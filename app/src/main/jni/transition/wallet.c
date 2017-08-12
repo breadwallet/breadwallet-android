@@ -207,7 +207,8 @@ Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env, jobject thiz
     int size = sizeof(result) - 1;
     jbyteArray bytePhrase = (*env)->NewByteArray(env, size);
     (*env)->SetByteArrayRegion(env, bytePhrase, 0, size, phraseJbyte);
-
+    memset(result, 0, sizeof(result));
+    
     return bytePhrase;
 }
 
@@ -658,6 +659,7 @@ Java_com_breadwallet_wallet_BRWalletManager_publishSerializedTransaction(JNIEnv 
     size_t seedSize = sizeof(key);
 
     BRWalletSignTransaction(_wallet, tmpTx, 0, key.u8, seedSize);
+    memset(&key, 0, sizeof(key));
     assert(BRTransactionIsSigned(tmpTx));
     if (!tmpTx) return JNI_FALSE;
     BRPeerManagerPublishTx(_peerManager, tmpTx, NULL, callback);
@@ -861,6 +863,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getAuth
     BRKeyPrivKey(&key, rawKey, sizeof(rawKey));
     jbyteArray result = (*env)->NewByteArray(env, (jsize) sizeof(rawKey));
     (*env)->SetByteArrayRegion(env, result, 0, (jsize) sizeof(rawKey), (jbyte *) rawKey);
+    memset(rawKey, 0, sizeof(rawKey));
     return result;
 }
 
@@ -894,6 +897,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getSeed
     BRBIP39DeriveKey(key.u8, charPhrase, NULL);
     jbyteArray result = (*env)->NewByteArray(env, (jsize) sizeof(key));
     (*env)->SetByteArrayRegion(env, result, 0, (jsize) sizeof(key), (jbyte *) &key);
+    memset(&key, 0, sizeof(key));
     return result;
 }
 
@@ -915,7 +919,7 @@ BRWalletBCashSweepTx(BRWallet *wallet, BRMasterPubKey mpk, const char *addr, uin
     w = BRWalletNew(transactions, txCount, mpk);
     BRWalletSetFeePerKb(w, feePerKb);
     tx = BRWalletCreateTransaction(w, BRWalletMaxOutputAmount(w), addr);
-    BRWalletFree(w);
+    //BRWalletFree(w); // BUG: this causes a double free of the wallet transactions
     return tx;
 }
 
@@ -936,7 +940,7 @@ JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getBCashBala
     txCount = BRWalletTransactions(_wallet, transactions, txCount);
     w = BRWalletNew(transactions, txCount, pubKey);
     jlong balance = (jlong) BRWalletBalance(w);
-    BRWalletFree(w);
+    //BRWalletFree(w); // BUG: this causes a double free of the wallet transactions
 //
     return balance;
 }
@@ -964,6 +968,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_sweepBC
     BRTransaction *tx = BRWalletBCashSweepTx(_wallet, pubKey, rawAddress, MIN_FEE_PER_KB);
 
     BRWalletSignTransaction(_wallet, tx, 0x40, key.u8, seedSize);
+    memset(&key, 0, sizeof(key));
     assert(BRTransactionIsSigned(tx));
     if (!tx) return NULL;
 
@@ -976,6 +981,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_sweepBC
 
     (*env)->SetByteArrayRegion(env, result, 0, (jsize) len, (jbyte *) buf);
     free(buf);
+    BRTransactionFree(tx);
     return result;
 
 }
