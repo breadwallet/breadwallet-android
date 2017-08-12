@@ -44,8 +44,6 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -56,8 +54,8 @@ public class ReplicatedKVStore {
 
     public boolean encrypted = true;
     public boolean encryptedReplication = true;
-    private Lock readLock = new ReentrantLock();
-    private Lock writeLock = new ReentrantLock();
+//    private Lock readLock = new ReentrantLock();
+//    private Lock writeLock = new ReentrantLock();
     public boolean syncImmediately = false;
     private boolean syncRunning = false;
     private KVStoreAdaptor remoteKvStore;
@@ -82,7 +80,7 @@ public class ReplicatedKVStore {
     }
 
     public void getWritable() {
-        writeLock.lock();
+//        writeLock.lock();
         writeDB = dbHelper.getWritableDatabase();
     }
 

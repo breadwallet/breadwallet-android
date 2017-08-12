@@ -281,9 +281,8 @@ public class KVStoreTests {
         byte[] value = "hello".getBytes();
         CompletionObject setObj = store.set(0, 0, "hello", value, System.currentTimeMillis(), 0);
         CompletionObject setStaleObj = store.set(0, 0, "hello", value, System.currentTimeMillis(), 0);
-
         Assert.assertNull(setObj.err);
-        Assert.assertEquals(setStaleObj.err, CompletionObject.RemoteKVStoreError.conflict);
+        Assert.assertEquals(CompletionObject.RemoteKVStoreError.conflict, setStaleObj.err);
     }
 
     @Test
