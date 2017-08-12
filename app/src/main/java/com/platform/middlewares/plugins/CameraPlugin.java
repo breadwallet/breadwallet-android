@@ -49,11 +49,7 @@ import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static android.R.attr.key;
-import static android.R.attr.name;
-import static com.breadwallet.R.string.request;
 import static com.breadwallet.tools.util.BRConstants.REQUEST_IMAGE_CAPTURE;
-import static com.platform.APIClient.bundleFileName;
 
 /**
  * BreadWallet

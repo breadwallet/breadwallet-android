@@ -7,6 +7,7 @@ import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.util.Log;
 
+import com.breadwallet.BreadWalletApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.MainActivity;
@@ -96,10 +97,10 @@ public class APIClient {
 
     // proto is the transport protocol to use for talking to the API (either http or https)
     private static final String PROTO = "https";
-    // host is the server(s) on which the API is hosted
-    private static final String HOST = "api.breadwallet.com";
-    // convenience getter for the API endpoint
-    public static final String BASE_URL = PROTO + "://" + HOST;
+//    // host is the server(s) on which the API is hosted
+//    private static final String HOST = "api.breadwallet.com";
+//    // convenience getter for the API endpoint
+    public static final String BASE_URL = PROTO + "://" + BreadWalletApp.HOST;
     //feePerKb url
     private static final String FEE_PER_KB_URL = "/v1/fee-per-kb";
     //token
@@ -108,9 +109,6 @@ public class APIClient {
     private static final String ME = "/me";
     //singleton instance
     private static APIClient ourInstance;
-
-    private static final String GET = "GET";
-    private static final String POST = "POST";
 
     public static final String BUNDLES = "bundles";
     //    public static final String BREAD_BUY = "bread-buy-staging";
@@ -290,8 +288,8 @@ public class APIClient {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    String bodyString = sink.buffer().readUtf8();
-                    base58Body = CryptoHelper.base58ofSha256(bodyString.getBytes());
+                    byte[] bytes = sink.buffer().readByteArray();
+                    base58Body = CryptoHelper.base58ofSha256(bytes);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -309,7 +307,8 @@ public class APIClient {
                     request.header("Content-Type"), request.header("Date"), request.url().encodedPath()
                             + ((queryString != null && !queryString.isEmpty()) ? ("?" + queryString) : ""));
             String signedRequest = signRequest(requestString);
-            String token = new String(KeyStoreManager.getToken(ctx));
+            byte[] rawToken = KeyStoreManager.getToken(ctx);
+            String token = new String(rawToken == null? new byte[0] : rawToken);
             if (token.isEmpty()) token = getToken();
             if (token == null || token.isEmpty()) {
                 Log.e(TAG, "sendRequest: failed to retrieve token");
@@ -327,6 +326,7 @@ public class APIClient {
         try {
             OkHttpClient client = new OkHttpClient.Builder().followRedirects(false)/*.addInterceptor(new LoggingInterceptor())*/.build();
 //            Log.e(TAG, "sendRequest: before executing the request: " + request.headers().toString());
+            request = request.newBuilder().header("User-agent", Utils.getAgentString(ctx, "OkHttp/3.4.1")).build();
             response = client.newCall(request).execute();
             try {
                 data = response.body().bytes();
@@ -341,7 +341,7 @@ public class APIClient {
                 Uri newUri = Uri.parse(newLocation);
                 if (newUri == null) {
                     Log.e(TAG, "sendRequest: redirect uri is null");
-                } else if (!newUri.getHost().equalsIgnoreCase(HOST)  || !newUri.getScheme().equalsIgnoreCase(PROTO)) {
+                } else if (!newUri.getHost().equalsIgnoreCase(BreadWalletApp.HOST)  || !newUri.getScheme().equalsIgnoreCase(PROTO)) {
                     Log.e(TAG, "sendRequest: WARNING: redirect is NOT safe: " + newLocation);
                 } else {
                     Log.w(TAG, "redirecting: " + request.url() + " >>> " + newLocation);

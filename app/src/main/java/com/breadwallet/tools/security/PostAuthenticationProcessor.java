@@ -176,7 +176,7 @@ public class PostAuthenticationProcessor {
         app.fragmentPhraseFlow1.setPhrase(phrase);
     }
 
-    public void onSendBch(Activity app, boolean authAsked, String bchAddress) {
+    public void onSendBch(final Activity app, boolean authAsked, String bchAddress) {
         this.bchAddress = bchAddress;
         byte[] phrase = null;
         try {
@@ -190,45 +190,72 @@ public class PostAuthenticationProcessor {
             BRErrorPipe.parseError(app, "error 006", ex, true);
             return;
         }
-        String title = "Failed";
-        String message;
+
         byte[] nullTerminatedPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
-        byte[] serializedTx = BRWalletManager.sweepBCash(KeyStoreManager.getMasterPublicKey(app), bchAddress, nullTerminatedPhrase);
-        message = serializedTx == null ? "null" : Arrays.toString(serializedTx);
+        final byte[] serializedTx = BRWalletManager.sweepBCash(KeyStoreManager.getMasterPublicKey(app), bchAddress, nullTerminatedPhrase);
+//        message = serializedTx == null ? "null" : Arrays.toString(serializedTx);
         assert (serializedTx != null);
         if (serializedTx == null) {
             Log.e(TAG, "onSendBch:serializedTx is null");
         } else {
-            String strUtl = BASE_URL + "/bch/publish-transaction";
+            Log.e(TAG, "onSendBch:serializedTx is:" + serializedTx.length);
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    String title = "Failed";
+                    final String message;
+                    String strUtl = BASE_URL + "/bch/publish-transaction";
+                    Log.e(TAG, "url: " + strUtl);
+                    final MediaType type
+                            = MediaType.parse("application/bchdata");
+                    RequestBody requestBody = RequestBody.create(type, serializedTx);
+                    Request request = new Request.Builder()
+                            .url(strUtl)
+                            .header("Content-Type", "application/bchdata")
+                            .post(requestBody).build();
+                    Response response = APIClient.getInstance(app).sendRequest(request, true, 0);
+                    String responseBody = null;
+                    try {
+                        responseBody = response == null ? null : response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    if (response == null) {
+                        Log.e(TAG, "onSendBch: response is null");
+                    } else {
+                        Log.e(TAG, "onSendBch: " + response.code());
+                        Log.e(TAG, "onSendBch: " + response.message());
+                        Log.e(TAG, "onSendBch: " + response.message());
+                    }
+                    if (response != null && response.isSuccessful()) {
+                        title = "Success";
+                        message = "";
+                    } else {
+                        title = "Failed to send";
+                        if (response == null) {
+                            message = "Something went wrong";
+                        } else {
+                            message = responseBody;
+                        }
+                    }
+                    final String finalTitle = title;
+                    app.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            BRErrorPipe.showKeyStoreDialog(app, finalTitle, message, "close", null,
+                                    new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            dialog.cancel();
+                                        }
+                                    }, null, null);
+                        }
+                    });
 
-//            final MediaType type
-//                    = MediaType.parse("application/bchdata");
-//            RequestBody requestBody = RequestBody.create(type, serializedTx);
-//            Request request = new Request.Builder()
-//                    .url(strUtl)
-//                    .header("Content-Type", "application/bchdata")
-//                    .post(requestBody).build();
-//            String strResponse = null;
-//            Response response = APIClient.getInstance(app).sendRequest(request, true, 0);
-//            if (response != null && response.isSuccessful()) {
-//                title = "Success";
-//                message = "";
-//            } else {
-//                title = "Failed to send";
-//                if (response == null) {
-//                    message = "Something went wrong";
-//                } else {
-//                    message = response.message();
-//                }
-//            }
+                }
+            }).start();
+
         }
 
-        BRErrorPipe.showKeyStoreDialog(app, title, message, "close", null,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.cancel();
-                    }
-                }, null, null);
 
     }
 

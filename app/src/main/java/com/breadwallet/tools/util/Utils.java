@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
@@ -31,6 +33,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+
+import okhttp3.internal.Util;
 
 /**
  * BreadWallet
@@ -192,6 +196,26 @@ public class Utils {
             Toast.makeText(app.getApplicationContext(), ignored.toString(), Toast.LENGTH_SHORT).show();
         }
         return log.toString();
+    }
+
+    public static String getAgentString(Context app, String cfnetwork) {
+
+        int versionNumber = 0;
+        if (app != null) {
+            try {
+                PackageInfo pInfo = null;
+                pInfo = app.getPackageManager().getPackageInfo(app.getPackageName(), 0);
+                versionNumber = pInfo.versionCode;
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+            }
+        }
+        int stringId = 0;
+        if (app != null) {
+            stringId = app.getApplicationInfo().labelRes;
+        }
+        String agent = System.getProperty("http.agent");
+        return String.format(Locale.getDefault(), "%s/%d %s %s", "breadwallet", versionNumber, cfnetwork, Util.toHumanReadableAscii(agent));
     }
 
 }

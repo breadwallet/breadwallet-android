@@ -262,7 +262,7 @@ public class FragmentWithdrawBch extends Fragment {
                         }
                     }, null, null);
         } else {
-            ((BreadWalletApp) app.getApplication()).promptForAuthentication(app, AUTH_FOR_BCH, null, "", "Sending out BCH", null, true);
+            ((BreadWalletApp) app.getApplication()).promptForAuthentication(app, AUTH_FOR_BCH, null, theAddress, "Sending out BCH", null, true);
         }
 
     }

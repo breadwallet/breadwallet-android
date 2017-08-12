@@ -25,12 +25,12 @@ import java.util.Arrays;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import static com.platform.APIClient.extractedFolder;
 import okhttp3.Request;
 
 import static android.R.attr.baseline;
 import static android.R.attr.handle;
 import static com.platform.APIClient.BUNDLES;
-import static com.platform.APIClient.extractedFolder;
 
 /**
  * BreadWallet
