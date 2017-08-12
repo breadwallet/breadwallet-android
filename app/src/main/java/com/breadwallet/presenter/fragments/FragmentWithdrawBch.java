@@ -36,6 +36,7 @@ import com.breadwallet.tools.security.PassCodeManager;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.security.RequestHandler;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.net.URI;
@@ -253,16 +254,25 @@ public class FragmentWithdrawBch extends Fragment {
     }
 
     public static void confirmSendingBCH(final Activity app, final String theAddress) {
-        address = theAddress;
-        if (BRWalletManager.getBCashBalance(KeyStoreManager.getMasterPublicKey(app)) == 0) {
-            BRErrorPipe.showKeyStoreDialog(app, "No balance", "You have 0 BCH", "close", null,
+        if (BRPeerManager.getCurrentBlockHeight() < 478559) {
+            BRErrorPipe.showKeyStoreDialog(app, "Not synced", "Please wait for syncing to complete before using this feature.", "close", null,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
                         }
                     }, null, null);
         } else {
-            ((BreadWalletApp) app.getApplication()).promptForAuthentication(app, AUTH_FOR_BCH, null, theAddress, "Sending out BCH", null, true);
+            address = theAddress;
+            if (BRWalletManager.getBCashBalance(KeyStoreManager.getMasterPublicKey(app)) == 0) {
+                BRErrorPipe.showKeyStoreDialog(app, "No balance", "You have 0 BCH", "close", null,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        }, null, null);
+            } else {
+                ((BreadWalletApp) app.getApplication()).promptForAuthentication(app, AUTH_FOR_BCH, null, theAddress, "Sending out BCH", null, true);
+            }
         }
 
     }

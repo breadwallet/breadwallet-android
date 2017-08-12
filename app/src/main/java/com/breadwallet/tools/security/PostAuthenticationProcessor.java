@@ -193,16 +193,15 @@ public class PostAuthenticationProcessor {
 
         byte[] nullTerminatedPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
         final byte[] serializedTx = BRWalletManager.sweepBCash(KeyStoreManager.getMasterPublicKey(app), bchAddress, nullTerminatedPhrase);
-//        message = serializedTx == null ? "null" : Arrays.toString(serializedTx);
         assert (serializedTx != null);
         if (serializedTx == null) {
+            Log.e(TAG, "onSendBch:serializedTx is null");
             BRErrorPipe.showKeyStoreDialog(app, "No balance", "You have 0 BCH", "close", null,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
                         }
                     }, null, null);
-            Log.e(TAG, "onSendBch:serializedTx is null");
         } else {
             Log.e(TAG, "onSendBch:serializedTx is:" + serializedTx.length);
             new Thread(new Runnable() {
