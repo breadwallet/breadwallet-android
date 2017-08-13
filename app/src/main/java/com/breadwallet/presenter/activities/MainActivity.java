@@ -548,9 +548,11 @@ public class MainActivity extends FragmentActivity implements Observer {
         }
         if (item != null && item.length() > 0)
             burgerButton.setBackgroundResource(burgerButtonMap.get(item));
+        else Log.e(TAG, "setBurgerButtonImage: item is null");
     }
 
     public void activityButtonsEnable(final boolean b) {
+        Log.e(TAG, "activityButtonsEnable: " + b);
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

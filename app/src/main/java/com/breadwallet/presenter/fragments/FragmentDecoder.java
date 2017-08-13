@@ -149,5 +149,12 @@ public class FragmentDecoder extends Fragment implements QRScannerView.ResultHan
         super.onPause();
         mScannerView.stopCamera();
         withdrawingBCH = false;
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (MainActivity.app != null)
+                    MainActivity.app.activityButtonsEnable(true);
+            }
+        }, 500);
     }
 }

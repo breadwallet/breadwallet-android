@@ -18,6 +18,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.BreadWalletApp;
 import com.breadwallet.R;
@@ -30,6 +32,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRTipsManager;
+import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.security.BRErrorPipe;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.security.PassCodeManager;
@@ -70,9 +73,10 @@ import static com.breadwallet.tools.util.BRConstants.AUTH_FOR_BCH;
 
 public class FragmentWithdrawBch extends Fragment {
     private static final String TAG = FragmentWithdrawBch.class.getName();
-    public EditText addressEditText;
     public RelativeLayout mainFragmentLayout;
     public static String address;
+    public static TextView txIdLabel;
+    public static TextView txId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -85,28 +89,13 @@ public class FragmentWithdrawBch extends Fragment {
         final Button payAddressFromClipboardButton = (Button)
                 rootView.findViewById(R.id.main_button_pay_address_from_clipboard);
 
-        addressEditText = (EditText) rootView.findViewById(R.id.address_edit_text);
-        addressEditText.setGravity(Gravity.CENTER_HORIZONTAL);
-        addressEditText.setOnClickListener(new View.OnClickListener() {
+        txId = (TextView) rootView.findViewById(R.id.tx_id);
+        txIdLabel = (TextView) rootView.findViewById(R.id.tx_id_label);
+        txId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                addressEditText.setText(BRClipboardManager.readFromClipboard(getActivity()));
-                MainActivity app = MainActivity.app;
-                if (app != null) {
-                    app.hideAllBubbles();
-                }
-            }
-        });
-
-        rootView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                ((BreadWalletApp) getActivity().getApplication()).hideKeyboard(getActivity());
-                addressEditText.clearFocus();
-                MainActivity app = MainActivity.app;
-                if (app != null) {
-                    app.hideAllBubbles();
-                }
+                BRClipboardManager.copyToClipboard(getActivity(), txId.getText().toString());
+                ((BreadWalletApp) getActivity().getApplication()).showCustomToast(getActivity(), "Transaction Id copied", MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
             }
         });
 
@@ -144,14 +133,9 @@ public class FragmentWithdrawBch extends Fragment {
                         alert[0] = builder.create();
                         alert[0].show();
                         BRClipboardManager.copyToClipboard(getActivity(), "");
-                        addressEditText.setText("");
                         return;
                     }
-                    if (!addressEditText.getText().toString().isEmpty()) {
-                        ifAddress = addressEditText.getText().toString();
-                    } else {
-                        ifAddress = obj.address;
-                    }
+                    ifAddress = obj.address;
                     if (ifAddress == null) {
                         //builder.setTitle(getResources().getString(R.string.alert));
                         builder.setMessage(getResources().getString(R.string.mainfragment_clipboard_invalid_data));
@@ -164,7 +148,6 @@ public class FragmentWithdrawBch extends Fragment {
                         alert[0] = builder.create();
                         alert[0].show();
                         BRClipboardManager.copyToClipboard(getActivity(), "");
-                        addressEditText.setText("");
                         return;
                     }
 //                    final String finalAddress = tempAddress;
@@ -172,7 +155,6 @@ public class FragmentWithdrawBch extends Fragment {
 
                     if (wm.isValidBitcoinPrivateKey(ifAddress) || wm.isValidBitcoinBIP38Key(ifAddress)) {
                         BRWalletManager.getInstance(getActivity()).confirmSweep(getActivity(), ifAddress);
-                        addressEditText.setText("");
                         return;
                     }
 
@@ -200,7 +182,6 @@ public class FragmentWithdrawBch extends Fragment {
                                             alert[0] = builder.create();
                                             alert[0].show();
                                             BRClipboardManager.copyToClipboard(getActivity(), "");
-                                            addressEditText.setText("");
 
 
                                         } else if (used) {
@@ -243,7 +224,6 @@ public class FragmentWithdrawBch extends Fragment {
                         alert[0] = builder.create();
                         alert[0].show();
                         BRClipboardManager.copyToClipboard(getActivity(), "");
-                        addressEditText.setText("");
                     }
                 }
             }
@@ -251,6 +231,13 @@ public class FragmentWithdrawBch extends Fragment {
         });
 
         return rootView;
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        updateUi();
     }
 
     public static void confirmSendingBCH(final Activity app, final String theAddress) {
@@ -277,8 +264,39 @@ public class FragmentWithdrawBch extends Fragment {
 
     }
 
+    private static void updateUi() {
+        if (MainActivity.app != null) {
+            MainActivity.app.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    String txIdString = SharedPreferencesManager.getBCHTxId(MainActivity.app);
+                    if (Utils.isNullOrEmpty(txIdString)) {
+                        txIdLabel.setVisibility(View.GONE);
+                        txId.setVisibility(View.GONE);
+                    } else {
+                        txIdLabel.setVisibility(View.VISIBLE);
+                        txId.setVisibility(View.VISIBLE);
+                        txId.setText(txIdString);
+                    }
+                }
+            });
+        } else {
+            Log.e(TAG, "updateUi: app is null");
+        }
+    }
+
     private boolean checkIfAddressIsValid(String str) {
         return BRWalletManager.validateAddress(str.trim());
+    }
+
+    //called from native
+    public static void setBCHTxId(String txId) {
+        if (MainActivity.app != null) {
+            SharedPreferencesManager.putBCHTxId(MainActivity.app, txId);
+            updateUi();
+        } else {
+            Log.e(TAG, "updateUi: app is null");
+        }
     }
 
 }

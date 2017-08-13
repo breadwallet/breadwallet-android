@@ -208,7 +208,7 @@ Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env, jobject thiz
     jbyteArray bytePhrase = (*env)->NewByteArray(env, size);
     (*env)->SetByteArrayRegion(env, bytePhrase, 0, size, phraseJbyte);
     memset(result, 0, sizeof(result));
-    
+
     return bytePhrase;
 }
 
@@ -769,7 +769,8 @@ Java_com_breadwallet_wallet_BRWalletManager_addInputToPrivKeyTx(JNIEnv *env, job
     jbyte *rawScript = (*env)->GetByteArrayElements(env, script, 0);
     UInt256 reversedHash = UInt256Reverse((*(UInt256 *) rawHash));
 
-    BRTransactionAddInput(_privKeyTx, reversedHash, (uint32_t) vout, (uint64_t) amount, (const uint8_t *) rawScript,
+    BRTransactionAddInput(_privKeyTx, reversedHash, (uint32_t) vout, (uint64_t) amount,
+                          (const uint8_t *) rawScript,
                           (size_t) scriptLength, NULL, 0, TXIN_SEQUENCE);
 }
 
@@ -947,12 +948,13 @@ JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getBCashBala
 
 //creates and signs a bcash tx, returns the serialized tx
 JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_sweepBCash(JNIEnv *env,
-                                                                               jobject thiz,
-                                                                               jbyteArray bytePubKey,
-                                                                               jstring address, jbyteArray phrase) {
+                                                                                    jobject thiz,
+                                                                                    jbyteArray bytePubKey,
+                                                                                    jstring address,
+                                                                                    jbyteArray phrase) {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "sweepBCash");
 
-    if(!_wallet) return NULL;
+    if (!_wallet) return NULL;
 
     jbyte *pubKeyBytes = (*env)->GetByteArrayElements(env, bytePubKey, 0);
     BRMasterPubKey pubKey = *(BRMasterPubKey *) pubKeyBytes;
@@ -971,6 +973,16 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_sweepBC
     memset(&key, 0, sizeof(key));
     assert(BRTransactionIsSigned(tx));
     if (!tx) return NULL;
+
+
+    UInt256 txid = tx->txHash;
+    UInt256 reversedHash = UInt256Reverse(txid);
+    jstring JtxHash = (*env)->NewStringUTF(env, u256_hex_encode(reversedHash));
+
+    //save txId to the SharedPrefs
+    jclass clazz = (*env)->FindClass(env, "com/breadwallet/presenter/fragments/FragmentWithdrawBch");
+    jmethodID mid = (*env)->GetStaticMethodID(env, clazz, "setBCHTxId", "(Ljava/lang/String;)V");
+    (*env)->CallStaticVoidMethod(env, clazz, mid, JtxHash);
 
     size_t len = BRTransactionSerialize(tx, NULL, 0);
     uint8_t *buf = malloc(len);

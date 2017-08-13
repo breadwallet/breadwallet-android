@@ -359,7 +359,7 @@ public class BRAnimator {
 
     public static void hideDecoderFragment() {
         try {
-            MainActivity app = MainActivity.app;
+            final MainActivity app = MainActivity.app;
             if (app == null) return;
             decoderFragmentOn = false;
             new Handler().postDelayed(new Runnable() {
