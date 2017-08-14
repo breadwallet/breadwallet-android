@@ -11,6 +11,7 @@ import com.breadwallet.presenter.activities.IntroActivity;
 import com.breadwallet.presenter.activities.MainActivity;
 import com.breadwallet.presenter.activities.PhraseFlowActivity;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
+import com.breadwallet.presenter.fragments.FragmentWithdrawBch;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.SharedPreferencesManager;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
@@ -208,7 +209,7 @@ public class PostAuthenticationProcessor {
                 @Override
                 public void run() {
                     String title = "Failed";
-                    final String message;
+                    String message = "";
                     String strUtl = BASE_URL + "/bch/publish-transaction";
                     Log.e(TAG, "url: " + strUtl);
                     final MediaType type
@@ -230,24 +231,34 @@ public class PostAuthenticationProcessor {
                     } else {
                         Log.e(TAG, "onSendBch: " + response.code());
                         Log.e(TAG, "onSendBch: " + response.message());
-                        Log.e(TAG, "onSendBch: " + response.message());
                     }
-                    if (response != null && response.isSuccessful()) {
-                        title = "Success";
-                        message = "";
-                    } else {
-                        title = "Failed to send";
-                        if (response == null) {
-                            message = "Something went wrong";
+                    boolean success = true;
+                    if (response != null) {
+                        title = "Failed";
+                        if (response.isSuccessful()) {
+                            title = "Success";
+                            message = "";
+                        } else if (response.code() == 503) {
+                            message = "Your BCH has already been sent, or your wallet did not contain BCH before the fork.";
                         } else {
+                            success = false;
                             message = responseBody;
                         }
+                    } else {
+                        title = "Failed to send";
+                        message = "Something went wrong";
                     }
+                    if (!success) {
+                        SharedPreferencesManager.putBCHTxId(app, "");
+                        FragmentWithdrawBch.updateUi();
+                    }
+
                     final String finalTitle = title;
+                    final String finalMessage = message;
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            BRErrorPipe.showKeyStoreDialog(app, finalTitle, message, "close", null,
+                            BRErrorPipe.showKeyStoreDialog(app, finalTitle, finalMessage, "close", null,
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.cancel();

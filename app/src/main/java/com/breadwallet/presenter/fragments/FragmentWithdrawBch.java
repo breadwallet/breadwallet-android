@@ -264,7 +264,7 @@ public class FragmentWithdrawBch extends Fragment {
 
     }
 
-    private static void updateUi() {
+    public static void updateUi() {
         if (MainActivity.app != null) {
             MainActivity.app.runOnUiThread(new Runnable() {
                 @Override
