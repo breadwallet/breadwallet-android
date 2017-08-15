@@ -226,23 +226,18 @@ public class PostAuthenticationProcessor {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                    if (response == null) {
-                        Log.e(TAG, "onSendBch: response is null");
-                    } else {
-                        Log.e(TAG, "onSendBch: " + response.code());
-                        Log.e(TAG, "onSendBch: " + response.message());
-                    }
+                    Log.e(TAG, "onSendBch:" + (response == null ? "resp is null" : response.code() + ":" + response.message()));
                     boolean success = true;
                     if (response != null) {
                         title = "Failed";
                         if (response.isSuccessful()) {
                             title = "Success";
-                            message = "";
+                            message = String.valueOf(response.code());
                         } else if (response.code() == 503) {
                             message = "Your BCH has already been sent, or your wallet did not contain BCH before the fork.";
                         } else {
                             success = false;
-                            message = responseBody;
+                            message = "(" + response.code() + ")" + "[" + response.message() + "]" + responseBody;
                         }
                     } else {
                         title = "Failed to send";

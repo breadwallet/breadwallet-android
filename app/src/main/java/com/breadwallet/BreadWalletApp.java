@@ -73,14 +73,14 @@ public class BreadWalletApp extends Application {
     private Toast toast;
     public static int DISPLAY_HEIGHT_PX;
     FingerprintManager mFingerprintManager;
-    public static String HOST = "prod.breadwallet.com";
+    public static String HOST = "api.breadwallet.com";
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         if (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
-            HOST = "stage.breadwallet.com";
+//            HOST = "stage.breadwallet.com";
         }
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
