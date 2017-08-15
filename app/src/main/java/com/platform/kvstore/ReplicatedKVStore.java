@@ -77,7 +77,7 @@ public class ReplicatedKVStore {
     public ReplicatedKVStore(Context context, KVStoreAdaptor remoteKvStore) {
         this.context = context;
         this.remoteKvStore = remoteKvStore;
-        dbHelper = PlatformSqliteHelper.getInstance(context);
+        dbHelper = new PlatformSqliteHelper(context);
     }
 
     public SQLiteDatabase getWritable() {
