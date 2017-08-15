@@ -191,7 +191,6 @@ public class ReplicatedKVStore {
 
         try {
             try {
-
                 //if no version, fine the version
                 SQLiteDatabase db = getReadable();
                 if (version == 0) {
