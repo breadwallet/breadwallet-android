@@ -3,6 +3,7 @@ package com.breadwallet.platform;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
 
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.platform.interfaces.KVStoreAdaptor;
@@ -110,7 +111,8 @@ public class KVStoreTests {
                 return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
             if (version != result.getRemoteVersion())
                 return new CompletionObject(CompletionObject.RemoteKVStoreError.conflict);
-            return new CompletionObject(result, result.getDeleted() > 0 ? CompletionObject.RemoteKVStoreError.tombstone : null);
+//            return new CompletionObject(result, result.getDeleted() > 0 ? CompletionObject.RemoteKVStoreError.tombstone : null);
+            return new CompletionObject(result.version, result.time, result.value, null);
         }
 
         @Override
@@ -132,6 +134,7 @@ public class KVStoreTests {
 
     @Before
     public void setUp() {
+        Log.e(TAG, "setUp: ");
         mActivityRule.getActivity().deleteDatabase(PlatformSqliteHelper.DATABASE_NAME);
         remote = new MockUpAdapter();
         ((MockUpAdapter) remote).putKv(new KVEntity(1, 1, "hello", "hello".getBytes(), System.currentTimeMillis(), 0));
@@ -146,6 +149,7 @@ public class KVStoreTests {
 
     @After
     public void tearDown() {
+        Log.e(TAG, "tearDown: ");
         mActivityRule.getActivity().deleteDatabase(PlatformSqliteHelper.DATABASE_NAME);
         store.deleteAllKVs();
     }
@@ -164,8 +168,8 @@ public class KVStoreTests {
         for (KVEntity kv : allLocalKeys) {
             if (kv.getDeleted() == 0) {
                 CompletionObject object = store.get(kv.getKey(), kv.getVersion());
-                KVEntity tmpKv = object.kv;
-                localKV.put(kv.getKey(), tmpKv.getValue());
+//                KVEntity tmpKv = object.kv;
+                localKV.put(kv.getKey(), object.value);
             }
         }
 
@@ -192,7 +196,8 @@ public class KVStoreTests {
 
     @Test
     public void testSetLocal() {
-        store.set(0, 1, "Key1", "Key1".getBytes(), System.currentTimeMillis(), 0);
+        CompletionObject obj = store.set(0, 1, "Key1", "Key1".getBytes(), System.currentTimeMillis(), 0);
+        Assert.assertNull(obj.err);
         store.set(0, 1, "Key1", "Key1".getBytes(), System.currentTimeMillis(), 0);
         store.set(new KVEntity(0, 1, "Key2", "Key2".getBytes(), System.currentTimeMillis(), 2));
         store.set(new KVEntity[]{
@@ -207,9 +212,9 @@ public class KVStoreTests {
     @Test
     public void testSetLocalIncrementsVersion() {
         CompletionObject obj = store.set(0, 0, "Key1", "Key1".getBytes(), System.currentTimeMillis(), 0);
-        List<KVEntity> test = store.getAllKVs();
-        Assert.assertEquals(test.size(), 1);
         Assert.assertNull(obj.err);
+        List<KVEntity> test = store.getAllKVs();
+        Assert.assertEquals(1, test.size());
         Assert.assertEquals(1, store.localVersion("Key1"));
     }
 
@@ -356,7 +361,7 @@ public class KVStoreTests {
         boolean success = store.syncAllKeys();
         Assert.assertTrue(success);
         CompletionObject obj = remote.get("derp", 1);
-        Assert.assertArrayEquals(obj.kv.getValue(), "derp".getBytes());
+        Assert.assertArrayEquals(obj.value, "derp".getBytes());
     }
 
     @Test
@@ -408,7 +413,7 @@ public class KVStoreTests {
         success = store.syncAllKeys();
         Assert.assertTrue(success);
         assertDatabasesAreSynced();
-        Assert.assertArrayEquals("goodbye_cruel_world with some new info".getBytes(), remote.get("goodbye_cruel_world", store.remoteVersion("goodbye_cruel_world")).kv.getValue());
+        Assert.assertArrayEquals("goodbye_cruel_world with some new info".getBytes(), remote.get("goodbye_cruel_world", store.remoteVersion("goodbye_cruel_world")).value);
 
     }
 
@@ -462,7 +467,7 @@ public class KVStoreTests {
         boolean success = store.syncAllKeys();
         Assert.assertTrue(success);
         CompletionObject obj = remote.get("derp", 1);
-        Assert.assertArrayEquals(obj.kv.getValue(), "derp".getBytes());
+        Assert.assertArrayEquals(obj.value, "derp".getBytes());
 
     }
 
