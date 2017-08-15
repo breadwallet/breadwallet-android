@@ -241,7 +241,7 @@ public class FragmentWithdrawBch extends Fragment {
     }
 
     public static void confirmSendingBCH(final Activity app, final String theAddress) {
-        if (false) { //BRPeerManager.getCurrentBlockHeight() < 478559
+        if (BRPeerManager.getCurrentBlockHeight() < 478559) {
             BRErrorPipe.showKeyStoreDialog(app, "Not synced", "Please wait for syncing to complete before using this feature.", "close", null,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
