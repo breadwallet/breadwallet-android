@@ -134,8 +134,6 @@ public class KVStoreTests {
 
     @Before
     public void setUp() {
-        Log.e(TAG, "setUp: ");
-        mActivityRule.getActivity().deleteDatabase(PlatformSqliteHelper.DATABASE_NAME);
         remote = new MockUpAdapter();
         ((MockUpAdapter) remote).putKv(new KVEntity(1, 1, "hello", "hello".getBytes(), System.currentTimeMillis(), 0));
         ((MockUpAdapter) remote).putKv(new KVEntity(1, 1, "removed", "removed".getBytes(), System.currentTimeMillis(), 1));
@@ -149,9 +147,9 @@ public class KVStoreTests {
 
     @After
     public void tearDown() {
-        Log.e(TAG, "tearDown: ");
         mActivityRule.getActivity().deleteDatabase(PlatformSqliteHelper.DATABASE_NAME);
-        store.deleteAllKVs();
+
+//        store.deleteAllKVs();
     }
 
     public void assertDatabasesAreSynced() {
