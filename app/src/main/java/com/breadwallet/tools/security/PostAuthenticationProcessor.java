@@ -232,7 +232,7 @@ public class PostAuthenticationProcessor {
                         title = "Failed";
                         if (response.isSuccessful()) {
                             title = "Success";
-                            message = String.valueOf(response.code());
+                            message = "";
                         } else if (response.code() == 503) {
                             message = "Your BCH has already been sent, or your wallet did not contain BCH before the fork.";
                         } else {

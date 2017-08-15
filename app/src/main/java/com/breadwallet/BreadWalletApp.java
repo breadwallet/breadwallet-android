@@ -80,7 +80,7 @@ public class BreadWalletApp extends Application {
         super.onCreate();
 
         if (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
-//            HOST = "stage.breadwallet.com";
+            HOST = "stage.breadwallet.com";
         }
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
