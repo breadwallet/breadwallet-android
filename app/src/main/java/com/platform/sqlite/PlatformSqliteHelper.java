@@ -36,7 +36,7 @@ public class PlatformSqliteHelper extends SQLiteOpenHelper {
     private static PlatformSqliteHelper instance;
 
     public static final String DATABASE_NAME = "platform.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public static synchronized PlatformSqliteHelper getInstance(Context context) {
 
@@ -44,7 +44,7 @@ public class PlatformSqliteHelper extends SQLiteOpenHelper {
         // don't accidentally leak an Activity's context.
         // See this article for more information: http://bit.ly/6LRzfx
         if (instance == null) {
-            instance = new PlatformSqliteHelper(context.getApplicationContext());
+            instance = new PlatformSqliteHelper(context);
         }
         return instance;
     }

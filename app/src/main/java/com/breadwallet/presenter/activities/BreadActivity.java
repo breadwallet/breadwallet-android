@@ -536,7 +536,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
-        Log.e(TAG, "onNetworkConnectionChanged: " + isConnected);
         if (isConnected) {
             if (barFlipper != null) {
                 if (barFlipper.getDisplayedChild() == 2)
@@ -547,7 +546,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 public void run() {
 
                     final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(BreadActivity.this));
-                    Log.e(TAG, "run: " + progress);
+//                    Log.e(TAG, "run: " + progress);
                     if (progress < 1 && progress > 0) {
                         BRPeerManager.getInstance().startSyncingProgressThread();
                     }

@@ -15,6 +15,7 @@ import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
+import com.google.firebase.crash.FirebaseCrash;
 import com.jniwrappers.BRKey;
 import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
@@ -258,6 +259,7 @@ public class APIClient {
     }
 
     public String signRequest(String request) {
+        Log.e(TAG, "signRequest: " + request);
         byte[] doubleSha256 = CryptoHelper.doubleSha256(request.getBytes(StandardCharsets.UTF_8));
         BRKey key = new BRKey(KeyStoreManager.getAuthKey(ctx));
         byte[] signedBytes = key.compactSign(doubleSha256);
@@ -312,7 +314,12 @@ public class APIClient {
 //            Log.e(TAG, "sendRequest: authValue: " + authValue);
             modifiedRequest = request.newBuilder();
 
-            request = modifiedRequest.header("Authorization", authValue).build();
+            try {
+                request = modifiedRequest.header("Authorization", authValue).build();
+            } catch (Exception e){
+                FirebaseCrash.report(e);
+
+            }
 
         }
 
