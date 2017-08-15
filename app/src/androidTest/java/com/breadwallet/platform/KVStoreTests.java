@@ -169,7 +169,7 @@ public class KVStoreTests {
             if (kv.getDeleted() == 0) {
                 CompletionObject object = store.get(kv.getKey(), kv.getVersion());
 //                KVEntity tmpKv = object.kv;
-                localKV.put(kv.getKey(), object.value);
+                localKV.put(kv.getKey(), object.kv.getValue());
             }
         }
 

@@ -33,21 +33,21 @@ import android.util.Log;
 public class PlatformSqliteHelper extends SQLiteOpenHelper {
     private static final String TAG = PlatformSqliteHelper.class.getName();
 
-    private static PlatformSqliteHelper instance;
+//    private static PlatformSqliteHelper instance;
 
     public static final String DATABASE_NAME = "platform.db";
     private static final int DATABASE_VERSION = 2;
 
-    public static synchronized PlatformSqliteHelper getInstance(Context context) {
-
-        // Use the application context, which will ensure that you
-        // don't accidentally leak an Activity's context.
-        // See this article for more information: http://bit.ly/6LRzfx
-        if (instance == null) {
-            instance = new PlatformSqliteHelper(context);
-        }
-        return instance;
-    }
+//    public static synchronized PlatformSqliteHelper getInstance(Context context) {
+//
+//        // Use the application context, which will ensure that you
+//        // don't accidentally leak an Activity's context.
+//        // See this article for more information: http://bit.ly/6LRzfx
+//        if (instance == null) {
+//            instance = new PlatformSqliteHelper(context.getApplicationContext());
+//        }
+//        return instance;
+//    }
 
     /**
      * KV Store table
@@ -71,7 +71,7 @@ public class PlatformSqliteHelper extends SQLiteOpenHelper {
             "   PRIMARY KEY (%s, %s) " +
             ");", KV_STORE_TABLE_NAME, KV_VERSION, KV_REMOTE_VERSION, KV_KEY, KV_VALUE, KV_TIME, KV_DELETED, KV_KEY, KV_VERSION);
 
-    private PlatformSqliteHelper(Context context) {
+    public PlatformSqliteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
