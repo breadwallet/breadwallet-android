@@ -81,7 +81,6 @@ public class KVStorePlugin implements Plugin {
                         return BRHTTPHelper.handleError(404, null, baseRequest, decorateResponse(0, 0 , response));
                     }
                     try {
-
                         JSONObject test = new JSONObject(new String(kv.getValue())); //just check for validity
                     } catch (JSONException e) {
                         e.printStackTrace();
