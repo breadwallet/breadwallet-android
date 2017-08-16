@@ -41,6 +41,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class LinkPlugin implements Plugin {
     public static final String TAG = LinkPlugin.class.getName();
+    private boolean hasBrowser;
 
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
@@ -48,7 +49,7 @@ public class LinkPlugin implements Plugin {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             String url = request.getParameter("url");
 
-            Activity app =  BreadApp.getBreadContext();
+            Activity app = BreadApp.getBreadContext();
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
@@ -65,7 +66,7 @@ public class LinkPlugin implements Plugin {
             return true;
         } else if (target.startsWith("/_open_maps")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            Activity app =  BreadApp.getBreadContext();
+            Activity app = BreadApp.getBreadContext();
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
@@ -79,8 +80,50 @@ public class LinkPlugin implements Plugin {
             String uri = "http://maps.google.com/maps?q=" + fromPoint + "&daddr=" + address + "&mode=driving";
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
             app.startActivity(Intent.createChooser(intent, "Select an application"));
-            return true;
-        } else return false;
+            return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
+        } else if (target.startsWith("/_browser")) {
+            switch (request.getMethod()) {
+                case "GET":
+                    // opens the in-app browser for the provided URL
+                    Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+
+                    if (hasBrowser)
+//                    Activity app = BreadApp.getBreadContext();
+//                    if (app == null) {
+//                        Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+//                        return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
+//                    }
+//                    String address = baseRequest.getParameter("address");
+//                    String fromPoint = baseRequest.getParameter("from_point");
+//                    if (address == null || fromPoint == null) {
+//                        Log.e(TAG, "handle: bad request: " + target + " " + baseRequest.getMethod());
+//                        return BRHTTPHelper.handleError(500, "bad request", baseRequest, response);
+//                    }
+//                    String uri = "http://maps.google.com/maps?q=" + fromPoint + "&daddr=" + address + "&mode=driving";
+//                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
+//                    app.startActivity(Intent.createChooser(intent, "Select an application"));
+                        return true;
+                case "POST":
+                    // opens a browser with a customized request object
+                    // params:
+                    //  {
+                    //    "url": "http://myirl.com",
+                    //    "method": "POST",
+                    //    "body": "stringified request body...",
+                    //    "headers": {"X-Header": "Blerb"}
+                    //    "closeOn": "http://someurl",
+                    //  }
+                    // Only the "url" parameter is required. If only the "url" parameter
+                    // is supplied the request acts exactly like the GET /_browser resource above
+                    //
+                    // When the "closeOn" parameter is provided the web view will automatically close
+                    // if the browser navigates to this exact URL. It is useful for oauth redirects
+                    // and the like
+
+
+            }
+        }
+        return false;
 
     }
 }
