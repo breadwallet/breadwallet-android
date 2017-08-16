@@ -71,29 +71,28 @@ public class KVStorePlugin implements Plugin {
             ReplicatedKVStore store = new ReplicatedKVStore(app, remote);
             switch (request.getMethod()) {
                 case "GET":
-
                     Log.i(TAG, "handle: " + target + " " + baseRequest.getMethod() + ", key: " + key);
-                    CompletionObject getObj = store.get(key, 0);
+                    CompletionObject getObj = store.get(getKey(key), 0);
                     KVEntity kv = getObj.kv;
 
                     if (kv == null || kv.deleted > 0) {
                         Log.e(TAG, "handle: kv store does not contain the kv: " + key);
-                        return BRHTTPHelper.handleError(404, null, baseRequest, decorateResponse(0, 0 , response));
+                        return BRHTTPHelper.handleError(404, null, baseRequest, decorateResponse(0, 0, response));
                     }
                     try {
                         JSONObject test = new JSONObject(new String(kv.getValue())); //just check for validity
                     } catch (JSONException e) {
                         e.printStackTrace();
-                        Log.e(TAG, "handle: the json is not valid: " + target + " " + baseRequest.getMethod());
-
-                        return BRHTTPHelper.handleError(500, null, baseRequest, decorateResponse(kv.getVersion(), kv.getTime(), response));
+                        Log.e(TAG, "handle: the json is not valid: for key: " + key + ", " + target + " " + baseRequest.getMethod());
+                        store.delete(getKey(key), kv.version);
+                        return BRHTTPHelper.handleError(404, null, baseRequest, decorateResponse(kv.getVersion(), kv.getTime(), response));
                     }
 
                     if (kv.getDeleted() > 0) {
                         Log.w(TAG, "handle: the key is gone: " + target + " " + baseRequest.getMethod());
-                        return BRHTTPHelper.handleError(410, "Gone", baseRequest, decorateResponse(kv.getVersion(), kv.getTime() , response));
+                        return BRHTTPHelper.handleError(410, "Gone", baseRequest, decorateResponse(kv.getVersion(), kv.getTime(), response));
                     }
-                    return BRHTTPHelper.handleSuccess(200, kv.getValue(), baseRequest, decorateResponse(kv.getVersion(), kv.getTime() , response), "application/json");
+                    return BRHTTPHelper.handleSuccess(200, kv.getValue(), baseRequest, decorateResponse(kv.getVersion(), kv.getTime(), response), "application/json");
                 case "PUT":
                     Log.i(TAG, "handle:" + target + " " + baseRequest.getMethod() + ", key: " + key);
                     // Read from request
@@ -123,7 +122,7 @@ public class KVStorePlugin implements Plugin {
 
                     long version = Long.valueOf(strVersion);
 
-                    CompletionObject setObj = store.set(new KVEntity(version, 0, key, rawData, System.currentTimeMillis(), 0));
+                    CompletionObject setObj = store.set(new KVEntity(version, 0, getKey(key), rawData, System.currentTimeMillis(), 0));
                     if (setObj.err != null) {
                         Log.e(TAG, "handle: error setting the key: " + key + ", err: " + setObj.err);
                         int errCode = transformErrorToResponseCode(setObj.err);
@@ -143,7 +142,7 @@ public class KVStorePlugin implements Plugin {
 
                     CompletionObject delObj = null;
                     try {
-                        delObj = store.delete(key, Long.parseLong(strVersion));
+                        delObj = store.delete(getKey(key), Long.parseLong(strVersion));
                     } catch (NumberFormatException e) {
                         e.printStackTrace();
                         return BRHTTPHelper.handleError(500, null, baseRequest, response);
@@ -183,6 +182,11 @@ public class KVStorePlugin implements Plugin {
         response.setHeader("Content-Type", "application/json");
         response.addHeader("Last-Modified", rfc1123);
         return response;
+    }
+
+    private String getKey(String key) {
+        if (key == null) Log.e(TAG, "getKey: key is null");
+        return "plat-" + key;
     }
 
     private int transformErrorToResponseCode(CompletionObject.RemoteKVStoreError err) {
