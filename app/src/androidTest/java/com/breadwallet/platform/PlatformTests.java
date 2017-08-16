@@ -71,7 +71,7 @@ public class PlatformTests {
     // proto is the transport protocol to use for talking to the API (either http or https)
     private static final String PROTO = "https";
     // host is the server(s) on which the API is hosted
-//    private static final String HOST = "prod.breadwallet.com";
+//    private static final String HOST = "api.breadwallet.com";
     // convenience getter for the API endpoint
     private static final String BASE_URL = PROTO + "://" + BreadApp.HOST;
     //feePerKb url
