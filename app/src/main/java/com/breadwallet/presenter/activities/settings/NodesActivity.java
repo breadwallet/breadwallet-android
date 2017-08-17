@@ -24,6 +24,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BreadDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 
@@ -97,7 +98,7 @@ public class NodesActivity extends BRActivity {
 
                 } else {
                     BRSharedPrefs.putTrustNode(NodesActivity.this, "");
-                    BRPeerManager.getInstance().updateFixedPeer();
+                    BRPeerManager.getInstance().updateFixedPeer(NodesActivity.this);
                     updateButtonText();
                 }
 
@@ -115,7 +116,6 @@ public class NodesActivity extends BRActivity {
     }
 
     private void createDialog() {
-
 
         final AlertDialog.Builder alertDialog = new AlertDialog.Builder(app);
         final TextView customTitle = new TextView(this);
@@ -160,24 +160,20 @@ public class NodesActivity extends BRActivity {
         mDialog.getButton(AlertDialog.BUTTON_POSITIVE).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mode == 1) {
-                    String str = input.getText().toString();
-                    if (TrustedNode.isValid(str)) {
-                        mDialog.setMessage("");
-                        SharedPreferencesManager.putTrustNode(app, str);
-                        BRPeerManager.getInstance(app).updateFixedPeer();
-                        mDialog.dismiss();
-                    } else {
-                        customTitle.setText("invalid node");
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                customTitle.setText("set a trusted node");
-                            }
-                        }, 1000);
-                    }
+                String str = input.getText().toString();
+                if (TrustedNode.isValid(str)) {
+                    mDialog.setMessage("");
+                    BRSharedPrefs.putTrustNode(app, str);
+                    BRPeerManager.getInstance().updateFixedPeer(app);
+                    mDialog.dismiss();
                 } else {
-
+                    customTitle.setText("invalid node");
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            customTitle.setText("set a trusted node");
+                        }
+                    }, 1000);
                 }
                 updateButtonText();
             }
