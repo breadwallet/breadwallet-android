@@ -24,7 +24,7 @@ public class NodesActivity extends BRActivity {
     private static final String TAG = NodesActivity.class.getName();
     private Button switchButton;
     private TextView nodeStatus;
-    private TextView nodeText;
+    private TextView trustNode;
     public static boolean appVisible = false;
     private static NodesActivity app;
 
@@ -56,7 +56,7 @@ public class NodesActivity extends BRActivity {
         });
 
         nodeStatus = (TextView) findViewById(R.id.node_status);
-        nodeText = (TextView) findViewById(R.id.node_text);
+        trustNode = (TextView) findViewById(R.id.node_text);
 
         switchButton = (Button) findViewById(R.id.button_switch);
         switchButton.setOnClickListener(new View.OnClickListener() {
@@ -64,7 +64,7 @@ public class NodesActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
 
-                if (!SharedPreferencesManager.getTrustNode((Activity) getContext()).isEmpty()) {
+                if (!BRSharedPrefs.getTrustNode(NodesActivity.this).isEmpty()) {
                     createDialog(2);
                 } else {
                     createDialog(1);
@@ -73,6 +73,11 @@ public class NodesActivity extends BRActivity {
             }
         });
 
+    }
+
+    private void updateStatus() {
+        if (trustNode != null)
+            trustNode.setText("dl peer: " + BRPeerManager.getInstance().getCurrentPeerName());
     }
 
     @Override
