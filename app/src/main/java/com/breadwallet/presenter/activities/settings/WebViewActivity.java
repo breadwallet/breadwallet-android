@@ -19,7 +19,15 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.Utils;
+import com.platform.BRHTTPHelper;
 import com.platform.HTTPServer;
+import com.platform.middlewares.plugins.LinkPlugin;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.breadwallet.R.string.error;
 
@@ -30,6 +38,7 @@ public class WebViewActivity extends BRActivity {
     String theUrl;
     public static boolean appVisible = false;
     private static WebViewActivity app;
+    private String onCloseUrl;
 
     public static WebViewActivity getApp() {
         return app;
@@ -49,6 +58,10 @@ public class WebViewActivity extends BRActivity {
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Log.e(TAG, "shouldOverrideUrlLoading: " + request.getUrl());
                 Log.e(TAG, "shouldOverrideUrlLoading: " + request.getMethod());
+                if (onCloseUrl != null && request.getUrl().toString().equalsIgnoreCase(onCloseUrl)) {
+                    onBackPressed();
+                    onCloseUrl = null;
+                }
                 return true;
             }
 
@@ -60,6 +73,7 @@ public class WebViewActivity extends BRActivity {
         });
 
         theUrl = getIntent().getStringExtra("url");
+        String json = getIntent().getStringExtra("json");
         setupServerMode(theUrl);
         String articleId = getIntent().getStringExtra("articleId");
         if (Utils.isNullOrEmpty(theUrl)) throw new IllegalArgumentException("No url extra!");
@@ -76,9 +90,51 @@ public class WebViewActivity extends BRActivity {
             theUrl = theUrl + "/" + articleId;
 
         Log.e(TAG, "onCreate: theUrl: " + theUrl + ", articleId: " + articleId);
-        webView.loadUrl(theUrl);
+        if (json != null) {
+            request(webView, json);
+        } else {
+            webView.loadUrl(theUrl);
+        }
+
         if (articleId != null && !articleId.isEmpty())
             navigate(articleId);
+    }
+
+    private void request(WebView webView, String jsonString) {
+        try {
+            JSONObject json = new JSONObject(jsonString);
+
+            String url = json.getString("url");
+            String method = json.getString("method");
+            String strBody = json.getString("body");
+            String headers = json.getString("headers");
+            String closeOn = json.getString("closeOn");
+            if (Utils.isNullOrEmpty(url) || Utils.isNullOrEmpty(method) ||
+                    Utils.isNullOrEmpty(strBody) || Utils.isNullOrEmpty(headers) || Utils.isNullOrEmpty(closeOn)) {
+                Log.e(TAG, "request: not enough params: " + jsonString);
+                return;
+            }
+            onCloseUrl = closeOn;
+
+            Map<String, String> httpHeaders = new HashMap<>();
+            JSONObject jsonHeaders = new JSONObject(headers);
+            while (jsonHeaders.keys().hasNext()) {
+                String key = jsonHeaders.keys().next();
+                jsonHeaders.put(key, jsonHeaders.getString(key));
+            }
+            byte[] body = strBody.getBytes();
+
+            if (method.equalsIgnoreCase("get")) {
+                webView.loadUrl(url, httpHeaders);
+            } else if (method.equalsIgnoreCase("post")) {
+                webView.postUrl(url, body);//todo find a way to add the headers to the post request too
+            } else {
+                throw new NullPointerException("unexpected method: " + method);
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "request: Failed to parse json or not enough params: " + jsonString);
+            e.printStackTrace();
+        }
 
     }
 
@@ -124,7 +180,6 @@ public class WebViewActivity extends BRActivity {
 
     @Override
     public void onBackPressed() {
-//        BRAnimator.startBreadActivity(this, false);
         super.onBackPressed();
         overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
     }
@@ -141,7 +196,7 @@ public class WebViewActivity extends BRActivity {
     protected void onPause() {
         super.onPause();
         appVisible = false;
+        LinkPlugin.hasBrowser = false;
     }
-
 
 }

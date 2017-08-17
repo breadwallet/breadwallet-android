@@ -96,13 +96,7 @@ public class KVStorePlugin implements Plugin {
                 case "PUT":
                     Log.i(TAG, "handle:" + target + " " + baseRequest.getMethod() + ", key: " + key);
                     // Read from request
-                    byte[] rawData = null;
-                    try {
-                        InputStream body = request.getInputStream();
-                        rawData = IOUtils.toByteArray(body);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    byte[] rawData = BRHTTPHelper.getBody(request);
 
                     if (rawData == null) {
                         Log.e(TAG, "handle: missing request body: " + target + " " + baseRequest.getMethod());
