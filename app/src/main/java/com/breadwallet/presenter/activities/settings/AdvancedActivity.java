@@ -15,9 +15,9 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.ImportActivity;
 import com.breadwallet.presenter.activities.RestoreActivity;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
@@ -32,21 +32,21 @@ import java.util.List;
 import static com.breadwallet.R.layout.settings_list_item;
 import static com.breadwallet.R.layout.settings_list_section;
 
-public class SettingsActivity extends BRActivity {
-    private static final String TAG = SettingsActivity.class.getName();
+public class AdvancedActivity extends BRActivity {
+    private static final String TAG = AdvancedActivity.class.getName();
     private ListView listView;
     public List<BRSettingsItem> items;
     public static boolean appVisible = false;
-    private static SettingsActivity app;
+    private static AdvancedActivity app;
 
-    public static SettingsActivity getApp() {
+    public static AdvancedActivity getApp() {
         return app;
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+        setContentView(R.layout.activity_advanced);
 
         listView = (ListView) findViewById(R.id.settings_list);
 
@@ -126,7 +126,7 @@ public class SettingsActivity extends BRActivity {
         items.add(new BRSettingsItem("Import Wallet", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, ImportActivity.class);
+                Intent intent = new Intent(AdvancedActivity.this, ImportActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
 
@@ -136,7 +136,7 @@ public class SettingsActivity extends BRActivity {
         items.add(new BRSettingsItem("Start/Recover Another Wallet", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, RestoreActivity.class);
+                Intent intent = new Intent(AdvancedActivity.this, RestoreActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
             }
@@ -147,7 +147,7 @@ public class SettingsActivity extends BRActivity {
         items.add(new BRSettingsItem("Notifications", BRSharedPrefs.getShowNotification(this) ? "On" : "Off", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, NotificationActivity.class);
+                Intent intent = new Intent(AdvancedActivity.this, NotificationActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
 
@@ -158,10 +158,10 @@ public class SettingsActivity extends BRActivity {
             items.add(new BRSettingsItem("FingerPrint Spending Limit", "", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AuthManager.getInstance().authPrompt(SettingsActivity.this, null, "Please enter your PIN to be able to change the limit.", true, new BRAuthCompletion() {
+                    AuthManager.getInstance().authPrompt(AdvancedActivity.this, null, "Please enter your PIN to be able to change the limit.", true, new BRAuthCompletion() {
                         @Override
                         public void onComplete() {
-                            Intent intent = new Intent(SettingsActivity.this, SpendLimitActivity.class);
+                            Intent intent = new Intent(AdvancedActivity.this, SpendLimitActivity.class);
                             overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                             startActivity(intent);
                         }
@@ -179,7 +179,7 @@ public class SettingsActivity extends BRActivity {
         items.add(new BRSettingsItem("Default Currency", BRSharedPrefs.getIso(this), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, DefaultCurrencyActivity.class);
+                Intent intent = new Intent(AdvancedActivity.this, DefaultCurrencyActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
@@ -188,7 +188,7 @@ public class SettingsActivity extends BRActivity {
         items.add(new BRSettingsItem("Sync Blockchain", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, SyncBlockchainActivity.class);
+                Intent intent = new Intent(AdvancedActivity.this, SyncBlockchainActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
@@ -196,7 +196,7 @@ public class SettingsActivity extends BRActivity {
         items.add(new BRSettingsItem("Withdraw BCash", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, BitcoinCashActivity.class);
+                Intent intent = new Intent(AdvancedActivity.this, BitcoinCashActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
@@ -207,7 +207,7 @@ public class SettingsActivity extends BRActivity {
         items.add(new BRSettingsItem("Share Anonymous Data", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, ShareDataActivity.class);
+                Intent intent = new Intent(AdvancedActivity.this, ShareDataActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
@@ -215,9 +215,9 @@ public class SettingsActivity extends BRActivity {
         items.add(new BRSettingsItem("Join Early Access Program", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, WebViewActivity.class);
+                Intent intent = new Intent(AdvancedActivity.this, WebViewActivity.class);
                 intent.putExtra("url", HTTPServer.URL_EA);
-                Activity app = SettingsActivity.this;
+                Activity app = AdvancedActivity.this;
                 app.startActivity(intent);
                 app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
             }
@@ -225,7 +225,7 @@ public class SettingsActivity extends BRActivity {
         items.add(new BRSettingsItem("About", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, AboutActivity.class);
+                Intent intent = new Intent(AdvancedActivity.this, AboutActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
@@ -234,7 +234,7 @@ public class SettingsActivity extends BRActivity {
         items.add(new BRSettingsItem("Advanced", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, AdvancedActivity.class);
+                Intent intent = new Intent(AdvancedActivity.this, AboutActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
