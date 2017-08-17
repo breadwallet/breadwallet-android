@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
@@ -21,7 +22,9 @@ import static com.platform.HTTPServer.URL_SUPPORT;
 
 public class NodesActivity extends BRActivity {
     private static final String TAG = NodesActivity.class.getName();
-    private Button scanButton;
+    private Button switchButton;
+    private TextView nodeStatus;
+    private TextView nodeText;
     public static boolean appVisible = false;
     private static NodesActivity app;
 
@@ -52,33 +55,21 @@ public class NodesActivity extends BRActivity {
             }
         });
 
-        scanButton = (Button) findViewById(R.id.button_scan);
-        scanButton.setOnClickListener(new View.OnClickListener() {
+        nodeStatus = (TextView) findViewById(R.id.node_status);
+        nodeText = (TextView) findViewById(R.id.node_text);
+
+        switchButton = (Button) findViewById(R.id.button_switch);
+        switchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BreadDialog.showCustomDialog(NodesActivity.this, "Sync with Blockchain?",
-                        "You will not be able to send money while syncing.", "Sync", "Cancel",
-                        new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismissWithAnimation();
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        BRSharedPrefs.putStartHeight(NodesActivity.this, 0);
-                                        BRPeerManager.getInstance().rescan();
-                                        BRAnimator.startBreadActivity(NodesActivity.this, false);
 
-                                    }
-                                }).start();
-                            }
-                        }, new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismissWithAnimation();
-                            }
-                        }, null, 0);
+                if (!SharedPreferencesManager.getTrustNode((Activity) getContext()).isEmpty()) {
+                    createDialog(2);
+                } else {
+                    createDialog(1);
+                }
+
             }
         });
 

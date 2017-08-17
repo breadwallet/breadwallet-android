@@ -1,5 +1,6 @@
 package com.breadwallet.tools.manager;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -389,6 +390,30 @@ public class BRSharedPrefs {
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("shareData", show);
+        editor.apply();
+    }
+
+    public static String getBCHTxId(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("bchTxId", "");
+    }
+
+    public static void putBCHTxId(Context context, String txId) {
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("bchTxId", txId);
+        editor.apply();
+    }
+
+    public static String getTrustNode(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("trustNode", "");
+    }
+
+    public static void putTrustNode(Context context, String trustNode) {
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("trustNode", trustNode);
         editor.apply();
     }
 }

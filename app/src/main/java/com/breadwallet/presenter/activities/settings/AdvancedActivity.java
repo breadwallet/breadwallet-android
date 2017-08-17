@@ -135,119 +135,12 @@ public class AdvancedActivity extends BRActivity {
         items.add(new BRSettingsItem("Withdraw BCH", "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(AdvancedActivity.this, ImportActivity.class);
+                Intent intent = new Intent(AdvancedActivity.this, WithdrawBchActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
-
             }
         }, false));
 
-//        items.add(new BRSettingsItem("Start/Recover Another Wallet", "", new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(AdvancedActivity.this, RestoreActivity.class);
-//                startActivity(intent);
-//                overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
-//            }
-//        }, false));
-//
-//        items.add(new BRSettingsItem("Manage", "", null, true));
-//
-//        items.add(new BRSettingsItem("Notifications", BRSharedPrefs.getShowNotification(this) ? "On" : "Off", new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(AdvancedActivity.this, NotificationActivity.class);
-//                startActivity(intent);
-//                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//
-//            }
-//        }, false));
-//
-//        if (AuthManager.isFingerPrintAvailableAndSetup(this)) {
-//            items.add(new BRSettingsItem("FingerPrint Spending Limit", "", new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    AuthManager.getInstance().authPrompt(AdvancedActivity.this, null, "Please enter your PIN to be able to change the limit.", true, new BRAuthCompletion() {
-//                        @Override
-//                        public void onComplete() {
-//                            Intent intent = new Intent(AdvancedActivity.this, SpendLimitActivity.class);
-//                            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//                            startActivity(intent);
-//                        }
-//
-//                        @Override
-//                        public void onCancel() {
-//
-//                        }
-//                    });
-//
-//                }
-//            }, false));
-//        }
-//
-//        items.add(new BRSettingsItem("Default Currency", BRSharedPrefs.getIso(this), new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(AdvancedActivity.this, DefaultCurrencyActivity.class);
-//                startActivity(intent);
-//                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//            }
-//        }, false));
-//
-//        items.add(new BRSettingsItem("Sync Blockchain", "", new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(AdvancedActivity.this, SyncBlockchainActivity.class);
-//                startActivity(intent);
-//                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//            }
-//        }, false));
-//        items.add(new BRSettingsItem("Withdraw BCash", "", new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(AdvancedActivity.this, BitcoinCashActivity.class);
-//                startActivity(intent);
-//                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//            }
-//        }, false));
-//
-//        items.add(new BRSettingsItem("Bread", "", null, true));
-//
-//        items.add(new BRSettingsItem("Share Anonymous Data", "", new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(AdvancedActivity.this, ShareDataActivity.class);
-//                startActivity(intent);
-//                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//            }
-//        }, false));
-//        items.add(new BRSettingsItem("Join Early Access Program", "", new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(AdvancedActivity.this, WebViewActivity.class);
-//                intent.putExtra("url", HTTPServer.URL_EA);
-//                Activity app = AdvancedActivity.this;
-//                app.startActivity(intent);
-//                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
-//            }
-//        }, false));
-//        items.add(new BRSettingsItem("About", "", new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(AdvancedActivity.this, AboutActivity.class);
-//                startActivity(intent);
-//                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//            }
-//        }, false));
-//        items.add(new BRSettingsItem("Other", "", null, true));
-//        items.add(new BRSettingsItem("Advanced", "", new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(AdvancedActivity.this, AboutActivity.class);
-//                startActivity(intent);
-//                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-//            }
-//        }, false));
 
     }
 
