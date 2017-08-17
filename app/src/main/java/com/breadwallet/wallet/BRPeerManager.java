@@ -13,6 +13,7 @@ import com.breadwallet.tools.manager.PromptManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
+import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 
 import java.util.ArrayList;
@@ -316,7 +317,7 @@ public class BRPeerManager {
 //        Log.e(TAG, "trust onClick: port:" + port);
         boolean success = setFixedPeer(host, port);
         if (!success) Log.e(TAG, "updateFixedPeer: Failed to updateFixedPeer with input: " + node);
-        BRPeerManager.getInstance(ctx).connect();
+        connect();
     }
 
     public void networkChanged(boolean isOnline) {
@@ -421,6 +422,8 @@ public class BRPeerManager {
     public native static int getCurrentBlockHeight();
 
     public native static int getRelayCount(byte[] hash);
+
+    public native boolean setFixedPeer(String node, int port);
 
     public native static int getEstimatedBlockHeight();
 
