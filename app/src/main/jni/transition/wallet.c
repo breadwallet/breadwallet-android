@@ -31,6 +31,7 @@
 #include <BRBIP38Key.h>
 #include <BRInt.h>
 #include <BRTransaction.h>
+#include <stdio.h>
 
 static JavaVM *_jvmW;
 BRWallet *_wallet;
@@ -647,7 +648,19 @@ Java_com_breadwallet_wallet_BRWalletManager_publishSerializedTransaction(JNIEnv 
 
     int txLength = (*env)->GetArrayLength(env, serializedTransaction);
     jbyte *byteTx = (*env)->GetByteArrayElements(env, serializedTransaction, 0);
-    BRTransaction *tmpTx = BRTransactionParse((uint8_t *) byteTx, (size_t) txLength);
+    uint8_t *u_int_tx = (uint8_t *) byteTx;
+
+    //print the serialized tx
+    char str[txLength * 2 + 1];
+
+    for (size_t i = 0; i < txLength; i++) {
+        sprintf(&str[i * 2], "%02x", u_int_tx[i]);
+    }
+
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ",
+                        "publishSerializedTransaction: %s", str);
+
+    BRTransaction *tmpTx = BRTransactionParse(u_int_tx, (size_t) txLength);
 
     if (!tmpTx) return JNI_FALSE;
 
@@ -980,7 +993,8 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_sweepBC
     jstring JtxHash = (*env)->NewStringUTF(env, u256_hex_encode(reversedHash));
 
     //save txId to the SharedPrefs
-    jclass clazz = (*env)->FindClass(env, "com/breadwallet/presenter/fragments/FragmentWithdrawBch");
+    jclass clazz = (*env)->FindClass(env,
+                                     "com/breadwallet/presenter/fragments/FragmentWithdrawBch");
     jmethodID mid = (*env)->GetStaticMethodID(env, clazz, "setBCHTxId", "(Ljava/lang/String;)V");
     (*env)->CallStaticVoidMethod(env, clazz, mid, JtxHash);
 

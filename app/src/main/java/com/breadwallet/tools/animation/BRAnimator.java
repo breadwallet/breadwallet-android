@@ -459,7 +459,7 @@ public class BRAnimator {
                             public void onClick(View view) {
                                 try {
                                     if (t != null) {
-                                        BRClipboardManager.copyToClipboard(context, ((TextView) t).getText().toString());
+                                        BRClipboardManager.copyToClipboard(context, ((TextView) t).getText().toString().trim().replaceAll("\n", "").replaceAll(" ", ""));
                                         Log.e(TAG, "clicked copy: " + ((TextView) t).getText().toString());
                                     }
                                     hideCopyBubble(context);
