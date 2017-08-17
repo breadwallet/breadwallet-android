@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.util.BRConstants;
@@ -94,31 +95,36 @@ public class WalletPlugin implements Plugin {
                 return BRHTTPHelper.handleError(500, "json error", baseRequest, response);
             }
         } else if (target.startsWith("/_event") && request.getMethod().equalsIgnoreCase("get")) {
-            //todo refactor this for events
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            byte[] rawData = null;
-            try {
-                InputStream body = request.getInputStream();
-                rawData = IOUtils.toByteArray(body);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            byte[] rawData = BRHTTPHelper.getBody(request);
+            String name = target.replace("/_event/", "");
+
             Log.e(TAG, "handle: body: " + new String(rawData != null ? rawData : "null".getBytes()));
-//            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-//            String amount = request.getParameter("amount");
-//            if (Utils.isNullOrEmpty(amount)) {
-//                Log.e(TAG, "handle: amount is not specified: " + target + " " + baseRequest.getMethod());
-//                return BRHTTPHelper.handleError(400, null, baseRequest, response);
-//            }
-//            long satAmount;
-//
-//            if (amount.contains(".")) {
-//                // assume full bitcoins
-//                satAmount = new BigDecimal(amount).multiply(new BigDecimal("100000000")).longValue();
-//            } else {
-//                satAmount = Long.valueOf(amount);
-//            }
-//            return BRHTTPHelper.handleSuccess(200, BRCurrency.getFormattedCurrencyString(app, Locale.getDefault().getISO3Language(), new BigDecimal(satAmount)).getBytes(), baseRequest, response, null);
+            JSONObject json = null;
+            if (rawData != null) {
+                try {
+                    json = new JSONObject(new String(rawData));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            if (json != null) {
+                Map<String, String> attr = new HashMap<>();
+                while (json.keys().hasNext()) {
+                    String key = json.keys().next();
+                    try {
+                        attr.put(key, json.getString(key));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, String.format("Failed to get the key: %s, from json: %s", key, json.toString()));
+                    }
+                }
+                BREventManager.getInstance().pushEvent(name, attr);
+            } else {
+                BREventManager.getInstance().pushEvent(name);
+            }
+            return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
+
         } else if (target.startsWith("/_wallet/sign_bitid") && request.getMethod().equalsIgnoreCase("post")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             /**
