@@ -198,6 +198,11 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>
+        <activity
+            android:name=".presenter.activities.settings.WithdrawBchActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>
