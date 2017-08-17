@@ -35,6 +35,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include <unistd.h>
+#include <arpa/inet.h>
 
 #define fprintf(...) __android_log_print(ANDROID_LOG_ERROR, "bread", _va_rest(__VA_ARGS__, NULL))
 
@@ -434,6 +435,37 @@ JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRPeerManager_getLastBlockTi
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getLastBlockTimestamp");
     if (!_peerManager || !_wallet) return 0;
     return (jint) BRPeerManagerLastBlockTimestamp(_peerManager);
+}
+
+JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRPeerManager_getCurrentPeerName(
+        JNIEnv *env, jobject thiz) {
+//    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "getEstimatedBlockHeight");
+    if (!_peerManager || !_wallet) return 0;
+
+    return  (*env)->NewStringUTF(env, BRPeerManagerDownloadPeerName(_peerManager));
+}
+
+JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_setFixedPeer(
+        JNIEnv *env, jobject thiz, jstring node, jint port) {
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "updateFixedPeer");
+    if (!_peerManager) return JNI_FALSE;
+    const char *host = (*env)->GetStringUTFChars(env, node, NULL);
+    UInt128 address = UINT128_ZERO;
+    uint16_t _port = (uint16_t) port;
+    if (strlen(host) != 0) {
+        struct in_addr addr;
+        if (inet_pton(AF_INET, host, &addr) != 1) return JNI_FALSE;
+        address.u16[5] = 0xffff;
+        address.u32[3] = addr.s_addr;
+        if (port == 0) _port = STANDARD_PORT;
+    } else {
+        _port = 0;
+    }
+
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "BRPeerManagerSetFixedPeer: %s:%d",
+                        host, _port);
+    BRPeerManagerSetFixedPeer(_peerManager, address, _port);
+    return JNI_TRUE;
 }
 
 JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_peerManagerFreeEverything(

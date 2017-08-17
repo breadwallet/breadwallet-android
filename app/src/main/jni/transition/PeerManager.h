@@ -93,6 +93,12 @@ JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getRelayCount(J
                                                                                jobject thiz,
                                                                                jbyteArray txHash);
 
+JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_setFixedPeer(
+        JNIEnv *env, jobject thiz, jstring node, jint port);
+
+JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRPeerManager_getCurrentPeerName(
+        JNIEnv *env, jobject thiz);
+
 #ifdef __cplusplus
 }
 #endif
