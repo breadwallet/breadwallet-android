@@ -308,6 +308,17 @@ public class BRPeerManager {
         }
     }
 
+    public void updateFixedPeer(Context ctx) {
+        String node = BRSharedPrefs.getTrustNode(ctx);
+        String host = TrustedNode.getNodeHost(node);
+        int port = TrustedNode.getNodePort(node);
+//        Log.e(TAG, "trust onClick: host:" + host);
+//        Log.e(TAG, "trust onClick: port:" + port);
+        boolean success = setFixedPeer(host, port);
+        if (!success) Log.e(TAG, "updateFixedPeer: Failed to updateFixedPeer with input: " + node);
+        BRPeerManager.getInstance(ctx).connect();
+    }
+
     public void networkChanged(boolean isOnline) {
 
 //        final RelativeLayout networkErrorBar = (RelativeLayout) ctx.findViewById(R.id.main_internet_status_bar);
