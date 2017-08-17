@@ -391,6 +391,8 @@ public class BRPeerManager {
         BRSharedPrefs.putLastBlockHeight(ctx, blockHeight);
     }
 
+    public native String getCurrentPeerName();
+
     public native void create(int earliestKeyTime, int blockCount, int peerCount);
 
     public native void connect();
