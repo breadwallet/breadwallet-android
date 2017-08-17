@@ -203,6 +203,11 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>
+        <activity
+            android:name=".presenter.activities.settings.NodesActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>
