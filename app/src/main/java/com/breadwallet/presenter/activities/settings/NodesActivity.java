@@ -97,13 +97,30 @@ public class NodesActivity extends BRActivity {
                 if (BRSharedPrefs.getTrustNode(NodesActivity.this).isEmpty()) {
                     createDialog();
                 } else {
-                    BRSharedPrefs.putTrustNode(NodesActivity.this, "");
-                    BRPeerManager.getInstance().updateFixedPeer(NodesActivity.this);
-                    updateButtonText();
+                    if (!updatingNode) {
+                        updatingNode = true;
+                        BRSharedPrefs.putTrustNode(NodesActivity.this, "");
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                BRPeerManager.getInstance().updateFixedPeer(NodesActivity.this);
+                                updatingNode = false;
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        updateButtonText();
+                                    }
+                                });
+
+                            }
+                        }).start();
+                    }
+
                 }
 
             }
         });
+
         updateButtonText();
 
     }

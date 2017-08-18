@@ -716,6 +716,7 @@ public class BRWalletManager {
             pm.create(walletTime, blocksCount, peersCount);
 
         }
+        BRPeerManager.getInstance().updateFixedPeer(ctx);
         pm.connect();
         if (BRSharedPrefs.getStartHeight(ctx) == 0)
             new Thread(new Runnable() {
@@ -819,7 +820,7 @@ public class BRWalletManager {
 
     public native byte[] tryTransaction(String addressHolder, long amountHolder);
 
-    public native byte[] createBCHTx(String addressHolder);
+//    public native byte[] createBCHTx(String addressHolder);
 
     // returns the given amount (amount is in satoshis) in local currency units (i.e. pennies, pence)
     // price is local currency units per bitcoin
