@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.fragments;
 
-import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
@@ -16,7 +15,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -25,10 +23,8 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
@@ -51,11 +47,8 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static com.breadwallet.tools.security.BitcoinUrlHandler.getRequestFromString;
 import static com.platform.HTTPServer.URL_SUPPORT;
@@ -293,7 +286,7 @@ public class FragmentSend extends Fragment {
             public void onClick(View v) {
                 removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.openCamera(getActivity());
+                BRAnimator.openScanner(getActivity(),BRConstants.SCANNER_REQUEST);
 
             }
         });

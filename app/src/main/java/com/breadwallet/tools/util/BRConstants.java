@@ -49,6 +49,10 @@ public class BRConstants {
     public static final int REQUEST_PHRASE_BITID = 117;
     public static final int PROVE_PHRASE_REQUEST = 118;
 
+
+    public static final int SCANNER_REQUEST = 201;
+
+
     /**
      * Request codes for take picture
      */
@@ -68,67 +72,13 @@ public class BRConstants {
 
 
     /**
-     * MainActivity
-     */
-    public static final int BURGER = 0;
-    public static final int CLOSE = 1;
-    public static final int BACK = 2;
-    public static final int DEBUG = 1;
-    public static final int RELEASE = 2;
-    public static final float PAGE_INDICATOR_SCALE_UP = 1.3f;
-
-
-    /**
      * BRWalletManager
      */
     public static final long TX_FEE_PER_KB = 5000;
     public static final long DEFAULT_FEE_PER_KB = (TX_FEE_PER_KB * 1000 + 190) / 191;
     public static final long MAX_FEE_PER_KB = (100100 * 1000 + 190) / 191;
 
-    /**
-     * BreadApp
-     */
-    public static final int BREAD_WALLET_IMAGE = 0;
-    public static final int BREAD_WALLET_TEXT = 1;
-    public static final int LOCKER_BUTTON = 2;
-    public static final int PAY_BUTTON = 3;
-    public static final int REQUEST_BUTTON = 4;
 
-    /**
-     * FragmentDecoder
-     */
-    public static final String CAMERA_GUIDE_RED = "red";
-    public static final String CAMERA_GUIDE = "reg";
-    public static final String TEXT_EMPTY = "";
-
-    /**
-     * FragmentScanResult
-     */
-    public static final int BITCOIN_LEFT = 1;
-    public static final int BITCOIN_RIGHT = 2;
-    public static final String DOUBLE_ARROW = "\u21CB";
-
-    /**
-     * FragmentSpendLimit
-     */
-    public static final int limit1 = 10000000;
-    public static final int limit2 = 100000000;
-    public static final int limit3 = 1000000000;
-
-    /**
-     * PasswordDialogFragment
-     */
-    public static final int AUTH_MODE_CHECK_PASS = 0;
-    public static final int AUTH_MODE_NEW_PASS = 1;
-    public static final int AUTH_MODE_CONFIRM_PASS = 2;
-
-    /**
-     * AmountAdapter
-     */
-    public static final int MAX_DIGITS_AFTER_SEPARATOR_BITS = 2;
-    public static final int MAX_DIGITS_AFTER_SEPARATOR_MBITS = 5;
-    public static final int MAX_DIGITS_AFTER_SEPARATOR_BITCOINS = 8;
-    public static final int DIGITS_LIMIT = 12;
 
     /**
      * BRSharedPrefs
