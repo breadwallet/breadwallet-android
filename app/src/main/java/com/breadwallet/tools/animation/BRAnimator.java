@@ -167,7 +167,7 @@ public class BRAnimator {
 
     }
 
-    public static void openCamera(Activity app) {
+    public static void openScanner(Activity app, int requestID) {
         try {
             if (app == null) return;
 
@@ -193,7 +193,7 @@ public class BRAnimator {
             } else {
                 // Permission is granted, open camera
                 Intent intent = new Intent(app, ScanQRActivity.class);
-                app.startActivityForResult(intent, 123);
+                app.startActivityForResult(intent, requestID);
                 app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
             }
         } catch (Exception e) {

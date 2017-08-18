@@ -76,28 +76,29 @@ public class WithdrawBchActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BreadDialog.showCustomDialog(WithdrawBchActivity.this, "Sync with Blockchain?",
-                        "You will not be able to send money while syncing.", "Sync", "Cancel",
-                        new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismissWithAnimation();
-                                new Thread(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        BRSharedPrefs.putStartHeight(WithdrawBchActivity.this, 0);
-                                        BRPeerManager.getInstance().rescan();
-                                        BRAnimator.startBreadActivity(WithdrawBchActivity.this, false);
 
-                                    }
-                                }).start();
-                            }
-                        }, new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismissWithAnimation();
-                            }
-                        }, null, 0);
+//                BreadDialog.showCustomDialog(WithdrawBchActivity.this, "Sync with Blockchain?",
+//                        "You will not be able to send money while syncing.", "Sync", "Cancel",
+//                        new BRDialogView.BROnClickListener() {
+//                            @Override
+//                            public void onClick(BRDialogView brDialogView) {
+//                                brDialogView.dismissWithAnimation();
+//                                new Thread(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        BRSharedPrefs.putStartHeight(WithdrawBchActivity.this, 0);
+//                                        BRPeerManager.getInstance().rescan();
+//                                        BRAnimator.startBreadActivity(WithdrawBchActivity.this, false);
+//
+//                                    }
+//                                }).start();
+//                            }
+//                        }, new BRDialogView.BROnClickListener() {
+//                            @Override
+//                            public void onClick(BRDialogView brDialogView) {
+//                                brDialogView.dismissWithAnimation();
+//                            }
+//                        }, null, 0);
             }
         });
 

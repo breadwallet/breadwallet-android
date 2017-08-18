@@ -220,7 +220,7 @@ public class PinActivity extends BRActivity {
     }
 
     private void handleClick(String key) {
-        if(!inputAllowed) {
+        if (!inputAllowed) {
             Log.e(TAG, "handleClick: input not allowed");
             return;
         }
@@ -343,12 +343,12 @@ public class PinActivity extends BRActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    BRAnimator.openCamera(this);
+                    BRAnimator.openScanner(this, BRConstants.SCANNER_REQUEST);
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
 
                 } else {
-
+                    Log.e(TAG, "onRequestPermissionsResult: permission isn't granted for: " + requestCode);
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }

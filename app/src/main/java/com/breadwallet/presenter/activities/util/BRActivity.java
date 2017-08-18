@@ -100,7 +100,7 @@ public class BRActivity extends Activity {
                 }
                 break;
 
-            case 123:
+            case BRConstants.SCANNER_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {
                     new Handler().postDelayed(new Runnable() {
                         @Override
