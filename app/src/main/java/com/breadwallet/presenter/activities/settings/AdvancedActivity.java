@@ -128,7 +128,7 @@ public class AdvancedActivity extends BRActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(AdvancedActivity.this, NodesActivity.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.empty_300);
 
             }
         }, false));
@@ -137,7 +137,7 @@ public class AdvancedActivity extends BRActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(AdvancedActivity.this, WithdrawBchActivity.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.empty_300);
             }
         }, false));
 
