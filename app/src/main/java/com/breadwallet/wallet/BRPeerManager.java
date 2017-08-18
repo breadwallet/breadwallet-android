@@ -316,7 +316,11 @@ public class BRPeerManager {
 //        Log.e(TAG, "trust onClick: host:" + host);
 //        Log.e(TAG, "trust onClick: port:" + port);
         boolean success = setFixedPeer(host, port);
-        if (!success) Log.e(TAG, "updateFixedPeer: Failed to updateFixedPeer with input: " + node);
+        if (!success) {
+            Log.e(TAG, "updateFixedPeer: Failed to updateFixedPeer with input: " + node);
+        } else {
+            Log.d(TAG, "updateFixedPeer: succeeded");
+        }
         connect();
     }
 
