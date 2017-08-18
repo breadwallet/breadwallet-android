@@ -39,13 +39,15 @@ public class NodesActivity extends BRActivity {
     AlertDialog mDialog;
     private int mInterval = 3000;
     private Handler mHandler;
+    private boolean updatingNode;
 //    private TextView nodeLabel;
 
     Runnable mStatusChecker = new Runnable() {
         @Override
         public void run() {
             try {
-                updateStatus(); //this function can change value of mInterval.
+                //this function can change value of mInterval.
+                updateButtonText();
             } finally {
                 // 100% guarantee that this always happens, even if
                 // your update method throws an exception
@@ -82,7 +84,6 @@ public class NodesActivity extends BRActivity {
                 app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
             }
         });
-        updateButtonText();
 
         nodeStatus = (TextView) findViewById(R.id.node_status);
         trustNode = (TextView) findViewById(R.id.node_text);
@@ -93,9 +94,8 @@ public class NodesActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
 
-                if (!BRSharedPrefs.getTrustNode(NodesActivity.this).isEmpty()) {
+                if (BRSharedPrefs.getTrustNode(NodesActivity.this).isEmpty()) {
                     createDialog();
-
                 } else {
                     BRSharedPrefs.putTrustNode(NodesActivity.this, "");
                     BRPeerManager.getInstance().updateFixedPeer(NodesActivity.this);
@@ -104,6 +104,7 @@ public class NodesActivity extends BRActivity {
 
             }
         });
+        updateButtonText();
 
     }
 
@@ -113,6 +114,9 @@ public class NodesActivity extends BRActivity {
         } else {
             switchButton.setText("Switch to Automatic Mode");
         }
+        nodeStatus.setText(BRPeerManager.getInstance().isConnected() ? "Connected" : "Not Connected");
+        if (trustNode != null)
+            trustNode.setText(BRPeerManager.getInstance().getCurrentPeerName());
     }
 
     private void createDialog() {
@@ -122,8 +126,9 @@ public class NodesActivity extends BRActivity {
 
         customTitle.setGravity(Gravity.CENTER);
         customTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        int pad = Utils.getPixelsFromDps(app, 32);
-        customTitle.setPadding(pad, pad, pad, pad);
+        int pad32 = Utils.getPixelsFromDps(app, 32);
+        int pad16 = Utils.getPixelsFromDps(app, 16);
+        customTitle.setPadding(pad16, pad16, pad16, pad16);
         customTitle.setText("Enter Node");
         customTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
         customTitle.setTypeface(null, Typeface.BOLD);
@@ -164,8 +169,32 @@ public class NodesActivity extends BRActivity {
                 if (TrustedNode.isValid(str)) {
                     mDialog.setMessage("");
                     BRSharedPrefs.putTrustNode(app, str);
-                    BRPeerManager.getInstance().updateFixedPeer(app);
-                    mDialog.dismiss();
+                    if (!updatingNode) {
+                        updatingNode = true;
+                        customTitle.setText("Updating node...");
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                BRPeerManager.getInstance().updateFixedPeer(app);
+                                updatingNode = false;
+                                runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        customTitle.setText("Updated");
+                                        new Handler().postDelayed(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                mDialog.dismiss();
+                                                updateButtonText();
+                                            }
+                                        }, 500);
+
+                                    }
+                                });
+                            }
+                        }).start();
+                    }
+
                 } else {
                     customTitle.setText("invalid node");
                     new Handler().postDelayed(new Runnable() {
@@ -180,10 +209,6 @@ public class NodesActivity extends BRActivity {
         });
     }
 
-    private void updateStatus() {
-        if (trustNode != null)
-            trustNode.setText(BRPeerManager.getInstance().getCurrentPeerName());
-    }
 
     @Override
     protected void onResume() {
