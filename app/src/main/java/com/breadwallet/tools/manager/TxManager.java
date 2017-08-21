@@ -164,6 +164,9 @@ public class TxManager {
         } else {
             if (item != null)
                 BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".dismissed");
+            if (currentPrompt == PromptManager.PromptItem.SHARE_DATA) {
+                BRSharedPrefs.putShareDataDismissed(app, true);
+            }
         }
 
     }
