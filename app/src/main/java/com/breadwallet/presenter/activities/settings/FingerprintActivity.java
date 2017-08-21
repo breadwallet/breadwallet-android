@@ -20,7 +20,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.tools.animation.BreadDialog;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.BRCurrency;
@@ -67,7 +67,7 @@ public class FingerprintActivity extends BRActivity {
                 Activity app = FingerprintActivity.this;
                 if (isChecked && !Utils.isFingerprintEnrolled(app)) {
                     Log.e(TAG, "onCheckedChanged: fingerprint not setup");
-                    BreadDialog.showCustomDialog(app, "Fingerprint Not Setup", "You have not setup any fingerprints on this device. Go to Settings -> Security to setup a fingerprint.", "OK", null, new BRDialogView.BROnClickListener() {
+                    BRDialog.showCustomDialog(app, "Fingerprint Not Setup", "You have not setup any fingerprints on this device. Go to Settings -> Security to setup a fingerprint.", "OK", null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();

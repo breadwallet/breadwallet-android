@@ -304,7 +304,8 @@ public class APIClient {
                     request.header("Content-Type"), request.header("Date"), request.url().encodedPath()
                             + ((queryString != null && !queryString.isEmpty()) ? ("?" + queryString) : ""));
             String signedRequest = signRequest(requestString);
-            String token = new String(KeyStoreManager.getToken(ctx));
+            byte[] tokenBytes = KeyStoreManager.getToken(ctx);
+            String token = tokenBytes == null ? "" : new String(tokenBytes);
             if (token.isEmpty()) token = getToken();
             if (token == null || token.isEmpty()) {
                 Log.e(TAG, "sendRequest: failed to retrieve token");
@@ -316,7 +317,7 @@ public class APIClient {
 
             try {
                 request = modifiedRequest.header("Authorization", authValue).build();
-            } catch (Exception e){
+            } catch (Exception e) {
                 FirebaseCrash.report(e);
 
             }

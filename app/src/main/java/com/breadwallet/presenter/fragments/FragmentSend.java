@@ -32,7 +32,7 @@ import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.adapter.CurAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.BreadDialog;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
@@ -226,7 +226,7 @@ public class FragmentSend extends Fragment {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        BreadDialog.showCustomDialog(getActivity(), "Address contained", getResources().getString(R.string.address_already_in_your_wallet), "close", null, new BRDialogView.BROnClickListener() {
+                                        BRDialog.showCustomDialog(getActivity(), "Address contained", getResources().getString(R.string.address_already_in_your_wallet), "close", null, new BRDialogView.BROnClickListener() {
                                             @Override
                                             public void onClick(BRDialogView brDialogView) {
                                                 brDialogView.dismiss();
@@ -240,7 +240,7 @@ public class FragmentSend extends Fragment {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        BreadDialog.showCustomDialog(getActivity(), "Address used", getResources().getString(R.string.address_already_used), "Ignore", "Cancel", new BRDialogView.BROnClickListener() {
+                                        BRDialog.showCustomDialog(getActivity(), "Address used", getResources().getString(R.string.address_already_used), "Ignore", "Cancel", new BRDialogView.BROnClickListener() {
                                             @Override
                                             public void onClick(BRDialogView brDialogView) {
                                                 brDialogView.dismiss();
@@ -432,7 +432,7 @@ public class FragmentSend extends Fragment {
     }
 
     private void showClipboardError() {
-        BreadDialog.showCustomDialog(getActivity(), "Clipboard empty", getResources().getString(R.string.Send_invalidAddressTitle), "close", null, new BRDialogView.BROnClickListener() {
+        BRDialog.showCustomDialog(getActivity(), "Clipboard empty", getResources().getString(R.string.Send_invalidAddressTitle), "close", null, new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {
                 brDialogView.dismiss();

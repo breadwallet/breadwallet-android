@@ -12,7 +12,7 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.BreadDialog;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRPeerManager;
@@ -57,7 +57,7 @@ public class SyncBlockchainActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BreadDialog.showCustomDialog(SyncBlockchainActivity.this, "Sync with Blockchain?",
+                BRDialog.showCustomDialog(SyncBlockchainActivity.this, "Sync with Blockchain?",
                         "You will not be able to send money while syncing.", "Sync", "Cancel",
                         new BRDialogView.BROnClickListener() {
                             @Override

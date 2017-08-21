@@ -18,7 +18,7 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.BreadDialog;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
@@ -183,7 +183,7 @@ public class InputWordsActivity extends BRActivity {
                             if (!InputWordsActivity.this.isDestroyed()) finish();
 
                         } else {
-                            BreadDialog.showCustomDialog(app, "", "The entered phrase does not match your wallet's phrase", "Close", null, new BRDialogView.BROnClickListener() {
+                            BRDialog.showCustomDialog(app, "", "The entered phrase does not match your wallet's phrase", "Close", null, new BRDialogView.BROnClickListener() {
                                 @Override
                                 public void onClick(BRDialogView brDialogView) {
                                     brDialogView.dismissWithAnimation();
@@ -216,7 +216,7 @@ public class InputWordsActivity extends BRActivity {
                         }
                     }
 
-                    BreadDialog.showCustomDialog(app, "", message, "Close", null, new BRDialogView.BROnClickListener() {
+                    BRDialog.showCustomDialog(app, "", message, "Close", null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();

@@ -47,10 +47,12 @@ public class BRConstants {
     public static final int PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE = 115;
     public static final int PAYMENT_PROTOCOL_REQUEST_CODE = 116;
     public static final int REQUEST_PHRASE_BITID = 117;
-    public static final int PROVE_PHRASE_REQUEST = 118;
+    public static final int SEND_BCH_REQUEST = 118;
+    public static final int PROVE_PHRASE_REQUEST = 119;
 
 
     public static final int SCANNER_REQUEST = 201;
+    public static final int SCANNER_BCH_REQUEST = 202;
 
 
     /**
@@ -77,7 +79,6 @@ public class BRConstants {
     public static final long TX_FEE_PER_KB = 5000;
     public static final long DEFAULT_FEE_PER_KB = (TX_FEE_PER_KB * 1000 + 190) / 191;
     public static final long MAX_FEE_PER_KB = (100100 * 1000 + 190) / 191;
-
 
 
     /**
@@ -112,7 +113,7 @@ public class BRConstants {
     public static final long PASS_CODE_TIME_LIMIT = TimeUnit.MILLISECONDS.convert(6, TimeUnit.DAYS);
 
     public static final boolean PLATFORM_ON = true;
-    public static final RoundingMode ROUNDING_MODE= RoundingMode.HALF_EVEN;
+    public static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_EVEN;
 
 
     /**
