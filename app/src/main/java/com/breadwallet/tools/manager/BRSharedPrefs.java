@@ -120,6 +120,7 @@ public class BRSharedPrefs {
         editor.putString(BRConstants.RECEIVE_ADDRESS, tmpAddr);
         editor.apply();
     }
+
     public static String getWalletName(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(BRConstants.WALLET_NAME, "My Bread");
@@ -154,6 +155,7 @@ public class BRSharedPrefs {
         editor.putLong(BRConstants.FEE_KB_PREFS, fee);
         editor.apply();
     }
+
     public static long getCatchedBalance(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getLong("balance", 0);
@@ -380,6 +382,7 @@ public class BRSharedPrefs {
         editor.putBoolean("showNotification", show);
         editor.apply();
     }
+
     public static boolean getShareData(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return settingsToGet.getBoolean("shareData", false);
@@ -390,6 +393,19 @@ public class BRSharedPrefs {
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("shareData", show);
+        editor.apply();
+    }
+
+    public static boolean getShareDataDismissed(Context context) {
+        SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return settingsToGet.getBoolean("shareDataDismissed", false);
+    }
+
+    public static void putShareDataDismissed(Context context, boolean dismissed) {
+        if (context == null) return;
+        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("shareDataDismissed", dismissed);
         editor.apply();
     }
 
