@@ -148,7 +148,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         convertView.sentReceived.setText(received ? "Received" : "Sent");
         convertView.toFrom.setText(received ? "from" : "to");
         final String addr = received ? item.getFrom()[0] : item.getTo()[0];
-        convertView.account.setText(TextUtils.concat(addr.substring(0, 5), "…", addr.substring(addr.length() - 5)));
+        convertView.account.setText(addr);
 
         new Handler().postDelayed(new Runnable() {
             @Override
