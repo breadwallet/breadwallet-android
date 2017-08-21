@@ -77,7 +77,7 @@ public class BRAnimator {
     private static final String TAG = BRAnimator.class.getName();
     private static FragmentSignal fragmentSignal;
     private static boolean clickAllowed = true;
-    public static final int SLIDE_ANIMATION_DURATION = 300;
+    public static int SLIDE_ANIMATION_DURATION = 300;
     public static float t1Size;
     public static float t2Size;
 
@@ -105,18 +105,30 @@ public class BRAnimator {
     public static void showFragmentByTag(Activity app, String tag) {
         Log.e(TAG, "showFragmentByTag: " + tag);
         if (tag == null) return;
-        if (tag.equalsIgnoreCase(FragmentSend.class.getName())) {
-            showSendFragment(app, null);
-        } else if (tag.equalsIgnoreCase(FragmentReceive.class.getName())) {
-            showReceiveFragment(app, true);
-        } else if (tag.equalsIgnoreCase(FragmentRequestAmount.class.getName())) {
-            showRequestFragment(app, BRSharedPrefs.getReceiveAddress(app));
-        } else if (tag.equalsIgnoreCase(FragmentMenu.class.getName())) {
-            showMenuFragment(app);
-        } else {
-            Log.e(TAG, "showFragmentByTag: error, no such tag: " + tag);
-        }
+        //catch animation duration, make it 0 for no animation, then restore it.
+        final int slideAnimation = SLIDE_ANIMATION_DURATION;
+        try {
+            SLIDE_ANIMATION_DURATION = 0;
+            if (tag.equalsIgnoreCase(FragmentSend.class.getName())) {
+                showSendFragment(app, null);
+            } else if (tag.equalsIgnoreCase(FragmentReceive.class.getName())) {
+                showReceiveFragment(app, true);
+            } else if (tag.equalsIgnoreCase(FragmentRequestAmount.class.getName())) {
+                showRequestFragment(app, BRSharedPrefs.getReceiveAddress(app));
+            } else if (tag.equalsIgnoreCase(FragmentMenu.class.getName())) {
+                showMenuFragment(app);
+            } else {
+                Log.e(TAG, "showFragmentByTag: error, no such tag: " + tag);
+            }
+        } finally {
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    SLIDE_ANIMATION_DURATION = slideAnimation;
+                }
+            }, 800);
 
+        }
     }
 
     public static void showSendFragment(Activity app, final String bitcoinUrl) {
@@ -129,17 +141,20 @@ public class BRAnimator {
             fragmentSend.setUrl(bitcoinUrl);
             return;
         }
+        try {
+            fragmentSend = new FragmentSend();
+            if (bitcoinUrl != null && !bitcoinUrl.isEmpty()) {
+                Bundle bundle = new Bundle();
+                bundle.putString("url", bitcoinUrl);
+                fragmentSend.setArguments(bundle);
+            }
+            app.getFragmentManager().beginTransaction()
+                    .setCustomAnimations(0, 0, 0, R.animator.plain_300)
+                    .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
+                    .addToBackStack(FragmentSend.class.getName()).commit();
+        } finally {
 
-        fragmentSend = new FragmentSend();
-        if (bitcoinUrl != null && !bitcoinUrl.isEmpty()) {
-            Bundle bundle = new Bundle();
-            bundle.putString("url", bitcoinUrl);
-            fragmentSend.setArguments(bundle);
         }
-        app.getFragmentManager().beginTransaction()
-                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
-                .addToBackStack(FragmentSend.class.getName()).commit();
 
     }
 
