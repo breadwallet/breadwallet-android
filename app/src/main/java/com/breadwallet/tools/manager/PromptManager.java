@@ -9,7 +9,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.UpdatePitActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.FingerprintActivity;
-import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.wallet.BRPeerManager;
 
 import static com.breadwallet.tools.manager.PromptManager.PromptItem.FINGER_PRINT;
@@ -86,7 +86,7 @@ public class PromptManager {
             case PAPER_KEY:
                 return !BRSharedPrefs.getPhraseWroteDown(app);
             case UPGRADE_PIN:
-                return KeyStoreManager.getPinCode(app).length() != 6;
+                return BRKeyStore.getPinCode(app).length() != 6;
             case RECOMMEND_RESCAN:
                 return false; //todo add code to this
 

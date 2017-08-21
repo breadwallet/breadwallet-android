@@ -17,12 +17,11 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
-import com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.Utils;
 
 /**
@@ -84,7 +83,7 @@ public class FragmentPin extends Fragment {
         keyboard = (BRKeyboard) rootView.findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) rootView.findViewById(R.id.pinLayout);
 
-        if (KeyStoreManager.getPinCode(getContext()).length() == 4) pinLimit = 4;
+        if (BRKeyStore.getPinCode(getContext()).length() == 4) pinLimit = 4;
 
         title = (TextView) rootView.findViewById(R.id.title);
         message = (TextView) rootView.findViewById(R.id.message);

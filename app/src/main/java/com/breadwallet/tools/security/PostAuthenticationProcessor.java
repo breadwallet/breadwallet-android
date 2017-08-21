@@ -9,7 +9,6 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.SetPinActivity;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
@@ -99,7 +98,7 @@ public class PostAuthenticationProcessor {
     public void onPhraseCheckAuth(Activity app, boolean authAsked) {
         String cleanPhrase;
         try {
-            cleanPhrase = new String(KeyStoreManager.getPhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE));
+            cleanPhrase = new String(BRKeyStore.getPhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE));
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             return;
@@ -113,7 +112,7 @@ public class PostAuthenticationProcessor {
     public void onPhraseProveAuth(Activity app, boolean authAsked) {
         String cleanPhrase;
         try {
-            cleanPhrase = new String(KeyStoreManager.getPhrase(app, BRConstants.PROVE_PHRASE_REQUEST));
+            cleanPhrase = new String(BRKeyStore.getPhrase(app, BRConstants.PROVE_PHRASE_REQUEST));
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             return;
@@ -135,7 +134,7 @@ public class PostAuthenticationProcessor {
         try {
             boolean success = false;
             try {
-                success = KeyStoreManager.putPhrase(phraseForKeyStore.getBytes(),
+                success = BRKeyStore.putPhrase(phraseForKeyStore.getBytes(),
                         app, BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
             } catch (UserNotAuthenticatedException e) {
                 e.printStackTrace();
@@ -152,9 +151,9 @@ public class PostAuthenticationProcessor {
                     byte[] seed = BRWalletManager.getSeedFromPhrase(bytePhrase);
                     byte[] authKey = BRWalletManager.getAuthPrivKeyForAPI(seed);
                     Log.e(TAG, "onRecoverWallet authKey:" + Utils.bytesToHex(authKey)); //todo delete
-                    KeyStoreManager.putAuthKey(authKey, app);
+                    BRKeyStore.putAuthKey(authKey, app);
                     byte[] pubKey = BRWalletManager.getInstance().getMasterPubKey(bytePhrase);
-                    KeyStoreManager.putMasterPublicKey(pubKey, app);
+                    BRKeyStore.putMasterPublicKey(pubKey, app);
                     app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                     Intent intent = new Intent(app, SetPinActivity.class);
                     intent.putExtra("noPin", true);
@@ -179,7 +178,7 @@ public class PostAuthenticationProcessor {
         final BRWalletManager walletManager = BRWalletManager.getInstance();
         byte[] rawSeed;
         try {
-            rawSeed = KeyStoreManager.getPhrase((Activity) app, BRConstants.PAY_REQUEST_CODE);
+            rawSeed = BRKeyStore.getPhrase((Activity) app, BRConstants.PAY_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             return;
@@ -213,7 +212,7 @@ public class PostAuthenticationProcessor {
 //        this.bchAddress = bchAddress;
         byte[] phrase = null;
         try {
-            phrase = KeyStoreManager.getPhrase(app, BRConstants.SEND_BCH_REQUEST);
+            phrase = BRKeyStore.getPhrase(app, BRConstants.SEND_BCH_REQUEST);
         } catch (UserNotAuthenticatedException e) {
             Log.e(TAG, "onShowPhraseFlowAuth: getPhrase with no auth");
             return;
@@ -225,7 +224,7 @@ public class PostAuthenticationProcessor {
         }
 
         byte[] nullTerminatedPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
-        final byte[] serializedTx = BRWalletManager.sweepBCash(KeyStoreManager.getMasterPublicKey(app), bchAddress, nullTerminatedPhrase);
+        final byte[] serializedTx = BRWalletManager.sweepBCash(BRKeyStore.getMasterPublicKey(app), bchAddress, nullTerminatedPhrase);
         assert (serializedTx != null);
         if (serializedTx == null) {
             Log.e(TAG, "onSendBch:serializedTx is null");
@@ -306,7 +305,7 @@ public class PostAuthenticationProcessor {
 
         byte[] rawSeed;
         try {
-            rawSeed = KeyStoreManager.getPhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
+            rawSeed = BRKeyStore.getPhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
             return;
         }
@@ -347,7 +346,7 @@ public class PostAuthenticationProcessor {
     public void onCanaryCheck(final Activity app, boolean authAsked) {
         String canary = null;
         try {
-            canary = KeyStoreManager.getCanary(app, BRConstants.CANARY_REQUEST_CODE);
+            canary = BRKeyStore.getCanary(app, BRConstants.CANARY_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
@@ -356,7 +355,7 @@ public class PostAuthenticationProcessor {
             Log.e(TAG, "!canary.equalsIgnoreCase(BRConstants.CANARY_STRING)");
             byte[] phrase;
             try {
-                phrase = KeyStoreManager.getPhrase(app, BRConstants.CANARY_REQUEST_CODE);
+                phrase = BRKeyStore.getPhrase(app, BRConstants.CANARY_REQUEST_CODE);
             } catch (UserNotAuthenticatedException e) {
                 Log.e(TAG, "onCanaryCheck: error: " + e.getMessage());
                 return;
@@ -369,7 +368,7 @@ public class PostAuthenticationProcessor {
                 m.wipeWalletButKeystore(app);
             } else {
                 try {
-                    KeyStoreManager.putCanary(BRConstants.CANARY_STRING, app, 0);
+                    BRKeyStore.putCanary(BRConstants.CANARY_STRING, app, 0);
                 } catch (UserNotAuthenticatedException e) {
                     e.printStackTrace();
                 }
@@ -383,7 +382,7 @@ public class PostAuthenticationProcessor {
 ////            BRWalletManager m = BRWalletManager.getInstance();
 ////            m.wipeKeyStore(app);
 ////            m.wipeWalletButKeystore(app);
-////            KeyStoreManager.showKeyStoreDialog(app, "Keystore invalidated", "Disable lock screen and all fingerprints, and re-enable to continue.", app.getString(R.string.Button_ok), null,
+////            BRKeyStore.showKeyStoreDialog(app, "Keystore invalidated", "Disable lock screen and all fingerprints, and re-enable to continue.", app.getString(R.string.Button_ok), null,
 ////                    new DialogInterface.OnClickListener() {
 ////                        public void onClick(DialogInterface dialog, int which) {
 ////                            dialog.cancel();

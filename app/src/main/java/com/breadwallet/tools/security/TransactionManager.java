@@ -282,7 +282,7 @@ public class TransactionManager {
         Log.e(TAG, "confirmPay: totalSent: " + BRWalletManager.getInstance().getTotalSent());
         Log.e(TAG, "confirmPay: request.amount: " + request.amount);
         Log.e(TAG, "confirmPay: total limit: " + AuthManager.getInstance().getTotalLimit(ctx));
-        Log.e(TAG, "confirmPay: limit: " + KeyStoreManager.getSpendLimit(ctx));
+        Log.e(TAG, "confirmPay: limit: " + BRKeyStore.getSpendLimit(ctx));
 
         if (BRWalletManager.getInstance().getTotalSent() + request.amount > AuthManager.getInstance().getTotalLimit(ctx)) {
             forcePin = true;

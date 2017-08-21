@@ -15,7 +15,7 @@ import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.BRKeyStore;
 
 public class UpdatePitActivity extends BRActivity {
     private static final String TAG = UpdatePitActivity.class.getName();
@@ -54,7 +54,7 @@ public class UpdatePitActivity extends BRActivity {
         title = (TextView) findViewById(R.id.title);
         description = (TextView) findViewById(R.id.description);
         pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
-        if (KeyStoreManager.getPinCode(this).length() == 4) pinLimit = 4;
+        if (BRKeyStore.getPinCode(this).length() == 4) pinLimit = 4;
         setMode(ENTER_PIN);
         title.setText("Update PIN");
         dot1 = findViewById(R.id.dot1);
@@ -171,7 +171,7 @@ public class UpdatePitActivity extends BRActivity {
                 } else {
                     SpringAnimator.failShakeAnimation(this, pinLayout);
                     setMode(ENTER_NEW_PIN);
-                    pinLimit = KeyStoreManager.getPinCode(this).length();
+                    pinLimit = BRKeyStore.getPinCode(this).length();
                 }
                 pin = new StringBuilder("");
                 updateDots();

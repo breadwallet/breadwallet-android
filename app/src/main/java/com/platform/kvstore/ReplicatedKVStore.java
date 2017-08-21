@@ -33,7 +33,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.jniwrappers.BRKey;
 import com.platform.interfaces.KVStoreAdaptor;
 import com.platform.sqlite.KVEntity;
@@ -754,7 +754,7 @@ public class ReplicatedKVStore {
         Context app = context;
         if (app == null) app = BreadApp.getBreadContext();
         if (app == null) return null;
-        BRKey key = new BRKey(KeyStoreManager.getAuthKey(app));
+        BRKey key = new BRKey(BRKeyStore.getAuthKey(app));
         byte[] nonce = getNonce();
         byte[] encryptedData = key.encryptNative(data, nonce);
         //result is nonce + encryptedData
@@ -771,7 +771,7 @@ public class ReplicatedKVStore {
         Context app = context;
         if (app == null) app = BreadApp.getBreadContext();
         if (app == null) return null;
-        BRKey key = new BRKey(KeyStoreManager.getAuthKey(app));
+        BRKey key = new BRKey(BRKeyStore.getAuthKey(app));
         //12 bytes is the nonce
         return key.decryptNative(Arrays.copyOfRange(data, 12, data.length), Arrays.copyOfRange(data, 0, 12));
     }
