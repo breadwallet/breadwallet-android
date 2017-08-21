@@ -67,15 +67,15 @@ public class AuthManager {
         Log.e(TAG, "checkAuth: ");
         String tempPass = passSequence.toString();
         if (!previousTry.equals(tempPass)) {
-            int failCount = KeyStoreManager.getFailCount(context);
-            KeyStoreManager.putFailCount(failCount + 1, context);
+            int failCount = BRKeyStore.getFailCount(context);
+            BRKeyStore.putFailCount(failCount + 1, context);
         }
         previousTry = tempPass;
 
-        String pass = KeyStoreManager.getPinCode(context);
+        String pass = BRKeyStore.getPinCode(context);
         boolean match = pass != null && tempPass.equals(pass);
         if (!match) {
-            if (KeyStoreManager.getFailCount(context) >= 3) {
+            if (BRKeyStore.getFailCount(context) >= 3) {
                 setWalletDisabled((Activity) context);
             }
         }
@@ -94,12 +94,12 @@ public class AuthManager {
                     e.printStackTrace();
                 }
                 AuthManager.getInstance().setTotalLimit(app, BRWalletManager.getInstance().getTotalSent()
-                        + KeyStoreManager.getSpendLimit(app));
+                        + BRKeyStore.getSpendLimit(app));
             }
         }).start();
 
-        KeyStoreManager.putFailCount(0, app);
-        KeyStoreManager.putLastPinUsedTime(System.currentTimeMillis(), app);
+        BRKeyStore.putFailCount(0, app);
+        BRKeyStore.putLastPinUsedTime(System.currentTimeMillis(), app);
     }
 
     public void authFail(Context app) {
@@ -107,27 +107,27 @@ public class AuthManager {
     }
 
     public boolean isWalletDisabled(Activity app) {
-        int failCount = KeyStoreManager.getFailCount(app);
+        int failCount = BRKeyStore.getFailCount(app);
         long secureTime = BRSharedPrefs.getSecureTime(app);
-        long failTimestamp = KeyStoreManager.getFailTimeStamp(app);
+        long failTimestamp = BRKeyStore.getFailTimeStamp(app);
         return failCount >= 3 && secureTime < failTimestamp + Math.pow(6, failCount - 3) * 60.0;
 
     }
 
     public void setWalletDisabled(Activity app) {
-        int failCount = KeyStoreManager.getFailCount(app);
+        int failCount = BRKeyStore.getFailCount(app);
         long now = System.currentTimeMillis() / 1000;
         long secureTime = BRSharedPrefs.getSecureTime(app);
-        long failTimestamp = KeyStoreManager.getFailTimeStamp(app);
+        long failTimestamp = BRKeyStore.getFailTimeStamp(app);
         double waitTimeMinutes = (failTimestamp + Math.pow(6, failCount - 3) * 60.0 - secureTime) / 60.0;
 
         ActivityUTILS.showWalletDisabled(app, waitTimeMinutes);
     }
 
     public void setPinCode(String pass, Activity context) {
-        KeyStoreManager.putFailCount(0, context);
-        KeyStoreManager.putPinCode(pass, context);
-        KeyStoreManager.putLastPinUsedTime(System.currentTimeMillis(), context);
+        BRKeyStore.putFailCount(0, context);
+        BRKeyStore.putPinCode(pass, context);
+        BRKeyStore.putLastPinUsedTime(System.currentTimeMillis(), context);
         setSpendingLimitIfNotSet(context);
     }
 
@@ -135,14 +135,14 @@ public class AuthManager {
      * Returns the total current limit that cannot be surpass without a pin
      */
     public long getTotalLimit(Context activity) {
-        return KeyStoreManager.getTotalLimit(activity);
+        return BRKeyStore.getTotalLimit(activity);
     }
 
     /**
      * Sets the total current limit that cannot be surpass without a pin
      */
     public void setTotalLimit(Context activity, long limit) {
-        KeyStoreManager.putTotalLimit(limit, activity);
+        BRKeyStore.putTotalLimit(limit, activity);
     }
 
     private void setSpendingLimitIfNotSet(final Activity activity) {
@@ -153,7 +153,7 @@ public class AuthManager {
                 @Override
                 public void run() {
                     long totalSpent = BRWalletManager.getInstance().getTotalSent();
-                    long totalLimit = totalSpent + KeyStoreManager.getSpendLimit(activity);
+                    long totalLimit = totalSpent + BRKeyStore.getSpendLimit(activity);
                     setTotalLimit(activity, totalLimit);
                 }
             }).start();
@@ -208,10 +208,10 @@ public class AuthManager {
 
         boolean useFingerPrint = isFingerPrintAvailableAndSetup(context);
 
-        if (KeyStoreManager.getFailCount(context) != 0) {
+        if (BRKeyStore.getFailCount(context) != 0) {
             useFingerPrint = false;
         }
-        long passTime = KeyStoreManager.getLastPinUsedTime(context);
+        long passTime = BRKeyStore.getLastPinUsedTime(context);
 
         if (passTime + TimeUnit.MILLISECONDS.convert(2, TimeUnit.DAYS) <= System.currentTimeMillis()) {
             useFingerPrint = false;

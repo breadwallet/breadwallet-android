@@ -18,7 +18,7 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
@@ -107,8 +107,8 @@ public class IntroActivity extends BRActivity implements Serializable {
             }
         });
 
-        if (!BuildConfig.DEBUG && KeyStoreManager.AUTH_DURATION_SEC != 300) {
-            Log.e(TAG, "onCreate: KeyStoreManager.AUTH_DURATION_SEC != 300");
+        if (!BuildConfig.DEBUG && BRKeyStore.AUTH_DURATION_SEC != 300) {
+            Log.e(TAG, "onCreate: BRKeyStore.AUTH_DURATION_SEC != 300");
             RuntimeException ex = new RuntimeException("AUTH_DURATION_SEC should be 300");
             FirebaseCrash.report(ex);
             throw ex;
@@ -117,7 +117,7 @@ public class IntroActivity extends BRActivity implements Serializable {
 
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
 
-        byte[] masterPubKey = KeyStoreManager.getMasterPublicKey(this);
+        byte[] masterPubKey = BRKeyStore.getMasterPublicKey(this);
         boolean isFirstAddressCorrect = false;
         if (masterPubKey != null && masterPubKey.length != 0) {
             isFirstAddressCorrect = checkFirstAddress(masterPubKey);

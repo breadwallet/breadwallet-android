@@ -31,7 +31,7 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
@@ -77,7 +77,7 @@ public class PinActivity extends BRActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin);
-        String pin = KeyStoreManager.getPinCode(this);
+        String pin = BRKeyStore.getPinCode(this);
         if (pin.isEmpty() || (pin.length() != 6 && pin.length() != 4)) {
             Intent intent = new Intent(this, SetPinActivity.class);
             intent.putExtra("noPin", true);
@@ -86,7 +86,7 @@ public class PinActivity extends BRActivity {
             return;
         }
 
-        if (KeyStoreManager.getPinCode(this).length() == 4) pinLimit = 4;
+        if (BRKeyStore.getPinCode(this).length() == 4) pinLimit = 4;
 
         keyboard = (BRKeyboard) findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) findViewById(R.id.pinLayout);

@@ -25,7 +25,7 @@ import com.breadwallet.presenter.activities.UpdatePitActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSecurityCenterItem;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 
@@ -155,7 +155,7 @@ public class SecurityCenterActivity extends BRActivity {
     }
 
     private void updateList() {
-        boolean isPinSet = KeyStoreManager.getPinCode(this).length() == 6;
+        boolean isPinSet = BRKeyStore.getPinCode(this).length() == 6;
         itemList.clear();
         itemList.add(new BRSecurityCenterItem("6-Digit PIN", "Unlocks your Bread, authorizes send money.",
                 isPinSet ? R.drawable.ic_check_mark_blue : R.drawable.ic_check_mark_grey, new View.OnClickListener() {

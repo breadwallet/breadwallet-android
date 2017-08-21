@@ -22,7 +22,7 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -162,7 +162,7 @@ public class InputWordsActivity extends BRActivity {
                 if (BRWalletManager.getInstance().validatePhrase(app, cleanPhrase) ) {
 
                     if (restore || resetPin) {
-                        if (KeyStoreManager.phraseIsValid(cleanPhrase, app) ) {
+                        if (BRKeyStore.phraseIsValid(cleanPhrase, app) ) {
                             Utils.hideKeyboard(app);
                             clearWords();
                             Intent intent;

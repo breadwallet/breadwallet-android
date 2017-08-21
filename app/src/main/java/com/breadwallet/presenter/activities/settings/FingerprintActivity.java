@@ -22,7 +22,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.Utils;
@@ -107,7 +107,7 @@ public class FingerprintActivity extends BRActivity {
     private String getLimitText() {
         String iso = BRSharedPrefs.getIso(this);
         //amount in satoshis
-        BigDecimal satoshis = new BigDecimal(KeyStoreManager.getSpendLimit(this));
+        BigDecimal satoshis = new BigDecimal(BRKeyStore.getSpendLimit(this));
         //amount in BTC, mBTC or bits
         BigDecimal amount = BRExchange.getAmountFromSatoshis(this, "BTC", satoshis);
         //amount in user preferred ISO (e.g. USD)

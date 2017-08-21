@@ -3,13 +3,10 @@ package com.breadwallet.tools.manager;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Environment;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.tools.security.KeyStoreManager;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 
 import org.json.JSONArray;

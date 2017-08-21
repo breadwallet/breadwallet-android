@@ -17,7 +17,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.Utils;
 
 /**
@@ -89,7 +89,7 @@ public class FragmentManage extends Fragment {
             }
         });
 
-        long time = (long) KeyStoreManager.getWalletCreationTime(getContext()) * 1000;
+        long time = (long) BRKeyStore.getWalletCreationTime(getContext()) * 1000;
         // multiply by 1000, make it millis, since the Wallet creation time is seconds.
         String creationDate = Utils.formatTimeStamp(time, "MMM. dd, yyyy  ha");
 

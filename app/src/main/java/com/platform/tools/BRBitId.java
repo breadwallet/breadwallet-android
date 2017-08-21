@@ -6,11 +6,10 @@ import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Base64;
 import android.util.Log;
 
-import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
@@ -216,7 +215,7 @@ public class BRBitId {
         final Uri uri = Uri.parse(_bitUri);
 
         try {
-            phrase = KeyStoreManager.getPhrase(app, BRConstants.REQUEST_PHRASE_BITID);
+            phrase = BRKeyStore.getPhrase(app, BRConstants.REQUEST_PHRASE_BITID);
         } catch (UserNotAuthenticatedException e) {
             Log.e(TAG, "processBitIdResponse: failed to getKeyStorePhrase: " + e.getMessage());
             return;

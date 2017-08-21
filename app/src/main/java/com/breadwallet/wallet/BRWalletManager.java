@@ -25,7 +25,6 @@ import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRToast;
@@ -42,6 +41,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRUtils;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
@@ -52,7 +52,6 @@ import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
-import com.breadwallet.tools.security.KeyStoreManager;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
@@ -153,14 +152,14 @@ public class BRWalletManager {
         }
         boolean success = false;
         try {
-            success = KeyStoreManager.putPhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
+            success = BRKeyStore.putPhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
         if (!success) return false;
         byte[] phrase;
         try {
-            phrase = KeyStoreManager.getPhrase(ctx, 0);
+            phrase = BRKeyStore.getPhrase(ctx, 0);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to retrieve the phrase even though at this point the system auth was asked for sure.");
@@ -176,9 +175,9 @@ public class BRWalletManager {
             FirebaseCrash.report(ex);
             throw ex;
         }
-        KeyStoreManager.putAuthKey(authKey, ctx);
+        BRKeyStore.putAuthKey(authKey, ctx);
         int walletCreationTime = (int) (System.currentTimeMillis() / 1000);
-        KeyStoreManager.putWalletCreationTime(walletCreationTime, ctx);
+        BRKeyStore.putWalletCreationTime(walletCreationTime, ctx);
         final WalletInfo info = new WalletInfo();
         info.creationDate = walletCreationTime;
         new Thread(new Runnable() {
@@ -190,7 +189,7 @@ public class BRWalletManager {
 
         byte[] strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
         byte[] pubKey = BRWalletManager.getInstance().getMasterPubKey(strBytes);
-        KeyStoreManager.putMasterPublicKey(pubKey, ctx);
+        BRKeyStore.putMasterPublicKey(pubKey, ctx);
 
         return true;
 
@@ -198,19 +197,19 @@ public class BRWalletManager {
 
     public boolean wipeKeyStore(Context context) {
         Log.e(TAG, "wipeKeyStore");
-        return KeyStoreManager.resetWalletKeyStore(context);
+        return BRKeyStore.resetWalletKeyStore(context);
     }
 
     /**
      * true if keystore is available and we know that no wallet exists on it
      */
     public boolean noWallet(Context ctx) {
-        byte[] pubkey = KeyStoreManager.getMasterPublicKey(ctx);
+        byte[] pubkey = BRKeyStore.getMasterPublicKey(ctx);
 
         if (pubkey == null || pubkey.length == 0) {
             byte[] phrase;
             try {
-                phrase = KeyStoreManager.getPhrase(ctx, 0);
+                phrase = BRKeyStore.getPhrase(ctx, 0);
                 //if not authenticated, an error will be thrown and returned false, so no worry about mistakenly removing the wallet
                 if (phrase == null || phrase.length == 0) {
                     return true;
@@ -225,7 +224,7 @@ public class BRWalletManager {
     }
 
     public boolean noWalletForPlatform(Context ctx) {
-        byte[] pubkey = KeyStoreManager.getMasterPublicKey(ctx);
+        byte[] pubkey = BRKeyStore.getMasterPublicKey(ctx);
         return pubkey == null || pubkey.length == 0;
     }
 
@@ -677,7 +676,7 @@ public class BRWalletManager {
                 }
             }
 
-            byte[] pubkeyEncoded = KeyStoreManager.getMasterPublicKey(ctx);
+            byte[] pubkeyEncoded = BRKeyStore.getMasterPublicKey(ctx);
 
             //Save the first address for future check
             m.createWallet(transactionsCount, pubkeyEncoded);
@@ -711,7 +710,7 @@ public class BRWalletManager {
             Log.d(TAG, "blocksCount before connecting: " + blocksCount);
             Log.d(TAG, "peersCount before connecting: " + peersCount);
 
-            int walletTime = KeyStoreManager.getWalletCreationTime(ctx);
+            int walletTime = BRKeyStore.getWalletCreationTime(ctx);
 
             Log.e(TAG, "setUpTheWallet: walletTime: " + walletTime);
             pm.create(walletTime, blocksCount, peersCount);

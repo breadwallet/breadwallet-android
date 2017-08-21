@@ -6,23 +6,20 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.SpendLimitActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.Utils;
 
 import java.util.Locale;
 
@@ -84,7 +81,7 @@ public class DisabledActivity extends BRActivity {
         });
 
 
-        int failCount = KeyStoreManager.getFailCount(this);
+        int failCount = BRKeyStore.getFailCount(this);
         untilLabel.setText("");
         attempts.setText(String.format(Locale.getDefault(), "%d attempts remaining", 8 - failCount));
 

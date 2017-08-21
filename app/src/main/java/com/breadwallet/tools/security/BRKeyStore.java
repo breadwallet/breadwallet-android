@@ -70,8 +70,8 @@ import javax.crypto.spec.IvParameterSpec;
  * THE SOFTWARE.
  */
 
-public class KeyStoreManager {
-    private static final String TAG = KeyStoreManager.class.getName();
+public class BRKeyStore {
+    private static final String TAG = BRKeyStore.class.getName();
 
     public static final String CIPHER_ALGORITHM = "AES/CBC/PKCS7Padding";
     public static final String PADDING = KeyProperties.ENCRYPTION_PADDING_PKCS7;
@@ -488,15 +488,18 @@ public class KeyStoreManager {
         try {
             int test = Integer.parseInt(pinCode);
         } catch (Exception e) {
+            Log.e(TAG, "getPinCode: WARNING passcode isn't a number: " + pinCode);
             pinCode = "";
             putPinCode(pinCode, context);
-            KeyStoreManager.putFailCount(0, context);
-            KeyStoreManager.putFailTimeStamp(0, context);
+            BRKeyStore.putFailCount(0, context);
+            BRKeyStore.putFailTimeStamp(0, context);
             return pinCode;
         }
-        if (pinCode.length() != 4) {
+        if (pinCode.length() != 6 && pinCode.length() != 4) {
             pinCode = "";
             putPinCode(pinCode, context);
+            putFailCount(0, context);
+           putFailTimeStamp(0, context);
         }
         return pinCode;
     }
@@ -631,7 +634,7 @@ public class KeyStoreManager {
         byte[] pubKey = m.getMasterPubKey(bytePhrase);
         byte[] pubKeyFromKeyStore = new byte[0];
         try {
-            pubKeyFromKeyStore = KeyStoreManager.getMasterPublicKey(activity);
+            pubKeyFromKeyStore = BRKeyStore.getMasterPublicKey(activity);
         } catch (Exception e) {
             e.printStackTrace();
             BRErrorPipe.parseKeyStoreError(activity, e, "", true);

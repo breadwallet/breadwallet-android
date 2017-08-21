@@ -13,7 +13,7 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
@@ -83,7 +83,7 @@ public class SpendLimitActivity extends BRActivity {
 //                updateText(0);
 //            }
 //        });
-        int progress = getStepFromLimit(KeyStoreManager.getSpendLimit(this));
+        int progress = getStepFromLimit(BRKeyStore.getSpendLimit(this));
         updateText(progress);
         seekBar.setProgress(progress);
         seekBar.setMax(3);
@@ -118,13 +118,13 @@ public class SpendLimitActivity extends BRActivity {
         //formatted string for the label
         String string = String.format("%s (%s)", BRCurrency.getFormattedCurrencyString(this, "BTC", amount), BRCurrency.getFormattedCurrencyString(this, iso, curAmount));
         label.setText(string);
-        KeyStoreManager.putSpendLimit(satoshis.longValue(), this);
+        BRKeyStore.putSpendLimit(satoshis.longValue(), this);
         updateTotalLimit();
     }
 
     private void updateTotalLimit() {
         AuthManager.getInstance().setTotalLimit(this, BRWalletManager.getInstance().getTotalSent()
-                + KeyStoreManager.getSpendLimit(this));
+                + BRKeyStore.getSpendLimit(this));
     }
 
     //satoshis
