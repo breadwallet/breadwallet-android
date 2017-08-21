@@ -2,6 +2,7 @@ package com.platform.tools;
 
 import android.app.Activity;
 import android.net.Uri;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Base64;
 import android.util.Log;
 
@@ -215,8 +216,8 @@ public class BRBitId {
         final Uri uri = Uri.parse(_bitUri);
 
         try {
-            phrase = KeyStoreManager.getKeyStorePhrase(app, BRConstants.REQUEST_PHRASE_BITID);
-        } catch (BRKeystoreErrorException e) {
+            phrase = KeyStoreManager.getPhrase(app, BRConstants.REQUEST_PHRASE_BITID);
+        } catch (UserNotAuthenticatedException e) {
             Log.e(TAG, "processBitIdResponse: failed to getKeyStorePhrase: " + e.getMessage());
             return;
         }

@@ -1,51 +1,26 @@
 package com.breadwallet.tools.security;
 
 import android.app.Activity;
-import android.net.Uri;
-import android.os.Handler;
 import android.util.Log;
 
 import com.breadwallet.R;
-import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.entities.RequestObject;
-import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.BreadDialog;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BREventManager;
-import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
-import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.TypesConverter;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
-import com.jniwrappers.BRBIP32Sequence;
-import com.jniwrappers.BRKey;
-import com.platform.APIClient;
-import com.platform.middlewares.plugins.WalletPlugin;
-import com.platform.tools.BRBitId;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-import java.io.UTFDataFormatException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.net.URLDecoder;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-
-import okhttp3.Request;
-import okhttp3.RequestBody;
-import okhttp3.Response;
 
 
 /**
@@ -101,7 +76,7 @@ public class BitcoinUrlHandler {
         }
         if (requestObject == null) {
             if (app != null) {
-                BreadDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
+                BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
                         app.getString(R.string.invalid_address), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                             @Override
                             public void onClick(BRDialogView brDialogView) {
@@ -117,7 +92,7 @@ public class BitcoinUrlHandler {
             return tryBitcoinURL(url, app);
         } else {
             if (app != null) {
-                BreadDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
+                BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
                         app.getString(R.string.bad_payment_request), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                             @Override
                             public void onClick(BRDialogView brDialogView) {

@@ -21,7 +21,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.fragments.FragmentPhraseWord;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.BreadDialog;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.Utils;
 import com.google.firebase.crash.FirebaseCrash;
@@ -108,7 +108,7 @@ public class PaperKeyActivity extends BRActivity {
         String wordArray[] = cleanPhrase.split(" ");
 
         if (wordArray.length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
-            BreadDialog.showCustomDialog(this, getString(R.string.JailbreakWarnings_title),
+            BRDialog.showCustomDialog(this, getString(R.string.JailbreakWarnings_title),
                     getString(R.string.RecoveryPhrase_paperKeyError_Android), getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {

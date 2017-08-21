@@ -13,6 +13,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
 import android.os.SystemClock;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -36,7 +37,7 @@ import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.BreadDialog;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -152,15 +153,15 @@ public class BRWalletManager {
         }
         boolean success = false;
         try {
-            success = KeyStoreManager.putKeyStorePhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
-        } catch (BRKeystoreErrorException e) {
+            success = KeyStoreManager.putPhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
+        } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
         if (!success) return false;
         byte[] phrase;
         try {
-            phrase = KeyStoreManager.getKeyStorePhrase(ctx, 0);
-        } catch (BRKeystoreErrorException e) {
+            phrase = KeyStoreManager.getPhrase(ctx, 0);
+        } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             throw new RuntimeException("Failed to retrieve the phrase even though at this point the system auth was asked for sure.");
         }
@@ -209,12 +210,12 @@ public class BRWalletManager {
         if (pubkey == null || pubkey.length == 0) {
             byte[] phrase;
             try {
-                phrase = KeyStoreManager.getKeyStorePhrase(ctx, 0);
+                phrase = KeyStoreManager.getPhrase(ctx, 0);
                 //if not authenticated, an error will be thrown and returned false, so no worry about mistakenly removing the wallet
                 if (phrase == null || phrase.length == 0) {
                     return true;
                 }
-            } catch (BRKeystoreErrorException e) {
+            } catch (UserNotAuthenticatedException e) {
                 e.printStackTrace();
                 return false;
             }
@@ -309,7 +310,7 @@ public class BRWalletManager {
 //                                ((Activity) ctx).runOnUiThread(new Runnable() {
 //                                    @Override
 //                                    public void run() {
-////                                        BreadDialog.showCustomDialog(ctx, ctx.getString(R.string.warning),
+////                                        BRDialog.showCustomDialog(ctx, ctx.getString(R.string.warning),
 ////                                                ctx.getString(R.string.not_connected), ctx.getString(R.string.ok));
 //                                    }
 //                                });
@@ -449,7 +450,7 @@ public class BRWalletManager {
 //        if (error != 0) {
 //            if (!PaymentProtocolPostPaymentTask.waiting && !PaymentProtocolPostPaymentTask.sent) {
 //                if (PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE) != null) {
-//                    BreadDialog.showCustomDialog(ctx, PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.TITLE),
+//                    BRDialog.showCustomDialog(ctx, PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.TITLE),
 //                            PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE), ctx.getString(R.string.ok));
 //                    PaymentProtocolPostPaymentTask.pendingErrorMessages = null;
 //                } else {
@@ -636,7 +637,7 @@ public class BRWalletManager {
         final BRWalletManager m = BRWalletManager.getInstance();
         if (!m.isPasscodeEnabled(app)) {
             //Device passcode/password should be enabled for the app to work
-            BreadDialog.showCustomDialog(app, "Warning", app.getString(R.string.IntroScreen_encryption_needed_Android),
+            BRDialog.showCustomDialog(app, "Warning", app.getString(R.string.IntroScreen_encryption_needed_Android),
                     "close", null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
@@ -748,7 +749,7 @@ public class BRWalletManager {
     }
 
     public void offerToChangeTheAmount(final Context app, final PaymentItem item) {
-        BreadDialog.showCustomDialog(app, app.getString(R.string.insufficient_funds), app.getString(R.string.change_payment_amount),
+        BRDialog.showCustomDialog(app, app.getString(R.string.insufficient_funds), app.getString(R.string.change_payment_amount),
                 app.getString(R.string.change), app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
@@ -873,5 +874,9 @@ public class BRWalletManager {
     public static native byte[] getSeedFromPhrase(byte[] phrase);
 
     public static native boolean isTestNet();
+
+    public static native byte[] sweepBCash(byte[] pubKey, String address, byte[] phrase);
+
+    public static native long getBCashBalance(byte[] pubKey);
 
 }

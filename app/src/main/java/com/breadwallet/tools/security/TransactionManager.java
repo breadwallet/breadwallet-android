@@ -12,7 +12,7 @@ import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.BreadDialog;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
@@ -96,7 +96,7 @@ public class TransactionManager {
                     ((Activity) app).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            BreadDialog.showCustomDialog(app, errTitle[0], errMessage[0], "Ok", null, new BRDialogView.BROnClickListener() {
+                            BRDialog.showCustomDialog(app, errTitle[0], errMessage[0], "Ok", null, new BRDialogView.BROnClickListener() {
                                 @Override
                                 public void onClick(BRDialogView brDialogView) {
                                     brDialogView.dismiss();
@@ -170,7 +170,7 @@ public class TransactionManager {
                     ((Activity) app).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            BreadDialog.showCustomDialog(app, "", app.getString(R.string.insufficient_funds), "Close", null, new BRDialogView.BROnClickListener() {
+                            BRDialog.showCustomDialog(app, "", app.getString(R.string.insufficient_funds), "Close", null, new BRDialogView.BROnClickListener() {
                                 @Override
                                 public void onClick(BRDialogView brDialogView) {
                                     brDialogView.dismiss();
@@ -202,7 +202,7 @@ public class TransactionManager {
         ((Activity) app).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                BreadDialog.showCustomDialog(app, app.getString(R.string.insufficient_funds_for_fee), String.format(app.getString(R.string.reduce_payment_amount_by),
+                BRDialog.showCustomDialog(app, app.getString(R.string.insufficient_funds_for_fee), String.format(app.getString(R.string.reduce_payment_amount_by),
                         reduceBits, reduceCurrency), String.format("%s (%s)", reduceBitsMinus, reduceCurrencyMinus), "Cancel", new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
@@ -267,7 +267,7 @@ public class TransactionManager {
             ((Activity) ctx).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    BreadDialog.showCustomDialog(ctx, ctx.getString(R.string.could_not_make_payment), bitcoinMinMessage, "Close", null, new BRDialogView.BROnClickListener() {
+                    BRDialog.showCustomDialog(ctx, ctx.getString(R.string.could_not_make_payment), bitcoinMinMessage, "Close", null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismiss();
@@ -320,7 +320,7 @@ public class TransactionManager {
                 throw ex;
             }
             if (maxAmount == 0) {
-                BreadDialog.showCustomDialog(ctx, "", ctx.getString(R.string.insufficient_funds_for_fee), "Close", null, new BRDialogView.BROnClickListener() {
+                BRDialog.showCustomDialog(ctx, "", ctx.getString(R.string.insufficient_funds_for_fee), "Close", null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         brDialogView.dismiss();
@@ -390,7 +390,7 @@ public class TransactionManager {
         ((Activity) app).runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                BreadDialog.showCustomDialog(app, app.getString(R.string.syncing_in_progress), app.getString(R.string.wait_for_sync_to_finish), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                BRDialog.showCustomDialog(app, app.getString(R.string.syncing_in_progress), app.getString(R.string.wait_for_sync_to_finish), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         brDialogView.dismissWithAnimation();

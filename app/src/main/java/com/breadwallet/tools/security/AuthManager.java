@@ -16,7 +16,7 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.fragments.FingerprintFragment;
 import com.breadwallet.presenter.fragments.FragmentPin;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
-import com.breadwallet.tools.animation.BreadDialog;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
@@ -211,7 +211,7 @@ public class AuthManager {
         if (KeyStoreManager.getFailCount(context) != 0) {
             useFingerPrint = false;
         }
-        long passTime = KeyStoreManager.getLastPasscodeUsedTime(context);
+        long passTime = KeyStoreManager.getLastPinUsedTime(context);
 
         if (passTime + TimeUnit.MILLISECONDS.convert(2, TimeUnit.DAYS) <= System.currentTimeMillis()) {
             useFingerPrint = false;
@@ -261,7 +261,7 @@ public class AuthManager {
                 }
             }
         } else {
-            BreadDialog.showCustomDialog(app, "", context.getString(R.string.IntroScreen_encryption_needed_Android), "close", null, new BRDialogView.BROnClickListener() {
+            BRDialog.showCustomDialog(app, "", context.getString(R.string.IntroScreen_encryption_needed_Android), "close", null, new BRDialogView.BROnClickListener() {
                 @Override
                 public void onClick(BRDialogView brDialogView) {
                     app.finish();

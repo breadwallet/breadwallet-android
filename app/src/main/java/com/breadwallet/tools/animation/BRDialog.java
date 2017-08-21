@@ -32,8 +32,8 @@ import com.breadwallet.presenter.customviews.BRDialogView;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BreadDialog {
-    private static final String TAG = BreadDialog.class.getName();
+public class BRDialog {
+    private static final String TAG = BRDialog.class.getName();
 
     /**
      * Safe from any threads

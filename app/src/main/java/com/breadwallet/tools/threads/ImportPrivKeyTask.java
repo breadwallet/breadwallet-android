@@ -8,7 +8,7 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
-import com.breadwallet.tools.animation.BreadDialog;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
@@ -74,7 +74,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             app.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    BreadDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
+                    BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
                             app.getString(R.string.priv_key_empty), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                                 @Override
                                 public void onClick(BRDialogView brDialogView) {
@@ -103,7 +103,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         if (app == null || importPrivKeyEntity == null) return;
         String message = String.format(app.getString(R.string.send_money_from_privkey_message), sentBits, sentExchange, feeBits, feeExchange);
         String posButton = String.format("%s (%s)", sentBits, sentExchange);
-        BreadDialog.showCustomDialog(app, "", message, posButton, "Cancel", new BRDialogView.BROnClickListener() {
+        BRDialog.showCustomDialog(app, "", message, posButton, "Cancel", new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {
                 new Thread(new Runnable() {
@@ -114,7 +114,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                             app.runOnUiThread(new Runnable() {
                                 @Override
                                 public void run() {
-                                    BreadDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
+                                    BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
                                             app.getString(R.string.could_not_sweep_the_balance), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                                                 @Override
                                                 public void onClick(BRDialogView brDialogView) {

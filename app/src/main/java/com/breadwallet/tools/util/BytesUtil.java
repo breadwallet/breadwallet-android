@@ -37,69 +37,6 @@ import java.io.StreamCorruptedException;
 
 public class BytesUtil {
 
-    public static Object readBytes(byte[] bytes) {
-        ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
-        ObjectInput in = null;
-        Object o = null;
-        try {
-            in = new ObjectInputStream(bis);
-            o = in.readObject();
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                bis.close();
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-            try {
-                if (in != null) {
-                    in.close();
-                }
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-        }
-        if (o != null) {
-            return o;
-        } else {
-            throw new NullPointerException("bytes should not be null");
-        }
-    }
-
-    public static byte[] writeBytes(Object obj) {
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ObjectOutput out = null;
-        byte[] yourBytes = null;
-        try {
-            out = new ObjectOutputStream(bos);
-            out.writeObject(obj);
-            yourBytes = bos.toByteArray();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-            try {
-                bos.close();
-            } catch (IOException ex) {
-                // ignore close exception
-            }
-        }
-        if (yourBytes != null) {
-            return yourBytes;
-        } else {
-            throw new NullPointerException("bytes should not be null");
-        }
-    }
-
     public static byte[] readBytesFromStream(InputStream in){
 
         // this dynamically extends to take the bytes you read

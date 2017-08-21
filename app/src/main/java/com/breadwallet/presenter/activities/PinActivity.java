@@ -27,7 +27,7 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.BreadDialog;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
@@ -143,7 +143,7 @@ public class PinActivity extends BRActivity {
                         // Should we show an explanation?
                         if (ActivityCompat.shouldShowRequestPermissionRationale(app,
                                 Manifest.permission.CAMERA)) {
-                            BreadDialog.showCustomDialog(app, "Permission Required.",
+                            BRDialog.showCustomDialog(app, "Permission Required.",
                                     app.getString(R.string.CameraPlugin_allowCameraAccess_Android), "close", null, new BRDialogView.BROnClickListener() {
                                         @Override
                                         public void onClick(BRDialogView brDialogView) {

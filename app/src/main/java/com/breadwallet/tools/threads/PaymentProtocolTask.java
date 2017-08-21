@@ -12,7 +12,7 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.exceptions.CertificateChainNotFound;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
-import com.breadwallet.tools.animation.BreadDialog;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
@@ -98,7 +98,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 
             if (paymentRequest == null || paymentRequest.error == PaymentRequestWrapper.INVALID_REQUEST_ERROR) {
                 Log.e(TAG, "paymentRequest is null!!!");
-                BreadDialog.showCustomDialog(app, "", app.getString(R.string.invalid_request), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                BRDialog.showCustomDialog(app, "", app.getString(R.string.invalid_request), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         brDialogView.dismissWithAnimation();
@@ -108,7 +108,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 return null;
             } else if (paymentRequest.error == PaymentRequestWrapper.INSUFFICIENT_FUNDS_ERROR) {
                 Log.e(TAG, "insufficient amount!!!");
-                BreadDialog.showCustomDialog(app, "", app.getString(R.string.insufficient_funds), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                BRDialog.showCustomDialog(app, "", app.getString(R.string.insufficient_funds), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         brDialogView.dismissWithAnimation();
@@ -119,7 +119,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             } else if (paymentRequest.error == PaymentRequestWrapper.SIGNING_FAILED_ERROR) {
                 Log.e(TAG, "failed to sign tx!!!");
                 Log.e(TAG, "insufficient amount!!!");
-                BreadDialog.showCustomDialog(app, "", app.getString(R.string.failed_to_sign_tx), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                BRDialog.showCustomDialog(app, "", app.getString(R.string.failed_to_sign_tx), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         brDialogView.dismissWithAnimation();
@@ -129,7 +129,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 return null;
             } else if (paymentRequest.error == PaymentRequestWrapper.REQUEST_TOO_LONG_ERROR) {
                 Log.e(TAG, "failed to sign tx!!!");
-                BreadDialog.showCustomDialog(app, "", app.getString(R.string.payment_request_message_too_large), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                BRDialog.showCustomDialog(app, "", app.getString(R.string.payment_request_message_too_large), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         brDialogView.dismissWithAnimation();
@@ -139,7 +139,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 return null;
             } else if (paymentRequest.error == PaymentRequestWrapper.AMOUNTS_ERROR) {
                 Log.e(TAG, "failed to sign tx!!!");
-                BreadDialog.showCustomDialog(app, "", app.getString(R.string.could_not_transmit_payment), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                BRDialog.showCustomDialog(app, "", app.getString(R.string.could_not_transmit_payment), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         brDialogView.dismissWithAnimation();
@@ -155,7 +155,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 allAddresses.append(s).append(", ");
                 if (!BRWalletManager.validateAddress(s)) {
                     if (app != null)
-                        BreadDialog.showCustomDialog(app, app.getString(R.string.error), String.format(app.getString(R.string.invalid_address_with_holder), s), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                        BRDialog.showCustomDialog(app, app.getString(R.string.error), String.format(app.getString(R.string.invalid_address_with_holder), s), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                             @Override
                             public void onClick(BRDialogView brDialogView) {
                                 brDialogView.dismissWithAnimation();
@@ -179,7 +179,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             if (paymentRequest.expires != 0 && paymentRequest.time > paymentRequest.expires) {
                 Log.e(TAG, "Request is expired");
                 if (app != null)
-                    BreadDialog.showCustomDialog(app, app.getString(R.string.error), app.getString(R.string.expired_request), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                    BRDialog.showCustomDialog(app, app.getString(R.string.error), app.getString(R.string.expired_request), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();
@@ -194,7 +194,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         } catch (Exception e) {
             if (e instanceof java.net.UnknownHostException) {
                 if (app != null)
-                    BreadDialog.showCustomDialog(app, app.getString(R.string.error), app.getString(R.string.unknown_host), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                    BRDialog.showCustomDialog(app, app.getString(R.string.error), app.getString(R.string.unknown_host), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();
@@ -203,7 +203,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 paymentRequest = null;
             } else if (e instanceof FileNotFoundException) {
                 if (app != null)
-                    BreadDialog.showCustomDialog(app, app.getString(R.string.error), app.getString(R.string.bad_payment_request), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                    BRDialog.showCustomDialog(app, app.getString(R.string.error), app.getString(R.string.bad_payment_request), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();
@@ -212,7 +212,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 paymentRequest = null;
             } else if (e instanceof SocketTimeoutException) {
                 if (app != null)
-                    BreadDialog.showCustomDialog(app, app.getString(R.string.error), app.getString(R.string.connection_timed_out), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                    BRDialog.showCustomDialog(app, app.getString(R.string.error), app.getString(R.string.connection_timed_out), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();
@@ -223,7 +223,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 Log.e(TAG, "No certificates!", e);
             } else {
                 if (app != null)
-                    BreadDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), app.getString(R.string.could_not_transmit_payment), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                    BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), app.getString(R.string.could_not_transmit_payment), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();

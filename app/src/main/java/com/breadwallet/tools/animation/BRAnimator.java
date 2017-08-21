@@ -178,7 +178,7 @@ public class BRAnimator {
                 // Should we show an explanation?
                 if (ActivityCompat.shouldShowRequestPermissionRationale(app,
                         Manifest.permission.CAMERA)) {
-                    BreadDialog.showCustomDialog(app, "Permission Required.", app.getString(R.string.CameraPlugin_allowCameraAccess_Android), "close", null, new BRDialogView.BROnClickListener() {
+                    BRDialog.showCustomDialog(app, "Permission Required.", app.getString(R.string.CameraPlugin_allowCameraAccess_Android), "close", null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismiss();
