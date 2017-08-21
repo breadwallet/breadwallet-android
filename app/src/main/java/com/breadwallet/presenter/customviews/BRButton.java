@@ -103,9 +103,9 @@ public class BRButton extends Button {
 
         isBreadButton = arr.getBoolean(4, false);
 
-        int paddingLeft = arr.hasValue(0) ? arr.getDimensionPixelOffset(0, -1) : 0;
+        int paddingLeft = arr.hasValue(0) ? arr.getDimensionPixelOffset(0, -1) : (int) px16;
         int paddingTop = arr.hasValue(1) ? arr.getDimensionPixelOffset(1, -1) : 0;
-        int paddingRight = arr.hasValue(2) ? arr.getDimensionPixelOffset(2, -1) : 0;
+        int paddingRight = arr.hasValue(2) ? arr.getDimensionPixelOffset(2, -1) : (int) px16;
         int paddingBottom = arr.hasValue(3) ? arr.getDimensionPixelOffset(3, -1) + (isBreadButton ? (int) px16 : 0) : (isBreadButton ? (int) px16 : 0);
 
         setType(arr.getInteger(5, 0));
