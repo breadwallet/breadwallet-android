@@ -15,6 +15,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AnimationUtils;
+import android.webkit.WebView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -39,6 +40,7 @@ import com.breadwallet.tools.util.NetworkChangeReceiver;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
+import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
 
@@ -203,6 +205,8 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 if (!BRAnimator.isClickAllowed()) return;
                 //start the server for Buy Bitcoin
                 BRAnimator.showMenuFragment(BreadActivity.this);
+                WebView view = new WebView(BreadActivity.this);
+                view.loadUrl(HTTPServer.URL_SUPPORT);
 
             }
         });

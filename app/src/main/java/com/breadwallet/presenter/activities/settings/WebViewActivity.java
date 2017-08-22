@@ -50,7 +50,7 @@ public class WebViewActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
 
-        if (webView != null) webView.destroy();
+//        if (webView != null) webView.destroy();
         webView = (WebView) findViewById(R.id.web_view);
         webView.setWebChromeClient(new BRWebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
