@@ -272,7 +272,7 @@ public class APIClient {
             throw new RuntimeException("sendRequest: Warning retryCount is: " + retryCount);
         boolean isTestVersion = BREAD_BUY.equalsIgnoreCase("staging") || BREAD_SUPPORT.contains("staging");
         boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
-        Request request = locRequest.newBuilder().header("X-Testflight", isTestVersion ? "1" : "0").header("X-Bitcoin-Testnet", isTestNet ? "1" : "0").build();
+        Request request = locRequest.newBuilder().header("X-Testflight", isTestVersion ? "true" : "false").header("X-Bitcoin-Testnet", isTestNet ? "true" : "false").build();
         if (needsAuth) {
             Request.Builder modifiedRequest = request.newBuilder();
             String base58Body = "";
@@ -329,6 +329,7 @@ public class APIClient {
         try {
             OkHttpClient client = new OkHttpClient.Builder().followRedirects(false)/*.addInterceptor(new LoggingInterceptor())*/.build();
 //            Log.e(TAG, "sendRequest: before executing the request: " + request.headers().toString());
+            Log.e(TAG, "sendRequest: headers for : " + request.url() + "\n" + request.headers());
             request = request.newBuilder().header("User-agent", Utils.getAgentString(ctx, "OkHttp/3.4.1")).build();
             response = client.newCall(request).execute();
             try {
