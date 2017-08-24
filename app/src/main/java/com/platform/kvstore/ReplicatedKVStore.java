@@ -776,7 +776,11 @@ public class ReplicatedKVStore {
      */
     public byte[] decrypt(byte[] data) {
         Context app = context;
-        if (app == null) app = BreadApp.getBreadContext();
+        if (data == null || data.length <= 12) {
+            Log.e(TAG, "decrypt: data is corrupted: " + (data == null? null : data.length));
+            return null;
+        }
+            if (app == null) app = BreadApp.getBreadContext();
         if (app == null) return null;
         BRKey key = new BRKey(BRKeyStore.getAuthKey(app));
         //12 bytes is the nonce
