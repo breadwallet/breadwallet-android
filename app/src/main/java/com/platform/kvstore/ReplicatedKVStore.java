@@ -136,7 +136,7 @@ public class ReplicatedKVStore {
     }
 
     private synchronized CompletionObject _set(KVEntity kv) throws Exception {
-        Log.e(TAG, "_set: " + kv.key);
+        Log.d(TAG, "_set: " + kv.key);
         long curVer = kv.getVersion();
         long newVer = 0;
         String key = kv.getKey();
@@ -151,7 +151,7 @@ public class ReplicatedKVStore {
         SQLiteDatabase db = getWritable();
         try {
             db.beginTransaction();
-            Log.e(TAG, "_set: " + key + ", Thread: " + Thread.currentThread().getName());
+//            Log.e(TAG, "_set: " + key + ", Thread: " + Thread.currentThread().getName());
             boolean success = insert(new KVEntity(newVer, 0, key, encryptionData, kv.getTime(), kv.getDeleted()));
             if (!success) return new CompletionObject(CompletionObject.RemoteKVStoreError.unknown);
             db.setTransactionSuccessful();

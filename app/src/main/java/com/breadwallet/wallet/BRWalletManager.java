@@ -154,14 +154,13 @@ public class BRWalletManager {
         try {
             success = BRKeyStore.putPhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
+            return false;
         }
         if (!success) return false;
         byte[] phrase;
         try {
             phrase = BRKeyStore.getPhrase(ctx, 0);
         } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
             throw new RuntimeException("Failed to retrieve the phrase even though at this point the system auth was asked for sure.");
         }
         byte[] nulTermPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
@@ -196,7 +195,7 @@ public class BRWalletManager {
     }
 
     public boolean wipeKeyStore(Context context) {
-        Log.e(TAG, "wipeKeyStore");
+        Log.d(TAG, "wipeKeyStore");
         return BRKeyStore.resetWalletKeyStore(context);
     }
 
@@ -215,7 +214,6 @@ public class BRWalletManager {
                     return true;
                 }
             } catch (UserNotAuthenticatedException e) {
-                e.printStackTrace();
                 return false;
             }
 
@@ -256,12 +254,8 @@ public class BRWalletManager {
 
     }
 
-    public boolean isPaperKeyWritten(Context context) {
-        return BRSharedPrefs.getPhraseWroteDown(context);
-    }
-
     public void wipeWalletButKeystore(final Context ctx) {
-        Log.e(TAG, "wipeWalletButKeystore");
+        Log.d(TAG, "wipeWalletButKeystore");
         new Thread(new Runnable() {
             @Override
             public void run() {

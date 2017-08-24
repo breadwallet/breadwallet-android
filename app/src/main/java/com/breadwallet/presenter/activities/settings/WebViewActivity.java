@@ -56,8 +56,8 @@ public class WebViewActivity extends BRActivity {
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                Log.e(TAG, "shouldOverrideUrlLoading: " + request.getUrl());
-                Log.e(TAG, "shouldOverrideUrlLoading: " + request.getMethod());
+                Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl());
+                Log.d(TAG, "shouldOverrideUrlLoading: " + request.getMethod());
                 if (onCloseUrl != null && request.getUrl().toString().equalsIgnoreCase(onCloseUrl)) {
                     onBackPressed();
                     onCloseUrl = null;
@@ -67,7 +67,7 @@ public class WebViewActivity extends BRActivity {
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                Log.e(TAG, "onPageStarted: " + url);
+                Log.d(TAG, "onPageStarted: " + url);
                 super.onPageStarted(view, url, favicon);
             }
         });
@@ -89,7 +89,7 @@ public class WebViewActivity extends BRActivity {
         if (articleId != null && !articleId.isEmpty())
             theUrl = theUrl + "/" + articleId;
 
-        Log.e(TAG, "onCreate: theUrl: " + theUrl + ", articleId: " + articleId);
+        Log.d(TAG, "onCreate: theUrl: " + theUrl + ", articleId: " + articleId);
         if (json != null) {
             request(webView, json);
         } else {

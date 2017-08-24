@@ -77,7 +77,7 @@ public class PlatformSqliteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase database) {
-        Log.e(TAG, "onCreate: " + KV_DATABASE_CREATE);
+        Log.d(TAG, "onCreate: " + KV_DATABASE_CREATE);
         database.execSQL(KV_DATABASE_CREATE);
     }
 

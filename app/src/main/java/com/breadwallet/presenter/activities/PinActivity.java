@@ -169,7 +169,7 @@ public class PinActivity extends BRActivity {
         });
 
         boolean useFingerprint = AuthManager.isFingerPrintAvailableAndSetup(this) && BRSharedPrefs.getUseFingerprint(this);
-        Log.e(TAG, "onCreate: isFingerPrintAvailableAndSetup: " + useFingerprint);
+//        Log.e(TAG, "onCreate: isFingerPrintAvailableAndSetup: " + useFingerprint);
         fingerPrint.setVisibility(useFingerprint ? View.VISIBLE : View.GONE);
 
         if (useFingerprint)

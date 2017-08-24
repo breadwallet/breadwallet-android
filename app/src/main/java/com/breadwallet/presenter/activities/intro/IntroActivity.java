@@ -21,6 +21,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
@@ -122,10 +123,7 @@ public class IntroActivity extends BRActivity implements Serializable {
         if (masterPubKey != null && masterPubKey.length != 0) {
             isFirstAddressCorrect = checkFirstAddress(masterPubKey);
         }
-//        Log.e(TAG, "isFirstAddressCorrect: " + isFirstAddressCorrect);
         if (!isFirstAddressCorrect) {
-            Log.e(TAG, "WARNING: isFirstAddressCorrect - false: CLEARING THE WALLET");
-
             BRWalletManager.getInstance().wipeWalletButKeystore(this);
         }
 
@@ -135,11 +133,11 @@ public class IntroActivity extends BRActivity implements Serializable {
             public void run() {
                 splashScreen.setVisibility(View.GONE);
             }
-        },1000);
+        }, 1000);
 
     }
 
-    private void updateBundles(){
+    private void updateBundles() {
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -147,7 +145,7 @@ public class IntroActivity extends BRActivity implements Serializable {
                 APIClient apiClient = APIClient.getInstance(IntroActivity.this);
                 apiClient.updateBundle(BREAD_SUPPORT, SUPPORT_FILE, SUPPORT_EXTRACTED_FOLDER);
                 long endTime = System.currentTimeMillis();
-                Log.e(TAG, "updateBundle " + BREAD_SUPPORT + ": DONE in " + (endTime - startTime) + "ms");
+                Log.d(TAG, "updateBundle " + BREAD_SUPPORT + ": DONE in " + (endTime - startTime) + "ms");
             }
         }).start();
     }
@@ -180,6 +178,9 @@ public class IntroActivity extends BRActivity implements Serializable {
     public boolean checkFirstAddress(byte[] mpk) {
         String addressFromPrefs = BRSharedPrefs.getFirstAddress(this);
         String generatedAddress = BRWalletManager.getFirstAddress(mpk);
+        if (!addressFromPrefs.equalsIgnoreCase(generatedAddress) && addressFromPrefs.length() != 0 && generatedAddress.length() != 0) {
+            Log.e(TAG, "checkFirstAddress: WARNING, addresses don't match: Prefs:" + addressFromPrefs + ", gen:" + generatedAddress);
+        }
         return addressFromPrefs.equals(generatedAddress);
     }
 

@@ -80,10 +80,9 @@ public class PostAuthenticationProcessor {
     }
 
     public void onCreateWalletAuth(Activity app, boolean authAsked) {
-        Log.e(TAG, "onCreateWalletAuth: " + authAsked + ", " + app.getClass().getName());
+//        Log.e(TAG, "onCreateWalletAuth: " + authAsked + ", " + app.getClass().getName());
         long start = System.currentTimeMillis();
         boolean success = BRWalletManager.getInstance().generateRandomSeed(app);
-        Log.e(TAG, "generateRandomSeed: took: " + (System.currentTimeMillis() - start));
         if (success) {
             Intent intent = new Intent(app, WriteDownActivity.class);
             app.startActivity(intent);
@@ -100,7 +99,6 @@ public class PostAuthenticationProcessor {
         try {
             cleanPhrase = new String(BRKeyStore.getPhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE));
         } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
             return;
         }
         Intent intent = new Intent(app, PaperKeyActivity.class);
@@ -114,7 +112,6 @@ public class PostAuthenticationProcessor {
         try {
             cleanPhrase = new String(BRKeyStore.getPhrase(app, BRConstants.PROVE_PHRASE_REQUEST));
         } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
             return;
         }
         Intent intent = new Intent(app, PaperKeyProveActivity.class);
@@ -138,6 +135,7 @@ public class PostAuthenticationProcessor {
                         app, BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
             } catch (UserNotAuthenticatedException e) {
                 e.printStackTrace();
+                return;
             }
 
             if (!success) {
@@ -178,9 +176,8 @@ public class PostAuthenticationProcessor {
         final BRWalletManager walletManager = BRWalletManager.getInstance();
         byte[] rawSeed;
         try {
-            rawSeed = BRKeyStore.getPhrase((Activity) app, BRConstants.PAY_REQUEST_CODE);
+            rawSeed = BRKeyStore.getPhrase( app, BRConstants.PAY_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
             return;
         }
         if (rawSeed.length < 10) return;
@@ -214,7 +211,6 @@ public class PostAuthenticationProcessor {
         try {
             phrase = BRKeyStore.getPhrase(app, BRConstants.SEND_BCH_REQUEST);
         } catch (UserNotAuthenticatedException e) {
-            Log.e(TAG, "onShowPhraseFlowAuth: getPhrase with no auth");
             return;
         }
         if (Utils.isNullOrEmpty(phrase)) {
@@ -348,17 +344,14 @@ public class PostAuthenticationProcessor {
         try {
             canary = BRKeyStore.getCanary(app, BRConstants.CANARY_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
             return;
         }
 
         if (canary == null || !canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
-            Log.e(TAG, "!canary.equalsIgnoreCase(BRConstants.CANARY_STRING)");
             byte[] phrase;
             try {
                 phrase = BRKeyStore.getPhrase(app, BRConstants.CANARY_REQUEST_CODE);
             } catch (UserNotAuthenticatedException e) {
-                Log.e(TAG, "onCanaryCheck: error: " + e.getMessage());
                 return;
             }
 
@@ -368,32 +361,15 @@ public class PostAuthenticationProcessor {
                 m.wipeKeyStore(app);
                 m.wipeWalletButKeystore(app);
             } else {
+                Log.e(TAG, "onCanaryCheck: Canary wasn't there, but the phrase persists, adding canary to keystore.");
                 try {
                     BRKeyStore.putCanary(BRConstants.CANARY_STRING, app, 0);
                 } catch (UserNotAuthenticatedException e) {
-                    e.printStackTrace();
+                    return;
                 }
             }
         }
         BRWalletManager.getInstance().startTheWalletIfExists(app);
     }
 
-//    private void showBugAuthLoopErrorMessage(final Activity app) {
-//        if (app != null) {
-////            BRWalletManager m = BRWalletManager.getInstance();
-////            m.wipeKeyStore(app);
-////            m.wipeWalletButKeystore(app);
-////            BRKeyStore.showKeyStoreDialog(app, "Keystore invalidated", "Disable lock screen and all fingerprints, and re-enable to continue.", app.getString(R.string.Button_ok), null,
-////                    new DialogInterface.OnClickListener() {
-////                        public void onClick(DialogInterface dialog, int which) {
-////                            dialog.cancel();
-////                        }
-////                    }, null, new DialogInterface.OnDismissListener() {
-////                        @Override
-////                        public void onDismiss(DialogInterface dialogInterface) {
-////                            app.finish();
-////                        }
-////                    });
-//        }
-//    }
 }
