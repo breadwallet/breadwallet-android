@@ -100,7 +100,6 @@ public class FragmentMenu extends Fragment {
         itemList.add(new BRMenuItem("Buy Bitcoin", R.drawable.buy_bitcoin, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "onClick: Lock Wallet");
                 Intent intent = new Intent(getActivity(), WebViewActivity.class);
                 intent.putExtra("url", HTTPServer.URL_BUY);
                 Activity app = getActivity();

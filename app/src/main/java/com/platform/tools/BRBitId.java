@@ -196,7 +196,6 @@ public class BRBitId {
         try {
             phrase = BRKeyStore.getPhrase(app, BRConstants.REQUEST_PHRASE_BITID);
         } catch (UserNotAuthenticatedException e) {
-            Log.e(TAG, "completeBitID: failed to getKeyStorePhrase: " + e.getMessage());
             return;
         }
         if (Utils.isNullOrEmpty(phrase)) throw new NullPointerException("cant happen");
@@ -238,7 +237,7 @@ public class BRBitId {
     private static void bitIdPlatform(Activity app, Uri uri, byte[] seed) {
 
         final String biUri = uri.getHost() == null ? uri.toString() : uri.getHost();
-        final byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, _bitIdUrl);
+        final byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, biUri);
         if (key == null) {
             Log.d(TAG, "bitIdPlatform: key is null!");
             return;

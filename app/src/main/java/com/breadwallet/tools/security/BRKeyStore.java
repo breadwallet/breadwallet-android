@@ -215,7 +215,7 @@ public class BRKeyStore {
             }
             return true;
         } catch (UserNotAuthenticatedException e) {
-            Log.e(TAG, "setData: User not Authenticated, requesting..." + alias + ", err(" + e.getMessage() + ")");
+            Log.d(TAG, "setData: User not Authenticated, requesting..." + alias + ", err(" + e.getMessage() + ")");
             showAuthenticationScreen(context, request_code);
             throw e;
         } catch (Exception e) {
@@ -245,7 +245,7 @@ public class BRKeyStore {
             if (secretKey == null) {
                 /* no such key, the key is just simply not there */
                 boolean fileExists = new File(encryptedDataFilePath).exists();
-                Log.e(TAG, "_getData: " + alias + " file exist: " + fileExists);
+//                Log.e(TAG, "_getData: " + alias + " file exist: " + fileExists);
                 if (!fileExists) {
                     return null;/* file also not there, fine then */
                 }
@@ -311,12 +311,12 @@ public class BRKeyStore {
 
             return data;
         } catch (InvalidKeyException e) {
-            Log.e(TAG, "_getData: InvalidKeyException", e);
             if (e instanceof UserNotAuthenticatedException) {
                 /** user not authenticated, ask the system for authentication */
                 showAuthenticationScreen(context, request_code);
                 throw (UserNotAuthenticatedException) e;
             } else {
+                Log.e(TAG, "_getData: InvalidKeyException", e);
                 BRErrorPipe.parseKeyStoreError(context, e, alias, true);
                 return null;
             }

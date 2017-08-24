@@ -77,7 +77,6 @@ public class BreadApp extends Application {
     }
 
     public static void setBreadContext(Activity app) {
-        Log.e(TAG, "setBreadContext: " + (app == null ? null : app.getClass().getName()));
         currentActivity = app;
         if (app == null) {
             new Handler().postDelayed(new Runnable() {

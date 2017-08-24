@@ -368,7 +368,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             return;
         }
         savedFragmentTag = getFragmentManager().getBackStackEntryAt(getFragmentManager().getBackStackEntryCount() - 1).getName();
-        Log.e(TAG, "saveVisibleFragment: saving the tag|" + savedFragmentTag);
     }
 
     //returns x-pos relative to root layout

@@ -259,7 +259,7 @@ public class APIClient {
     }
 
     public String signRequest(String request) {
-        Log.e(TAG, "signRequest: " + request);
+        Log.d(TAG, "signRequest: " + request);
         byte[] doubleSha256 = CryptoHelper.doubleSha256(request.getBytes(StandardCharsets.UTF_8));
         BRKey key = new BRKey(BRKeyStore.getAuthKey(ctx));
         byte[] signedBytes = key.compactSign(doubleSha256);
@@ -329,7 +329,7 @@ public class APIClient {
         try {
             OkHttpClient client = new OkHttpClient.Builder().followRedirects(false)/*.addInterceptor(new LoggingInterceptor())*/.build();
 //            Log.e(TAG, "sendRequest: before executing the request: " + request.headers().toString());
-            Log.e(TAG, "sendRequest: headers for : " + request.url() + "\n" + request.headers());
+            Log.d(TAG, "sendRequest: headers for : " + request.url() + "\n" + request.headers());
             request = request.newBuilder().header("User-agent", Utils.getAgentString(ctx, "OkHttp/3.4.1")).build();
             response = client.newCall(request).execute();
             try {
@@ -390,7 +390,7 @@ public class APIClient {
 
     public void updateBundle(String bundleName, String fileName, String extractedFolder) {
         File bundleFile = new File(ctx.getFilesDir().getAbsolutePath() + fileName);
-        logFiles("updateBundle before", ctx);
+//        logFiles("updateBundle before", ctx);
         if (bundleFile.exists()) {
             Log.d(TAG, bundleName + ": updateBundle: exists");
 
@@ -406,7 +406,7 @@ public class APIClient {
             byte[] hash = CryptoHelper.sha256(bFile);
 
             currentTarVersion = Utils.bytesToHex(hash);
-            Log.e(TAG, bundleName + ": updateBundle: version of the current tar: " + currentTarVersion);
+            Log.d(TAG, bundleName + ": updateBundle: version of the current tar: " + currentTarVersion);
 
             if (latestVersion != null) {
                 if (latestVersion.equals(currentTarVersion)) {
@@ -436,8 +436,7 @@ public class APIClient {
             tryExtractTar(bundleFile, extractedFolder);
         }
 
-        logFiles("updateBundle after", ctx);
-
+//        logFiles("updateBundle after", ctx);
     }
 
     public String getLatestVersion(String bundleName) {
@@ -532,7 +531,7 @@ public class APIClient {
             return false;
         }
         String extractFolderName = app.getFilesDir().getAbsolutePath() + BUNDLES_FOLDER + "/" + extractedFolder;
-        Log.e(TAG, "tryExtractTar: " + extractFolderName);
+//        Log.e(TAG, "tryExtractTar: " + extractFolderName);
         boolean result = false;
         TarArchiveInputStream debInputStream = null;
         try {
@@ -641,7 +640,7 @@ public class APIClient {
     }
 
     public void updatePlatform() {
-        if (BuildConfig.DEBUG) {
+        if (BuildConfig.DEBUG) { //todo delete this
             Log.d(TAG, "updatePlatform: updating platform...");
             if (platformUpdating) return;
             platformUpdating = true;
@@ -652,7 +651,7 @@ public class APIClient {
                     APIClient apiClient = APIClient.getInstance(ctx);
                     apiClient.updateBundle(BREAD_BUY, BUY_FILE, BUY_EXTRACTED_FOLDER); //bread-buy-staging
                     long endTime = System.currentTimeMillis();
-                    Log.e(TAG, "updateBundle " + BREAD_BUY + ": DONE in " + (endTime - startTime) + "ms");
+                    Log.d(TAG, "updateBundle " + BREAD_BUY + ": DONE in " + (endTime - startTime) + "ms");
                     itemFinished();
 
                 }
@@ -676,7 +675,7 @@ public class APIClient {
                     APIClient apiClient = APIClient.getInstance(ctx);
                     apiClient.updateFeatureFlag();
                     long endTime = System.currentTimeMillis();
-                    Log.e(TAG, "updateFeatureFlag: DONE in " + (endTime - startTime) + "ms");
+                    Log.d(TAG, "updateFeatureFlag: DONE in " + (endTime - startTime) + "ms");
                     itemFinished();
                 }
             }).start();
@@ -687,7 +686,7 @@ public class APIClient {
                     APIClient apiClient = APIClient.getInstance(ctx);
                     apiClient.syncKvStore();
                     long endTime = System.currentTimeMillis();
-                    Log.e(TAG, "updatePlatform: DONE in " + (endTime - startTime) + "ms");
+                    Log.d(TAG, "updatePlatform: DONE in " + (endTime - startTime) + "ms");
                     itemFinished();
                 }
             }).start();
@@ -699,7 +698,7 @@ public class APIClient {
     private void itemFinished() {
         int items = itemsLeftToUpdate.incrementAndGet();
         if (items >= 4) {
-            Log.e(TAG, "PLATFORM ALL UPDATED: " + items);
+            Log.d(TAG, "PLATFORM ALL UPDATED: " + items);
             platformUpdating = false;
             itemsLeftToUpdate.set(0);
         }
