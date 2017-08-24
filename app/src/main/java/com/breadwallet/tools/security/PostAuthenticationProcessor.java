@@ -349,6 +349,7 @@ public class PostAuthenticationProcessor {
             canary = BRKeyStore.getCanary(app, BRConstants.CANARY_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
+            return;
         }
 
         if (canary == null || !canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
