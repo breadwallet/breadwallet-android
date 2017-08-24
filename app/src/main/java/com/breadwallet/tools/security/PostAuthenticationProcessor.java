@@ -124,7 +124,7 @@ public class PostAuthenticationProcessor {
     }
 
     public void onBitIDAuth(Activity app, boolean authenticated) {
-        BRBitId.processBitIdResponse(app, authenticated);
+        BRBitId.completeBitID(app, authenticated);
     }
 
     public void onRecoverWalletAuth(Activity app, boolean authAsked) {

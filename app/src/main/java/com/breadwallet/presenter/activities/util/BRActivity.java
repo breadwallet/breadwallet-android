@@ -110,7 +110,7 @@ public class BRActivity extends Activity {
                             if (BitcoinUrlHandler.isBitcoinUrl(result))
                                 BitcoinUrlHandler.processRequest(BRActivity.this, result);
                             else if (BRBitId.isBitId(result))
-                                BRBitId.tryBitIdUri(BRActivity.this, result, null);
+                                BRBitId.signBitID(BRActivity.this, result, null);
                             else
                                 Log.e(TAG, "onActivityResult: not bitcoin address NOR bitID");
                         }
@@ -129,7 +129,7 @@ public class BRActivity extends Activity {
 //                            if (BitcoinUrlHandler.isBitcoinUrl(result))
 //                                BitcoinUrlHandler.processRequest(BRActivity.this, result);
 //                            else if (BRBitId.isBitId(result))
-//                                BRBitId.tryBitIdUri(BRActivity.this, result, null);
+//                                BRBitId.signBitID(BRActivity.this, result, null);
 //                            else
 //                                Log.e(TAG, "onActivityResult: not bitcoin address NOR bitID");
                         }

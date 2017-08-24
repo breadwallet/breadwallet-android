@@ -42,6 +42,7 @@ JNIEXPORT void JNICALL Java_com_jniwrappers_BRKey_setPrivKey(
     int res = BRKeySetPrivKey(&_key, (const char *) bytePrivKey);
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "key is set, _key: %s", _key.secret);
 }
+
 JNIEXPORT void JNICALL Java_com_jniwrappers_BRKey_setSecret(
         JNIEnv *env,
         jobject thiz,
@@ -90,6 +91,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_decryptNative(JNIEnv *en
     size_t outSize = BRChacha20Poly1305AEADDecrypt(out, sizeof(out), &_key, (uint8_t *) byteNonce,
                                                    (uint8_t *) byteData,
                                                    (size_t) (dataSize), NULL, 0);
+    if (sizeof(out) == 0) return NULL;
     jbyteArray result = (*env)->NewByteArray(env, (jsize) outSize);
     (*env)->SetByteArrayRegion(env, result, 0, (jsize) outSize, (const jbyte *) out);
 

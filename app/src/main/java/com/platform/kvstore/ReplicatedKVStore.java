@@ -34,6 +34,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.util.Utils;
 import com.jniwrappers.BRKey;
 import com.platform.interfaces.KVStoreAdaptor;
 import com.platform.sqlite.KVEntity;
@@ -225,7 +226,13 @@ public class ReplicatedKVStore {
                 }
 
                 if (encrypted && kv != null) {
-                    kv.value = encrypted ? decrypt(kv.getValue()) : kv.getValue();
+                    byte[] val = kv.getValue();
+                    kv.value = encrypted ? decrypt(val) : val;
+                    if (val != null && Utils.isNullOrEmpty(kv.value)) {
+                        //decrypting failed
+                        Log.e(TAG, "get: Decrypting failed for key: " + key + ", deleting the kv");
+                        delete(key, curVer);
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();

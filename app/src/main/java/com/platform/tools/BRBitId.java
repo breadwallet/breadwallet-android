@@ -90,52 +90,33 @@ public class BRBitId {
         return false;
     }
 
-    public static void tryBitIdUri(final Activity app, String uri, JSONObject jsonBody) {
-        if (uri == null) {
-            Log.e(TAG, "tryBitIdUri: uri is null");
-            return;
+    public static void signBitID(final Activity app, String uri, JSONObject jsonBody) {
+
+        if (uri == null && jsonBody != null) {
+            try {
+                uri = jsonBody.getString("bitid_url");
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
 
-        URI bitIdUri = null;
+        if (uri == null) {
+            Log.e(TAG, "signBitID: uri is null");
+            return;
+        }
+        _bitUri = uri;
+
+        final URI bitIdUri;
         try {
-            bitIdUri = new URI(uri);
+            bitIdUri = new URI(_bitUri);
         } catch (URISyntaxException e) {
             e.printStackTrace();
-            Log.e(TAG, "tryBitIdUri: returning false: ", e);
+            Log.e(TAG, "signBitID: returning false: ", e);
             return;
         }
 
         final String biUri = bitIdUri.getHost() == null ? bitIdUri.toString() : bitIdUri.getHost();
-        final boolean authNeeded;
-        if (bitIdKeys.containsKey(biUri)) {
-            authNeeded = false;
-//            String sigAndAddress = bitIdKeys.get(biUri);
-//
-//            if (Utils.isNullOrEmpty(sigAndAddress))
-//                throw new NullPointerException("cannot be null or empty");
-//            String[] parts = sigAndAddress.split(" ");
-//            if (parts.length != 2)
-//                throw new IllegalArgumentException("cannot happen, sigAndAddress split byt a space does not give 2 strings");
-//            if (Utils.isNullOrEmpty(parts[0]) || Utils.isNullOrEmpty(parts[1]))
-//                throw new IllegalArgumentException("one of the parts is empty");
-//
-//            final String sig = parts[0];
-//            final String address = parts[1];
-//            //means we still have a valid key
-//            JSONObject postJson = new JSONObject();
-//            try {
-//                postJson.put("address", address);
-//                postJson.put("signature", sig);
-//            } catch (JSONException e) {
-//                e.printStackTrace();
-//            }
-//            WalletPlugin.handleBitId(postJson, true);
-//            return true;
-        } else {
-            authNeeded = true;
-        }
-
-        _bitUri = uri;
+        final boolean authNeeded = !bitIdKeys.containsKey(biUri);
 
         if (jsonBody != null) {
             try {
@@ -145,36 +126,34 @@ public class BRBitId {
                 _strToSign = jsonBody.getString("string_to_sign");
             } catch (JSONException e) {
                 e.printStackTrace();
-            }
-        } else if (bitIdUri != null && "bitid".equals(bitIdUri.getScheme())) {
-            if (app == null) {
-                Log.e(TAG, "tryBitIdUri: app is null, returning true still");
                 return;
             }
-
+        } else if ("bitid".equals(bitIdUri.getScheme())) {
+            if (app == null) {
+                Log.e(TAG, "signBitID: app is null, returning true still");
+                return;
+            }
             _promptString = "BitID Authentication Request";
         }
 
-        Log.e(TAG, "tryBitIdUri: _bitUri: " + _bitUri);
-        Log.e(TAG, "tryBitIdUri: _strToSign: " + _strToSign);
-        Log.e(TAG, "tryBitIdUri: _index: " + _index);
+        Log.e(TAG, "signBitID: _bitUri: " + _bitUri);
+        Log.e(TAG, "signBitID: _strToSign: " + _strToSign);
+        Log.e(TAG, "signBitID: _index: " + _index);
 
         new Thread(new Runnable() {
             @Override
             public void run() {
-//                byte[] phrase = null;
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                final Uri tmpUri = Uri.parse(_bitUri);
 
                 if (authNeeded) {
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            AuthManager.getInstance().authPrompt(app, _promptString, tmpUri.getHost(), true, new BRAuthCompletion() {
+                            AuthManager.getInstance().authPrompt(app, _promptString, bitIdUri.getHost(), true, new BRAuthCompletion() {
                                 @Override
                                 public void onComplete() {
                                     PostAuthenticationProcessor.getInstance().onBitIDAuth(app, true);
@@ -195,20 +174,20 @@ public class BRBitId {
         }).start();
     }
 
-    public static void processBitIdResponse(final Activity app, boolean authenticated) {
+    public static void completeBitID(final Activity app, boolean authenticated) {
         final byte[] phrase;
         final byte[] nulTermPhrase;
         final byte[] seed;
         if (!authenticated) {
-            WalletPlugin.handleBitId(null, false);
+            WalletPlugin.sendBitIdResponse(null, false);
             return;
         }
         if (app == null) {
-            Log.e(TAG, "processBitIdResponse: app is null");
+            Log.e(TAG, "completeBitID: app is null");
             return;
         }
         if (_bitUri == null) {
-            Log.e(TAG, "processBitIdResponse: _bitUri is null");
+            Log.e(TAG, "completeBitID: _bitUri is null");
             return;
         }
 
@@ -217,14 +196,14 @@ public class BRBitId {
         try {
             phrase = BRKeyStore.getPhrase(app, BRConstants.REQUEST_PHRASE_BITID);
         } catch (UserNotAuthenticatedException e) {
-            Log.e(TAG, "processBitIdResponse: failed to getKeyStorePhrase: " + e.getMessage());
+            Log.e(TAG, "completeBitID: failed to getKeyStorePhrase: " + e.getMessage());
             return;
         }
         if (Utils.isNullOrEmpty(phrase)) throw new NullPointerException("cant happen");
         nulTermPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
         seed = BRWalletManager.getSeedFromPhrase(nulTermPhrase);
-        if (seed == null) {
-            Log.e(TAG, "processBitIdResponse: seed is null!");
+        if (Utils.isNullOrEmpty(seed)) {
+            Log.e(TAG, "completeBitID: seed is null!");
             return;
         }
 
@@ -232,7 +211,6 @@ public class BRBitId {
         new Thread(new Runnable() {
             @Override
             public void run() {
-
                 try {
                     if (_strToSign == null) {
                         //meaning it's a link handling
@@ -241,7 +219,6 @@ public class BRBitId {
                         //meaning its the wallet plugin, glidera auth (platform)
                         bitIdPlatform(app, uri, seed);
                     }
-
                 } finally {
                     //release everything
                     _bitUri = null;
@@ -249,9 +226,9 @@ public class BRBitId {
                     _bitIdUrl = null;
                     _promptString = null;
                     _index = 0;
-                    if (phrase != null) Arrays.fill(phrase, (byte) 0);
+                    Arrays.fill(phrase, (byte) 0);
                     if (nulTermPhrase != null) Arrays.fill(nulTermPhrase, (byte) 0);
-                    if (seed != null) Arrays.fill(seed, (byte) 0);
+                    Arrays.fill(seed, (byte) 0);
                 }
             }
         }).start();
@@ -260,21 +237,16 @@ public class BRBitId {
 
     private static void bitIdPlatform(Activity app, Uri uri, byte[] seed) {
 
-        String scheme = "https";
-
-        String u = uri.getQueryParameter("u");
-        if (u != null && u.equalsIgnoreCase("1")) {
-            scheme = "http";
-        }
         final String biUri = uri.getHost() == null ? uri.toString() : uri.getHost();
-        final String callbackUrl = String.format("%s://%s%s", scheme, uri.getHost(), uri.getPath());
-        Log.e(TAG, "GLIDERA: callbackUrl:" + callbackUrl);
         final byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, _bitIdUrl);
         if (key == null) {
-            Log.d(TAG, "processBitIdResponse: key is null!");
+            Log.d(TAG, "bitIdPlatform: key is null!");
             return;
         }
-//                    Log.e(TAG, "run: uriWithNonce: " + uriWithNonce);
+        if (_strToSign == null) {
+            Log.d(TAG, "bitIdPlatform: _strToSign is null!");
+            return;
+        }
         final String sig = BRBitId.signMessage(_strToSign, new BRKey(key));
         final String address = new BRKey(key).address();
 
@@ -286,7 +258,7 @@ public class BRBitId {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        //save the signature for about 60 seconds.
+        //keep auth off for this host for 60 seconds.
         if (!bitIdKeys.containsKey(biUri)) {
             bitIdKeys.put(biUri, true);
             Log.d(TAG, "run: saved temporary sig for key: " + biUri);
@@ -304,7 +276,7 @@ public class BRBitId {
                 }
             }).start();
         }
-        WalletPlugin.handleBitId(postJson, true);
+        WalletPlugin.sendBitIdResponse(postJson, true);
     }
 
     private static void bitIdLink(Activity app, Uri uri, byte[] seed) {
@@ -332,11 +304,11 @@ public class BRBitId {
         final byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, _bitUri);
 
         if (key == null) {
-            Log.d(TAG, "processBitIdResponse: key is null!");
+            Log.d(TAG, "completeBitID: key is null!");
             return;
         }
 
-        final String sig = BRBitId.signMessage(_strToSign == null ? uriWithNonce : _strToSign, new BRKey(key));
+        final String sig = BRBitId.signMessage(uriWithNonce, new BRKey(key));
         final String address = new BRKey(key).address();
         Log.e(TAG, "LINK: address: " + address);
         JSONObject postJson = new JSONObject();
@@ -355,10 +327,10 @@ public class BRBitId {
                 .header("Content-Type", "application/json")
                 .build();
         Response res = APIClient.getInstance(app).sendRequest(request, true, 0);
-        Log.e(TAG, "processBitIdResponse: res.code: " + res.code());
-        Log.e(TAG, "processBitIdResponse: res.code: " + res.message());
+        Log.e(TAG, "completeBitID: res.code: " + res.code());
+        Log.e(TAG, "completeBitID: res.code: " + res.message());
         try {
-            Log.e(TAG, "processBitIdResponse: body: " + res.body().string());
+            Log.e(TAG, "completeBitID: body: " + res.body().string());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -378,7 +350,6 @@ public class BRBitId {
 
         return nonce;
     }
-
 
     public static String signMessage(String message, BRKey key) {
         byte[] signingData = formatMessageForBitcoinSigning(message);
