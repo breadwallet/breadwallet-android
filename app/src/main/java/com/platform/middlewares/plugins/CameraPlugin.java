@@ -16,7 +16,11 @@ import android.widget.Toast;
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.CameraActivity;
+import com.breadwallet.presenter.activities.ScanQRActivity;
+import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRToast;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.util.BRConstants;
 import com.platform.BRHTTPHelper;
@@ -39,7 +43,6 @@ import java.io.UnsupportedEncodingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static com.breadwallet.tools.util.BRConstants.REQUEST_IMAGE_CAPTURE;
 
 /**
  * BreadWallet
@@ -107,31 +110,36 @@ public class CameraPlugin implements Plugin {
                 Log.e(TAG, "handle: no camera available: ");
                 return BRHTTPHelper.handleError(404, null, baseRequest, response);
             }
-            if (ContextCompat.checkSelfPermission(app,
-                    Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // Should we show an explanation?
-                if (ActivityCompat.shouldShowRequestPermissionRationale(app,
-                        Manifest.permission.CAMERA)) {
-                    Log.e(TAG, "handle: no camera access, showing instructions");
-                    BRToast.showCustomToast(app,
-                            app.getString(R.string.CameraPlugin_allowCameraAccess_Android),
-                            BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_blue);
-                } else {
-                    // No explanation needed, we can request the permission.
-                    ActivityCompat.requestPermissions(app,
-                            new String[]{Manifest.permission.CAMERA},
-                            BRConstants.CAMERA_REQUEST_GLIDERA_ID);
-                }
-            } else {
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(app.getPackageManager()) != null) {
-                    app.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                }
 
-                continuation = ContinuationSupport.getContinuation(request);
-                continuation.suspend(response);
-                globalBaseRequest = baseRequest;
+            try {
+
+                // Check if the camera permission is granted
+                if (ContextCompat.checkSelfPermission(app,
+                        Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(app,
+                            Manifest.permission.CAMERA)) {
+                        BRDialog.showCustomDialog(app, "Permission Required.", app.getString(R.string.CameraPlugin_allowCameraAccess_Android), "close", null, new BRDialogView.BROnClickListener() {
+                            @Override
+                            public void onClick(BRDialogView brDialogView) {
+                                brDialogView.dismiss();
+                            }
+                        }, null, null, 0);
+                    } else {
+                        // No explanation needed, we can request the permission.
+                        ActivityCompat.requestPermissions(app,
+                                new String[]{Manifest.permission.CAMERA},
+                                BRConstants.CAMERA_REQUEST_ID);
+                    }
+                } else {
+                    // Permission is granted, open camera
+                    Intent intent = new Intent(app, CameraActivity.class);
+                    app.startActivityForResult(intent, BRConstants.REQUEST_IMAGE_CAPTURE);
+                    app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
             return true;

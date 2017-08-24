@@ -208,6 +208,11 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>
+        <activity
+            android:name=".presenter.activities.CameraActivity"
+            android:launchMode="singleInstance"
+            android:screenOrientation="portrait">
+        </activity>
     </application>
 
 </manifest>
