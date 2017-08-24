@@ -50,15 +50,13 @@ public class BRConstants {
     public static final int SEND_BCH_REQUEST = 118;
     public static final int PROVE_PHRASE_REQUEST = 119;
 
-
-    public static final int SCANNER_REQUEST = 201;
-    public static final int SCANNER_BCH_REQUEST = 202;
-
-
     /**
      * Request codes for take picture
      */
-    public static final int REQUEST_IMAGE_CAPTURE = 111;
+    public static final int SCANNER_REQUEST = 201;
+    public static final int SCANNER_BCH_REQUEST = 202;
+    public static final int REQUEST_IMAGE_CAPTURE = 203;
+
 
     public static final String CANARY_STRING = "canary";
     public static final String FIRST_ADDRESS = "firstAddress";
