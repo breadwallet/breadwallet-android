@@ -6,9 +6,7 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.BRHTTPHelper;
@@ -23,8 +21,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.Locale;
@@ -170,11 +166,11 @@ public class WalletPlugin implements Plugin {
                 continuation = ContinuationSupport.getContinuation(request);
                 continuation.suspend(response);
                 globalBaseRequest = baseRequest;
-                BRBitId.tryBitIdUri(app, obj.getString("bitid_url"), obj);
+                BRBitId.signBitID(app, null, obj);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG, "handle: Failed to parse Json request body: " + target + " " + baseRequest.getMethod());
-                return true;
+                return BRHTTPHelper.handleError(400, "failed to parse json", baseRequest, response);
             }
 
             return true;
@@ -185,7 +181,7 @@ public class WalletPlugin implements Plugin {
     }
 
 
-    public static void handleBitId(final JSONObject restJson, final boolean authenticated) {
+    public static void sendBitIdResponse(final JSONObject restJson, final boolean authenticated) {
 
         new Thread(new Runnable() {
             @Override
@@ -195,17 +191,23 @@ public class WalletPlugin implements Plugin {
                         try {
                             ((HttpServletResponse) continuation.getServletResponse()).sendError(401);
                         } catch (IOException e) {
-                            Log.e(TAG, "handleBitId: failed to send error 401: ", e);
+                            Log.e(TAG, "sendBitIdResponse: failed to send error 401: ", e);
                             e.printStackTrace();
                         }
                         return;
                     }
                     if (restJson == null || restJson.isNull("signature")) {
-                        Log.e(TAG, "handleBitId: WARNING restJson is null: " + restJson);
+                        Log.e(TAG, "sendBitIdResponse: WARNING restJson is null: " + restJson);
+                        try {
+                            ((HttpServletResponse) continuation.getServletResponse()).sendError(500, "json malformed or null");
+                        } catch (IOException e) {
+                            Log.e(TAG, "sendBitIdResponse: failed to send error 401: ", e);
+                            e.printStackTrace();
+                        }
                         return;
                     }
                     if (continuation == null) {
-                        Log.e(TAG, "handleBitId: WARNING continuation is null");
+                        Log.e(TAG, "sendBitIdResponse: WARNING continuation is null");
                         return;
                     }
 
@@ -213,10 +215,10 @@ public class WalletPlugin implements Plugin {
                         continuation.getServletResponse().setContentType("application/json");
                         continuation.getServletResponse().setCharacterEncoding("UTF-8");
                         continuation.getServletResponse().getWriter().print(restJson);
-                        Log.d(TAG, "handleBitId: finished with writing to the response: " + restJson);
+                        Log.d(TAG, "sendBitIdResponse: finished with writing to the response: " + restJson);
                     } catch (Exception e) {
                         e.printStackTrace();
-                        Log.e(TAG, "handleBitId Failed to send json: ", e);
+                        Log.e(TAG, "sendBitIdResponse Failed to send json: ", e);
                     }
                     ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
                 } finally {
