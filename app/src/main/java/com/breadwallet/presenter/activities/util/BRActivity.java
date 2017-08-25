@@ -10,6 +10,7 @@ import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
+import com.platform.middlewares.plugins.CameraPlugin;
 import com.platform.tools.BRBitId;
 
 /**
