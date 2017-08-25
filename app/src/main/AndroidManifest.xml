@@ -174,7 +174,7 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".presenter.activities.ScanQRActivity"
+            android:name=".presenter.activities.camera.ScanQRActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>
@@ -209,7 +209,7 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".presenter.activities.CameraActivity"
+            android:name=".presenter.activities.camera.CameraActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>
