@@ -184,15 +184,11 @@ public class CameraPlugin implements Plugin {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                Bitmap img =  getResizedBitmap(BitmapFactory.decodeByteArray(data, 0, data.length), 1000);
-
+                Bitmap img = getResizedBitmap(BitmapFactory.decodeByteArray(data, 0, data.length), 1000);
+                Log.e(TAG, "handleCameraImageTaken: w:" + img.getWidth() + "h:" + img.getHeight());
                 if (globalBaseRequest == null || continuation == null) {
                     //shit should now happen
                     Log.e(TAG, "handleCameraImageTaken: WARNING: " + continuation + " " + globalBaseRequest);
-//                    globalBaseRequest.setHandled(true);
-//                    ((HttpServletResponse) continuation.getServletResponse()).setStatus(500);
-//                    continuation.complete();
-//                    continuation = null;
                     return;
                 }
                 try {

@@ -70,18 +70,20 @@ public class NodesActivity extends BRActivity {
         setContentView(R.layout.activity_nodes);
 
         ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        faq.setVisibility(View.GONE);
 
-        faq.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Activity app = NodesActivity.this;
-                Intent intent = new Intent(app, WebViewActivity.class);
-                intent.putExtra("url", URL_SUPPORT);
-                intent.putExtra("articleId", BRConstants.reScan);
-                app.startActivity(intent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
-            }
-        });
+//        faq.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                BRAnimator.showSupportFragment(NodesActivity.this,);
+////                Activity app = NodesActivity.this;
+////                Intent intent = new Intent(app, WebViewActivity.class);
+////                intent.putExtra("url", URL_SUPPORT);
+////                intent.putExtra("articleId", BRConstants.reScan);
+////                app.startActivity(intent);
+////                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+//            }
+//        });
 
         nodeStatus = (TextView) findViewById(R.id.node_status);
         trustNode = (TextView) findViewById(R.id.node_text);

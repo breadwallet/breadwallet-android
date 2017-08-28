@@ -41,6 +41,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import io.sigpipe.jbsdiff.InvalidHeaderException;
@@ -102,15 +103,15 @@ public class APIClient {
     private static APIClient ourInstance;
 
     public static final String BUNDLES = "bundles";
-    public static String BREAD_BUY = "bread-buy";
+    public static String BREAD_BUY = "bread-frontend-staging"; //todo make this production
     public static String BREAD_SUPPORT = "bread-support";
 
     public static final String BUNDLES_FOLDER = String.format("/%s", BUNDLES);
 
-    public static final String BUY_FILE = String.format("/%s/%s.tar", BUNDLES, BREAD_BUY);
-    public static final String BUY_EXTRACTED_FOLDER = String.format("%s-extracted", BREAD_BUY);
-    public static final String SUPPORT_FILE = String.format("/%s/%s.tar", BUNDLES, BREAD_SUPPORT);
-    public static final String SUPPORT_EXTRACTED_FOLDER = String.format("%s-extracted", BREAD_SUPPORT);
+    public static String BUY_FILE;
+    public static String BUY_EXTRACTED_FOLDER ;
+    public static String SUPPORT_FILE;
+    public static String SUPPORT_EXTRACTED_FOLDER;
 
     private boolean platformUpdating = false;
     private AtomicInteger itemsLeftToUpdate = new AtomicInteger(0);
@@ -150,8 +151,13 @@ public class APIClient {
     private APIClient(Context context) {
         ctx = context;
         if (0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
-            BREAD_BUY = "bread-buy-staging";
+//            BREAD_BUY = "bread-buy-staging";
+            BREAD_BUY = "bread-frontend-staging";
             BREAD_SUPPORT = "bread-support-staging";
+            BUY_FILE = String.format("/%s/%s.tar", BUNDLES, BREAD_BUY);
+            BUY_EXTRACTED_FOLDER = String.format("%s-extracted", BREAD_BUY);
+            SUPPORT_FILE = String.format("/%s/%s.tar", BUNDLES, BREAD_SUPPORT);
+            SUPPORT_EXTRACTED_FOLDER = String.format("%s-extracted", BREAD_SUPPORT);
         }
     }
 
@@ -327,7 +333,7 @@ public class APIClient {
         Response response = null;
         byte[] data = new byte[0];
         try {
-            OkHttpClient client = new OkHttpClient.Builder().followRedirects(false)/*.addInterceptor(new LoggingInterceptor())*/.build();
+            OkHttpClient client = new OkHttpClient.Builder().followRedirects(false).connectTimeout(60, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
 //            Log.e(TAG, "sendRequest: before executing the request: " + request.headers().toString());
             Log.d(TAG, "sendRequest: headers for : " + request.url() + "\n" + request.headers());
             request = request.newBuilder().header("User-agent", Utils.getAgentString(ctx, "OkHttp/3.4.1")).build();
