@@ -23,6 +23,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
+import com.breadwallet.presenter.activities.settings.NodesActivity;
 import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
@@ -30,7 +31,6 @@ import com.breadwallet.presenter.entities.BRMenuItem;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
-import com.breadwallet.tools.util.BRConstants;
 import com.platform.APIClient;
 import com.platform.HTTPServer;
 
@@ -38,7 +38,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.breadwallet.R.id.menu_listview;
-import static com.platform.HTTPServer.URL_SUPPORT;
 
 /**
  * BreadWallet
@@ -122,12 +121,13 @@ public class FragmentMenu extends Fragment {
             @Override
             public void onClick(View v) {
                 Log.e(TAG, "onClick: Support");
-                Intent intent = new Intent(getActivity(), WebViewActivity.class);
-                intent.putExtra("url", URL_SUPPORT);
-//                intent.putExtra("navigate", "support");
-                Activity app = getActivity();
-                app.startActivity(intent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+//                Intent intent = new Intent(getActivity(), WebViewActivity.class);
+//                intent.putExtra("url", URL_SUPPORT);
+////                intent.putExtra("navigate", "support");
+//                Activity app = getActivity();
+//                app.startActivity(intent);
+//                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                BRAnimator.showSupportFragment(getActivity(), null);
             }
         }));
         itemList.add(new BRMenuItem("Settings", R.drawable.ic_settings, new View.OnClickListener() {

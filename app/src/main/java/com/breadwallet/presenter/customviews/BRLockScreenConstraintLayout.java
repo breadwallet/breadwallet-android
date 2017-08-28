@@ -66,7 +66,6 @@ public class BRLockScreenConstraintLayout extends ConstraintLayout {
     }
 
     private void init() {
-        Log.e(TAG, "init: ");
         trianglesPaintBlack = new Paint();
         trianglesPaint = new Paint();
         trianglesPaintBlack.setStyle(Paint.Style.FILL);
