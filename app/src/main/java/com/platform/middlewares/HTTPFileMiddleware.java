@@ -70,10 +70,10 @@ public class HTTPFileMiddleware implements Middleware {
         File temp;
         String requestedFile = app.getFilesDir() + bundlePath + target;
         temp = new File(requestedFile);
-        if (temp.exists()) {
+        if (temp.exists() && !temp.isDirectory()) {
             Log.d(TAG, "handle: found bundle for:" + target);
         } else {
-            Log.e(TAG, "handle: no bundle found for: " + target);
+            Log.d(TAG, "handle: no bundle found for: " + target);
             return false;
         }
 

@@ -134,7 +134,6 @@ public class PostAuthenticationProcessor {
                 success = BRKeyStore.putPhrase(phraseForKeyStore.getBytes(),
                         app, BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
             } catch (UserNotAuthenticatedException e) {
-                e.printStackTrace();
                 return;
             }
 

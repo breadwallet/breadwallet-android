@@ -104,7 +104,6 @@ public class BRAnimator {
     }
 
     public static void showFragmentByTag(Activity app, String tag) {
-        Log.e(TAG, "showFragmentByTag: " + tag);
         if (tag == null) return;
         //catch animation duration, make it 0 for no animation, then restore it.
         final int slideAnimation = SLIDE_ANIMATION_DURATION;
@@ -195,7 +194,6 @@ public class BRAnimator {
             Log.e(TAG, "showTransactionPager: Already showing");
             return;
         }
-        Log.e(TAG, "showTransactionPager: " + position);
         fragmentTransactionDetails = new FragmentTransactionDetails();
         fragmentTransactionDetails.setItems(items);
         Bundle bundle = new Bundle();

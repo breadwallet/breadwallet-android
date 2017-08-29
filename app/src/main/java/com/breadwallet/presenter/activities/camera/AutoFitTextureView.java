@@ -16,6 +16,8 @@ package com.breadwallet.presenter.activities.camera;
  * limitations under the License.
  */
 
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.util.AttributeSet;
 import android.view.TextureView;
 
@@ -28,9 +30,11 @@ public class AutoFitTextureView extends TextureView {
 
     private int mRatioWidth = 0;
     private int mRatioHeight = 0;
+    private Paint framePaint;
 
     public AutoFitTextureView(Context context) {
         this(context, null);
+        init(context, null);
     }
 
     public AutoFitTextureView(Context context, AttributeSet attrs) {
@@ -39,6 +43,10 @@ public class AutoFitTextureView extends TextureView {
 
     public AutoFitTextureView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+    }
+
+    private void init(Context ctx, AttributeSet attrs) {
+        framePaint = new Paint();
     }
 
     /**
@@ -56,6 +64,11 @@ public class AutoFitTextureView extends TextureView {
         mRatioWidth = width;
         mRatioHeight = height;
         requestLayout();
+    }
+
+    @Override
+    public void onDrawForeground(Canvas canvas) {
+        super.onDrawForeground(canvas);
     }
 
     @Override

@@ -88,7 +88,7 @@ import java.util.concurrent.TimeUnit;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class CameraActivity extends BRActivity implements View.OnClickListener, FragmentCompat.OnRequestPermissionsResultCallback {
+public class CameraActivity extends BRActivity implements View.OnClickListener, ActivityCompat.OnRequestPermissionsResultCallback {
     private static final String TAG = CameraActivity.class.getName();
     public static boolean appVisible = false;
     private static CameraActivity app;
@@ -422,27 +422,6 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
             return choices[0];
         }
     }
-
-//    public static Camera2BasicFragment newInstance() {
-//        return new Camera2BasicFragment();
-//    }
-
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                             Bundle savedInstanceState) {
-//        return inflater.inflate(R.layout.fragment_camera2_basic, container, false);
-//    }
-//
-//    @Override
-//    public void onViewCreated(final View view, Bundle savedInstanceState) {
-
-//    }
-//
-//    @Override
-//    public void onActivityCreated(Bundle savedInstanceState) {
-//        super.onActivityCreated(savedInstanceState);
-//    }
-
 
     private void requestCameraPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(this, Manifest.permission.CAMERA)) {
