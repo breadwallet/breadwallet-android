@@ -137,7 +137,7 @@ public class FragmentRequestAmount extends Fragment {
         currListIndex = signalLayout.indexOfChild(currencyListLayout);
         keyboardIndex = signalLayout.indexOfChild(keyboardLayout);
 
-        mTitle.setText(getString(R.string.RequestAnAmoutn_title));
+        mTitle.setText(getString(R.string.Receive_request));
         setListeners();
 
         signalLayout.removeView(shareButtonsLayout);

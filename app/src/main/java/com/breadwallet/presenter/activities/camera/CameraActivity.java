@@ -851,13 +851,13 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
                 takePicture();
                 break;
             }
-            case R.id.info: {
-                new AlertDialog.Builder(CameraActivity.this)
-                        .setMessage(R.string.intro_message)
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show();
-                break;
-            }
+//            case R.id.info: {
+//                new AlertDialog.Builder(CameraActivity.this)
+//                        .setMessage(R.string.intro_message)
+//                        .setPositiveButton(android.R.string.ok, null)
+//                        .show();
+//                break;
+//            }
         }
     }
 

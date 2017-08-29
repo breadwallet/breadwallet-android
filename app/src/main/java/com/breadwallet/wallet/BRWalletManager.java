@@ -314,7 +314,7 @@ public class BRWalletManager {
                                 ((Activity) ctx).runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        BRToast.showCustomToast(ctx, ctx.getString(R.string.BRWalletManager_checkingPrivKeyBalance_Android), 500, Toast.LENGTH_LONG, R.drawable.toast_layout_blue);
+                                        BRToast.showCustomToast(ctx, ctx.getString(R.string.Import_checking), 500, Toast.LENGTH_LONG, R.drawable.toast_layout_blue);
                                     }
                                 });
                             if (editText == null) {
@@ -557,9 +557,9 @@ public class BRWalletManager {
                     public void run() {
                         AlertDialog alert;
                         AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-                        builder.setTitle(R.string.BRWalletManager_transactionRejected_Android);
+                        builder.setTitle(R.string.Prompts_RecommendRescan_title);
 
-                        builder.setMessage(recommendRescan == 1 ? ctx.getString(R.string.BRWalletManager_walletOutOfSync_Android) : "");
+                        builder.setMessage(recommendRescan == 1 ? ctx.getString(R.string.Prompts_RecommendRescan_body) : "");
                         if (recommendRescan == 1)
                             builder.setPositiveButton(R.string.ReScan_alertAction,
                                     new DialogInterface.OnClickListener() {
@@ -630,7 +630,7 @@ public class BRWalletManager {
         final BRWalletManager m = BRWalletManager.getInstance();
         if (!m.isPasscodeEnabled(app)) {
             //Device passcode/password should be enabled for the app to work
-            BRDialog.showCustomDialog(app, "Warning", app.getString(R.string.IntroScreen_encryption_needed_Android),
+            BRDialog.showCustomDialog(app, "Warning", "A device screen lock is needed to safeguard your wallet. Go to \"Settings\" > \"Security\" > \"Screen lock\"",
                     "close", null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {

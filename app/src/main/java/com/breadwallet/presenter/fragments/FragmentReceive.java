@@ -270,7 +270,7 @@ public class FragmentReceive extends Fragment {
         if (!isReceive) {
             signalLayout.removeView(separator);
             signalLayout.removeView(requestButton);
-            mTitle.setText(getString(R.string.LoginScreen_myAddress));
+            mTitle.setText(getString(R.string.UnlockScreen_myAddress));
         }
 
         new Thread(new Runnable() {

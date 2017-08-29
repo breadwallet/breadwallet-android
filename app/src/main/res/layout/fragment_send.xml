@@ -45,7 +45,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_gravity="center_horizontal"
                 android:layout_margin="@dimen/bread_margin"
-                android:text="@string/Send.modalTitle"
+                android:text="@string/Send.title"
                 android:textColor="@color/almost_black"
                 android:textSize="18sp"
                 app:customFont="CircularPro-Bold.otf"

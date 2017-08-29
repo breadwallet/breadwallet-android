@@ -315,7 +315,7 @@
   <!-- Recover wallet header -->
   <string name="RecoverWallet.header">Recover Wallet</string>
   <!-- Reset PIN with paper key: header -->
-  <string name="RecoverWallet.header-reset-pin">Reset PIN</string>
+  <string name="RecoverWallet.headerResetPin">Reset PIN</string>
   <!-- Enter paper key instruction -->
   <string name="RecoverWallet.instruction">Enter Paper Key</string>
   <!-- Recover wallet intro -->
@@ -327,13 +327,13 @@
   <!-- Next button label -->
   <string name="RecoverWallet.next">Next</string>
   <!-- Reset PIN with paper key: more information button. -->
-  <string name="RecoverWallet.reset-pin-more-info">Tap here for more information.</string>
+  <string name="RecoverWallet.resetPinMoreInfo">Tap here for more information.</string>
   <!-- Next button accessibility label -->
   <string name="RecoverWallet.rightArrow">Right Arrow</string>
   <!-- Recover wallet sub-header -->
   <string name="RecoverWallet.subheader">Enter the paper key for the wallet you want to recover.</string>
   <!-- Reset PIN with paper key: sub-header -->
-  <string name="RecoverWallet.subheader-reset-pin">To reset your PIN, enter the words from your paper key into the boxes below.</string>
+  <string name="RecoverWallet.subheaderResetPin">To reset your PIN, enter the words from your paper key into the boxes below.</string>
   <!-- No amount entered error message. -->
   <string name="RequestAnAmount.noAmount">Please enter an amount first.</string>
   <!-- Request a specific amount of bitcoin -->
@@ -660,4 +660,6 @@
   <string name="WritePaperPhrase.previous">Previous</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d of %2$d</string>
+
+  <string name="lang_Android">en</string>
 </resources>
