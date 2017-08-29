@@ -81,7 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView10"
         android:layout_margin="@dimen/bread_margin"
-        android:text="@string/TouchIdSettings.switchLabel_Android"
+        android:text="Enable Fingerprint for Bread"
         android:textColor="@color/almost_black"
         android:textSize="18sp"
         app:customFont="CircularPro-Bold.otf"/>

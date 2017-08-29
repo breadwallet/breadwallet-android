@@ -54,7 +54,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
-                        android:text="@string/LoginScreen.header"
+                        android:text="bread"
                         android:textColor="@color/white"
                         android:textSize="36sp"
                         android:textStyle="bold"

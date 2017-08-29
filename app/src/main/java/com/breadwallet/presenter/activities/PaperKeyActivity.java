@@ -109,13 +109,13 @@ public class PaperKeyActivity extends BRActivity {
 
         if (wordArray.length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
             BRDialog.showCustomDialog(this, getString(R.string.JailbreakWarnings_title),
-                    getString(R.string.RecoveryPhrase_paperKeyError_Android), getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                    "Paper Key error, please contact support at breadwallet.com", getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();
                         }
                     }, null, null, 0);
-            FirebaseCrash.report(new IllegalArgumentException(getString(R.string.RecoveryPhrase_paperKeyError_Android)));
+            FirebaseCrash.report(new IllegalArgumentException("Paper Key error, please contact support at breadwallet.com"));
 
         } else {
             WordPagerAdapter adapter = new WordPagerAdapter(getFragmentManager());

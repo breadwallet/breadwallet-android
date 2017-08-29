@@ -124,7 +124,7 @@ public class FingerprintFragment extends Fragment
             }
         });
         mCancelButton.setText(R.string.Button_cancel);
-        mSecondDialogButton.setText(R.string.Fingerprint_usePin_Android);
+        mSecondDialogButton.setText("PIN");
         mFingerprintContent.setVisibility(View.VISIBLE);
         mSecondDialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
