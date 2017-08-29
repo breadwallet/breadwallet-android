@@ -26,12 +26,12 @@ import java.io.IOException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import static com.platform.APIClient.BREAD_POINT;
 import io.sigpipe.jbsdiff.InvalidHeaderException;
 import io.sigpipe.jbsdiff.Patch;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import static com.platform.APIClient.BREAD_BUY;
 import static com.platform.APIClient.BUNDLES;
 import static com.platform.APIClient.BUY_FILE;
 import static com.platform.APIClient.BUY_EXTRACTED_FOLDER;
@@ -101,7 +101,7 @@ public class PlatformTests {
     public void bundleExtractTest() {
         File bundleFile = new File(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + BUY_FILE);
         Request request = new Request.Builder()
-                .url(String.format("%s/assets/bundles/%s/download", BASE_URL, BREAD_BUY))
+                .url(String.format("%s/assets/bundles/%s/download", BASE_URL, BREAD_POINT))
                 .get().build();
 
         Response response = null;
@@ -132,7 +132,7 @@ public class PlatformTests {
         Response response = apiClient.sendRequest(request, false, 0);
         File bundleFile = new File(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + BUY_FILE);
         apiClient.writeBundleToFile(response, bundleFile);
-        String latestVersion = apiClient.getLatestVersion(BREAD_BUY);
+        String latestVersion = apiClient.getLatestVersion(BREAD_POINT);
         Assert.assertNotNull(latestVersion);
         String currentTarVersion = getCurrentVersion(bundleFile);
         Log.e(TAG, "bundleUpdateTest: latestVersion: " + latestVersion + ", currentTarVersion: " + currentTarVersion);
@@ -150,14 +150,14 @@ public class PlatformTests {
                 .get()
                 .url("https://s3.amazonaws.com/breadwallet-assets/bread-buy/bundle.tar").build();
         Response response = apiClient.sendRequest(request, false, 0);
-        File bundleFileOld = new File(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + String.format("/%s/%s.tar", BUNDLES, BREAD_BUY));
+        File bundleFileOld = new File(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + String.format("/%s/%s.tar", BUNDLES, BREAD_POINT));
         byte[] bundleFileOldBytes = apiClient.writeBundleToFile(response, bundleFileOld);
 
         request = new Request.Builder()
                 .get()
                 .url("https://s3.amazonaws.com/breadwallet-assets/bread-buy/bundle2.tar").build();
         response = apiClient.sendRequest(request, false, 0);
-        File bundleFileLatest = new File(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + String.format("/%s/%s.tar", BUNDLES, BREAD_BUY + "-test"));
+        File bundleFileLatest = new File(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + String.format("/%s/%s.tar", BUNDLES, BREAD_POINT + "-test"));
         apiClient.writeBundleToFile(response, bundleFileLatest);
 
         request = new Request.Builder()
@@ -179,7 +179,7 @@ public class PlatformTests {
         byte[] correctFileBytes = new byte[0];
         try {
 
-            FileOutputStream outputStream = new FileOutputStream(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + String.format("/%s/%s.tar", BUNDLES, BREAD_BUY));
+            FileOutputStream outputStream = new FileOutputStream(mActivityRule.getActivity().getFilesDir().getAbsolutePath() + String.format("/%s/%s.tar", BUNDLES, BREAD_POINT));
             Log.e(TAG, "bundleUpdateTest: beforeDiff");
 
             Patch.patch(bundleFileOldBytes, patchBytes, outputStream);
