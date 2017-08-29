@@ -17,19 +17,29 @@ package com.breadwallet.presenter.activities.camera;
  */
 
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.TextureView;
 
 import android.content.Context;
+
+import com.breadwallet.R;
 
 /**
  * A {@link TextureView} that can be adjusted to a specified aspect ratio.
  */
 public class AutoFitTextureView extends TextureView {
 
+    private static final String TAG = AutoFitTextureView.class.getName();
+
     private int mRatioWidth = 0;
     private int mRatioHeight = 0;
+    private int width;
+    private int height;
+    private int guideLineWidth = 600;
+    private int guideLineHeight = 400;
     private Paint framePaint;
 
     public AutoFitTextureView(Context context) {
@@ -39,14 +49,19 @@ public class AutoFitTextureView extends TextureView {
 
     public AutoFitTextureView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
+        init(context, attrs);
     }
 
     public AutoFitTextureView(Context context, AttributeSet attrs, int defStyle) {
         super(context, attrs, defStyle);
+        init(context, attrs);
     }
 
     private void init(Context ctx, AttributeSet attrs) {
         framePaint = new Paint();
+        framePaint.setAntiAlias(true);
+        framePaint.setStyle(Paint.Style.FILL);
+        framePaint.setColor(ctx.getColor(R.color.camera_guideline));
     }
 
     /**
@@ -68,14 +83,23 @@ public class AutoFitTextureView extends TextureView {
 
     @Override
     public void onDrawForeground(Canvas canvas) {
+        int left = width / 2 - guideLineWidth / 2;
+        int top = height / 2 - guideLineHeight / 2;
+        int right = width / 2 + guideLineWidth / 2;
+        int bottom = height / 2 + guideLineWidth / 2;
+        Log.e(TAG, "onDrawForeground: l:" + left);
+        Log.e(TAG, "onDrawForeground: t:" + top);
+        Log.e(TAG, "onDrawForeground: r:" + right);
+        Log.e(TAG, "onDrawForeground: b:" + bottom);
+        canvas.drawRect(left, top, right, bottom, framePaint);
         super.onDrawForeground(canvas);
     }
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int width = MeasureSpec.getSize(widthMeasureSpec);
-        int height = MeasureSpec.getSize(heightMeasureSpec);
+        width = MeasureSpec.getSize(widthMeasureSpec);
+        height = MeasureSpec.getSize(heightMeasureSpec);
         if (0 == mRatioWidth || 0 == mRatioHeight) {
             setMeasuredDimension(width, height);
         } else {
