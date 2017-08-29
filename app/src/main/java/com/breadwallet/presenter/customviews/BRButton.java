@@ -67,6 +67,7 @@ public class BRButton extends Button {
 
     public BRButton(Context context) {
         super(context);
+        init(context, null);
     }
 
     public BRButton(Context context, @Nullable AttributeSet attrs) {

@@ -21,7 +21,6 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuthenticationProcessor;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
@@ -29,7 +28,7 @@ import com.platform.HTTPServer;
 
 import java.io.Serializable;
 
-import static com.platform.APIClient.BREAD_SUPPORT;
+import static com.platform.APIClient.BREAD_POINT;
 import static com.platform.APIClient.SUPPORT_EXTRACTED_FOLDER;
 import static com.platform.APIClient.SUPPORT_FILE;
 
@@ -143,9 +142,9 @@ public class IntroActivity extends BRActivity implements Serializable {
             public void run() {
                 final long startTime = System.currentTimeMillis();
                 APIClient apiClient = APIClient.getInstance(IntroActivity.this);
-                apiClient.updateBundle(BREAD_SUPPORT, SUPPORT_FILE, SUPPORT_EXTRACTED_FOLDER);
+                apiClient.updateBundle(BREAD_POINT, SUPPORT_FILE, SUPPORT_EXTRACTED_FOLDER);
                 long endTime = System.currentTimeMillis();
-                Log.d(TAG, "updateBundle " + BREAD_SUPPORT + ": DONE in " + (endTime - startTime) + "ms");
+                Log.d(TAG, "updateBundle " + BREAD_POINT + ": DONE in " + (endTime - startTime) + "ms");
             }
         }).start();
     }

@@ -103,8 +103,8 @@ public class APIClient {
     private static APIClient ourInstance;
 
     public static final String BUNDLES = "bundles";
-    public static String BREAD_BUY = "bread-frontend-staging"; //todo make this production
-    public static String BREAD_SUPPORT = "bread-support";
+    public static String BREAD_POINT = "bread-frontend-staging"; //todo make this production
+//    public static String BREAD_SUPPORT = "bread-support";
 
     public static final String BUNDLES_FOLDER = String.format("/%s", BUNDLES);
 
@@ -152,12 +152,12 @@ public class APIClient {
         ctx = context;
         if (0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
 //            BREAD_BUY = "bread-buy-staging";
-            BREAD_BUY = "bread-frontend-staging";
-            BREAD_SUPPORT = "bread-support-staging";
-            BUY_FILE = String.format("/%s/%s.tar", BUNDLES, BREAD_BUY);
-            BUY_EXTRACTED_FOLDER = String.format("%s-extracted", BREAD_BUY);
-            SUPPORT_FILE = String.format("/%s/%s.tar", BUNDLES, BREAD_SUPPORT);
-            SUPPORT_EXTRACTED_FOLDER = String.format("%s-extracted", BREAD_SUPPORT);
+            BREAD_POINT = "bread-frontend-staging";
+//            BREAD_SUPPORT = "bread-support-staging";
+            BUY_FILE = String.format("/%s/%s.tar", BUNDLES, BREAD_POINT);
+            BUY_EXTRACTED_FOLDER = String.format("%s-extracted", BREAD_POINT);
+            SUPPORT_FILE = String.format("/%s/%s.tar", BUNDLES, BREAD_POINT);
+            SUPPORT_EXTRACTED_FOLDER = String.format("%s-extracted", BREAD_POINT);
         }
     }
 
@@ -276,7 +276,7 @@ public class APIClient {
     public Response sendRequest(Request locRequest, boolean needsAuth, int retryCount) {
         if (retryCount > 1)
             throw new RuntimeException("sendRequest: Warning retryCount is: " + retryCount);
-        boolean isTestVersion = BREAD_BUY.equalsIgnoreCase("staging") || BREAD_SUPPORT.contains("staging");
+        boolean isTestVersion = BREAD_POINT.contains("staging") ;
         boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
         Request request = locRequest.newBuilder().header("X-Testflight", isTestVersion ? "true" : "false").header("X-Bitcoin-Testnet", isTestNet ? "true" : "false").build();
         if (needsAuth) {
@@ -655,9 +655,9 @@ public class APIClient {
                 public void run() {
                     final long startTime = System.currentTimeMillis();
                     APIClient apiClient = APIClient.getInstance(ctx);
-                    apiClient.updateBundle(BREAD_BUY, BUY_FILE, BUY_EXTRACTED_FOLDER); //bread-buy-staging
+                    apiClient.updateBundle(BREAD_POINT, BUY_FILE, BUY_EXTRACTED_FOLDER); //bread-buy-staging
                     long endTime = System.currentTimeMillis();
-                    Log.d(TAG, "updateBundle " + BREAD_BUY + ": DONE in " + (endTime - startTime) + "ms");
+                    Log.d(TAG, "updateBundle " + BREAD_POINT + ": DONE in " + (endTime - startTime) + "ms");
                     itemFinished();
 
                 }
@@ -668,9 +668,9 @@ public class APIClient {
                 public void run() {
                     final long startTime = System.currentTimeMillis();
                     APIClient apiClient = APIClient.getInstance(ctx);
-                    apiClient.updateBundle(BREAD_SUPPORT, SUPPORT_FILE, SUPPORT_EXTRACTED_FOLDER); //bread-support-staging
+                    apiClient.updateBundle(BREAD_POINT, SUPPORT_FILE, SUPPORT_EXTRACTED_FOLDER); //bread-support-staging
                     long endTime = System.currentTimeMillis();
-                    Log.e(TAG, "updateBundle " + BREAD_SUPPORT + ": DONE in " + (endTime - startTime) + "ms");
+                    Log.e(TAG, "updateBundle " + BREAD_POINT + ": DONE in " + (endTime - startTime) + "ms");
                     itemFinished();
                 }
             }).start();
