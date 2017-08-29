@@ -148,7 +148,7 @@ public class KVStoreManager {
         Log.e(TAG, "txHash hex: " + Utils.bytesToHex(txHash));
         String hex = Utils.bytesToHex(CryptoHelper.sha256(txHash));
         String key = "txn-" + hex;
-//        Log.e(TAG, "getTxMetaData: txMetaData: " + key);
+        Log.e(TAG, "getTxMetaData: txMetaData: " + key);
 
         TxMetaData result = new TxMetaData();
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));

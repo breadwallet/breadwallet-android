@@ -261,7 +261,12 @@ public class AuthManager {
                 }
             }
         } else {
-            BRDialog.showCustomDialog(app, "", "A device screen lock is needed to safeguard your wallet. Go to \"Settings\" > \"Security\" > \"Screen lock\" and enable to continue.", "close", null, new BRDialogView.BROnClickListener() {
+            BRDialog.showCustomDialog(app,
+                    "",
+                    "A device screen lock is needed to safeguard your wallet. Go to \"Settings\" > \"Security\" > \"Screen lock\" and enable to continue.",
+                    "close",
+                    null,
+                    new BRDialogView.BROnClickListener() {
                 @Override
                 public void onClick(BRDialogView brDialogView) {
                     app.finish();

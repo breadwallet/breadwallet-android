@@ -7,6 +7,7 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
+import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
 import com.platform.HTTPServer;
 import com.platform.interfaces.Middleware;
@@ -63,12 +64,8 @@ public class HTTPFileMiddleware implements Middleware {
             return true;
         }
 
-        String bundlePath = HTTPServer.getBundlePath();
-
-        if (bundlePath == null) return false;
-
         File temp;
-        String requestedFile = app.getFilesDir() + bundlePath + target;
+        String requestedFile = APIClient.getInstance(app).getExtractedPath(app, target);
         temp = new File(requestedFile);
         if (temp.exists() && !temp.isDirectory()) {
             Log.d(TAG, "handle: found bundle for:" + target);

@@ -31,10 +31,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static com.platform.APIClient.BUNDLES;
-import static com.platform.APIClient.BUY_EXTRACTED_FOLDER;
-import static com.platform.APIClient.SUPPORT_EXTRACTED_FOLDER;
-
 
 /**
  * BreadWallet
@@ -217,20 +213,6 @@ public class HTTPServer {
         // kvstore plugin provides access to the shared replicated kv store
         Plugin kvStorePlugin = new KVStorePlugin();
         httpRouter.appendPlugin(kvStorePlugin);
-    }
-
-    public static void setMode(ServerMode theMode) {
-        mode = theMode;
-    }
-
-    public static String getBundlePath() {
-        String bundlePath = null;
-        if (HTTPServer.mode == HTTPServer.ServerMode.BUY || HTTPServer.mode == HTTPServer.ServerMode.EA) {
-            bundlePath = "/" + BUNDLES + "/" + BUY_EXTRACTED_FOLDER;
-        } else if (HTTPServer.mode == HTTPServer.ServerMode.SUPPORT) {
-            bundlePath = "/" + BUNDLES + "/" + SUPPORT_EXTRACTED_FOLDER;
-        }
-        return bundlePath;
     }
 
 }
