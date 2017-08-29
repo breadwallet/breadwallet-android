@@ -150,14 +150,14 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         final String addr = received ? item.getFrom()[0] : item.getTo()[0];
         convertView.account.setText(addr);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (convertView.account.getX() + convertView.account.getWidth() > convertView.timestamp.getX()) {
-                    convertView.account.setText(TextUtils.concat(addr.substring(0, 5), "…\n", "…", addr.substring(addr.length() - 5)));
-                }
-            }
-        }, 50);
+//        new Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (convertView.account.getX() + convertView.account.getWidth() > convertView.timestamp.getX()) {
+//                    convertView.account.setText(TextUtils.concat(addr.substring(0, 5), "…\n", "…", addr.substring(addr.length() - 5)));
+//                }
+//            }
+//        }, 50);
 
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext) - blockHeight + 1;
