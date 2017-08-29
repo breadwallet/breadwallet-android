@@ -102,16 +102,14 @@ public class APIClient {
     //singleton instance
     private static APIClient ourInstance;
 
-    public static final String BUNDLES = "bundles";
-    public static String BREAD_POINT = "bread-frontend-staging"; //todo make this production
-//    public static String BREAD_SUPPORT = "bread-support";
+    private static final String BUNDLES = "bundles";
+    private static String BREAD_POINT = "bread-frontend-staging"; //todo make this production
 
-    public static final String BUNDLES_FOLDER = String.format("/%s", BUNDLES);
+    private static final String BUNDLES_FOLDER = String.format("/%s", BUNDLES);
 
-    public static String BUY_FILE;
-    public static String BUY_EXTRACTED_FOLDER ;
-    public static String SUPPORT_FILE;
-    public static String SUPPORT_EXTRACTED_FOLDER;
+    private static String BREAD_FILE;
+    private static String BREAD_EXTRACTED;
+
 
     private boolean platformUpdating = false;
     private AtomicInteger itemsLeftToUpdate = new AtomicInteger(0);
@@ -151,13 +149,9 @@ public class APIClient {
     private APIClient(Context context) {
         ctx = context;
         if (0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
-//            BREAD_BUY = "bread-buy-staging";
             BREAD_POINT = "bread-frontend-staging";
-//            BREAD_SUPPORT = "bread-support-staging";
-            BUY_FILE = String.format("/%s/%s.tar", BUNDLES, BREAD_POINT);
-            BUY_EXTRACTED_FOLDER = String.format("%s-extracted", BREAD_POINT);
-            SUPPORT_FILE = String.format("/%s/%s.tar", BUNDLES, BREAD_POINT);
-            SUPPORT_EXTRACTED_FOLDER = String.format("%s-extracted", BREAD_POINT);
+            BREAD_FILE = String.format("/%s.tar", BREAD_POINT);
+            BREAD_EXTRACTED = String.format("%s-extracted", BREAD_POINT);
         }
     }
 
@@ -276,7 +270,7 @@ public class APIClient {
     public Response sendRequest(Request locRequest, boolean needsAuth, int retryCount) {
         if (retryCount > 1)
             throw new RuntimeException("sendRequest: Warning retryCount is: " + retryCount);
-        boolean isTestVersion = BREAD_POINT.contains("staging") ;
+        boolean isTestVersion = BREAD_POINT.contains("staging");
         boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
         Request request = locRequest.newBuilder().header("X-Testflight", isTestVersion ? "true" : "false").header("X-Bitcoin-Testnet", isTestNet ? "true" : "false").build();
         if (needsAuth) {
@@ -394,11 +388,11 @@ public class APIClient {
         return response.newBuilder().body(postReqBody).build();
     }
 
-    public void updateBundle(String bundleName, String fileName, String extractedFolder) {
-        File bundleFile = new File(ctx.getFilesDir().getAbsolutePath() + fileName);
-//        logFiles("updateBundle before", ctx);
+    public void updateBundle() {
+        File bundleFile = new File(getBundleResource(ctx, BREAD_FILE));
+        Log.d(TAG, "updateBundle: " + bundleFile);
         if (bundleFile.exists()) {
-            Log.d(TAG, bundleName + ": updateBundle: exists");
+            Log.d(TAG, bundleFile + ": updateBundle: exists");
 
             byte[] bFile = new byte[0];
             try {
@@ -407,51 +401,51 @@ public class APIClient {
                 e.printStackTrace();
             }
 
-            String latestVersion = getLatestVersion(bundleName);
+            String latestVersion = getLatestVersion();
             String currentTarVersion = null;
             byte[] hash = CryptoHelper.sha256(bFile);
 
             currentTarVersion = Utils.bytesToHex(hash);
-            Log.d(TAG, bundleName + ": updateBundle: version of the current tar: " + currentTarVersion);
+            Log.d(TAG, bundleFile + ": updateBundle: version of the current tar: " + currentTarVersion);
 
             if (latestVersion != null) {
                 if (latestVersion.equals(currentTarVersion)) {
-                    Log.d(TAG, bundleName + ": updateBundle: have the latest version");
-                    tryExtractTar(bundleFile, extractedFolder);
+                    Log.d(TAG, bundleFile + ": updateBundle: have the latest version");
+                    tryExtractTar();
                 } else {
-                    Log.d(TAG, bundleName + ": updateBundle: don't have the most recent version, download diff");
-                    downloadDiff(bundleFile, bundleName, currentTarVersion);
-                    tryExtractTar(bundleFile, extractedFolder);
+                    Log.d(TAG, bundleFile + ": updateBundle: don't have the most recent version, download diff");
+                    downloadDiff(currentTarVersion);
+                    tryExtractTar();
 
                 }
             } else {
-                Log.d(TAG, bundleName + ": updateBundle: latestVersion is null");
+                Log.d(TAG, bundleFile + ": updateBundle: latestVersion is null");
             }
 
         } else {
-            Log.d(TAG, bundleName + ": updateBundle: bundle doesn't exist, downloading new copy");
+            Log.d(TAG, bundleFile + ": updateBundle: bundle doesn't exist, downloading new copy");
             long startTime = System.currentTimeMillis();
             Request request = new Request.Builder()
-                    .url(String.format("%s/assets/bundles/%s/download", BASE_URL, bundleName))
+                    .url(String.format("%s/assets/bundles/%s/download", BASE_URL, BREAD_POINT))
                     .get().build();
             Response response = null;
             response = sendRequest(request, false, 0);
-            Log.d(TAG, bundleName + ": updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
-            writeBundleToFile(response, bundleFile);
+            Log.d(TAG, bundleFile + ": updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
+            writeBundleToFile(response);
 
-            tryExtractTar(bundleFile, extractedFolder);
+            tryExtractTar();
         }
 
 //        logFiles("updateBundle after", ctx);
     }
 
-    public String getLatestVersion(String bundleName) {
+    public String getLatestVersion() {
         String latestVersion = null;
         String response = null;
         try {
             response = sendRequest(new Request.Builder()
                     .get()
-                    .url(String.format("%s/assets/bundles/%s/versions", BASE_URL, bundleName))
+                    .url(String.format("%s/assets/bundles/%s/versions", BASE_URL, BREAD_POINT))
                     .build(), false, 0).body().string();
         } catch (IOException e) {
             e.printStackTrace();
@@ -470,29 +464,31 @@ public class APIClient {
         return latestVersion;
     }
 
-    public void downloadDiff(File bundleFile, String bundleName, String currentTarVersion) {
+    public void downloadDiff(String currentTarVersion) {
         Request diffRequest = new Request.Builder()
-                .url(String.format("%s/assets/bundles/%s/diff/%s", BASE_URL, bundleName, currentTarVersion))
+                .url(String.format("%s/assets/bundles/%s/diff/%s", BASE_URL, BREAD_POINT, currentTarVersion))
                 .get().build();
         Response diffResponse = sendRequest(diffRequest, false, 0);
         File patchFile = null;
         File tempFile = null;
         byte[] patchBytes = null;
         try {
-            patchFile = new File(String.format("/%s/%s.diff", BUNDLES, bundleName + "-patch"));
+            patchFile = new File(getBundleResource(ctx, BREAD_POINT + "-patch.diff"));
             patchBytes = diffResponse.body().bytes();
+            Log.e(TAG, "downloadDiff: trying to write to file");
             FileUtils.writeByteArrayToFile(patchFile, patchBytes);
 
             String compression = System.getProperty("jbsdiff.compressor", "tar");
             compression = compression.toLowerCase();
-            tempFile = new File(String.format("/%s/%s.tar", BUNDLES, bundleName + "-temp"));
+            tempFile = new File(getBundleResource(ctx, BREAD_POINT + "-temp.tar"));
+            File bundleFile = new File(getBundleResource(ctx, BREAD_POINT + ".tar"));
             FileUI.diff(bundleFile, tempFile, patchFile, compression);
 
             byte[] updatedBundleBytes = IOUtils.toByteArray(new FileInputStream(tempFile));
             FileUtils.writeByteArrayToFile(bundleFile, updatedBundleBytes);
 
         } catch (IOException | InvalidHeaderException | CompressorException | NullPointerException e) {
-            e.printStackTrace();
+            Log.e(TAG, "downloadDiff: ", e);
         } finally {
             if (patchFile != null)
                 patchFile.delete();
@@ -503,7 +499,7 @@ public class APIClient {
 //        logFiles("downloadDiff", ctx);
     }
 
-    public byte[] writeBundleToFile(Response response, File bundleFile) {
+    public byte[] writeBundleToFile(Response response) {
         byte[] bodyBytes;
         FileOutputStream fileOutputStream = null;
         assert (response != null);
@@ -513,6 +509,7 @@ public class APIClient {
                 return null;
             }
             bodyBytes = response.body().bytes();
+            File bundleFile = new File(getBundleResource(ctx, BREAD_POINT + ".tar"));
             FileUtils.writeByteArrayToFile(bundleFile, bodyBytes);
             return bodyBytes;
         } catch (IOException e) {
@@ -530,24 +527,23 @@ public class APIClient {
         return null;
     }
 
-    public boolean tryExtractTar(File inputFile, String extractedFolder) {
+    public boolean tryExtractTar() {
         Activity app = BreadApp.getBreadContext();
         if (app == null) {
             Log.e(TAG, "tryExtractTar: failed to extract, app is null");
             return false;
         }
-        String extractFolderName = app.getFilesDir().getAbsolutePath() + BUNDLES_FOLDER + "/" + extractedFolder;
-//        Log.e(TAG, "tryExtractTar: " + extractFolderName);
+        File bundleFile = new File(getBundleResource(ctx, BREAD_POINT + ".tar"));
         boolean result = false;
         TarArchiveInputStream debInputStream = null;
         try {
-            final InputStream is = new FileInputStream(inputFile);
+            final InputStream is = new FileInputStream(bundleFile);
             debInputStream = (TarArchiveInputStream) new ArchiveStreamFactory().createArchiveInputStream("tar", is);
             TarArchiveEntry entry = null;
             while ((entry = (TarArchiveEntry) debInputStream.getNextEntry()) != null) {
 
                 final String outPutFileName = entry.getName().replace("./", "");
-                final File outputFile = new File(extractFolderName, outPutFileName);
+                final File outputFile = new File(getBundleResource(ctx, BREAD_EXTRACTED), outPutFileName);
                 if (!entry.isDirectory()) {
                     FileUtils.writeByteArrayToFile(outputFile, org.apache.commons.compress.utils.IOUtils.toByteArray(debInputStream));
                 }
@@ -650,30 +646,21 @@ public class APIClient {
             Log.d(TAG, "updatePlatform: updating platform...");
             if (platformUpdating) return;
             platformUpdating = true;
+
+            //update Bundle
             new Thread(new Runnable() {
                 @Override
                 public void run() {
                     final long startTime = System.currentTimeMillis();
                     APIClient apiClient = APIClient.getInstance(ctx);
-                    apiClient.updateBundle(BREAD_POINT, BUY_FILE, BUY_EXTRACTED_FOLDER); //bread-buy-staging
-                    long endTime = System.currentTimeMillis();
-                    Log.d(TAG, "updateBundle " + BREAD_POINT + ": DONE in " + (endTime - startTime) + "ms");
-                    itemFinished();
-
-                }
-            }).start();
-
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    final long startTime = System.currentTimeMillis();
-                    APIClient apiClient = APIClient.getInstance(ctx);
-                    apiClient.updateBundle(BREAD_POINT, SUPPORT_FILE, SUPPORT_EXTRACTED_FOLDER); //bread-support-staging
+                    apiClient.updateBundle();
                     long endTime = System.currentTimeMillis();
                     Log.e(TAG, "updateBundle " + BREAD_POINT + ": DONE in " + (endTime - startTime) + "ms");
                     itemFinished();
                 }
             }).start();
+
+            //update feature flags
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -685,6 +672,8 @@ public class APIClient {
                     itemFinished();
                 }
             }).start();
+
+            //update kvStore
             new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -703,7 +692,7 @@ public class APIClient {
 
     private void itemFinished() {
         int items = itemsLeftToUpdate.incrementAndGet();
-        if (items >= 4) {
+        if (items >= 3) {
             Log.d(TAG, "PLATFORM ALL UPDATED: " + items);
             platformUpdating = false;
             itemsLeftToUpdate.set(0);
@@ -718,8 +707,34 @@ public class APIClient {
         kvStore.syncAllKeys();
     }
 
+    //returns the resource at bundles/path, if path is null then the bundle folder
+    public String getBundleResource(Context app, String path) {
+        String bundle = app.getFilesDir().getAbsolutePath() + BUNDLES_FOLDER;
+        if (Utils.isNullOrEmpty(path)) {
+            return bundle;
+        } else {
+            if (!path.startsWith("/")) {
+                path = "/" + path;
+            }
+            return bundle + path;
+        }
+    }
+
+    //returns the extracted folder or the path in it
+    public  String getExtractedPath(Context app, String path) {
+        String extracted = app.getFilesDir().getAbsolutePath() + BUNDLES_FOLDER + "/" + BREAD_EXTRACTED;
+        if (Utils.isNullOrEmpty(path)) {
+            return extracted;
+        } else {
+            if (!path.startsWith("/")) {
+                path = "/" + path;
+            }
+            return extracted + path;
+        }
+    }
+
     public void logFiles(String tag, Context ctx) {
-//        Log.e(TAG, "logFiles " + tag + " : START LOGGING");
+        Log.e(TAG, "logFiles " + tag + " : START LOGGING");
 //        String path = ctx.getFilesDir().getAbsolutePath() + "/" + BUNDLES + "/" + SUPPORT_EXTRACTED_FOLDER;
 //
 //        File directory = new File(path);
@@ -728,7 +743,7 @@ public class APIClient {
 //        for (int i = 0; files != null && i < files.length; i++) {
 //            Log.e("Files", "FileName:" + files[i].getName());
 //        }
-//        Log.e(TAG, "logFiles " + tag + " : START LOGGING");
+        Log.e(TAG, "logFiles " + tag + " : START LOGGING");
     }
 
 }

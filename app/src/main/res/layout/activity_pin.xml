@@ -86,7 +86,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:text="UnlockScreen.subheader"
+        android:text="@string/UnlockScreen.subheader"
         android:textColor="@color/almost_black"
         android:textSize="18sp"
         app:customFont="CircularPro-Book.otf"

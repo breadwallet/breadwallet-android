@@ -69,8 +69,9 @@ model {
             disable 'MissingTranslation'
         }
 
+        gitUpdateModules()
+
         buildTypes {
-            gitUpdateModules()
 
             release {
                 proguardFiles.add(file('proguard-rules.pro'))
@@ -107,6 +108,7 @@ model {
                     debuggable = true
                 }
             }
+
         }
     }
 }

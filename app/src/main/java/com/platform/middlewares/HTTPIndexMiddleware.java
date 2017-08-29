@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
 import com.platform.HTTPServer;
 import com.platform.interfaces.Middleware;
@@ -54,10 +55,8 @@ public class HTTPIndexMiddleware implements Middleware {
             Log.e(TAG, "handle: app is null!");
             return true;
         }
-        String bundlePath = HTTPServer.getBundlePath();
-        if (bundlePath == null) return false;
 
-        String indexFile = app.getFilesDir() + bundlePath + "/index.html";
+        String indexFile = APIClient.getInstance(app).getExtractedPath(app, "/index.html");
 
         File temp = new File(indexFile);
         if (!temp.exists()) {
