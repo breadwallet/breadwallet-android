@@ -90,7 +90,7 @@ public class KVStoreManager {
             result.creationDate = json.getInt("creationDate");
             result.name = json.getString("name");
 //            result.currentCurrency = json.getString("currentCurrency");
-
+            Log.d(TAG, "getWalletInfo: " + result.creationDate + ", name: " + result.name);
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(TAG, "getWalletInfo: FAILED to get json value");
@@ -159,7 +159,7 @@ public class KVStoreManager {
             Log.e(TAG, "getTxMetaData: value is null for key: " + key);
             return null;
         }
-
+        Log.e(TAG, "getTxMetaData: FOUND:" + key);
         JSONObject json;
 
         try {

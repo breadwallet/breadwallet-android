@@ -14,8 +14,11 @@ import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
+import com.platform.entities.WalletInfo;
+import com.platform.tools.KVStoreManager;
 
 import junit.framework.Assert;
 
@@ -462,7 +465,18 @@ public class BRKeyStore {
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
-        return result != null && result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
+        if (Utils.isNullOrEmpty(result)) {
+            //if none, try getting from KVStore
+            WalletInfo info = KVStoreManager.getInstance().getWalletInfo(context);
+            if (info != null) {
+                int creationDate = info.creationDate;
+                putWalletCreationTime(creationDate, context);
+                return creationDate;
+            } else
+                return 0;
+        } else {
+            return TypesConverter.bytesToInt(result);
+        }
     }
 
     public static boolean putPinCode(String pinCode, Context context) {
@@ -486,20 +500,20 @@ public class BRKeyStore {
         }
         String pinCode = result == null ? "" : new String(result);
         try {
-            int test = Integer.parseInt(pinCode);
+            Integer.parseInt(pinCode);
         } catch (Exception e) {
             Log.e(TAG, "getPinCode: WARNING passcode isn't a number: " + pinCode);
             pinCode = "";
             putPinCode(pinCode, context);
-            BRKeyStore.putFailCount(0, context);
-            BRKeyStore.putFailTimeStamp(0, context);
+            putFailCount(0, context);
+            putFailTimeStamp(0, context);
             return pinCode;
         }
         if (pinCode.length() != 6 && pinCode.length() != 4) {
             pinCode = "";
             putPinCode(pinCode, context);
             putFailCount(0, context);
-           putFailTimeStamp(0, context);
+            putFailTimeStamp(0, context);
         }
         return pinCode;
     }
