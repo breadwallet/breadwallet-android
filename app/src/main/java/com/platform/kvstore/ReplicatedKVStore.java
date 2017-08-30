@@ -749,7 +749,6 @@ public class ReplicatedKVStore {
         buffer.putLong(t);
         byte[] byteTime = buffer.array();
         System.arraycopy(byteTime, 0, nonce, 4, byteTime.length);
-
         return nonce;
     }
 
@@ -757,11 +756,22 @@ public class ReplicatedKVStore {
      * encrypt some data using self.key
      */
     public byte[] encrypt(byte[] data) {
-        if (data == null) return null;
+        if (data == null) {
+            Log.e(TAG, "encrypt: data is null");
+            return null;
+        }
         Context app = context;
         if (app == null) app = BreadApp.getBreadContext();
-        if (app == null) return null;
-        BRKey key = new BRKey(BRKeyStore.getAuthKey(app));
+        if (app == null) {
+            Log.e(TAG, "encrypt: app is null");
+            return null;
+        }
+        byte[] authKey = BRKeyStore.getAuthKey(app);
+        if (Utils.isNullOrEmpty(authKey)) {
+            Log.e(TAG, "encrypt: authKey is empty: " + (authKey == null ? null : authKey.length));
+            return null;
+        }
+        BRKey key = new BRKey(authKey);
         byte[] nonce = getNonce();
         byte[] encryptedData = key.encryptNative(data, nonce);
         //result is nonce + encryptedData

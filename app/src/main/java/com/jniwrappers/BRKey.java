@@ -31,14 +31,16 @@ public class BRKey {
     public static final String TAG = BRKey.class.getName();
 
     public BRKey(byte[] key) {
-        setPrivKey(key);
+        if (!setPrivKey(key)) {
+            throw new IllegalArgumentException("Failed to setup the key");
+        }
     }
 
     public BRKey(String hexSecret) {
         setSecret(Utils.hexToBytes(hexSecret));
     }
 
-    private native void setPrivKey(byte[] privKey);
+    private native boolean setPrivKey(byte[] privKey);
 
     private native void setSecret(byte[] secret);
 
