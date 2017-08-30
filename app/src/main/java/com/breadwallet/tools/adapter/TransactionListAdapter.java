@@ -26,6 +26,8 @@ import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.wallet.BRPeerManager;
+import com.platform.entities.TxMetaData;
+import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -142,6 +144,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 //        new InfoSlider().init(infoCardLayout);.....
 
         TxItem item = itemFeed.get(TxManager.getInstance().currentPrompt == null ? position : position - 1);
+
+        TxMetaData txMetaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
+        String commentString = txMetaData == null || txMetaData.comment == null ? "" : txMetaData.comment;
+
+        convertView.comment.setText(commentString);
 
         boolean received = item.getSent() == 0;
         convertView.mainLayout.setBackgroundResource(getResourceByPos(position));

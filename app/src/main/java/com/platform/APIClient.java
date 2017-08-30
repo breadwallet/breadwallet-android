@@ -722,7 +722,7 @@ public class APIClient {
 
     //returns the extracted folder or the path in it
     public  String getExtractedPath(Context app, String path) {
-        String extracted = app.getFilesDir().getAbsolutePath() + BUNDLES_FOLDER + "/" + BREAD_EXTRACTED;
+        String extracted = app.getFilesDir().getAbsolutePath()  + "/" + BREAD_EXTRACTED;
         if (Utils.isNullOrEmpty(path)) {
             return extracted;
         } else {
