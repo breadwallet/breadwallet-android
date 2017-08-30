@@ -1,5 +1,6 @@
 package com.breadwallet.security;
 
+import android.security.keystore.UserNotAuthenticatedException;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
@@ -53,8 +54,8 @@ public class KeyStoreTests {
         //set get phrase
         byte[] phrase = "axis husband project any sea patch drip tip spirit tide bring belt".getBytes();
         try {
-            BRKeyStore.putKeyStorePhrase(phrase, mActivityRule.getActivity(), 0);
-        } catch (BRKeystoreErrorException e) {
+            BRKeyStore.putPhrase(phrase, mActivityRule.getActivity(), 0);
+        } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             Assert.fail();
         }
@@ -62,8 +63,8 @@ public class KeyStoreTests {
 
         byte[] freshGet = new byte[0];
         try {
-            freshGet = BRKeyStore.getKeyStorePhrase(mActivityRule.getActivity(), 0);
-        } catch (BRKeystoreErrorException e) {
+            freshGet = BRKeyStore.getPhrase(mActivityRule.getActivity(), 0);
+        } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
         Assert.assertArrayEquals(freshGet, phrase);
@@ -71,16 +72,16 @@ public class KeyStoreTests {
         //set get Japaneese phrase
         byte[] japPhrase = "こせき　ぎじにってい　けっこん　せつぞく　うんどう　ふこう　にっすう　こせい　きさま　なまみ　たきび　はかい".getBytes();
         try {
-            BRKeyStore.putKeyStorePhrase(japPhrase, mActivityRule.getActivity(), 0);
-        } catch (BRKeystoreErrorException e) {
+            BRKeyStore.putPhrase(japPhrase, mActivityRule.getActivity(), 0);
+        } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             Assert.fail();
         }
         assertFilesExist(BRKeyStore.PHRASE_ALIAS);
         byte[] freshJapGet = new byte[0];
         try {
-            freshJapGet = BRKeyStore.getKeyStorePhrase(mActivityRule.getActivity(), 0);
-        } catch (BRKeystoreErrorException e) {
+            freshJapGet = BRKeyStore.getPhrase(mActivityRule.getActivity(), 0);
+        } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
         Assert.assertArrayEquals(freshJapGet, japPhrase);
@@ -91,16 +92,16 @@ public class KeyStoreTests {
     public void setGetCanary() {
         String canary = "canary";
         try {
-            BRKeyStore.putKeyStoreCanary(canary, mActivityRule.getActivity(), 0);
-        } catch (BRKeystoreErrorException e) {
+            BRKeyStore.putCanary(canary, mActivityRule.getActivity(), 0);
+        } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             Assert.fail();
         }
         assertFilesExist(BRKeyStore.CANARY_ALIAS);
         String freshGet = "";
         try {
-            freshGet = BRKeyStore.getKeyStoreCanary(mActivityRule.getActivity(), 0);
-        } catch (BRKeystoreErrorException e) {
+            freshGet = BRKeyStore.getCanary(mActivityRule.getActivity(), 0);
+        } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
         Assert.assertEquals(freshGet, canary);
@@ -211,21 +212,21 @@ public class KeyStoreTests {
         BRKeyStore.putLastPinUsedTime(time, mActivityRule.getActivity());
         assertFilesExist(BRKeyStore.PASS_TIME_ALIAS);
         long freshGet;
-        freshGet = BRKeyStore.getLastPasscodeUsedTime(mActivityRule.getActivity());
+        freshGet = BRKeyStore.getLastPinUsedTime(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
     }
 
     @Test
     public void testClearKeyStore() {
         try {
-            BRKeyStore.putKeyStorePhrase("axis husband project any sea patch drip tip spirit tide bring belt".getBytes(), mActivityRule.getActivity(), 0);
-        } catch (BRKeystoreErrorException e) {
+            BRKeyStore.putPhrase("axis husband project any sea patch drip tip spirit tide bring belt".getBytes(), mActivityRule.getActivity(), 0);
+        } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             Assert.fail();
         }
         try {
-            BRKeyStore.putKeyStoreCanary("canary", mActivityRule.getActivity(), 0);
-        } catch (BRKeystoreErrorException e) {
+            BRKeyStore.putCanary("canary", mActivityRule.getActivity(), 0);
+        } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             Assert.fail();
         }
@@ -252,16 +253,16 @@ public class KeyStoreTests {
 
         byte[] phrase = "some".getBytes();
         try {
-            phrase = BRKeyStore.getKeyStorePhrase(mActivityRule.getActivity(), 0);
-        } catch (BRKeystoreErrorException e) {
+            phrase = BRKeyStore.getPhrase(mActivityRule.getActivity(), 0);
+        } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
 
         String canary = "some";
 
         try {
-            canary = BRKeyStore.getKeyStoreCanary(mActivityRule.getActivity(), 0);
-        } catch (BRKeystoreErrorException e) {
+            canary = BRKeyStore.getCanary(mActivityRule.getActivity(), 0);
+        } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
 
@@ -275,7 +276,7 @@ public class KeyStoreTests {
         Assert.assertEquals(BRKeyStore.getFailCount(mActivityRule.getActivity()), 0);
         Assert.assertEquals(BRKeyStore.getFailTimeStamp(mActivityRule.getActivity()), 0);
         Assert.assertEquals(BRKeyStore.getSpendLimit(mActivityRule.getActivity()), 0);
-        Assert.assertEquals(BRKeyStore.getLastPasscodeUsedTime(mActivityRule.getActivity()), 0);
+        Assert.assertEquals(BRKeyStore.getLastPinUsedTime(mActivityRule.getActivity()), 0);
 
     }
 
