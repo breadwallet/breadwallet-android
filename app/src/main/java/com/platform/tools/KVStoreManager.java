@@ -74,7 +74,7 @@ public class KVStoreManager {
         JSONObject json;
 
         try {
-            byte[] decompressed = BRCompressor.bz2Extract(obj.kv.getValue());
+            byte[] decompressed = BRCompressor.bz2Extract(obj.kv.value);
             if (decompressed == null) {
                 Log.e(TAG, "getWalletInfo: decompressed value is null");
                 return null;
