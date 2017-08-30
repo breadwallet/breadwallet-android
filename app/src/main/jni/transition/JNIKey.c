@@ -32,7 +32,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_compactSign(
     return result;
 }
 
-JNIEXPORT void JNICALL Java_com_jniwrappers_BRKey_setPrivKey(
+JNIEXPORT jboolean JNICALL Java_com_jniwrappers_BRKey_setPrivKey(
         JNIEnv *env,
         jobject thiz,
         jbyteArray privKey) {
@@ -40,6 +40,10 @@ JNIEXPORT void JNICALL Java_com_jniwrappers_BRKey_setPrivKey(
 
     jbyte *bytePrivKey = (*env)->GetByteArrayElements(env, privKey, 0);
     int res = BRKeySetPrivKey(&_key, (const char *) bytePrivKey);
+    if (res)
+        return JNI_TRUE;
+    else
+        return JNI_FALSE;
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "key is set, _key: %s", _key.secret);
 }
 
