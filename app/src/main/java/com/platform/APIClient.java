@@ -103,7 +103,7 @@ public class APIClient {
     private static APIClient ourInstance;
 
     private static final String BUNDLES = "bundles";
-    private static String BREAD_POINT = "bread-frontend-staging"; //todo make this production
+    public static String BREAD_POINT = "bread-frontend-staging"; //todo make this production
 
     private static final String BUNDLES_FOLDER = String.format("/%s", BUNDLES);
 
@@ -332,8 +332,10 @@ public class APIClient {
             Log.d(TAG, "sendRequest: headers for : " + request.url() + "\n" + request.headers());
             request = request.newBuilder().header("User-agent", Utils.getAgentString(ctx, "OkHttp/3.4.1")).build();
             response = client.newCall(request).execute();
+            String s = null;
             try {
                 data = response.body().bytes();
+                s = new String(data);
             } catch (IOException e) {
                 e.printStackTrace();
             }

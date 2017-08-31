@@ -1,6 +1,5 @@
 package com.jniwrappers;
 
-
 import com.breadwallet.tools.util.Utils;
 
 /**
