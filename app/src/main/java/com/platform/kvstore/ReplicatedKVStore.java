@@ -34,11 +34,15 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.Utils;
 import com.jniwrappers.BRKey;
 import com.platform.interfaces.KVStoreAdaptor;
 import com.platform.sqlite.KVEntity;
 import com.platform.sqlite.PlatformSqliteHelper;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -491,12 +495,14 @@ public class ReplicatedKVStore {
                 } else {
                     Log.i(TAG, String.format("Remote key %s is newer, fetching...", key));
                     CompletionObject remoteGet = remoteKvStore.get(key, remoteVersion);
+
 //                    KVEntity kv = remoteGet.kv;
                     if (remoteGet.err != null) {
                         Log.e(TAG, String.format("Error fetching the remote value for key %s, error: %s", key, err));
                         return false;
                     }
                     byte[] decryptedValue = remoteGet.value;
+
                     CompletionObject setObj = new CompletionObject(CompletionObject.RemoteKVStoreError.unknown);
                     try {
                         setObj = _set(new KVEntity(localKv.getVersion(), remoteGet.version, key, decryptedValue, remoteGet.time, localKv.getDeleted()));
@@ -527,6 +533,8 @@ public class ReplicatedKVStore {
         // 3. for kvs that we do have, sync em
         // 4. for kvs that they don't have that we do, upload em
         if (syncRunning) return false;
+        deleteAllKVs();
+        List<KVEntity> ent = getAllKVs();
         syncRunning = true;
         long startTime = System.currentTimeMillis();
 
@@ -773,7 +781,15 @@ public class ReplicatedKVStore {
         }
         BRKey key = new BRKey(authKey);
         byte[] nonce = getNonce();
+        if (Utils.isNullOrEmpty(nonce) || nonce.length != 12) {
+            Log.e(TAG, "encrypt: nonce is invalid: " + (nonce == null ? null : nonce.length));
+            return null;
+        }
         byte[] encryptedData = key.encryptNative(data, nonce);
+        if (Utils.isNullOrEmpty(encryptedData)) {
+            Log.e(TAG, "encrypt: encryptNative failed: " + (encryptedData == null ? null : encryptedData.length));
+            return null;
+        }
         //result is nonce + encryptedData
         byte[] result = new byte[nonce.length + encryptedData.length];
         System.arraycopy(nonce, 0, result, 0, nonce.length);

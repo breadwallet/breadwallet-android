@@ -97,11 +97,11 @@ model {
                     create() {
                         type = "boolean"
                         name = "BITCOIN_TESTNET"
-                        value = "true"
+                        value = "false"
                     }
                 }
                 ndk {
-                    CFlags.addAll(['-DBITCOIN_TESTNET=1'])
+//                    CFlags.addAll(['-DBITCOIN_TESTNET=1'])
                     minifyEnabled = false
                     debuggable = true
                 }
@@ -121,14 +121,13 @@ repositories {
 }
 
 dependencies {
-
-    compile group: 'commons-io', name: 'commons-io', version: '2.0.1'
-    compile group: 'org.eclipse.jetty', name: 'jetty-webapp', version: '9.2.19.v20160908'
-    compile group: 'org.eclipse.jetty.websocket', name: 'websocket-server', version: '9.2.19.v20160908'
-    compile group: 'org.eclipse.jetty', name: 'jetty-continuation', version: '9.2.19.v20160908'
-
-    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.22'
+    compile 'commons-io:commons-io:2.0.1'
+    compile 'org.eclipse.jetty:jetty-webapp:9.2.19.v20160908'
+    compile 'org.eclipse.jetty.websocket:websocket-server:9.2.19.v20160908'
+    compile 'org.eclipse.jetty:jetty-continuation:9.2.19.v20160908'
+    compile 'org.slf4j:slf4j-api:1.7.22'
     //    compile 'org.apache.commons:commons-compress:1.8.1'
+    //    compile group: 'org.apache.ant', name: 'ant', version: '1.8.2'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support:design:25.3.1'
     compile 'com.android.support:gridlayout-v7:25.3.1'

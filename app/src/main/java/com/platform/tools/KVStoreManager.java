@@ -75,7 +75,7 @@ public class KVStoreManager {
 
         try {
             byte[] decompressed = BRCompressor.bz2Extract(obj.kv.value);
-            if (decompressed == null) {
+            if (obj.kv.value == null) {
                 Log.e(TAG, "getWalletInfo: decompressed value is null");
                 return null;
             }
@@ -115,7 +115,7 @@ public class KVStoreManager {
         if (old.name != null) old.name = "My Bread";
 
         JSONObject obj = new JSONObject();
-        byte[] result = new byte[0];
+        byte[] result;
         try {
             obj.put("classVersion", old.classVersion);
             obj.put("creationDate", old.creationDate);
