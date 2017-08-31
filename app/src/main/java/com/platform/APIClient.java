@@ -261,7 +261,21 @@ public class APIClient {
     public String signRequest(String request) {
         Log.d(TAG, "signRequest: " + request);
         byte[] doubleSha256 = CryptoHelper.doubleSha256(request.getBytes(StandardCharsets.UTF_8));
-        BRKey key = new BRKey(BRKeyStore.getAuthKey(ctx));
+        BRKey key;
+        try {
+            byte[] authKey = BRKeyStore.getAuthKey(ctx);
+            if (Utils.isNullOrEmpty(authKey)) {
+                Log.e(TAG, "signRequest: authkey is null");
+                return null;
+            }
+            key = new BRKey(authKey);
+        } catch (IllegalArgumentException ex) {
+            key = null;
+        }
+        if (key == null) {
+            Log.e(TAG, "signRequest: key is null, failed to create BRKey");
+            return null;
+        }
         byte[] signedBytes = key.compactSign(doubleSha256);
         return Base58.encode(signedBytes);
 
@@ -304,6 +318,7 @@ public class APIClient {
                     request.header("Content-Type"), request.header("Date"), request.url().encodedPath()
                             + ((queryString != null && !queryString.isEmpty()) ? ("?" + queryString) : ""));
             String signedRequest = signRequest(requestString);
+            if (signedRequest == null) return null;
             byte[] tokenBytes = BRKeyStore.getToken(ctx);
             String token = tokenBytes == null ? "" : new String(tokenBytes);
             if (token.isEmpty()) token = getToken();
@@ -483,6 +498,7 @@ public class APIClient {
             String compression = System.getProperty("jbsdiff.compressor", "tar");
             compression = compression.toLowerCase();
             tempFile = new File(getBundleResource(ctx, BREAD_POINT + "-temp.tar"));
+            tempFile.createNewFile();
             File bundleFile = new File(getBundleResource(ctx, BREAD_POINT + ".tar"));
             FileUI.diff(bundleFile, tempFile, patchFile, compression);
 
@@ -723,8 +739,8 @@ public class APIClient {
     }
 
     //returns the extracted folder or the path in it
-    public  String getExtractedPath(Context app, String path) {
-        String extracted = app.getFilesDir().getAbsolutePath()  + "/" + BREAD_EXTRACTED;
+    public String getExtractedPath(Context app, String path) {
+        String extracted = app.getFilesDir().getAbsolutePath() + "/" + BREAD_EXTRACTED;
         if (Utils.isNullOrEmpty(path)) {
             return extracted;
         } else {

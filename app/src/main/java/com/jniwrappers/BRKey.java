@@ -29,7 +29,7 @@ import com.breadwallet.tools.util.Utils;
 public class BRKey {
     public static final String TAG = BRKey.class.getName();
 
-    public BRKey(byte[] key) {
+    public BRKey(byte[] key) throws IllegalArgumentException{
         if (!setPrivKey(key)) {
             throw new IllegalArgumentException("Failed to setup the key");
         }

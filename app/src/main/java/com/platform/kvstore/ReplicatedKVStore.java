@@ -464,7 +464,12 @@ public class ReplicatedKVStore {
                     // if the remote version is zero it means it doesnt yet exist on the server. set the remote version
                     // to "1" to create the key on the server
                     long useRemoteVer = (remoteVersion == 0 || remoteVersion < recorderRemoteVersion) ? 1 : remoteVersion;
-                    CompletionObject obj = remoteKvStore.put(key, localKv.getValue(), useRemoteVer);
+                    byte[] encrypted = encrypt(localKv.getValue());
+                    if (Utils.isNullOrEmpty(encrypted)) {
+                        Log.e(TAG, "_syncKey: encrypting value before sending to remote failed");
+                        return false;
+                    }
+                    CompletionObject obj = remoteKvStore.put(key, encrypted, useRemoteVer);
 
                     if (obj.err != null) {
                         Log.e(TAG, String.format("Error updating remote version for key %s, error: %s", key, err));
@@ -496,12 +501,21 @@ public class ReplicatedKVStore {
                     Log.i(TAG, String.format("Remote key %s is newer, fetching...", key));
                     CompletionObject remoteGet = remoteKvStore.get(key, remoteVersion);
 
-//                    KVEntity kv = remoteGet.kv;
                     if (remoteGet.err != null) {
                         Log.e(TAG, String.format("Error fetching the remote value for key %s, error: %s", key, err));
                         return false;
                     }
-                    byte[] decryptedValue = remoteGet.value;
+
+                    byte[] val = remoteGet.value;
+                    if (Utils.isNullOrEmpty(val)) {
+                        Log.e(TAG, "_syncKey: key: " + key + " ,from the remote, is empty");
+                        return false;
+                    }
+                    byte[] decryptedValue = decrypt(val);
+                    if (Utils.isNullOrEmpty(decryptedValue)) {
+                        Log.e(TAG, "_syncKey: failed to decrypt the value from remote for key: " + key);
+                        return false;
+                    }
 
                     CompletionObject setObj = new CompletionObject(CompletionObject.RemoteKVStoreError.unknown);
                     try {
