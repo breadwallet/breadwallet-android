@@ -109,7 +109,6 @@ public class BRCompressor {
         return null;
     }
 
-
     public static byte[] bz2Compress(byte[] data) {
         if (data == null) return null;
         byte[] compressedData = null;
