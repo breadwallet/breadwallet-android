@@ -971,7 +971,7 @@ JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getBCashBala
     return balance;
 }
 
-JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTxSize(
+JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTxSize(
         JNIEnv *env,
         jobject thiz,
         jbyteArray serializedTransaction) {
@@ -981,7 +981,7 @@ JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTxSize(
     jbyte *byteTx = (*env)->GetByteArrayElements(env, serializedTransaction, 0);
     BRTransaction *tmpTx = BRTransactionParse((uint8_t *) byteTx, (size_t) txLength);
 
-    return (jlong) BRTransactionSize(tmpTx);
+    return (jint) (jlong) BRTransactionSize(tmpTx);
 }
 
 //creates and signs a bcash tx, returns the serialized tx

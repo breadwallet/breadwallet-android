@@ -32,10 +32,6 @@ public class BRTransactionEntity {
     private long timestamp;
     private String txHash;
 
-    private BRTransactionEntity(){
-
-    }
-
     public long getBlockheight() {
         return blockheight;
     }
