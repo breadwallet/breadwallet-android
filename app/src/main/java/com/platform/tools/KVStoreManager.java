@@ -188,15 +188,15 @@ public class KVStoreManager {
 
         boolean needsUpdate = false;
 
-        if (!Utils.isNullOrEmpty(data.exchangeCurrency) && !data.exchangeCurrency.equalsIgnoreCase(old.exchangeCurrency)) {
+        if (!Utils.isNullOrEmpty(data.exchangeCurrency) && !Utils.isNullOrEmpty(old.exchangeCurrency) && !data.exchangeCurrency.equalsIgnoreCase(old.exchangeCurrency)) {
             old.exchangeCurrency = data.exchangeCurrency;
             needsUpdate = true;
         }
-        if (!Utils.isNullOrEmpty(data.deviceId) && !data.deviceId.equals(old.deviceId)) {
+        if (!Utils.isNullOrEmpty(data.deviceId) && !Utils.isNullOrEmpty(old.deviceId) && !data.deviceId.equals(old.deviceId)) {
             old.deviceId = data.deviceId;
             needsUpdate = true;
         }
-        if (!Utils.isNullOrEmpty(data.comment) && !data.comment.equals(old.comment)) {
+        if (!Utils.isNullOrEmpty(data.comment) && !Utils.isNullOrEmpty(old.comment) && !data.comment.equals(old.comment)) {
             old.comment = data.comment;
             needsUpdate = true;
         }
