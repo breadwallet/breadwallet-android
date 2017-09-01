@@ -235,18 +235,19 @@ public class TxManager {
                     tx.creationTime = (int) (item.getTimeStamp() / 1000);
                     tx.blockHeight = item.getBlockHeight();
                     tx.deviceId = BRSharedPrefs.getDeviceId(app);
-                    byte[] raw = null;
-                    for (BRTransactionEntity rawTx : rawTxs) {
-                        if (rawTx.getTxHash().equalsIgnoreCase(item.getTxHashHexReversed())) {
-                            raw = rawTx.getBuff();
-                            break;
-                        }
-                    }
-                    if (Utils.isNullOrEmpty(raw)) {
-                        Log.e(TAG, "updateTxMetaData: raw tx not found for txHash: " + item.getTxHashHexReversed());
-                    } else {
-                        tx.txSize = BRWalletManager.getTxSize(raw);
-                    }
+                    //todo fix the txSize problem
+//                    byte[] raw = null;
+////                    for (BRTransactionEntity rawTx : rawTxs) {
+////                        if (rawTx.getTxHash().equalsIgnoreCase(item.getTxHashHexReversed())) {
+////                            raw = rawTx.getBuff();
+////                            break;
+////                        }
+////                    }
+//                    if (Utils.isNullOrEmpty(raw)) {
+//                        Log.e(TAG, "updateTxMetaData: raw tx not found for txHash: " + item.getTxHashHexReversed());
+//                    } else {
+//                        tx.txSize = BRWalletManager.getTxSize(raw);
+//                    }
 
                     kvM.putTxMetaData(app, tx, item.getTxHash());
                 }

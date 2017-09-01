@@ -421,7 +421,7 @@ public class ReplicatedKVStore {
 
         long recorderRemoteVersion = remoteVersion(key);
         if (err != CompletionObject.RemoteKVStoreError.notFound && remoteVersion > 0 && recorderRemoteVersion == remoteVersion) {
-            Log.e(TAG, "_syncKey: " + String.format("Remote version of key: %s is the same as the one we have", key));
+//            Log.e(TAG, "_syncKey: " + String.format("Remote version of key: %s is the same as the one we have", key));
             return true;
         }
 

@@ -147,7 +147,7 @@ public class KVStoreManager {
         long ver = kvStore.localVersion(key);
         CompletionObject obj = kvStore.get(key, ver);
         if (obj.kv == null) {
-            Log.e(TAG, "getTxMetaData: kv is null for key: " + key);
+//            Log.e(TAG, "getTxMetaData: kv is null for key: " + key);
             return null;
         }
         JSONObject json;
@@ -188,41 +188,43 @@ public class KVStoreManager {
 
         boolean needsUpdate = false;
 
-        if (null != data.exchangeCurrency && null != old.exchangeCurrency && !data.exchangeCurrency.equalsIgnoreCase(old.exchangeCurrency)) {
-            old.exchangeCurrency = data.exchangeCurrency;
-            needsUpdate = true;
-        }
-        if (null != data.deviceId && null != old.deviceId && !data.deviceId.equals(old.deviceId)) {
-            old.deviceId = data.deviceId;
-            needsUpdate = true;
-        }
-        if (null != data.comment && null != old.comment && !data.comment.equals(old.comment)) {
-            old.comment = data.comment;
-            needsUpdate = true;
-        }
-        if (data.classVersion != old.classVersion) {
-            old.classVersion = data.classVersion;
-            needsUpdate = true;
-        }
-        if (data.creationTime != old.creationTime) {
-            old.creationTime = data.creationTime;
-            needsUpdate = true;
-        }
-        if (data.exchangeRate != old.exchangeRate) {
-            old.exchangeRate = data.exchangeRate;
-            needsUpdate = true;
-        }
-        if (data.blockHeight != old.blockHeight) {
-            old.blockHeight = data.blockHeight;
-            needsUpdate = true;
-        }
-        if (data.txSize != old.txSize) {
-            old.txSize = data.txSize;
-            needsUpdate = true;
-        }
-        if (data.fee != old.fee) {
-            old.fee = data.fee;
-            needsUpdate = true;
+        if (data != null && old != null) {
+            if (null != data.exchangeCurrency && null != old.exchangeCurrency && !data.exchangeCurrency.equalsIgnoreCase(old.exchangeCurrency)) {
+                old.exchangeCurrency = data.exchangeCurrency;
+                needsUpdate = true;
+            }
+            if (null != data.deviceId && null != old.deviceId && !data.deviceId.equals(old.deviceId)) {
+                old.deviceId = data.deviceId;
+                needsUpdate = true;
+            }
+            if (null != data.comment && null != old.comment && !data.comment.equals(old.comment)) {
+                old.comment = data.comment;
+                needsUpdate = true;
+            }
+            if (data.classVersion != old.classVersion) {
+                old.classVersion = data.classVersion;
+                needsUpdate = true;
+            }
+            if (data.creationTime != old.creationTime) {
+                old.creationTime = data.creationTime;
+                needsUpdate = true;
+            }
+            if (data.exchangeRate != old.exchangeRate) {
+                old.exchangeRate = data.exchangeRate;
+                needsUpdate = true;
+            }
+            if (data.blockHeight != old.blockHeight) {
+                old.blockHeight = data.blockHeight;
+                needsUpdate = true;
+            }
+            if (data.txSize != old.txSize) {
+                old.txSize = data.txSize;
+                needsUpdate = true;
+            }
+            if (data.fee != old.fee) {
+                old.fee = data.fee;
+                needsUpdate = true;
+            }
         }
 
         if (!needsUpdate) return;
