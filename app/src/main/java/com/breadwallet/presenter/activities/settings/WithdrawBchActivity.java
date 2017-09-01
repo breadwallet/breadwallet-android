@@ -27,7 +27,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
@@ -278,7 +278,7 @@ public class WithdrawBchActivity extends BRActivity {
                 AuthManager.getInstance().authPrompt(app, "Sending out BCH", theAddress, true, new BRAuthCompletion() {
                     @Override
                     public void onComplete() {
-                        PostAuthenticationProcessor.getInstance().onSendBch(getApp(), false, address);
+                        PostAuth.getInstance().onSendBch(getApp(), false, address);
                     }
 
                     @Override

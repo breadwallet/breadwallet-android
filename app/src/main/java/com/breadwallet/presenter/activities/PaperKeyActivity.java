@@ -22,7 +22,7 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.fragments.FragmentPhraseWord;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.Utils;
 import com.google.firebase.crash.FirebaseCrash;
 
@@ -134,7 +134,7 @@ public class PaperKeyActivity extends BRActivity {
         if (isNext) {
             setButtonEnabled(true);
             if (currentIndex >= 11) {
-                PostAuthenticationProcessor.getInstance().onPhraseProveAuth(this, false);
+                PostAuth.getInstance().onPhraseProveAuth(this, false);
             } else {
                 wordViewPager.setCurrentItem(currentIndex + 1);
             }

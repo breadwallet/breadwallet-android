@@ -196,7 +196,7 @@ public class BitcoinUrlHandler {
         } else {
             if (app != null) {
                 BRAnimator.killAllFragments(app);
-                TransactionManager.getInstance().sendTransaction(app, new PaymentItem(addresses, new BigDecimal(amount).longValue(), null, true));
+                BRSender.getInstance().sendTransaction(app, new PaymentItem(addresses, new BigDecimal(amount).longValue(), null, true));
             }
         }
 

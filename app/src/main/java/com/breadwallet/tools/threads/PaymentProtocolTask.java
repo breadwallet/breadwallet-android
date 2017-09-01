@@ -16,7 +16,7 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
@@ -367,8 +367,8 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                         AuthManager.getInstance().authPrompt(app, "Confirmation", message, false, new BRAuthCompletion() {
                             @Override
                             public void onComplete() {
-                                PostAuthenticationProcessor.getInstance().setTmpPaymentRequest(paymentRequest);
-                                PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(app, false);
+                                PostAuth.getInstance().setTmpPaymentRequest(paymentRequest);
+                                PostAuth.getInstance().onPaymentProtocolRequest(app, false);
                             }
 
                             @Override

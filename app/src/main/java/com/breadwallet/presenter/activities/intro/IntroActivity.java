@@ -19,7 +19,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
@@ -122,7 +122,7 @@ public class IntroActivity extends BRActivity implements Serializable {
             BRWalletManager.getInstance().wipeWalletButKeystore(this);
         }
 
-        PostAuthenticationProcessor.getInstance().onCanaryCheck(this, false);
+        PostAuth.getInstance().onCanaryCheck(this, false);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

@@ -38,7 +38,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
-import com.breadwallet.tools.security.TransactionManager;
+import com.breadwallet.tools.security.BRSender;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRExchange;
@@ -322,7 +322,7 @@ public class FragmentSend extends Fragment {
                 }
 
                 if (allFilled)
-                    TransactionManager.getInstance().sendTransaction(getContext(), new PaymentItem(new String[]{address}, satoshiAmount.longValue(), null, false));
+                    BRSender.getInstance().sendTransaction(getContext(), new PaymentItem(new String[]{address}, satoshiAmount.longValue(), null, false));
             }
         });
 

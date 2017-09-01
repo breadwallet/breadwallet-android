@@ -174,7 +174,6 @@ public class KVStoreManager {
             result.creationTime = json.getInt("c");
             result.deviceId = json.getString("dId");
             result.comment = json.getString("comment");
-            result.label = json.getString("label");
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(TAG, "getTxMetaData: FAILED to get json value");
@@ -194,7 +193,6 @@ public class KVStoreManager {
         if (data.creationTime != 0) old.creationTime = data.creationTime;
         if (data.exchangeRate != 0) old.exchangeRate = data.exchangeRate;
         if (data.blockHeight != 0) old.blockHeight = data.blockHeight;
-        if (Utils.isNullOrEmpty(data.label)) old.label = data.label;
         if (data.txSize != 0) old.txSize = data.txSize;
         if (data.fee != 0) old.fee = data.fee;
 
@@ -210,7 +208,6 @@ public class KVStoreManager {
             obj.put("c", old.creationTime);
             obj.put("dId", old.deviceId);
             obj.put("comment", old.comment);
-            obj.put("label", old.label);
             result = obj.toString().getBytes();
 
         } catch (JSONException e) {

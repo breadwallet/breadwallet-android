@@ -23,7 +23,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
@@ -195,8 +195,8 @@ public class InputWordsActivity extends BRActivity {
                         BRWalletManager m = BRWalletManager.getInstance();
                         m.wipeWalletButKeystore(app);
                         m.wipeKeyStore(app);
-                        PostAuthenticationProcessor.getInstance().setPhraseForKeyStore(cleanPhrase);
-                        PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(app, false);
+                        PostAuth.getInstance().setPhraseForKeyStore(cleanPhrase);
+                        PostAuth.getInstance().onRecoverWalletAuth(app, false);
                         BRSharedPrefs.putAllowSpend(app, false);
                     }
 
@@ -351,7 +351,7 @@ public class InputWordsActivity extends BRActivity {
         switch (requestCode) {
             case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onRecoverWalletAuth(this, true);
+                    PostAuth.getInstance().onRecoverWalletAuth(this, true);
                 } else {
                     finish();
                 }

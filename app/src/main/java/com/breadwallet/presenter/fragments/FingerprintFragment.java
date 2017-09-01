@@ -221,7 +221,7 @@ public class FingerprintFragment extends Fragment
 ////                app.fragmentPhraseFlow2.setPhrase(FragmentPhraseFlow1.phrase);
 //            }
 //        } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
-//            PostAuthenticationProcessor.getInstance().onPublishTxAuth((MainActivity) getActivity(),false);
+//            PostAuth.getInstance().onPublishTxAuth((MainActivity) getActivity(),false);
 //        } else if (mode == BRConstants.AUTH_FOR_PAYMENT_PROTOCOL && paymentRequest != null) {
 //            if (paymentRequest.paymentURL == null || paymentRequest.paymentURL.isEmpty()) return;
 //            new PaymentProtocolPostPaymentTask(paymentRequest).execute();

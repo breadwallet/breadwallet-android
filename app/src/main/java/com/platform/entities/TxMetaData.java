@@ -39,7 +39,6 @@ public class TxMetaData {
      * “c”: 123475859 //created
      * “dId”: ”<UUID>” //DeviceId - This is a UUID that gets generated and then persisted so it can get sent with every tx
      * “comment”: “Vodka for Mihail”
-     * “label”: “Label from payment protocol”
      * }
      */
 
@@ -52,5 +51,4 @@ public class TxMetaData {
     public int creationTime;
     public String deviceId;
     public String comment;
-    public String label;
 }
