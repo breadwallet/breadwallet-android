@@ -13,12 +13,15 @@ import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.util.BRExchange;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.entities.TxMetaData;
@@ -219,6 +222,7 @@ public class TxManager {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                List<BRTransactionEntity> rawTxs = TransactionDataSource.getInstance(app).getAllTransactions();
                 for (TxItem item : arr) {
                     KVStoreManager kvM = KVStoreManager.getInstance();
                     String iso = BRSharedPrefs.getIso(app);
@@ -228,10 +232,21 @@ public class TxManager {
                     tx.exchangeCurrency = iso;
                     tx.exchangeRate = rate;
                     tx.fee = item.getFee();
-                    tx.creationTime = (int) (item.getTimeStamp()/1000);
+                    tx.creationTime = (int) (item.getTimeStamp() / 1000);
                     tx.blockHeight = item.getBlockHeight();
                     tx.deviceId = BRSharedPrefs.getDeviceId(app);
-                    tx.txSize = BRWalletManager.getInstance().
+                    byte[] raw = null;
+                    for (BRTransactionEntity rawTx : rawTxs) {
+                        if (rawTx.getTxHash().equalsIgnoreCase(item.getTxHashHexReversed())) {
+                            raw = rawTx.getBuff();
+                            break;
+                        }
+                    }
+                    if (Utils.isNullOrEmpty(raw)) {
+                        Log.e(TAG, "updateTxMetaData: raw tx not found for txHash: " + item.getTxHashHexReversed());
+                    } else {
+                        tx.txSize = BRWalletManager.getTxSize(raw);
+                    }
 
                     kvM.putTxMetaData(app, tx, item.getTxHash());
                 }

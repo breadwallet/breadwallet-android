@@ -186,16 +186,48 @@ public class KVStoreManager {
         String key = txKey(txHash);
         TxMetaData old = getTxMetaData(app, txHash);
 
-        if (!Utils.isNullOrEmpty(data.exchangeCurrency))
+        boolean needsUpdate = false;
+
+        if (!Utils.isNullOrEmpty(data.exchangeCurrency) && !data.exchangeCurrency.equalsIgnoreCase(old.exchangeCurrency)) {
             old.exchangeCurrency = data.exchangeCurrency;
-        if (!Utils.isNullOrEmpty(data.deviceId)) old.deviceId = data.deviceId;
-        if (!Utils.isNullOrEmpty(data.comment)) old.comment = data.comment;
-        if (data.classVersion != 0) old.classVersion = data.classVersion;
-        if (data.creationTime != 0) old.creationTime = data.creationTime;
-        if (data.exchangeRate != 0) old.exchangeRate = data.exchangeRate;
-        if (data.blockHeight != 0) old.blockHeight = data.blockHeight;
-        if (data.txSize != 0) old.txSize = data.txSize;
-        if (data.fee != 0) old.fee = data.fee;
+            needsUpdate = true;
+        }
+        if (!Utils.isNullOrEmpty(data.deviceId) && !data.deviceId.equals(old.deviceId)) {
+            old.deviceId = data.deviceId;
+            needsUpdate = true;
+        }
+        if (!Utils.isNullOrEmpty(data.comment) && !data.comment.equals(old.comment)) {
+            old.comment = data.comment;
+            needsUpdate = true;
+        }
+        if (data.classVersion != old.classVersion) {
+            old.classVersion = data.classVersion;
+            needsUpdate = true;
+        }
+        if (data.creationTime != old.creationTime) {
+            old.creationTime = data.creationTime;
+            needsUpdate = true;
+        }
+        if (data.exchangeRate != old.exchangeRate) {
+            old.exchangeRate = data.exchangeRate;
+            needsUpdate = true;
+        }
+        if (data.blockHeight != old.blockHeight) {
+            old.blockHeight = data.blockHeight;
+            needsUpdate = true;
+        }
+        if (data.txSize != old.txSize) {
+            old.txSize = data.txSize;
+            needsUpdate = true;
+        }
+        if (data.fee != old.fee) {
+            old.fee = data.fee;
+            needsUpdate = true;
+        }
+
+        if (!needsUpdate) return;
+
+        Log.d(TAG, "putTxMetaData: updating txMetadata for : " + key);
 
         JSONObject obj = new JSONObject();
         byte[] result;
@@ -233,7 +265,7 @@ public class KVStoreManager {
 
     }
 
-    public static void setMetaDataNative(){
+    public static void setMetaDataNative() {
 
     }
 

@@ -872,6 +872,6 @@ public class BRWalletManager {
 
     public static native long getBCashBalance(byte[] pubKey);
 
-    public static native long getTxSize(byte[] serializedTx);
+    public static native int getTxSize(byte[] serializedTx);
 
 }

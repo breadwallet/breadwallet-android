@@ -218,7 +218,7 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_sweepBC
                                                                                     jstring address,
                                                                                     jbyteArray phrase);
 
-JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTxSize(JNIEnv *env,
+JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTxSize(JNIEnv *env,
                                                                               jobject thiz,
                                                                               jbyteArray serializedTransaction);
 
