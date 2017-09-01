@@ -20,6 +20,7 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.entities.TxItem;
@@ -29,6 +30,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
@@ -284,13 +286,15 @@ public class FragmentTransactionItem extends Fragment {
     @Override
     public void onPause() {
         String comment = mCommentText.getText().toString();
+        Activity app = getActivity();
         if (!comment.equals(oldComment)) {
             Log.e(TAG, "onPause: new comment: " + comment);
             TxMetaData md = new TxMetaData();
             md.comment = comment;
-            KVStoreManager.getInstance().putTxMetaData(getActivity(), md, item.getTxHash());
+            KVStoreManager.getInstance().putTxMetaData(app, md, item.getTxHash());
         }
         oldComment = null;
+        Utils.hideKeyboard(app);
         super.onPause();
     }
 

@@ -186,7 +186,8 @@ public class KVStoreManager {
         String key = txKey(txHash);
         TxMetaData old = getTxMetaData(app, txHash);
 
-        if (Utils.isNullOrEmpty(data.exchangeCurrency)) old.exchangeCurrency = data.exchangeCurrency;
+        if (Utils.isNullOrEmpty(data.exchangeCurrency))
+            old.exchangeCurrency = data.exchangeCurrency;
         if (Utils.isNullOrEmpty(data.deviceId)) old.deviceId = data.deviceId;
         if (Utils.isNullOrEmpty(data.comment)) old.comment = data.comment;
         if (data.classVersion != 0) old.classVersion = data.classVersion;

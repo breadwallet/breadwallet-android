@@ -95,8 +95,6 @@ public class TxManager {
                         }
                     }
                 }
-
-
             }
 
             @Override
@@ -209,14 +207,6 @@ public class TxManager {
     }
 
     public void updateCard(Context app) {
-//        Log.e(TAG, "updateTxList: ");
-//        ((Activity) app).runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                adapter.notifyItemChanged(0);
-//            }
-//        });
-//        txList.getRecycledViewPool().clear();
         updateTxList(app);
     }
 
