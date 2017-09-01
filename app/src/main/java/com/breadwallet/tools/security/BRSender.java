@@ -48,16 +48,16 @@ import java.util.Locale;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class TransactionManager {
-    private static final String TAG = TransactionManager.class.getName();
+public class BRSender {
+    private static final String TAG = BRSender.class.getName();
 
-    private static TransactionManager instance;
+    private static BRSender instance;
 
-    private TransactionManager() {
+    private BRSender() {
     }
 
-    public static TransactionManager getInstance() {
-        if (instance == null) instance = new TransactionManager();
+    public static BRSender getInstance() {
+        if (instance == null) instance = new BRSender();
         return instance;
     }
 
@@ -181,7 +181,7 @@ public class TransactionManager {
                     });
                     return;
                 }
-                PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx);
+                PostAuth.getInstance().setTmpTx(tmpTx);
                 confirmPay(app, paymentRequest);
             }
         }).start();
@@ -214,7 +214,7 @@ public class TransactionManager {
                                 final byte[] tmpTx2 = m.tryTransaction(request.addresses[0], newAmount);
 
                                 if (tmpTx2 != null) {
-                                    PostAuthenticationProcessor.getInstance().setTmpTx(tmpTx2);
+                                    PostAuth.getInstance().setTmpTx(tmpTx2);
                                     request.amount = newAmount;
                                     confirmPay(app, request);
                                 } else {
@@ -292,7 +292,7 @@ public class TransactionManager {
         AuthManager.getInstance().authPrompt(ctx, "", message, forcePin, new BRAuthCompletion() {
             @Override
             public void onComplete() {
-                PostAuthenticationProcessor.getInstance().onPublishTxAuth(ctx, true);
+                PostAuth.getInstance().onPublishTxAuth(ctx, true);
                 BRAnimator.killAllFragments((Activity) ctx);
                 BRAnimator.startBreadIfNotStarted((Activity) ctx);
             }

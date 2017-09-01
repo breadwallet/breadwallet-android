@@ -7,10 +7,9 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
-import com.platform.middlewares.plugins.CameraPlugin;
 import com.platform.tools.BRBitId;
 
 /**
@@ -63,7 +62,7 @@ public class BRActivity extends Activity {
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuthenticationProcessor.getInstance().onPublishTxAuth(BRActivity.this, true);
+                            PostAuth.getInstance().onPublishTxAuth(BRActivity.this, true);
                         }
                     }).start();
 
@@ -71,20 +70,20 @@ public class BRActivity extends Activity {
                 break;
             case BRConstants.REQUEST_PHRASE_BITID:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onBitIDAuth(BRActivity.this, true);
+                    PostAuth.getInstance().onBitIDAuth(BRActivity.this, true);
 
                 }
                 break;
 
             case BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(this, true);
+                    PostAuth.getInstance().onPaymentProtocolRequest(this, true);
                 }
                 break;
 
             case BRConstants.CANARY_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onCanaryCheck(this, true);
+                    PostAuth.getInstance().onCanaryCheck(this, true);
                 } else {
                     finish();
                 }
@@ -92,12 +91,12 @@ public class BRActivity extends Activity {
 
             case BRConstants.SHOW_PHRASE_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onPhraseCheckAuth(this, true);
+                    PostAuth.getInstance().onPhraseCheckAuth(this, true);
                 }
                 break;
             case BRConstants.PROVE_PHRASE_REQUEST:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onPhraseProveAuth(this, true);
+                    PostAuth.getInstance().onPhraseProveAuth(this, true);
                 }
                 break;
 
@@ -126,7 +125,7 @@ public class BRActivity extends Activity {
                         public void run() {
                             Log.e(TAG, "run: result got back!");
                             String result = data.getStringExtra("result");
-                            PostAuthenticationProcessor.getInstance().onSendBch(BRActivity.this, true, result);
+                            PostAuth.getInstance().onSendBch(BRActivity.this, true, result);
 //                            if (BitcoinUrlHandler.isBitcoinUrl(result))
 //                                BitcoinUrlHandler.processRequest(BRActivity.this, result);
 //                            else if (BRBitId.isBitId(result))
@@ -141,7 +140,7 @@ public class BRActivity extends Activity {
 
             case BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    PostAuthenticationProcessor.getInstance().onCreateWalletAuth(this, true);
+                    PostAuth.getInstance().onCreateWalletAuth(this, true);
                 } else {
                     Log.e(TAG, "WARNING: resultCode != RESULT_OK");
                     BRWalletManager m = BRWalletManager.getInstance();

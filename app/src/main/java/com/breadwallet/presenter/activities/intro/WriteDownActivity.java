@@ -1,7 +1,5 @@
 package com.breadwallet.presenter.activities.intro;
 
-import android.app.Activity;
-import android.app.ActivityManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -9,16 +7,14 @@ import android.widget.Button;
 import android.widget.ImageButton;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.SetPinActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.wallet.BRWalletManager;
 import com.platform.HTTPServer;
 
 public class WriteDownActivity extends BRActivity {
@@ -63,7 +59,7 @@ public class WriteDownActivity extends BRActivity {
                 AuthManager.getInstance().authPrompt(WriteDownActivity.this, null, "Please enter your PIN to continue.", true, new BRAuthCompletion() {
                     @Override
                     public void onComplete() {
-                        PostAuthenticationProcessor.getInstance().onPhraseCheckAuth(WriteDownActivity.this, false);
+                        PostAuth.getInstance().onPhraseCheckAuth(WriteDownActivity.this, false);
                     }
 
                     @Override

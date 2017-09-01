@@ -18,7 +18,7 @@ import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.HTTPServer;
@@ -182,7 +182,7 @@ public class ReEnterPinActivity extends BRActivity {
                 BRAnimator.showBreadSignal(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                     @Override
                     public void onComplete() {
-                        PostAuthenticationProcessor.getInstance().onCreateWalletAuth(ReEnterPinActivity.this, false);
+                        PostAuth.getInstance().onCreateWalletAuth(ReEnterPinActivity.this, false);
 
                     }
                 });

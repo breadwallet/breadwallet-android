@@ -58,8 +58,8 @@ import okhttp3.Response;
  * THE SOFTWARE.
  */
 
-public class PostAuthenticationProcessor {
-    public static final String TAG = PostAuthenticationProcessor.class.getName();
+public class PostAuth {
+    public static final String TAG = PostAuth.class.getName();
 
     private String phraseForKeyStore;
     private byte[] tmpTx;
@@ -67,14 +67,14 @@ public class PostAuthenticationProcessor {
     private String uri;
     private String label;
 
-    private static PostAuthenticationProcessor instance;
+    private static PostAuth instance;
 
-    private PostAuthenticationProcessor() {
+    private PostAuth() {
     }
 
-    public static PostAuthenticationProcessor getInstance() {
+    public static PostAuth getInstance() {
         if (instance == null) {
-            instance = new PostAuthenticationProcessor();
+            instance = new PostAuth();
         }
         return instance;
     }
@@ -175,7 +175,7 @@ public class PostAuthenticationProcessor {
         final BRWalletManager walletManager = BRWalletManager.getInstance();
         byte[] rawSeed;
         try {
-            rawSeed = BRKeyStore.getPhrase( app, BRConstants.PAY_REQUEST_CODE);
+            rawSeed = BRKeyStore.getPhrase(app, BRConstants.PAY_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
             return;
         }
@@ -190,8 +190,7 @@ public class PostAuthenticationProcessor {
                 }
                 if (!success) {
                     Log.e(TAG, "onPublishTxAuth: publishSerializedTransaction returned FALSE");
-                    BRWalletManager.getInstance().offerToChangeTheAmount(app,
-                            new PaymentItem(paymentRequest.addresses, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
+                    BRWalletManager.getInstance().offerToChangeTheAmount(app, new PaymentItem(paymentRequest.addresses, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
                     return;
                 }
             } else {
@@ -354,7 +353,7 @@ public class PostAuthenticationProcessor {
                 return;
             }
 
-            String strPhrase = new String((phrase == null)? new byte[0] : phrase);
+            String strPhrase = new String((phrase == null) ? new byte[0] : phrase);
             if (strPhrase.isEmpty()) {
                 BRWalletManager m = BRWalletManager.getInstance();
                 m.wipeKeyStore(app);

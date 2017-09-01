@@ -99,8 +99,8 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
             }
 
             message = BitcoinUrlHandler.parsePaymentACK(serializedBytes);
-//            PostAuthenticationProcessor.getInstance().setTmpPaymentRequest(paymentRequest);
-//            PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(app,false);
+//            PostAuth.getInstance().setTmpPaymentRequest(paymentRequest);
+//            PostAuth.getInstance().onPaymentProtocolRequest(app,false);
         } catch (Exception e) {
             Activity app = BreadApp.getBreadContext();
             if (e instanceof java.net.UnknownHostException) {

@@ -40,7 +40,6 @@ import java.util.Locale;
 
 import static com.platform.HTTPServer.URL_SUPPORT;
 
-
 /**
  * BreadWallet
  * <p>
@@ -83,6 +82,7 @@ public class FragmentTransactionItem extends Fragment {
     private TxItem item;
     private LinearLayout signalLayout;
     private ImageButton close;
+    private String oldComment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -106,7 +106,9 @@ public class FragmentTransactionItem extends Fragment {
 
         ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
 
-        faq.setOnClickListener(new View.OnClickListener() {
+        faq.setOnClickListener(new View.OnClickListener()
+
+        {
             @Override
             public void onClick(View v) {
                 Activity app = getActivity();
@@ -124,14 +126,18 @@ public class FragmentTransactionItem extends Fragment {
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
 
-        rootView.setOnClickListener(new View.OnClickListener() {
+        rootView.setOnClickListener(new View.OnClickListener()
+
+        {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 getActivity().onBackPressed();
             }
         });
-        close.setOnClickListener(new View.OnClickListener() {
+        close.setOnClickListener(new View.OnClickListener()
+
+        {
             @Override
             public void onClick(View v) {
                 Activity app = getActivity();
@@ -272,16 +278,19 @@ public class FragmentTransactionItem extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        oldComment = mCommentText.getText().toString();
     }
 
     @Override
     public void onPause() {
         String comment = mCommentText.getText().toString();
-
-        Log.e(TAG, "onPause: new comment: " + comment);
-        TxMetaData md = new TxMetaData();
-        md.comment = comment;
-        KVStoreManager.getInstance().putTxMetaData(getActivity(), md, item.getTxHash());
+        if (!comment.equals(oldComment)) {
+            Log.e(TAG, "onPause: new comment: " + comment);
+            TxMetaData md = new TxMetaData();
+            md.comment = comment;
+            KVStoreManager.getInstance().putTxMetaData(getActivity(), md, item.getTxHash());
+        }
+        oldComment = null;
         super.onPause();
     }
 

@@ -10,7 +10,7 @@ import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
+import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
@@ -156,18 +156,18 @@ public class BRBitId {
                             AuthManager.getInstance().authPrompt(app, _promptString, bitIdUri.getHost(), true, new BRAuthCompletion() {
                                 @Override
                                 public void onComplete() {
-                                    PostAuthenticationProcessor.getInstance().onBitIDAuth(app, true);
+                                    PostAuth.getInstance().onBitIDAuth(app, true);
                                 }
 
                                 @Override
                                 public void onCancel() {
-                                    PostAuthenticationProcessor.getInstance().onBitIDAuth(app, false);
+                                    PostAuth.getInstance().onBitIDAuth(app, false);
                                 }
                             });
                         }
                     });
                 } else {
-                    PostAuthenticationProcessor.getInstance().onBitIDAuth(app, true);
+                    PostAuth.getInstance().onBitIDAuth(app, true);
                 }
 
             }
