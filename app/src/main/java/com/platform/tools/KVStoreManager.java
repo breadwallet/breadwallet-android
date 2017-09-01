@@ -144,7 +144,7 @@ public class KVStoreManager {
         TxMetaData result = new TxMetaData();
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
-        long ver = kvStore.remoteVersion(key);
+        long ver = kvStore.localVersion(key);
         CompletionObject obj = kvStore.get(key, ver);
         if (obj.kv == null) {
             Log.e(TAG, "getTxMetaData: kv is null for key: " + key);
@@ -186,10 +186,10 @@ public class KVStoreManager {
         String key = txKey(txHash);
         TxMetaData old = getTxMetaData(app, txHash);
 
-        if (Utils.isNullOrEmpty(data.exchangeCurrency))
+        if (!Utils.isNullOrEmpty(data.exchangeCurrency))
             old.exchangeCurrency = data.exchangeCurrency;
-        if (Utils.isNullOrEmpty(data.deviceId)) old.deviceId = data.deviceId;
-        if (Utils.isNullOrEmpty(data.comment)) old.comment = data.comment;
+        if (!Utils.isNullOrEmpty(data.deviceId)) old.deviceId = data.deviceId;
+        if (!Utils.isNullOrEmpty(data.comment)) old.comment = data.comment;
         if (data.classVersion != 0) old.classVersion = data.classVersion;
         if (data.creationTime != 0) old.creationTime = data.creationTime;
         if (data.exchangeRate != 0) old.exchangeRate = data.exchangeRate;
@@ -230,6 +230,10 @@ public class KVStoreManager {
         if (compObj.err != null) {
             Log.e(TAG, "putTxMetaData: Error setting value for key: " + key + ", err: " + compObj.err);
         }
+
+    }
+
+    public static void setMetaDataNative(){
 
     }
 

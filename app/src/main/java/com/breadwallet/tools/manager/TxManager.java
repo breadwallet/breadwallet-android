@@ -17,8 +17,12 @@ import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
+import com.platform.entities.TxMetaData;
+import com.platform.tools.KVStoreManager;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -56,6 +60,7 @@ public class TxManager {
     private RecyclerView txList;
     public TransactionListAdapter adapter;
     public PromptManager.PromptItem currentPrompt;
+    private boolean isMetaDataUpdating;
 
     public PromptManager.PromptInfo promptInfo;
     public TransactionListAdapter.SyncingHolder syncingHolder;
@@ -194,6 +199,7 @@ public class TxManager {
     //BLOCKS
     public void updateTxList(final Context app) {
         final TxItem[] arr = BRWalletManager.getInstance().getTransactions();
+        updateTxMetaData(app, arr);
         ((Activity) app).runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -204,6 +210,34 @@ public class TxManager {
             }
         });
 
+    }
+
+    private void updateTxMetaData(final Context app, final TxItem[] arr) {
+        if (isMetaDataUpdating) return;
+        Log.d(TAG, "updateTxMetaData: updating txMetaData...");
+        isMetaDataUpdating = true;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for (TxItem item : arr) {
+                    KVStoreManager kvM = KVStoreManager.getInstance();
+                    String iso = BRSharedPrefs.getIso(app);
+                    double rate = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso).rate;
+
+                    TxMetaData tx = new TxMetaData();
+                    tx.exchangeCurrency = iso;
+                    tx.exchangeRate = rate;
+                    tx.fee = item.getFee();
+                    tx.creationTime = (int) (item.getTimeStamp()/1000);
+                    tx.blockHeight = item.getBlockHeight();
+                    tx.deviceId = BRSharedPrefs.getDeviceId(app);
+                    tx.txSize = BRWalletManager.getInstance().
+
+                    kvM.putTxMetaData(app, tx, item.getTxHash());
+                }
+                isMetaDataUpdating = false;
+            }
+        }).start();
     }
 
     public void updateCard(Context app) {
