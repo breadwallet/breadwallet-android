@@ -156,7 +156,7 @@ public class ReplicatedKVStore {
         try {
             db.beginTransaction();
 //            Log.e(TAG, "_set: " + key + ", Thread: " + Thread.currentThread().getName());
-            boolean success = insert(new KVEntity(newVer, 0, key, encryptionData, kv.getTime(), kv.getDeleted()));
+            boolean success = insert(new KVEntity(newVer, kv.remoteVersion, key, encryptionData, kv.getTime(), kv.getDeleted()));
             if (!success) return new CompletionObject(CompletionObject.RemoteKVStoreError.unknown);
             db.setTransactionSuccessful();
         } finally {
@@ -524,7 +524,7 @@ public class ReplicatedKVStore {
                         e.printStackTrace();
                     }
                     if (setObj.err == null) {
-                        boolean success = setRemoteVersion(key, remoteGet.version, remoteGet.version).err == null;
+                        boolean success = setRemoteVersion(key, setObj.version, remoteGet.version).err == null;
                         if (!success) return false;
                     }
                 }
@@ -547,8 +547,6 @@ public class ReplicatedKVStore {
         // 3. for kvs that we do have, sync em
         // 4. for kvs that they don't have that we do, upload em
         if (syncRunning) return false;
-        deleteAllKVs();
-        List<KVEntity> ent = getAllKVs();
         syncRunning = true;
         long startTime = System.currentTimeMillis();
 
@@ -575,7 +573,7 @@ public class ReplicatedKVStore {
             int failures = 0;
             for (KVEntity k : allKvs) {
                 String s = k.getKey();
-                boolean success = _syncKey(k.getKey(), k.getRemoteVersion(), k.getTime(), k.getErr());
+                boolean success = _syncKey(s, k.getRemoteVersion(), k.getTime(), k.getErr());
                 if (!success) failures++;
             }
             Log.i(TAG, String.format("Finished syncing in %d, with failures: %d", (System.currentTimeMillis() - startTime), failures));
