@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -73,7 +74,7 @@ public class FragmentTransactionItem extends Fragment {
     private TextView mSubHeader;
     private TextView mConfirmationText;
     private TextView mAvailableSpend;
-    private TextView mCommentText;
+    private EditText mCommentText;
     private TextView mAmountText;
     private TextView mAddressText;
     private TextView mDateText;
@@ -93,7 +94,7 @@ public class FragmentTransactionItem extends Fragment {
         mTitle = (TextView) rootView.findViewById(R.id.title);
         mDescriptionText = (TextView) rootView.findViewById(R.id.description_text);
         mSubHeader = (TextView) rootView.findViewById(R.id.sub_header);
-        mCommentText = (TextView) rootView.findViewById(R.id.comment_text);
+        mCommentText = (EditText) rootView.findViewById(R.id.comment_text);
         mAmountText = (TextView) rootView.findViewById(R.id.amount_text);
         mAddressText = (TextView) rootView.findViewById(R.id.address_text);
         mDateText = (TextView) rootView.findViewById(R.id.date_text);
@@ -258,6 +259,7 @@ public class FragmentTransactionItem extends Fragment {
         mDescriptionText.setText(TextUtils.concat(descriptionString));
         mSubHeader.setText(TextUtils.concat(toFrom, " ", addr));
         mCommentText.setText(commentString);
+
         mAmountText.setText(amountString);
         mAddressText.setText(sent ? item.getFrom()[0] : item.getTo()[0]);
     }
@@ -274,6 +276,12 @@ public class FragmentTransactionItem extends Fragment {
 
     @Override
     public void onPause() {
+        String comment = mCommentText.getText().toString();
+
+        Log.e(TAG, "onPause: new comment: " + comment);
+        TxMetaData md = new TxMetaData();
+        md.comment = comment;
+        KVStoreManager.getInstance().putTxMetaData(getActivity(), md, item.getTxHash());
         super.onPause();
     }
 

@@ -6,7 +6,6 @@ import android.util.Log;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 import com.platform.entities.TxMetaData;
 import com.platform.entities.WalletInfo;
@@ -16,11 +15,6 @@ import com.platform.kvstore.ReplicatedKVStore;
 
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-
-import static android.R.attr.key;
 
 /**
  * BreadWallet
@@ -145,30 +139,26 @@ public class KVStoreManager {
     }
 
     public TxMetaData getTxMetaData(Context app, byte[] txHash) {
-        Log.e(TAG, "txHash hex: " + Utils.bytesToHex(txHash));
-        String hex = Utils.bytesToHex(CryptoHelper.sha256(txHash));
-        String key = "txn-" + hex;
-        Log.e(TAG, "getTxMetaData: txMetaData: " + key);
+        String key = txKey(txHash);
 
         TxMetaData result = new TxMetaData();
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
         long ver = kvStore.remoteVersion(key);
         CompletionObject obj = kvStore.get(key, ver);
-        if (obj.value == null) {
-            Log.e(TAG, "getTxMetaData: value is null for key: " + key);
+        if (obj.kv == null) {
+            Log.e(TAG, "getTxMetaData: kv is null for key: " + key);
             return null;
         }
-        Log.e(TAG, "getTxMetaData: FOUND:" + key);
         JSONObject json;
 
         try {
-//            byte[] decompressed = BRCompressor.bz2Extract(obj.kv.getValue());
-//            if (decompressed == null) {
-//                Log.e(TAG, "getWalletInfo: decompressed value is null");
-//                return null;
-//            }
-            json = new JSONObject(new String(obj.kv.getValue()));
+            byte[] decompressed = BRCompressor.bz2Extract(obj.kv.value);
+            if (decompressed == null) {
+                Log.e(TAG, "getTxMetaData: decompressed value is null");
+                return null;
+            }
+            json = new JSONObject(new String(decompressed));
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
@@ -185,17 +175,70 @@ public class KVStoreManager {
             result.deviceId = json.getString("dId");
             result.comment = json.getString("comment");
             result.label = json.getString("label");
-
         } catch (JSONException e) {
             e.printStackTrace();
-            Log.e(TAG, "getWalletInfo: FAILED to get json value");
+            Log.e(TAG, "getTxMetaData: FAILED to get json value");
         }
 
-        Log.e(TAG, "getWalletInfo: " + json);
         return result;
     }
 
-    public void putTxMetaData(Context app, TxMetaData data) {
-        //todo finish
+    public void putTxMetaData(Context app, TxMetaData data, byte[] txHash) {
+        String key = txKey(txHash);
+        TxMetaData old = getTxMetaData(app, txHash);
+
+        if (Utils.isNullOrEmpty(data.exchangeCurrency)) old.exchangeCurrency = data.exchangeCurrency;
+        if (Utils.isNullOrEmpty(data.deviceId)) old.deviceId = data.deviceId;
+        if (Utils.isNullOrEmpty(data.comment)) old.comment = data.comment;
+        if (data.classVersion != 0) old.classVersion = data.classVersion;
+        if (data.creationTime != 0) old.creationTime = data.creationTime;
+        if (data.exchangeRate != 0) old.exchangeRate = data.exchangeRate;
+        if (data.blockHeight != 0) old.blockHeight = data.blockHeight;
+        if (Utils.isNullOrEmpty(data.label)) old.label = data.label;
+        if (data.txSize != 0) old.txSize = data.txSize;
+        if (data.fee != 0) old.fee = data.fee;
+
+        JSONObject obj = new JSONObject();
+        byte[] result;
+        try {
+            obj.put("classVersion", old.classVersion);
+            obj.put("bh", old.blockHeight);
+            obj.put("er", old.exchangeRate);
+            obj.put("erc", old.exchangeCurrency);
+            obj.put("fr", old.fee);
+            obj.put("s", old.txSize);
+            obj.put("c", old.creationTime);
+            obj.put("dId", old.deviceId);
+            obj.put("comment", old.comment);
+            obj.put("label", old.label);
+            result = obj.toString().getBytes();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, "putTxMetaData: FAILED to create json");
+            return;
+        }
+
+        if (result.length == 0) {
+            Log.e(TAG, "putTxMetaData: FAILED: result is empty");
+            return;
+        }
+        byte[] compressed = BRCompressor.bz2Compress(result);
+        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
+        ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
+        long localVer = kvStore.localVersion(key);
+        long removeVer = kvStore.remoteVersion(key);
+        CompletionObject compObj = kvStore.set(localVer, removeVer, key, compressed, System.currentTimeMillis(), 0);
+        if (compObj.err != null) {
+            Log.e(TAG, "putTxMetaData: Error setting value for key: " + key + ", err: " + compObj.err);
+        }
+
+    }
+
+    public static String txKey(byte[] txHash) {
+        if (Utils.isNullOrEmpty(txHash)) return null;
+        String hex = Utils.bytesToHex(CryptoHelper.sha256(txHash));
+        if (Utils.isNullOrEmpty(hex)) return null;
+        return "txn2-" + hex;
     }
 }

@@ -453,7 +453,7 @@ public class APIClient {
             tryExtractTar();
         }
 
-//        logFiles("updateBundle after", ctx);
+        logFiles("updateBundle after", ctx);
     }
 
     public String getLatestVersion() {
@@ -514,7 +514,7 @@ public class APIClient {
                 tempFile.delete();
         }
 
-//        logFiles("downloadDiff", ctx);
+        logFiles("downloadDiff", ctx);
     }
 
     public byte[] writeBundleToFile(Response response) {
@@ -578,7 +578,7 @@ public class APIClient {
                 e.printStackTrace();
             }
         }
-//        logFiles("tryExtractTar", ctx);
+        logFiles("tryExtractTar", ctx);
         return result;
 
     }
@@ -753,14 +753,14 @@ public class APIClient {
 
     public void logFiles(String tag, Context ctx) {
         Log.e(TAG, "logFiles " + tag + " : START LOGGING");
-//        String path = ctx.getFilesDir().getAbsolutePath() + "/" + BUNDLES + "/" + SUPPORT_EXTRACTED_FOLDER;
-//
-//        File directory = new File(path);
-//        File[] files = directory.listFiles();
-//        Log.e("Files", "Path: " + path + ", size: " + (files == null ? 0 : files.length));
-//        for (int i = 0; files != null && i < files.length; i++) {
-//            Log.e("Files", "FileName:" + files[i].getName());
-//        }
+        String path = getExtractedPath(ctx, null);
+
+        File directory = new File(path);
+        File[] files = directory.listFiles();
+        Log.e("Files", "Path: " + path + ", size: " + (files == null ? 0 : files.length));
+        for (int i = 0; files != null && i < files.length; i++) {
+            Log.e("Files", "FileName:" + files[i].getName());
+        }
         Log.e(TAG, "logFiles " + tag + " : START LOGGING");
     }
 
