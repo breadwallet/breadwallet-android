@@ -27,6 +27,7 @@ import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
@@ -288,10 +289,10 @@ public class FragmentTransactionItem extends Fragment {
         String comment = mCommentText.getText().toString();
         Activity app = getActivity();
         if (!comment.equals(oldComment)) {
-            Log.e(TAG, "onPause: new comment: " + comment);
             TxMetaData md = new TxMetaData();
             md.comment = comment;
             KVStoreManager.getInstance().putTxMetaData(app, md, item.getTxHash());
+            TxManager.getInstance().updateTxList(app);
         }
         oldComment = null;
         Utils.hideKeyboard(app);
