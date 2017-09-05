@@ -42,13 +42,14 @@ public class TxMetaData {
      * }
      */
 
+    public String deviceId;
+    public String comment;
+    public String exchangeCurrency;
     public int classVersion;
     public int blockHeight;
     public double exchangeRate;
-    public String exchangeCurrency;
     public long fee;
     public int txSize;
     public int creationTime;
-    public String deviceId;
-    public String comment;
+
 }

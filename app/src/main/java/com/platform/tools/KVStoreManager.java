@@ -189,40 +189,52 @@ public class KVStoreManager {
         boolean needsUpdate = false;
 
         if (data != null && old != null) {
-            if (null != data.exchangeCurrency && null != old.exchangeCurrency && !data.exchangeCurrency.equalsIgnoreCase(old.exchangeCurrency)) {
-                old.exchangeCurrency = data.exchangeCurrency;
+            String finalExchangeCurrency = getFinalValue(data.exchangeCurrency, old.exchangeCurrency);
+            if (finalExchangeCurrency != null) {
+                Log.e(TAG, "putTxMetaData: finalExchangeCurrency:" + finalExchangeCurrency);
+                old.exchangeCurrency = finalExchangeCurrency;
                 needsUpdate = true;
             }
-            if (null != data.deviceId && null != old.deviceId && !data.deviceId.equals(old.deviceId)) {
-                old.deviceId = data.deviceId;
+            String finalDeviceId = getFinalValue(data.deviceId, old.deviceId);
+            if (finalDeviceId != null) {
+                Log.e(TAG, "putTxMetaData: finalDeviceId:" + finalDeviceId);
+                old.deviceId = finalDeviceId;
                 needsUpdate = true;
             }
-            if (null != data.comment && null != old.comment && !data.comment.equals(old.comment)) {
-                old.comment = data.comment;
+            String finalComment = getFinalValue(data.comment, old.comment);
+            if (finalComment != null) {
+                Log.e(TAG, "putTxMetaData: comment:" + finalComment);
+                old.comment = finalComment;
                 needsUpdate = true;
             }
-            if (data.classVersion != old.classVersion) {
-                old.classVersion = data.classVersion;
+            int finalClassVersion = getFinalValue(data.classVersion, old.classVersion);
+            if (finalClassVersion != -1) {
+                old.classVersion = finalClassVersion;
                 needsUpdate = true;
             }
-            if (data.creationTime != old.creationTime) {
-                old.creationTime = data.creationTime;
+            int finalCreationTime = getFinalValue(data.creationTime, old.creationTime);
+            if (finalCreationTime != -1) {
+                old.creationTime = finalCreationTime;
                 needsUpdate = true;
             }
-            if (data.exchangeRate != old.exchangeRate) {
-                old.exchangeRate = data.exchangeRate;
+            double finalExchangeRate = getFinalValue(data.exchangeRate, old.exchangeRate);
+            if (finalExchangeRate != -1) {
+                old.exchangeRate = finalExchangeRate;
                 needsUpdate = true;
             }
-            if (data.blockHeight != old.blockHeight) {
-                old.blockHeight = data.blockHeight;
+            int finalBlockHeight = getFinalValue(data.blockHeight, old.blockHeight);
+            if (finalBlockHeight != -1) {
+                old.blockHeight = finalBlockHeight;
                 needsUpdate = true;
             }
-            if (data.txSize != old.txSize) {
-                old.txSize = data.txSize;
+            int finalTxSize = getFinalValue(data.txSize, old.txSize);
+            if (finalTxSize != -1) {
+                old.txSize = finalTxSize;
                 needsUpdate = true;
             }
-            if (data.fee != old.fee) {
-                old.fee = data.fee;
+            long finalFee = getFinalValue(data.fee, old.fee);
+            if (finalFee != -1) {
+                old.fee = finalFee;
                 needsUpdate = true;
             }
         }
@@ -237,12 +249,12 @@ public class KVStoreManager {
             obj.put("classVersion", old.classVersion);
             obj.put("bh", old.blockHeight);
             obj.put("er", old.exchangeRate);
-            obj.put("erc", old.exchangeCurrency);
+            obj.put("erc", old.exchangeCurrency == null ? "" : old.exchangeCurrency);
             obj.put("fr", old.fee);
             obj.put("s", old.txSize);
             obj.put("c", old.creationTime);
-            obj.put("dId", old.deviceId);
-            obj.put("comment", old.comment);
+            obj.put("dId", old.deviceId == null ? "" : old.deviceId);
+            obj.put("comment", old.comment == null ? "" : old.comment);
             result = obj.toString().getBytes();
 
         } catch (JSONException e) {
@@ -267,9 +279,50 @@ public class KVStoreManager {
 
     }
 
-    public static void setMetaDataNative() {
-
+    //null means no change
+    private String getFinalValue(String newVal, String oldVal) {
+        if (Utils.isNullOrEmpty(newVal)) return null;
+        if (Utils.isNullOrEmpty(oldVal)) return newVal;
+        if (newVal.equals(oldVal)) {
+            return null;
+        } else {
+            return newVal;
+        }
     }
+
+    // -1 means no change
+    private int getFinalValue(int newVal, int oldVal) {
+        if (newVal <= 0) return -1;
+        if (oldVal <= 0) return newVal;
+        if (newVal == oldVal) {
+            return -1;
+        } else {
+            return newVal;
+        }
+    }
+
+    // -1 means no change
+    private long getFinalValue(long newVal, long oldVal) {
+        if (newVal <= 0) return -1;
+        if (oldVal <= 0) return newVal;
+        if (newVal == oldVal) {
+            return -1;
+        } else {
+            return newVal;
+        }
+    }
+
+    // -1 means no change
+    private double getFinalValue(double newVal, double oldVal) {
+        if (newVal <= 0) return -1;
+        if (oldVal <= 0) return newVal;
+        if (newVal == oldVal) {
+            return -1;
+        } else {
+            return newVal;
+        }
+    }
+
 
     public static String txKey(byte[] txHash) {
         if (Utils.isNullOrEmpty(txHash)) return null;
