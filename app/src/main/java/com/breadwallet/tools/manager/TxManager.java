@@ -222,20 +222,21 @@ public class TxManager {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                List<BRTransactionEntity> rawTxs = TransactionDataSource.getInstance(app).getAllTransactions();
-                for (TxItem item : arr) {
-                    KVStoreManager kvM = KVStoreManager.getInstance();
-                    String iso = BRSharedPrefs.getIso(app);
-                    double rate = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso).rate;
+//                List<BRTransactionEntity> rawTxs = TransactionDataSource.getInstance(app).getAllTransactions();
+                if (arr != null) {
+                    for (TxItem item : arr) {
+                        KVStoreManager kvM = KVStoreManager.getInstance();
+                        String iso = BRSharedPrefs.getIso(app);
+                        double rate = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso).rate;
 
-                    TxMetaData tx = new TxMetaData();
-                    tx.exchangeCurrency = iso;
-                    tx.exchangeRate = rate;
-                    tx.fee = item.getFee();
-                    tx.creationTime = (int) (item.getTimeStamp() / 1000);
-                    tx.blockHeight = item.getBlockHeight();
-                    tx.deviceId = BRSharedPrefs.getDeviceId(app);
-                    //todo fix the txSize problem
+                        TxMetaData tx = new TxMetaData();
+                        tx.exchangeCurrency = iso;
+                        tx.exchangeRate = rate;
+                        tx.fee = item.getFee();
+                        tx.creationTime = (int) (item.getTimeStamp() / 1000);
+                        tx.blockHeight = item.getBlockHeight();
+                        tx.deviceId = BRSharedPrefs.getDeviceId(app);
+                        //todo fix the txSize problem
 //                    byte[] raw = null;
 ////                    for (BRTransactionEntity rawTx : rawTxs) {
 ////                        if (rawTx.getTxHash().equalsIgnoreCase(item.getTxHashHexReversed())) {
@@ -249,7 +250,8 @@ public class TxManager {
 //                        tx.txSize = BRWalletManager.getTxSize(raw);
 //                    }
 
-                    kvM.putTxMetaData(app, tx, item.getTxHash());
+                        kvM.putTxMetaData(app, tx, item.getTxHash());
+                    }
                 }
                 isMetaDataUpdating = false;
             }
