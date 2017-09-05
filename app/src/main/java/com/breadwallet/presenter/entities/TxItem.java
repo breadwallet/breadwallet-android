@@ -47,7 +47,7 @@ public class TxItem {
 
     public TxItem(long timeStamp, int blockHeight, byte[] hash, long sent,
                   long received, long fee, String to[], String from[],
-                  long balanceAfterTx, long[] outAmounts, boolean isValid) {
+                  long balanceAfterTx, int txSize, long[] outAmounts, boolean isValid) {
         this.timeStamp = timeStamp;
         this.blockHeight = blockHeight;
         this.txHash = hash;

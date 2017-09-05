@@ -354,7 +354,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
     jobjectArray txObjects = (*env)->NewObjectArray(env, (jsize) txCount, txClass, 0);
     jobjectArray globalTxs = (*env)->NewGlobalRef(env, txObjects);
     jmethodID txObjMid = (*env)->GetMethodID(env, txClass, "<init>",
-                                             "(JI[BJJJ[Ljava/lang/String;[Ljava/lang/String;J[JZ)V");
+                                             "(JI[BJJJ[Ljava/lang/String;[Ljava/lang/String;JI[JZ)V");
     jclass stringClass = (*env)->FindClass(env, "java/lang/String");
 
     for (int i = 0; i < txCount; i++) {
@@ -362,9 +362,9 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
         BRTransaction *tempTx = transactions_sqlite[i];
         jboolean isValid = (jboolean) ((BRWalletTransactionIsValid(_wallet, tempTx) == 1) ? JNI_TRUE
                                                                                           : JNI_FALSE);
-
         jlong JtimeStamp = tempTx->timestamp;
         jint JblockHeight = tempTx->blockHeight;
+        jint JtxSize = (jint) BRTransactionSize(tempTx);
         UInt256 txid = tempTx->txHash;
         jbyteArray JtxHash = (*env)->NewByteArray(env, sizeof(txid));
         (*env)->SetByteArrayRegion(env, JtxHash, 0, (jsize) sizeof(txid), (jbyte *) txid.u8);
@@ -421,7 +421,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
         jobject txObject = (*env)->NewObject(env, txClass, txObjMid, JtimeStamp, JblockHeight,
                                              JtxHash, Jsent,
                                              Jreceived, Jfee, JtoAddresses, JfromAddresses,
-                                             JbalanceAfterTx,
+                                             JbalanceAfterTx, JtxSize,
                                              JoutAmounts, isValid);
 
         (*env)->SetObjectArrayElement(env, globalTxs, (jsize) (txCount - 1 - i), txObject);
