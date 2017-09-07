@@ -41,6 +41,7 @@ public class TxItem {
     private long balanceAfterTx;
     private long outAmounts[];
     private boolean isValid;
+    private int txSize;
 
     private TxItem() {
     }
@@ -59,6 +60,7 @@ public class TxItem {
         this.balanceAfterTx = balanceAfterTx;
         this.outAmounts = outAmounts;
         this.isValid = isValid;
+        this.txSize = txSize;
     }
 
     public int getBlockHeight() {
@@ -69,6 +71,10 @@ public class TxItem {
         return fee;
     }
 
+    public int getTxSize() {
+        return txSize;
+    }
+
     public String[] getFrom() {
         return from;
     }
@@ -77,7 +83,7 @@ public class TxItem {
         return txHash;
     }
 
-    public String getTxHashHexReversed(){
+    public String getTxHashHexReversed() {
         return Utils.reverseHex(Utils.bytesToHex(txHash));
     }
 

@@ -10,15 +10,12 @@ import com.platform.interfaces.Plugin;
 import com.platform.kvstore.CompletionObject;
 import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
-import com.platform.sqlite.KVEntity;
+import com.platform.sqlite.KVItem;
 
-import org.apache.commons.io.IOUtils;
 import org.eclipse.jetty.server.Request;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 
@@ -73,26 +70,26 @@ public class KVStorePlugin implements Plugin {
                 case "GET":
                     Log.i(TAG, "handle: " + target + " " + baseRequest.getMethod() + ", key: " + key);
                     CompletionObject getObj = store.get(getKey(key), 0);
-                    KVEntity kv = getObj.kv;
+                    KVItem kv = getObj.kv;
 
                     if (kv == null || kv.deleted > 0) {
                         Log.e(TAG, "handle: kv store does not contain the kv: " + key);
                         return BRHTTPHelper.handleError(404, null, baseRequest, decorateResponse(0, 0, response));
                     }
                     try {
-                        JSONObject test = new JSONObject(new String(kv.getValue())); //just check for validity
+                        JSONObject test = new JSONObject(new String(kv.value)); //just check for validity
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "handle: the json is not valid: for key: " + key + ", " + target + " " + baseRequest.getMethod());
                         store.delete(getKey(key), kv.version);
-                        return BRHTTPHelper.handleError(404, null, baseRequest, decorateResponse(kv.getVersion(), kv.getTime(), response));
+                        return BRHTTPHelper.handleError(404, null, baseRequest, decorateResponse(kv.version, kv.time, response));
                     }
 
-                    if (kv.getDeleted() > 0) {
+                    if (kv.deleted > 0) {
                         Log.w(TAG, "handle: the key is gone: " + target + " " + baseRequest.getMethod());
-                        return BRHTTPHelper.handleError(410, "Gone", baseRequest, decorateResponse(kv.getVersion(), kv.getTime(), response));
+                        return BRHTTPHelper.handleError(410, "Gone", baseRequest, decorateResponse(kv.version, kv.time, response));
                     }
-                    return BRHTTPHelper.handleSuccess(200, kv.getValue(), baseRequest, decorateResponse(kv.getVersion(), kv.getTime(), response), "application/json");
+                    return BRHTTPHelper.handleSuccess(200, kv.value, baseRequest, decorateResponse(kv.version, kv.time, response), "application/json");
                 case "PUT":
                     Log.i(TAG, "handle:" + target + " " + baseRequest.getMethod() + ", key: " + key);
                     // Read from request
@@ -116,7 +113,7 @@ public class KVStorePlugin implements Plugin {
 
                     long version = Long.valueOf(strVersion);
 
-                    CompletionObject setObj = store.set(new KVEntity(version, 0, getKey(key), rawData, System.currentTimeMillis(), 0));
+                    CompletionObject setObj = store.set(new KVItem(version, 0, getKey(key), rawData, System.currentTimeMillis(), 0));
                     if (setObj.err != null) {
                         Log.e(TAG, "handle: error setting the key: " + key + ", err: " + setObj.err);
                         int errCode = transformErrorToResponseCode(setObj.err);

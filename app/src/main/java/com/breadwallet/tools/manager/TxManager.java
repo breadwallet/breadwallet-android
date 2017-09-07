@@ -222,12 +222,13 @@ public class TxManager {
         new Thread(new Runnable() {
             @Override
             public void run() {
-//                List<BRTransactionEntity> rawTxs = TransactionDataSource.getInstance(app).getAllTransactions();
                 if (arr != null) {
                     for (TxItem item : arr) {
                         KVStoreManager kvM = KVStoreManager.getInstance();
                         String iso = BRSharedPrefs.getIso(app);
                         double rate = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso).rate;
+                        TxMetaData temp = kvM.getTxMetaData(app, item.getTxHash());
+                        String comment = temp == null ? "" : temp.comment;
 
                         TxMetaData tx = new TxMetaData();
                         tx.exchangeCurrency = iso;
@@ -236,20 +237,9 @@ public class TxManager {
                         tx.creationTime = (int) (item.getTimeStamp() / 1000);
                         tx.blockHeight = item.getBlockHeight();
                         tx.deviceId = BRSharedPrefs.getDeviceId(app);
-                        //todo fix the txSize problem
-//                    byte[] raw = null;
-////                    for (BRTransactionEntity rawTx : rawTxs) {
-////                        if (rawTx.getTxHash().equalsIgnoreCase(item.getTxHashHexReversed())) {
-////                            raw = rawTx.getBuff();
-////                            break;
-////                        }
-////                    }
-//                    if (Utils.isNullOrEmpty(raw)) {
-//                        Log.e(TAG, "updateTxMetaData: raw tx not found for txHash: " + item.getTxHashHexReversed());
-//                    } else {
-//                        tx.txSize = BRWalletManager.getTxSize(raw);
-//                    }
-
+                        tx.txSize = item.getTxSize();
+                        tx.comment = comment == null? "" : comment;
+//                        tx.classVersion = ...
                         kvM.putTxMetaData(app, tx, item.getTxHash());
                     }
                 }

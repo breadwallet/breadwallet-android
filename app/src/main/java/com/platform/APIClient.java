@@ -148,6 +148,7 @@ public class APIClient {
 
     private APIClient(Context context) {
         ctx = context;
+        itemsLeftToUpdate = new AtomicInteger(0);
         if (0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
             BREAD_POINT = "bread-frontend-staging";
             BREAD_FILE = String.format("/%s.tar", BREAD_POINT);
@@ -661,8 +662,11 @@ public class APIClient {
 
     public void updatePlatform() {
         if (BuildConfig.DEBUG) { //todo delete this
-            Log.d(TAG, "updatePlatform: updating platform...");
-            if (platformUpdating) return;
+
+            if (platformUpdating) {
+                Log.e(TAG, "updatePlatform: platform already Updating!");
+                return;
+            }
             platformUpdating = true;
 
             //update Bundle

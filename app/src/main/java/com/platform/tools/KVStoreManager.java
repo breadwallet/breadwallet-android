@@ -58,7 +58,7 @@ public class KVStoreManager {
         WalletInfo result = new WalletInfo();
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
-        long ver = kvStore.localVersion(walletInfoKey);
+        long ver = kvStore.localVersion(walletInfoKey).version;
         CompletionObject obj = kvStore.get(walletInfoKey, ver);
         if (obj.kv == null) {
             Log.e(TAG, "getWalletInfo: value is null for key: " + obj.key);
@@ -129,7 +129,7 @@ public class KVStoreManager {
         byte[] compressed = BRCompressor.bz2Compress(result);
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
-        long localVer = kvStore.localVersion(walletInfoKey);
+        long localVer = kvStore.localVersion(walletInfoKey).version;
         long removeVer = kvStore.remoteVersion(walletInfoKey);
         CompletionObject compObj = kvStore.set(localVer, removeVer, walletInfoKey, compressed, System.currentTimeMillis(), 0);
         if (compObj.err != null) {
@@ -144,7 +144,7 @@ public class KVStoreManager {
         TxMetaData result = new TxMetaData();
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
-        long ver = kvStore.localVersion(key);
+        long ver = kvStore.localVersion(key).version;
         CompletionObject obj = kvStore.get(key, ver);
         if (obj.kv == null) {
 //            Log.e(TAG, "getTxMetaData: kv is null for key: " + key);
@@ -270,7 +270,7 @@ public class KVStoreManager {
         byte[] compressed = BRCompressor.bz2Compress(result);
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
-        long localVer = kvStore.localVersion(key);
+        long localVer = kvStore.localVersion(key).version;
         long removeVer = kvStore.remoteVersion(key);
         CompletionObject compObj = kvStore.set(localVer, removeVer, key, compressed, System.currentTimeMillis(), 0);
         if (compObj.err != null) {

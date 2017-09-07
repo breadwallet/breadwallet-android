@@ -30,8 +30,8 @@ import com.platform.kvstore.CompletionObject;
  * THE SOFTWARE.
  */
 
-public class KVEntity {
-    public static final String TAG = KVEntity.class.getName();
+public class KVItem {
+    public static final String TAG = KVItem.class.getName();
 
     public long version;
     public long remoteVersion;
@@ -41,7 +41,7 @@ public class KVEntity {
     public int deleted;
     public CompletionObject.RemoteKVStoreError err;
 
-    public KVEntity(long version, long remoteVersion, String key, byte[] value, long time, int deleted, CompletionObject.RemoteKVStoreError err) {
+    public KVItem(long version, long remoteVersion, String key, byte[] value, long time, int deleted, CompletionObject.RemoteKVStoreError err) {
         this.version = version;
         this.remoteVersion = remoteVersion;
         this.key = key;
@@ -51,7 +51,7 @@ public class KVEntity {
         this.err = err;
     }
 
-    public KVEntity(long version, long remoteVersion, String key, byte[] value, long time, int deleted) {
+    public KVItem(long version, long remoteVersion, String key, byte[] value, long time, int deleted) {
         this.version = version;
         this.remoteVersion = remoteVersion;
         this.key = key;
@@ -61,7 +61,7 @@ public class KVEntity {
     }
 
     public void printValues() {
-        Log.e(TAG, "KVEntity values:");
+        Log.e(TAG, "KVItem values:");
         Log.e(TAG, "version: " + version);
         Log.e(TAG, "remoteVersion: " + remoteVersion);
         Log.e(TAG, "key: " + key);
@@ -70,35 +70,7 @@ public class KVEntity {
         Log.e(TAG, "deleted: " + deleted);
     }
 
-    private KVEntity() {
+    private KVItem() {
     }
 
-
-    public CompletionObject.RemoteKVStoreError getErr() {
-        return err;
-    }
-
-    public long getVersion() {
-        return version;
-    }
-
-    public long getRemoteVersion() {
-        return remoteVersion;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public byte[] getValue() {
-        return value;
-    }
-
-    public long getTime() {
-        return time;
-    }
-
-    public int getDeleted() {
-        return deleted;
-    }
 }
