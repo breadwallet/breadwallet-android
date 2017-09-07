@@ -504,13 +504,15 @@ public class APIClient {
             String compression = System.getProperty("jbsdiff.compressor", "tar");
             compression = compression.toLowerCase();
             tempFile = new File(getBundleResource(ctx, BREAD_POINT + "-temp.tar"));
-            tempFile.createNewFile();
+            boolean a = tempFile.createNewFile();
+            if (!a)
+                Log.e(TAG, "downloadDiff: failed to create a temp file: " + tempFile.getAbsolutePath());
             File bundleFile = new File(getBundleResource(ctx, BREAD_POINT + ".tar"));
             FileUI.diff(bundleFile, tempFile, patchFile, compression);
-
             byte[] updatedBundleBytes = IOUtils.toByteArray(new FileInputStream(tempFile));
+            if(Utils.isNullOrEmpty(updatedBundleBytes))
+                Log.e(TAG, "downloadDiff: failed to get bytes from the updatedBundle: " + tempFile.getAbsolutePath());
             FileUtils.writeByteArrayToFile(bundleFile, updatedBundleBytes);
-
         } catch (IOException | InvalidHeaderException | CompressorException | NullPointerException e) {
             Log.e(TAG, "downloadDiff: ", e);
         } finally {

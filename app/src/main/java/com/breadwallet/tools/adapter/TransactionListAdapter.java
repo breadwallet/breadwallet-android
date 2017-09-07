@@ -296,11 +296,13 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         for (boolean i : switches) if (i) switchesON++;
 
         List<TxItem> filteredList = new ArrayList<>();
+        TxMetaData metaData;
         for (TxItem item : backUpFeed) {
-
+            metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
             if (item.getTxHashHexReversed().toLowerCase().contains(lowerQuery)
                     || item.getFrom()[0].toLowerCase().contains(lowerQuery)
-                    || item.getTo()[0].toLowerCase().contains(lowerQuery)) {
+                    || item.getTo()[0].toLowerCase().contains(lowerQuery) ||
+                    (metaData.comment != null && metaData.comment.toLowerCase().contains(lowerQuery))) {
                 if (switchesON == 0) {
                     filteredList.add(item);
                 } else {
@@ -395,7 +397,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             progress = (ProgressBar) view.findViewById(R.id.sync_progress);
         }
     }
-
 
 
 }
