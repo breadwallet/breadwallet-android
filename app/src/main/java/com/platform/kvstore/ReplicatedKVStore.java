@@ -34,15 +34,11 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.Utils;
 import com.jniwrappers.BRKey;
 import com.platform.interfaces.KVStoreAdaptor;
-import com.platform.sqlite.KVEntity;
+import com.platform.sqlite.KVItem;
 import com.platform.sqlite.PlatformSqliteHelper;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
@@ -59,8 +55,8 @@ public class ReplicatedKVStore {
 
     private static final String KEY_REGEX = "^[^_][\\w-]{1,255}$";
 
-    public boolean encrypted = true;
-    public boolean encryptedReplication = true;
+    public final boolean encrypted = true;
+    public final boolean encryptedReplication = true;
     private Lock dbLock = new ReentrantLock();
     public boolean syncImmediately = false;
     private boolean syncRunning = false;
@@ -100,18 +96,18 @@ public class ReplicatedKVStore {
      * stored in the database. To create a new key, pass `0` as `localVer`
      */
     public CompletionObject set(long version, long remoteVersion, String key, byte[] value, long time, int deleted) {
-        KVEntity entity = new KVEntity(version, remoteVersion, key, value, time, deleted);
+        KVItem entity = new KVItem(version, remoteVersion, key, value, time, deleted);
         return set(entity);
     }
 
-    public void set(List<KVEntity> kvs) {
-        for (KVEntity kv : kvs)
+    public void set(List<KVItem> kvs) {
+        for (KVItem kv : kvs)
             set(kv);
     }
 
-    public CompletionObject set(KVEntity kv) {
+    public CompletionObject set(KVItem kv) {
         try {
-            if (isKeyValid(kv.getKey())) {
+            if (isKeyValid(kv.key)) {
                 CompletionObject obj = new CompletionObject(CompletionObject.RemoteKVStoreError.unknown);
 
                 try {
@@ -121,8 +117,8 @@ public class ReplicatedKVStore {
                 }
                 if (syncImmediately && obj.err == null) {
                     if (!syncRunning) {
-                        syncKey(kv.getKey(), 0, 0, null);
-                        Log.e(TAG, "set: key synced: " + kv.getKey());
+                        syncKey(kv.key, 0, 0, null);
+                        Log.e(TAG, "set: key synced: " + kv.key);
                     }
                 }
                 return obj;
@@ -133,49 +129,52 @@ public class ReplicatedKVStore {
         return new CompletionObject(CompletionObject.RemoteKVStoreError.unknown);
     }
 
-    public void set(KVEntity[] kvEntities) {
-        for (KVEntity kv : kvEntities) {
+    public void set(KVItem[] kvEntities) {
+        for (KVItem kv : kvEntities) {
             set(kv);
         }
     }
 
-    private synchronized CompletionObject _set(KVEntity kv) throws Exception {
+    private synchronized CompletionObject _set(KVItem kv) throws Exception {
         Log.d(TAG, "_set: " + kv.key);
-        long curVer = kv.getVersion();
+        long localVer = kv.version;
         long newVer = 0;
-        String key = kv.getKey();
+        long time = System.currentTimeMillis();
+        String key = kv.key;
 
-        long localVer = _localVersion(key);
+        long curVer = _localVersion(key).version;
         if (curVer != localVer) {
             Log.e(TAG, String.format("set key %s conflict: version %d != current version %d", key, localVer, curVer));
             return new CompletionObject(CompletionObject.RemoteKVStoreError.conflict);
         }
         newVer = curVer + 1;
-        byte[] encryptionData = encrypted ? encrypt(kv.getValue()) : kv.getValue();
+        byte[] encryptionData = encrypted ? encrypt(kv.value, context) : kv.value;
         SQLiteDatabase db = getWritable();
         try {
             db.beginTransaction();
 //            Log.e(TAG, "_set: " + key + ", Thread: " + Thread.currentThread().getName());
-            boolean success = insert(new KVEntity(newVer, kv.remoteVersion, key, encryptionData, kv.getTime(), kv.getDeleted()));
+            boolean success = insert(new KVItem(newVer, -1, key, encryptionData, time, kv.deleted));
             if (!success) return new CompletionObject(CompletionObject.RemoteKVStoreError.unknown);
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
             dbLock.unlock();
         }
-        return new CompletionObject(newVer, kv.getTime(), null);
+        return new CompletionObject(newVer, time, null);
     }
 
-    private boolean insert(KVEntity kv) {
+    private boolean insert(KVItem kv) {
         try {
             SQLiteDatabase db = getWritable();
             ContentValues values = new ContentValues();
-            values.put(PlatformSqliteHelper.KV_VERSION, kv.getVersion());
-            values.put(PlatformSqliteHelper.KV_REMOTE_VERSION, kv.getRemoteVersion());
-            values.put(PlatformSqliteHelper.KV_KEY, kv.getKey());
-            values.put(PlatformSqliteHelper.KV_VALUE, kv.getValue());
-            values.put(PlatformSqliteHelper.KV_TIME, kv.getTime());
-            values.put(PlatformSqliteHelper.KV_DELETED, kv.getDeleted());
+            if (kv.version != -1)
+                values.put(PlatformSqliteHelper.KV_VERSION, kv.version);
+            if (kv.remoteVersion != -1)
+                values.put(PlatformSqliteHelper.KV_REMOTE_VERSION, kv.remoteVersion);
+            values.put(PlatformSqliteHelper.KV_KEY, kv.key);
+            values.put(PlatformSqliteHelper.KV_VALUE, kv.value);
+            values.put(PlatformSqliteHelper.KV_TIME, kv.time);
+            values.put(PlatformSqliteHelper.KV_DELETED, kv.deleted);
             long n = db.insert(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, values);
             return n != -1;
         } catch (Exception e) {
@@ -190,7 +189,7 @@ public class ReplicatedKVStore {
      * get kv by key and version (version can be 0)
      */
     public CompletionObject get(String key, long version) {
-        KVEntity kv = null;
+        KVItem kv = null;
         Cursor cursor = null;
         long curVer = 0;
 
@@ -199,12 +198,12 @@ public class ReplicatedKVStore {
                 //if no version, fine the version
                 SQLiteDatabase db = getReadable();
                 if (version == 0) {
-                    curVer = localVersion(key);
+                    curVer = _localVersion(key).version;
                 } else {
-                    curVer = version;
+//                    curVer = version;
                     //if we have a version, check if it's correct
                     cursor = db.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
-                            allColumns, "key = ? AND version = ?", new String[]{key, String.valueOf(curVer)},
+                            allColumns, "key = ? AND version = ?", new String[]{key, String.valueOf(version)},
                             null, null, "version DESC", "1");
 
                     boolean success = cursor.moveToNext();
@@ -213,11 +212,11 @@ public class ReplicatedKVStore {
                     else
                         curVer = 0;
                 }
+                if (cursor != null)
+                    cursor.close();
 
                 //if still 0 then version is non-existent or wrong.
                 if (curVer == 0) {
-                    if (cursor != null)
-                        cursor.close();
                     return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
                 }
 
@@ -229,9 +228,9 @@ public class ReplicatedKVStore {
                     kv = cursorToKv(cursor);
                 }
 
-                if (encrypted && kv != null) {
-                    byte[] val = kv.getValue();
-                    kv.value = encrypted ? decrypt(val) : val;
+                if (kv != null) {
+                    byte[] val = kv.value;
+                    kv.value = encrypted ? decrypt(val, context) : val;
                     if (val != null && Utils.isNullOrEmpty(kv.value)) {
                         //decrypting failed
                         Log.e(TAG, "get: Decrypting failed for key: " + key + ", deleting the kv");
@@ -249,39 +248,42 @@ public class ReplicatedKVStore {
             }
         }
 
-        return new CompletionObject(kv, null);
+        return kv == null ? new CompletionObject(CompletionObject.RemoteKVStoreError.notFound) : new CompletionObject(kv, null);
     }
 
     /**
      * Gets the local version of the provided key, or 0 if it doesn't exist
      */
 
-    public long localVersion(String key) {
+    public CompletionObject localVersion(String key) {
         if (isKeyValid(key)) {
             return _localVersion(key);
         } else {
             Log.e(TAG, "Key is invalid: " + key);
         }
-        return 0;
+        return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
     }
 
-    private synchronized long _localVersion(String key) {
+    private synchronized CompletionObject _localVersion(String key) {
         long version = 0;
+        long time = System.currentTimeMillis();
         Cursor cursor = null;
         SQLiteDatabase db = getReadable();
         try {
             String selectQuery = "SELECT " + PlatformSqliteHelper.KV_VERSION + ", " + PlatformSqliteHelper.KV_TIME + " FROM " + PlatformSqliteHelper.KV_STORE_TABLE_NAME + " WHERE key = ? ORDER BY version DESC LIMIT 1";
             cursor = db.rawQuery(selectQuery, new String[]{key});
             cursor.moveToNext();
-            if (!cursor.isAfterLast())
+            if (!cursor.isAfterLast()) {
                 version = cursor.getLong(0);
+                time = cursor.getLong(1);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
             if (cursor != null)
                 cursor.close();
         }
-        return version;
+        return new CompletionObject(version, time, null);
     }
 
     public synchronized void deleteAllKVs() {
@@ -296,8 +298,8 @@ public class ReplicatedKVStore {
 
     }
 
-    public synchronized List<KVEntity> getAllKVs() {
-        List<KVEntity> kvs = new ArrayList<>();
+    public synchronized List<KVItem> getAllKVs() {
+        List<KVItem> kvs = new ArrayList<>();
         Cursor cursor = null;
         SQLiteDatabase db = getReadable();
         try {
@@ -317,8 +319,8 @@ public class ReplicatedKVStore {
 //                    allColumns, null, null, null, PlatformSqliteHelper.KV_VERSION + " DESC", "1");
 //            cursor.moveToNext();
             while (!cursor.isAfterLast()) {
-                KVEntity kvEntity = cursorToKv(cursor);
-                kvs.add(kvEntity);
+                KVItem kvItem = cursorToKv(cursor);
+                kvs.add(kvItem);
                 cursor.moveToNext();
             }
         } catch (Exception e) {
@@ -332,7 +334,7 @@ public class ReplicatedKVStore {
         return kvs;
     }
 
-    private KVEntity cursorToKv(Cursor cursor) {
+    private KVItem cursorToKv(Cursor cursor) {
         long version = 0;
         long remoteVersion = 0;
         String key = null;
@@ -373,7 +375,7 @@ public class ReplicatedKVStore {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new KVEntity(version, remoteVersion, key, value, time, deleted);
+        return new KVItem(version, remoteVersion, key, value, time, deleted);
     }
 
     /**
@@ -426,26 +428,26 @@ public class ReplicatedKVStore {
         }
 
         CompletionObject completionObject = get(key, 0);
-        KVEntity localKv = completionObject.kv;
+        KVItem localKv = completionObject.kv;
         byte[] locVal = new byte[0];
         if (completionObject.err == CompletionObject.RemoteKVStoreError.notFound) {
-            localKv = new KVEntity(0, 0, key, locVal, 0, 0);
+            localKv = new KVItem(0, 0, key, locVal, 0, 0);
         }
 
         if (completionObject.err == null) {
-            locVal = localKv.getValue();
-            localKv.value = locVal;
+            locVal = localKv.value;
+            localKv.value = encryptedReplication ? encrypt(locVal, context) : locVal;
         }
 
         if (err == null || err == CompletionObject.RemoteKVStoreError.notFound || err == CompletionObject.RemoteKVStoreError.tombstone) {
 
-            if (localKv.getDeleted() > 0 && err == CompletionObject.RemoteKVStoreError.tombstone) {
+            if (localKv.deleted > 0 && err == CompletionObject.RemoteKVStoreError.tombstone) {
                 // was removed on both server and locally
                 Log.i(TAG, String.format("Local key %s was deleted, and so was the remote key", key));
-                return setRemoteVersion(key, localKv.getVersion(), localKv.getRemoteVersion()).err == null;
+                return setRemoteVersion(key, localKv.version, localKv.remoteVersion).err == null;
             }
-            if (localKv.getTime() >= remoteTime) {// local is newer (or a tiebreaker)
-                if (localKv.getDeleted() > 0) {
+            if (localKv.time >= remoteTime) {// local is newer (or a tiebreaker)
+                if (localKv.deleted > 0) {
                     Log.i(TAG, String.format("Local key %s was deleted, removing remotely...", key));
                     CompletionObject obj = remoteKvStore.del(key, remoteVersion);
                     if (obj.err == CompletionObject.RemoteKVStoreError.notFound) {
@@ -457,26 +459,26 @@ public class ReplicatedKVStore {
                         return false;
                     }
 
-                    boolean success = setRemoteVersion(key, localKv.getVersion(), obj.version).err == null;
+                    boolean success = setRemoteVersion(key, localKv.version, obj.version).err == null;
                     if (!success) return false;
                 } else {
                     Log.i(TAG, String.format("Local key %s is newer, updating remotely...", key));
                     // if the remote version is zero it means it doesnt yet exist on the server. set the remote version
                     // to "1" to create the key on the server
                     long useRemoteVer = (remoteVersion == 0 || remoteVersion < recorderRemoteVersion) ? 1 : remoteVersion;
-                    byte[] encrypted = encrypt(localKv.getValue());
-                    if (Utils.isNullOrEmpty(encrypted)) {
+                    byte[] val = localKv.value;
+                    if (Utils.isNullOrEmpty(val)) {
                         Log.e(TAG, "_syncKey: encrypting value before sending to remote failed");
                         return false;
                     }
-                    CompletionObject obj = remoteKvStore.put(key, encrypted, useRemoteVer);
+                    CompletionObject obj = remoteKvStore.put(key, val, useRemoteVer);
 
                     if (obj.err != null) {
                         Log.e(TAG, String.format("Error updating remote version for key %s, error: %s", key, err));
                         return false;
                     }
 
-                    boolean success = setRemoteVersion(key, localKv.getVersion(), obj.version).err == null;
+                    boolean success = setRemoteVersion(key, localKv.version, obj.version).err == null;
                     Log.i(TAG, String.format("Local key %s updated on server", key));
                     if (!success) return false;
                 }
@@ -487,7 +489,7 @@ public class ReplicatedKVStore {
                     Log.i(TAG, String.format("Remote key %s deleted, removing locally", key));
                     CompletionObject obj = new CompletionObject(CompletionObject.RemoteKVStoreError.unknown);
                     try {
-                        obj = _delete(key, localKv.getVersion());
+                        obj = _delete(key, localKv.version);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -511,7 +513,7 @@ public class ReplicatedKVStore {
                         Log.e(TAG, "_syncKey: key: " + key + " ,from the remote, is empty");
                         return false;
                     }
-                    byte[] decryptedValue = decrypt(val);
+                    byte[] decryptedValue = encryptedReplication ? decrypt(val, context) : val;
                     if (Utils.isNullOrEmpty(decryptedValue)) {
                         Log.e(TAG, "_syncKey: failed to decrypt the value from remote for key: " + key);
                         return false;
@@ -519,7 +521,7 @@ public class ReplicatedKVStore {
 
                     CompletionObject setObj = new CompletionObject(CompletionObject.RemoteKVStoreError.unknown);
                     try {
-                        setObj = _set(new KVEntity(localKv.getVersion(), remoteGet.version, key, decryptedValue, remoteGet.time, localKv.getDeleted()));
+                        setObj = _set(new KVItem(localKv.version, remoteGet.version, key, decryptedValue, remoteGet.time, localKv.deleted));
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -546,7 +548,10 @@ public class ReplicatedKVStore {
         // 2. for kvs that we don't have, add em
         // 3. for kvs that we do have, sync em
         // 4. for kvs that they don't have that we do, upload em
-        if (syncRunning) return false;
+        if (syncRunning) {
+            Log.e(TAG, "syncAllKeys: already syncing");
+            return false;
+        }
         syncRunning = true;
         long startTime = System.currentTimeMillis();
 
@@ -557,23 +562,23 @@ public class ReplicatedKVStore {
                 syncRunning = false;
                 return false;
             }
-            List<KVEntity> localKvs = getAllKVs();
-            List<KVEntity> remoteKVs = obj.kvs;
+            List<KVItem> localKvs = getAllKVs();
+            List<KVItem> remoteKVs = obj.kvs;
 
             List<String> remoteKeys = getKeysFromKVEntity(remoteKVs);
-            List<KVEntity> allKvs = new ArrayList<>();
+            List<KVItem> allKvs = new ArrayList<>();
             allKvs.addAll(remoteKVs);
 
-            for (KVEntity kv : localKvs) {
-                if (!remoteKeys.contains(kv.getKey())) // server is missing a key that we have
-                    allKvs.add(new KVEntity(0, 0, kv.getKey(), null, 0, 0));
+            for (KVItem kv : localKvs) {
+                if (!remoteKeys.contains(kv.key)) // server is missing a key that we have
+                    allKvs.add(new KVItem(0, 0, kv.key, null, 0, 0));
             }
 
             Log.i(TAG, String.format("Syncing %d kvs", allKvs.size()));
             int failures = 0;
-            for (KVEntity k : allKvs) {
-                String s = k.getKey();
-                boolean success = _syncKey(s, k.getRemoteVersion(), k.getTime(), k.getErr());
+            for (KVItem k : allKvs) {
+                String s = k.key;
+                boolean success = _syncKey(s, k.remoteVersion == -1? k.version : k.remoteVersion, k.time, k.err);
                 if (!success) failures++;
             }
             Log.i(TAG, String.format("Finished syncing in %d, with failures: %d", (System.currentTimeMillis() - startTime), failures));
@@ -586,10 +591,10 @@ public class ReplicatedKVStore {
         return false;
     }
 
-    private List<String> getKeysFromKVEntity(List<KVEntity> entities) {
+    private List<String> getKeysFromKVEntity(List<KVItem> entities) {
         List<String> keys = new ArrayList<>();
-        for (KVEntity kv : entities)
-            keys.add(kv.getKey());
+        for (KVItem kv : entities)
+            keys.add(kv.key);
         return keys;
     }
 
@@ -631,7 +636,7 @@ public class ReplicatedKVStore {
      */
     public synchronized CompletionObject setRemoteVersion(String key, long localVer, long remoteVer) {
         if (localVer < 1)
-            return new CompletionObject(CompletionObject.RemoteKVStoreError.conflict);
+            return new CompletionObject(CompletionObject.RemoteKVStoreError.conflict); // setRemoteVersion can't be used for creates
         if (isKeyValid(key)) {
 
             Cursor c = null;
@@ -641,7 +646,7 @@ public class ReplicatedKVStore {
                 long newVer = 0;
                 long time = System.currentTimeMillis();
 
-                long curVer = localVersion(key);
+                long curVer = _localVersion(key).version;
 
                 if (curVer != localVer) {
                     Log.e(TAG, String.format("set remote version key %s conflict: version %d != current version %d", key, localVer, curVer));
@@ -651,7 +656,7 @@ public class ReplicatedKVStore {
                 newVer = curVer + 1;
                 c = db.query(true, PlatformSqliteHelper.KV_STORE_TABLE_NAME, allColumns, PlatformSqliteHelper.KV_KEY + "=? and " + PlatformSqliteHelper.KV_VERSION + "=?", new String[]{key, String.valueOf(curVer)}, null, null, "version DESC", "1");
                 c.moveToNext();
-                KVEntity tmp = null;
+                KVItem tmp = null;
                 if (!c.isAfterLast()) {
                     tmp = cursorToKv(c);
                 }
@@ -663,10 +668,12 @@ public class ReplicatedKVStore {
                 values.put(PlatformSqliteHelper.KV_VERSION, newVer);
                 values.put(PlatformSqliteHelper.KV_REMOTE_VERSION, remoteVer);
                 values.put(PlatformSqliteHelper.KV_KEY, key);
-                values.put(PlatformSqliteHelper.KV_VALUE, tmp.getValue());
-                values.put(PlatformSqliteHelper.KV_TIME, System.currentTimeMillis());
-                values.put(PlatformSqliteHelper.KV_DELETED, tmp.getDeleted());
-                db.insert(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, values);
+                values.put(PlatformSqliteHelper.KV_VALUE, tmp.value);
+                values.put(PlatformSqliteHelper.KV_TIME, time);
+                values.put(PlatformSqliteHelper.KV_DELETED, tmp.deleted);
+                long id = db.insert(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, values);
+                if (id == -1)
+                    return new CompletionObject(CompletionObject.RemoteKVStoreError.unknown);
 
                 db.setTransactionSuccessful();
                 return new CompletionObject(newVer, time, null);
@@ -716,14 +723,14 @@ public class ReplicatedKVStore {
         if (localVersion == 0)
             return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
         long newVer = 0;
+        long time = System.currentTimeMillis();
         Cursor cursor = null;
         try {
-            long curVer = _localVersion(key);
+            long curVer = _localVersion(key).version;
             if (curVer != localVersion) {
                 Log.e(TAG, String.format("del key %s conflict: version %d != current version %d", key, localVersion, curVer));
                 return new CompletionObject(CompletionObject.RemoteKVStoreError.conflict);
             }
-            long time = System.currentTimeMillis();
             SQLiteDatabase db = getWritable();
             try {
                 db.beginTransaction();
@@ -734,6 +741,7 @@ public class ReplicatedKVStore {
                         null, null, "version DESC", "1");
                 cursor.moveToNext();
                 byte[] value = cursor.getBlob(0);
+                if (Utils.isNullOrEmpty(value)) throw new NullPointerException("cannot be empty");
                 ContentValues values = new ContentValues();
                 values.put(PlatformSqliteHelper.KV_VERSION, newVer);
                 values.put(PlatformSqliteHelper.KV_KEY, key);
@@ -761,7 +769,7 @@ public class ReplicatedKVStore {
     /**
      * generate a nonce using microseconds-since-epoch
      */
-    public byte[] getNonce() {
+    public static byte[] getNonce() {
         byte[] nonce = new byte[12];
         ByteBuffer buffer = ByteBuffer.allocate(8);
         long t = System.nanoTime() / 1000;
@@ -775,12 +783,11 @@ public class ReplicatedKVStore {
     /**
      * encrypt some data using self.key
      */
-    public byte[] encrypt(byte[] data) {
+    public static byte[] encrypt(byte[] data, Context app) {
         if (data == null) {
             Log.e(TAG, "encrypt: data is null");
             return null;
         }
-        Context app = context;
         if (app == null) app = BreadApp.getBreadContext();
         if (app == null) {
             Log.e(TAG, "encrypt: app is null");
@@ -812,8 +819,7 @@ public class ReplicatedKVStore {
     /**
      * decrypt some data using key
      */
-    public byte[] decrypt(byte[] data) {
-        Context app = context;
+    public static byte[] decrypt(byte[] data, Context app) {
         if (data == null || data.length <= 12) {
             Log.e(TAG, "decrypt: failed to decrypt: " + (data == null ? null : data.length));
             return null;
@@ -839,14 +845,14 @@ public class ReplicatedKVStore {
     }
 
 //    //for testing only
-//    public List<KVEntity> getAllLocalKeysForTesting() {
-//        List<KVEntity> list = new ArrayList<>();
+//    public List<KVItem> getAllLocalKeysForTesting() {
+//        List<KVItem> list = new ArrayList<>();
 //        open();
 //        Cursor cursor = database.rawQuery("select * from " + PlatformSqliteHelper.KV_STORE_TABLE_NAME, null);
 //        Log.e(TAG, "printAllKvs: SIZE: " + cursor.getCount());
 //        cursor.moveToNext();
 //        while (!cursor.isAfterLast()) {
-//            KVEntity kv = cursorToKv(cursor);
+//            KVItem kv = cursorToKv(cursor);
 //            list.add(kv);
 //            cursor.moveToNext();
 //        }

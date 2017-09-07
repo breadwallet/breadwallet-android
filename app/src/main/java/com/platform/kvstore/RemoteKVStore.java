@@ -4,21 +4,19 @@ import android.util.Log;
 
 import com.platform.APIClient;
 import com.platform.interfaces.KVStoreAdaptor;
-import com.platform.sqlite.KVEntity;
+import com.platform.sqlite.KVItem;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.R.attr.key;
-import static com.platform.kvstore.CompletionObject.RemoteKVStoreError.notFound;
 import static com.platform.kvstore.CompletionObject.RemoteKVStoreError.unknown;
 
 /**
@@ -194,7 +192,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
         if (reqData == null) return new CompletionObject(0, 0, unknown);
         ByteBuffer buffer = ByteBuffer.wrap(reqData).order(java.nio.ByteOrder.LITTLE_ENDIAN);
 
-        List<KVEntity> keys = new ArrayList<>();
+        List<KVItem> keys = new ArrayList<>();
         try {
             int count = buffer.getInt();
 
@@ -218,7 +216,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 time = buffer.getLong();
                 deleted = buffer.get();
                 if (key == null || key.isEmpty()) return new CompletionObject(0, 0, unknown);
-                keys.add(new KVEntity(0, version, key, null, time, deleted));
+                keys.add(new KVItem(0, version, key, null, time, deleted));
 
             }
         } catch (Exception e) {
