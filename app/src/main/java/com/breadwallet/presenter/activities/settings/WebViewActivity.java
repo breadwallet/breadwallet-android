@@ -63,6 +63,9 @@ public class WebViewActivity extends BRActivity {
                     onBackPressed();
                     onCloseUrl = null;
                 }
+                if (request.getUrl().toString().contains("_close")) {
+                    onBackPressed();
+                }
                 return true;
             }
 

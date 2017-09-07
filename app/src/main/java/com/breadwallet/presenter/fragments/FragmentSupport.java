@@ -87,6 +87,9 @@ public class FragmentSupport extends Fragment {
                     getActivity().onBackPressed();
                     onCloseUrl = null;
                 }
+                if (request.getUrl().toString().contains("_close")) {
+                    getActivity().onBackPressed();
+                }
                 return true;
             }
 
