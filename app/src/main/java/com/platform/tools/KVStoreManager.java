@@ -187,8 +187,10 @@ public class KVStoreManager {
         TxMetaData old = getTxMetaData(app, txHash);
 
         boolean needsUpdate = false;
-
-        if (data != null && old != null) {
+        if (old == null) {
+            needsUpdate = true;
+            old = data;
+        } else if (data != null) {
             String finalExchangeCurrency = getFinalValue(data.exchangeCurrency, old.exchangeCurrency);
             if (finalExchangeCurrency != null) {
                 Log.e(TAG, "putTxMetaData: finalExchangeCurrency:" + finalExchangeCurrency);

@@ -303,6 +303,7 @@ public class FragmentSend extends Fragment {
                 String address = addressEdit.getText().toString();
                 String amountStr = amountBuilder.toString();
                 String iso = selectedIso;
+                String comment = commentEdit.getText().toString();
 
                 //get amount in satoshis from any isos
                 BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) ? "0" : amountStr);
@@ -322,7 +323,7 @@ public class FragmentSend extends Fragment {
                 }
 
                 if (allFilled)
-                    BRSender.getInstance().sendTransaction(getContext(), new PaymentItem(new String[]{address}, satoshiAmount.longValue(), null, false));
+                    BRSender.getInstance().sendTransaction(getContext(), new PaymentItem(new String[]{address}, null, satoshiAmount.longValue(), null, false, comment));
             }
         });
 

@@ -65,13 +65,14 @@ static JNIEnv *getEnv() {
 void callback(void *info, int error) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from callback: ", "err: %s",
                         strerror(error));
+    BRTransaction * tx = info;
+//    tx.
     JNIEnv *env = getEnv();
 
     if (!env || _walletManagerClass == NULL) return;
 
     jmethodID mid = (*env)->GetStaticMethodID(env, _walletManagerClass, "publishCallback",
-                                              "(Ljava/lang/String;I)V");
-
+                                              "(Ljava/lang/String;I[B)V");
     //call java methods
     if (error) {
         __android_log_print(ANDROID_LOG_ERROR, "Message from callback: ", "publishing Failed: %s",
@@ -79,11 +80,14 @@ void callback(void *info, int error) {
     } else {
         __android_log_print(ANDROID_LOG_DEBUG, "Message from callback: ", "publishing Succeeded!");
     }
+    UInt256 txid = tx->txHash;
+    jbyteArray JtxHash = (*env)->NewByteArray(env, sizeof(txid));
+    (*env)->SetByteArrayRegion(env, JtxHash, 0, (jsize) sizeof(txid), (jbyte *) txid.u8);
 
     (*env)->CallStaticVoidMethod(env, _walletManagerClass, mid,
-                                 (*env)->NewStringUTF(env, strerror(error)), error);
+                                 (*env)->NewStringUTF(env, strerror(error)),
+                                 error, JtxHash);
 }
-
 
 static void balanceChanged(void *info, uint64_t balance) {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "balanceChanged: %d", (int) balance);
@@ -647,18 +651,18 @@ Java_com_breadwallet_wallet_BRWalletManager_getFirstAddress(JNIEnv *env, jobject
     return (*env)->NewStringUTF(env, address.s);
 }
 
-JNIEXPORT jboolean JNICALL
+JNIEXPORT jbyteArray JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_publishSerializedTransaction(JNIEnv *env, jobject thiz,
                                                                          jbyteArray serializedTransaction,
                                                                          jbyteArray phrase) {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "publishSerializedTransaction");
-    if (!_peerManager) return JNI_FALSE;
+    if (!_peerManager) return NULL;
 
     int txLength = (*env)->GetArrayLength(env, serializedTransaction);
     jbyte *byteTx = (*env)->GetByteArrayElements(env, serializedTransaction, 0);
     BRTransaction *tmpTx = BRTransactionParse((uint8_t *) byteTx, (size_t) txLength);
 
-    if (!tmpTx) return JNI_FALSE;
+    if (!tmpTx) return NULL;
 
     jbyte *bytePhrase = (*env)->GetByteArrayElements(env, phrase, 0);
     UInt512 key = UINT512_ZERO;
@@ -669,11 +673,15 @@ Java_com_breadwallet_wallet_BRWalletManager_publishSerializedTransaction(JNIEnv 
 
     BRWalletSignTransaction(_wallet, tmpTx, 0, key.u8, seedSize);
     assert(BRTransactionIsSigned(tmpTx));
-    if (!tmpTx) return JNI_FALSE;
-    BRPeerManagerPublishTx(_peerManager, tmpTx, NULL, callback);
+    if (!tmpTx) return NULL;
+    BRPeerManagerPublishTx(_peerManager, tmpTx, tmpTx, callback);
     (*env)->ReleaseByteArrayElements(env, phrase, bytePhrase, JNI_ABORT);
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "returning true");
-    return JNI_TRUE;
+    UInt256 txid = tmpTx->txHash;
+    jbyteArray JtxHash = (*env)->NewByteArray(env, sizeof(txid));
+    (*env)->SetByteArrayRegion(env, JtxHash, 0, (jsize) sizeof(txid), (jbyte *) txid.u8);
+
+    return JtxHash;
 }
 
 JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTotalSent(JNIEnv *env,
