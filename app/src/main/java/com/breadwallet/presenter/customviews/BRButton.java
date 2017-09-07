@@ -10,17 +10,20 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
+import android.view.ViewTreeObserver;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.TypefacesManager;
 import com.breadwallet.tools.util.Utils;
 
@@ -121,6 +124,17 @@ public class BRButton extends Button {
         setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
         a.recycle();
         arr.recycle();
+        final ViewTreeObserver observer = getViewTreeObserver();
+        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                if (observer.isAlive()) {
+                    observer.removeOnGlobalLayoutListener(this);
+                }
+                correctTextSizeIfNeeded();
+
+            }
+        });
     }
 
     @Override
@@ -147,6 +161,24 @@ public class BRButton extends Button {
         width = w;
         height = h;
 
+    }
+
+    private void correctTextSizeIfNeeded() {
+        int limit = 100;
+        int lines = getLineCount();
+        float px = getTextSize();
+        while (lines > 1 && !getText().toString().contains("\n")) {
+            limit--;
+//            Log.e(TAG, "correctTextSizeIfNeeded: (" + getText().toString() + ")resizing by 2..: " + px);
+            px -= 1;
+            setTextSize(TypedValue.COMPLEX_UNIT_PX, px);
+            invalidate();
+            lines = getLineCount();
+            if (limit <= 0) {
+                Log.e(TAG, "correctTextSizeIfNeeded: Failed to rescale, limit reached, final: " + px);
+                break;
+            }
+        }
     }
 
     @Override
