@@ -23,7 +23,9 @@ import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
+import com.platform.entities.TxMetaData;
 import com.platform.tools.BRBitId;
+import com.platform.tools.KVStoreManager;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -62,10 +64,8 @@ public class PostAuth {
     public static final String TAG = PostAuth.class.getName();
 
     private String phraseForKeyStore;
-    private byte[] tmpTx;
+    public PaymentItem paymentItem;
     private PaymentRequestWrapper paymentRequest;
-    private String uri;
-    private String label;
 
     private static PostAuth instance;
 
@@ -183,21 +183,28 @@ public class PostAuth {
         final byte[] seed = TypesConverter.getNullTerminatedPhrase(rawSeed);
         try {
             if (seed.length != 0) {
-                boolean success = false;
-                if (tmpTx != null) {
-                    success = walletManager.publishSerializedTransaction(tmpTx, seed);
-                    tmpTx = null;
-                }
-                if (!success) {
-                    Log.e(TAG, "onPublishTxAuth: publishSerializedTransaction returned FALSE");
-                    BRWalletManager.getInstance().offerToChangeTheAmount(app, new PaymentItem(paymentRequest.addresses, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
-                    return;
+                if (paymentItem != null && paymentItem.serializedTx != null) {
+                    byte[] txHash = walletManager.publishSerializedTransaction(paymentItem.serializedTx, seed);
+                    Log.e(TAG, "onPublishTxAuth: txhash:" + Arrays.toString(txHash));
+                    if (Utils.isNullOrEmpty(txHash)) {
+                        Log.e(TAG, "onPublishTxAuth: publishSerializedTransaction returned FALSE");
+                        BRWalletManager.getInstance().offerToChangeTheAmount(app, new PaymentItem(paymentRequest.addresses, paymentItem.serializedTx, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
+                    } else {
+                        TxMetaData txMetaData = new TxMetaData();
+                        txMetaData.comment = paymentItem.comment;
+                        KVStoreManager.getInstance().putTxMetaData(app, txMetaData, txHash);
+                    }
+                    paymentItem = null;
+                } else {
+                    throw new NullPointerException("payment item is null");
                 }
             } else {
                 Log.e(TAG, "onPublishTxAuth: seed length is 0!");
                 return;
             }
-        } finally {
+        } finally
+
+        {
             Arrays.fill(seed, (byte) 0);
         }
 
@@ -314,7 +321,8 @@ public class PostAuth {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                BRWalletManager.getInstance().publishSerializedTransaction(paymentRequest.serializedTx, seed);
+                byte[] txHash = BRWalletManager.getInstance().publishSerializedTransaction(paymentRequest.serializedTx, seed);
+                if (Utils.isNullOrEmpty(txHash)) throw new NullPointerException("txHash is null!");
                 PaymentProtocolPostPaymentTask.sent = true;
                 Arrays.fill(seed, (byte) 0);
                 paymentRequest = null;
@@ -329,8 +337,8 @@ public class PostAuth {
     }
 
 
-    public void setTmpTx(byte[] tmpTx) {
-        this.tmpTx = tmpTx;
+    public void setPaymentItem(PaymentItem item) {
+        this.paymentItem = item;
     }
 
     public void setTmpPaymentRequest(PaymentRequestWrapper paymentRequest) {

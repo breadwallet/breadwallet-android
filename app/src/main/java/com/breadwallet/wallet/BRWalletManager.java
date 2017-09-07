@@ -60,6 +60,7 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -416,8 +417,8 @@ public class BRWalletManager {
     /**
      * Wallet callbacks
      */
-    public static void publishCallback(final String message, final int error) {
-        Log.e(TAG, "publishCallback: " + message + ", err:" + error);
+    public static void publishCallback(final String message, final int error, byte[] txHash) {
+        Log.e(TAG, "publishCallback: " + message + ", err:" + error + ", txHash: " + Arrays.toString(txHash));
         final Activity app = BreadApp.getBreadContext();
         app.runOnUiThread(new Runnable() {
             @Override
@@ -830,7 +831,7 @@ public class BRWalletManager {
 
     public native static String getFirstAddress(byte[] mpk);
 
-    public native boolean publishSerializedTransaction(byte[] serializedTransaction, byte[] phrase);
+    public native byte[] publishSerializedTransaction(byte[] serializedTransaction, byte[] phrase);
 
     public native long getTotalSent();
 

@@ -125,7 +125,7 @@ JNIEXPORT jstring JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_getFirstAddress(JNIEnv *env, jobject thiz,
                                                             jbyteArray bytePubKey);
 
-JNIEXPORT jboolean JNICALL
+JNIEXPORT jbyteArray JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_publishSerializedTransaction(JNIEnv *env,
                                                                          jobject thiz,
                                                                          jbyteArray serializedTransaction,

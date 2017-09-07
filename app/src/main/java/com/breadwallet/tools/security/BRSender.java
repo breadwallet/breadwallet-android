@@ -181,7 +181,8 @@ public class BRSender {
                     });
                     return;
                 }
-                PostAuth.getInstance().setTmpTx(tmpTx);
+                paymentRequest.serializedTx = tmpTx;
+                PostAuth.getInstance().setPaymentItem(paymentRequest);
                 confirmPay(app, paymentRequest);
             }
         }).start();
@@ -214,7 +215,8 @@ public class BRSender {
                                 final byte[] tmpTx2 = m.tryTransaction(request.addresses[0], newAmount);
 
                                 if (tmpTx2 != null) {
-                                    PostAuth.getInstance().setTmpTx(tmpTx2);
+                                    request.serializedTx = tmpTx2;
+                                    PostAuth.getInstance().setPaymentItem(request);
                                     request.amount = newAmount;
                                     confirmPay(app, request);
                                 } else {
@@ -345,7 +347,8 @@ public class BRSender {
         return receiver + "\n\n"
                 + "amount: " + formattedAmountBTC + " (" + formattedAmount + ")"
                 + "\nnetwork fee: +" + formattedFeeBTC + " (" + formattedFee + ")"
-                + "\ntotal: " + formattedTotalBTC + " (" + formattedTotal + ")";
+                + "\ntotal: " + formattedTotalBTC + " (" + formattedTotal + ")"
+                + (request.comment == null ? "" : "\n\n" + request.comment);
     }
 
     public String getReceiver(PaymentItem item) {
