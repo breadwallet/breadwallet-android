@@ -102,6 +102,7 @@ public class APIClient {
     //singleton instance
     private static APIClient ourInstance;
 
+
     private static final String BUNDLES = "bundles";
     public static String BREAD_POINT = "bread-frontend-staging"; //todo make this production
 
@@ -109,6 +110,7 @@ public class APIClient {
 
     private static String BREAD_FILE;
     private static String BREAD_EXTRACTED;
+    private static final boolean PRINT_FILES = false;
 
 
     private boolean platformUpdating = false;
@@ -449,9 +451,12 @@ public class APIClient {
             Response response = null;
             response = sendRequest(request, false, 0);
             Log.d(TAG, bundleFile + ": updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
-            writeBundleToFile(response);
+            byte[] body = writeBundleToFile(response);
+            if (Utils.isNullOrEmpty(body))
+                throw new NullPointerException("failed to write bundle to file");
 
-            tryExtractTar();
+            boolean b = tryExtractTar();
+            if (!b) throw new NullPointerException("failed to extract the bundle tar");
         }
 
         logFiles("updateBundle after", ctx);
@@ -562,7 +567,7 @@ public class APIClient {
             while ((entry = (TarArchiveEntry) debInputStream.getNextEntry()) != null) {
 
                 final String outPutFileName = entry.getName().replace("./", "");
-                final File outputFile = new File(getBundleResource(ctx, BREAD_EXTRACTED), outPutFileName);
+                final File outputFile = new File(getExtractedPath(ctx, null), outPutFileName);
                 if (!entry.isDirectory()) {
                     FileUtils.writeByteArrayToFile(outputFile, org.apache.commons.compress.utils.IOUtils.toByteArray(debInputStream));
                 }
@@ -756,16 +761,18 @@ public class APIClient {
     }
 
     public void logFiles(String tag, Context ctx) {
-        Log.e(TAG, "logFiles " + tag + " : START LOGGING");
-        String path = getExtractedPath(ctx, null);
+        if (PRINT_FILES) {
+            Log.e(TAG, "logFiles " + tag + " : START LOGGING");
+            String path = getExtractedPath(ctx, null);
 
-        File directory = new File(path);
-        File[] files = directory.listFiles();
-        Log.e("Files", "Path: " + path + ", size: " + (files == null ? 0 : files.length));
-        for (int i = 0; files != null && i < files.length; i++) {
-            Log.e("Files", "FileName:" + files[i].getName());
+            File directory = new File(path);
+            File[] files = directory.listFiles();
+            Log.e("Files", "Path: " + path + ", size: " + (files == null ? 0 : files.length));
+            for (int i = 0; files != null && i < files.length; i++) {
+                Log.e("Files", "FileName:" + files[i].getName());
+            }
+            Log.e(TAG, "logFiles " + tag + " : START LOGGING");
         }
-        Log.e(TAG, "logFiles " + tag + " : START LOGGING");
     }
 
 }
