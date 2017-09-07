@@ -157,9 +157,7 @@ public class HTTPServer {
                         app.onBackPressed();
                     }
                 });
-                response.setStatus(200);
-                baseRequest.setHandled(true);
-                return true;
+                return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
             }
 
             return false;
