@@ -25,19 +25,19 @@ import java.math.BigDecimal;
 import static com.platform.HTTPServer.URL_SUPPORT;
 
 
-public class DefaultCurrencyActivity extends BRActivity {
-    private static final String TAG = DefaultCurrencyActivity.class.getName();
+public class DisplayCurrencyActivity extends BRActivity {
+    private static final String TAG = DisplayCurrencyActivity.class.getName();
     private TextView exchangeText;
     private ListView listView;
     private CurrencyListAdapter adapter;
     //    private String ISO;
 //    private float rate;
     public static boolean appVisible = false;
-    private static DefaultCurrencyActivity app;
+    private static DisplayCurrencyActivity app;
     private Button leftButton;
     private Button rightButton;
 
-    public static DefaultCurrencyActivity getApp() {
+    public static DisplayCurrencyActivity getApp() {
         return app;
     }
 
@@ -48,14 +48,14 @@ public class DefaultCurrencyActivity extends BRActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_default_currency);
+        setContentView(R.layout.activity_display_currency);
 
         ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity app = DefaultCurrencyActivity.this;
+                Activity app = DisplayCurrencyActivity.this;
                 Intent intent = new Intent(app, WebViewActivity.class);
                 intent.putExtra("url", URL_SUPPORT);
                 intent.putExtra("articleId", BRConstants.defaultCurrency);
@@ -98,8 +98,8 @@ public class DefaultCurrencyActivity extends BRActivity {
                 TextView currencyItemText = (TextView) view.findViewById(R.id.currency_item_text);
                 final String selectedCurrency = currencyItemText.getText().toString();
                 String iso = selectedCurrency.substring(0, 3);
-                BRSharedPrefs.putIso(DefaultCurrencyActivity.this, iso);
-                BRSharedPrefs.putCurrencyListPosition(DefaultCurrencyActivity.this, position);
+                BRSharedPrefs.putIso(DisplayCurrencyActivity.this, iso);
+                BRSharedPrefs.putCurrencyListPosition(DisplayCurrencyActivity.this, position);
 
                 updateExchangeRate();
 
@@ -116,7 +116,7 @@ public class DefaultCurrencyActivity extends BRActivity {
         String iso = BRSharedPrefs.getIso(this);
         CurrencyEntity entity = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso);
         if (entity != null) {
-            String finalExchangeRate = BRCurrency.getFormattedCurrencyString(DefaultCurrencyActivity.this, BRSharedPrefs.getIso(this), new BigDecimal(entity.rate));
+            String finalExchangeRate = BRCurrency.getFormattedCurrencyString(DisplayCurrencyActivity.this, BRSharedPrefs.getIso(this), new BigDecimal(entity.rate));
             boolean bits = BRSharedPrefs.getCurrencyUnit(this) == BRConstants.CURRENT_UNIT_BITS;
             exchangeText.setText(BRCurrency.getFormattedCurrencyString(this, "BTC", new BigDecimal(bits ? 1000000 : 1)) + " = " + finalExchangeRate);
         }

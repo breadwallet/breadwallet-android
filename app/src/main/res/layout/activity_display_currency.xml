@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
-        android:text="@string/Settings.currency"
+        android:text="Display Currency"
         android:textColor="@color/almost_black"
         android:textSize="30sp"
         app:customFont="CircularPro-Bold.otf"

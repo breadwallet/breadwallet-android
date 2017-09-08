@@ -129,7 +129,7 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".presenter.activities.settings.DefaultCurrencyActivity"
+            android:name=".presenter.activities.settings.DisplayCurrencyActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>
