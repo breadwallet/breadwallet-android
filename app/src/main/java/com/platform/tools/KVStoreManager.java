@@ -283,8 +283,8 @@ public class KVStoreManager {
 
     //null means no change
     private String getFinalValue(String newVal, String oldVal) {
-        if (Utils.isNullOrEmpty(newVal)) return null;
-        if (Utils.isNullOrEmpty(oldVal)) return newVal;
+        if (newVal == null) return null;
+        if (oldVal == null) return newVal;
         if (newVal.equals(oldVal)) {
             return null;
         } else {

@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.Spannable;
 import android.text.SpannableString;
@@ -287,12 +288,18 @@ public class FragmentTransactionItem extends Fragment {
     @Override
     public void onPause() {
         String comment = mCommentText.getText().toString();
-        Activity app = getActivity();
+        final Activity app = getActivity();
         if (!comment.equals(oldComment)) {
             TxMetaData md = new TxMetaData();
             md.comment = comment;
             KVStoreManager.getInstance().putTxMetaData(app, md, item.getTxHash());
-            TxManager.getInstance().updateTxList(app);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    TxManager.getInstance().updateTxList(app);
+                }
+            },200);
+
         }
         oldComment = null;
         Utils.hideKeyboard(app);
