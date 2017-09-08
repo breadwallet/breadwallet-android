@@ -83,7 +83,7 @@
             android:text="Completed"
             android:textColor="@color/almost_black"
             app:customFont="CircularPro-Book.otf"
-            app:layout_constraintLeft_toLeftOf="@+id/comment"
+            app:layout_constraintLeft_toLeftOf="@+id/sent_received"
             app:layout_constraintTop_toBottomOf="@+id/comment"
             />
 
@@ -98,7 +98,7 @@
             android:textColor="#48F0B8"
             app:customFont="CircularPro-Bold.otf"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="@+id/comment"
+            app:layout_constraintLeft_toLeftOf="@+id/sent_received"
             app:layout_constraintTop_toBottomOf="@+id/status"
             app:layout_constraintVertical_bias="0.0"/>
 

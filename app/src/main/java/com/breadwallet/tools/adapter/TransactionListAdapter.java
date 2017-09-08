@@ -146,9 +146,29 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         TxItem item = itemFeed.get(TxManager.getInstance().currentPrompt == null ? position : position - 1);
 
         TxMetaData txMetaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
-        String commentString = txMetaData == null || txMetaData.comment == null ? "" : txMetaData.comment;
+        String commentString = (txMetaData == null || txMetaData.comment == null) ? "" : txMetaData.comment;
 
         convertView.comment.setText(commentString);
+        if (commentString.isEmpty()) {
+            convertView.constraintLayout.removeView(convertView.comment);
+            ConstraintSet set = new ConstraintSet();
+            set.clone(convertView.constraintLayout);
+            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, mContext.getResources().getDisplayMetrics());
+
+            set.connect(R.id.status, ConstraintSet.TOP, convertView.toFrom.getId(), ConstraintSet.BOTTOM, px);
+            // Apply the changes
+            set.applyTo(convertView.constraintLayout);
+        } else {
+            if (convertView.constraintLayout.indexOfChild(convertView.comment) == -1)
+                convertView.constraintLayout.addView(convertView.comment);
+            ConstraintSet set = new ConstraintSet();
+            set.clone(convertView.constraintLayout);
+            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, mContext.getResources().getDisplayMetrics());
+
+            set.connect(R.id.status, ConstraintSet.TOP, convertView.comment.getId(), ConstraintSet.BOTTOM, px);
+            // Apply the changes
+            set.applyTo(convertView.constraintLayout);
+        }
 
         boolean received = item.getSent() == 0;
         convertView.mainLayout.setBackgroundResource(getResourceByPos(position));
@@ -156,15 +176,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         convertView.toFrom.setText(received ? "from" : "to");
         final String addr = received ? item.getFrom()[0] : item.getTo()[0];
         convertView.account.setText(addr);
-
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (convertView.account.getX() + convertView.account.getWidth() > convertView.timestamp.getX()) {
-//                    convertView.account.setText(TextUtils.concat(addr.substring(0, 5), "…\n", "…", addr.substring(addr.length() - 5)));
-//                }
-//            }
-//        }, 50);
 
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext) - blockHeight + 1;
