@@ -174,7 +174,7 @@ public class SecurityCenterActivity extends BRActivity {
                 : R.drawable.ic_check_mark_grey;
 
         if (Utils.isFingerprintAvailable(this)) {
-            itemList.add(new BRSecurityCenterItem("FingerPrint", "Unlocks your Bread, authorizes send money to set limit.",
+            itemList.add(new BRSecurityCenterItem("Fingerprint", "Unlocks your Bread, authorizes send money to set limit.",
                     resId, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
