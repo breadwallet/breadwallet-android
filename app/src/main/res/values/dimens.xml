@@ -14,5 +14,6 @@
     <dimen name="bread_margin">16dp</dimen>
     <dimen name="faq_dimen">24dp</dimen>
     <dimen name="close_dimen">24dp</dimen>
+    <dimen name="radius">4dp</dimen>
 
 </resources>
