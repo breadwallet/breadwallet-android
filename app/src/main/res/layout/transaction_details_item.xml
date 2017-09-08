@@ -34,9 +34,11 @@
                 android:id="@+id/close_button"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:layout_margin="@dimen/bread_margin"
                 android:background="@drawable/ic_close_black_24dp"
-                />
+                android:layout_marginLeft="@dimen/bread_margin"
+                android:layout_marginRight="@dimen/bread_margin"
+                android:layout_centerVertical="true"
+               />
 
             <com.breadwallet.presenter.customviews.BRText
                 android:id="@+id/title"
@@ -55,10 +57,12 @@
                 android:id="@+id/faq_button"
                 android:layout_width="@dimen/faq_dimen"
                 android:layout_height="@dimen/faq_dimen"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="@dimen/bread_margin"
                 android:background="@drawable/faq_question_black"
-                />
+                android:layout_marginLeft="@dimen/bread_margin"
+                android:layout_marginRight="@dimen/bread_margin"
+                android:layout_alignBottom="@+id/title"
+                android:layout_alignParentEnd="true"
+                android:layout_marginEnd="@dimen/bread_margin"/>
 
             <View
                 android:id="@+id/view"
