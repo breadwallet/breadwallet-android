@@ -317,7 +317,7 @@
                 android:id="@+id/request_button"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/big_button_height"
-                android:layout_marginBottom="32dp"
+                android:layout_marginBottom="0dp"
                 android:layout_marginEnd="24dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
