@@ -252,7 +252,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/extra_light_gray"
-                android:paddingTop="8dp"
                 />
 
             <View
