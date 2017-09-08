@@ -34,6 +34,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 
@@ -323,7 +324,7 @@ public class PinActivity extends BRActivity {
         GradientDrawable leftDrawable = (GradientDrawable) leftButton.getBackground().getCurrent();
         GradientDrawable rightDrawable = (GradientDrawable) rightButton.getBackground().getCurrent();
 
-        int rad = 30;
+        int rad = Utils.getPixelsFromDps(this, (int) getResources().getDimension(R.dimen.radius)/2);
         int stoke = 2;
 
         leftDrawable.setCornerRadii(new float[]{rad, rad, 0, 0, 0, 0, rad, rad});
