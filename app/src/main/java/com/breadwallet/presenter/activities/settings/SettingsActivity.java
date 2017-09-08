@@ -155,7 +155,7 @@ public class SettingsActivity extends BRActivity {
         }, false));
 
         if (AuthManager.isFingerPrintAvailableAndSetup(this)) {
-            items.add(new BRSettingsItem("FingerPrint Spending Limit", "", new View.OnClickListener() {
+            items.add(new BRSettingsItem("Fingerprint Spending Limit", "", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     AuthManager.getInstance().authPrompt(SettingsActivity.this, null, "Please enter your PIN to be able to change the limit.", true, new BRAuthCompletion() {
@@ -176,10 +176,10 @@ public class SettingsActivity extends BRActivity {
             }, false));
         }
 
-        items.add(new BRSettingsItem("Default Currency", BRSharedPrefs.getIso(this), new View.OnClickListener() {
+        items.add(new BRSettingsItem("Display Currency", BRSharedPrefs.getIso(this), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, DefaultCurrencyActivity.class);
+                Intent intent = new Intent(SettingsActivity.this, DisplayCurrencyActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
