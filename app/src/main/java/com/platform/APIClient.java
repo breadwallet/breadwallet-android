@@ -500,19 +500,15 @@ public class APIClient {
             patchBytes = diffResponse.body().bytes();
             Log.e(TAG, "downloadDiff: trying to write to file");
             FileUtils.writeByteArrayToFile(patchFile, patchBytes);
-
-            String compression = System.getProperty("jbsdiff.compressor", "tar");
-            compression = compression.toLowerCase();
-            tempFile = new File(getBundleResource(ctx, BREAD_POINT + "-temp.tar"));
+            tempFile = new File(getBundleResource(ctx, BREAD_POINT + "-2temp.tar"));
             boolean a = tempFile.createNewFile();
-            if (!a)
-                Log.e(TAG, "downloadDiff: failed to create a temp file: " + tempFile.getAbsolutePath());
             File bundleFile = new File(getBundleResource(ctx, BREAD_POINT + ".tar"));
-            FileUI.diff(bundleFile, tempFile, patchFile, compression);
+            FileUI.patch(bundleFile, tempFile, patchFile);
             byte[] updatedBundleBytes = IOUtils.toByteArray(new FileInputStream(tempFile));
-            if(Utils.isNullOrEmpty(updatedBundleBytes))
+            if (Utils.isNullOrEmpty(updatedBundleBytes))
                 Log.e(TAG, "downloadDiff: failed to get bytes from the updatedBundle: " + tempFile.getAbsolutePath());
             FileUtils.writeByteArrayToFile(bundleFile, updatedBundleBytes);
+
         } catch (IOException | InvalidHeaderException | CompressorException | NullPointerException e) {
             Log.e(TAG, "downloadDiff: ", e);
         } finally {
