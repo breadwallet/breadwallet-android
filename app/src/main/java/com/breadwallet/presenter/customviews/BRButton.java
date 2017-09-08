@@ -60,12 +60,15 @@ public class BRButton extends Button {
     private RectF bRect;
     private int width;
     private int height;
+    private int modifiedWidth;
+    private int modifiedHeight;
     private Paint bPaint;
     private Paint bPaintStroke;
     private int type = 2;
     private static final float SHADOW_PRESSED = 0.88f;
     private static final float SHADOW_UNPRESSED = 0.95f;
     private float shadowOffSet = SHADOW_UNPRESSED;
+    private static final int ROUND_PIXELS = 16;
     private boolean isBreadButton; //meaning is has the special animation and shadow
 
     public BRButton(Context context) {
@@ -98,7 +101,7 @@ public class BRButton extends Button {
         TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.BRText);
         String customFont = a.getString(R.styleable.BRText_customFont);
         TypefacesManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Medium.otf" : customFont);
-        float px16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 14, getResources().getDisplayMetrics());
+        float px16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics());
         //check attributes you need, for example all paddings
         int[] attributes = new int[]{android.R.attr.paddingStart, android.R.attr.paddingTop, android.R.attr.paddingEnd, android.R.attr.paddingBottom, R.attr.isBreadButton, R.attr.buttonType};
         //then obtain typed array
@@ -132,7 +135,7 @@ public class BRButton extends Button {
                     observer.removeOnGlobalLayoutListener(this);
                 }
                 correctTextSizeIfNeeded();
-
+                correctTextBalance();
             }
         });
     }
@@ -172,7 +175,6 @@ public class BRButton extends Button {
 //            Log.e(TAG, "correctTextSizeIfNeeded: (" + getText().toString() + ")resizing by 2..: " + px);
             px -= 1;
             setTextSize(TypedValue.COMPLEX_UNIT_PX, px);
-            invalidate();
             lines = getLineCount();
             if (limit <= 0) {
                 Log.e(TAG, "correctTextSizeIfNeeded: Failed to rescale, limit reached, final: " + px);
@@ -181,14 +183,36 @@ public class BRButton extends Button {
         }
     }
 
+    private void correctTextBalance() {
+//        Rect bounds = new Rect();
+//        Paint textPaint = getPaint();
+//        textPaint.getTextBounds(getText().toString(), 0, getText().toString().length(), bounds);
+//        int height = bounds.height();
+//        int width = bounds.width();
+
+//        int paddingLeft = getPaddingLeft();
+//        int paddingTop = getPaddingTop();
+//        int paddingRight = getPaddingRight();
+//        int paddingBottom = getPaddingBottom();
+//
+//        paddingTop = 5;
+//        paddingBottom = height - 5 - modifiedHeight;
+//
+//        setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
+//        invalidate();
+    }
+
     @Override
     protected void onDraw(Canvas canvas) {
         if (isBreadButton) {
             shadowRect.set(5, height / 4, width - 5, (int) (height * shadowOffSet));
-            bRect.set(5, 5, width - 5, height - height / 4);
+            modifiedWidth = width - 10;
+            modifiedHeight = height - height / 4 - 5;
+            bRect.set(5, 5, modifiedWidth, modifiedHeight + 5);
             canvas.drawBitmap(shadow, null, shadowRect, null);
-            canvas.drawRoundRect(bRect, 16, 16, bPaint);
-            if (type == 2 || type == 3) canvas.drawRoundRect(bRect, 16, 16, bPaintStroke);
+            canvas.drawRoundRect(bRect, ROUND_PIXELS, ROUND_PIXELS, bPaint);
+            if (type == 2 || type == 3)
+                canvas.drawRoundRect(bRect, ROUND_PIXELS, ROUND_PIXELS, bPaintStroke);
         }
         super.onDraw(canvas);
 
