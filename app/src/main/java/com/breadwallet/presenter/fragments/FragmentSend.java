@@ -129,7 +129,9 @@ public class FragmentSend extends Fragment {
         close = (ImageButton) rootView.findViewById(R.id.close_button);
         amountBuilder = new StringBuilder(0);
         setListeners();
-
+        isoText.setText("Amount");
+        isoText.setTextSize(18);
+        isoText.setTextColor(getContext().getColor(R.color.light_gray));
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
 
         signalLayout.setOnClickListener(new View.OnClickListener() {
@@ -172,14 +174,13 @@ public class FragmentSend extends Fragment {
             @Override
             public void onClick(View v) {
                 showKeyboard(true);
-                if (!amountEdit.getHint().toString().equalsIgnoreCase("0")) { //only first time
-                    RelativeLayout.LayoutParams params = (RelativeLayout.LayoutParams) isoText.getLayoutParams();
-                    params.width = RecyclerView.LayoutParams.WRAP_CONTENT;
-                    isoText.setLayoutParams(params);
+                if (amountEdit.getHint() == null || !amountEdit.getHint().toString().equalsIgnoreCase("0")) { //only first time
                     amountEdit.setHint("0");
                     amountEdit.setTextSize(24);
-                    isoText.requestLayout();
                     balanceText.setVisibility(View.VISIBLE);
+                    isoText.setTextColor(getContext().getColor(R.color.almost_black));
+                    isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
+                    isoText.setTextSize(28);
                 }
 
             }

@@ -152,11 +152,12 @@
 
             <com.breadwallet.presenter.customviews.BRText
                 android:id="@+id/iso_text"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="@dimen/bread_margin"
                 android:text="$"
+                app:customFont="CircularPro-Medium.otf"
                 android:textSize="28sp"
                 />
 
@@ -174,7 +175,6 @@
                 android:ems="10"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
-                android:hint="Amount"
                 android:inputType="numberDecimal"
                 android:textIsSelectable="false"
                 />
