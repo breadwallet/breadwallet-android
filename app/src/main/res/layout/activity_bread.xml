@@ -88,7 +88,7 @@
                         android:layout_marginStart="4dp"
                         android:layout_marginTop="0dp"
                         android:text="= b0"
-                        android:textColor="@color/almost_black"
+                        android:textColor="@color/white"
                         android:textSize="16sp"
                         app:customFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="@+id/search_icon"

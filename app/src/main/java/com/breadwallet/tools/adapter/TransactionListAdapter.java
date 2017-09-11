@@ -320,6 +320,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                             || item.getFrom()[0].toLowerCase().contains(lowerQuery)
                             || item.getTo()[0].toLowerCase().contains(lowerQuery) ||
                             (metaData.comment != null && metaData.comment.toLowerCase().contains(lowerQuery))) {
+                        Log.e(TAG, "run: after contains: " + item.getTxHashHexReversed());
                         if (switchesON == 0) {
                             filteredList.add(item);
                         } else {
