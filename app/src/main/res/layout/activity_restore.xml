@@ -112,9 +112,9 @@
             android:layout_height="@dimen/faq_dimen"
             android:layout_alignBottom="@+id/textView2"
             android:layout_alignParentEnd="true"
-            android:layout_alignTop="@+id/textView2"
             android:layout_marginEnd="15dp"
-            android:background="@drawable/faq_question_white"/>
+            android:background="@drawable/faq_question_white"
+            android:scaleType="centerCrop"/>
 
         <ImageButton
             android:id="@+id/close_button"
