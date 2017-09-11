@@ -83,7 +83,7 @@
         android:layout_margin="@dimen/bread_margin"
         android:text="Enable Fingerprint for Bread"
         android:textColor="@color/almost_black"
-        android:textSize="18sp"
+        android:textSize="16sp"
         app:customFont="CircularPro-Bold.otf"/>
 
     <ToggleButton
