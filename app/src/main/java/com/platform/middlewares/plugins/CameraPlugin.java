@@ -20,6 +20,7 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.util.BRConstants;
 import com.platform.BRHTTPHelper;
+import com.platform.HTTPServer;
 import com.platform.interfaces.Plugin;
 
 import org.apache.commons.compress.utils.IOUtils;
@@ -217,11 +218,12 @@ public class CameraPlugin implements Plugin {
                         }
                         Log.i(TAG, "handleCameraImageTaken: wrote image to: " + id);
                         try {
+                            continuation.getServletResponse().setContentType("application/json");
                             ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
                             continuation.getServletResponse().getWriter().write(respJson.toString());
                             globalBaseRequest.setHandled(true);
                             continuation.complete();
-                            Log.e(TAG, "run: Finished taking picture");
+                            Log.d(TAG, "run: Finished taking picture");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
