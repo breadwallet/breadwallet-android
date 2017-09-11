@@ -112,7 +112,7 @@
   <string name="Confirmation.feeLabel">Network Fee:</string>
   <!-- eg. Processing time: This transaction will take 10-30 minutes to process. -->
   <string name="Confirmation.processingTime">Processing time: This transaction will take %1$s minutes to process.</string>
-  <!-- Send: (amount) -->
+  <!-- Label for "send" button on final confirmation screen -->
   <string name="Confirmation.send">Send</string>
   <!-- Confirmation Screen title -->
   <string name="Confirmation.title">Confirmation</string>
@@ -315,7 +315,7 @@
   <!-- Recover wallet header -->
   <string name="RecoverWallet.header">Recover Wallet</string>
   <!-- Reset PIN with paper key: header -->
-  <string name="RecoverWallet.headerResetPin">Reset PIN</string>
+  <string name="RecoverWallet.header-reset-pin">Reset PIN</string>
   <!-- Enter paper key instruction -->
   <string name="RecoverWallet.instruction">Enter Paper Key</string>
   <!-- Recover wallet intro -->
@@ -327,13 +327,13 @@
   <!-- Next button label -->
   <string name="RecoverWallet.next">Next</string>
   <!-- Reset PIN with paper key: more information button. -->
-  <string name="RecoverWallet.resetPinMoreInfo">Tap here for more information.</string>
+  <string name="RecoverWallet.reset-pin-more-info">Tap here for more information.</string>
   <!-- Next button accessibility label -->
   <string name="RecoverWallet.rightArrow">Right Arrow</string>
   <!-- Recover wallet sub-header -->
   <string name="RecoverWallet.subheader">Enter the paper key for the wallet you want to recover.</string>
   <!-- Reset PIN with paper key: sub-header -->
-  <string name="RecoverWallet.subheaderResetPin">To reset your PIN, enter the words from your paper key into the boxes below.</string>
+  <string name="RecoverWallet.subheader-reset-pin">To reset your PIN, enter the words from your paper key into the boxes below.</string>
   <!-- No amount entered error message. -->
   <string name="RequestAnAmount.noAmount">Please enter an amount first.</string>
   <!-- Request a specific amount of bitcoin -->
@@ -349,7 +349,7 @@
   <!-- Syncing explanation -->
   <string name="ReScan.body2">If a transaction shows as completed on the bitcoin network but not in your Bread.</string>
   <!-- Syncing explanation -->
-  <string name="ReScan.body3">If you are trying to send a transaction and it keeps getting rejected.</string>
+  <string name="ReScan.body3">You repeatedly get an error saying your transaction was rejected.</string>
   <!-- Start Sync button label -->
   <string name="ReScan.buttonTitle">Start Sync</string>
   <!-- Sync blockchain view footer -->
@@ -390,8 +390,6 @@
   <string name="Send.amountLabel">Amount</string>
   <!-- Balance: $4.00 -->
   <string name="Send.balance">Balance: %1$s</string>
-  <!-- Network Fee: $0.01 -->
-  <string name="Send.balanceWithFee">Balance: %1$s, Fee: %2$s</string>
   <!-- Camera not allowed message -->
   <string name="Send.cameraunavailableMessage">Go to Settings to allow camera access.</string>
   <!-- Camera not allowed alert title -->
@@ -402,14 +400,22 @@
   <string name="Send.creatTransactionError">Could not create transaction.</string>
   <!-- Description for sending money label -->
   <string name="Send.descriptionLabel">Memo</string>
+  <!-- Emtpy pasteboard error message -->
+  <string name="Send.emptyPasteboard">Pasteboard is empty</string>
+  <!-- Network Fee: $0.01 -->
+  <string name="Send.fee">Network Fee: %1$s</string>
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">Payee identity isn\'t certified.</string>
   <!-- Invalid address alert message -->
-  <string name="Send.invalidAddressMessage">Your clipboard does not contain a valid bitcoin address.</string>
+  <string name="Send.invalidAddressMessage">The destination address is not a valid bitcoin address.</string>
+  <!-- Invalid address on pasteboard message -->
+  <string name="Send.invalidAddressOnPasteboard">Pasteboard does not contain a valid bitcoin address.</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">Invalid Address</string>
   <!-- Is rescanning error message -->
   <string name="Send.isRescanning">Sending is disabled during a full rescan.</string>
+  <!-- Loading request activity view message -->
+  <string name="Send.loadingRequest">Loading Request</string>
   <!-- Empty address alert message -->
   <string name="Send.noAddress">Please enter the recipient\'s address.</string>
   <!-- Emtpy amount alert message -->
@@ -418,12 +424,14 @@
   <string name="Send.pasteLabel">Paste</string>
   <!-- Could not publish transaction alert title -->
   <string name="Send.publishTransactionError">Could not publish transaction.</string>
+  <!-- Could not load remote request error message -->
+  <string name="Send.remoteRequestError">Could not load payment request</string>
   <!-- Scan button label -->
   <string name="Send.scanLabel">Scan</string>
-  <!-- Send button label -->
+  <!-- Send button label (the action, "press here to send") -->
   <string name="Send.sendLabel">Send</string>
-  <!-- Send modal title -->
-  <string name="Send.title">Send Money</string>
+  <!-- Send screen title (as in "this is the screen for sending money") -->
+  <string name="Send.title">Send</string>
   <!-- Send money to label -->
   <string name="Send.toLabel">To</string>
   <!-- Adress already used alert message - first part -->
@@ -436,8 +444,8 @@
   <string name="Settings.about">About</string>
   <!-- Advanced Settings title -->
   <string name="Settings.advancedTitle">Advanced Settings</string>
-  <!-- Default currency label -->
-  <string name="Settings.currency">Default Currency</string>
+  <!-- i.e. the currency which will be displayed -->
+  <string name="Settings.currency">Display Currency</string>
   <!-- Join Early access label -->
   <string name="Settings.earlyAccess">Join Early Access</string>
   <!-- Are you enjoying bread alert message body -->
@@ -495,7 +503,7 @@
   <!-- Touch Id screen label -->
   <string name="TouchIdSettings.label">Use your fingerprint to unlock your Bread and send money up to a set limit.</string>
   <!-- Link Text (see TouchIdSettings.customizeText) -->
-  <string name="TouchIdSettings.linkText">Touch ID Spending Limit screen</string>
+  <string name="TouchIdSettings.linkText">Touch ID Spending Limit Screen</string>
   <!-- Spending Limit: b100,000 ($100) -->
   <string name="TouchIdSettings.spendingLimit">Spending limit: %1$s (%2$s)</string>
   <!-- Touch id switch label. -->
@@ -546,21 +554,21 @@
   <string name="TransactionDetails.commentsHeader">Memo</string>
   <!-- Empty transaction list message. -->
   <string name="TransactionDetails.emptyMessage">Your transactions will appear here.</string>
-  <!-- [received] at <address> (received title 2/2) -->
-  <string name="TransactionDetails.from">from an address</string>
+  <!-- "Received [$5] at [which of my addresses]" => This is the "at [which of my addresses]" part. -->
+  <string name="TransactionDetails.from">at %1$s</string>
   <!-- More button title -->
   <string name="TransactionDetails.more">More...</string>
-  <!-- Moved $5.00 -->
+  <!-- Moved $5.00 (as in "I moved $5 to another location") -->
   <string name="TransactionDetails.moved">Moved %1$s</string>
   <!-- Moved $5.00 -->
   <string name="TransactionDetails.movedAmountDescription">Moved <b>%1@</b></string>
   <!-- eg. Confirmed in Block: Not Confirmed -->
   <string name="TransactionDetails.notConfirmedBlockHeightLabel">Not Confirmed</string>
-  <!-- Received $5.00 (received title 1/2) -->
+  <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
   <string name="TransactionDetails.received">Received %1$s</string>
   <!-- Received $5.00 -->
   <string name="TransactionDetails.receivedAmountDescription">Received <b>%1@</b></string>
-  <!-- Sent $5.00 (sent title 1/2) -->
+  <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
   <string name="TransactionDetails.sent">Sent %1$s</string>
   <!-- Sent $5.00 -->
   <string name="TransactionDetails.sentAmountDescription">Sent <b>%1@</b></string>
@@ -568,14 +576,14 @@
   <string name="TransactionDetails.statusHeader">Status</string>
   <!-- Transaction Details Title -->
   <string name="TransactionDetails.title">Transaction Details</string>
-  <!-- [sent] to <address> (sent title 2/2) -->
-  <string name="TransactionDetails.to">to an address</string>
+  <!-- "Sent [$5] to [address]" => This is the "to [address]" part. -->
+  <string name="TransactionDetails.to">to %1$s</string>
   <!-- Transaction ID header -->
-  <string name="TransactionDetails.txHashHeader">Transaction Hash</string>
+  <string name="TransactionDetails.txHashHeader">Bitcoin Transaction ID</string>
   <!-- (this transaction was) Received at this address: -->
-  <string name="TransactionDirection.address">received at this address</string>
+  <string name="TransactionDirection.address">Received at this Address</string>
   <!-- (this transaction was) Sent to this address: -->
-  <string name="TransactionDirection.to">to</string>
+  <string name="TransactionDirection.to">Sent to this Address</string>
   <!-- Disabled until date -->
   <string name="UnlockScreen.disabled">Disabled until: %1$s</string>
   <!-- My Address button title -->
@@ -636,6 +644,10 @@
   <string name="Webview.errorMessage">There was an error loading the content. Please try again.</string>
   <!-- Updating webview message -->
   <string name="Webview.updating">Updating...</string>
+  <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
+  <string name="Welcome.body">Breadwallet has changed its name to Bread, with a brand new look and some new features.\n\nIf you need help, look for the (?) in the top right of most screens.</string>
+  <!-- Top title of welcome screen -->
+  <string name="Welcome.title">Welcome to Bread!</string>
   <!-- Wipe wallet alert message -->
   <string name="WipeWallet.alertMessage">Are you sure you want to delete this wallet?</string>
   <!-- Wipe wallet alert title -->
@@ -646,6 +658,10 @@
   <string name="WipeWallet.failedTitle">Failed</string>
   <!-- Enter phrase to wipe wallet instruction. -->
   <string name="WipeWallet.instruction">Enter this wallet\'s recovery phrase to wipe it and start or recover another. Your current balance remains on this phrase.</string>
+  <!-- Start wipe wallet view message -->
+  <string name="WipeWallet.startMessage">Starting or recovering another wallet allows you to access and manage a different Bread wallet on this device.</string>
+  <!-- Start wipe wallet view warning -->
+  <string name="WipeWallet.startWaring">You will no longer be able to access your current Bread wallet from this device. The balance will remain on the phrase.</string>
   <!-- Wipe wallet navigation item title. -->
   <string name="WipeWallet.title">Start or Recover Another Wallet</string>
   <!-- Wipe wallet button title -->
@@ -660,6 +676,4 @@
   <string name="WritePaperPhrase.previous">Previous</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d of %2$d</string>
-
-  <string name="lang_Android">en</string>
 </resources>
