@@ -13,7 +13,7 @@ import android.view.View;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.fragments.FingerprintFragment;
+import com.breadwallet.presenter.fragments.FragmentFingerprint;
 import com.breadwallet.presenter.fragments.FragmentPin;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRDialog;
@@ -222,7 +222,7 @@ public class AuthManager {
 
         final Activity app = (Activity) context;
 
-        FingerprintFragment fingerprintFragment = (FingerprintFragment) app.getFragmentManager().findFragmentByTag(FingerprintFragment.class.getName());
+        FragmentFingerprint fingerprintFragment = (FragmentFingerprint) app.getFragmentManager().findFragmentByTag(FragmentFingerprint.class.getName());
         FragmentPin breadPin = (FragmentPin) app.getFragmentManager().findFragmentByTag(FragmentPin.class.getName());
 
         if (fingerprintFragment != null && fingerprintFragment.isAdded() || breadPin != null && breadPin.isAdded()) {
@@ -233,7 +233,7 @@ public class AuthManager {
         if (keyguardManager.isKeyguardSecure()) {
             if (useFingerPrint) {
 
-                fingerprintFragment = new FingerprintFragment();
+                fingerprintFragment = new FragmentFingerprint();
                 Bundle args = new Bundle();
                 args.putString("title", title);
                 args.putString("message", message);
@@ -241,7 +241,7 @@ public class AuthManager {
                 fingerprintFragment.setCompletion(completion);
                 FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
                 transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
-                transaction.add(android.R.id.content, fingerprintFragment, FingerprintFragment.class.getName());
+                transaction.add(android.R.id.content, fingerprintFragment, FragmentFingerprint.class.getName());
                 transaction.addToBackStack(null);
                 if (!app.isDestroyed())
                     transaction.commit();

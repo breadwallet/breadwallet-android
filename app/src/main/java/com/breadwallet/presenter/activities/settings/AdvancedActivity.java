@@ -116,7 +116,8 @@ public class AdvancedActivity extends BRActivity {
 
     @Override
     public void onBackPressed() {
-        BRAnimator.startBreadActivity(this, false);
+        super.onBackPressed();
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 
     private void populateItems() {

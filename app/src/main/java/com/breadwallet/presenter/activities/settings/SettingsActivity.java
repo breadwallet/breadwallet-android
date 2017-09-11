@@ -116,7 +116,8 @@ public class SettingsActivity extends BRActivity {
 
     @Override
     public void onBackPressed() {
-        BRAnimator.startBreadActivity(this, false);
+        super.onBackPressed();
+        overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
     }
 
     private void populateItems() {

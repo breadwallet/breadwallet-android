@@ -25,7 +25,6 @@ import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,9 +50,9 @@ import com.breadwallet.tools.util.Utils;
  * A dialog which uses fingerprint APIs to authenticate the user, and falls back to password
  * authentication if fingerprint is not available.
  */
-public class FingerprintFragment extends Fragment
+public class FragmentFingerprint extends Fragment
         implements FingerprintUiHelper.Callback {
-    public static final String TAG = FingerprintFragment.class.getName();
+    public static final String TAG = FragmentFingerprint.class.getName();
 
     private FingerprintManager.CryptoObject mCryptoObject;
     private FingerprintUiHelper mFingerprintUiHelper;
@@ -69,7 +68,7 @@ public class FingerprintFragment extends Fragment
 
     FingerprintUiHelper.FingerprintUiHelperBuilder mFingerprintUiHelperBuilder;
 
-    public FingerprintFragment() {
+    public FragmentFingerprint() {
     }
 
     @Override
@@ -276,7 +275,7 @@ public class FingerprintFragment extends Fragment
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
                     if (getActivity() != null)
-                        getActivity().getFragmentManager().beginTransaction().remove(FingerprintFragment.this).commit();
+                        getActivity().getFragmentManager().beginTransaction().remove(FragmentFingerprint.this).commit();
                 }
             });
 

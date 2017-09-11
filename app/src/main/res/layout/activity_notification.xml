@@ -26,7 +26,7 @@
         android:id="@+id/description"
         android:layout_width="296dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/bread_margin"
+        android:layout_marginTop="24dp"
         android:lineSpacingMultiplier="1.3"
         android:text="@string/PushNotifications.body"
         android:textColor="@color/almost_black"
