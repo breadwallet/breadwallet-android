@@ -226,19 +226,13 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         primaryPrice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.swapPriceTexts(BreadActivity.this, !isSwapped ? primaryPrice : secondaryPrice, !isSwapped ? secondaryPrice : primaryPrice);
-                isSwapped = !isSwapped;
-                updateUI();
+               swap();
             }
         });
         secondaryPrice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.swapPriceTexts(BreadActivity.this, !isSwapped ? primaryPrice : secondaryPrice, !isSwapped ? secondaryPrice : primaryPrice);
-                isSwapped = !isSwapped;
-                updateUI();
+                swap();
             }
         });
 
@@ -252,6 +246,13 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         });
 
 
+    }
+
+    private void swap(){
+        if (!BRAnimator.isClickAllowed()) return;
+        BRAnimator.swapPriceTexts(BreadActivity.this, !isSwapped ? primaryPrice : secondaryPrice, !isSwapped ? secondaryPrice : primaryPrice);
+        isSwapped = !isSwapped;
+        updateUI();
     }
 
     private void setUpBarFlipper() {
