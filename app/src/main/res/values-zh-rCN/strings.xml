@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+  <!-- About screen blog label -->
+  <string name="About.blog">博客</string>
+  <!-- About screen footer -->
+  <string name="About.footer">由全球 Bread 团队制作。版本%1$s</string>
+  <!-- Privay Policy button label -->
+  <string name="About.privacy">隐私政策</string>
+  <!-- About screen reddit label -->
+  <string name="About.reddit">Reddit</string>
+  <!-- Terms of Use button label -->
+  <string name="About.terms">使用条款</string>
+  <!-- About screen title -->
+  <string name="About.title">关于</string>
+  <!-- About screen twitter label -->
+  <string name="About.twitter">Twitter</string>
+  <!-- Close modal button accessibility label -->
+  <string name="AccessibilityLabels.close">关闭</string>
+  <!-- Support center accessibiliy label -->
+  <string name="AccessibilityLabels.faq">支持中心</string>
+  <!-- Loading Wallet Message -->
+  <string name="Account.loadingMessage">正在加载钱包</string>
+  <!-- Default wallet name -->
+  <string name="AccountHeader.defaultWalletName">我的 Bread</string>
+  <!-- Equals symbol -->
+  <string name="AccountHeader.equals">=</string>
+  <!-- Manage wallet button title -->
+  <string name="AccountHeader.manageButtonName">管理</string>
+  <!-- Error alert title -->
+  <string name="Alert.error">错误</string>
+  <!-- No internet alert message -->
+  <string name="Alert.noInternet">未发现互联网连接。检查您的连接并重试。</string>
+  <!-- Warning alert title -->
+  <string name="Alert.warning">警告</string>
+  <!-- 'the addresses were copied'' Alert title -->
+  <string name="Alerts.copiedAddressesHeader">地址已复制</string>
+  <!-- Addresses Copied Alert sub header -->
+  <string name="Alerts.copiedAddressesSubheader">所有的钱包地址已被成功复制。</string>
+  <!-- Alert Header Label (the paper key was set) -->
+  <string name="Alerts.paperKeySet">纸上密钥已设置</string>
+  <!-- Alert Subheader label (playfully positive) -->
+  <string name="Alerts.paperKeySetSubheader">太棒了！</string>
+  <!-- Alert Header label (the PIN was set) -->
+  <string name="Alerts.pinSet">PIN 已设置</string>
+  <!-- Send failure alert header label (the send failed to happen) -->
+  <string name="Alerts.sendFailure">发送失败</string>
+  <!-- Send success alert header label (confirmation that the send happened) -->
+  <string name="Alerts.sendSuccess">发送确认</string>
+  <!-- Send success alert subheader label (e.g. the money was sent) -->
+  <string name="Alerts.sendSuccessSubheader">钱已发送！</string>
+  <!-- JSON Serialization error message -->
+  <string name="ApiClient.jsonError">JSON 串行化错误</string>
+  <!-- Wallet not ready error message -->
+  <string name="ApiClient.notReady">钱包尚未备好</string>
+  <!-- API Token error message -->
+  <string name="ApiClient.tokenError">无法检索 API 令牌</string>
+  <!-- Send BCH view body. -->
+  <string name="BCH.body">在下方输入目标 BCH 地址。您钱包中此分叉 (%1$s) 时的所有 BCH 都将被发送。</string>
+  <!-- Confirm sending <$5.00> to <address>? -->
+  <string name="BCH.confirmationMessage">确认将 %1$s 发送到 %2$s</string>
+  <!-- Confirmation alert title -->
+  <string name="BCH.confirmationTitle">确认</string>
+  <!-- Generic bch erorr message -->
+  <string name="BCH.genericError">您的账户不包含任何 BCH，或您在分叉后接收到 BCH。</string>
+  <!-- Transaction ID copied message -->
+  <string name="BCH.hashCopiedMessage">已拷贝交易 ID</string>
+  <!-- No address error message -->
+  <string name="BCH.noAddressError">请输入地址</string>
+  <!-- Attempted to scan unsupported qr code error message. -->
+  <string name="BCH.paymentProtocolError">支付协议请求不支持 BCH 交易</string>
+  <!-- BCH successfully sent alert message -->
+  <string name="BCH.successMessage">BCH 已成功发送。</string>
+  <!-- Widthdraw BCH view title -->
+  <string name="BCH.title">取出 BCH</string>
+  <!-- Tx Hash button header -->
+  <string name="BCH.txHashHeader">BCH 交易 ID</string>
+  <!-- Approve button label -->
+  <string name="BitID.approve">批准</string>
+  <!-- <sitename> is requesting authentication using your bitcoin wallet -->
+  <string name="BitID.authenticationRequest">%1$s 正使用您的比特币钱包请求验证</string>
+  <!-- Deny button label -->
+  <string name="BitID.deny">拒绝</string>
+  <!-- BitID error alert title -->
+  <string name="BitID.error">验证错误</string>
+  <!-- BitID error alert messaage (The payment service you are trying to use isn't working. Please contact them, as you may need to try again) -->
+  <string name="BitID.errorMessage">请检查此服务。您可能需要重试。</string>
+  <!-- BitID success alert title -->
+  <string name="BitID.success">验证成功</string>
+  <!-- BitID Authentication Request alert view title -->
+  <string name="BitID.title">BitID 验证请求</string>
+  <!-- Cancel button label -->
+  <string name="Button.cancel">取消</string>
+  <!-- Ignore button label -->
+  <string name="Button.ignore">忽略</string>
+  <!-- menu button -->
+  <string name="Button.menu">菜单</string>
+  <!-- No button -->
+  <string name="Button.no">不</string>
+  <!-- OK button label -->
+  <string name="Button.ok">好</string>
+  <!-- receive button -->
+  <string name="Button.receive">收到</string>
+  <!-- send button -->
+  <string name="Button.send">发送</string>
+  <!-- Settings button label -->
+  <string name="Button.settings">设置</string>
+  <!-- Settings button label -->
+  <string name="Button.submit">提交</string>
+  <!-- Yes button -->
+  <string name="Button.yes">是</string>
+  <!-- Camera plugin instruction -->
+  <string name="CameraPlugin.centerInstruction">将您的身份证号集中在方框中</string>
+  <!-- Amount to Send: ($1.00) -->
+  <string name="Confirmation.amountLabel">发送金额：</string>
+  <!-- Network Fee: ($1.00) -->
+  <string name="Confirmation.feeLabel">网络费：</string>
+  <!-- eg. Processing time: This transaction will take 10-30 minutes to process. -->
+  <string name="Confirmation.processingTime">处理时间：此交易需要 %1$s 分钟以进行处理。</string>
+  <!-- Label for "send" button on final confirmation screen -->
+  <string name="Confirmation.send">发送</string>
+  <!-- Confirmation Screen title -->
+  <string name="Confirmation.title">确认</string>
+  <!-- To: (address) -->
+  <string name="Confirmation.to">至</string>
+  <!-- Total Cost: ($5.00) -->
+  <string name="Confirmation.totalLabel">费用总计：</string>
+  <!-- Confirm paper phrase view label. -->
+  <string name="ConfirmPaperPhrase.label">为确保一切均被正确地书写，请在您的纸键输入以下文字。</string>
+  <!-- Word label eg. Word #1, Word #2 -->
+  <string name="ConfirmPaperPhrase.word">单词#%1$s</string>
+  <!-- Bitcoin denomination picker label -->
+  <string name="DefaultCurrency.bitcoinLabel">比特币显示单位</string>
+  <!-- Exchange rate label -->
+  <string name="DefaultCurrency.rateLabel">汇率</string>
+  <!-- Email unavailable alert title -->
+  <string name="ErrorMessages.emailUnavailableMessage">此设备未进行配置，无法用 iOS 邮件应用发送电子邮件。</string>
+  <!-- Email unavailable alert title -->
+  <string name="ErrorMessages.emailUnavailableTitle">电子邮箱不可用</string>
+  <!-- Messaging unavailable alert title -->
+  <string name="ErrorMessages.messagingUnavailableMessage">本设备未被配置来发送消息。</string>
+  <!-- Messaging unavailable alert title -->
+  <string name="ErrorMessages.messagingUnavailableTitle">消息发送不可用</string>
+  <!-- Economy fee -->
+  <string name="FeeSelector.economy">经济</string>
+  <!-- Fee Selector economly fee description -->
+  <string name="FeeSelector.economyLabel">预计交付时间：60 分钟以上</string>
+  <!-- Warning message for economy fee -->
+  <string name="FeeSelector.economyWaring">对于有时效性的交易，不推荐使用此选项。</string>
+  <!-- Regular fee -->
+  <string name="FeeSelector.regular">常规</string>
+  <!-- Fee Selector regular fee description -->
+  <string name="FeeSelector.regularLabel">预计交付时间：10-30 分钟</string>
+  <!-- Fee Selector title -->
+  <string name="FeeSelector.title">处理速度</string>
+  <!-- Checking private key balance progress view text -->
+  <string name="Import.checking">正在查看私人密钥余额...</string>
+  <!-- Sweep private key confirmation message -->
+  <string name="Import.confirm">从这个私人密钥中发送 %1$s 到您的钱包吗？比特币网络将收到 %2$s 费用。</string>
+  <!-- Duplicate key error message -->
+  <string name="Import.Error.duplicate">本私钥已在您的钱包里。</string>
+  <!-- empty private key error message -->
+  <string name="Import.Error.empty">本私钥为空。</string>
+  <!-- High fees error message -->
+  <string name="Import.Error.highFees">交易费将超过本私钥的可用资金。</string>
+  <!-- Not a valid private key error message -->
+  <string name="Import.Error.notValid">并非有效私钥</string>
+  <!-- Import signing error message -->
+  <string name="Import.Error.signing">错误签名交易</string>
+  <!-- Import button label -->
+  <string name="Import.importButton">导入</string>
+  <!-- Importing wallet progress view label -->
+  <string name="Import.importing">导入钱包</string>
+  <!-- Caption for graphics -->
+  <string name="Import.leftCaption">待导入钱包</string>
+  <!-- Import wallet intro screen message -->
+  <string name="Import.message">导入钱包，利用单笔交易将您其他钱包里的所有钱转移到您的 Bread  钱包。</string>
+  <!-- Enter password alert view title -->
+  <string name="Import.password">本私钥受到密码保护。</string>
+  <!-- password textfield placeholder -->
+  <string name="Import.passwordPlaceholder">密码</string>
+  <!-- Caption for graphics -->
+  <string name="Import.rightCaption">您的 Bread 钱包</string>
+  <!-- Scan Private key button label -->
+  <string name="Import.scan">扫描私钥</string>
+  <!-- Import wallet success alert title -->
+  <string name="Import.success">成功</string>
+  <!-- Successfully imported wallet message body -->
+  <string name="Import.SuccessBody">成功导入钱包。</string>
+  <!-- Import Wallet screen title -->
+  <string name="Import.title">导入钱包</string>
+  <!-- Unlocking Private key activity view message. -->
+  <string name="Import.unlockingActivity">解锁键</string>
+  <!-- Import wallet intro warning message -->
+  <string name="Import.warning">导入钱包不包括交易记录或其他细节。</string>
+  <!-- Wrong password alert message -->
+  <string name="Import.wrongPassword">密码错误，请重试。</string>
+  <!-- Close app button -->
+  <string name="JailbreakWarnings.close">关闭</string>
+  <!-- Ignore jailbreak warning button -->
+  <string name="JailbreakWarnings.ignore">忽略</string>
+  <!-- Jailbreak warning message -->
+  <string name="JailbreakWarnings.messageWithBalance">设备安全性受损\n任何\'越狱\'应用都可能访问 Bread 的密钥链数据并盗取您的比特币！立即擦除这个钱包并在一台安全设备上进行恢复。</string>
+  <!-- Jailbreak warning message -->
+  <string name="JailbreakWarnings.messageWithoutBalance">设备安全性受损\n任何\'越狱\'应用都可能访问 Bread 的密钥链数据并盗取您的比特币！请您仅在未越狱设备上使用 Bread 。</string>
+  <!-- Jailbreak warning title -->
+  <string name="JailbreakWarnings.title">警告</string>
+  <!-- Wipe wallet button -->
+  <string name="JailbreakWarnings.wipe">擦除</string>
+  <!-- Location services disabled error -->
+  <string name="LocationPlugin.disabled">位置服务被禁用。</string>
+  <!-- No permissions for location services -->
+  <string name="LocationPlugin.notAuthorized">Bread 无权限访问位置服务。</string>
+  <!-- Wallet creation date prefix -->
+  <string name="ManageWallet.creationDatePrefix">您在%1$s上创建了您的钱包</string>
+  <!-- Manage wallet description text -->
+  <string name="ManageWallet.description">您的钱包名称仅出现在您的帐户交易记录中，其他任何人无法看到。</string>
+  <!-- Change Wallet name textfield label -->
+  <string name="ManageWallet.textFeildLabel">钱包名称</string>
+  <!-- Manage wallet modal title -->
+  <string name="ManageWallet.title">管理钱包</string>
+  <!-- Buy bitcoin title -->
+  <string name="MenuButton.buy">购买比特币</string>
+  <!-- Menu button title -->
+  <string name="MenuButton.lock">锁住钱包</string>
+  <!-- Menu button title -->
+  <string name="MenuButton.security">安全中心</string>
+  <!-- Menu button title -->
+  <string name="MenuButton.settings">设置</string>
+  <!-- Menu button title -->
+  <string name="MenuButton.support">支持</string>
+  <!-- button label -->
+  <string name="MenuViewController.createButton">创建新的钱包</string>
+  <!-- Menu modal title -->
+  <string name="MenuViewController.modalTitle">菜单</string>
+  <!-- button label -->
+  <string name="MenuViewController.recoverButton">恢复钱包</string>
+  <!-- Switch to automatic mode button label -->
+  <string name="NodeSelector.automaticButton">切换到自动模式</string>
+  <!-- Node is connected label -->
+  <string name="NodeSelector.connected">已连接</string>
+  <!-- Enter node ip address view body -->
+  <string name="NodeSelector.enterBody">输入节点 IP 地址和端口（可选）</string>
+  <!-- Enter Node ip address view title -->
+  <string name="NodeSelector.enterTitle">输入节点</string>
+  <!-- Switch to manual mode button label -->
+  <string name="NodeSelector.manualButton">切换到手动模式</string>
+  <!-- Node address label -->
+  <string name="NodeSelector.nodeLabel">当前主要节点</string>
+  <!-- Node is not connected label -->
+  <string name="NodeSelector.notConnected">未连接</string>
+  <!-- Node status label -->
+  <string name="NodeSelector.statusLabel">节点连接状态</string>
+  <!-- Node Selector view title -->
+  <string name="NodeSelector.title">比特币节点</string>
+  <!-- Bad Payment request alert title -->
+  <string name="PaymentProtocol.Errors.badPaymentRequest">假的付款请求</string>
+  <!-- Error opening payment protocol file message -->
+  <string name="PaymentProtocol.Errors.corruptedDocument">不受支持或受损的文档</string>
+  <!-- Missing certificate payment protocol error message -->
+  <string name="PaymentProtocol.Errors.missingCertificate">缺失的证书</string>
+  <!-- Request expired payment protocol error message -->
+  <string name="PaymentProtocol.Errors.requestExpired">请求已过期</string>
+  <!-- Payment too small alert title -->
+  <string name="PaymentProtocol.Errors.smallOutputError">无法付款</string>
+  <!-- Amount too small error message -->
+  <string name="PaymentProtocol.Errors.smallPayment">比特币支付不能小于%1$s。</string>
+  <!-- Output too small error message. -->
+  <string name="PaymentProtocol.Errors.smallTransaction">比特币交易输出不能小于 $@。</string>
+  <!-- Unsupported signature type payment protocol error message -->
+  <string name="PaymentProtocol.Errors.unsupportedSignatureType">不受支持的签名类型</string>
+  <!-- Untrusted certificate payment protocol error message -->
+  <string name="PaymentProtocol.Errors.untrustedCertificate">不可信证书</string>
+  <!-- No passcode set warning body -->
+  <string name="Prompts.NoPasscode.body">需要设备密码才能保护您的钱包。转到设置并开启密码。</string>
+  <!-- No Passcode set warning title -->
+  <string name="Prompts.NoPasscode.title">开启设备密码</string>
+  <!-- Paper key not save prompt body -->
+  <string name="Prompts.PaperKey.body">该钱包的纸键尚未被书写。点击此处查看。</string>
+  <!-- Paper Key not saved prompt title -->
+  <string name="Prompts.PaperKey.title">纸键未保存</string>
+  <!-- Transaction rejected prompt body -->
+  <string name="Prompts.RecommendRescan.body">您的钱包可能不同步。通常可通过重新扫描区块链来修复。</string>
+  <!-- Transaction rejected prompt title -->
+  <string name="Prompts.RecommendRescan.title">交易被拒</string>
+  <!-- Share data prompt body -->
+  <string name="Prompts.ShareData.body">与我们分享您的匿名数据来帮助改善 Bread。</string>
+  <!-- Share data prompt title -->
+  <string name="Prompts.ShareData.title">分享匿名数据</string>
+  <!-- Enable touch ID prompt body -->
+  <string name="Prompts.TouchId.body">点击此处以启用触摸 ID</string>
+  <!-- Enable touch ID prompt title -->
+  <string name="Prompts.TouchId.title">启用触摸 ID</string>
+  <!-- Upgrade PIN prompt body. -->
+  <string name="Prompts.UpgradePin.body">Bread 已升级到使用 6 位 PIN。点击此处升级。</string>
+  <!-- Upgrade PIN prompt title. -->
+  <string name="Prompts.UpgradePin.title">升级 PIN</string>
+  <!-- Push notifications settings view body -->
+  <string name="PushNotifications.body">当您收到的钱可以花费时收到通知。</string>
+  <!-- Push notifications toggle switch label -->
+  <string name="PushNotifications.label">推送通知</string>
+  <!-- Push notifications are off label -->
+  <string name="PushNotifications.off">关闭</string>
+  <!-- Push notifications are on label -->
+  <string name="PushNotifications.on">开启</string>
+  <!-- Push notifications settings view title label -->
+  <string name="PushNotifications.title">通知</string>
+  <!-- Address copied message. -->
+  <string name="Receive.copied">已复制到剪贴板。</string>
+  <!-- Share via email button label -->
+  <string name="Receive.emailButton">电子邮件</string>
+  <!-- Request button label -->
+  <string name="Receive.request">申请金额</string>
+  <!-- Share button label -->
+  <string name="Receive.share">分享</string>
+  <!-- Share via text message (SMS) -->
+  <string name="Receive.textButton">短信</string>
+  <!-- Receive modal title -->
+  <string name="Receive.title">接收</string>
+  <!-- Done button text -->
+  <string name="RecoverWallet.done">完成</string>
+  <!-- Recover wallet header -->
+  <string name="RecoverWallet.header">恢复钱包</string>
+  <!-- Reset PIN with paper key: header -->
+  <string name="RecoverWallet.header_reset_pin">复位 PIN</string>
+  <!-- Enter paper key instruction -->
+  <string name="RecoverWallet.instruction">输入纸键</string>
+  <!-- Recover wallet intro -->
+  <string name="RecoverWallet.intro">用您的纸键恢复您的 Bread。</string>
+  <!-- Invalid paper key message -->
+  <string name="RecoverWallet.invalid">您输入的纸键无效。请仔细检查每个单词并重试。</string>
+  <!-- Previous button accessibility label -->
+  <string name="RecoverWallet.leftArrow">左箭头键</string>
+  <!-- Next button label -->
+  <string name="RecoverWallet.next">下一个</string>
+  <!-- Reset PIN with paper key: more information button. -->
+  <string name="RecoverWallet.reset_pin_more_info">点击此处以获取更多信息。</string>
+  <!-- Next button accessibility label -->
+  <string name="RecoverWallet.rightArrow">右箭头键</string>
+  <!-- Recover wallet sub-header -->
+  <string name="RecoverWallet.subheader">输入您想恢复的钱包的纸键。</string>
+  <!-- Reset PIN with paper key: sub-header -->
+  <string name="RecoverWallet.subheader_reset_pin">要重置 PIN 码，请在下面的框中输入纸上密钥中的单词。</string>
+  <!-- No amount entered error message. -->
+  <string name="RequestAnAmount.noAmount">请先输入金额。</string>
+  <!-- Request a specific amount of bitcoin -->
+  <string name="RequestAnAmount.title">申请金额</string>
+  <!-- Alert action button label -->
+  <string name="ReScan.alertAction">同步</string>
+  <!-- Alert message body -->
+  <string name="ReScan.alertMessage">您不能在同步的同时寄钱。</string>
+  <!-- Alert message title -->
+  <string name="ReScan.alertTitle">与区块链同步？</string>
+  <!-- extimated time -->
+  <string name="ReScan.body1">20-45 分钟</string>
+  <!-- Syncing explanation -->
+  <string name="ReScan.body2">如果某次交易在比特币网络上显示为已完成，却不在您的 Bread 里。</string>
+  <!-- Syncing explanation -->
+  <string name="ReScan.body3">你反复得到交易被拒绝的出错信息。</string>
+  <!-- Start Sync button label -->
+  <string name="ReScan.buttonTitle">开始同步</string>
+  <!-- Sync blockchain view footer -->
+  <string name="ReScan.footer">您不能在与区块链同步的同时寄钱。</string>
+  <!-- Sync Blockchain view header -->
+  <string name="ReScan.header">同步区块链</string>
+  <!-- Subheader label -->
+  <string name="ReScan.subheader1">估计时间</string>
+  <!-- Subheader label -->
+  <string name="ReScan.subheader2">何时同步？</string>
+  <!-- Scan bitcoin address camera flash toggle -->
+  <string name="Scanner.flashButtonLabel">相机闪光灯</string>
+  <!-- Complete filter label -->
+  <string name="Search.complete">完成</string>
+  <!-- Pending filter label -->
+  <string name="Search.pending">待定</string>
+  <!-- Received filter label -->
+  <string name="Search.received">已收到</string>
+  <!-- Sent filter label -->
+  <string name="Search.sent">已发送</string>
+  <!-- Security Center Info -->
+  <string name="SecurityCenter.info">启用所有安全功能以获得最大保护。</string>
+  <!-- Paper Key button description -->
+  <string name="SecurityCenter.paperKeyDescription">若您丢失或升级您的手机，访问您的比特币的唯一方法。</string>
+  <!-- Paper Key button title -->
+  <string name="SecurityCenter.paperKeyTitle">纸键</string>
+  <!-- PIN button description -->
+  <string name="SecurityCenter.pinDescription">保护您的 Bread 免遭未授权用户盗用。</string>
+  <!-- PIN button title -->
+  <string name="SecurityCenter.pinTitle">6 位 PIN</string>
+  <!-- Security Center Title -->
+  <string name="SecurityCenter.title">安全中心</string>
+  <!-- Touch ID button description -->
+  <string name="SecurityCenter.touchIdDescription">方便地解锁 Bread，在设定限额下汇钱。</string>
+  <!-- Touch ID button title -->
+  <string name="SecurityCenter.touchIdTitle">触摸 ID</string>
+  <!-- Send money amount label -->
+  <string name="Send.amountLabel">金额</string>
+  <!-- Balance: $4.00 -->
+  <string name="Send.balance">余额：%1$s</string>
+  <!-- Camera not allowed message -->
+  <string name="Send.cameraunavailableMessage">前往“设置”以允许访问照相机。</string>
+  <!-- Camera not allowed alert title -->
+  <string name="Send.cameraUnavailableTitle">Bread 不允许访问照相机</string>
+  <!-- Warning when sending to self. -->
+  <string name="Send.containsAddress">目标是您自己的地址。您不能发送给您自己。</string>
+  <!-- Could not create transaction alert title -->
+  <string name="Send.creatTransactionError">无法创建交易。</string>
+  <!-- Description for sending money label -->
+  <string name="Send.descriptionLabel">备忘录</string>
+  <!-- Network Fee: $0.01 -->
+  <string name="Send.fee">网络费：%1$s</string>
+  <!-- Payee identity not certified alert title. -->
+  <string name="Send.identityNotCertified">收款人身份未经认证。</string>
+  <!-- Invalid address alert message -->
+  <string name="Send.invalidAddressMessage">目标地址不是有效的比特币地址。</string>
+  <!-- Invalid address alert title -->
+  <string name="Send.invalidAddressTitle">无效地址</string>
+  <!-- Is rescanning error message -->
+  <string name="Send.isRescanning">完全扫描期间发送功能已被禁用。</string>
+  <!-- Empty address alert message -->
+  <string name="Send.noAddress">请输入收件人地址。</string>
+  <!-- Emtpy amount alert message -->
+  <string name="Send.noAmount">请输入汇款金额。</string>
+  <!-- Paste button label -->
+  <string name="Send.pasteLabel">粘贴</string>
+  <!-- Could not publish transaction alert title -->
+  <string name="Send.publishTransactionError">无法发布交易。</string>
+  <!-- Scan button label -->
+  <string name="Send.scanLabel">扫描</string>
+  <!-- Send button label (the action, "press here to send") -->
+  <string name="Send.sendLabel">发送</string>
+  <!-- Send screen title (as in "this is the screen for sending money") -->
+  <string name="Send.title">发送</string>
+  <!-- Send money to label -->
+  <string name="Send.toLabel">至</string>
+  <!-- Adress already used alert message - first part -->
+  <string name="Send.UsedAddress.firstLine">比特币地址仅供一次性使用。</string>
+  <!-- Adress already used alert message - second part -->
+  <string name="Send.UsedAddress.secondLIne">重复使用会削弱您和收件人的隐私，如果收件人不直接控制地址，可能会导致损失。</string>
+  <!-- Adress already used alert title -->
+  <string name="Send.UsedAddress.title">地址已被使用</string>
+  <!-- About label -->
+  <string name="Settings.about">关于</string>
+  <!-- Advanced Settings title -->
+  <string name="Settings.advancedTitle">高级设置</string>
+  <!-- i.e. the currency which will be displayed -->
+  <string name="Settings.currency">显示币种</string>
+  <!-- Join Early access label -->
+  <string name="Settings.earlyAccess">加入早期访问</string>
+  <!-- Are you enjoying bread alert message body -->
+  <string name="Settings.enjoying">您喜欢 Bread 吗？</string>
+  <!-- Import wallet label -->
+  <string name="Settings.importTitle">导入钱包</string>
+  <!-- Manage settings section header -->
+  <string name="Settings.manage">管理</string>
+  <!-- Notifications label -->
+  <string name="Settings.notifications">通知</string>
+  <!-- Leave review button label -->
+  <string name="Settings.review">给我们评论</string>
+  <!-- Share anonymous data label -->
+  <string name="Settings.shareData">分享匿名数据</string>
+  <!-- Sync blockchain label -->
+  <string name="Settings.sync">同步区块链</string>
+  <!-- Settings title -->
+  <string name="Settings.title">设置</string>
+  <!-- Touch ID spending limit label -->
+  <string name="Settings.touchIdLimit">触摸 ID 支出限制</string>
+  <!-- Wallet Settings section header -->
+  <string name="Settings.wallet">钱包</string>
+  <!-- Start or recover another wallet menu label. -->
+  <string name="Settings.wipe">开始/恢复另一钱包</string>
+  <!-- Share data view body -->
+  <string name="ShareData.body">同我们分享您的匿名数据来帮助改善 Bread。这不包括任何财务信息。我们尊重您的财务隐私。</string>
+  <!-- Share data header -->
+  <string name="ShareData.header">共享数据？</string>
+  <!-- Share data switch label. -->
+  <string name="ShareData.toggleLabel">共享匿名数据？</string>
+  <!-- button label -->
+  <string name="StartPaperPhrase.againButtonTitle">再次书写纸键</string>
+  <!-- Paper key explanation text. -->
+  <string name="StartPaperPhrase.body">如果您的手机丢失、被盗、损坏或升级，纸上密钥是恢复 Bread 的唯一方法。\n\n\n我们将向您显示一张单词表，请将其写在纸上并保存在安全的地方。</string>
+  <!-- button label -->
+  <string name="StartPaperPhrase.buttonTitle">写下纸键</string>
+  <!-- Argument is date -->
+  <string name="StartPaperPhrase.date">您最后一次记录纸上密钥是在 %1$s</string>
+  <!-- Start view message -->
+  <string name="StartViewController.message">使用比特币最安全且最可靠的方式。</string>
+  <!-- Syncing view header text -->
+  <string name="SyncingView.header">正在同步</string>
+  <!-- Retry button label -->
+  <string name="SyncingView.retry">重试</string>
+  <!-- 6 d (6 days) -->
+  <string name="TimeSince.days">%1$s 天</string>
+  <!-- 6 h (6 hours) -->
+  <string name="TimeSince.hours">%1$s 小时</string>
+  <!-- 6 m (6 minutes) -->
+  <string name="TimeSince.minutes">%1$s 分钟</string>
+  <!-- 6 s (6 seconds) -->
+  <string name="TimeSince.seconds">%1$s 秒</string>
+  <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
+  <string name="TouchIdSettings.customizeText">你可以自定义从 %1$s 的 Touch ID 支出限额。</string>
+  <!-- Touch Id screen label -->
+  <string name="TouchIdSettings.label">请用指纹解锁 Bread 并在设定限额下汇钱。</string>
+  <!-- Link Text (see TouchIdSettings.customizeText) -->
+  <string name="TouchIdSettings.linkText">Touch ID 支出限额屏幕</string>
+  <!-- Spending Limit: b100,000 ($100) -->
+  <string name="TouchIdSettings.spendingLimit">支出限制：%1$s (%2$s)</string>
+  <!-- Touch id switch label. -->
+  <string name="TouchIdSettings.switchLabel">针对 Bread 启用触摸 ID</string>
+  <!-- Touch ID settings view title -->
+  <string name="TouchIdSettings.title">触摸 ID</string>
+  <!-- Touch ID unavailable alert message -->
+  <string name="TouchIdSettings.unavailableAlertMessage">您尚未在本设备上设置触摸 ID。现在前往设置 -&gt; 触摸 ID和密码进行设置。</string>
+  <!-- Touch ID unavailable alert title -->
+  <string name="TouchIdSettings.unavailableAlertTitle">触摸 ID 未设置</string>
+  <!-- Always require passcode option -->
+  <string name="TouchIdSpendingLimit">始终需要密码</string>
+  <!-- Touch ID spending limit screen body -->
+  <string name="TouchIdSpendingLimit.body">如需发送超过您支出金额限制的任何交易，您将需要输入您的 6 位数 PIN 码。在您输入 6 位数 PIN 码后每 48 小时您都需要重新输入该 PIN 码。</string>
+  <!-- Touch Id spending limit screen title -->
+  <string name="TouchIdSpendingLimit.title">触摸 ID 支出限制</string>
+  <!-- Availability status text -->
+  <string name="Transaction.available">可供支出</string>
+  <!-- Transaction complete label -->
+  <string name="Transaction.complete">完成</string>
+  <!-- eg. Ending balance: $50.00 -->
+  <string name="Transaction.ending">期末余额：%1$s</string>
+  <!-- Exchange rate on date header -->
+  <string name="Transaction.exchangeOnDayReceived">接收时汇率：</string>
+  <!-- Exchange rate on date header -->
+  <string name="Transaction.exchangeOnDaySent">发送时汇率：</string>
+  <!-- (b600 fee) -->
+  <string name="Transaction.fee">(%1$s 费用)</string>
+  <!-- Invalid transaction -->
+  <string name="Transaction.invalid">无效</string>
+  <!-- Timestamp label for event that just happened -->
+  <string name="Transaction.justNow">刚刚</string>
+  <!-- Receive status text: 'In progress: 20%' -->
+  <string name="Transaction.receivedStatus">进行中：%1$s</string>
+  <!-- Send status text: 'In progress: 20%' -->
+  <string name="Transaction.sendingStatus">进行中：%1$s</string>
+  <!-- eg. Starting balance: $50.00 -->
+  <string name="Transaction.starting">期初余额：%1$s</string>
+  <!-- Waiting to be confirmed string -->
+  <string name="Transaction.waiting">等待确认中。部分商家需要进行确认以完成交易。预估时间：1-2 小时。</string>
+  <!-- e.g. I received money from an account. -->
+  <string name="TransactionDetails.account">账户</string>
+  <!-- Amount section header -->
+  <string name="TransactionDetails.amountHeader">金额</string>
+  <!-- Block height label -->
+  <string name="TransactionDetails.blockHeightLabel">已在区块中确认</string>
+  <!-- Memo section header -->
+  <string name="TransactionDetails.commentsHeader">备忘录</string>
+  <!-- Empty transaction list message. -->
+  <string name="TransactionDetails.emptyMessage">您的交易将显示在这里。</string>
+  <!-- "Received [$5] at [which of my addresses]" => This is the "at [which of my addresses]" part. -->
+  <string name="TransactionDetails.from">在 %1$s</string>
+  <!-- More button title -->
+  <string name="TransactionDetails.more">更多...</string>
+  <!-- Moved $5.00 (as in "I moved $5 to another location") -->
+  <string name="TransactionDetails.moved">移出 %1$s</string>
+  <!-- Moved $5.00 -->
+  <string name="TransactionDetails.movedAmountDescription">已移动 <b>%1@</b></string>
+  <!-- eg. Confirmed in Block: Not Confirmed -->
+  <string name="TransactionDetails.notConfirmedBlockHeightLabel">未确认</string>
+  <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
+  <string name="TransactionDetails.received">已接收 %1$s</string>
+  <!-- Received $5.00 -->
+  <string name="TransactionDetails.receivedAmountDescription">已收到 <b>%1@</b></string>
+  <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
+  <string name="TransactionDetails.sent">已发送 %1$s</string>
+  <!-- Sent $5.00 -->
+  <string name="TransactionDetails.sentAmountDescription">已发送 <b>%1@</b></string>
+  <!-- Status section header -->
+  <string name="TransactionDetails.statusHeader">状态</string>
+  <!-- Transaction Details Title -->
+  <string name="TransactionDetails.title">交易详情</string>
+  <!-- "Sent [$5] to [address]" => This is the "to [address]" part. -->
+  <string name="TransactionDetails.to">到 %1$s</string>
+  <!-- Transaction ID header -->
+  <string name="TransactionDetails.txHashHeader">比特币交易 ID</string>
+  <!-- (this transaction was) Received at this address: -->
+  <string name="TransactionDirection.address">已在此地址接收</string>
+  <!-- (this transaction was) Sent to this address: -->
+  <string name="TransactionDirection.to">已汇至此地址</string>
+  <!-- Disabled until date -->
+  <string name="UnlockScreen.disabled">在此日期前禁用：%1$s</string>
+  <!-- My Address button title -->
+  <string name="UnlockScreen.myAddress">我的地址</string>
+  <!-- Reset PIN with Paper Key button label. -->
+  <string name="UnlockScreen.resetPin">复位 PIN</string>
+  <!-- Scan button title -->
+  <string name="UnlockScreen.scan">扫描</string>
+  <!-- Unlock Screen sub-header -->
+  <string name="UnlockScreen.subheader">输入 PIN 码</string>
+  <!-- TouchID prompt text -->
+  <string name="UnlockScreen.touchIdPrompt">解锁您的 Bread。</string>
+  <!-- Unlock with TouchID accessibility label -->
+  <string name="UnlockScreen.touchIdText">使用 TouchID 解锁</string>
+  <!-- Wallet unlocked message -->
+  <string name="UnlockScreen.unlocked">钱包已解锁</string>
+  <!-- Update PIN caption text -->
+  <string name="UpdatePin.caption">请牢记此 PIN 码。如果您忘记，您将无法访问您的比特币。</string>
+  <!-- PIN creation info. -->
+  <string name="UpdatePin.createInstruction">您的 PIN 码将用于解锁您的 Bread 并发送款项。</string>
+  <!-- Update PIN title -->
+  <string name="UpdatePin.createTitle">设置 PIN 码</string>
+  <!-- Update PIN title -->
+  <string name="UpdatePin.createTitleConfirm">重新输入 PIN 码</string>
+  <!-- Enter current PIN instruction -->
+  <string name="UpdatePin.enterCurrent">输入您当前的 PIN 码。</string>
+  <!-- Enter new PIN instruction -->
+  <string name="UpdatePin.enterNew">输入您的新 PIN 码。</string>
+  <!-- Re-Enter new PIN instruction -->
+  <string name="UpdatePin.reEnterNew">重新输入您的新 PIN 码。</string>
+  <!-- Update PIN failure error message. -->
+  <string name="UpdatePin.setPinError">抱歉，无法更新 PIN 码。</string>
+  <!-- Update PIN failure alert view title -->
+  <string name="UpdatePin.setPinErrorTitle">更新 PIN 码错误</string>
+  <!-- Update PIN title -->
+  <string name="UpdatePin.updateTitle">更新 PIN 码</string>
+  <!-- Authorize to copy wallet addresses alert message -->
+  <string name="URLHandling.addressaddressListAlertMessage">是否拷贝钱包地址到剪贴板？</string>
+  <!-- Authorize to copy wallet address PIN view prompt. -->
+  <string name="URLHandling.addressList">授权以拷贝钱包地址到剪贴板</string>
+  <!-- Authorize to copy wallet address alert title -->
+  <string name="URLHandling.addressListAlertTitle">拷贝钱包地址</string>
+  <!-- Copy wallet addresses alert button label -->
+  <string name="URLHandling.copy">拷贝</string>
+  <!-- Verify PIN for transaction view body -->
+  <string name="VerifyPin.authorize">请输入您的个人识别码（PIN）以便授权此交易。</string>
+  <!-- Verify PIN view body -->
+  <string name="VerifyPin.continueBody">请输入您的 PIN 码以继续。</string>
+  <!-- Verify PIN view title -->
+  <string name="VerifyPin.title">PIN 码为必填项</string>
+  <!-- Authorize transaction with touch id message -->
+  <string name="VerifyPin.touchIdMessage">授权此交易</string>
+  <!-- 'No wallet' warning for watch app -->
+  <string name="Watch.noWalletWarning">打开 Bread iPhone app 以设置您的钱包。</string>
+  <!-- Dismiss button label -->
+  <string name="Webview.dismiss">忽略</string>
+  <!-- Webview loading error message -->
+  <string name="Webview.errorMessage">载入内容时发生错误。请重试。</string>
+  <!-- Updating webview message -->
+  <string name="Webview.updating">正在更新...</string>
+  <!-- Wipe wallet alert message -->
+  <string name="WipeWallet.alertMessage">您确认要删除此钱包吗？</string>
+  <!-- Wipe wallet alert title -->
+  <string name="WipeWallet.alertTitle">擦除钱包吗？</string>
+  <!-- Failed wipe wallet alert message -->
+  <string name="WipeWallet.failedMessage">擦除钱包失败。</string>
+  <!-- Failed wipe wallet alert title -->
+  <string name="WipeWallet.failedTitle">失败</string>
+  <!-- Enter phrase to wipe wallet instruction. -->
+  <string name="WipeWallet.instruction">输入此钱包的恢复短语以擦除并启动或恢复另一钱包。您的当前余额将保留。</string>
+  <!-- Wipe wallet navigation item title. -->
+  <string name="WipeWallet.title">启动或恢复另一钱包</string>
+  <!-- Wipe wallet button title -->
+  <string name="WipeWallet.wipe">擦除</string>
+  <!-- Wiping activity message -->
+  <string name="WipeWallet.wiping">正在擦除...</string>
+  <!-- Paper key instructions. -->
+  <string name="WritePaperPhrase.instruction">按顺序写下每个词并保存到安全位置。</string>
+  <!-- button label -->
+  <string name="WritePaperPhrase.next">下一个</string>
+  <!-- button label -->
+  <string name="WritePaperPhrase.previous">上一步</string>
+  <!-- 1 of 3 -->
+  <string name="WritePaperPhrase.step">%1$d / %2$d</string>
+</resources>
