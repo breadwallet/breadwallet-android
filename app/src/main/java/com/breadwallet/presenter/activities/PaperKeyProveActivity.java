@@ -140,7 +140,7 @@ public class PaperKeyProveActivity extends BRActivity {
                         }
                     });
                 } else {
-                    String languageCode = getString(R.string.lang_Android);
+                    String languageCode = getString(R.string.lang);
                     List<String> list;
                     try {
                         list = Bip39Reader.getWordList(PaperKeyProveActivity.this, languageCode);

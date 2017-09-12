@@ -23,15 +23,18 @@ import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.PromptManager;
 import com.breadwallet.tools.manager.TxManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.BRExchange;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -73,6 +76,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private final int txType = 0;
     private final int promptType = 1;
     private final int syncingType = 2;
+    private byte[] tempAuthKey;
 
     public TransactionListAdapter(Context mContext, List<TxItem> items) {
         itemFeed = items;
@@ -142,13 +146,20 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private void setTexts(final TxHolder convertView, int position) {
 
-//        new InfoSlider().init(infoCardLayout);.....
-
         TxItem item = itemFeed.get(TxManager.getInstance().currentPrompt == null ? position : position - 1);
-
-        TxMetaData txMetaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
+        if (Utils.isNullOrEmpty(tempAuthKey)) {
+            tempAuthKey = BRKeyStore.getAuthKey(mContext);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Log.e(TAG, "clearing out tempAuthKey: ");
+                    Arrays.fill(tempAuthKey, (byte) 0);
+                    tempAuthKey = null;
+                }
+            }, 10000);
+        }
+        TxMetaData txMetaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash(), tempAuthKey);
         String commentString = (txMetaData == null || txMetaData.comment == null) ? "" : txMetaData.comment;
-
         convertView.comment.setText(commentString);
         if (commentString.isEmpty()) {
             convertView.constraintLayout.removeView(convertView.comment);
@@ -177,7 +188,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         convertView.toFrom.setText(received ? "from" : "to");
         final String addr = received ? item.getFrom()[0] : item.getTo()[0];
         convertView.account.setText(addr);
-
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext) - blockHeight + 1;
         int relayCount = BRPeerManager.getRelayCount(item.getTxHash());
@@ -227,7 +237,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 availableForSpend = true;
                 break;
         }
-
         if (availableForSpend && received) {
             convertView.status_2.setText("Available to Spend");
         } else {
@@ -240,7 +249,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             // Apply the changes
             set.applyTo(convertView.constraintLayout);
         }
-
         if (level == 6) {
             convertView.status.setText(mContext.getString(R.string.Transaction_complete));
         } else {
@@ -254,7 +262,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         boolean isBTCPreferred = BRSharedPrefs.getPreferredBTC(mContext);
         String iso = isBTCPreferred ? "BTC" : BRSharedPrefs.getIso(mContext);
-
         convertView.amount.setText(BRCurrency.getFormattedCurrencyString(mContext, iso, BRExchange.getAmountFromSatoshis(mContext, iso, new BigDecimal(satoshisAmount))));
 
         //if it's 0 we use the current time.
@@ -313,14 +320,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 final List<TxItem> filteredList = new ArrayList<>();
                 TxMetaData metaData;
                 for (TxItem item : backUpFeed) {
-                    Log.e(TAG, "run: " + item.getTxHashHexReversed());
                     metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
-                    Log.e(TAG, "run: found: " + item.getTxHashHexReversed());
                     if (item.getTxHashHexReversed().toLowerCase().contains(lowerQuery)
                             || item.getFrom()[0].toLowerCase().contains(lowerQuery)
                             || item.getTo()[0].toLowerCase().contains(lowerQuery) ||
                             (metaData.comment != null && metaData.comment.toLowerCase().contains(lowerQuery))) {
-                        Log.e(TAG, "run: after contains: " + item.getTxHashHexReversed());
                         if (switchesON == 0) {
                             filteredList.add(item);
                         } else {
@@ -349,10 +353,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                         }
 
                     }
-                    Log.e(TAG, "run: filtered: " + item.getTxHashHexReversed());
 
                 }
-                ((Activity)mContext).runOnUiThread(new Runnable() {
+                ((Activity) mContext).runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         itemFeed = filteredList;

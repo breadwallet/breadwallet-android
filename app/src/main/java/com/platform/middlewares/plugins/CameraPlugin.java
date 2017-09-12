@@ -20,7 +20,6 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.util.BRConstants;
 import com.platform.BRHTTPHelper;
-import com.platform.HTTPServer;
 import com.platform.interfaces.Plugin;
 
 import org.apache.commons.compress.utils.IOUtils;

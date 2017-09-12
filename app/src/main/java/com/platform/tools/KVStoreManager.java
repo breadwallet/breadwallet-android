@@ -138,14 +138,20 @@ public class KVStoreManager {
 
     }
 
-    public TxMetaData getTxMetaData(Context app, byte[] txHash) {
+    public TxMetaData getTxMetaData(Context app, byte[] txHash){
+        return getTxMetaData(app, txHash, null);
+    }
+
+    public TxMetaData getTxMetaData(Context app, byte[] txHash, byte[] authKey) {
         String key = txKey(txHash);
 
         TxMetaData result = new TxMetaData();
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
         long ver = kvStore.localVersion(key).version;
-        CompletionObject obj = kvStore.get(key, ver);
+
+        CompletionObject obj = kvStore.get(key, ver, authKey);
+
         if (obj.kv == null) {
 //            Log.e(TAG, "getTxMetaData: kv is null for key: " + key);
             return null;
@@ -178,6 +184,7 @@ public class KVStoreManager {
             e.printStackTrace();
             Log.e(TAG, "getTxMetaData: FAILED to get json value");
         }
+
 
         return result;
     }

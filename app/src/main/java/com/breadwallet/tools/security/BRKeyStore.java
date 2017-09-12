@@ -293,7 +293,6 @@ public class BRKeyStore {
 //                    return null;
 //                }
 //            }
-
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
             byte[] data = BytesUtil.readBytesFromStream(cipherInputStream);

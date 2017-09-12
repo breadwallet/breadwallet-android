@@ -422,7 +422,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 //amount in currency units
                 BigDecimal curAmount = BRExchange.getAmountFromSatoshis(BreadActivity.this, iso, amount);
                 final String formattedCurAmount = BRCurrency.getFormattedCurrencyString(BreadActivity.this, iso, curAmount);
-
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -437,7 +436,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
                     }
                 });
-
                 TxManager.getInstance().updateTxList(BreadActivity.this);
             }
         }).start();
