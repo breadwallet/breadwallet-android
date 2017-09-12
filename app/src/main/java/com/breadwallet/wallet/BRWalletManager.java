@@ -132,7 +132,7 @@ public class BRWalletManager {
         String[] words = new String[0];
         List<String> list;
         try {
-            String languageCode = ctx.getString(R.string.lang_Android);
+            String languageCode = ctx.getString(R.string.lang);
             list = Bip39Reader.getWordList(ctx, languageCode);
             words = list.toArray(new String[list.size()]);
         } catch (IOException e) {
@@ -599,7 +599,7 @@ public class BRWalletManager {
         String[] cleanWordList = null;
         try {
             boolean isLocal = true;
-            String languageCode = ctx.getString(R.string.lang_Android);
+            String languageCode = ctx.getString(R.string.lang);
             list = Bip39Reader.getWordList(ctx, languageCode);
 
             String[] phraseWords = phrase.split(" ");

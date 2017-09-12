@@ -185,10 +185,14 @@ public class ReplicatedKVStore {
         }
     }
 
+    public CompletionObject get(String key, long version) {
+        return get(key, version, null);
+    }
+
     /**
      * get kv by key and version (version can be 0)
      */
-    public CompletionObject get(String key, long version) {
+    public CompletionObject get(String key, long version, byte[] authKey) {
         KVItem kv = null;
         Cursor cursor = null;
         long curVer = 0;
@@ -205,7 +209,6 @@ public class ReplicatedKVStore {
                     cursor = db.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
                             allColumns, "key = ? AND version = ?", new String[]{key, String.valueOf(version)},
                             null, null, "version DESC", "1");
-
                     boolean success = cursor.moveToNext();
                     if (success)
                         curVer = cursor.getLong(0);
@@ -214,7 +217,6 @@ public class ReplicatedKVStore {
                 }
                 if (cursor != null)
                     cursor.close();
-
                 //if still 0 then version is non-existent or wrong.
                 if (curVer == 0) {
                     return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
@@ -227,10 +229,9 @@ public class ReplicatedKVStore {
                     cursor.moveToNext();
                     kv = cursorToKv(cursor);
                 }
-
                 if (kv != null) {
                     byte[] val = kv.value;
-                    kv.value = encrypted ? decrypt(val, context) : val;
+                    kv.value = encrypted ? decrypt(val, context, authKey) : val;
                     if (val != null && Utils.isNullOrEmpty(kv.value)) {
                         //decrypting failed
                         Log.e(TAG, "get: Decrypting failed for key: " + key + ", deleting the kv");
@@ -578,7 +579,7 @@ public class ReplicatedKVStore {
             int failures = 0;
             for (KVItem k : allKvs) {
                 String s = k.key;
-                boolean success = _syncKey(s, k.remoteVersion == -1? k.version : k.remoteVersion, k.time, k.err);
+                boolean success = _syncKey(s, k.remoteVersion == -1 ? k.version : k.remoteVersion, k.time, k.err);
                 if (!success) failures++;
             }
             Log.i(TAG, String.format("Finished syncing in %d, with failures: %d", (System.currentTimeMillis() - startTime), failures));
@@ -816,17 +817,23 @@ public class ReplicatedKVStore {
         return result;
     }
 
+    public static byte[] decrypt(byte[] data, Context app) {
+        return decrypt(data, app, null);
+    }
+
     /**
      * decrypt some data using key
      */
-    public static byte[] decrypt(byte[] data, Context app) {
+    public static byte[] decrypt(byte[] data, Context app, byte[] authKey) {
         if (data == null || data.length <= 12) {
             Log.e(TAG, "decrypt: failed to decrypt: " + (data == null ? null : data.length));
             return null;
         }
         if (app == null) app = BreadApp.getBreadContext();
         if (app == null) return null;
-        BRKey key = new BRKey(BRKeyStore.getAuthKey(app));
+        if (authKey == null)
+            authKey = BRKeyStore.getAuthKey(app);
+        BRKey key = new BRKey(authKey);
         //12 bytes is the nonce
         return key.decryptNative(Arrays.copyOfRange(data, 12, data.length), Arrays.copyOfRange(data, 0, 12));
     }

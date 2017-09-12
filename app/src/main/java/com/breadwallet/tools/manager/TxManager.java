@@ -203,21 +203,22 @@ public class TxManager {
     public void updateTxList(final Context app) {
         final TxItem[] arr = BRWalletManager.getInstance().getTransactions();
         updateTxMetaData(app, arr);
-        ((Activity) app).runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                List<TxItem> items = arr == null ? null : new LinkedList<>(Arrays.asList(arr));
-                adapter.setItems(items);
-                txList.swapAdapter(adapter, true);
-                adapter.notifyDataSetChanged();
-            }
-        });
+        List<TxItem> items = arr == null ? null : new LinkedList<>(Arrays.asList(arr));
+        if (adapter != null) {
+            adapter.setItems(items);
+            ((Activity) app).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    txList.swapAdapter(adapter, true);
+                    adapter.notifyDataSetChanged();
+                }
+            });
+        }
 
     }
 
     private void updateTxMetaData(final Context app, final TxItem[] arr) {
         if (isMetaDataUpdating) return;
-        Log.d(TAG, "updateTxMetaData: updating txMetaData...");
         isMetaDataUpdating = true;
         new Thread(new Runnable() {
             @Override
@@ -238,7 +239,7 @@ public class TxManager {
                         tx.blockHeight = item.getBlockHeight();
                         tx.deviceId = BRSharedPrefs.getDeviceId(app);
                         tx.txSize = item.getTxSize();
-                        tx.comment = comment == null? "" : comment;
+                        tx.comment = comment == null ? "" : comment;
 //                        tx.classVersion = ...
                         kvM.putTxMetaData(app, tx, item.getTxHash());
                     }
