@@ -40,6 +40,7 @@ import com.platform.APIClient;
 
 import static com.breadwallet.R.color.white;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
+import static com.breadwallet.tools.util.BRConstants.SCANNER_REQUEST;
 
 public class PinActivity extends BRActivity {
     private static final String TAG = PinActivity.class.getName();
@@ -161,7 +162,7 @@ public class PinActivity extends BRActivity {
                     } else {
                         // Permission is granted, open camera
                         Intent intent = new Intent(app, ScanQRActivity.class);
-                        app.startActivityForResult(intent, 123);
+                        app.startActivityForResult(intent, SCANNER_REQUEST);
                         app.overridePendingTransition(R.anim.fade_up, 0);
                     }
                 } catch (Exception e) {

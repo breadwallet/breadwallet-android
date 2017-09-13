@@ -105,7 +105,6 @@ public class ScanQRActivity extends BRActivity {
                     });
                 }
 
-
             }
         }).facing(QRReader.BACK_CAM)
                 .enableAutofocus(true)
