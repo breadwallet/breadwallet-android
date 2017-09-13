@@ -151,6 +151,24 @@ public class BRCurrency {
         return Utils.isNullOrEmpty(symbol) ? iso : symbol;
     }
 
+    //for now only use for BTC and Bits
+    public static String getCurrencyName(Context app, String iso) {
+        if (Objects.equals(iso, "BTC")) {
+            if (app != null) {
+                int unit = BRSharedPrefs.getCurrencyUnit(app);
+                switch (unit) {
+                    case CURRENT_UNIT_BITS:
+                        return "Bits";
+                    case BRConstants.CURRENT_UNIT_MBITS:
+                        return "MBits";
+                    case BRConstants.CURRENT_UNIT_BITCOINS:
+                        return "BTC";
+                }
+            }
+        }
+        return iso;
+    }
+
     public static int getMaxDecimalPlaces(String iso) {
         if (Utils.isNullOrEmpty(iso)) return 8;
 

@@ -87,18 +87,18 @@ public class FragmentRequestAmount extends Fragment {
     private boolean shareButtonsShown = true;
     private int keyboardPosition = 0;
     private String selectedIso;
-    private CurAdapter curAdapter;
+//    private CurAdapter curAdapter;
     private Button isoButton;
-    private RecyclerView currencyRecycler;
+//    private RecyclerView currencyRecycler;
     private Handler copyCloseHandler = new Handler();
     private LinearLayout keyboardLayout;
     private RelativeLayout amountLayout;
     private Button request;
-    private LinearLayout currencyListLayout;
+//    private LinearLayout currencyListLayout;
     private BRLinearLayoutWithCaret shareButtonsLayout;
     private BRLinearLayoutWithCaret copiedLayout;
     private int keyboardIndex;
-    private int currListIndex;
+//    private int currListIndex;
     private ImageButton close;
 
     @Override
@@ -109,8 +109,8 @@ public class FragmentRequestAmount extends Fragment {
         signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
         shareButtonsLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.share_buttons_layout);
         copiedLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.copied_layout);
-        currencyListLayout = (LinearLayout) rootView.findViewById(R.id.cur_spinner_layout);
-        currencyListLayout.setVisibility(View.VISIBLE);
+//        currencyListLayout = (LinearLayout) rootView.findViewById(R.id.cur_spinner_layout);
+//        currencyListLayout.setVisibility(View.VISIBLE);
         request = (Button) rootView.findViewById(R.id.request_button);
         keyboardLayout = (LinearLayout) rootView.findViewById(R.id.keyboard_layout);
         keyboardLayout.setVisibility(View.VISIBLE);
@@ -122,7 +122,7 @@ public class FragmentRequestAmount extends Fragment {
         isoText = (TextView) rootView.findViewById(R.id.iso_text);
         amountEdit = (EditText) rootView.findViewById(R.id.amount_edit);
         amountBuilder = new StringBuilder(0);
-        currencyRecycler = (RecyclerView) rootView.findViewById(R.id.cur_spinner);
+//        currencyRecycler = (RecyclerView) rootView.findViewById(R.id.cur_spinner);
         isoButton = (Button) rootView.findViewById(R.id.iso_button);
         mTitle = (TextView) rootView.findViewById(R.id.title);
         mAddress = (TextView) rootView.findViewById(R.id.address_text);
@@ -134,7 +134,7 @@ public class FragmentRequestAmount extends Fragment {
         keyboardSeparator = rootView.findViewById(R.id.view2);
         close = (ImageButton) rootView.findViewById(R.id.close_button);
 
-        currListIndex = signalLayout.indexOfChild(currencyListLayout);
+//        currListIndex = signalLayout.indexOfChild(currencyListLayout);
         keyboardIndex = signalLayout.indexOfChild(keyboardLayout);
 
         mTitle.setText(getString(R.string.Receive_request));
@@ -146,18 +146,18 @@ public class FragmentRequestAmount extends Fragment {
 
         showCurrencyList(false);
 
-        final List<String> curList = new ArrayList<>();
-        curList.add("BTC");
-        curList.addAll(CurrencyDataSource.getInstance(getActivity()).getAllISOs());
-        curAdapter = new CurAdapter(getContext(), curList);
-        currencyRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        currencyRecycler.setAdapter(curAdapter);
-        selectedIso = curAdapter.getItemAtPos(0);
+//        final List<String> curList = new ArrayList<>();
+//        curList.add("BTC");
+//        curList.addAll(CurrencyDataSource.getInstance(getActivity()).getAllISOs());
+//        curAdapter = new CurAdapter(getContext(), curList);
+//        currencyRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+//        currencyRecycler.setAdapter(curAdapter);
+        selectedIso = BRSharedPrefs.getPreferredBTC(getContext()) ? "BTC" : BRSharedPrefs.getIso(getContext());
 
         signalLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeCurrencySelector();
+//                removeCurrencySelector();
             }
         });
         keyboardPosition = signalLayout.indexOfChild(keyboard);
@@ -180,23 +180,23 @@ public class FragmentRequestAmount extends Fragment {
             }
         });
 
-        currencyRecycler.addOnItemTouchListener(new RecyclerItemClickListener(getContext(),
-                currencyRecycler, new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position, float x, float y) {
-                selectedIso = curAdapter.getItemAtPos(position);
-                updateText();
-                boolean generated = generateQrImage(receiveAddress, amountEdit.getText().toString(), selectedIso);
-                if (!generated)
-                    throw new RuntimeException("failed to generate qr image for address");
-                removeCurrencySelector();
-            }
-
-            @Override
-            public void onLongItemClick(View view, int position) {
-
-            }
-        }));
+//        currencyRecycler.addOnItemTouchListener(new RecyclerItemClickListener(getContext(),
+//                currencyRecycler, new RecyclerItemClickListener.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(View view, int position, float x, float y) {
+//                selectedIso = curAdapter.getItemAtPos(position);
+//                updateText();
+//                boolean generated = generateQrImage(receiveAddress, amountEdit.getText().toString(), selectedIso);
+//                if (!generated)
+//                    throw new RuntimeException("failed to generate qr image for address");
+//                removeCurrencySelector();
+//            }
+//
+//            @Override
+//            public void onLongItemClick(View view, int position) {
+//
+//            }
+//        }));
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -212,13 +212,6 @@ public class FragmentRequestAmount extends Fragment {
             public void onClick(View v) {
                 removeCurrencySelector();
                 showKeyboard(false);
-            }
-        });
-
-        isoButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                showCurrencyList(true);
             }
         });
 
@@ -290,7 +283,15 @@ public class FragmentRequestAmount extends Fragment {
         isoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showCurrencyList(true);
+                //                showCurrencyList(true);
+                if (selectedIso.equalsIgnoreCase(BRSharedPrefs.getIso(getContext()))) {
+                    selectedIso = "BTC";
+                } else {
+                    selectedIso = BRSharedPrefs.getIso(getContext());
+                }
+                boolean generated = generateQrImage(receiveAddress, amountEdit.getText().toString(), selectedIso);
+                if (!generated) throw new RuntimeException("failed to generate qr image for address");
+                updateText();
             }
         });
 
@@ -433,12 +434,12 @@ public class FragmentRequestAmount extends Fragment {
         String tmpAmount = amountBuilder.toString();
         amountEdit.setText(tmpAmount);
         isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
-        isoButton.setText(selectedIso);
+        isoButton.setText(String.format("%s(%s)", BRCurrency.getCurrencyName(getActivity(),selectedIso), BRCurrency.getSymbolByIso(getActivity(), selectedIso)));
 
     }
 
     private void showKeyboard(boolean b) {
-        int curIndex = signalLayout.indexOfChild(currencyListLayout) == -1 ? keyboardIndex - 1 : keyboardIndex;
+        int curIndex = keyboardIndex;
 
         if (!b) {
             signalLayout.removeView(keyboardLayout);
@@ -471,7 +472,7 @@ public class FragmentRequestAmount extends Fragment {
 
 
     private void removeCurrencySelector() {
-        showCurrencyList(false);
+//        showCurrencyList(false);
     }
 
     private void showShareButtons(boolean b) {
@@ -509,17 +510,17 @@ public class FragmentRequestAmount extends Fragment {
     }
 
     private void showCurrencyList(boolean b) {
-        Log.e(TAG, "showCurrencyList: " + currListIndex);
-
-        if (!b) {
-            signalLayout.removeView(currencyListLayout);
-        } else {
-            if (signalLayout.indexOfChild(currencyListLayout) == -1)
-                signalLayout.addView(currencyListLayout, currListIndex);
-            else
-                signalLayout.removeView(currencyListLayout);
-
-        }
+//        Log.e(TAG, "showCurrencyList: " + currListIndex);
+//
+//        if (!b) {
+//            signalLayout.removeView(currencyListLayout);
+//        } else {
+//            if (signalLayout.indexOfChild(currencyListLayout) == -1)
+//                signalLayout.addView(currencyListLayout, currListIndex);
+//            else
+//                signalLayout.removeView(currencyListLayout);
+//
+//        }
     }
 
 
