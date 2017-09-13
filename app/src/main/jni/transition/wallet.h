@@ -83,7 +83,7 @@ Java_com_breadwallet_wallet_BRWalletManager_addressIsUsed(JNIEnv *env, jobject o
 JNIEXPORT jint JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_feeForTransaction(JNIEnv *env, jobject obj,
                                                               jstring address,
-                                                              jlong amount);
+                                                              jlong amount, jboolean economy);
 
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_isCreated(JNIEnv *env,
                                                                                  jobject obj);
@@ -219,8 +219,8 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_sweepBC
                                                                                     jbyteArray phrase);
 
 JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTxSize(JNIEnv *env,
-                                                                              jobject thiz,
-                                                                              jbyteArray serializedTransaction);
+                                                                             jobject thiz,
+                                                                             jbyteArray serializedTransaction);
 
 #ifdef __cplusplus
 }
