@@ -1,20 +1,30 @@
 package com.breadwallet.presenter.fragments;
 
+import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
+import android.support.transition.AutoTransition;
+import android.support.transition.TransitionManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Transition;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.BounceInterpolator;
+import android.view.animation.DecelerateInterpolator;
+import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -95,6 +105,7 @@ public class FragmentSend extends Fragment {
     private TextView isoText;
     private EditText amountEdit;
     private TextView balanceText;
+    private TextView feeText;
     private long curBalance;
     private String selectedIso;
     //    private CurAdapter curAdapter;
@@ -104,6 +115,8 @@ public class FragmentSend extends Fragment {
     private LinearLayout keyboardLayout;
     //    private LinearLayout currencyListLayout;
     private ImageButton close;
+    private View separator2;
+    private ConstraintLayout amountLayout;
 
     @Override
 
@@ -122,10 +135,13 @@ public class FragmentSend extends Fragment {
         send = (Button) rootView.findViewById(R.id.send_button);
         commentEdit = (EditText) rootView.findViewById(R.id.comment_edit);
 //        currencyRecycler = (RecyclerView) rootView.findViewById(R.id.cur_spinner);
+        separator2 = rootView.findViewById(R.id.separator2);
         amountEdit = (EditText) rootView.findViewById(R.id.amount_edit);
         balanceText = (TextView) rootView.findViewById(R.id.balance_text);
+        feeText = (TextView) rootView.findViewById(R.id.fee_text);
         isoButton = (Button) rootView.findViewById(R.id.iso_button);
         keyboardLayout = (LinearLayout) rootView.findViewById(R.id.keyboard_layout);
+        amountLayout = (ConstraintLayout) rootView.findViewById(R.id.amount_layout);
 //        currencyListLayout = (LinearLayout) rootView.findViewById(R.id.cur_spinner_layout);
         close = (ImageButton) rootView.findViewById(R.id.close_button);
         selectedIso = BRSharedPrefs.getPreferredBTC(getContext()) ? "BTC" : BRSharedPrefs.getIso(getContext());
@@ -181,9 +197,57 @@ public class FragmentSend extends Fragment {
                     amountEdit.setHint("0");
                     amountEdit.setTextSize(24);
                     balanceText.setVisibility(View.VISIBLE);
+                    feeText.setVisibility(View.VISIBLE);
                     isoText.setTextColor(getContext().getColor(R.color.almost_black));
                     isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
                     isoText.setTextSize(28);
+                    final float scaleX = amountEdit.getScaleX();
+                    amountEdit.setScaleX(0);
+
+                    AutoTransition tr = new AutoTransition();
+                    tr.setInterpolator(new OvershootInterpolator());
+                    tr.addListener(new android.support.transition.Transition.TransitionListener() {
+                        @Override
+                        public void onTransitionStart(@NonNull android.support.transition.Transition transition) {
+
+                        }
+
+                        @Override
+                        public void onTransitionEnd(@NonNull android.support.transition.Transition transition) {
+                            amountEdit.requestLayout();
+                            amountEdit.animate().setDuration(100).scaleX(scaleX);
+                        }
+
+                        @Override
+                        public void onTransitionCancel(@NonNull android.support.transition.Transition transition) {
+
+                        }
+
+                        @Override
+                        public void onTransitionPause(@NonNull android.support.transition.Transition transition) {
+
+                        }
+
+                        @Override
+                        public void onTransitionResume(@NonNull android.support.transition.Transition transition) {
+
+                        }
+                    });
+
+                    ConstraintSet set = new ConstraintSet();
+                    set.clone(amountLayout);
+                    TransitionManager.beginDelayedTransition(amountLayout, tr);
+
+                    int px4 = Utils.getPixelsFromDps(getContext(), 4);
+                    int px32 = Utils.getPixelsFromDps(getContext(), 32);
+                    set.connect(balanceText.getId(), ConstraintSet.TOP, isoText.getId(), ConstraintSet.BOTTOM, px4);
+                    set.connect(feeText.getId(), ConstraintSet.TOP, balanceText.getId(), ConstraintSet.BOTTOM, px4);
+                    set.connect(separator2.getId(), ConstraintSet.TOP, feeText.getId(), ConstraintSet.BOTTOM, px4);
+                    set.connect(isoText.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, px32);
+                    set.connect(isoText.getId(), ConstraintSet.BOTTOM, 0, ConstraintSet.TOP, 0);
+                    set.applyTo(amountLayout);
+
+
                 }
 
             }
@@ -331,6 +395,7 @@ public class FragmentSend extends Fragment {
                 }
                 if (satoshiAmount.longValue() > BRWalletManager.getInstance().getBalance(getActivity())) {
                     SpringAnimator.failShakeAnimation(getActivity(), balanceText);
+                    SpringAnimator.failShakeAnimation(getActivity(), feeText);
                 }
 
                 if (allFilled)
@@ -573,16 +638,19 @@ public class FragmentSend extends Fragment {
         if (new BigDecimal((tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".")) ? "0" : tmpAmount).doubleValue() > balanceForISO.doubleValue()) {
 //            balanceString = String.format("Insufficient funds. Try an amount below your current balance: %s", formattedBalance);
             balanceText.setTextColor(getContext().getColor(R.color.warning_color));
+            feeText.setTextColor(getContext().getColor(R.color.warning_color));
             amountEdit.setTextColor(getContext().getColor(R.color.warning_color));
             isoText.setTextColor(getContext().getColor(R.color.warning_color));
         } else {
 //            balanceString = String.format("Current Balance: %s", formattedBalance);
             balanceText.setTextColor(getContext().getColor(R.color.light_gray));
+            feeText.setTextColor(getContext().getColor(R.color.light_gray));
             amountEdit.setTextColor(getContext().getColor(R.color.almost_black));
             isoText.setTextColor(getContext().getColor(R.color.almost_black));
         }
         balanceString = String.format("Current Balance: %s", formattedBalance);
-        balanceText.setText(String.format("%s, Fee: %s", balanceString, aproxFee));
+        balanceText.setText(String.format("%s", balanceString));
+        feeText.setText(String.format("Network Fee: %s", aproxFee));
 
     }
 
