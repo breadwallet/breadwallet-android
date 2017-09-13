@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.fragments;
 
-import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
@@ -13,24 +12,18 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.transition.AutoTransition;
 import android.support.transition.TransitionManager;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.transition.Transition;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
-import android.view.animation.BounceInterpolator;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -40,17 +33,14 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.RequestObject;
-import com.breadwallet.tools.adapter.CurAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.BRSender;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.BRCurrency;
@@ -58,8 +48,6 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 import static com.breadwallet.tools.security.BitcoinUrlHandler.getRequestFromString;
 import static com.platform.HTTPServer.URL_SUPPORT;
@@ -625,7 +613,7 @@ public class FragmentSend extends Fragment {
         String iso = selectedIso;
         curBalance = BRWalletManager.getInstance().getBalance(getActivity());
         isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
-        isoButton.setText(String.format("%s(%s)", selectedIso, BRCurrency.getSymbolByIso(getActivity(), selectedIso)));
+        isoButton.setText(String.format("%s(%s)", BRCurrency.getCurrencyName(getActivity(), selectedIso), BRCurrency.getSymbolByIso(getActivity(), selectedIso)));
         //Balance depending on ISO
         BigDecimal balanceForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance));
         //formattedBalance
