@@ -99,8 +99,10 @@ public class BRAnimator {
 
     public static void init(Activity app) {
         if (app == null) return;
-        t1Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 30, app.getResources().getDisplayMetrics());
-        t2Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16, app.getResources().getDisplayMetrics());
+//        t1Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 30, app.getResources().getDisplayMetrics());
+//        t2Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16, app.getResources().getDisplayMetrics());
+        t1Size = 30;
+        t2Size = 16;
     }
 
     public static void showFragmentByTag(Activity app, String tag) {
