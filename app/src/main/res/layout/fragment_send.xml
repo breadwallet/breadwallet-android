@@ -201,7 +201,7 @@
 
             <com.breadwallet.presenter.customviews.BRButton
                 android:id="@+id/iso_button"
-                android:layout_width="70dp"
+                android:layout_width="80dp"
                 android:layout_height="50dp"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
@@ -227,27 +227,27 @@
 
         </RelativeLayout>
 
-        <LinearLayout
-            android:id="@+id/cur_spinner_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical">
+        <!--<LinearLayout-->
+            <!--android:id="@+id/cur_spinner_layout"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:orientation="vertical">-->
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/cur_spinner"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_gravity="center_vertical"
-                android:background="@color/button_secondary"
-                />
+            <!--<android.support.v7.widget.RecyclerView-->
+                <!--android:id="@+id/cur_spinner"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="60dp"-->
+                <!--android:layout_gravity="center_vertical"-->
+                <!--android:background="@color/button_secondary"-->
+                <!--/>-->
 
-            <View
-                android:id="@+id/separator5"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:background="@color/extra_light_gray"
-                />
-        </LinearLayout>
+            <!--<View-->
+                <!--android:id="@+id/separator5"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:layout_height="1dp"-->
+                <!--android:background="@color/extra_light_gray"-->
+                <!--/>-->
+        <!--</LinearLayout>-->
 
         <LinearLayout
             android:id="@+id/keyboard_layout"

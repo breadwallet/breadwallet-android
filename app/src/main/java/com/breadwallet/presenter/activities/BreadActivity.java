@@ -269,18 +269,22 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     }
 
     private void setPriceTags(boolean btcPreferred, boolean animate) {
-        /** meaning the primaryPrice is left*/
-        secondaryPrice.setTextSize(!btcPreferred ? t1Size : t2Size);//make it the size it should be after animation to get the X
-        primaryPrice.setTextSize(!btcPreferred ? t2Size : t1Size);//make it the size it should be after animation to get the X
+        secondaryPrice.setTextSize(!btcPreferred ? t1Size : t2Size);
+        primaryPrice.setTextSize(!btcPreferred ? t2Size : t1Size);
         ConstraintSet set = new ConstraintSet();
         set.clone(toolBarConstraintLayout);
         if (animate)
             TransitionManager.beginDelayedTransition(toolBarConstraintLayout);
         int px4 = Utils.getPixelsFromDps(this, 4);
         int px16 = Utils.getPixelsFromDps(this, 16);
+        //align to parent left
         set.connect(!btcPreferred ? R.id.secondary_price : R.id.primary_price, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.END, px16);
+        //align equals after the first item
         set.connect(R.id.equals, ConstraintSet.START, !btcPreferred ? secondaryPrice.getId() : primaryPrice.getId(), ConstraintSet.END, px4);
+        //align second item after equals
         set.connect(!btcPreferred ? R.id.primary_price : R.id.secondary_price, ConstraintSet.START, equals.getId(), ConstraintSet.END, px4);
+//        align the second item to the baseline of the first
+//        set.connect(!btcPreferred ? R.id.primary_price : R.id.secondary_price, ConstraintSet.BASELINE, btcPreferred ? R.id.primary_price : R.id.secondary_price, ConstraintSet.BASELINE, 0);
         // Apply the changes
         set.applyTo(toolBarConstraintLayout);
 
