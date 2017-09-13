@@ -37,6 +37,7 @@ import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.BRClipboardManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.BRSender;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
@@ -88,7 +89,7 @@ public class FragmentSend extends Fragment {
     private Button scan;
     private Button paste;
     private Button send;
-    private RecyclerView currencyRecycler;
+    //    private RecyclerView currencyRecycler;
     private EditText commentEdit;
     private StringBuilder amountBuilder;
     private TextView isoText;
@@ -96,12 +97,12 @@ public class FragmentSend extends Fragment {
     private TextView balanceText;
     private long curBalance;
     private String selectedIso;
-    private CurAdapter curAdapter;
+    //    private CurAdapter curAdapter;
     private Button isoButton;
     private int keyboardIndex;
-    private int currListIndex;
+    //    private int currListIndex;
     private LinearLayout keyboardLayout;
-    private LinearLayout currencyListLayout;
+    //    private LinearLayout currencyListLayout;
     private ImageButton close;
 
     @Override
@@ -120,13 +121,15 @@ public class FragmentSend extends Fragment {
         paste = (Button) rootView.findViewById(R.id.paste_button);
         send = (Button) rootView.findViewById(R.id.send_button);
         commentEdit = (EditText) rootView.findViewById(R.id.comment_edit);
-        currencyRecycler = (RecyclerView) rootView.findViewById(R.id.cur_spinner);
+//        currencyRecycler = (RecyclerView) rootView.findViewById(R.id.cur_spinner);
         amountEdit = (EditText) rootView.findViewById(R.id.amount_edit);
         balanceText = (TextView) rootView.findViewById(R.id.balance_text);
         isoButton = (Button) rootView.findViewById(R.id.iso_button);
         keyboardLayout = (LinearLayout) rootView.findViewById(R.id.keyboard_layout);
-        currencyListLayout = (LinearLayout) rootView.findViewById(R.id.cur_spinner_layout);
+//        currencyListLayout = (LinearLayout) rootView.findViewById(R.id.cur_spinner_layout);
         close = (ImageButton) rootView.findViewById(R.id.close_button);
+        selectedIso = BRSharedPrefs.getPreferredBTC(getContext()) ? "BTC" : BRSharedPrefs.getIso(getContext());
+
         amountBuilder = new StringBuilder(0);
         setListeners();
         isoText.setText("Amount");
@@ -137,10 +140,10 @@ public class FragmentSend extends Fragment {
         signalLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeCurrencySelector();
+//                removeCurrencySelector();
             }
         });
-        currListIndex = signalLayout.indexOfChild(currencyListLayout);
+//        currListIndex = signalLayout.indexOfChild(currencyListLayout);
         keyboardIndex = signalLayout.indexOfChild(keyboardLayout);
 
         ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
@@ -162,7 +165,7 @@ public class FragmentSend extends Fragment {
         });
 
         showKeyboard(false);
-        showCurrencyList(false);
+//        showCurrencyList(false);
 
         signalLayout.setLayoutTransition(BRAnimator.getDefaultTransition());
 
@@ -189,7 +192,7 @@ public class FragmentSend extends Fragment {
         paste.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeCurrencySelector();
+//                removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
                 String bitcoinUrl = BRClipboardManager.getClipboard(getActivity());
                 if (Utils.isNullOrEmpty(bitcoinUrl) || !isInputValid(bitcoinUrl)) {
@@ -278,23 +281,30 @@ public class FragmentSend extends Fragment {
         isoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showCurrencyList(true);
+//                showCurrencyList(true);
+                if (selectedIso.equalsIgnoreCase(BRSharedPrefs.getIso(getContext()))) {
+                    selectedIso = "BTC";
+                } else {
+                    selectedIso = BRSharedPrefs.getIso(getContext());
+                }
+                updateText();
+
             }
         });
 
         scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeCurrencySelector();
+//                removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.openScanner(getActivity(),BRConstants.SCANNER_REQUEST);
+                BRAnimator.openScanner(getActivity(), BRConstants.SCANNER_REQUEST);
 
             }
         });
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeCurrencySelector();
+//                removeCurrencySelector();
                 //not allowed now
                 if (!BRAnimator.isClickAllowed()) {
                     return;
@@ -331,7 +341,7 @@ public class FragmentSend extends Fragment {
         backgroundLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                removeCurrencySelector();
+//                removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
                 getActivity().onBackPressed();
             }
@@ -346,26 +356,26 @@ public class FragmentSend extends Fragment {
             }
         });
 
-        currencyRecycler.addOnItemTouchListener(new RecyclerItemClickListener(getContext(),
-                currencyRecycler, new RecyclerItemClickListener.OnItemClickListener() {
-            @Override
-            public void onItemClick(View view, int position, float x, float y) {
-                Log.e(TAG, "onItemClick: " + position);
-//                BRAnimator.showTransactionPager(BreadActivity.this, adapter.getItems(), position);
-                selectedIso = curAdapter.getItemAtPos(position);
-
-                Log.e(TAG, "onItemSelected: " + selectedIso);
-//                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
-                updateText();
-                removeCurrencySelector();
-
-            }
-
-            @Override
-            public void onLongItemClick(View view, int position) {
-
-            }
-        }));
+//        currencyRecycler.addOnItemTouchListener(new RecyclerItemClickListener(getContext(),
+//                currencyRecycler, new RecyclerItemClickListener.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(View view, int position, float x, float y) {
+//                Log.e(TAG, "onItemClick: " + position);
+////                BRAnimator.showTransactionPager(BreadActivity.this, adapter.getItems(), position);
+//                selectedIso = curAdapter.getItemAtPos(position);
+//
+//                Log.e(TAG, "onItemSelected: " + selectedIso);
+////                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
+//                updateText();
+//                removeCurrencySelector();
+//
+//            }
+//
+//            @Override
+//            public void onLongItemClick(View view, int position) {
+//
+//            }
+//        }));
 
         addressEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -386,25 +396,25 @@ public class FragmentSend extends Fragment {
         keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {
             @Override
             public void onClick(String key) {
-                removeCurrencySelector();
+//                removeCurrencySelector();
                 handleClick(key);
             }
         });
 
-        final List<String> curList = new ArrayList<>();
-        curList.add("BTC");
-        if (getActivity() == null) return;
-        curList.addAll(CurrencyDataSource.getInstance(getActivity()).getAllISOs());
-        curAdapter = new CurAdapter(getContext(), curList);
-        currencyRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        currencyRecycler.setAdapter(curAdapter);
-        selectedIso = curAdapter.getItemAtPos(0);
+//        final List<String> curList = new ArrayList<>();
+//        curList.add("BTC");
+//        if (getActivity() == null) return;
+//        curList.addAll(CurrencyDataSource.getInstance(getActivity()).getAllISOs());
+//        curAdapter = new CurAdapter(getContext(), curList);
+//        currencyRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+//        currencyRecycler.setAdapter(curAdapter);
+//        selectedIso = curAdapter.getItemAtPos(0);
         updateText();
 
     }
 
     private void showKeyboard(boolean b) {
-        int curIndex = signalLayout.indexOfChild(currencyListLayout) == -1 ? keyboardIndex - 1 : keyboardIndex;
+        int curIndex = keyboardIndex;
 
         if (!b) {
             signalLayout.removeView(keyboardLayout);
@@ -419,19 +429,19 @@ public class FragmentSend extends Fragment {
         }
     }
 
-    private void showCurrencyList(boolean b) {
-        Log.e(TAG, "showCurrencyList: " + currListIndex);
-
-        if (!b) {
-            signalLayout.removeView(currencyListLayout);
-        } else {
-            if (signalLayout.indexOfChild(currencyListLayout) == -1)
-                signalLayout.addView(currencyListLayout, currListIndex);
-            else
-                signalLayout.removeView(currencyListLayout);
-
-        }
-    }
+//    private void showCurrencyList(boolean b) {
+//        Log.e(TAG, "showCurrencyList: " + currListIndex);
+//
+//        if (!b) {
+//            signalLayout.removeView(currencyListLayout);
+//        } else {
+//            if (signalLayout.indexOfChild(currencyListLayout) == -1)
+//                signalLayout.addView(currencyListLayout, currListIndex);
+//            else
+//                signalLayout.removeView(currencyListLayout);
+//
+//        }
+//    }
 
     private void showClipboardError() {
         BRDialog.showCustomDialog(getActivity(), "Clipboard empty", getResources().getString(R.string.Send_invalidAddressTitle), "close", null, new BRDialogView.BROnClickListener() {
@@ -550,7 +560,7 @@ public class FragmentSend extends Fragment {
         String iso = selectedIso;
         curBalance = BRWalletManager.getInstance().getBalance(getActivity());
         isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
-        isoButton.setText(iso);
+        isoButton.setText(String.format("%s(%s)", selectedIso, BRCurrency.getSymbolByIso(getActivity(), selectedIso)));
         //Balance depending on ISO
         BigDecimal balanceForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance));
         //formattedBalance
@@ -595,13 +605,13 @@ public class FragmentSend extends Fragment {
         }
     }
 
-    private void removeCurrencySelector() {
-        try {
-            signalLayout.removeView(currencyListLayout);
-        } catch (IllegalStateException ignored) {
-
-        }
-    }
+//    private void removeCurrencySelector() {
+//        try {
+//            signalLayout.removeView(currencyListLayout);
+//        } catch (IllegalStateException ignored) {
+//
+//        }
+//    }
 
     private void setAmount() {
         String tmpAmount = amountBuilder.toString();
