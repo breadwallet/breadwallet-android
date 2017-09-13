@@ -508,7 +508,7 @@ Java_com_breadwallet_wallet_BRWalletManager_getMaxOutputAmount(JNIEnv *env, jobj
 
 JNIEXPORT jint JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_feeForTransaction(JNIEnv *env, jobject obj,
-                                                              jstring address, jlong amount) {
+                                                              jstring address, jlong amount, jboolean economy) {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "feeForTransaction");
     if (!_wallet) return 0;
 
