@@ -44,6 +44,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.NetworkChangeReceiver;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
@@ -268,38 +269,20 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     }
 
     private void setPriceTags(boolean btcPreferred, boolean animate) {
-        Log.e(TAG, "swap: " + btcPreferred);
-        if (!btcPreferred) {
-            /** meaning the primaryPrice is left*/
-            secondaryPrice.setTextSize(t1Size);//make it the size it should be after animation to get the X
-            primaryPrice.setTextSize(t2Size);//make it the size it should be after animation to get the X
-            ConstraintSet set = new ConstraintSet();
-            set.clone(toolBarConstraintLayout);
-            if (animate)
-                TransitionManager.beginDelayedTransition(toolBarConstraintLayout);
-            set.connect(R.id.secondary_price, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 16);
-            set.connect(R.id.equals, ConstraintSet.LEFT, secondaryPrice.getId(), ConstraintSet.RIGHT, 8);
-            set.connect(R.id.primary_price, ConstraintSet.LEFT, equals.getId(), ConstraintSet.RIGHT, 8);
-            // Apply the changes
-            set.applyTo(toolBarConstraintLayout);
-            Log.e(TAG, "swapped");
-
-        } else {
-            /** meaning the primaryPrice is right*/
-            primaryPrice.setTextSize(t1Size);//make it the size it should be after animation to get the X
-            secondaryPrice.setTextSize(t2Size);//make it the size it should be after animation to get the X
-            ConstraintSet set = new ConstraintSet();
-            set.clone(toolBarConstraintLayout);
-            if (animate)
-                TransitionManager.beginDelayedTransition(toolBarConstraintLayout);
-            set.connect(R.id.primary_price, ConstraintSet.LEFT, ConstraintSet.PARENT_ID, ConstraintSet.RIGHT, 16);
-            set.connect(R.id.equals, ConstraintSet.LEFT, primaryPrice.getId(), ConstraintSet.RIGHT, 8);
-            set.connect(R.id.secondary_price, ConstraintSet.LEFT, equals.getId(), ConstraintSet.RIGHT, 8);
-            // Apply the changes
-            set.applyTo(toolBarConstraintLayout);
-            Log.e(TAG, "swapped back");
-
-        }
+        /** meaning the primaryPrice is left*/
+        secondaryPrice.setTextSize(!btcPreferred ? t1Size : t2Size);//make it the size it should be after animation to get the X
+        primaryPrice.setTextSize(!btcPreferred ? t2Size : t1Size);//make it the size it should be after animation to get the X
+        ConstraintSet set = new ConstraintSet();
+        set.clone(toolBarConstraintLayout);
+        if (animate)
+            TransitionManager.beginDelayedTransition(toolBarConstraintLayout);
+        int px4 = Utils.getPixelsFromDps(this, 4);
+        int px16 = Utils.getPixelsFromDps(this, 16);
+        set.connect(!btcPreferred ? R.id.secondary_price : R.id.primary_price, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.END, px16);
+        set.connect(R.id.equals, ConstraintSet.START, !btcPreferred ? secondaryPrice.getId() : primaryPrice.getId(), ConstraintSet.END, px4);
+        set.connect(!btcPreferred ? R.id.primary_price : R.id.secondary_price, ConstraintSet.START, equals.getId(), ConstraintSet.END, px4);
+        // Apply the changes
+        set.applyTo(toolBarConstraintLayout);
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -344,9 +327,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         BRAnimator.showFragmentByTag(this, savedFragmentTag);
         savedFragmentTag = null;
 
-
         TxManager.getInstance().onResume(BreadActivity.this);
-
 
     }
 
