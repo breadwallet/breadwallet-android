@@ -65,7 +65,7 @@ static JNIEnv *getEnv() {
 void callback(void *info, int error) {
     __android_log_print(ANDROID_LOG_ERROR, "Message from callback: ", "err: %s",
                         strerror(error));
-    BRTransaction * tx = info;
+    BRTransaction *tx = info;
 //    tx.
     JNIEnv *env = getEnv();
 
@@ -508,14 +508,13 @@ Java_com_breadwallet_wallet_BRWalletManager_getMaxOutputAmount(JNIEnv *env, jobj
 
 JNIEXPORT jint JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_feeForTransaction(JNIEnv *env, jobject obj,
-                                                              jstring address, jlong amount, jboolean economy) {
+                                                              jstring address, jlong amount) {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "feeForTransaction");
     if (!_wallet) return 0;
-
     const char *rawAddress = (*env)->GetStringUTFChars(env, address, NULL);
     BRTransaction *tx = BRWalletCreateTransaction(_wallet, (uint64_t) amount, rawAddress);
-
-    return tx ? (jint) BRWalletFeeForTx(_wallet, tx) : 0;
+    if (!tx) return 0;
+    return (jint) BRWalletFeeForTx(_wallet, tx);
 }
 
 JNIEXPORT jlong JNICALL

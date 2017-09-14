@@ -224,7 +224,6 @@ public class CurrencyFetchManager {
             JSONObject obj = new JSONObject(jsonString);
             fee = obj.getLong("fee_per_kb");
             if (fee != 0 && fee < BRConstants.MAX_FEE_PER_KB) {
-
                 BRSharedPrefs.putFeePerKb(activity, fee);
                 BRWalletManager.getInstance().setFeePerKb(fee);
             }
