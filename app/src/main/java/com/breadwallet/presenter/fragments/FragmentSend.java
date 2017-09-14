@@ -581,7 +581,6 @@ public class FragmentSend extends Fragment {
         Utils.hideKeyboard(getActivity());
     }
 
-
     private void handleClick(String key) {
         if (key == null) {
             Log.e(TAG, "handleClick: key is null! ");

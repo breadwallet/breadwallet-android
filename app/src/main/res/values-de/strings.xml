@@ -274,10 +274,10 @@
   <string name="Prompts.NoPasscode.body">Ein Gerät-Passcode wird benötigt, um Ihr Wallet zu schützen. Gehen Sie zu den Einstellungen und aktivieren Sie den Passcode.</string>
   <!-- No Passcode set warning title -->
   <string name="Prompts.NoPasscode.title">Aktivieren Sie den Gerät-Passcode</string>
-  <!-- Paper key not save prompt body -->
-  <string name="Prompts.PaperKey.body">Der Offlineschlüssel dieses Wallets wurde noch nicht notiert. Hier antippen, um ihn anzuzeigen.</string>
-  <!-- Paper Key not saved prompt title -->
-  <string name="Prompts.PaperKey.title">Offlineschlüssel nicht gespeichert</string>
+  <!-- Warning about paper key. -->
+  <string name="Prompts.PaperKey.body">Ihr Paper-Key muss für den Fall, dass Sie Ihr Telefon verlieren oder wechseln, gespeichert werden. Tippen Sie hier, um fortzufahren.</string>
+  <!-- An action is required (You must do this action). -->
+  <string name="Prompts.PaperKey.title">Maßnahme erforderlich</string>
   <!-- Transaction rejected prompt body -->
   <string name="Prompts.RecommendRescan.body">Möglicherweise ist dein Wallet nicht synchronisiert. Dies kann oft durch ein erneutes Einscannen der Blockchain behoben werden.</string>
   <!-- Transaction rejected prompt title -->
@@ -294,8 +294,8 @@
   <string name="Prompts.UpgradePin.body">Bread nutzt mittlerweile eine 6-stellige PIN. Hier antippen, um upzugraden.</string>
   <!-- Upgrade PIN prompt title. -->
   <string name="Prompts.UpgradePin.title">PIN upgraden</string>
-  <!-- Push notifications settings view body -->
-  <string name="PushNotifications.body">Lass dich benachrichtigen, wenn Geld, das du empfangen hast, ausgegeben werden kann.</string>
+  <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
+  <string name="PushNotifications.body">Schalten Sie Benachrichtigungen ein, um in Zukunft besondere Meldungen von Bread zu erhalten.</string>
   <!-- Push notifications toggle switch label -->
   <string name="PushNotifications.label">Push-Benachrichtigungen</string>
   <!-- Push notifications are off label -->
@@ -406,16 +406,22 @@
   <string name="Send.creatTransactionError">Transaktion konnte nicht erstellen werden.</string>
   <!-- Description for sending money label -->
   <string name="Send.descriptionLabel">Vermerk</string>
+  <!-- Emtpy pasteboard error message -->
+  <string name="Send.emptyPasteboard">Pasteboard ist leer.</string>
   <!-- Network Fee: $0.01 -->
   <string name="Send.fee">Netzwerkgebühr: %1$s</string>
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">die Identität des Zahlungsempfängers ist nicht bestätigt.</string>
   <!-- Invalid address alert message -->
   <string name="Send.invalidAddressMessage">Die Zieladresse ist keine gültige Bitcoin-Adresse.</string>
+  <!-- Invalid address on pasteboard message -->
+  <string name="Send.invalidAddressOnPasteboard">Pasteboard enthält keine gültige Bitcoin-Adresse.</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">Ungültige Adresse</string>
   <!-- Is rescanning error message -->
   <string name="Send.isRescanning">Das Senden ist während eines kompletten Neuscans deaktiviert.</string>
+  <!-- Loading request activity view message -->
+  <string name="Send.loadingRequest">Anfrage wird geladen</string>
   <!-- Empty address alert message -->
   <string name="Send.noAddress">Bitte gib die Adresse des Empfängers ein.</string>
   <!-- Emtpy amount alert message -->
@@ -424,6 +430,8 @@
   <string name="Send.pasteLabel">Einfügen</string>
   <!-- Could not publish transaction alert title -->
   <string name="Send.publishTransactionError">Transaktion konnte nicht veröffentlicht werden.</string>
+  <!-- Could not load remote request error message -->
+  <string name="Send.remoteRequestError">Zahlungsanfrage konnte nicht geladen werden</string>
   <!-- Scan button label -->
   <string name="Send.scanLabel">Scannen</string>
   <!-- Send button label (the action, "press here to send") -->
@@ -484,10 +492,14 @@
   <string name="StartPaperPhrase.date">Du hast dir deinen Offlineschlüssel zuletzt am %1$s notiert</string>
   <!-- Start view message -->
   <string name="StartViewController.message">Die sicherste Option zur Nutzung von Bitcoin.</string>
+  <!-- Syncing view connectiong state header text -->
+  <string name="SyncingView.connecting">Verbindet</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Synchronisation läuft</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Erneut versuchen</string>
+  <!-- Syncing view syncing state header text -->
+  <string name="SyncingView.syncing">Synchronisiert</string>
   <!-- 6 d (6 days) -->
   <string name="TimeSince.days">%1$s d</string>
   <!-- 6 h (6 hours) -->
@@ -642,6 +654,10 @@
   <string name="Webview.errorMessage">Beim Laden des Inhalts ist ein Fehler aufgetreten. Bitte versuche es erneut.</string>
   <!-- Updating webview message -->
   <string name="Webview.updating">Aktualisierung läuft …</string>
+  <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
+  <string name="Welcome.body">Breadwallet heißt jetzt Bread und hat ein brandneues Erscheinungsbild sowie einige neue Funktionen.\n\nWenn Sie Hilfe benötigen, halten Sie Ausschau nach dem (?), das auf den meisten Bildschirm oben rechts zu finden ist.</string>
+  <!-- Top title of welcome screen -->
+  <string name="Welcome.title">Willkommen bei Bread!</string>
   <!-- Wipe wallet alert message -->
   <string name="WipeWallet.alertMessage">Sind Sie sicher, dass Sie dieses Wallet löschen möchten?</string>
   <!-- Wipe wallet alert title -->
@@ -652,6 +668,10 @@
   <string name="WipeWallet.failedTitle">Fehlgeschlagen</string>
   <!-- Enter phrase to wipe wallet instruction. -->
   <string name="WipeWallet.instruction">Geben Sie die Wiederherstellungsphrase des Wallets ein, um es zu löschen und die Wiederherstellung eines anderen Wallets zu beginnen. Ihr aktueller Kontostand bleibt mit dieser Phrase verbunden.</string>
+  <!-- Start wipe wallet view message -->
+  <string name="WipeWallet.startMessage">Das Anlegen oder Wiederherstellen einer weiteren Wallet ermöglicht es Ihnen, auf diesem Gerät auf eine andere Bread-Wallet zuzugreifen und diese zu verwalten.</string>
+  <!-- Start wipe wallet view warning -->
+  <string name="WipeWallet.startWaring">Sie werden von diesem Gerät aus keinen Zugriff auf Ihr aktuelles Bread-Wallet mehr haben. Der Saldo verbleibt auf dem Satz.</string>
   <!-- Wipe wallet navigation item title. -->
   <string name="WipeWallet.title">Ein anderes Wallet beginnen oder wiederherstellen</string>
   <!-- Wipe wallet button title -->

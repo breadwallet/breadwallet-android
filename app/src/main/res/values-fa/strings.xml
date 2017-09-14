@@ -190,9 +190,9 @@
   <string name="PaymentProtocol.Errors.unsupportedSignatureType">الگوی امضا قابل قبول نیست</string>
   <!-- Untrusted certificate payment protocol error message -->
   <string name="PaymentProtocol.Errors.untrustedCertificate">گواهی نامعتبر</string>
-  <!-- Paper key not save prompt body -->
+  <!-- Warning about paper key. -->
   <string name="Prompts.PaperKey.body">کلید کاغذی این کیف تاکنون نوشته نشده است. برای مشاهده آن اینجا تپ کنید.</string>
-  <!-- Paper Key not saved prompt title -->
+  <!-- An action is required (You must do this action). -->
   <string name="Prompts.PaperKey.title">کلید کاغذی ذخیره نشده است</string>
   <!-- Transaction rejected prompt body -->
   <string name="Prompts.RecommendRescan.body">شاید کیف شما با شبکه همگام نیست. این مشکل می‌تواند با اسکن دوباره زنجیره بلوکی حل شود.</string>
@@ -206,7 +206,7 @@
   <string name="Prompts.UpgradePin.body">برِد ارتقا یافته تا از پین ۶ عددی استفاده کنید. برای ارتقا اینجا را لمس کنید.</string>
   <!-- Upgrade PIN prompt title. -->
   <string name="Prompts.UpgradePin.title">پین را ارتقا دهید</string>
-  <!-- Push notifications settings view body -->
+  <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
   <string name="PushNotifications.body">وقتی پول دریافتی‌تان آمادهٔ خرج کردن شد، یک اعلان دریافت کنید.</string>
   <!-- Push notifications toggle switch label -->
   <string name="PushNotifications.label">اعلان‌های ورودی</string>
@@ -397,7 +397,7 @@
   <!-- Link Text (see TouchIdSettings.customizeText) -->
   <string name="TouchIdSettings.linkText">صفحه محدودیت پرداخت با تاچ آی.دی</string>
   <!-- Spending Limit: b100,000 ($100) -->
-  <!--<string name="TouchIdSettings.spendingLimit">محدودیت پرداخت: @$1% (معادل @$2%)</string>-->//todo fix this problem
+  <string name="TouchIdSettings.spendingLimit">محدودیت پرداخت: @$1% (معادل @$2%)</string>
   <!-- Touch id switch label. -->
   <string name="TouchIdSettings.switchLabel">تاچ آی.دی را برای برِد فعال کنید</string>
   <!-- Touch ID settings view title -->

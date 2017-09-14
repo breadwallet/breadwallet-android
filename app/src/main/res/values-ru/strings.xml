@@ -274,10 +274,10 @@
   <string name="Prompts.NoPasscode.body">Для защиты вашего кошелька необходим код доступа к устройству. Перейдите к настройкам и включите код доступа.</string>
   <!-- No Passcode set warning title -->
   <string name="Prompts.NoPasscode.title">Включить код доступа к устройству</string>
-  <!-- Paper key not save prompt body -->
-  <string name="Prompts.PaperKey.body">Бумажный ключ для этого кошелька не был выписан. Коснитесь здесь для просмотра.</string>
-  <!-- Paper Key not saved prompt title -->
-  <string name="Prompts.PaperKey.title">Бумажный ключ не сохранен</string>
+  <!-- Warning about paper key. -->
+  <string name="Prompts.PaperKey.body">Ваш бумажный ключ нужно сохранить на случай, если вы потеряете или смените свой телефон. Нажмите сюда, чтобы продолжить.</string>
+  <!-- An action is required (You must do this action). -->
+  <string name="Prompts.PaperKey.title">Необходимо совершить действие</string>
   <!-- Transaction rejected prompt body -->
   <string name="Prompts.RecommendRescan.body">Ваш кошелек, возможно, дал сбой. Зачастую это можно исправить, повторно просканировав цепочку ключей.</string>
   <!-- Transaction rejected prompt title -->
@@ -294,8 +294,8 @@
   <string name="Prompts.UpgradePin.body">Bread обновил свой интерфейс до использования 6-цифрового PIN-кода. Коснитесь здесь для обновления.</string>
   <!-- Upgrade PIN prompt title. -->
   <string name="Prompts.UpgradePin.title">Обновить PIN-код</string>
-  <!-- Push notifications settings view body -->
-  <string name="PushNotifications.body">Получайте уведомления, когда полученные деньги будут доступны для использования.</string>
+  <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
+  <string name="PushNotifications.body">Включите уведомления, чтобы в будущем получать от Bread важные сообщения.</string>
   <!-- Push notifications toggle switch label -->
   <string name="PushNotifications.label">Push-уведомления</string>
   <!-- Push notifications are off label -->
@@ -406,16 +406,22 @@
   <string name="Send.creatTransactionError">Не удалось создать транзакцию.</string>
   <!-- Description for sending money label -->
   <string name="Send.descriptionLabel">Записка</string>
+  <!-- Emtpy pasteboard error message -->
+  <string name="Send.emptyPasteboard">Буфер обмена пуст</string>
   <!-- Network Fee: $0.01 -->
   <string name="Send.fee">Комиссия сети: %1$s</string>
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">Личность получателя платежа не сертифицирована.</string>
   <!-- Invalid address alert message -->
   <string name="Send.invalidAddressMessage">Недействительный биткоин-адрес получателя.</string>
+  <!-- Invalid address on pasteboard message -->
+  <string name="Send.invalidAddressOnPasteboard">В буфере обмена нет действительного биткоин-адреса.</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">Недействительный адрес</string>
   <!-- Is rescanning error message -->
   <string name="Send.isRescanning">Отправка отключена во время полного сканирования.</string>
+  <!-- Loading request activity view message -->
+  <string name="Send.loadingRequest">Загрузка запроса</string>
   <!-- Empty address alert message -->
   <string name="Send.noAddress">Пожалуйста, введите адрес получателя.</string>
   <!-- Emtpy amount alert message -->
@@ -424,6 +430,8 @@
   <string name="Send.pasteLabel">Вставить</string>
   <!-- Could not publish transaction alert title -->
   <string name="Send.publishTransactionError">Не удалось опубликовать транзакцию.</string>
+  <!-- Could not load remote request error message -->
+  <string name="Send.remoteRequestError">Не удалось загрузить запрос на оплату</string>
   <!-- Scan button label -->
   <string name="Send.scanLabel">Сканировать</string>
   <!-- Send button label (the action, "press here to send") -->
@@ -484,10 +492,14 @@
   <string name="StartPaperPhrase.date">Вы выписывали свой бумажный ключ в последний раз %1$s</string>
   <!-- Start view message -->
   <string name="StartViewController.message">Самый надежный и безопасный способ использования биткойна.</string>
+  <!-- Syncing view connectiong state header text -->
+  <string name="SyncingView.connecting">Соединение</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Синхронизация</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Повторить</string>
+  <!-- Syncing view syncing state header text -->
+  <string name="SyncingView.syncing">Синхронизация</string>
   <!-- 6 d (6 days) -->
   <string name="TimeSince.days">%1$s д</string>
   <!-- 6 h (6 hours) -->
@@ -642,6 +654,10 @@
   <string name="Webview.errorMessage">Во время загрузки контента возникла ошибка. Пожалуйста, повторите попытку.</string>
   <!-- Updating webview message -->
   <string name="Webview.updating">Идет обновление...</string>
+  <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
+  <string name="Welcome.body">Breadwallet сменил свое название на Bread и обзавелся новым дизайном и функциями.\n\nЕсли вам нужна помощь, то ищите иконку (?) в правом верхнем углу большинства экранов.</string>
+  <!-- Top title of welcome screen -->
+  <string name="Welcome.title">Добро пожаловать в Bread!</string>
   <!-- Wipe wallet alert message -->
   <string name="WipeWallet.alertMessage">Вы действительно хотите удалить этот кошелек?</string>
   <!-- Wipe wallet alert title -->
@@ -652,6 +668,10 @@
   <string name="WipeWallet.failedTitle">Не удалось</string>
   <!-- Enter phrase to wipe wallet instruction. -->
   <string name="WipeWallet.instruction">Введите фразу восстановления кошелька для того, чтобы его удалить и запустить или восстановить другой. Ваш текущий баланс остается на этой фразе.</string>
+  <!-- Start wipe wallet view message -->
+  <string name="WipeWallet.startMessage">Создание или восстановление другого кошелька позволит вам получить доступ или управлять другим кошельком Bread на этом устройстве.</string>
+  <!-- Start wipe wallet view warning -->
+  <string name="WipeWallet.startWaring">Вы больше не сможете получить доступ к текущему кошельку Bread с этого устройства. Ваш баланс останется на этой фразе.</string>
   <!-- Wipe wallet navigation item title. -->
   <string name="WipeWallet.title">Запуск или восстановление другого кошелька</string>
   <!-- Wipe wallet button title -->
