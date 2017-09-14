@@ -29,9 +29,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.DisplayCurrencyActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
+import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
+import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -105,8 +108,11 @@ public class FragmentSend extends Fragment {
     private LinearLayout keyboardLayout;
     //    private LinearLayout currencyListLayout;
     private ImageButton close;
-    private View separator2;
     private ConstraintLayout amountLayout;
+    private BRButton regular;
+    private BRButton economy;
+    private BRLinearLayoutWithCaret feeLayout;
+    private boolean feeButtonsShown = false;
 
     @Override
 
@@ -125,7 +131,6 @@ public class FragmentSend extends Fragment {
         send = (Button) rootView.findViewById(R.id.send_button);
         commentEdit = (EditText) rootView.findViewById(R.id.comment_edit);
 //        currencyRecycler = (RecyclerView) rootView.findViewById(R.id.cur_spinner);
-        separator2 = rootView.findViewById(R.id.separator2);
         amountEdit = (EditText) rootView.findViewById(R.id.amount_edit);
         balanceText = (TextView) rootView.findViewById(R.id.balance_text);
         feeText = (TextView) rootView.findViewById(R.id.fee_text);
@@ -133,6 +138,10 @@ public class FragmentSend extends Fragment {
         isoButton = (Button) rootView.findViewById(R.id.iso_button);
         keyboardLayout = (LinearLayout) rootView.findViewById(R.id.keyboard_layout);
         amountLayout = (ConstraintLayout) rootView.findViewById(R.id.amount_layout);
+        feeLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.fee_buttons_layout);
+
+        regular = (BRButton) rootView.findViewById(R.id.left_button);
+        economy = (BRButton) rootView.findViewById(R.id.right_button);
 //        currencyListLayout = (LinearLayout) rootView.findViewById(R.id.cur_spinner_layout);
         close = (ImageButton) rootView.findViewById(R.id.close_button);
         selectedIso = BRSharedPrefs.getPreferredBTC(getContext()) ? "BTC" : BRSharedPrefs.getIso(getContext());
@@ -151,10 +160,13 @@ public class FragmentSend extends Fragment {
             }
         });
 
+        showFeeSelectionButtons(feeButtonsShown);
+
         edit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                feeButtonsShown = !feeButtonsShown;
+                showFeeSelectionButtons(feeButtonsShown);
             }
         });
 //        currListIndex = signalLayout.indexOfChild(currencyListLayout);
@@ -196,6 +208,7 @@ public class FragmentSend extends Fragment {
                     amountEdit.setTextSize(24);
                     balanceText.setVisibility(View.VISIBLE);
                     feeText.setVisibility(View.VISIBLE);
+                    edit.setVisibility(View.VISIBLE);
                     isoText.setTextColor(getContext().getColor(R.color.almost_black));
                     isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
                     isoText.setTextSize(28);
@@ -240,7 +253,7 @@ public class FragmentSend extends Fragment {
                     int px32 = Utils.getPixelsFromDps(getContext(), 32);
                     set.connect(balanceText.getId(), ConstraintSet.TOP, isoText.getId(), ConstraintSet.BOTTOM, px4);
                     set.connect(feeText.getId(), ConstraintSet.TOP, balanceText.getId(), ConstraintSet.BOTTOM, px4);
-                    set.connect(separator2.getId(), ConstraintSet.TOP, feeText.getId(), ConstraintSet.BOTTOM, px4);
+                    set.connect(feeText.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px4);
                     set.connect(isoText.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, px32);
                     set.connect(isoText.getId(), ConstraintSet.BOTTOM, 0, ConstraintSet.TOP, 0);
                     set.applyTo(amountLayout);
@@ -419,26 +432,6 @@ public class FragmentSend extends Fragment {
             }
         });
 
-//        currencyRecycler.addOnItemTouchListener(new RecyclerItemClickListener(getContext(),
-//                currencyRecycler, new RecyclerItemClickListener.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(View view, int position, float x, float y) {
-//                Log.e(TAG, "onItemClick: " + position);
-////                BRAnimator.showTransactionPager(BreadActivity.this, adapter.getItems(), position);
-//                selectedIso = curAdapter.getItemAtPos(position);
-//
-//                Log.e(TAG, "onItemSelected: " + selectedIso);
-////                isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
-//                updateText();
-//                removeCurrencySelector();
-//
-//            }
-//
-//            @Override
-//            public void onLongItemClick(View view, int position) {
-//
-//            }
-//        }));
 
         addressEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
@@ -461,6 +454,19 @@ public class FragmentSend extends Fragment {
             public void onClick(String key) {
 //                removeCurrencySelector();
                 handleClick(key);
+            }
+        });
+
+        regular.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setButton(true);
+            }
+        });
+        economy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setButton(false);
             }
         });
 
@@ -671,13 +677,16 @@ public class FragmentSend extends Fragment {
         }
     }
 
-//    private void removeCurrencySelector() {
-//        try {
-//            signalLayout.removeView(currencyListLayout);
-//        } catch (IllegalStateException ignored) {
-//
-//        }
-//    }
+    private void showFeeSelectionButtons(boolean b) {
+        if (!b) {
+            signalLayout.removeView(feeLayout);
+        } else {
+            signalLayout.addView(feeLayout, signalLayout.indexOfChild(amountLayout) + 1);
+//            regular = (BRButton) getActivity().findViewById(R.id.left);
+//            economy = (BRButton) getActivity().findViewById(R.id.right);
+
+        }
+    }
 
     private void setAmount() {
         String tmpAmount = amountBuilder.toString();
@@ -694,6 +703,21 @@ public class FragmentSend extends Fragment {
             }
         }
         amountEdit.setText(newAmount.toString());
+    }
+
+    private void setButton(boolean isRegular) {
+        if (isRegular) {
+            regular.setTextColor(getContext().getColor(R.color.white));
+            regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue));
+            economy.setTextColor(getContext().getColor(R.color.dark_blue));
+            economy.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue_stroke));
+        } else {
+            regular.setTextColor(getContext().getColor(R.color.dark_blue));
+            regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue_stroke));
+            economy.setTextColor(getContext().getColor(R.color.white));
+            economy.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue));
+        }
+        updateText();
     }
 
     private boolean isInputValid(String input) {
