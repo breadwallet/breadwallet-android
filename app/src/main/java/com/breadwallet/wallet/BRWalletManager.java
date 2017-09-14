@@ -553,42 +553,7 @@ public class BRWalletManager {
         Log.e(TAG, "onTxDeleted: " + String.format("hash: %s, notifyUser: %d, recommendRescan: %d", hash, notifyUser, recommendRescan));
         final Activity ctx = BreadApp.getBreadContext();
         if (ctx != null) {
-            TransactionDataSource.getInstance(ctx).deleteTxByHash(hash);
-            if (notifyUser == 1) {
-                ctx.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        AlertDialog alert;
-                        AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-                        builder.setTitle(R.string.Prompts_RecommendRescan_title);
-
-                        builder.setMessage(recommendRescan == 1 ? ctx.getString(R.string.Prompts_RecommendRescan_body) : "");
-                        if (recommendRescan == 1)
-                            builder.setPositiveButton(R.string.ReScan_alertAction,
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-//                                            if (BRAnimator.checkTheMultipressingAvailability()) {
-                                            new Thread(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    BRPeerManager.getInstance().rescan();
-                                                }
-                                            }).start();
-//                                            }
-                                        }
-                                    });
-                        builder.setNegativeButton(ctx.getString(R.string.Button_cancel),
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        alert = builder.create();
-                        alert.show();
-                    }
-                });
-
-            }
+            BRSharedPrefs.putScanRecommended(ctx, true);
         } else {
             Log.e(TAG, "onTxDeleted: Failed! ctx is null");
         }

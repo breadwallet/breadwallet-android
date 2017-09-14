@@ -155,6 +155,7 @@ public class BRSharedPrefs {
         editor.putLong(BRConstants.FEE_KB_PREFS, fee);
         editor.apply();
     }
+
     public static long getEconomyFeePerKb(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getLong(BRConstants.ECONOMY_FEE_KB_PREFS, 0);
@@ -191,31 +192,6 @@ public class BRSharedPrefs {
         editor.putLong(BRConstants.SECURE_TIME_PREFS, date);
         editor.apply();
     }
-
-//    public static long getPhraseWarningTime(Context activity) {
-//        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-//        return prefs.getLong(BRConstants.PHRASE_WARNING_TIME, 0);
-//    }
-//
-//
-//    public static void putPhraseWarningTime(Context activity, long phraseWarningTime) {
-//        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = prefs.edit();
-//        editor.putLong(BRConstants.PHRASE_WARNING_TIME, phraseWarningTime);
-//        editor.apply();
-//    }
-
-//    public static int getTotalLimit(Context activity) {
-//        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-//        return prefs.getInt(BRConstants.LIMIT_PREFS, BRConstants.HUNDRED_BITS);
-//    }
-//
-//    public static void putLimit(Context activity, int limit) {
-//        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-//        SharedPreferences.Editor editor = prefs.edit();
-//        editor.putInt(BRConstants.LIMIT_PREFS, limit);
-//        editor.apply();
-//    }
 
     public static List<Integer> getBitIdNonces(Context activity, String key) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
@@ -335,16 +311,16 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static boolean getTipsShown(Context context) {
+    public static boolean getScanRecommended(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
-        return settingsToGet.getBoolean(BRConstants.TIPS_SHOWN, false);
+        return settingsToGet.getBoolean("scanRecommended", false);
     }
 
-    public static void putTipsShown(Context context, boolean tipsShown) {
+    public static void putScanRecommended(Context context, boolean recommended) {
         if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean(BRConstants.TIPS_SHOWN, tipsShown);
+        editor.putBoolean("scanRecommended", recommended);
         editor.apply();
     }
 

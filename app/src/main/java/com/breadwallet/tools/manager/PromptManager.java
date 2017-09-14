@@ -91,7 +91,7 @@ public class PromptManager {
             case UPGRADE_PIN:
                 return BRKeyStore.getPinCode(app).length() != 6;
             case RECOMMEND_RESCAN:
-                return false; //todo add code to this
+                return BRSharedPrefs.getScanRecommended(app);
             case SHARE_DATA:
                 return !BRSharedPrefs.getShareData(app) && !BRSharedPrefs.getShareDataDismissed(app);
 
@@ -146,6 +146,7 @@ public class PromptManager {
                             public void run() {
                                 BRSharedPrefs.putStartHeight(app, 0);
                                 BRPeerManager.getInstance().rescan();
+                                BRSharedPrefs.putScanRecommended(app, false);
                             }
                         }).start();
                     }
