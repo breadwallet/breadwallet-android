@@ -220,12 +220,17 @@ public class CurrencyFetchManager {
             return;
         }
         long fee;
+        long economyFee;
         try {
             JSONObject obj = new JSONObject(jsonString);
             fee = obj.getLong("fee_per_kb");
+            economyFee = obj.getLong("fee_per_kb_economy");
             if (fee != 0 && fee < BRConstants.MAX_FEE_PER_KB) {
                 BRSharedPrefs.putFeePerKb(activity, fee);
                 BRWalletManager.getInstance().setFeePerKb(fee);
+            }
+            if (economyFee != 0 && economyFee < BRConstants.MAX_FEE_PER_KB) {
+                BRSharedPrefs.putEconomyFeePerKb(activity, economyFee);
             }
         } catch (JSONException e) {
             FirebaseCrash.report(e);
