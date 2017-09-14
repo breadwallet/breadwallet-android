@@ -330,6 +330,17 @@
                     />
             </LinearLayout>
 
+            <com.breadwallet.presenter.customviews.BRText
+                android:id="@+id/warning_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
+                android:text="This option is not recommended for time-sensitive transactions."
+                android:textColor="@color/red_text"
+                />
+
 
         </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
 

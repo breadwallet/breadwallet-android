@@ -34,6 +34,8 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import static com.breadwallet.presenter.fragments.FragmentSend.isEconomyFee;
+
 /**
  * BreadWallet
  * <p>
@@ -227,7 +229,7 @@ public class CurrencyFetchManager {
             economyFee = obj.getLong("fee_per_kb_economy");
             if (fee != 0 && fee < BRConstants.MAX_FEE_PER_KB) {
                 BRSharedPrefs.putFeePerKb(activity, fee);
-                BRWalletManager.getInstance().setFeePerKb(fee);
+                BRWalletManager.getInstance().setFeePerKb(fee, isEconomyFee);
             }
             if (economyFee != 0 && economyFee < BRConstants.MAX_FEE_PER_KB) {
                 BRSharedPrefs.putEconomyFeePerKb(activity, economyFee);
