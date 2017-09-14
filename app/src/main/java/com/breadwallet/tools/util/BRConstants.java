@@ -64,6 +64,7 @@ public class BRConstants {
     public static final String PHRASE_WARNING_TIME = "phraseWarningTime";
     public static final String EXCHANGE_RATES = "exchangeRates";
     public static final String FEE_KB_PREFS = "feeKb";
+    public static final String ECONOMY_FEE_KB_PREFS = "EconomyFeeKb";
     public static final String LITTLE_CIRCLE = "\u2022";
     public static String SUPPORT_EMAIL = "support@breadwallet.com";
 

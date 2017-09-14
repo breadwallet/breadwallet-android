@@ -155,6 +155,17 @@ public class BRSharedPrefs {
         editor.putLong(BRConstants.FEE_KB_PREFS, fee);
         editor.apply();
     }
+    public static long getEconomyFeePerKb(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getLong(BRConstants.ECONOMY_FEE_KB_PREFS, 0);
+    }
+
+    public static void putEconomyFeePerKb(Context context, long fee) {
+        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong(BRConstants.ECONOMY_FEE_KB_PREFS, fee);
+        editor.apply();
+    }
 
     public static long getCatchedBalance(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
