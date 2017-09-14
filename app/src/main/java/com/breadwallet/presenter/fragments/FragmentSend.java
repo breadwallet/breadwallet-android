@@ -29,12 +29,12 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.DisplayCurrencyActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
+import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -113,6 +113,9 @@ public class FragmentSend extends Fragment {
     private BRButton economy;
     private BRLinearLayoutWithCaret feeLayout;
     private boolean feeButtonsShown = false;
+    private BRText feeDescription;
+    private BRText warningText;
+    public static boolean isEconomyFee;
 
     @Override
 
@@ -139,6 +142,8 @@ public class FragmentSend extends Fragment {
         keyboardLayout = (LinearLayout) rootView.findViewById(R.id.keyboard_layout);
         amountLayout = (ConstraintLayout) rootView.findViewById(R.id.amount_layout);
         feeLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.fee_buttons_layout);
+        feeDescription = (BRText) rootView.findViewById(R.id.fee_description);
+        warningText = (BRText) rootView.findViewById(R.id.warning_text);
 
         regular = (BRButton) rootView.findViewById(R.id.left_button);
         economy = (BRButton) rootView.findViewById(R.id.right_button);
@@ -192,6 +197,7 @@ public class FragmentSend extends Fragment {
 
         showKeyboard(false);
 //        showCurrencyList(false);
+        setButton(true);
 
         signalLayout.setLayoutTransition(BRAnimator.getDefaultTransition());
 
@@ -561,6 +567,7 @@ public class FragmentSend extends Fragment {
                 }
             }
         });
+        isEconomyFee = false;
     }
 
     @Override
@@ -707,16 +714,25 @@ public class FragmentSend extends Fragment {
 
     private void setButton(boolean isRegular) {
         if (isRegular) {
+            isEconomyFee = false;
+            BRWalletManager.getInstance().setFeePerKb(BRSharedPrefs.getFeePerKb(getContext()), isEconomyFee);
             regular.setTextColor(getContext().getColor(R.color.white));
             regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue));
             economy.setTextColor(getContext().getColor(R.color.dark_blue));
             economy.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue_stroke));
+            feeDescription.setText("Estimated Delivery: 10-30 minutes");
+            warningText.getLayoutParams().height = 0;
         } else {
+            isEconomyFee = true;
+            BRWalletManager.getInstance().setFeePerKb(BRSharedPrefs.getEconomyFeePerKb(getContext()), isEconomyFee);
             regular.setTextColor(getContext().getColor(R.color.dark_blue));
             regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue_stroke));
             economy.setTextColor(getContext().getColor(R.color.white));
             economy.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue));
+            feeDescription.setText("Estimated Delivery: 60+ minutes");
+            warningText.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;
         }
+        warningText.requestLayout();
         updateText();
     }
 

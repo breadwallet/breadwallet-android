@@ -136,7 +136,8 @@ JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTotalSent
 
 JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRWalletManager_setFeePerKb(JNIEnv *env,
                                                                                jobject obj,
-                                                                               jlong fee);
+                                                                               jlong fee,
+                                                                               jboolean ignore);
 
 JNIEXPORT jboolean JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_isValidBitcoinPrivateKey(JNIEnv *env,

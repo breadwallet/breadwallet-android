@@ -63,6 +63,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static com.breadwallet.presenter.fragments.FragmentSend.isEconomyFee;
+
 /**
  * BreadWallet
  * <p/>
@@ -682,7 +684,7 @@ public class BRWalletManager {
                 fee = BRConstants.DEFAULT_FEE_PER_KB;
                 BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
             }
-            BRWalletManager.getInstance().setFeePerKb(fee);
+            BRWalletManager.getInstance().setFeePerKb(fee, isEconomyFee);
         }
 
         if (!pm.isCreated()) {
@@ -835,7 +837,7 @@ public class BRWalletManager {
 
     public native long getTotalSent();
 
-    public native long setFeePerKb(long fee);
+    public native long setFeePerKb(long fee, boolean ignore);
 
     public native boolean isValidBitcoinPrivateKey(String key);
 

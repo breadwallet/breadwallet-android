@@ -692,9 +692,10 @@ JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTotalSent
 
 JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRWalletManager_setFeePerKb(JNIEnv *env,
                                                                                jobject obj,
-                                                                               jlong fee) {
+                                                                               jlong fee,
+                                                                               jboolean ignore) {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "setFeePerKb");
-    if (!_wallet) return;
+    if (!_wallet || ignore) return;
     BRWalletSetFeePerKb(_wallet, (uint64_t) fee);
 }
 
