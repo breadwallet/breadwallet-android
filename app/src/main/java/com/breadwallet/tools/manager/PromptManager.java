@@ -138,7 +138,7 @@ public class PromptManager {
                     }
                 });
             case RECOMMEND_RESCAN:
-                return new PromptInfo(app.getString(R.string.Prompts_UpgradePin_title), app.getString(R.string.Prompts_UpgradePin_body), new View.OnClickListener() {
+                return new PromptInfo("Transaction Rejected", "Your wallet may be out of sync. This can often be fixed by rescanning the blockchain.", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         new Thread(new Runnable() {
