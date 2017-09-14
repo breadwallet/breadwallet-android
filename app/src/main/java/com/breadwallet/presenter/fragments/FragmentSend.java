@@ -23,6 +23,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -94,6 +95,7 @@ public class FragmentSend extends Fragment {
     private EditText amountEdit;
     private TextView balanceText;
     private TextView feeText;
+    private ImageView edit;
     private long curBalance;
     private String selectedIso;
     //    private CurAdapter curAdapter;
@@ -127,6 +129,7 @@ public class FragmentSend extends Fragment {
         amountEdit = (EditText) rootView.findViewById(R.id.amount_edit);
         balanceText = (TextView) rootView.findViewById(R.id.balance_text);
         feeText = (TextView) rootView.findViewById(R.id.fee_text);
+        edit = (ImageView) rootView.findViewById(R.id.edit);
         isoButton = (Button) rootView.findViewById(R.id.iso_button);
         keyboardLayout = (LinearLayout) rootView.findViewById(R.id.keyboard_layout);
         amountLayout = (ConstraintLayout) rootView.findViewById(R.id.amount_layout);
@@ -145,6 +148,13 @@ public class FragmentSend extends Fragment {
             @Override
             public void onClick(View v) {
 //                removeCurrencySelector();
+            }
+        });
+
+        edit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
 //        currListIndex = signalLayout.indexOfChild(currencyListLayout);
