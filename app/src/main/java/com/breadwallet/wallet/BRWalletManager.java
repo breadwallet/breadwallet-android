@@ -801,7 +801,7 @@ public class BRWalletManager {
 
     public native boolean addressIsUsed(String address);
 
-    public native int feeForTransaction(String addressHolder, long amountHolder, boolean economy);
+    public native int feeForTransaction(String addressHolder, long amountHolder);
 
     public native int feeForTransactionAmount(long amountHolder);
 

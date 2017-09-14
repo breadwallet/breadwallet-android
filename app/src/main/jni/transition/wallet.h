@@ -83,7 +83,7 @@ Java_com_breadwallet_wallet_BRWalletManager_addressIsUsed(JNIEnv *env, jobject o
 JNIEXPORT jint JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_feeForTransaction(JNIEnv *env, jobject obj,
                                                               jstring address,
-                                                              jlong amount, jboolean economy);
+                                                              jlong amount);
 
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRWalletManager_isCreated(JNIEnv *env,
                                                                                  jobject obj);
