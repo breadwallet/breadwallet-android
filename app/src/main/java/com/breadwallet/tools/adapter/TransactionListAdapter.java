@@ -13,6 +13,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -183,6 +184,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
 
         boolean received = item.getSent() == 0;
+        convertView.arrowIcon.setImageResource(received ? R.drawable.arrow_down_bold_circle : R.drawable.arrow_up_bold_circle);
         convertView.mainLayout.setBackgroundResource(getResourceByPos(position));
         convertView.sentReceived.setText(received ? "Received" : "Sent");
         convertView.toFrom.setText(received ? "from" : "to");
@@ -378,6 +380,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         public TextView status_2;
         public TextView timestamp;
         public TextView comment;
+        public ImageView arrowIcon;
 
         public TxHolder(View view) {
             super(view);
@@ -391,6 +394,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             status_2 = (TextView) view.findViewById(R.id.status_2);
             timestamp = (TextView) view.findViewById(R.id.timestamp);
             comment = (TextView) view.findViewById(R.id.comment);
+            arrowIcon = (ImageView) view.findViewById(R.id.arrow_icon);
         }
     }
 

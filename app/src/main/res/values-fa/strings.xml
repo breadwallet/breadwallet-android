@@ -397,7 +397,7 @@
   <!-- Link Text (see TouchIdSettings.customizeText) -->
   <string name="TouchIdSettings.linkText">صفحه محدودیت پرداخت با تاچ آی.دی</string>
   <!-- Spending Limit: b100,000 ($100) -->
-  <string name="TouchIdSettings.spendingLimit">محدودیت پرداخت: @$1% (معادل @$2%)</string>
+  <!--<string name="TouchIdSettings.spendingLimit">محدودیت پرداخت: @$1% (معادل @$2%)</string>-->
   <!-- Touch id switch label. -->
   <string name="TouchIdSettings.switchLabel">تاچ آی.دی را برای برِد فعال کنید</string>
   <!-- Touch ID settings view title -->
