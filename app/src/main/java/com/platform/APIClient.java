@@ -664,54 +664,51 @@ public class APIClient {
     }
 
     public void updatePlatform() {
-        if (BuildConfig.DEBUG) { //todo delete this
 
-            if (platformUpdating) {
-                Log.e(TAG, "updatePlatform: platform already Updating!");
-                return;
-            }
-            platformUpdating = true;
-
-            //update Bundle
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    final long startTime = System.currentTimeMillis();
-                    APIClient apiClient = APIClient.getInstance(ctx);
-                    apiClient.updateBundle();
-                    long endTime = System.currentTimeMillis();
-                    Log.e(TAG, "updateBundle " + BREAD_POINT + ": DONE in " + (endTime - startTime) + "ms");
-                    itemFinished();
-                }
-            }).start();
-
-            //update feature flags
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    final long startTime = System.currentTimeMillis();
-                    APIClient apiClient = APIClient.getInstance(ctx);
-                    apiClient.updateFeatureFlag();
-                    long endTime = System.currentTimeMillis();
-                    Log.d(TAG, "updateFeatureFlag: DONE in " + (endTime - startTime) + "ms");
-                    itemFinished();
-                }
-            }).start();
-
-            //update kvStore
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    final long startTime = System.currentTimeMillis();
-                    APIClient apiClient = APIClient.getInstance(ctx);
-                    apiClient.syncKvStore();
-                    long endTime = System.currentTimeMillis();
-                    Log.d(TAG, "updatePlatform: DONE in " + (endTime - startTime) + "ms");
-                    itemFinished();
-                }
-            }).start();
-
+        if (platformUpdating) {
+            Log.e(TAG, "updatePlatform: platform already Updating!");
+            return;
         }
+        platformUpdating = true;
+
+        //update Bundle
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final long startTime = System.currentTimeMillis();
+                APIClient apiClient = APIClient.getInstance(ctx);
+                apiClient.updateBundle();
+                long endTime = System.currentTimeMillis();
+                Log.e(TAG, "updateBundle " + BREAD_POINT + ": DONE in " + (endTime - startTime) + "ms");
+                itemFinished();
+            }
+        }).start();
+
+        //update feature flags
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final long startTime = System.currentTimeMillis();
+                APIClient apiClient = APIClient.getInstance(ctx);
+                apiClient.updateFeatureFlag();
+                long endTime = System.currentTimeMillis();
+                Log.d(TAG, "updateFeatureFlag: DONE in " + (endTime - startTime) + "ms");
+                itemFinished();
+            }
+        }).start();
+
+        //update kvStore
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final long startTime = System.currentTimeMillis();
+                APIClient apiClient = APIClient.getInstance(ctx);
+                apiClient.syncKvStore();
+                long endTime = System.currentTimeMillis();
+                Log.d(TAG, "updatePlatform: DONE in " + (endTime - startTime) + "ms");
+                itemFinished();
+            }
+        }).start();
 
     }
 

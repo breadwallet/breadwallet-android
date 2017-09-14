@@ -147,7 +147,6 @@ public class PostAuth {
                     bytePhrase = TypesConverter.getNullTerminatedPhrase(phraseForKeyStore.getBytes());
                     byte[] seed = BRWalletManager.getSeedFromPhrase(bytePhrase);
                     byte[] authKey = BRWalletManager.getAuthPrivKeyForAPI(seed);
-                    Log.e(TAG, "onRecoverWallet authKey:" + Utils.bytesToHex(authKey)); //todo delete
                     BRKeyStore.putAuthKey(authKey, app);
                     byte[] pubKey = BRWalletManager.getInstance().getMasterPubKey(bytePhrase);
                     BRKeyStore.putMasterPublicKey(pubKey, app);
@@ -157,7 +156,6 @@ public class PostAuth {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     app.startActivity(intent);
                     if (!app.isDestroyed()) app.finish();
-//                    BRAnimator.startBreadActivity(app, false);
                     phraseForKeyStore = null;
                 }
 

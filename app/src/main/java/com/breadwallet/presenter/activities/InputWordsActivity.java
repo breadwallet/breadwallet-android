@@ -149,12 +149,8 @@ public class InputWordsActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-//                if (alertDialog.isShowing()) {
-//                    alertDialog.dismiss();
-//                }
                 final Activity app = InputWordsActivity.this;
                 String phraseToCheck = getPhrase();
-//                phraseToCheck = "worth plug tribe insane kind quantum vintage frozen cousin prosper ticket fantasy"; //todo delete this testing
                 if (phraseToCheck == null) return;
                 String cleanPhrase = Bip39Reader.cleanPhrase(app, phraseToCheck);
 
