@@ -274,10 +274,10 @@
   <string name="Prompts.NoPasscode.body">Ett enhets-lösenord behövs för att skydda din plånbok. Gå till inställningar och aktivera lösenord.</string>
   <!-- No Passcode set warning title -->
   <string name="Prompts.NoPasscode.title">Aktivera enhets-lösenord</string>
-  <!-- Paper key not save prompt body -->
-  <string name="Prompts.PaperKey.body">Denna plånboks ordnyckel har inte skrivits ner. Klicka här för att se.</string>
-  <!-- Paper Key not saved prompt title -->
-  <string name="Prompts.PaperKey.title">Ordnyckel är inte sparad</string>
+  <!-- Warning about paper key. -->
+  <string name="Prompts.PaperKey.body">Din pappersnyckel måste sparas ifall du skulle förlora eller byta ut din telefon. Tryck här för att fortsätta.</string>
+  <!-- An action is required (You must do this action). -->
+  <string name="Prompts.PaperKey.title">Åtgärd krävs</string>
   <!-- Transaction rejected prompt body -->
   <string name="Prompts.RecommendRescan.body">Din plånbok kan vara osynkroniserad. Detta kan ofta lösas genom att läsa om blockkedjan.</string>
   <!-- Transaction rejected prompt title -->
@@ -294,8 +294,8 @@
   <string name="Prompts.UpgradePin.body">Bread har uppgraderat till att använda 6-siffrig PIN-kod. Klicka här för att uppgradera.</string>
   <!-- Upgrade PIN prompt title. -->
   <string name="Prompts.UpgradePin.title">Uppgradera PIN-kod</string>
-  <!-- Push notifications settings view body -->
-  <string name="PushNotifications.body">Få meddelande när de pengar du fått kan utnyttjas.</string>
+  <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
+  <string name="PushNotifications.body">Slå på aviseringar för att få särskilda meddelanden från Bread i framtiden.</string>
   <!-- Push notifications toggle switch label -->
   <string name="PushNotifications.label">Push-meddelanden</string>
   <!-- Push notifications are off label -->
@@ -406,16 +406,22 @@
   <string name="Send.creatTransactionError">Kunde inte skapa transaktion.</string>
   <!-- Description for sending money label -->
   <string name="Send.descriptionLabel">Memo</string>
+  <!-- Emtpy pasteboard error message -->
+  <string name="Send.emptyPasteboard">Urklipp är tomt</string>
   <!-- Network Fee: $0.01 -->
   <string name="Send.fee">Nätverksavgift: %1$s</string>
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">Betalningsmottagaren är inte certifierad.</string>
   <!-- Invalid address alert message -->
   <string name="Send.invalidAddressMessage">Mottagaradressen är inte en giltig bitcoin-adress.</string>
+  <!-- Invalid address on pasteboard message -->
+  <string name="Send.invalidAddressOnPasteboard">Urklipp innehåller inte en giltig bitcoinadress.</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">Ogiltig adress</string>
   <!-- Is rescanning error message -->
   <string name="Send.isRescanning">Skicka är avaktiverat under en full omskanning.</string>
+  <!-- Loading request activity view message -->
+  <string name="Send.loadingRequest">Laddar förfrågan</string>
   <!-- Empty address alert message -->
   <string name="Send.noAddress">Ange mottagarens adress.</string>
   <!-- Emtpy amount alert message -->
@@ -424,6 +430,8 @@
   <string name="Send.pasteLabel">Klistra in</string>
   <!-- Could not publish transaction alert title -->
   <string name="Send.publishTransactionError">Kunde inte lägga ut transaktion.</string>
+  <!-- Could not load remote request error message -->
+  <string name="Send.remoteRequestError">Kunde inte ladda betalningsförfrågan</string>
   <!-- Scan button label -->
   <string name="Send.scanLabel">Läs av</string>
   <!-- Send button label (the action, "press here to send") -->
@@ -484,10 +492,14 @@
   <string name="StartPaperPhrase.date">Senast skrev du ner din ordnyckel på %1$s</string>
   <!-- Start view message -->
   <string name="StartViewController.message">Det säkraste och tryggaste sättet att använda bitcoin.</string>
+  <!-- Syncing view connectiong state header text -->
+  <string name="SyncingView.connecting">Ansluter</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Synkar</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Försök igen</string>
+  <!-- Syncing view syncing state header text -->
+  <string name="SyncingView.syncing">Synkroniserar</string>
   <!-- 6 d (6 days) -->
   <string name="TimeSince.days">%1$s d</string>
   <!-- 6 h (6 hours) -->
@@ -642,6 +654,10 @@
   <string name="Webview.errorMessage">Det blev fel vid uppladdning av innehållet. Försök igen</string>
   <!-- Updating webview message -->
   <string name="Webview.updating">Uppdaterar...</string>
+  <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
+  <string name="Welcome.body">Breadplånboken har bytt namn till Bread, med ett splitter nytt utseende och några nya funktioner.\n\nOm du behöver hjälp, leta efter (?)-tecknet i det övre högra hörnet på de flesta skärmar.</string>
+  <!-- Top title of welcome screen -->
+  <string name="Welcome.title">Välkommen till Bread!</string>
   <!-- Wipe wallet alert message -->
   <string name="WipeWallet.alertMessage">Är du säker på att du vill ta bort den här plånboken.</string>
   <!-- Wipe wallet alert title -->
@@ -652,6 +668,10 @@
   <string name="WipeWallet.failedTitle">Misslyckades</string>
   <!-- Enter phrase to wipe wallet instruction. -->
   <string name="WipeWallet.instruction">Ange den här plånbokens återställningsfras för att rensa den och starta eller återställa en annan. Ditt nuvarande saldo är kvar på den här frasen.</string>
+  <!-- Start wipe wallet view message -->
+  <string name="WipeWallet.startMessage">Att starta eller återställa en annan plånbok ger dig tillgång till och låter dig hantera en annan Breadplånbok på denna enhet.</string>
+  <!-- Start wipe wallet view warning -->
+  <string name="WipeWallet.startWaring">Du kommer inte längre att kunna komma åt din aktuella Breadplånbok från denna enhet. Saldot kommer att kvarstå på frasen.</string>
   <!-- Wipe wallet navigation item title. -->
   <string name="WipeWallet.title">Starta eller hämta en annan plånbok</string>
   <!-- Wipe wallet button title -->

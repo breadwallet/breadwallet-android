@@ -268,10 +268,10 @@
   <string name="Prompts.NoPasscode.body">A device passcode is needed to safeguard your wallet. Go to settings and turn passcode on.</string>
   <!-- No Passcode set warning title -->
   <string name="Prompts.NoPasscode.title">Turn device passcode on</string>
-  <!-- Paper key not save prompt body -->
-  <string name="Prompts.PaperKey.body">This wallet\'s paper key hasn\'t been written down. Tap here to view.</string>
-  <!-- Paper Key not saved prompt title -->
-  <string name="Prompts.PaperKey.title">Paper Key Not Saved</string>
+  <!-- Warning about paper key. -->
+  <string name="Prompts.PaperKey.body">Your Paper Key must be saved in case you ever lose or change your phone. Tap here to continue.</string>
+  <!-- An action is required (You must do this action). -->
+  <string name="Prompts.PaperKey.title">Action Required</string>
   <!-- Transaction rejected prompt body -->
   <string name="Prompts.RecommendRescan.body">Your wallet may be out of sync. This can often be fixed by rescanning the blockchain.</string>
   <!-- Transaction rejected prompt title -->
@@ -288,8 +288,8 @@
   <string name="Prompts.UpgradePin.body">Bread has upgraded to using a 6-digit PIN. Tap here to upgrade.</string>
   <!-- Upgrade PIN prompt title. -->
   <string name="Prompts.UpgradePin.title">Upgrade PIN</string>
-  <!-- Push notifications settings view body -->
-  <string name="PushNotifications.body">Get notified when money you’ve received is available for spending.</string>
+  <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
+  <string name="PushNotifications.body">Turn on notifications to receive special messages from Bread in the future.</string>
   <!-- Push notifications toggle switch label -->
   <string name="PushNotifications.label">Push Notifications</string>
   <!-- Push notifications are off label -->
@@ -486,10 +486,14 @@
   <string name="StartPaperPhrase.date">You last wrote down your paper key on %1$s</string>
   <!-- Start view message -->
   <string name="StartViewController.message">The most secure and safest way to use bitcoin.</string>
+  <!-- Syncing view connectiong state header text -->
+  <string name="SyncingView.connecting">Connecting</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Syncing</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Retry</string>
+  <!-- Syncing view syncing state header text -->
+  <string name="SyncingView.syncing">Syncing</string>
   <!-- 6 d (6 days) -->
   <string name="TimeSince.days">%1$s d</string>
   <!-- 6 h (6 hours) -->

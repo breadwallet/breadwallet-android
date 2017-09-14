@@ -274,10 +274,10 @@
   <string name="Prompts.NoPasscode.body">ウォレットを保護するためには端末のパスコードが必要です。設定画面にてパスコードをオンにしてください。</string>
   <!-- No Passcode set warning title -->
   <string name="Prompts.NoPasscode.title">端末のパスコードをオンにする</string>
-  <!-- Paper key not save prompt body -->
-  <string name="Prompts.PaperKey.body">このウォレットの紙の鍵は書き留められていません。閲覧するにはこちらをタップしてください。</string>
-  <!-- Paper Key not saved prompt title -->
-  <string name="Prompts.PaperKey.title">紙の鍵が保存されていません</string>
+  <!-- Warning about paper key. -->
+  <string name="Prompts.PaperKey.body">携帯電話の紛失時や変更時に備えて、お客様のペーパーキーは必ず保管しておいてください。続けるにはここをタップしてください。</string>
+  <!-- An action is required (You must do this action). -->
+  <string name="Prompts.PaperKey.title">アクションが要求されました</string>
   <!-- Transaction rejected prompt body -->
   <string name="Prompts.RecommendRescan.body">あなたのウォレットは同期されていない可能性があります。ブロックチェーンを再スキャンすることで修復できる可能性があります。</string>
   <!-- Transaction rejected prompt title -->
@@ -294,8 +294,8 @@
   <string name="Prompts.UpgradePin.body">ブレッドは6桁のPINコード使用にアップグレードされました。こちらをタップして更新してください。</string>
   <!-- Upgrade PIN prompt title. -->
   <string name="Prompts.UpgradePin.title">PINコードを更新する</string>
-  <!-- Push notifications settings view body -->
-  <string name="PushNotifications.body">あなたが受け取ったお金が利用可能になり次第、通知を受け取る。</string>
+  <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
+  <string name="PushNotifications.body">今後、Breadからの特別なメッセージを受け取るために通知をオンにしてください。</string>
   <!-- Push notifications toggle switch label -->
   <string name="PushNotifications.label">プッシュ通知</string>
   <!-- Push notifications are off label -->
@@ -406,16 +406,22 @@
   <string name="Send.creatTransactionError">トランザクションの作成ができませんでした。</string>
   <!-- Description for sending money label -->
   <string name="Send.descriptionLabel">メモ</string>
+  <!-- Emtpy pasteboard error message -->
+  <string name="Send.emptyPasteboard">ペーストボードが空です</string>
   <!-- Network Fee: $0.01 -->
   <string name="Send.fee">ネットワーク手数料: %1$s</string>
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">受取人の本人確認が行われていません。</string>
   <!-- Invalid address alert message -->
   <string name="Send.invalidAddressMessage">送金先のアドレスが無効なビットコインアドレスです。</string>
+  <!-- Invalid address on pasteboard message -->
+  <string name="Send.invalidAddressOnPasteboard">ペーストボードに有効なビットコインアドレスが入っていません。</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">無効なアドレスです</string>
   <!-- Is rescanning error message -->
   <string name="Send.isRescanning">フルリスキャンを行っている間は送金できません。</string>
+  <!-- Loading request activity view message -->
+  <string name="Send.loadingRequest">ロード要求</string>
   <!-- Empty address alert message -->
   <string name="Send.noAddress">受取人のアドレスを入力してください。</string>
   <!-- Emtpy amount alert message -->
@@ -424,6 +430,8 @@
   <string name="Send.pasteLabel">貼り付け</string>
   <!-- Could not publish transaction alert title -->
   <string name="Send.publishTransactionError">取引を実行できませんでした。</string>
+  <!-- Could not load remote request error message -->
+  <string name="Send.remoteRequestError">支払い要求がロードできませんでした</string>
   <!-- Scan button label -->
   <string name="Send.scanLabel">スキャン</string>
   <!-- Send button label (the action, "press here to send") -->
@@ -484,10 +492,14 @@
   <string name="StartPaperPhrase.date">あなたが最後に紙の鍵を書き留めたのは %1$sです</string>
   <!-- Start view message -->
   <string name="StartViewController.message">最も安全にビットコインを使う手段。</string>
+  <!-- Syncing view connectiong state header text -->
+  <string name="SyncingView.connecting">接続中</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">同期中</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">再試行</string>
+  <!-- Syncing view syncing state header text -->
+  <string name="SyncingView.syncing">同期中</string>
   <!-- 6 d (6 days) -->
   <string name="TimeSince.days">%1$s日</string>
   <!-- 6 h (6 hours) -->
@@ -642,6 +654,10 @@
   <string name="Webview.errorMessage">このコンテンツの読み込み中にエラーが発生しました。もう一度お試しください。</string>
   <!-- Updating webview message -->
   <string name="Webview.updating">更新中...</string>
+  <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
+  <string name="Welcome.body">Breadwalletは新しい見た目と新機能を備えて、Breadという名前に生まれ変わりました。\n\nヘルプをご覧になるには、ほとんどの画面の右上にある(?)をお探しください。</string>
+  <!-- Top title of welcome screen -->
+  <string name="Welcome.title">Breadへようこそ！</string>
   <!-- Wipe wallet alert message -->
   <string name="WipeWallet.alertMessage">本当にこのウォレットを削除しますか？</string>
   <!-- Wipe wallet alert title -->
@@ -652,6 +668,10 @@
   <string name="WipeWallet.failedTitle">失敗しました</string>
   <!-- Enter phrase to wipe wallet instruction. -->
   <string name="WipeWallet.instruction">ウォレットを消去し、新しいウォレットを作成したり、復元したりしたい場合は復旧フレーズを入力してください。この段階では残高は残っています。</string>
+  <!-- Start wipe wallet view message -->
+  <string name="WipeWallet.startMessage">別のウォレットを開設するか復元することにより、このデバイス上で異なるBreadウォレットへのアクセスと管理ができるようになります。</string>
+  <!-- Start wipe wallet view warning -->
+  <string name="WipeWallet.startWaring">このデバイスから現在使用中のBreadウォレットへのアクセスはできなくなります。残高はフレーズに残されます。</string>
   <!-- Wipe wallet navigation item title. -->
   <string name="WipeWallet.title">別のウォレットを作成、または復元する</string>
   <!-- Wipe wallet button title -->

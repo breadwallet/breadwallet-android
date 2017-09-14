@@ -274,10 +274,10 @@
   <string name="Prompts.NoPasscode.body">Er is een apparaat-pascode nodig om je portomonnee te beschermen. Ga naar de instellingen en zet je pascode aan.</string>
   <!-- No Passcode set warning title -->
   <string name="Prompts.NoPasscode.title">Zet pascode voor apparaat aan</string>
-  <!-- Paper key not save prompt body -->
-  <string name="Prompts.PaperKey.body">De papieren sleutel van deze portemonnee is niet opgeschreven. Tik hier om te bekijken.</string>
-  <!-- Paper Key not saved prompt title -->
-  <string name="Prompts.PaperKey.title">Papieren Sleutel Niet Opgeslagen</string>
+  <!-- Warning about paper key. -->
+  <string name="Prompts.PaperKey.body">Uw Papiersleutel moet opgeslagen worden voor het geval dat u uw telefoon ooit verliest of vervangt. Klik hier om door te gaan.</string>
+  <!-- An action is required (You must do this action). -->
+  <string name="Prompts.PaperKey.title">Actie Vereist</string>
   <!-- Transaction rejected prompt body -->
   <string name="Prompts.RecommendRescan.body">Je portemonnee is misschien niet gesynchroniseerd. Dit kan vaak worden verholpen door de blokketen opnieuw te scannen.</string>
   <!-- Transaction rejected prompt title -->
@@ -294,8 +294,8 @@
   <string name="Prompts.UpgradePin.body">Bread is geüpgrade naar een 6-cijferige PIN. Tik hier om te upgraden.</string>
   <!-- Upgrade PIN prompt title. -->
   <string name="Prompts.UpgradePin.title">PIN Upgraden</string>
-  <!-- Push notifications settings view body -->
-  <string name="PushNotifications.body">Word genotificeerd wanneer het geld dat je hebt ontvangen klaar is om gespendeerd te worden.</string>
+  <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
+  <string name="PushNotifications.body">Zet notificaties aan om in de toekomst speciale berichten van Brood te ontvangen.</string>
   <!-- Push notifications toggle switch label -->
   <string name="PushNotifications.label">Push Meldingen</string>
   <!-- Push notifications are off label -->
@@ -406,16 +406,22 @@
   <string name="Send.creatTransactionError">Kon de transactie niet creëren.</string>
   <!-- Description for sending money label -->
   <string name="Send.descriptionLabel">Memo</string>
+  <!-- Emtpy pasteboard error message -->
+  <string name="Send.emptyPasteboard">Plakbord is leeg</string>
   <!-- Network Fee: $0.01 -->
   <string name="Send.fee">Netwerkkosten: %1$s</string>
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">Begunstigde is niet gecertifcieerd.</string>
   <!-- Invalid address alert message -->
   <string name="Send.invalidAddressMessage">Het bestemmingsadres is geen geldig bitcoin-adres.</string>
+  <!-- Invalid address on pasteboard message -->
+  <string name="Send.invalidAddressOnPasteboard">Plakbord bevat geen geldig bitcoin adres.</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">Ongeldig Adres</string>
   <!-- Is rescanning error message -->
   <string name="Send.isRescanning">Zenden is uitgeschakeld tijdens volledig opnieuw scannen</string>
+  <!-- Loading request activity view message -->
+  <string name="Send.loadingRequest">Verzoek aan het laden</string>
   <!-- Empty address alert message -->
   <string name="Send.noAddress">Voer a.u.b. het adres van de begunstigde in.</string>
   <!-- Emtpy amount alert message -->
@@ -424,6 +430,8 @@
   <string name="Send.pasteLabel">Plakken</string>
   <!-- Could not publish transaction alert title -->
   <string name="Send.publishTransactionError">Kon de transactie niet publiceren.</string>
+  <!-- Could not load remote request error message -->
+  <string name="Send.remoteRequestError">Kon de betalingsaanvraag niet laden</string>
   <!-- Scan button label -->
   <string name="Send.scanLabel">Scannen</string>
   <!-- Send button label (the action, "press here to send") -->
@@ -484,10 +492,14 @@
   <string name="StartPaperPhrase.date">Je hebt voor het laatst je papieren sleutel opgeschreven op %1$s</string>
   <!-- Start view message -->
   <string name="StartViewController.message">De veiligste en betrouwbaarste manier om bitcoin te gebruiken.</string>
+  <!-- Syncing view connectiong state header text -->
+  <string name="SyncingView.connecting">Aan het verbinden</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Synchroniseren</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Opnieuw proberen</string>
+  <!-- Syncing view syncing state header text -->
+  <string name="SyncingView.syncing">Aan het synchroniseren</string>
   <!-- 6 d (6 days) -->
   <string name="TimeSince.days">%1$s d</string>
   <!-- 6 h (6 hours) -->
@@ -642,6 +654,10 @@
   <string name="Webview.errorMessage">Er was een error bij het laden van de inhoud. Probeer a.u.b. opnieuw.</string>
   <!-- Updating webview message -->
   <string name="Webview.updating">Updaten...</string>
+  <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
+  <string name="Welcome.body">Breadwallet is omgedoopt tot Bread, met een gloednieuw uiterlijk en enkele nieuwe functies.\n\nAls u hulp nodig hebt, zoek naar de (?) rechtsboven in de meeste schermen.</string>
+  <!-- Top title of welcome screen -->
+  <string name="Welcome.title">Welkom bij Brood!</string>
   <!-- Wipe wallet alert message -->
   <string name="WipeWallet.alertMessage">Weet je zeker dat je deze portomonnee wilt verwijderen?</string>
   <!-- Wipe wallet alert title -->
@@ -652,6 +668,10 @@
   <string name="WipeWallet.failedTitle">Mislukt</string>
   <!-- Enter phrase to wipe wallet instruction. -->
   <string name="WipeWallet.instruction">Voer de herstelzin van deze portomonnee in om hem te wissen of een anderen te herstellen. Je huidige saldo zal op deze zin blijven.</string>
+  <!-- Start wipe wallet view message -->
+  <string name="WipeWallet.startMessage">Een andere portemonnee beginnen of herstellen zal u toestaan om nog een Bread portemonnee op dit apparaat te gebruiken.</string>
+  <!-- Start wipe wallet view warning -->
+  <string name="WipeWallet.startWaring">U zal niet langer uw huidige Bread portemonnee kunnen bereiken vanaf dit apparaat. Uw saldo zal hetzelfde blijven.</string>
   <!-- Wipe wallet navigation item title. -->
   <string name="WipeWallet.title">Start of herstel een anderen portomonnee</string>
   <!-- Wipe wallet button title -->

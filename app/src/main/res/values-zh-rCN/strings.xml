@@ -61,7 +61,7 @@
   <!-- Confirmation alert title -->
   <string name="BCH.confirmationTitle">确认</string>
   <!-- Generic bch erorr message -->
-  <string name="BCH.genericError">您的账户不包含任何 BCH，或您在分叉后接收到 BCH。</string>
+  <string name="BCH.genericError">您的账户不包含任何 BCH，或您在分叉后才接收到 BCH。</string>
   <!-- Transaction ID copied message -->
   <string name="BCH.hashCopiedMessage">已拷贝交易 ID</string>
   <!-- No address error message -->
@@ -274,10 +274,10 @@
   <string name="Prompts.NoPasscode.body">需要设备密码才能保护您的钱包。转到设置并开启密码。</string>
   <!-- No Passcode set warning title -->
   <string name="Prompts.NoPasscode.title">开启设备密码</string>
-  <!-- Paper key not save prompt body -->
-  <string name="Prompts.PaperKey.body">该钱包的纸键尚未被书写。点击此处查看。</string>
-  <!-- Paper Key not saved prompt title -->
-  <string name="Prompts.PaperKey.title">纸键未保存</string>
+  <!-- Warning about paper key. -->
+  <string name="Prompts.PaperKey.body">为了应对手机丢失或者更换， 请您务必写下你的纸键。点击此处继续。</string>
+  <!-- An action is required (You must do this action). -->
+  <string name="Prompts.PaperKey.title">需要采取的行动</string>
   <!-- Transaction rejected prompt body -->
   <string name="Prompts.RecommendRescan.body">您的钱包可能不同步。通常可通过重新扫描区块链来修复。</string>
   <!-- Transaction rejected prompt title -->
@@ -294,8 +294,8 @@
   <string name="Prompts.UpgradePin.body">Bread 已升级到使用 6 位 PIN。点击此处升级。</string>
   <!-- Upgrade PIN prompt title. -->
   <string name="Prompts.UpgradePin.title">升级 PIN</string>
-  <!-- Push notifications settings view body -->
-  <string name="PushNotifications.body">当您收到的钱可以花费时收到通知。</string>
+  <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
+  <string name="PushNotifications.body">打开推送通知，以便将来从 Bread 接收特殊消息。</string>
   <!-- Push notifications toggle switch label -->
   <string name="PushNotifications.label">推送通知</string>
   <!-- Push notifications are off label -->
@@ -406,16 +406,22 @@
   <string name="Send.creatTransactionError">无法创建交易。</string>
   <!-- Description for sending money label -->
   <string name="Send.descriptionLabel">备忘录</string>
+  <!-- Emtpy pasteboard error message -->
+  <string name="Send.emptyPasteboard">粘贴板为空</string>
   <!-- Network Fee: $0.01 -->
   <string name="Send.fee">网络费：%1$s</string>
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">收款人身份未经认证。</string>
   <!-- Invalid address alert message -->
   <string name="Send.invalidAddressMessage">目标地址不是有效的比特币地址。</string>
+  <!-- Invalid address on pasteboard message -->
+  <string name="Send.invalidAddressOnPasteboard">粘贴板中没有有效的比特币地址</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">无效地址</string>
   <!-- Is rescanning error message -->
   <string name="Send.isRescanning">完全扫描期间发送功能已被禁用。</string>
+  <!-- Loading request activity view message -->
+  <string name="Send.loadingRequest">加载请求中</string>
   <!-- Empty address alert message -->
   <string name="Send.noAddress">请输入收件人地址。</string>
   <!-- Emtpy amount alert message -->
@@ -424,6 +430,8 @@
   <string name="Send.pasteLabel">粘贴</string>
   <!-- Could not publish transaction alert title -->
   <string name="Send.publishTransactionError">无法发布交易。</string>
+  <!-- Could not load remote request error message -->
+  <string name="Send.remoteRequestError">无法加载支付请求</string>
   <!-- Scan button label -->
   <string name="Send.scanLabel">扫描</string>
   <!-- Send button label (the action, "press here to send") -->
@@ -484,10 +492,14 @@
   <string name="StartPaperPhrase.date">您最后一次记录纸上密钥是在 %1$s</string>
   <!-- Start view message -->
   <string name="StartViewController.message">使用比特币最安全且最可靠的方式。</string>
+  <!-- Syncing view connectiong state header text -->
+  <string name="SyncingView.connecting">连接中</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">正在同步</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">重试</string>
+  <!-- Syncing view syncing state header text -->
+  <string name="SyncingView.syncing">同步中</string>
   <!-- 6 d (6 days) -->
   <string name="TimeSince.days">%1$s 天</string>
   <!-- 6 h (6 hours) -->
@@ -642,6 +654,10 @@
   <string name="Webview.errorMessage">载入内容时发生错误。请重试。</string>
   <!-- Updating webview message -->
   <string name="Webview.updating">正在更新...</string>
+  <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
+  <string name="Welcome.body">Breadwallet 更名为 Bread， 并增加了全新的界面和功能。如果您需要帮助，请使用在大多数设备屏幕右上角的(?)</string>
+  <!-- Top title of welcome screen -->
+  <string name="Welcome.title">欢迎使用bread！</string>
   <!-- Wipe wallet alert message -->
   <string name="WipeWallet.alertMessage">您确认要删除此钱包吗？</string>
   <!-- Wipe wallet alert title -->
@@ -652,6 +668,10 @@
   <string name="WipeWallet.failedTitle">失败</string>
   <!-- Enter phrase to wipe wallet instruction. -->
   <string name="WipeWallet.instruction">输入此钱包的恢复短语以擦除并启动或恢复另一钱包。您的当前余额将保留。</string>
+  <!-- Start wipe wallet view message -->
+  <string name="WipeWallet.startMessage">开始或恢复另一个钱包能让你在这个设备上管理和使用不同的bread钱包</string>
+  <!-- Start wipe wallet view warning -->
+  <string name="WipeWallet.startWaring">您无法再在这个设备上使用现在的Bread钱包。 现在的一切资金都留在纸键上。</string>
   <!-- Wipe wallet navigation item title. -->
   <string name="WipeWallet.title">启动或恢复另一钱包</string>
   <!-- Wipe wallet button title -->

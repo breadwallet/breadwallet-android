@@ -274,10 +274,10 @@
   <string name="Prompts.NoPasscode.body">必須有裝置密碼來保護您的錢包。進入設定並開啟密碼。</string>
   <!-- No Passcode set warning title -->
   <string name="Prompts.NoPasscode.title">開啟裝置密碼。</string>
-  <!-- Paper key not save prompt body -->
-  <string name="Prompts.PaperKey.body">這個電子錢包的紙上金鑰尚未寫下。點選這裡來檢視。</string>
-  <!-- Paper Key not saved prompt title -->
-  <string name="Prompts.PaperKey.title">紙上金鑰尚未儲存</string>
+  <!-- Warning about paper key. -->
+  <string name="Prompts.PaperKey.body">必須儲存紙上金鑰，以防萬一您遺失或換電話。點選這裡來繼續。</string>
+  <!-- An action is required (You must do this action). -->
+  <string name="Prompts.PaperKey.title">需要採取動作</string>
   <!-- Transaction rejected prompt body -->
   <string name="Prompts.RecommendRescan.body">您的電子錢包可能不同步。這通常可以經由重新掃描區塊鏈來修正。</string>
   <!-- Transaction rejected prompt title -->
@@ -294,8 +294,8 @@
   <string name="Prompts.UpgradePin.body">Bread 已經升級至 6 位數 PIN 碼。請點這裡升級。</string>
   <!-- Upgrade PIN prompt title. -->
   <string name="Prompts.UpgradePin.title">升級 PIN 碼</string>
-  <!-- Push notifications settings view body -->
-  <string name="PushNotifications.body">您收到的錢已經可以花用時，會收到通知。</string>
+  <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
+  <string name="PushNotifications.body">開啟通知，好在未來收到 Bread 的特別訊息。</string>
   <!-- Push notifications toggle switch label -->
   <string name="PushNotifications.label">推播</string>
   <!-- Push notifications are off label -->
@@ -406,16 +406,22 @@
   <string name="Send.creatTransactionError">無法建立交易。</string>
   <!-- Description for sending money label -->
   <string name="Send.descriptionLabel">備註</string>
+  <!-- Emtpy pasteboard error message -->
+  <string name="Send.emptyPasteboard">剪貼板是空的</string>
   <!-- Network Fee: $0.01 -->
   <string name="Send.fee">網路費：%1$s</string>
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">受款人身分未經認證。</string>
   <!-- Invalid address alert message -->
   <string name="Send.invalidAddressMessage">目的地址不是一個有效的比特幣地址。</string>
+  <!-- Invalid address on pasteboard message -->
+  <string name="Send.invalidAddressOnPasteboard">剪貼板未包含有效的比特幣地址。</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">位址無效</string>
   <!-- Is rescanning error message -->
   <string name="Send.isRescanning">完全重新掃描期間無法寄送。</string>
+  <!-- Loading request activity view message -->
+  <string name="Send.loadingRequest">正在載入要求</string>
   <!-- Empty address alert message -->
   <string name="Send.noAddress">請輸入收受者的地址。</string>
   <!-- Emtpy amount alert message -->
@@ -424,6 +430,8 @@
   <string name="Send.pasteLabel">貼上</string>
   <!-- Could not publish transaction alert title -->
   <string name="Send.publishTransactionError">無法公布交易。</string>
+  <!-- Could not load remote request error message -->
+  <string name="Send.remoteRequestError">無法載入付款要求</string>
   <!-- Scan button label -->
   <string name="Send.scanLabel">掃描</string>
   <!-- Send button label (the action, "press here to send") -->
@@ -484,10 +492,14 @@
   <string name="StartPaperPhrase.date">您最近一次在 %1$s 寫下了您的紙本金鑰</string>
   <!-- Start view message -->
   <string name="StartViewController.message">使用比特幣最安全、最有保障的方式。</string>
+  <!-- Syncing view connectiong state header text -->
+  <string name="SyncingView.connecting">正在連線</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">正在同步</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">重試</string>
+  <!-- Syncing view syncing state header text -->
+  <string name="SyncingView.syncing">正在同步</string>
   <!-- 6 d (6 days) -->
   <string name="TimeSince.days">%1$s 天</string>
   <!-- 6 h (6 hours) -->
@@ -642,6 +654,10 @@
   <string name="Webview.errorMessage">載入內容時發生錯誤。請重試一次。</string>
   <!-- Updating webview message -->
   <string name="Webview.updating">正在更新……</string>
+  <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
+  <string name="Welcome.body">Breadwallet 已經改名爲 Bread，有嶄新的面貌和一些新功能。\n\n如果需要協助，就在大部分畫面的右上角尋找(?)。</string>
+  <!-- Top title of welcome screen -->
+  <string name="Welcome.title">歡迎使用 Bread！</string>
   <!-- Wipe wallet alert message -->
   <string name="WipeWallet.alertMessage">確定要刪除此錢包嗎？</string>
   <!-- Wipe wallet alert title -->
@@ -652,6 +668,10 @@
   <string name="WipeWallet.failedTitle">失敗</string>
   <!-- Enter phrase to wipe wallet instruction. -->
   <string name="WipeWallet.instruction">輸入此錢包的復原短語（recovery phrase）以進行抹除，並開啟或復原其他錢包。您目前的餘額會保留在於短語。</string>
+  <!-- Start wipe wallet view message -->
+  <string name="WipeWallet.startMessage">開始或復原另一個電子錢包會讓您能夠在這項裝置上存取和管理不一樣的 Bread 錢包。</string>
+  <!-- Start wipe wallet view warning -->
+  <string name="WipeWallet.startWaring">您將再也無法從這項裝置存取目前的 Bread 錢包。餘額會留在片段上。</string>
   <!-- Wipe wallet navigation item title. -->
   <string name="WipeWallet.title">開啟或復原其他錢包</string>
   <!-- Wipe wallet button title -->

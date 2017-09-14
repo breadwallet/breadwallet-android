@@ -274,10 +274,10 @@
   <string name="Prompts.NoPasscode.body">En adgangskode til enheden er nødvendig for at beskytte din wallet. Gå til indstillinger og slå adgangskode til.</string>
   <!-- No Passcode set warning title -->
   <string name="Prompts.NoPasscode.title">Slå enhedens adgangskode til</string>
-  <!-- Paper key not save prompt body -->
-  <string name="Prompts.PaperKey.body">Pungens paper key er ikke blevet skrevet ned. Tryk her for at se den.</string>
-  <!-- Paper Key not saved prompt title -->
-  <string name="Prompts.PaperKey.title">Paper key ikke gemt</string>
+  <!-- Warning about paper key. -->
+  <string name="Prompts.PaperKey.body">Din Papirnøgle skal gemmes i tilfælde af du nogensinde mister eller skifter telefon. Tryk her for at fortsætte.</string>
+  <!-- An action is required (You must do this action). -->
+  <string name="Prompts.PaperKey.title">Handling påkrævet</string>
   <!-- Transaction rejected prompt body -->
   <string name="Prompts.RecommendRescan.body">Din pung er muligvis ikke synkroniseret. Dette kan ofte løses ved at genskanne blokkæden.</string>
   <!-- Transaction rejected prompt title -->
@@ -294,8 +294,8 @@
   <string name="Prompts.UpgradePin.body">Bread er blevet opgraderet til at bruge en 6-cifret PIN. Tryk her for at opgradere.</string>
   <!-- Upgrade PIN prompt title. -->
   <string name="Prompts.UpgradePin.title">Opgader PIN</string>
-  <!-- Push notifications settings view body -->
-  <string name="PushNotifications.body">Få besked når pengene du har modtaget er klar til brug.</string>
+  <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
+  <string name="PushNotifications.body">Slå notifikationer til for at modtage særlige meddelelser fra Bread i fremtiden.</string>
   <!-- Push notifications toggle switch label -->
   <string name="PushNotifications.label">Push notifikationer</string>
   <!-- Push notifications are off label -->
@@ -406,16 +406,22 @@
   <string name="Send.creatTransactionError">Kunne ikke oprette transaktion.</string>
   <!-- Description for sending money label -->
   <string name="Send.descriptionLabel">Memo</string>
+  <!-- Emtpy pasteboard error message -->
+  <string name="Send.emptyPasteboard">Tegnebord er tomt</string>
   <!-- Network Fee: $0.01 -->
   <string name="Send.fee">Netværksafgift: %1$s</string>
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">Betalingsmodtagerens identitet er ikke bekræftet.</string>
   <!-- Invalid address alert message -->
   <string name="Send.invalidAddressMessage">Modtageradressen er ikke en gyldig bitcoin-adresse.</string>
+  <!-- Invalid address on pasteboard message -->
+  <string name="Send.invalidAddressOnPasteboard">Tegnebord indeholder ikke en gyldig bitcoin adresse.</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">Ugyldig adresse</string>
   <!-- Is rescanning error message -->
   <string name="Send.isRescanning">Afsendelse er deaktiveret under en ny scanning.</string>
+  <!-- Loading request activity view message -->
+  <string name="Send.loadingRequest">Behandler Anmodning</string>
   <!-- Empty address alert message -->
   <string name="Send.noAddress">Indtast modtagerens adresse.</string>
   <!-- Emtpy amount alert message -->
@@ -424,6 +430,8 @@
   <string name="Send.pasteLabel">Indsæt</string>
   <!-- Could not publish transaction alert title -->
   <string name="Send.publishTransactionError">Kunne ikke offentliggøre transaktion.</string>
+  <!-- Could not load remote request error message -->
+  <string name="Send.remoteRequestError">Kunne ikke behandle betalingsanmodning</string>
   <!-- Scan button label -->
   <string name="Send.scanLabel">Scan</string>
   <!-- Send button label (the action, "press here to send") -->
@@ -484,10 +492,14 @@
   <string name="StartPaperPhrase.date">Du skrev sidst din paper key ned den %1$s</string>
   <!-- Start view message -->
   <string name="StartViewController.message">Den mest sikre og trygge måde at bruge bitcoins på.</string>
+  <!-- Syncing view connectiong state header text -->
+  <string name="SyncingView.connecting">Tilslutter</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Synkroniserer</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Prøv igen</string>
+  <!-- Syncing view syncing state header text -->
+  <string name="SyncingView.syncing">Synkroniserer</string>
   <!-- 6 d (6 days) -->
   <string name="TimeSince.days">%1$s d</string>
   <!-- 6 h (6 hours) -->
@@ -642,6 +654,10 @@
   <string name="Webview.errorMessage">Der var en fejl ved indlæsning af indholdet. Prøv igen.</string>
   <!-- Updating webview message -->
   <string name="Webview.updating">Opdaterer...</string>
+  <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
+  <string name="Welcome.body">Breadwallet har skiftet navn til Bread med et helt nyt look og nogle nye funktioner.\n\nHvis du har brug for hjælp, led efter (?) øverst til højre på de fleste skærme.</string>
+  <!-- Top title of welcome screen -->
+  <string name="Welcome.title">Velkommen til Bread!</string>
   <!-- Wipe wallet alert message -->
   <string name="WipeWallet.alertMessage">Er du sikker på at du vil slette denne wallet?</string>
   <!-- Wipe wallet alert title -->
@@ -652,6 +668,10 @@
   <string name="WipeWallet.failedTitle">Fejl</string>
   <!-- Enter phrase to wipe wallet instruction. -->
   <string name="WipeWallet.instruction">Indtast denne wallets gendannelsessætning for at slette den og starte eller gendanne en anden. Din nuværende saldo forbliver med denne sætning.</string>
+  <!-- Start wipe wallet view message -->
+  <string name="WipeWallet.startMessage">Påbegyndelse eller gendannelse af en anden tegnebog giver mulighed for at få adgang samt administrere en Bread tegnebog på denne enhed.</string>
+  <!-- Start wipe wallet view warning -->
+  <string name="WipeWallet.startWaring">Du vil ikke længere være i stand til at få adgang til din nuværende Bread tegnebog fra denne enhed. Saldoen vil forblive på frasen.</string>
   <!-- Wipe wallet navigation item title. -->
   <string name="WipeWallet.title">Start eller gendan en anden wallet.</string>
   <!-- Wipe wallet button title -->
