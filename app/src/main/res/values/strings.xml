@@ -282,8 +282,12 @@
   <string name="Prompts.ShareData.title">Share Anonymous Data</string>
   <!-- Enable touch ID prompt body -->
   <string name="Prompts.TouchId.body">Tap here to enable Touch ID</string>
+  <!-- Enable Fingerprint prompt body -->
+  <string name="Android.Prompts.Fingerprint.body">Tap here to enable Fingerprint</string>
   <!-- Enable touch ID prompt title -->
   <string name="Prompts.TouchId.title">Enable Touch ID</string>
+  <!-- Enable Fingerprint prompt title -->
+  <string name="Android.Prompts.Fingerprint.title">Enable Fingerprint</string>
   <!-- Upgrade PIN prompt body. -->
   <string name="Prompts.UpgradePin.body">Bread has upgraded to using a 6-digit PIN. Tap here to upgrade.</string>
   <!-- Upgrade PIN prompt title. -->

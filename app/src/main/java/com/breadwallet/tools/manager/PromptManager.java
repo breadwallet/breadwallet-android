@@ -111,14 +111,14 @@ public class PromptManager {
     public PromptInfo promptInfo(final Activity app, PromptItem item) {
         switch (item) {
             case FINGER_PRINT:
-                return new PromptInfo(app.getString(R.string.Prompts_TouchId_title), app.getString(R.string.Prompts_TouchId_body), new View.OnClickListener() {
+                return new PromptInfo(app.getString(R.string.Android_Prompts_Fingerprint_title), app.getString(R.string.Android_Prompts_Fingerprint_body), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(app, FingerprintActivity.class);
                         app.startActivity(intent);
                         app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                     }
-                }); //todo make it fingerprint, not touch id
+                });
             case PAPER_KEY:
                 return new PromptInfo(app.getString(R.string.Prompts_PaperKey_title), app.getString(R.string.Prompts_PaperKey_body), new View.OnClickListener() {
                     @Override
