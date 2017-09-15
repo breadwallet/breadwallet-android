@@ -28,7 +28,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:text="bread"
+        android:text="@string/App.name.Android"
         android:textColor="@color/black"
         android:textSize="26sp"
         app:layout_constraintLeft_toLeftOf="@+id/view3"
@@ -202,7 +202,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        android:text="Reddit"
+        android:text="@string/About.reddit"
         android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/divider1"
         app:layout_constraintLeft_toLeftOf="@+id/divider1"/>

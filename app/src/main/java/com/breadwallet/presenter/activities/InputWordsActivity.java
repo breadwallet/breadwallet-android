@@ -36,7 +36,7 @@ import static com.platform.HTTPServer.URL_SUPPORT;
 
 public class InputWordsActivity extends BRActivity {
     private static final String TAG = InputWordsActivity.class.getName();
-//    private Button leftButton;
+    //    private Button leftButton;
 //    private Button rightButton;
     private Button nextButton;
 
@@ -154,10 +154,10 @@ public class InputWordsActivity extends BRActivity {
                 if (phraseToCheck == null) return;
                 String cleanPhrase = Bip39Reader.cleanPhrase(app, phraseToCheck);
 
-                if (BRWalletManager.getInstance().validatePhrase(app, cleanPhrase) ) {
+                if (BRWalletManager.getInstance().validatePhrase(app, cleanPhrase)) {
 
                     if (restore || resetPin) {
-                        if (BRKeyStore.phraseIsValid(cleanPhrase, app) ) {
+                        if (BRKeyStore.phraseIsValid(cleanPhrase, app)) {
                             Utils.hideKeyboard(app);
                             clearWords();
                             Intent intent;
@@ -197,21 +197,21 @@ public class InputWordsActivity extends BRActivity {
                     }
 
                 } else {
-                    String message = getResources().getString(R.string.bad_recovery_phrase);
-                    String[] words = cleanPhrase.split(" ");
-                    if (words.length != 12) {
-                        message = String.format(app.getString(R.string.recovery_phrase_must_have_12_words), 12);
-                    } else {
-                        List<String> allWords = getAllWordLists(app);
+                    String message = getResources().getString(R.string.RecoverWallet_invalid);
+//                    String[] words = cleanPhrase.split(" ");
+//                    if (words.length != 12) {
+//                        message = String.format(app.getString(R.string.recovery_phrase_must_have_12_words), 12);
+//                    } else {
+//                    List<String> allWords = getAllWordLists(app);
 
-                        for (String word : words) {
-                            if (!allWords.contains(word)) {
-                                message = String.format(app.getString(R.string.not_a_recovery_phrase_word), word);
-                            }
-                        }
-                    }
+//                    for (String word : words) {
+//                        if (!allWords.contains(word)) {
+//                            message = String.format(app.getString(R.string.not_a_recovery_phrase_word), word);
+//                        }
+//                    }
+//                    }
 
-                    BRDialog.showCustomDialog(app, "", message, "Close", null, new BRDialogView.BROnClickListener() {
+                    BRDialog.showCustomDialog(app, "", message, getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();

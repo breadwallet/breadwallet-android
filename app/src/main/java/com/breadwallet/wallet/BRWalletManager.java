@@ -492,11 +492,10 @@ public class BRWalletManager {
                 ctx.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        String strToShow =
-                                (String.format(ctx.getString(R.string.received_amount),
-                                        BRCurrency.getFormattedCurrencyString(ctx, "BTC", new BigDecimal(amount)),
-                                        BRCurrency.getFormattedCurrencyString(ctx, BRSharedPrefs.getIso(ctx), new BigDecimal(amount))));
-
+                        String am = BRCurrency.getFormattedCurrencyString(ctx, "BTC", new BigDecimal(amount));
+                        String fee = BRCurrency.getFormattedCurrencyString(ctx, BRSharedPrefs.getIso(ctx), new BigDecimal(amount));
+                        String formatted = String.format("%s (%s)", am, fee);
+                        String strToShow = String.format(ctx.getString(R.string.TransactionDetails_received), formatted);
                         showToast(ctx, strToShow);
                     }
 
@@ -709,21 +708,21 @@ public class BRWalletManager {
 
     }
 
-    public void offerToChangeTheAmount(final Context app, final PaymentItem item) {
-        BRDialog.showCustomDialog(app, app.getString(R.string.insufficient_funds), app.getString(R.string.change_payment_amount),
-                app.getString(R.string.change), app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-                        BRAnimator.showSendFragment((Activity) app, Utils.createBitcoinUrl(item.addresses[0], 0, null, null, null));
-                        brDialogView.dismissWithAnimation();
-                    }
-                }, new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-                        brDialogView.dismissWithAnimation();
-                    }
-                }, null, 0);
-    }
+//    public void offerToChangeTheAmount(final Context app, final PaymentItem item) {
+//        BRDialog.showCustomDialog(app, app.getString(R.string.insufficient_funds), app.getString(R.string.change_payment_amount),
+//                app.getString(R.string.change), app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
+//                    @Override
+//                    public void onClick(BRDialogView brDialogView) {
+//                        BRAnimator.showSendFragment((Activity) app, Utils.createBitcoinUrl(item.addresses[0], 0, null, null, null));
+//                        brDialogView.dismissWithAnimation();
+//                    }
+//                }, new BRDialogView.BROnClickListener() {
+//                    @Override
+//                    public void onClick(BRDialogView brDialogView) {
+//                        brDialogView.dismissWithAnimation();
+//                    }
+//                }, null, 0);
+//    }
 
     public void addBalanceChangedListener(OnBalanceChanged listener) {
         if (balanceListeners == null) {

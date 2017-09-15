@@ -28,9 +28,12 @@ import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
+import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
+
+import java.math.BigDecimal;
 
 import static com.breadwallet.tools.util.BRConstants.SCANNER_BCH_REQUEST;
 
@@ -42,6 +45,7 @@ public class WithdrawBchActivity extends BRActivity {
     private EditText addressEdit; //address_edit
     private TextView txHash; //tx_hash
     private TextView txIdLabel;
+    private TextView description;
     public static String address;
 
     public static boolean appVisible = false;
@@ -73,12 +77,16 @@ public class WithdrawBchActivity extends BRActivity {
 //                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
 //            }
 //        });
+        description = (TextView) findViewById(R.id.description);
         txIdLabel = (TextView) findViewById(R.id.tx_label);
         paste = (Button) findViewById(R.id.paste);
         send = (Button) findViewById(R.id.button_send);
         scan = (Button) findViewById(R.id.scan);
         txHash = (TextView) findViewById(R.id.tx_hash);
         addressEdit = (EditText) findViewById(R.id.address_edit);
+
+        String balance = BRCurrency.getFormattedCurrencyString(this, BRSharedPrefs.getPreferredBTC(this) ? "BTC" : BRSharedPrefs.getIso(this), new BigDecimal(BRWalletManager.getBCashBalance(BRKeyStore.getMasterPublicKey(app))));
+        description.setText(String.format(getString(R.string.BCH_body), balance));
 
 
         txHash.setOnClickListener(new View.OnClickListener() {
@@ -101,8 +109,8 @@ public class WithdrawBchActivity extends BRActivity {
                     RequestObject obj = BitcoinUrlHandler.getRequestFromString(bitcoinUrl);
                     if (obj == null) {
                         //builder.setTitle(getResources().getString(R.string.alert));
-                        builder.setMessage(getResources().getString(R.string.clipboard_invalid_data));
-                        builder.setNeutralButton(getResources().getString(R.string.ok),
+                        builder.setMessage(getResources().getString(R.string.Send_invalidAddressOnPasteboard));
+                        builder.setNeutralButton(getResources().getString(R.string.Button_ok),
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
@@ -116,8 +124,8 @@ public class WithdrawBchActivity extends BRActivity {
                     ifAddress = obj.address;
                     if (ifAddress == null) {
                         //builder.setTitle(getResources().getString(R.string.alert));
-                        builder.setMessage(getResources().getString(R.string.clipboard_invalid_data));
-                        builder.setNeutralButton(getResources().getString(R.string.ok),
+                        builder.setMessage(getResources().getString(R.string.Send_invalidAddressOnPasteboard));
+                        builder.setNeutralButton(getResources().getString(R.string.Button_ok),
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();
@@ -152,8 +160,8 @@ public class WithdrawBchActivity extends BRActivity {
                                         if (contained) {
 
                                             //builder.setTitle(getResources().getString(R.string.alert));
-                                            builder.setMessage(getResources().getString(R.string.address_already_in_your_wallet));
-                                            builder.setNeutralButton(getResources().getString(R.string.ok),
+                                            builder.setMessage(getResources().getString(R.string.Send_UsedAddress_firstLine));
+                                            builder.setNeutralButton(getResources().getString(R.string.Button_ok),
                                                     new DialogInterface.OnClickListener() {
                                                         public void onClick(DialogInterface dialog, int which) {
                                                             dialog.dismiss();
@@ -174,8 +182,8 @@ public class WithdrawBchActivity extends BRActivity {
 
                     } else {
                         //builder.setTitle(getResources().getString(R.string.alert));
-                        builder.setMessage(getResources().getString(R.string.clipboard_invalid_data));
-                        builder.setNeutralButton(getResources().getString(R.string.ok),
+                        builder.setMessage(getResources().getString(R.string.Send_invalidAddressOnPasteboard));
+                        builder.setNeutralButton(getResources().getString(R.string.Button_ok),
                                 new DialogInterface.OnClickListener() {
                                     public void onClick(DialogInterface dialog, int which) {
                                         dialog.dismiss();

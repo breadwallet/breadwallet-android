@@ -15,7 +15,6 @@
         android:clickable="false"
         android:focusable="false"
         android:gravity="center"
-        android:text="Button"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="18sp"/>

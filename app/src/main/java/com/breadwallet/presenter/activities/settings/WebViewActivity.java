@@ -29,9 +29,6 @@ import org.json.JSONObject;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.breadwallet.R.string.error;
-
-
 public class WebViewActivity extends BRActivity {
     private static final String TAG = WebViewActivity.class.getName();
     WebView webView;
