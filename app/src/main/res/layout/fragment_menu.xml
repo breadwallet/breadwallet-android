@@ -42,7 +42,7 @@
                 android:layout_marginTop="0dp"
                 app:layout_constraintBottom_toBottomOf="@+id/title"
                 android:layout_marginBottom="8dp"
-                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
                 app:layout_constraintLeft_toLeftOf="parent"/>
 
             <com.breadwallet.presenter.customviews.BRText
@@ -64,17 +64,6 @@
                 android:layout_marginBottom="8dp"
                 app:layout_constraintTop_toTopOf="parent"
                 android:layout_marginTop="8dp"/>
-
-            <!--<ImageButton-->
-                <!--android:id="@+id/faq_button"-->
-                <!--android:layout_width="@dimen/faq_dimen"-->
-                <!--android:layout_height="@dimen/faq_dimen"-->
-                <!--android:layout_alignParentEnd="true"-->
-                <!--android:layout_margin="@dimen/bread_margin"-->
-                <!--android:background="@drawable/faq_question_black"-->
-                <!--tools:layout_editor_absoluteX="0dp"-->
-                <!--tools:layout_editor_absoluteY="81dp"/>-->
-
 
         </android.support.constraint.ConstraintLayout>
 

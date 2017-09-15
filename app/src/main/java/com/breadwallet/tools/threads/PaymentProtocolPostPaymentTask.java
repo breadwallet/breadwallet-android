@@ -105,30 +105,31 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
             Activity app = BreadApp.getBreadContext();
             if (e instanceof java.net.UnknownHostException) {
                 if (app != null) {
-                    pendingErrorMessages.put(TITLE, app.getString(R.string.error));
-                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.unknown_host));
+                    pendingErrorMessages.put(TITLE, app.getString(R.string.Alert_error));
+                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.Send_remoteRequestError));
                 }
-            } else if (e instanceof FileNotFoundException) {
-                if (app != null) {
-                    pendingErrorMessages.put(TITLE, app.getString(R.string.JailbreakWarnings_title));
-                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.bad_payment_request));
-                }
-            } else if (e instanceof SocketTimeoutException) {
-                if (app != null) {
-                    pendingErrorMessages.put(TITLE, app.getString(R.string.JailbreakWarnings_title));
-                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.connection_timed_out));
-                }
-            } else {
-                if (app != null) {
-                    pendingErrorMessages.put(TITLE, app.getString(R.string.JailbreakWarnings_title));
-                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.could_not_transmit_payment));
-//                    if (!((BreadApp) app.getApplication()).hasInternetAccess())
-//                        BreadDialog.
-//                                showCustomDialog(app,app.getString(R.string.could_not_make_payment), app.getString(R.string.not_connected_network), app.getString(R.string.ok));
-
-                }
-
             }
+//            else if (e instanceof FileNotFoundException) {
+//                if (app != null) {
+//                    pendingErrorMessages.put(TITLE, app.getString(R.string.JailbreakWarnings_title));
+//                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.bad_payment_request));
+//                }
+//            } else if (e instanceof SocketTimeoutException) {
+//                if (app != null) {
+//                    pendingErrorMessages.put(TITLE, app.getString(R.string.JailbreakWarnings_title));
+//                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.connection_timed_out));
+//                }
+//            } else {
+//                if (app != null) {
+//                    pendingErrorMessages.put(TITLE, app.getString(R.string.JailbreakWarnings_title));
+//                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.could_not_transmit_payment));
+////                    if (!((BreadApp) app.getApplication()).hasInternetAccess())
+////                        BreadDialog.
+////                                showCustomDialog(app,app.getString(R.string.could_not_make_payment), app.getString(R.string.not_connected_network), app.getString(R.string.ok));
+//
+//                }
+//
+//            }
             e.printStackTrace();
         } finally {
             if (urlConnection != null) urlConnection.disconnect();

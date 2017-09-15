@@ -36,7 +36,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="Fingerprint"
+                android:text="@string/Fingerprint.Android"
                 android:textColor="@color/white"
                 android:textSize="18sp"
                 app:customFont="CircularPro-Bold.otf"/>
@@ -81,7 +81,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView10"
         android:layout_margin="@dimen/bread_margin"
-        android:text="Enable Fingerprint for Bread"
+        android:text="@string/Fingerprint.enable.Android"
         android:textColor="@color/almost_black"
         android:textSize="16sp"
         app:customFont="CircularPro-Bold.otf"/>
@@ -124,7 +124,7 @@
         android:lineSpacingMultiplier="1.2"
         android:layout_below="@+id/limit_exchange"
         android:layout_margin="@dimen/bread_margin"
-        android:text="You can customize your Fingerprint Spending Limit from the Fingerprint Spending Limit screen"
+        android:text="@string/Fingerprint.body.Android"
         android:textColor="@color/almost_black"
         android:textSize="18sp"
         />

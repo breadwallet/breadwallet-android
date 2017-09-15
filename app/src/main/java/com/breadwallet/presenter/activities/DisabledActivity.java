@@ -48,7 +48,6 @@ public class DisabledActivity extends BRActivity {
         attempts = (TextView) findViewById(R.id.attempts_label);
         resetButton = (Button) findViewById(R.id.reset_button);
 
-
         ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {

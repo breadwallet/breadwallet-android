@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lang">en</string>
+    <!-- Device authentication title -->
+    <string name="App.name.Android">bread</string>
+    <!-- Device authentication title -->
+    <string name="Auth.title.Android">Authentication required</string>
+    <!-- Instruction to touch the sensor for fingerprint authentication -->
+    <string name="Auth.touch.Android">Touch Sensor</string>
+    <!-- Device authentication body -->
+    <string name="Auth.body.Android">Please unlock your device to continue.</string>
+    <!-- Enable Fingerprint prompt body -->
+    <string name="Prompts.Fingerprint.body.Android">Tap here to enable Fingerprint</string>
+    <!-- Enable Fingerprint prompt title -->
+    <string name="Prompts.Fingerprint.title.Android">Enable Fingerprint</string>
+    <!-- Fingerprint -->
+    <string name="Fingerprint.Android">Fingerprint</string>
+    <!-- Enable fingerprint for this wallet called Bread -->
+    <string name="Fingerprint.enable.Android">Enable Fingerprint for Bread</string>
+    <!-- Fingerprint enabling description body -->
+    <string name="Fingerprint.body.Android">You can customize your Fingerprint Spending Limit from the Fingerprint Spending Limit screen</string>
+    <!-- Fingerprint limit -->
+    <string name="Fingerprint.limit.Android">Fingerprint Limit</string>
+
+</resources>

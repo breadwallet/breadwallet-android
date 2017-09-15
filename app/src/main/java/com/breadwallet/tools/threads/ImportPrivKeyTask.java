@@ -75,7 +75,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                 @Override
                 public void run() {
                     BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
-                            app.getString(R.string.priv_key_empty), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                            app.getString(R.string.Import_Error_empty), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                                 @Override
                                 public void onClick(BRDialogView brDialogView) {
                                     brDialogView.dismissWithAnimation();
@@ -101,9 +101,9 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         String feeExchange = BRCurrency.getFormattedCurrencyString(app, iso, BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(importPrivKeyEntity.getFee())));
 
         if (app == null || importPrivKeyEntity == null) return;
-        String message = String.format(app.getString(R.string.send_money_from_privkey_message), sentBits, sentExchange, feeBits, feeExchange);
+        String message = String.format(app.getString(R.string.Import_confirm), sentBits, sentExchange, feeBits, feeExchange);
         String posButton = String.format("%s (%s)", sentBits, sentExchange);
-        BRDialog.showCustomDialog(app, "", message, posButton, "Cancel", new BRDialogView.BROnClickListener() {
+        BRDialog.showCustomDialog(app, "", message, posButton, app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {
                 new Thread(new Runnable() {
@@ -115,7 +115,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                                 @Override
                                 public void run() {
                                     BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
-                                            app.getString(R.string.could_not_sweep_the_balance), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                                            app.getString(R.string.Import_Error_notValid), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                                                 @Override
                                                 public void onClick(BRDialogView brDialogView) {
                                                     brDialogView.dismissWithAnimation();

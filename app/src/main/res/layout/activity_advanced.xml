@@ -16,7 +16,7 @@
         android:layout_marginEnd="@dimen/bread_margin"
         android:layout_marginStart="@dimen/bread_margin"
         android:layout_marginTop="@dimen/bread_margin"
-        android:text="Advanced Settings"
+        android:text="@string/Settings.advancedTitle"
         android:textColor="@color/almost_black"
         android:textSize="30sp"
         app:customFont="CircularPro-Bold.otf"

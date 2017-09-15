@@ -705,7 +705,7 @@ public class BRKeyStore {
         if (context instanceof Activity) {
             Activity app = (Activity) context;
             KeyguardManager mKeyguardManager = (KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE);
-            Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(context.getString(R.string.auth_required), context.getString(R.string.auth_message));
+            Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent("Authentication required", context.getString(R.string.Auth_body_Android));
 //        Assert.assertTrue(intent != null);
             if (intent != null) {
                 app.startActivityForResult(intent, requestCode);

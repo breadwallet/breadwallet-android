@@ -273,7 +273,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:text="Processing Speed"
+                android:text="@string/FeeSelector.title"
                 android:textColor="@color/almost_black"
                 android:textStyle="bold"/>
 
@@ -282,7 +282,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
-                android:text="Estimated delivery..."
                 android:textColor="@color/light_gray"
                 />
 
@@ -308,7 +307,7 @@
                     android:layout_weight="1.0"
                     android:background="@drawable/b_half_left_blue"
                     android:padding="0dp"
-                    android:text="Regular"
+                    android:text="@string/FeeSelector.regular"
                     android:textColor="@color/white"
                     android:textSize="14sp"
                     app:customFont="CircularPro-Medium.otf"
@@ -322,7 +321,7 @@
                     android:layout_weight="1.0"
                     android:background="@drawable/b_half_right_blue_stroke"
                     android:padding="0dp"
-                    android:text="Economy"
+                    android:text="@string/FeeSelector.economy"
                     android:textColor="@color/dark_blue"
                     android:textSize="14sp"
                     app:customFont="CircularPro-Medium.otf"
@@ -337,7 +336,7 @@
                 android:layout_marginBottom="8dp"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
-                android:text="This option is not recommended for time-sensitive transactions."
+                android:text="@string/FeeSelector.economyWaring"
                 android:textColor="@color/red_text"
                 />
 
@@ -384,7 +383,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:background="@android:color/transparent"
-                android:hint="Memo"
+                android:hint="@string/Send.descriptionLabel"
                 android:inputType="textPersonName"
                 android:maxLength="250"
                 />

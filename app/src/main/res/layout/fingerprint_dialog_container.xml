@@ -40,7 +40,7 @@
             android:layout_marginTop="16dp"
             android:filterTouchesWhenObscured="true"
             android:gravity="center"
-            android:text="Fingerprint authentication"
+            android:text="@string/Auth.title.Android"
             android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.Material.Subhead"
             android:textColor="?android:attr/textColorSecondary"
@@ -87,7 +87,7 @@
                 android:layout_toEndOf="@+id/fingerprint_icon"
                 android:filterTouchesWhenObscured="true"
                 android:gravity="center_vertical"
-                android:text="Touch Sensor"
+                android:text="@string/Auth.touch.Android"
                 android:textColor="@color/hint_color"/>
         </RelativeLayout>
 
