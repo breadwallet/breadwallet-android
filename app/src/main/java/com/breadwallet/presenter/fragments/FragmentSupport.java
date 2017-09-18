@@ -27,6 +27,9 @@ import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.util.Utils;
 import com.platform.HTTPServer;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 import static com.platform.HTTPServer.URL_SUPPORT;
 
 
@@ -86,10 +89,12 @@ public class FragmentSupport extends Fragment {
                 if (onCloseUrl != null && request.getUrl().toString().equalsIgnoreCase(onCloseUrl)) {
                     getActivity().onBackPressed();
                     onCloseUrl = null;
-                }
-                if (request.getUrl().toString().contains("_close")) {
+                } else if (request.getUrl().toString().contains("_close")) {
                     getActivity().onBackPressed();
+                } else {
+                    view.loadUrl(request.getUrl().toString());
                 }
+
                 return true;
             }
 
@@ -118,9 +123,6 @@ public class FragmentSupport extends Fragment {
 
         Log.d(TAG, "onCreate: theUrl: " + theUrl + ", articleId: " + articleId);
         webView.loadUrl(theUrl);
-
-//        if (articleId != null && !articleId.isEmpty())
-//            navigate(articleId);
 
         return rootView;
     }

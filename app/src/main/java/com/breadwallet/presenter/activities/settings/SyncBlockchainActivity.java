@@ -17,7 +17,6 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRPeerManager;
 
-import static com.platform.HTTPServer.URL_SUPPORT;
 
 public class SyncBlockchainActivity extends BRActivity {
     private static final String TAG = SyncBlockchainActivity.class.getName();
@@ -43,12 +42,7 @@ public class SyncBlockchainActivity extends BRActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity app = SyncBlockchainActivity.this;
-                Intent intent = new Intent(app, WebViewActivity.class);
-                intent.putExtra("url", URL_SUPPORT);
-                intent.putExtra("articleId", BRConstants.reScan);
-                app.startActivity(intent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+                BRAnimator.showSupportFragment(app, BRConstants.reScan);
             }
         });
 

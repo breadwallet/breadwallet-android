@@ -13,6 +13,7 @@ import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.BRConstants;
 import com.platform.HTTPServer;
 
@@ -51,11 +52,7 @@ public class SetPinActivity extends BRActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SetPinActivity.this, WebViewActivity.class);
-                intent.putExtra("url", HTTPServer.URL_SUPPORT);
-                intent.putExtra("articleId", BRConstants.setPin);
-                app.startActivity(intent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+                BRAnimator.showSupportFragment(app, BRConstants.setPin);
             }
         });
 

@@ -1,10 +1,12 @@
 package com.platform;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
+import android.os.Build;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -274,6 +276,7 @@ public class APIClient {
             key = new BRKey(authKey);
         } catch (IllegalArgumentException ex) {
             key = null;
+            Log.e(TAG, "signRequest: " + request, ex);
         }
         if (key == null) {
             Log.e(TAG, "signRequest: key is null, failed to create BRKey");
@@ -289,7 +292,8 @@ public class APIClient {
             throw new RuntimeException("sendRequest: Warning retryCount is: " + retryCount);
         boolean isTestVersion = BREAD_POINT.contains("staging");
         boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
-        Request request = locRequest.newBuilder().header("X-Testflight", isTestVersion ? "true" : "false").header("X-Bitcoin-Testnet", isTestNet ? "true" : "false").build();
+        String lang = getCurrentLocale(ctx);
+        Request request = locRequest.newBuilder().header("X-Testflight", isTestVersion ? "true" : "false").header("X-Bitcoin-Testnet", isTestNet ? "true" : "false").header("Accept-Language", lang).build();
         if (needsAuth) {
             Request.Builder modifiedRequest = request.newBuilder();
             String base58Body = "";
@@ -348,7 +352,9 @@ public class APIClient {
             OkHttpClient client = new OkHttpClient.Builder().followRedirects(false).connectTimeout(60, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
 //            Log.e(TAG, "sendRequest: before executing the request: " + request.headers().toString());
             Log.d(TAG, "sendRequest: headers for : " + request.url() + "\n" + request.headers());
-            request = request.newBuilder().header("User-agent", Utils.getAgentString(ctx, "OkHttp/3.4.1")).build();
+            String agent = Utils.getAgentString(ctx, "OkHttp/3.4.1");
+            Log.e(TAG, "sendRequest: agent: " + agent);
+            request = request.newBuilder().header("User-agent", agent).build();
             response = client.newCall(request).execute();
             String s = null;
             try {
@@ -767,6 +773,17 @@ public class APIClient {
                 Log.e("Files", "FileName:" + files[i].getName());
             }
             Log.e(TAG, "logFiles " + tag + " : START LOGGING");
+        }
+    }
+
+
+    @TargetApi(Build.VERSION_CODES.N)
+    public String getCurrentLocale(Context ctx){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+            return ctx.getResources().getConfiguration().getLocales().get(0).getLanguage();
+        } else{
+            //noinspection deprecation
+            return ctx.getResources().getConfiguration().locale.getLanguage();
         }
     }
 

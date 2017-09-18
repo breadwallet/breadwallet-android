@@ -110,9 +110,7 @@ public class FragmentTransactionItem extends Fragment {
 
         ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
 
-        faq.setOnClickListener(new View.OnClickListener()
-
-        {
+        faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Activity app = getActivity();
@@ -120,11 +118,7 @@ public class FragmentTransactionItem extends Fragment {
                     Log.e(TAG, "onClick: app is null, can't start the webview with url: " + URL_SUPPORT);
                     return;
                 }
-                Intent intent = new Intent(app, WebViewActivity.class);
-                intent.putExtra("url", URL_SUPPORT);
-                intent.putExtra("articleId", BRConstants.transactionDetails);
-                app.startActivity(intent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+                BRAnimator.showSupportFragment(app, BRConstants.transactionDetails);
             }
         });
 

@@ -95,11 +95,7 @@ public class IntroActivity extends BRActivity implements Serializable {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(IntroActivity.this, WebViewActivity.class);
-                intent.putExtra("url", HTTPServer.URL_SUPPORT);
-                intent.putExtra("articleId", BRConstants.startView);
-                app.startActivity(intent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+                BRAnimator.showSupportFragment(app, BRConstants.startView);
             }
         });
 

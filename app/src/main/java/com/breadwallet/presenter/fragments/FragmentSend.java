@@ -187,11 +187,7 @@ public class FragmentSend extends Fragment {
                     Log.e(TAG, "onClick: app is null, can't start the webview with url: " + URL_SUPPORT);
                     return;
                 }
-                Intent intent = new Intent(app, WebViewActivity.class);
-                intent.putExtra("url", URL_SUPPORT);
-                intent.putExtra("articleId", BRConstants.send);
-                app.startActivity(intent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+                BRAnimator.showSupportFragment(app, BRConstants.send);
             }
         });
 

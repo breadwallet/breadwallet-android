@@ -224,16 +224,13 @@ public class Utils {
                 PackageInfo pInfo = null;
                 pInfo = app.getPackageManager().getPackageInfo(app.getPackageName(), 0);
                 versionNumber = pInfo.versionCode;
+
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }
         }
-        int stringId = 0;
-        if (app != null) {
-            stringId = app.getApplicationInfo().labelRes;
-        }
-        String agent = System.getProperty("http.agent");
-        return String.format(Locale.getDefault(), "%s/%d %s %s", "breadwallet", versionNumber, cfnetwork, Util.toHumanReadableAscii(agent));
+        String release = Build.VERSION.RELEASE;
+        return String.format(Locale.getDefault(), "%s/%d %s %s/%s", "breadwallet", versionNumber, cfnetwork, "Android", release);
     }
 
     public static String reverseHex(String hex) {
@@ -242,7 +239,7 @@ public class Utils {
         for (int i = 0; i <= hex.length() - 2; i = i + 2) {
             result.append(new StringBuilder(hex.substring(i, i + 2)).reverse());
         }
-       return result.reverse().toString();
+        return result.reverse().toString();
     }
 
 }

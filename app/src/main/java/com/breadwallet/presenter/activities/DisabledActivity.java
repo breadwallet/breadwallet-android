@@ -23,7 +23,6 @@ import com.breadwallet.tools.util.BRConstants;
 
 import java.util.Locale;
 
-import static com.platform.HTTPServer.URL_SUPPORT;
 
 
 public class DisabledActivity extends BRActivity {
@@ -53,12 +52,7 @@ public class DisabledActivity extends BRActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity app = DisabledActivity.this;
-                Intent intent = new Intent(app, WebViewActivity.class);
-                intent.putExtra("url", URL_SUPPORT);
-                intent.putExtra("articleId", BRConstants.walletDisabled);
-                app.startActivity(intent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+                BRAnimator.showSupportFragment(DisabledActivity.this, BRConstants.walletDisabled);
             }
         });
 

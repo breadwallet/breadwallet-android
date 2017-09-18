@@ -21,12 +21,10 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 
-import static com.platform.HTTPServer.URL_SUPPORT;
 
 public class NodesActivity extends BRActivity {
     private static final String TAG = NodesActivity.class.getName();
@@ -75,13 +73,7 @@ public class NodesActivity extends BRActivity {
 //        faq.setOnClickListener(new View.OnClickListener() {
 //            @Override
 //            public void onClick(View v) {
-//                BRAnimator.showSupportFragment(NodesActivity.this,);
-////                Activity app = NodesActivity.this;
-////                Intent intent = new Intent(app, WebViewActivity.class);
-////                intent.putExtra("url", URL_SUPPORT);
-////                intent.putExtra("articleId", BRConstants.reScan);
-////                app.startActivity(intent);
-////                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+//                    ....
 //            }
 //        });
 
