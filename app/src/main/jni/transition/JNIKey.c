@@ -57,7 +57,6 @@ JNIEXPORT void JNICALL Java_com_jniwrappers_BRKey_setSecret(
     int res = BRKeySetSecret(&_key, (const UInt256 *) bytePrivKey, 1);
 
     __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "key is set, res: %d", res);
-    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "key is set, _key: %s", _key.secret);
 }
 
 JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_encryptNative(JNIEnv *env, jobject thiz,

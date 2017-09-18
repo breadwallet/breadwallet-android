@@ -1,7 +1,5 @@
 package com.breadwallet.presenter.activities.settings;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -11,6 +9,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -22,7 +21,6 @@ import com.breadwallet.wallet.BRWalletManager;
 import java.math.BigDecimal;
 
 import static com.breadwallet.tools.util.BRConstants.ONE_BITCOIN;
-import static com.platform.HTTPServer.URL_SUPPORT;
 
 
 public class SpendLimitActivity extends BRActivity {
@@ -55,12 +53,7 @@ public class SpendLimitActivity extends BRActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity app = SpendLimitActivity.this;
-                Intent intent = new Intent(app, WebViewActivity.class);
-                intent.putExtra("url", URL_SUPPORT);
-                intent.putExtra("articleId", BRConstants.touchIdSpendingLimit);
-                app.startActivity(intent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+                BRAnimator.showSupportFragment(app, BRConstants.fingerprintSpendingLimit);
             }
         });
 //        curSpiner = (Spinner) findViewById(R.id.cur_spinner);
