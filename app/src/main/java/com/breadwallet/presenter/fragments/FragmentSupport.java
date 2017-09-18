@@ -114,25 +114,15 @@ public class FragmentSupport extends Fragment {
         webSettings.setJavaScriptEnabled(true);
 
         if (articleId != null && !articleId.isEmpty())
-            theUrl = theUrl + "/" + articleId;
+            theUrl = theUrl + "/article?slug=" + articleId;
 
         Log.d(TAG, "onCreate: theUrl: " + theUrl + ", articleId: " + articleId);
         webView.loadUrl(theUrl);
 
-        if (articleId != null && !articleId.isEmpty())
-            navigate(articleId);
+//        if (articleId != null && !articleId.isEmpty())
+//            navigate(articleId);
 
         return rootView;
-    }
-
-    private void navigate(String to) {
-        String js = String.format("window.location = \'%s\';", to);
-        webView.evaluateJavascript(js, new ValueCallback<String>() {
-            @Override
-            public void onReceiveValue(String value) {
-                Log.e(TAG, "onReceiveValue: " + value);
-            }
-        });
     }
 
     @Override

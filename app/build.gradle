@@ -97,11 +97,11 @@ model {
                     create() {
                         type = "boolean"
                         name = "BITCOIN_TESTNET"
-                        value = "true"
+                        value = "false"
                     }
                 }
                 ndk {
-                    CFlags.addAll(['-DBITCOIN_TESTNET=1'])
+//                    CFlags.addAll(['-DBITCOIN_TESTNET=1'])
                     minifyEnabled = false
                     debuggable = true
                 }
