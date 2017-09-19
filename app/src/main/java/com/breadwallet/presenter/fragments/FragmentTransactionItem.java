@@ -182,15 +182,10 @@ public class FragmentTransactionItem extends Fragment {
         String commentString = txMetaData == null || txMetaData.comment == null ? "" : txMetaData.comment;
         String sb = String.format(getString(R.string.Transaction_starting), startingBalance);
         String eb = String.format(getString(R.string.Transaction_ending), endingBalance);
-        String amountString = String.format("%s %s\n\n%s\n%s", amount, item.getFee() == -1 ? "" : String.format("(%s fee)", fee), sb, eb);
+        String amountString = String.format("%s %s\n\n%s\n%s", amount, item.getFee() == -1 ? "" : String.format(getString(R.string.Transaction_fee), fee), sb, eb);
 
-        SpannableString addr = sent ? new SpannableString(item.getTo()[0]) : new SpannableString(item.getFrom()[0]);
-        SpannableString toFrom = sent ? new SpannableString("to") : new SpannableString("from");
-        toFrom.setSpan(new RelativeSizeSpan(1f), 0, toFrom.length(), 0);
-        //span a piece of text to be smaller size (the address)
-        final StyleSpan norm = new StyleSpan(Typeface.NORMAL);
-        addr.setSpan(norm, 0, addr.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-        addr.setSpan(new RelativeSizeSpan(0.8f), 0, addr.length(), 0);
+        String addr = sent ? item.getTo()[0] : item.getFrom()[0];
+        String toFrom = sent ? String.format(getString(R.string.TransactionDetails_to), addr) : String.format(getString(R.string.TransactionDetails_from), addr);
 
         mTxHash.setText(item.getTxHashHexReversed());
 
@@ -216,7 +211,8 @@ public class FragmentTransactionItem extends Fragment {
                 level = 6;
         }
         boolean availableForSpend = false;
-        String sentReceived = !sent ? "Receiving" : "Sending";
+//        String sentReceived = !sent ? "Receiving" : "Sending";
+//        sentReceived = ""; //make this empy for now
         String percentage = "";
         switch (level) {
             case 0:
@@ -244,7 +240,7 @@ public class FragmentTransactionItem extends Fragment {
         }
 
         if (availableForSpend && !sent) {
-            mAvailableSpend.setText("Available to Spend");
+            mAvailableSpend.setText(getString(R.string.Transaction_available));
         } else {
             signalLayout.removeView(mAvailableSpend);
         }
@@ -252,16 +248,16 @@ public class FragmentTransactionItem extends Fragment {
         if (level == 6) {
             mConfirmationText.setText(getString(R.string.Transaction_complete));
         } else {
-            mConfirmationText.setText(String.format("%s - %s", sentReceived, percentage));
+            mConfirmationText.setText(String.format("%s", percentage));
         }
 
         if (!item.isValid())
-            mConfirmationText.setText("INVALID");
+            mConfirmationText.setText(getString(R.string.Transaction_invalid));
 
-        mToFromBottom.setText(sent ? "From" : "To");
+        mToFromBottom.setText(sent ? getString(R.string.TransactionDirection_to) : getString(R.string.TransactionDirection_address));
         mDateText.setText(getFormattedDate(item.getTimeStamp()));
         mDescriptionText.setText(TextUtils.concat(descriptionString));
-        mSubHeader.setText(TextUtils.concat(toFrom, " ", addr));
+        mSubHeader.setText(toFrom);
         mCommentText.setText(commentString);
 
         mAmountText.setText(amountString);
@@ -323,7 +319,13 @@ public class FragmentTransactionItem extends Fragment {
         String str1 = date1.format(currentLocalTime);
         String str2 = date2.format(currentLocalTime);
 
-        return str1 + " at " + str2;
+        return str1 + " " + String.format(getString(R.string.TransactionDetails_from), str2);
+    }
+
+    private String getShortAddress(String addr) {
+        String p1 = addr.substring(0, 5);
+        String p2 = addr.substring(addr.length() - 5, addr.length());
+        return p1 + "..." + p2;
     }
 
 }

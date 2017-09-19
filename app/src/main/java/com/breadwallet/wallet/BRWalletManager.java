@@ -303,17 +303,6 @@ public class BRWalletManager {
                     builder.setPositiveButton(ctx.getString(R.string.Button_ok), new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-//                            if (!((BreadApp) ((Activity) ctx).getApplication()).hasInternetAccess()) {
-//                                ((Activity) ctx).runOnUiThread(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-////                                        BRDialog.showCustomDialog(ctx, ctx.getString(R.string.warning),
-////                                                ctx.getString(R.string.not_connected), ctx.getString(R.string.ok));
-//                                    }
-//                                });
-//
-//                                return;
-//                            }
                             if (ctx != null)
                                 ((Activity) ctx).runOnUiThread(new Runnable() {
                                     @Override
@@ -367,55 +356,6 @@ public class BRWalletManager {
         }
     }
 
-//    public static void showWritePhraseDialog(final Context ctx, final boolean firstTime) {
-//
-//        if (ctx != null) {
-//            ((Activity) ctx).runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    boolean phraseWroteDown = BRSharedPrefs.getPhraseWroteDown(ctx);
-//                    if (phraseWroteDown) return;
-//                    long now = System.currentTimeMillis() / 1000;
-//                    long lastMessageShow = BRSharedPrefs.getPhraseWarningTime(ctx);
-//                    if (lastMessageShow == 0 || (!firstTime && lastMessageShow > (now - 36 * 60 * 60)))
-//                        return;//36 * 60 * 60//
-//                    if (BRWalletManager.getInstance().getBalance(ctx) > BRSharedPrefs.getTotalLimit(ctx)) {
-////                        getInstance(ctx).animateSavePhraseFlow();
-//                        return;
-//                    }
-//                    BRSharedPrefs.putPhraseWarningTime(ctx, System.currentTimeMillis() / 1000);
-//                    AlertDialog alert;
-//                    AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
-//                    builder.setTitle(ctx.getString(R.string.you_received_bitcoin));
-//                    builder.setMessage(String.format(ctx.getString(R.string.write_down_phrase),
-//                            ctx.getString(R.string.write_down_phrase_holder1)));
-//                    builder.setPositiveButton(ctx.getString(R.string.show_phrase),
-//                            new DialogInterface.OnClickListener() {
-//                                public void onClick(final DialogInterface dialog, int which) {
-//                                    new Thread(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            dialog.dismiss();
-////                                            BRWalletManager.getInstance().animateSavePhraseFlow();
-//                                        }
-//                                    }).start();
-//                                }
-//                            });
-//                    builder.setNegativeButton(ctx.getString(R.string.ok),
-//                            new DialogInterface.OnClickListener() {
-//                                public void onClick(DialogInterface dialog, int which) {
-//                                    dialog.dismiss();
-//                                }
-//                            });
-//                    builder.setCancelable(false);
-//                    alert = builder.create();
-//                    alert.show();
-//                }
-//            });
-//
-//        }
-//
-//    }
 
     /**
      * Wallet callbacks
@@ -442,22 +382,6 @@ public class BRWalletManager {
 
             }
         });
-
-//        PaymentProtocolPostPaymentTask.waiting = false;
-//        if (error != 0) {
-//            if (!PaymentProtocolPostPaymentTask.waiting && !PaymentProtocolPostPaymentTask.sent) {
-//                if (PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE) != null) {
-//                    BRDialog.showCustomDialog(ctx, PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.TITLE),
-//                            PaymentProtocolPostPaymentTask.pendingErrorMessages.get(PaymentProtocolPostPaymentTask.MESSAGE), ctx.getString(R.string.ok));
-//                    PaymentProtocolPostPaymentTask.pendingErrorMessages = null;
-//                } else {
-//                    BRToast.showCustomToast(BreadActivity.app, message,
-//                            BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
-//                }
-//            }
-//        } else {
-//            PaymentProtocolPostPaymentTask.sent = true;
-//        }
 
     }
 
@@ -582,8 +506,8 @@ public class BRWalletManager {
         final BRWalletManager m = BRWalletManager.getInstance();
         if (!m.isPasscodeEnabled(app)) {
             //Device passcode/password should be enabled for the app to work
-            BRDialog.showCustomDialog(app, "Warning", "A device screen lock is needed to safeguard your wallet. Go to \"Settings\" > \"Security\" > \"Screen lock\"",
-                    "close", null, new BRDialogView.BROnClickListener() {
+            BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), app.getString(R.string.Warning_encryption_body_Android),
+                    app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             app.finish();
@@ -693,22 +617,6 @@ public class BRWalletManager {
 
     }
 
-//    public void offerToChangeTheAmount(final Context app, final PaymentItem item) {
-//        BRDialog.showCustomDialog(app, app.getString(R.string.insufficient_funds), app.getString(R.string.change_payment_amount),
-//                app.getString(R.string.change), app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
-//                    @Override
-//                    public void onClick(BRDialogView brDialogView) {
-//                        BRAnimator.showSendFragment((Activity) app, Utils.createBitcoinUrl(item.addresses[0], 0, null, null, null));
-//                        brDialogView.dismissWithAnimation();
-//                    }
-//                }, new BRDialogView.BROnClickListener() {
-//                    @Override
-//                    public void onClick(BRDialogView brDialogView) {
-//                        brDialogView.dismissWithAnimation();
-//                    }
-//                }, null, 0);
-//    }
-
     public void addBalanceChangedListener(OnBalanceChanged listener) {
         if (balanceListeners == null) {
             Log.e(TAG, "addBalanceChangedListener: statusUpdateListeners is null");
@@ -762,11 +670,7 @@ public class BRWalletManager {
 
     public native boolean isCreated();
 
-//    public native boolean transactionIsVerified(String txHash);
-
     public native byte[] tryTransaction(String addressHolder, long amountHolder);
-
-//    public native byte[] createBCHTx(String addressHolder);
 
     // returns the given amount (amount is in satoshis) in local currency units (i.e. pennies, pence)
     // price is local currency units per bitcoin

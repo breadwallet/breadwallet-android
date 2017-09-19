@@ -103,9 +103,8 @@ public class FragmentFingerprint extends Fragment
         }
         FingerprintManager mFingerprintManager = (FingerprintManager) getActivity().getSystemService(Activity.FINGERPRINT_SERVICE);
         mFingerprintUiHelperBuilder = new FingerprintUiHelper.FingerprintUiHelperBuilder(mFingerprintManager);
-        mFingerprintUiHelper = mFingerprintUiHelperBuilder.build(
-                (ImageView) v.findViewById(R.id.fingerprint_icon),
-                (TextView) v.findViewById(R.id.fingerprint_status), this);
+        mFingerprintUiHelper = mFingerprintUiHelperBuilder.build((ImageView) v.findViewById(R.id.fingerprint_icon),
+                (TextView) v.findViewById(R.id.fingerprint_status), this, getContext());
         View mFingerprintContent = v.findViewById(R.id.fingerprint_container);
 
         Button mCancelButton = (Button) v.findViewById(R.id.cancel_button);
