@@ -353,7 +353,7 @@ public class APIClient {
 //            Log.e(TAG, "sendRequest: before executing the request: " + request.headers().toString());
             Log.d(TAG, "sendRequest: headers for : " + request.url() + "\n" + request.headers());
             String agent = Utils.getAgentString(ctx, "OkHttp/3.4.1");
-            Log.e(TAG, "sendRequest: agent: " + agent);
+//            Log.e(TAG, "sendRequest: agent: " + agent);
             request = request.newBuilder().header("User-agent", agent).build();
             response = client.newCall(request).execute();
             String s = null;
