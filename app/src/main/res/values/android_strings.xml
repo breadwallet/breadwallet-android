@@ -21,5 +21,13 @@
     <string name="Fingerprint.body.Android">You can customize your Fingerprint Spending Limit from the Fingerprint Spending Limit screen</string>
     <!-- Fingerprint limit -->
     <string name="Fingerprint.limit.Android">Fingerprint Limit</string>
+    <!-- Fingerprint Is Not Setup -->
+    <string name="Fingerprint.warning.title.Android">Fingerprint Not Setup</string>
+    <!-- Instruction for the fingerprint setup -->
+    <string name="Fingerprint.warning.body.Android">You have not setup any fingerprints on this device. Go to Settings -> Security to setup a fingerprint.</string>
+    <!-- Instruction for how you can customize the spending limit -->
+    <string name="Fingerprint.customize.body.Android">You can customize your Fingerprint Spending Limit from the Fingerprint Spending Limit screen</string>
+    <!-- The fingerprint spending limit -->
+    <string name="Settings.fingerprintLimit.Android">Fingerprint Spending Limit</string>
 
 </resources>

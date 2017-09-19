@@ -51,8 +51,8 @@ public class SyncBlockchainActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRDialog.showCustomDialog(SyncBlockchainActivity.this, "Sync with Blockchain?",
-                        "You will not be able to send money while syncing.", "Sync", "Cancel",
+                BRDialog.showCustomDialog(SyncBlockchainActivity.this, getString(R.string.ReScan_alertTitle),
+                        getString(R.string.ReScan_footer), getString(R.string.ReScan_alertAction), getString(R.string.Button_cancel),
                         new BRDialogView.BROnClickListener() {
                             @Override
                             public void onClick(BRDialogView brDialogView) {

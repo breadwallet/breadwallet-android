@@ -87,10 +87,6 @@ public class AutoFitTextureView extends TextureView {
         int top = height / 2 - guideLineHeight / 2;
         int right = width / 2 + guideLineWidth / 2;
         int bottom = height / 2 + guideLineWidth / 2;
-        Log.e(TAG, "onDrawForeground: l:" + left);
-        Log.e(TAG, "onDrawForeground: t:" + top);
-        Log.e(TAG, "onDrawForeground: r:" + right);
-        Log.e(TAG, "onDrawForeground: b:" + bottom);
         canvas.drawRect(left, top, right, bottom, framePaint);
         super.onDrawForeground(canvas);
     }

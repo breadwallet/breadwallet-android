@@ -49,7 +49,7 @@ public class WriteDownActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                AuthManager.getInstance().authPrompt(WriteDownActivity.this, null, "Please enter your PIN to continue.", true, new BRAuthCompletion() {
+                AuthManager.getInstance().authPrompt(WriteDownActivity.this, null, getString(R.string.VerifyPin_continueBody), true, new BRAuthCompletion() {
                     @Override
                     public void onComplete() {
                         PostAuth.getInstance().onPhraseCheckAuth(WriteDownActivity.this, false);

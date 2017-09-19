@@ -71,7 +71,6 @@ public class SecurityCenterActivity extends BRActivity {
         });
         updateList();
 
-
         ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
@@ -151,11 +150,10 @@ public class SecurityCenterActivity extends BRActivity {
     private void updateList() {
         boolean isPinSet = BRKeyStore.getPinCode(this).length() == 6;
         itemList.clear();
-        itemList.add(new BRSecurityCenterItem("6-Digit PIN", "Unlocks your Bread, authorizes send money.",
+        itemList.add(new BRSecurityCenterItem(getString(R.string.SecurityCenter_pinTitle), getString(R.string.SecurityCenter_pinDescription),
                 isPinSet ? R.drawable.ic_check_mark_blue : R.drawable.ic_check_mark_grey, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: 6-Digit PIN");
                 Intent intent = new Intent(SecurityCenterActivity.this, UpdatePitActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -168,11 +166,10 @@ public class SecurityCenterActivity extends BRActivity {
                 : R.drawable.ic_check_mark_grey;
 
         if (Utils.isFingerprintAvailable(this)) {
-            itemList.add(new BRSecurityCenterItem("Fingerprint", "Unlocks your Bread, authorizes send money to set limit.",
+            itemList.add(new BRSecurityCenterItem(getString(R.string.Fingerprint_Android), getString(R.string.SecurityCenter_touchIdDescription),
                     resId, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Log.d(TAG, "onClick: Touch ID");
                     Intent intent = new Intent(SecurityCenterActivity.this, FingerprintActivity.class);
                     startActivity(intent);
                     overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -181,11 +178,10 @@ public class SecurityCenterActivity extends BRActivity {
         }
 
         boolean isPaperKeySet = BRSharedPrefs.getPhraseWroteDown(this);
-        itemList.add(new BRSecurityCenterItem("Paper Key", "Restores your Bread on new devices and after software updates.",
+        itemList.add(new BRSecurityCenterItem(getString(R.string.SecurityCenter_paperKeyTitle), getString(R.string.SecurityCenter_paperKeyDescription),
                 isPaperKeySet ? R.drawable.ic_check_mark_blue : R.drawable.ic_check_mark_grey, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: Paper Key");
                 Intent intent = new Intent(SecurityCenterActivity.this, WriteDownActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);

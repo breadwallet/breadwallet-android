@@ -56,26 +56,6 @@ public class SpendLimitActivity extends BRActivity {
                 BRAnimator.showSupportFragment(app, BRConstants.fingerprintSpendingLimit);
             }
         });
-//        curSpiner = (Spinner) findViewById(R.id.cur_spinner);
-
-//        final List<String> curList = new ArrayList<>();
-//        curList.add("BTC");
-//        curList.addAll(CurrencyDataSource.getInstance(this).getAllISOs());
-
-//        final ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.bread_spinner_item, curList);
-//        curSpiner.setAdapter(adapter);
-//        curSpiner.setAdapter(adapter);
-//        curSpiner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                updateText(0);
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//                updateText(0);
-//            }
-//        });
         int progress = getStepFromLimit(BRKeyStore.getSpendLimit(this));
         updateText(progress);
         seekBar.setProgress(progress);

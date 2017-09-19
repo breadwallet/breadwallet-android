@@ -124,7 +124,7 @@ public class AdvancedActivity extends BRActivity {
 
         items.add(new BRSettingsItem("", "", null, true));
 
-        items.add(new BRSettingsItem("Bitcoin Nodes", "", new View.OnClickListener() {
+        items.add(new BRSettingsItem(getString(R.string.NodeSelector_title), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(AdvancedActivity.this, NodesActivity.class);
@@ -133,7 +133,7 @@ public class AdvancedActivity extends BRActivity {
 
             }
         }, false));
-        items.add(new BRSettingsItem("Withdraw BCH", "", new View.OnClickListener() {
+        items.add(new BRSettingsItem(getString(R.string.BCH_title), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(AdvancedActivity.this, WithdrawBchActivity.class);

@@ -55,7 +55,7 @@ public class WebViewActivity extends BRActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl());
-                Log.d(TAG, "shouldOverrideUrlLoading: " + request.getMethod());
+//                Log.d(TAG, "shouldOverrideUrlLoading: " + request.getMethod());
                 if (onCloseUrl != null && request.getUrl().toString().equalsIgnoreCase(onCloseUrl)) {
                     onBackPressed();
                     onCloseUrl = null;
@@ -68,7 +68,7 @@ public class WebViewActivity extends BRActivity {
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-                Log.d(TAG, "onPageStarted: " + url);
+//                Log.d(TAG, "onPageStarted: " + url);
                 super.onPageStarted(view, url, favicon);
             }
         });
