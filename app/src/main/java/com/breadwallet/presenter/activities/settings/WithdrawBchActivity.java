@@ -228,7 +228,7 @@ public class WithdrawBchActivity extends BRActivity {
     }
 
     public static void confirmSendingBCH(final Activity app, final String theAddress) {
-        if (BRPeerManager.getCurrentBlockHeight() < 478559) {
+        if (BRPeerManager.getCurrentBlockHeight() < 478559) { //todo fix translations for this class
             BRDialog.showCustomDialog(app, "Not synced", "Please wait for syncing to complete before using this feature.", app.getString(R.string.AccessibilityLabels_close), null,
                     new BRDialogView.BROnClickListener() {
                         @Override

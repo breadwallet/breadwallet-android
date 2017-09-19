@@ -36,8 +36,6 @@ import static com.platform.HTTPServer.URL_SUPPORT;
 
 public class InputWordsActivity extends BRActivity {
     private static final String TAG = InputWordsActivity.class.getName();
-    //    private Button leftButton;
-//    private Button rightButton;
     private Button nextButton;
 
     private EditText word1;
@@ -71,8 +69,6 @@ public class InputWordsActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_words);
 
-//        leftButton = (Button) findViewById(R.id.left_button);
-//        rightButton = (Button) findViewById(R.id.right_button);
         nextButton = (Button) findViewById(R.id.send_button);
 
         ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
@@ -105,12 +101,12 @@ public class InputWordsActivity extends BRActivity {
 
         if (restore) {
             //change the labels
-            title.setText("Restore Wallet");
-            description.setText("Enter the paper key for your current Bread wallet.");
+            title.setText(getString(R.string.MenuViewController_recoverButton));
+            description.setText(getString(R.string.WipeWallet_instruction));
         } else if (resetPin) {
             //change the labels
-            title.setText("Reset PIN");
-            description.setText("To reset your PIN, enter the words from your paper key into the boxes below. Touch here for more information.");
+            title.setText(getString(R.string.RecoverWallet_header_reset_pin));
+            description.setText(getString(R.string.RecoverWallet_subheader_reset_pin));
         }
 
         word12.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -121,24 +117,6 @@ public class InputWordsActivity extends BRActivity {
                 return false;
             }
         });
-
-//        chooseWordsSize(true);
-
-//        leftButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (!BRAnimator.isClickAllowed()) return;
-//                chooseWordsSize(true);
-//            }
-//        });
-//
-//        rightButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (!BRAnimator.isClickAllowed()) return;
-//                chooseWordsSize(false);
-//            }
-//        });
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,7 +151,7 @@ public class InputWordsActivity extends BRActivity {
                             if (!InputWordsActivity.this.isDestroyed()) finish();
 
                         } else {
-                            BRDialog.showCustomDialog(app, "", "The entered phrase does not match your wallet's phrase", "Close", null, new BRDialogView.BROnClickListener() {
+                            BRDialog.showCustomDialog(app, "", getString(R.string.RecoverWallet_invalid), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                                 @Override
                                 public void onClick(BRDialogView brDialogView) {
                                     brDialogView.dismissWithAnimation();
@@ -193,18 +171,6 @@ public class InputWordsActivity extends BRActivity {
 
                 } else {
                     String message = getResources().getString(R.string.RecoverWallet_invalid);
-//                    String[] words = cleanPhrase.split(" ");
-//                    if (words.length != 12) {
-//                        message = String.format(app.getString(R.string.recovery_phrase_must_have_12_words), 12);
-//                    } else {
-//                    List<String> allWords = getAllWordLists(app);
-
-//                    for (String word : words) {
-//                        if (!allWords.contains(word)) {
-//                            message = String.format(app.getString(R.string.not_a_recovery_phrase_word), word);
-//                        }
-//                    }
-//                    }
 
                     BRDialog.showCustomDialog(app, "", message, getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                         @Override
@@ -218,33 +184,6 @@ public class InputWordsActivity extends BRActivity {
         });
 
     }
-
-
-//    private void chooseWordsSize(boolean isLeft) {
-//        int activeColor = getColor(dark_blue);
-//        int nonActiveColor = getColor(extra_light_gray);
-//        GradientDrawable leftDrawable = (GradientDrawable) leftButton.getBackground().getCurrent();
-//        GradientDrawable rightDrawable = (GradientDrawable) rightButton.getBackground().getCurrent();
-//
-//        int rad = 30;
-//        int stoke = 3;
-//
-//        leftDrawable.setCornerRadii(new float[]{rad, rad, 0, 0, 0, 0, rad, rad});
-//        rightDrawable.setCornerRadii(new float[]{0, 0, rad, rad, rad, rad, 0, 0});
-//
-//        if (isLeft) {
-//            leftDrawable.setStroke(stoke, activeColor, 0, 0);
-//            rightDrawable.setStroke(stoke, nonActiveColor, 0, 0);
-//            leftButton.setTextColor(activeColor);
-//            rightButton.setTextColor(nonActiveColor);
-//        } else {
-//            leftDrawable.setStroke(stoke, nonActiveColor, 0, 0);
-//            rightDrawable.setStroke(stoke, activeColor, 0, 0);
-//            leftButton.setTextColor(nonActiveColor);
-//            rightButton.setTextColor(activeColor);
-//        }
-//
-//    }
 
     @Override
     protected void onResume() {

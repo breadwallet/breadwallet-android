@@ -49,6 +49,7 @@ import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.BRNotificationManager;
 import com.breadwallet.tools.util.BRCurrency;
+import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
@@ -470,31 +471,15 @@ public class BRWalletManager {
     public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, String hash) {
         Log.d(TAG, "onTxAdded: " + String.format("tx.length: %d, blockHeight: %d, timestamp: %d, amount: %d, hash: %s", tx.length, blockHeight, timestamp, amount, hash));
 
-//        if (getInstance().getTxCount() <= 1) {
-//            BRSharedPrefs.putPhraseWarningTime(ctx, System.currentTimeMillis() / 1000);
-//            ctx.runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    new Handler().postDelayed(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            showWritePhraseDialog(ctx, true);
-//                        }
-//                    }, 2000);
-//                }
-//            });
-//
-//        }
-
         final Activity ctx = BreadApp.getBreadContext();
         if (amount > 0)
             if (ctx != null) {
                 ctx.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        String am = BRCurrency.getFormattedCurrencyString(ctx, "BTC", new BigDecimal(amount));
-                        String fee = BRCurrency.getFormattedCurrencyString(ctx, BRSharedPrefs.getIso(ctx), new BigDecimal(amount));
-                        String formatted = String.format("%s (%s)", am, fee);
+                        String am = BRCurrency.getFormattedCurrencyString(ctx, "BTC", BRExchange.getBitcoinForSatoshis(ctx, new BigDecimal(amount)));
+                        String amCur = BRCurrency.getFormattedCurrencyString(ctx, BRSharedPrefs.getIso(ctx), new BigDecimal(amount));
+                        String formatted = String.format("%s (%s)", am, amCur);
                         String strToShow = String.format(ctx.getString(R.string.TransactionDetails_received), formatted);
                         showToast(ctx, strToShow);
                     }

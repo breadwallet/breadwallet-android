@@ -145,11 +145,11 @@ public class PinActivity extends BRActivity {
                     if (ContextCompat.checkSelfPermission(app,
                             Manifest.permission.CAMERA)
                             != PackageManager.PERMISSION_GRANTED) {
-                        // Should we show an explanation?
+                        // Should we show an expgetString(R.string.ConfirmPaperPhrase_word)lanation?
                         if (ActivityCompat.shouldShowRequestPermissionRationale(app,
                                 Manifest.permission.CAMERA)) {
-                            BRDialog.showCustomDialog(app, "Permission Required.",
-                                    "Allow camera access in \"Settings\" > \"Apps\" > \"breadwallet\" > \"Permissions\"", "close", null, new BRDialogView.BROnClickListener() {
+                            BRDialog.showCustomDialog(app, getString(R.string.Permissions_title_Android),
+                                    getString(R.string.Permissions_body_Android), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                                         @Override
                                         public void onClick(BRDialogView brDialogView) {
                                             brDialogView.dismiss();
@@ -200,7 +200,6 @@ public class PinActivity extends BRActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e(TAG, "onResume: ");
         updateDots();
         appVisible = true;
         app = this;
@@ -309,7 +308,6 @@ public class PinActivity extends BRActivity {
                 new AuthManager.OnPinSuccess() {
                     @Override
                     public void onSuccess() {
-                        Log.e(TAG, "onSuccess: ");
                         inputAllowed = false;
                         if (AuthManager.getInstance().checkAuth(pin.toString(), PinActivity.this)) {
                             AuthManager.getInstance().authSuccess(PinActivity.this);

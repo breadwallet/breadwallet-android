@@ -103,7 +103,6 @@ public class FragmentTransactionDetails extends Fragment {
 
     }
 
-
     @Override
     public void onStop() {
         super.onStop();

@@ -256,13 +256,11 @@ public class FragmentReceive extends Fragment {
                 observer.removeGlobalOnLayoutListener(this);
                 animateBackgroundDim(backgroundLayout, false);
                 animateSignalSlide(signalLayout, false, null);
-//                showShareButtons(false);
             }
         });
 
         Bundle extras = getArguments();
         isReceive = extras.getBoolean("receive");
-        Log.e(TAG, "onViewCreated isReceive: " + isReceive);
         if (!isReceive) {
             signalLayout.removeView(separator);
             signalLayout.removeView(requestButton);

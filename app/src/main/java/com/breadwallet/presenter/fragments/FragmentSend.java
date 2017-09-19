@@ -91,7 +91,6 @@ public class FragmentSend extends Fragment {
     private Button scan;
     private Button paste;
     private Button send;
-    //    private RecyclerView currencyRecycler;
     private EditText commentEdit;
     private StringBuilder amountBuilder;
     private TextView isoText;
@@ -101,12 +100,9 @@ public class FragmentSend extends Fragment {
     private ImageView edit;
     private long curBalance;
     private String selectedIso;
-    //    private CurAdapter curAdapter;
     private Button isoButton;
     private int keyboardIndex;
-    //    private int currListIndex;
     private LinearLayout keyboardLayout;
-    //    private LinearLayout currencyListLayout;
     private ImageButton close;
     private ConstraintLayout amountLayout;
     private BRButton regular;
@@ -133,7 +129,6 @@ public class FragmentSend extends Fragment {
         paste = (Button) rootView.findViewById(R.id.paste_button);
         send = (Button) rootView.findViewById(R.id.send_button);
         commentEdit = (EditText) rootView.findViewById(R.id.comment_edit);
-//        currencyRecycler = (RecyclerView) rootView.findViewById(R.id.cur_spinner);
         amountEdit = (EditText) rootView.findViewById(R.id.amount_edit);
         balanceText = (TextView) rootView.findViewById(R.id.balance_text);
         feeText = (TextView) rootView.findViewById(R.id.fee_text);
@@ -147,13 +142,12 @@ public class FragmentSend extends Fragment {
 
         regular = (BRButton) rootView.findViewById(R.id.left_button);
         economy = (BRButton) rootView.findViewById(R.id.right_button);
-//        currencyListLayout = (LinearLayout) rootView.findViewById(R.id.cur_spinner_layout);
         close = (ImageButton) rootView.findViewById(R.id.close_button);
         selectedIso = BRSharedPrefs.getPreferredBTC(getContext()) ? "BTC" : BRSharedPrefs.getIso(getContext());
 
         amountBuilder = new StringBuilder(0);
         setListeners();
-        isoText.setText("Amount");
+        isoText.setText(getString(R.string.Send_amountLabel));
         isoText.setTextSize(18);
         isoText.setTextColor(getContext().getColor(R.color.light_gray));
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
@@ -161,7 +155,6 @@ public class FragmentSend extends Fragment {
         signalLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                removeCurrencySelector();
             }
         });
 
@@ -174,7 +167,6 @@ public class FragmentSend extends Fragment {
                 showFeeSelectionButtons(feeButtonsShown);
             }
         });
-//        currListIndex = signalLayout.indexOfChild(currencyListLayout);
         keyboardIndex = signalLayout.indexOfChild(keyboardLayout);
 
         ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
@@ -192,7 +184,6 @@ public class FragmentSend extends Fragment {
         });
 
         showKeyboard(false);
-//        showCurrencyList(false);
         setButton(true);
 
         signalLayout.setLayoutTransition(BRAnimator.getDefaultTransition());
@@ -260,7 +251,6 @@ public class FragmentSend extends Fragment {
                     set.connect(isoText.getId(), ConstraintSet.BOTTOM, 0, ConstraintSet.TOP, 0);
                     set.applyTo(amountLayout);
 
-
                 }
 
             }
@@ -269,7 +259,6 @@ public class FragmentSend extends Fragment {
         paste.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
                 String bitcoinUrl = BRClipboardManager.getClipboard(getActivity());
                 if (Utils.isNullOrEmpty(bitcoinUrl) || !isInputValid(bitcoinUrl)) {
@@ -286,12 +275,6 @@ public class FragmentSend extends Fragment {
                 }
                 address = obj.address;
                 final BRWalletManager wm = BRWalletManager.getInstance();
-
-//                if (wm.isValidBitcoinPrivateKey(address) || wm.isValidBitcoinBIP38Key(address)) {
-////                        wm.confirmSweep(getActivity(), address);
-////                        addressEdit.setText("");
-//                    return;
-//                }
 
                 if (BRWalletManager.validateAddress(address)) {
                     final String finalAddress = address;
@@ -358,7 +341,6 @@ public class FragmentSend extends Fragment {
         isoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                showCurrencyList(true);
                 if (selectedIso.equalsIgnoreCase(BRSharedPrefs.getIso(getContext()))) {
                     selectedIso = "BTC";
                 } else {
@@ -372,7 +354,6 @@ public class FragmentSend extends Fragment {
         scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.openScanner(getActivity(), BRConstants.SCANNER_REQUEST);
 
@@ -381,7 +362,6 @@ public class FragmentSend extends Fragment {
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                removeCurrencySelector();
                 //not allowed now
                 if (!BRAnimator.isClickAllowed()) {
                     return;
@@ -396,7 +376,6 @@ public class FragmentSend extends Fragment {
                 //get amount in satoshis from any isos
                 BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) ? "0" : amountStr);
                 BigDecimal satoshiAmount = BRExchange.getSatoshisFromAmount(getActivity(), iso, bigAmount);
-//                long amount = BRExchange.getAmountFromSatoshis(getActivity(), iso, satoshiAmount).longValue();
 
                 if (address.isEmpty() || !BRWalletManager.validateAddress(address)) {
                     allFilled = false;
@@ -419,7 +398,6 @@ public class FragmentSend extends Fragment {
         backgroundLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
                 getActivity().onBackPressed();
             }
@@ -454,7 +432,6 @@ public class FragmentSend extends Fragment {
         keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {
             @Override
             public void onClick(String key) {
-//                removeCurrencySelector();
                 handleClick(key);
             }
         });
@@ -471,15 +448,6 @@ public class FragmentSend extends Fragment {
                 setButton(false);
             }
         });
-
-//        final List<String> curList = new ArrayList<>();
-//        curList.add("BTC");
-//        if (getActivity() == null) return;
-//        curList.addAll(CurrencyDataSource.getInstance(getActivity()).getAllISOs());
-//        curAdapter = new CurAdapter(getContext(), curList);
-//        currencyRecycler.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-//        currencyRecycler.setAdapter(curAdapter);
-//        selectedIso = curAdapter.getItemAtPos(0);
         updateText();
 
     }
@@ -500,22 +468,8 @@ public class FragmentSend extends Fragment {
         }
     }
 
-//    private void showCurrencyList(boolean b) {
-//        Log.e(TAG, "showCurrencyList: " + currListIndex);
-//
-//        if (!b) {
-//            signalLayout.removeView(currencyListLayout);
-//        } else {
-//            if (signalLayout.indexOfChild(currencyListLayout) == -1)
-//                signalLayout.addView(currencyListLayout, currListIndex);
-//            else
-//                signalLayout.removeView(currencyListLayout);
-//
-//        }
-//    }
-
     private void showClipboardError() {
-        BRDialog.showCustomDialog(getActivity(), "Clipboard empty", getResources().getString(R.string.Send_invalidAddressTitle), "close", null, new BRDialogView.BROnClickListener() {
+        BRDialog.showCustomDialog(getActivity(), getString(R.string.Send_emptyPasteboard), getResources().getString(R.string.Send_invalidAddressTitle), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {
                 brDialogView.dismiss();
@@ -642,21 +596,19 @@ public class FragmentSend extends Fragment {
         //formattedBalance
         String aproxFee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, feeForISO);
         if (new BigDecimal((tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".")) ? "0" : tmpAmount).doubleValue() > balanceForISO.doubleValue()) {
-//            balanceString = String.format("Insufficient funds. Try an amount below your current balance: %s", formattedBalance);
             balanceText.setTextColor(getContext().getColor(R.color.warning_color));
             feeText.setTextColor(getContext().getColor(R.color.warning_color));
             amountEdit.setTextColor(getContext().getColor(R.color.warning_color));
             isoText.setTextColor(getContext().getColor(R.color.warning_color));
         } else {
-//            balanceString = String.format("Current Balance: %s", formattedBalance);
             balanceText.setTextColor(getContext().getColor(R.color.light_gray));
             feeText.setTextColor(getContext().getColor(R.color.light_gray));
             amountEdit.setTextColor(getContext().getColor(R.color.almost_black));
             isoText.setTextColor(getContext().getColor(R.color.almost_black));
         }
-        balanceString = String.format("Current Balance: %s", formattedBalance);
+        balanceString = String.format(getString(R.string.Send_balance), formattedBalance);
         balanceText.setText(String.format("%s", balanceString));
-        feeText.setText(String.format("Network Fee: %s", aproxFee));
+        feeText.setText(String.format(getString(R.string.Send_fee), aproxFee));
 
     }
 
@@ -684,8 +636,6 @@ public class FragmentSend extends Fragment {
             signalLayout.removeView(feeLayout);
         } else {
             signalLayout.addView(feeLayout, signalLayout.indexOfChild(amountLayout) + 1);
-//            regular = (BRButton) getActivity().findViewById(R.id.left);
-//            economy = (BRButton) getActivity().findViewById(R.id.right);
 
         }
     }
@@ -696,7 +646,6 @@ public class FragmentSend extends Fragment {
         if (tmpAmount.contains(".")) {
             divider = tmpAmount.indexOf(".");
         }
-        Log.e(TAG, "setAmount: " + divider);
         StringBuilder newAmount = new StringBuilder();
         for (int i = 0; i < tmpAmount.length(); i++) {
             newAmount.append(tmpAmount.charAt(i));
@@ -715,7 +664,7 @@ public class FragmentSend extends Fragment {
             regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue));
             economy.setTextColor(getContext().getColor(R.color.dark_blue));
             economy.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue_stroke));
-            feeDescription.setText("Estimated Delivery: 10-30 minutes");
+            feeDescription.setText(getString(R.string.FeeSelector_regularLabel));
             warningText.getLayoutParams().height = 0;
         } else {
             isEconomyFee = true;
@@ -724,7 +673,7 @@ public class FragmentSend extends Fragment {
             regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue_stroke));
             economy.setTextColor(getContext().getColor(R.color.white));
             economy.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue));
-            feeDescription.setText("Estimated Delivery: 60+ minutes");
+            feeDescription.setText(getString(R.string.FeeSelector_economyLabel));
             warningText.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;
         }
         warningText.requestLayout();
