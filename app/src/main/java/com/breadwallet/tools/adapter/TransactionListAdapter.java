@@ -186,8 +186,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         boolean received = item.getSent() == 0;
         convertView.arrowIcon.setImageResource(received ? R.drawable.arrow_down_bold_circle : R.drawable.arrow_up_bold_circle);
         convertView.mainLayout.setBackgroundResource(getResourceByPos(position));
-        convertView.sentReceived.setText(received ? "Received" : "Sent");
-        convertView.toFrom.setText(received ? "from" : "to");
+        convertView.sentReceived.setText(received ? mContext.getString(R.string.TransactionDetails_received, "") : mContext.getString(R.string.TransactionDetails_sent, ""));
+        convertView.toFrom.setText(received ? String.format(mContext.getString(R.string.TransactionDetails_from), "") : String.format(mContext.getString(R.string.TransactionDetails_to), ""));
         final String addr = received ? item.getFrom()[0] : item.getTo()[0];
         convertView.account.setText(addr);
         int blockHeight = item.getBlockHeight();
@@ -240,7 +240,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 break;
         }
         if (availableForSpend && received) {
-            convertView.status_2.setText("Available to Spend");
+            convertView.status_2.setText(mContext.getString(R.string.Transaction_available));
         } else {
             convertView.constraintLayout.removeView(convertView.status_2);
             ConstraintSet set = new ConstraintSet();
@@ -258,7 +258,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
 
         if (!item.isValid())
-            convertView.status.setText("INVALID");
+            convertView.status.setText(mContext.getString(R.string.Transaction_invalid));
 
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived());
 

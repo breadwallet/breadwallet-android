@@ -32,8 +32,14 @@
     <!-- Permission required -->
     <string name="Permissions.title.Android">Permission Required</string>
     <!-- Instructions how to allow the camera access for the app -->
-    <string name="Permissions.body.Android">"Allow camera access in \"Settings\" > \"Apps\" > \"breadwallet\" > \"Permissions\""</string>
+    <string name="Permissions.body.Android">Allow camera access in \"Settings\" > \"Apps\" > \"breadwallet\" > \"Permissions\"</string>
     <!-- Switch button from fingerprint to PIN insert -->
     <string name="Pin.title.Android">PIN</string>
+    <!-- Fingerprint was recognized by the scanner -->
+    <string name="Fingerprint.recognized.Android">Fingerprint recognized</string>
+    <!-- Fingerprint was not recognized by the scanner, please try scanning again -->
+    <string name="Fingerprint.not.recognized.Android">Fingerprint not recognized. Try again</string>
+    <!-- Instruction how to enable device encryption -->
+    <string name="Warning.encryption.body.Android">A device screen lock is needed to safeguard your wallet. Go to \"Settings\" > \"Security\" > \"Screen lock\"</string>
 
 </resources>

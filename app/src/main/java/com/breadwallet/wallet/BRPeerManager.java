@@ -325,11 +325,6 @@ public class BRPeerManager {
     }
 
     public void networkChanged(boolean isOnline) {
-
-//        final RelativeLayout networkErrorBar = (RelativeLayout) ctx.findViewById(R.id.main_internet_status_bar);
-//        if (networkErrorBar == null) return;
-//
-//        final boolean isConnected = ((BreadApp) ctx.getApplication()).hasInternetAccess();
         if (isOnline)
             new Thread(new Runnable() {
                 @Override
@@ -337,41 +332,8 @@ public class BRPeerManager {
                     BRPeerManager.getInstance().connect();
                 }
             }).start();
-//
-//        if (!isConnected) {
-//            ctx.runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    networkErrorBar.setVisibility(View.VISIBLE);
-//                }
-//            });
-//            BRPeerManager.stopSyncingProgressThread();
-//            Log.e(TAG, "Network Not Available ");
-//
-//        } else {
-//            new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(ctx));
-//                    ctx.runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            networkErrorBar.setVisibility(View.GONE);
-//
-//                        }
-//                    });
-//
-//                    if (progress < 1 && progress > 0) {
-//                        BRPeerManager.startSyncingProgressThread();
-//                    }
-//                    Log.d(TAG, "Network Available ");
-//                }
-//            }).start();
-//
-//        }
 
     }
-
 
     public void addStatusUpdateListener(OnTxStatusUpdate listener) {
         if (statusUpdateListeners == null) {

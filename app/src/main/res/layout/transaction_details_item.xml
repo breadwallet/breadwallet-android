@@ -34,11 +34,11 @@
                 android:id="@+id/close_button"
                 android:layout_width="32dp"
                 android:layout_height="32dp"
-                android:background="@drawable/ic_close_black_24dp"
+                android:layout_centerVertical="true"
                 android:layout_marginLeft="@dimen/bread_margin"
                 android:layout_marginRight="@dimen/bread_margin"
-                android:layout_centerVertical="true"
-               />
+                android:background="@drawable/ic_close_black_24dp"
+                />
 
             <com.breadwallet.presenter.customviews.BRText
                 android:id="@+id/title"
@@ -57,12 +57,12 @@
                 android:id="@+id/faq_button"
                 android:layout_width="@dimen/faq_dimen"
                 android:layout_height="@dimen/faq_dimen"
-                android:background="@drawable/faq_question_black"
-                android:layout_marginLeft="@dimen/bread_margin"
-                android:layout_marginRight="@dimen/bread_margin"
                 android:layout_alignBottom="@+id/title"
                 android:layout_alignParentEnd="true"
-                android:layout_marginEnd="@dimen/bread_margin"/>
+                android:layout_marginEnd="@dimen/bread_margin"
+                android:layout_marginLeft="@dimen/bread_margin"
+                android:layout_marginRight="@dimen/bread_margin"
+                android:background="@drawable/faq_question_black"/>
 
             <View
                 android:id="@+id/view"
@@ -119,10 +119,13 @@
                     android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
-                    android:text="to 1f97ydf9ys0c80s..."
+                    android:maxLines="1"
+                    android:lines="1"
+                    android:ellipsize="middle"
+                    android:text=""
                     android:textColor="@color/almost_black"
-                    android:textIsSelectable="true"
-                    android:textSize="18sp"
+                    android:textIsSelectable="false"
+                    android:textSize="16sp"
                     app:customFont="CircularPro-Book.otf"
                     />
 
