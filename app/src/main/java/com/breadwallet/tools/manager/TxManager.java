@@ -61,7 +61,7 @@ public class TxManager {
 
     private static final String TAG = TxManager.class.getName();
     private static TxManager instance;
-    private RecyclerView txList;
+    public RecyclerView txList;
     public TransactionListAdapter adapter;
     public PromptManager.PromptItem currentPrompt;
     private boolean isMetaDataUpdating;
@@ -211,6 +211,7 @@ public class TxManager {
                 @Override
                 public void run() {
                     txList.swapAdapter(adapter, true);
+
                     adapter.notifyDataSetChanged();
                 }
             });
