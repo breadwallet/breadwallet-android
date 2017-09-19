@@ -95,6 +95,7 @@ public class IntroActivity extends BRActivity implements Serializable {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSupportFragment(app, BRConstants.startView);
             }
         });

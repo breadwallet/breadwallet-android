@@ -239,12 +239,14 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         primaryPrice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
                 swap();
             }
         });
         secondaryPrice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
                 swap();
             }
         });
@@ -252,6 +254,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         searchIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
                 barFlipper.setDisplayedChild(1); //search bar
                 searchBar.onShow(true);
 

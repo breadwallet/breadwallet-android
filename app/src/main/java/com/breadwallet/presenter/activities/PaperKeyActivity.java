@@ -87,6 +87,7 @@ public class PaperKeyActivity extends BRActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.startBreadActivity(PaperKeyActivity.this, false);
                 if (!isDestroyed()) finish();
             }

@@ -66,6 +66,7 @@ public class SecurityCenterActivity extends BRActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
                 onBackPressed();
             }
         });
@@ -76,6 +77,7 @@ public class SecurityCenterActivity extends BRActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSupportFragment(app, BRConstants.securityCenter);
             }
         });
