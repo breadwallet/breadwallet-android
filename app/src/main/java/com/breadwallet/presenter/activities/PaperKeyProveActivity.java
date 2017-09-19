@@ -73,33 +73,16 @@ public class PaperKeyProveActivity extends BRActivity {
             public void run() {
 
                 TransitionManager.beginDelayedTransition(constraintLayout);
-//                applyConstraintSet.constrainMinHeight();
-//                int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 40, getResources().getDisplayMetrics());
                 applyConstraintSet.setMargin(R.id.word_number_first, ConstraintSet.TOP, 8);
                 applyConstraintSet.setMargin(R.id.line1, ConstraintSet.TOP, 16);
                 applyConstraintSet.setMargin(R.id.line2, ConstraintSet.TOP, 16);
                 applyConstraintSet.setMargin(R.id.word_number_second, ConstraintSet.TOP, 8);
                 applyConstraintSet.applyTo(constraintLayout);
 
-//                TransitionManager.beginDelayedTransition(constraintLayout);
-//                resetConstraintSet.applyTo(constraintLayout);
 
             }
         }, 500);
 
-//        wordEditSecond.setOnFocusChangeListener(new View.OnFocusChangeListener() {
-//            @Override
-//            public void onFocusChange(View v, boolean hasFocus) {
-//                TransitionManager.beginDelayedTransition(constraintLayout);
-//                if (hasFocus) {
-//                    applyConstraintSet.setMargin(R.id.word_number_second, ConstraintSet.TOP, 8);
-//                    applyConstraintSet.setMargin(R.id.word_edittext_second, ConstraintSet.TOP, 16);
-//                    applyConstraintSet.applyTo(constraintLayout);
-//                } else {
-//                    resetConstraintSet.applyTo(constraintLayout);
-//                }
-//            }
-//        });
 
         wordEditSecond.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -112,14 +95,6 @@ public class PaperKeyProveActivity extends BRActivity {
             }
         });
 
-//        new Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                wordEditFirst.requestFocus();
-//                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//                imm.toggleSoftInput(InputMethodManager.SHOW_FORCED,0);
-//            }
-//        }, 200);
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -131,7 +106,7 @@ public class PaperKeyProveActivity extends BRActivity {
                 if (edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0))) && edit2.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)))) {
                     Utils.hideKeyboard(PaperKeyProveActivity.this);
                     BRSharedPrefs.putPhraseWroteDown(PaperKeyProveActivity.this, true);
-                    BRAnimator.showBreadSignal(PaperKeyProveActivity.this, "Paper Key Set", "Awesome!", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
+                    BRAnimator.showBreadSignal(PaperKeyProveActivity.this, getString(R.string.Alerts_paperKeySet), getString(R.string.Alerts_paperKeySetSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                         @Override
                         public void onComplete() {
                             BRAnimator.startBreadActivity(PaperKeyProveActivity.this, false);
@@ -148,7 +123,6 @@ public class PaperKeyProveActivity extends BRActivity {
                         e.printStackTrace();
                         throw new NullPointerException("No word list");
                     }
-                    Log.e(TAG, "onClick: FAIL");
                     if (!list.contains(edit1) || !edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0)))) {
                         SpringAnimator.failShakeAnimation(PaperKeyProveActivity.this, wordTextFirst);
                     }
@@ -167,7 +141,6 @@ public class PaperKeyProveActivity extends BRActivity {
         if (Utils.isNullOrEmpty(cleanPhrase)) {
             throw new RuntimeException(TAG + ": cleanPhrase is null");
         }
-//        Log.e(TAG, "onCreate: " + cleanPhrase);
 
         String wordArray[] = cleanPhrase.split(" ");
 
@@ -220,8 +193,8 @@ public class PaperKeyProveActivity extends BRActivity {
 
         sparseArrayWords.append(n, words[n]);
 
-        wordTextFirst.setText(String.format(Locale.getDefault(), "Word #%d", (sparseArrayWords.keyAt(0) + 1)));
-        wordTextSecond.setText(String.format(Locale.getDefault(), "Word #%d", (sparseArrayWords.keyAt(1) + 1)));
+        wordTextFirst.setText(String.format(Locale.getDefault(), getString(R.string.ConfirmPaperPhrase_word), (sparseArrayWords.keyAt(0) + 1)));
+        wordTextSecond.setText(String.format(Locale.getDefault(), getString(R.string.ConfirmPaperPhrase_word), (sparseArrayWords.keyAt(1) + 1)));
     }
 
     @Override

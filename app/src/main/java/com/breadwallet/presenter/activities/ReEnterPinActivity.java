@@ -64,7 +64,7 @@ public class ReEnterPinActivity extends BRActivity {
         });
 
         title = (TextView) findViewById(R.id.title);
-        title.setText("Re-Enter PIN");
+        title.setText(getString(R.string.UpdatePin_createTitleConfirm));
         firstPIN = getIntent().getExtras().getString("pin");
         if (Utils.isNullOrEmpty(firstPIN)) {
             throw new RuntimeException("first PIN is required");
@@ -175,7 +175,7 @@ public class ReEnterPinActivity extends BRActivity {
             if (getIntent().getBooleanExtra("noPin", false)) {
                 BRAnimator.startBreadActivity(this, false);
             } else {
-                BRAnimator.showBreadSignal(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
+                BRAnimator.showBreadSignal(this, getString(R.string.Alerts_pinSet), getString(R.string.UpdatePin_createInstruction), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                     @Override
                     public void onComplete() {
                         PostAuth.getInstance().onCreateWalletAuth(ReEnterPinActivity.this, false);
@@ -187,7 +187,7 @@ public class ReEnterPinActivity extends BRActivity {
         } else {
             AuthManager.getInstance().authFail(this);
             Log.e(TAG, "verifyPin: FAIL: firs: " + firstPIN + ", reEnter: " + pin.toString());
-            title.setText("Wrong PIN,\nplease try again");
+//            title.setText("Wrong PIN,\nplease try again");
             SpringAnimator.failShakeAnimation(this, pinLayout);
             pin = new StringBuilder();
         }

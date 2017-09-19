@@ -105,7 +105,6 @@ public class BRActivity extends Activity {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Log.e(TAG, "run: result got back!");
                             String result = data.getStringExtra("result");
                             if (BitcoinUrlHandler.isBitcoinUrl(result))
                                 BitcoinUrlHandler.processRequest(BRActivity.this, result);
@@ -123,15 +122,8 @@ public class BRActivity extends Activity {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            Log.e(TAG, "run: result got back!");
                             String result = data.getStringExtra("result");
                             PostAuth.getInstance().onSendBch(BRActivity.this, true, result);
-//                            if (BitcoinUrlHandler.isBitcoinUrl(result))
-//                                BitcoinUrlHandler.processRequest(BRActivity.this, result);
-//                            else if (BRBitId.isBitId(result))
-//                                BRBitId.signBitID(BRActivity.this, result, null);
-//                            else
-//                                Log.e(TAG, "onActivityResult: not bitcoin address NOR bitID");
                         }
                     }, 500);
 

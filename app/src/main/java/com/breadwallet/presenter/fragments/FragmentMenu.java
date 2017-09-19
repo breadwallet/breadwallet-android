@@ -96,7 +96,7 @@ public class FragmentMenu extends Fragment {
         itemList = new ArrayList<>();
         boolean buyBitcoinEnabled = APIClient.getInstance(getActivity()).isFeatureEnabled(APIClient.FeatureFlags.BUY_BITCOIN.toString());
         if (buyBitcoinEnabled)
-            itemList.add(new BRMenuItem("Buy Bitcoin", R.drawable.buy_bitcoin, new View.OnClickListener() {
+            itemList.add(new BRMenuItem(getString(R.string.MenuButton_buy), R.drawable.buy_bitcoin, new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(getActivity(), WebViewActivity.class);
@@ -107,45 +107,36 @@ public class FragmentMenu extends Fragment {
 
                 }
             }));
-        itemList.add(new BRMenuItem("Security Center", R.drawable.ic_shield, new View.OnClickListener() {
+        itemList.add(new BRMenuItem(getString(R.string.MenuButton_security), R.drawable.ic_shield, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "onClick: Security Center");
                 Activity app = getActivity();
                 Intent intent = new Intent(app, SecurityCenterActivity.class);
                 app.startActivity(intent);
                 app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
             }
         }));
-        itemList.add(new BRMenuItem("Support", R.drawable.ic_question_mark, new View.OnClickListener() {
+        itemList.add(new BRMenuItem(getString(R.string.MenuButton_support), R.drawable.ic_question_mark, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "onClick: Support");
                 BRAnimator.showSupportFragment(getActivity(), null);
             }
         }));
-        itemList.add(new BRMenuItem("Settings", R.drawable.ic_settings, new View.OnClickListener() {
+        itemList.add(new BRMenuItem(getString(R.string.MenuButton_settings), R.drawable.ic_settings, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "onClick: Settings");
                 Intent intent = new Intent(getActivity(), SettingsActivity.class);
                 Activity app = getActivity();
                 app.startActivity(intent);
                 app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
             }
         }));
-        itemList.add(new BRMenuItem("Lock Wallet", R.drawable.ic_lock, new View.OnClickListener() {
+        itemList.add(new BRMenuItem(getString(R.string.MenuButton_lock), R.drawable.ic_lock, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.e(TAG, "onClick: Lock Wallet");
                 final Activity from = getActivity();
                 from.getFragmentManager().popBackStack();
-                BRAnimator.showBreadSignal(getActivity(), "Wallet Locked", "Wallet Locked", R.drawable.ic_wallet_locked, new BROnSignalCompletion() {
-                    @Override
-                    public void onComplete() {
-                        BRAnimator.startBreadActivity(from, true);
-                    }
-                });
+                BRAnimator.startBreadActivity(from, true);
             }
         }));
 
@@ -180,11 +171,6 @@ public class FragmentMenu extends Fragment {
         });
     }
 
-
-    public RelativeLayout getMainLayout() {
-        return background;
-    }
-
     public class MenuListAdapter extends ArrayAdapter<BRMenuItem> {
 
         private List<BRMenuItem> items;
@@ -200,8 +186,6 @@ public class FragmentMenu extends Fragment {
         @NonNull
         @Override
         public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
-//            Log.e(TAG, "getView: pos: " + position + ", item: " + items.get(position));
             if (convertView == null) {
                 // inflate the background
                 LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();

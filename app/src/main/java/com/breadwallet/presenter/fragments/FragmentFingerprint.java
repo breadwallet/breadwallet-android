@@ -123,7 +123,7 @@ public class FragmentFingerprint extends Fragment
             }
         });
         mCancelButton.setText(R.string.Button_cancel);
-        mSecondDialogButton.setText("PIN");
+        mSecondDialogButton.setText(getString(R.string.Pin_title_Android));
         mFingerprintContent.setVisibility(View.VISIBLE);
         mSecondDialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -204,30 +204,6 @@ public class FragmentFingerprint extends Fragment
 
         closeMe();
 
-//
-//        ((BreadApp) getActivity().getApplicationContext()).setUnlocked(true);
-//        FragmentSettingsAll.refreshUI();
-//        MiddleViewAdapter.resetMiddleView(getActivity(), null);
-//        ((BreadApp) getActivity().getApplicationContext()).allowKeyStoreAccessForSeconds();
-//        getDialog().dismiss();
-//        if (mode == BRConstants.AUTH_FOR_PHRASE) {
-//            PhraseFlowActivity app = ((PhraseFlowActivity) getActivity());
-//            if (BRSharedPrefs.getPhraseWroteDown(app)) {
-////                app.animateSlide(app.fragmentPhraseFlow1, app.fragmentRecoveryPhrase, IntroActivity.RIGHT);
-////                app.fragmentRecoveryPhrase.setPhrase(FragmentPhraseFlow1.phrase);
-//            } else {
-////                app.animateSlide(app.fragmentPhraseFlow1, app.fragmentPhraseFlow2, IntroActivity.RIGHT);
-////                app.fragmentPhraseFlow2.setPhrase(FragmentPhraseFlow1.phrase);
-//            }
-//        } else if (mode == BRConstants.AUTH_FOR_PAY && request != null) {
-//            PostAuth.getInstance().onPublishTxAuth((MainActivity) getActivity(),false);
-//        } else if (mode == BRConstants.AUTH_FOR_PAYMENT_PROTOCOL && paymentRequest != null) {
-//            if (paymentRequest.paymentURL == null || paymentRequest.paymentURL.isEmpty()) return;
-//            new PaymentProtocolPostPaymentTask(paymentRequest).execute();
-//        } else if (mode == AUTH_FOR_BIT_ID){
-//            RequestHandler.processBitIdResponse(getActivity());
-//        }
-//        dismiss();
     }
 
     public void setCompletion(BRAuthCompletion completion) {

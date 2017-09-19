@@ -175,12 +175,14 @@ public class FragmentTransactionItem extends Fragment {
         //calculated and formatted fee for iso
         String fee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(item.getFee())));
         //description (Sent $24.32 ....)
-        Spannable descriptionString = sent ? new SpannableString("Sent " + amountWithFee) : new SpannableString("Received " + amount);
+        Spannable descriptionString = sent ? new SpannableString(String.format(getString(R.string.TransactionDetails_sent), amountWithFee)) : new SpannableString(String.format(getString(R.string.TransactionDetails_received), amount));
 
         String startingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(sent ? item.getBalanceAfterTx() + txAmount.longValue() : item.getBalanceAfterTx() - txAmount.longValue())));
         String endingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(item.getBalanceAfterTx())));
         String commentString = txMetaData == null || txMetaData.comment == null ? "" : txMetaData.comment;
-        String amountString = String.format("%s %s\n\nStarting Balance: %s\nEnding Balance:  %s", amount, item.getFee() == -1 ? "" : String.format("(%s fee)", fee), startingBalance, endingBalance);
+        String sb = String.format(getString(R.string.Transaction_starting), startingBalance);
+        String eb = String.format(getString(R.string.Transaction_ending), endingBalance);
+        String amountString = String.format("%s %s\n\n%s\n%s", amount, item.getFee() == -1 ? "" : String.format("(%s fee)", fee), sb, eb);
 
         SpannableString addr = sent ? new SpannableString(item.getTo()[0]) : new SpannableString(item.getFrom()[0]);
         SpannableString toFrom = sent ? new SpannableString("to") : new SpannableString("from");
@@ -194,9 +196,7 @@ public class FragmentTransactionItem extends Fragment {
 
         int relayCount = BRPeerManager.getRelayCount(item.getTxHash());
 
-        int level = 0;
-        Log.e(TAG, "setTexts: confirms: " + confirms);
-        Log.e(TAG, "setTexts: relayCount: " + relayCount);
+        int level;
 
         if (confirms <= 0) {
             if (relayCount <= 0)
@@ -292,7 +292,7 @@ public class FragmentTransactionItem extends Fragment {
                 public void run() {
                     TxManager.getInstance().updateTxList(app);
                 }
-            },200);
+            }, 200);
 
         }
         oldComment = null;

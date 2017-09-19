@@ -237,7 +237,6 @@ public class SettingsActivity extends BRActivity {
             }
         }, false));
 
-
         items.add(new BRSettingsItem("", "", null, true)); //just for a blank space
 
     }

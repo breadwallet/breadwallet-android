@@ -56,7 +56,7 @@ public class UpdatePitActivity extends BRActivity {
         pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
         if (BRKeyStore.getPinCode(this).length() == 4) pinLimit = 4;
         setMode(ENTER_PIN);
-        title.setText("Update PIN");
+        title.setText(getString(R.string.UpdatePin_updateTitle));
         dot1 = findViewById(R.id.dot1);
         dot2 = findViewById(R.id.dot2);
         dot3 = findViewById(R.id.dot3);
@@ -162,7 +162,7 @@ public class UpdatePitActivity extends BRActivity {
             case RE_ENTER_NEW_PIN:
                 if (curNewPin.equalsIgnoreCase(pin.toString())) {
                     AuthManager.getInstance().setPinCode(pin.toString(), this);
-                    BRAnimator.showBreadSignal(this, "PIN Set", "Use your PIN to login and send money.", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
+                    BRAnimator.showBreadSignal(this, getString(R.string.Alerts_pinSet), getString(R.string.UpdatePin_caption), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                         @Override
                         public void onComplete() {
                             BRAnimator.startBreadActivity(UpdatePitActivity.this, false);
@@ -184,13 +184,13 @@ public class UpdatePitActivity extends BRActivity {
         this.mode = mode;
         switch (mode) {
             case ENTER_PIN:
-                text = "Enter your current PIN.";
+                text = getString(R.string.UpdatePin_enterCurrent);
                 break;
             case ENTER_NEW_PIN:
-                text = "Enter your new PIN.";
+                text = getString(R.string.UpdatePin_enterNew);
                 break;
             case RE_ENTER_NEW_PIN:
-                text = "Re-Enter your new PIN.";
+                text = getString(R.string.UpdatePin_reEnterNew);
                 break;
         }
         description.setText(text);

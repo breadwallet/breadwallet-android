@@ -140,9 +140,6 @@ public class FragmentSupport extends Fragment {
                 BRAnimator.animateSignalSlide(signalLayout, false, new BRAnimator.OnSlideAnimationEnd() {
                     @Override
                     public void onAnimationEnd() {
-//                        Bundle bundle = getArguments();
-//                        if (bundle != null && bundle.getString("url") != null)
-//                            setUrl(bundle.getString("url"));
                     }
                 });
             }
