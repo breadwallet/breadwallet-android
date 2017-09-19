@@ -70,13 +70,6 @@ public class NodesActivity extends BRActivity {
         ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
         faq.setVisibility(View.GONE);
 
-//        faq.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                    ....
-//            }
-//        });
-
         nodeStatus = (TextView) findViewById(R.id.node_status);
         trustNode = (TextView) findViewById(R.id.node_text);
 
@@ -119,11 +112,11 @@ public class NodesActivity extends BRActivity {
 
     private void updateButtonText() {
         if (BRSharedPrefs.getTrustNode(this).isEmpty()) {
-            switchButton.setText("Switch to Manual Mode");
+            switchButton.setText(getString(R.string.NodeSelector_manualButton));
         } else {
-            switchButton.setText("Switch to Automatic Mode");
+            switchButton.setText(getString(R.string.NodeSelector_automaticButton));
         }
-        nodeStatus.setText(BRPeerManager.getInstance().isConnected() ? "Connected" : "Not Connected");
+        nodeStatus.setText(BRPeerManager.getInstance().isConnected() ? getString(R.string.NodeSelector_connected) : getString(R.string.NodeSelector_notConnected));
         if (trustNode != null)
             trustNode.setText(BRPeerManager.getInstance().getCurrentPeerName());
     }
@@ -138,11 +131,11 @@ public class NodesActivity extends BRActivity {
         int pad32 = Utils.getPixelsFromDps(app, 32);
         int pad16 = Utils.getPixelsFromDps(app, 16);
         customTitle.setPadding(pad16, pad16, pad16, pad16);
-        customTitle.setText("Enter Node");
+        customTitle.setText(getString(R.string.NodeSelector_enterTitle));
         customTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
         customTitle.setTypeface(null, Typeface.BOLD);
         alertDialog.setCustomTitle(customTitle);
-        alertDialog.setMessage("Enter node ip address and port");
+        alertDialog.setMessage(getString(R.string.NodeSelector_enterBody));
 
         final EditText input = new EditText(app);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
@@ -154,14 +147,14 @@ public class NodesActivity extends BRActivity {
         input.setLayoutParams(lp);
         alertDialog.setView(input);
 
-        alertDialog.setNegativeButton("cancel",
+        alertDialog.setNegativeButton(getString(R.string.Button_cancel),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.cancel();
                     }
                 });
 
-        alertDialog.setPositiveButton("OK",
+        alertDialog.setPositiveButton(getString(R.string.Button_ok),
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
 
@@ -180,7 +173,7 @@ public class NodesActivity extends BRActivity {
                     BRSharedPrefs.putTrustNode(app, str);
                     if (!updatingNode) {
                         updatingNode = true;
-                        customTitle.setText("Updating node...");
+                        customTitle.setText(getString(R.string.Webview_updating));
                         new Thread(new Runnable() {
                             @Override
                             public void run() {
@@ -189,7 +182,7 @@ public class NodesActivity extends BRActivity {
                                 runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        customTitle.setText("Updated");
+                                        customTitle.setText(getString(R.string.RecoverWallet_done));
                                         new Handler().postDelayed(new Runnable() {
                                             @Override
                                             public void run() {
@@ -209,7 +202,7 @@ public class NodesActivity extends BRActivity {
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            customTitle.setText("set a trusted node");
+                            customTitle.setText(getString(R.string.NodeSelector_enterTitle));
                         }
                     }, 1000);
                 }

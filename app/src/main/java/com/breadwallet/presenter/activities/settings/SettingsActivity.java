@@ -24,6 +24,7 @@ import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
+import com.platform.APIClient;
 import com.platform.HTTPServer;
 
 import java.util.ArrayList;
@@ -122,9 +123,9 @@ public class SettingsActivity extends BRActivity {
 
     private void populateItems() {
 
-        items.add(new BRSettingsItem("Wallet", "", null, true));
+        items.add(new BRSettingsItem(getString(R.string.Settings_wallet), "", null, true));
 
-        items.add(new BRSettingsItem("Import Wallet", "", new View.OnClickListener() {
+        items.add(new BRSettingsItem(getString(R.string.Settings_importTitle), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, ImportActivity.class);
@@ -134,7 +135,7 @@ public class SettingsActivity extends BRActivity {
             }
         }, false));
 
-        items.add(new BRSettingsItem("Start/Recover Another Wallet", "", new View.OnClickListener() {
+        items.add(new BRSettingsItem(getString(R.string.Settings_wipe), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, RestoreActivity.class);
@@ -143,9 +144,10 @@ public class SettingsActivity extends BRActivity {
             }
         }, false));
 
-        items.add(new BRSettingsItem("Manage", "", null, true));
+        items.add(new BRSettingsItem(getString(R.string.Settings_manage), "", null, true));
 
-        items.add(new BRSettingsItem("Notifications", BRSharedPrefs.getShowNotification(this) ? "On" : "Off", new View.OnClickListener() {
+        items.add(new BRSettingsItem(getString(R.string.Settings_notifications), BRSharedPrefs.getShowNotification(this) ?
+                getString(R.string.PushNotifications_on) : getString(R.string.PushNotifications_off), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, NotificationActivity.class);
@@ -156,10 +158,10 @@ public class SettingsActivity extends BRActivity {
         }, false));
 
         if (AuthManager.isFingerPrintAvailableAndSetup(this)) {
-            items.add(new BRSettingsItem("Fingerprint Spending Limit", "", new View.OnClickListener() {
+            items.add(new BRSettingsItem(getString(R.string.Settings_fingerprintLimit_Android), "", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AuthManager.getInstance().authPrompt(SettingsActivity.this, null, "Please enter your PIN to be able to change the limit.", true, new BRAuthCompletion() {
+                    AuthManager.getInstance().authPrompt(SettingsActivity.this, null, getString(R.string.VerifyPin_continueBody), true, new BRAuthCompletion() {
                         @Override
                         public void onComplete() {
                             Intent intent = new Intent(SettingsActivity.this, SpendLimitActivity.class);
@@ -177,7 +179,7 @@ public class SettingsActivity extends BRActivity {
             }, false));
         }
 
-        items.add(new BRSettingsItem("Display Currency", BRSharedPrefs.getIso(this), new View.OnClickListener() {
+        items.add(new BRSettingsItem(getString(R.string.Settings_currency), BRSharedPrefs.getIso(this), new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, DisplayCurrencyActivity.class);
@@ -186,7 +188,7 @@ public class SettingsActivity extends BRActivity {
             }
         }, false));
 
-        items.add(new BRSettingsItem("Sync Blockchain", "", new View.OnClickListener() {
+        items.add(new BRSettingsItem(getString(R.string.Settings_sync), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, SyncBlockchainActivity.class);
@@ -197,7 +199,7 @@ public class SettingsActivity extends BRActivity {
 
         items.add(new BRSettingsItem("Bread", "", null, true));
 
-        items.add(new BRSettingsItem("Share Anonymous Data", "", new View.OnClickListener() {
+        items.add(new BRSettingsItem(getString(R.string.Settings_shareData), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, ShareDataActivity.class);
@@ -205,17 +207,19 @@ public class SettingsActivity extends BRActivity {
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false));
-        items.add(new BRSettingsItem("Join Early Access Program", "", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, WebViewActivity.class);
-                intent.putExtra("url", HTTPServer.URL_EA);
-                Activity app = SettingsActivity.this;
-                app.startActivity(intent);
-                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
-            }
-        }, false));
-        items.add(new BRSettingsItem("About", "", new View.OnClickListener() {
+        boolean eaEnabled = APIClient.getInstance(this).isFeatureEnabled(APIClient.FeatureFlags.EARLY_ACCESS.toString());
+        if (eaEnabled)
+            items.add(new BRSettingsItem(getString(R.string.Settings_earlyAccess), "", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(SettingsActivity.this, WebViewActivity.class);
+                    intent.putExtra("url", HTTPServer.URL_EA);
+                    Activity app = SettingsActivity.this;
+                    app.startActivity(intent);
+                    app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+                }
+            }, false));
+        items.add(new BRSettingsItem(getString(R.string.Settings_about), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, AboutActivity.class);
@@ -223,8 +227,8 @@ public class SettingsActivity extends BRActivity {
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false));
-        items.add(new BRSettingsItem("Other", "", null, true));
-        items.add(new BRSettingsItem("Advanced", "", new View.OnClickListener() {
+        items.add(new BRSettingsItem("", "", null, true));
+        items.add(new BRSettingsItem(getString(R.string.Settings_advancedTitle), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, AdvancedActivity.class);
@@ -232,7 +236,6 @@ public class SettingsActivity extends BRActivity {
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false));
-
 
 
         items.add(new BRSettingsItem("", "", null, true)); //just for a blank space

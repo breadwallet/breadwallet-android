@@ -67,7 +67,7 @@ public class FingerprintActivity extends BRActivity {
                 Activity app = FingerprintActivity.this;
                 if (isChecked && !Utils.isFingerprintEnrolled(app)) {
                     Log.e(TAG, "onCheckedChanged: fingerprint not setup");
-                    BRDialog.showCustomDialog(app, "Fingerprint Not Setup", "You have not setup any fingerprints on this device. Go to Settings -> Security to setup a fingerprint.", "OK", null, new BRDialogView.BROnClickListener() {
+                    BRDialog.showCustomDialog(app, getString(R.string.Fingerprint_warning_title_Android), getString(R.string.Fingerprint_warning_body_Android), getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();
@@ -80,7 +80,7 @@ public class FingerprintActivity extends BRActivity {
 
             }
         });
-        SpannableString ss = new SpannableString("You can customize your Fingerprint Spending Limit from the Fingerprint Spending Limit screen");
+        SpannableString ss = new SpannableString(getString(R.string.Fingerprint_customize_body_Android));
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(View textView) {
@@ -113,7 +113,7 @@ public class FingerprintActivity extends BRActivity {
         //amount in user preferred ISO (e.g. USD)
         BigDecimal curAmount = BRExchange.getAmountFromSatoshis(this, iso, satoshis);
         //formatted string for the label
-        return String.format("Spending Limit: %s (%s)", BRCurrency.getFormattedCurrencyString(this, "BTC", amount), BRCurrency.getFormattedCurrencyString(this, iso, curAmount));
+        return String.format(getString(R.string.TouchIdSettings_spendingLimit), BRCurrency.getFormattedCurrencyString(this, "BTC", amount), BRCurrency.getFormattedCurrencyString(this, iso, curAmount));
     }
 
     @Override

@@ -64,19 +64,6 @@ public class WithdrawBchActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_withdraw_bch);
 
-//        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
-//
-//        faq.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Activity app = WithdrawBchActivity.this;
-//                Intent intent = new Intent(app, WebViewActivity.class);
-//                intent.putExtra("url", URL_SUPPORT);
-//                intent.putExtra("articleId", BRConstants.reScan);
-//                app.startActivity(intent);
-//                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
-//            }
-//        });
         description = (TextView) findViewById(R.id.description);
         txIdLabel = (TextView) findViewById(R.id.tx_label);
         paste = (Button) findViewById(R.id.paste);
@@ -93,7 +80,7 @@ public class WithdrawBchActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 BRClipboardManager.putClipboard(WithdrawBchActivity.this, txHash.getText().toString().trim());
-                BRToast.showCustomToast(WithdrawBchActivity.this, "Transaction Id copied", BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                BRToast.showCustomToast(WithdrawBchActivity.this, getString(R.string.BCH_hashCopiedMessage), BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
             }
         });
 
@@ -171,7 +158,6 @@ public class WithdrawBchActivity extends BRActivity {
                                             alert[0].show();
                                             BRClipboardManager.putClipboard(WithdrawBchActivity.this, "");
 
-
                                         } else {
                                             confirmSendingBCH(WithdrawBchActivity.this, bitcoinUrl);
                                         }
@@ -202,28 +188,6 @@ public class WithdrawBchActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.openScanner(WithdrawBchActivity.this, SCANNER_BCH_REQUEST);
-//                BRDialog.showCustomDialog(WithdrawBchActivity.this, "Sync with Blockchain?",
-//                        "You will not be able to send money while syncing.", "Sync", "Cancel",
-//                        new BRDialogView.BROnClickListener() {
-//                            @Override
-//                            public void onClick(BRDialogView brDialogView) {
-//                                brDialogView.dismissWithAnimation();
-//                                new Thread(new Runnable() {
-//                                    @Override
-//                                    public void run() {
-//                                        BRSharedPrefs.putStartHeight(WithdrawBchActivity.this, 0);
-//                                        BRPeerManager.getInstance().rescan();
-//                                        BRAnimator.startBreadActivity(WithdrawBchActivity.this, false);
-//
-//                                    }
-//                                }).start();
-//                            }
-//                        }, new BRDialogView.BROnClickListener() {
-//                            @Override
-//                            public void onClick(BRDialogView brDialogView) {
-//                                brDialogView.dismissWithAnimation();
-//                            }
-//                        }, null, 0);
             }
         });
         updateUi(this);
@@ -265,17 +229,17 @@ public class WithdrawBchActivity extends BRActivity {
 
     public static void confirmSendingBCH(final Activity app, final String theAddress) {
         if (BRPeerManager.getCurrentBlockHeight() < 478559) {
-            BRDialog.showCustomDialog(app, "Not synced", "Please wait for syncing to complete before using this feature.", "close", null,
+            BRDialog.showCustomDialog(app, "Not synced", "Please wait for syncing to complete before using this feature.", app.getString(R.string.AccessibilityLabels_close), null,
                     new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
-
+                            brDialogView.dismissWithAnimation();
                         }
                     }, null, null, 0);
         } else {
             address = theAddress;
             if (BRWalletManager.getBCashBalance(BRKeyStore.getMasterPublicKey(app)) == 0) {
-                BRDialog.showCustomDialog(app, "No balance", "You have 0 BCH", "close", null,
+                BRDialog.showCustomDialog(app, "No balance", "You have 0 BCH", app.getString(R.string.AccessibilityLabels_close), null,
                         new BRDialogView.BROnClickListener() {
                             @Override
                             public void onClick(BRDialogView brDialogView) {

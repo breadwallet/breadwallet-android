@@ -81,7 +81,6 @@ public class ScanQRActivity extends BRActivity {
             public void onDetected(final String data) {
                 if (handlingCode) return;
                 if (BitcoinUrlHandler.isBitcoinUrl(data) || BRBitId.isBitId(data)) {
-                    Log.e(TAG, "onDetected: YES it is bitcoin URL");
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -94,13 +93,12 @@ public class ScanQRActivity extends BRActivity {
                         }
                     });
                 }  else {
-                    Log.e(TAG, "onDetected: NO it is NOT bitcoin URL");
                     runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             lastUpdated = System.currentTimeMillis();
                             cameraGuide.setImageResource(R.drawable.cameraguide_red);
-                            descriptionText.setText("Not a valid bitcoin url");
+                            descriptionText.setText(getString(R.string.Send_invalidAddressTitle));
                         }
                     });
                 }

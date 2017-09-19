@@ -28,7 +28,6 @@ public class NotificationActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_notification);
 
-
         toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         toggleButton.setChecked(BRSharedPrefs.getShowNotification(this));
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
