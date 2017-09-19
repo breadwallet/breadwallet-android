@@ -175,7 +175,11 @@ public class ReplicatedKVStore {
             values.put(PlatformSqliteHelper.KV_VALUE, kv.value);
             values.put(PlatformSqliteHelper.KV_TIME, kv.time);
             values.put(PlatformSqliteHelper.KV_DELETED, kv.deleted);
-            long n = db.insert(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, values);
+            long n = db.insertWithOnConflict(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
+            if (n == -1) {
+                //try updating if inserting failed
+                n = db.update(PlatformSqliteHelper.KV_STORE_TABLE_NAME, values, "key=?", new String[]{kv.key});
+            }
             return n != -1;
         } catch (Exception e) {
             e.printStackTrace();
