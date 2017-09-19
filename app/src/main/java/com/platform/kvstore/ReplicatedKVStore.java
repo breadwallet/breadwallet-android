@@ -747,14 +747,8 @@ public class ReplicatedKVStore {
                 cursor.moveToNext();
                 byte[] value = cursor.getBlob(0);
                 if (Utils.isNullOrEmpty(value)) throw new NullPointerException("cannot be empty");
-                ContentValues values = new ContentValues();
-                values.put(PlatformSqliteHelper.KV_VERSION, newVer);
-                values.put(PlatformSqliteHelper.KV_KEY, key);
-                values.put(PlatformSqliteHelper.KV_VALUE, value);
-                values.put(PlatformSqliteHelper.KV_TIME, time);
-                values.put(PlatformSqliteHelper.KV_DELETED, 1);
-
-                db.insert(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, values);
+                KVItem kvToInsert = new KVItem(newVer, -1, key, value, time, 1);
+                insert(kvToInsert);
                 db.setTransactionSuccessful();
             } finally {
                 db.endTransaction();
