@@ -311,7 +311,8 @@
                 android:layout_height="0dp"
                 android:layout_margin="4dp"
                 android:layout_weight="1"
-                android:text="SEND"
+                android:textAllCaps="true"
+                android:text="@string/Send.sendLabel"
                 android:textColor="@color/pin_pad_text"
                 app:customFont="CircularPro-Medium.otf"/>
         </LinearLayout>
@@ -337,7 +338,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
                 android:layout_weight="1"
-                android:text="RECEIVE"
+                android:text="@string/Button.receive"
+                android:textAllCaps="true"
                 android:textColor="@color/pin_pad_text"
                 app:customFont="CircularPro-Medium.otf"/>
         </LinearLayout>
@@ -363,7 +365,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="4dp"
                 android:layout_weight="1"
-                android:text="MENU"
+                android:text="@string/Button.menu"
+                android:textAllCaps="true"
                 android:textColor="@color/pin_pad_text"
                 app:customFont="CircularPro-Medium.otf"/>
         </LinearLayout>
