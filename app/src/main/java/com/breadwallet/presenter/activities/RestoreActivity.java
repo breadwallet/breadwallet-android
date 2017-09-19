@@ -38,6 +38,7 @@ public class RestoreActivity extends BRActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSupportFragment(app, BRConstants.wipeWallet);
             }
         });
@@ -56,6 +57,7 @@ public class RestoreActivity extends BRActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
                 onBackPressed();
             }
         });

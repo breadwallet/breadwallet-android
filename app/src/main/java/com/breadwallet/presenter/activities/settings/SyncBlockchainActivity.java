@@ -42,6 +42,7 @@ public class SyncBlockchainActivity extends BRActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSupportFragment(app, BRConstants.reScan);
             }
         });

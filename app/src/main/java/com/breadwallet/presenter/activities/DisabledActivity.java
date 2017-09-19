@@ -52,6 +52,7 @@ public class DisabledActivity extends BRActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSupportFragment(DisabledActivity.this, BRConstants.walletDisabled);
             }
         });

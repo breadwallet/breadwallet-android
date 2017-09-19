@@ -79,6 +79,7 @@ public class WithdrawBchActivity extends BRActivity {
         txHash.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
                 BRClipboardManager.putClipboard(WithdrawBchActivity.this, txHash.getText().toString().trim());
                 BRToast.showCustomToast(WithdrawBchActivity.this, getString(R.string.BCH_hashCopiedMessage), BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
             }
