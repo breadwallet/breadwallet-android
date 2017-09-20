@@ -1,5 +1,7 @@
 package com.breadwallet.tools.manager;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -47,6 +49,18 @@ public class SyncManager {
     private SyncManager() {
     }
 
+    public void createAlarm(long time){
+        AlarmManager alarmManager = (AlarmManager) getActivity().getSystemService(Context.ALARM_SERVICE);
+        Intent intent = new Intent(getActivity(), MyReceiver.class);
+        intent.setAction(MyReceiver.ACTION_ALARM_RECEIVER);//my custom string action name
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(getActivity(), 1001, intent, PendingIntent.FLAG_CANCEL_CURRENT);//used unique ID as 1001
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), aroundInterval, pendingIntent);//first start will start asap
+    }
+
+    public void updateAlarms(){
+
+    }
+
     public class SyncReceiver extends BroadcastReceiver {
         public  final String TAG = SyncReceiver.class.getSimpleName();
         public  final String ACTION_ALARM_RECEIVER = "ACTION_ALARM_RECEIVER";
@@ -55,7 +69,7 @@ public class SyncManager {
         public void onReceive(Context context, Intent intent) {
             if (intent != null)
                 if (ACTION_ALARM_RECEIVER.equals(intent.getAction())) {
-                    Log.d(TAG, new Exception().getStackTrace()[0].getMethodName() + " " + c.getTime());
+                    Log.e(TAG, new Exception().getStackTrace()[0].getMethodName() + " " + c.getTime());
                     //do something here
                 }
         }
