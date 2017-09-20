@@ -193,6 +193,18 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
+    public static long getLastSyncTime(Context activity) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getLong("lastSyncTime", 0);
+    }
+
+    public static void putLastSyncTime(Context activity, long time) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong("lastSyncTime", time);
+        editor.apply();
+    }
+
     public static List<Integer> getBitIdNonces(Context activity, String key) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         String result = prefs.getString(key, null);
