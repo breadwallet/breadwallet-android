@@ -1,15 +1,16 @@
-package com.breadwallet.tools.manager;
+package com.breadwallet.tools.listeners;
 
-import android.app.Activity;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
+import android.app.IntentService;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.util.Log;
 
-import com.breadwallet.tools.listeners.SyncReceiver;
+import com.breadwallet.R;
+import com.breadwallet.wallet.BRWalletManager;
 
-import java.util.concurrent.TimeUnit;
+import java.util.Calendar;
 
 /**
  * BreadWallet
@@ -35,30 +36,23 @@ import java.util.concurrent.TimeUnit;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class SyncManager {
+public class SyncReceiver extends IntentService {
+    public final String TAG = SyncReceiver.class.getSimpleName();
+    public final static String SYNC_RECEIVER = "SYNC_RECEIVER";
+    private Calendar c = Calendar.getInstance();
 
-    private static final String TAG = SyncManager.class.getName();
-    private static SyncManager instance;
-    private static final long SYNC_PERIOD = TimeUnit.HOURS.toMillis(24);
-
-    public static SyncManager getInstance() {
-        if (instance == null) instance = new SyncManager();
-        return instance;
+    public SyncReceiver() {
+        super("SyncReceiver");
     }
 
-    private SyncManager() {
+    @Override
+    protected void onHandleIntent(Intent workIntent) {
+        Log.e(TAG, "onReceive: some ");
+        if (workIntent != null)
+            if (SYNC_RECEIVER.equals(workIntent.getAction())) {
+                Log.e(TAG, new Exception().getStackTrace()[0].getMethodName() + " " + c.getTime());
+                BRWalletManager.getInstance().setUpTheWallet(getApplication());
+            }
     }
-
-    private void createAlarm(Activity app, long time) {
-        AlarmManager alarmManager = (AlarmManager) app.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(app, SyncReceiver.class);
-        intent.setAction(SyncReceiver.SYNC_RECEIVER);//my custom string action name
-        PendingIntent pendingIntent = PendingIntent.getService(app, 1001, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.setWindow(AlarmManager.RTC_WAKEUP, time, time + TimeUnit.MINUTES.toMillis(1), pendingIntent);//first start will start asap
-    }
-
-    public void updateAlarms(Activity app) {
-        createAlarm(app, System.currentTimeMillis() + SYNC_PERIOD);
-    }
-
 }
+
