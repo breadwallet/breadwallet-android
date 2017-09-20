@@ -213,6 +213,10 @@
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>
+
+        <receiver
+            android:name=".tools.manager.SyncManager$SyncReceiver"
+            android:label="SyncReceiver" />
     </application>
 
 </manifest>
