@@ -18,6 +18,7 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
@@ -90,6 +91,7 @@ public class IntroActivity extends BRActivity implements Serializable {
         setListeners();
         updateBundles();
 
+        SyncManager.getInstance().updateAlarms(this);
         faq = (ImageButton) findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {

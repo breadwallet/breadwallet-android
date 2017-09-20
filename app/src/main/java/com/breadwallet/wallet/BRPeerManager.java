@@ -10,6 +10,7 @@ import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.PromptManager;
+import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
@@ -89,6 +90,8 @@ public class BRPeerManager {
         Log.d(TAG, "syncSucceeded");
         final Activity app = BreadApp.getBreadContext();
         if (app == null) return;
+        BRSharedPrefs.putLastSyncTime(app, System.currentTimeMillis());
+        SyncManager.getInstance().updateAlarms(app);
         BRSharedPrefs.putAllowSpend(app, true);
         getInstance().stopSyncingProgressThread();
         new Thread(new Runnable() {

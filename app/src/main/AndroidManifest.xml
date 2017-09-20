@@ -214,9 +214,11 @@
             android:screenOrientation="portrait">
         </activity>
 
-        <receiver
-            android:name=".tools.manager.SyncManager$SyncReceiver"
-            android:label="SyncReceiver" />
+        <service
+            android:name=".tools.listeners.SyncReceiver"
+            android:enabled="true"
+            android:exported="false"
+            android:label="SyncReceiver"/>
     </application>
 
 </manifest>

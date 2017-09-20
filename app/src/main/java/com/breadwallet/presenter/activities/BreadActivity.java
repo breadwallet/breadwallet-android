@@ -239,14 +239,12 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         primaryPrice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
                 swap();
             }
         });
         secondaryPrice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
                 swap();
             }
         });
