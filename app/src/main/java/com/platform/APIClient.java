@@ -433,7 +433,7 @@ public class APIClient {
 
             currentTarVersion = Utils.bytesToHex(hash);
             Log.d(TAG, bundleFile + ": updateBundle: version of the current tar: " + currentTarVersion);
-
+            FileAssert.printDirectoryTree(new File(getExtractedPath(ctx, null)));
             if (latestVersion != null) {
                 if (latestVersion.equals(currentTarVersion)) {
                     Log.d(TAG, bundleFile + ": updateBundle: have the latest version");
@@ -447,6 +447,8 @@ public class APIClient {
             } else {
                 Log.d(TAG, bundleFile + ": updateBundle: latestVersion is null");
             }
+            Log.e(TAG, "updateBundle: After extract");
+            FileAssert.printDirectoryTree(new File(getExtractedPath(ctx, null)));
 
         } else {
             Log.d(TAG, bundleFile + ": updateBundle: bundle doesn't exist, downloading new copy");
@@ -778,13 +780,63 @@ public class APIClient {
 
 
     @TargetApi(Build.VERSION_CODES.N)
-    public String getCurrentLocale(Context ctx){
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N){
+    public String getCurrentLocale(Context ctx) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
             return ctx.getResources().getConfiguration().getLocales().get(0).getLanguage();
-        } else{
+        } else {
             //noinspection deprecation
             return ctx.getResources().getConfiguration().locale.getLanguage();
         }
     }
 
+}
+
+class FileAssert {
+    private static final String TAG = FileAssert.class.getName();
+
+    public static void printDirectoryTree(File folder) {
+        if (!folder.isDirectory()) {
+            throw new IllegalArgumentException("folder is not a Directory");
+        }
+        Log.e(TAG, folder.getAbsolutePath());
+        int indent = 0;
+        StringBuilder sb = new StringBuilder();
+        printDirectoryTree(folder, indent, sb);
+        Log.e(TAG, sb.toString());
+    }
+
+    private static void printDirectoryTree(File folder, int indent,
+                                           StringBuilder sb) {
+        if (!folder.isDirectory()) {
+            throw new IllegalArgumentException("folder is not a Directory");
+        }
+        sb.append(getIndentString(indent));
+        sb.append("+--");
+        sb.append(folder.getName());
+        sb.append("/");
+        sb.append("\n");
+        for (File file : folder.listFiles()) {
+            if (file.isDirectory()) {
+                printDirectoryTree(file, indent + 1, sb);
+            } else {
+                printFile(file, indent + 1, sb);
+            }
+        }
+
+    }
+
+    private static void printFile(File file, int indent, StringBuilder sb) {
+        sb.append(getIndentString(indent));
+        sb.append("+--");
+        sb.append(file.getName());
+        sb.append("\n");
+    }
+
+    private static String getIndentString(int indent) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < indent; i++) {
+            sb.append("|  ");
+        }
+        return sb.toString();
+    }
 }

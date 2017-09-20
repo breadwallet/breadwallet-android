@@ -95,7 +95,6 @@ public class BRButton extends Button {
         shadow = BitmapFactory.decodeResource(getResources(), R.drawable.shadow);
         bPaint = new Paint();
         bPaintStroke = new Paint();
-
         shadowRect = new Rect(0, 0, 100, 100);
         bRect = new RectF(0, 0, 100, 100);
         TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.BRText);
@@ -172,7 +171,6 @@ public class BRButton extends Button {
         float px = getTextSize();
         while (lines > 1 && !getText().toString().contains("\n")) {
             limit--;
-//            Log.e(TAG, "correctTextSizeIfNeeded: (" + getText().toString() + ")resizing by 2..: " + px);
             px -= 1;
             setTextSize(TypedValue.COMPLEX_UNIT_PX, px);
             lines = getLineCount();
