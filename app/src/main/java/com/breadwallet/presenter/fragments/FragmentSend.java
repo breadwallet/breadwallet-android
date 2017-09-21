@@ -114,7 +114,6 @@ public class FragmentSend extends Fragment {
     public static boolean isEconomyFee;
 
     @Override
-
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_send, container, false);
@@ -593,6 +592,7 @@ public class FragmentSend extends Fragment {
         String formattedBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, balanceForISO);
         //Balance depending on ISO
         long fee = curBalance == 0 ? 0 : BRWalletManager.getInstance().feeForTransactionAmount(curBalance);
+        Log.e(TAG, "updateText: retrieved fee is: " + fee);
         BigDecimal feeForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance == 0 ? 0 : fee));
         //formattedBalance
         String aproxFee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, feeForISO);
@@ -626,7 +626,6 @@ public class FragmentSend extends Fragment {
             String iso = selectedIso;
             BigDecimal satoshiAmount = new BigDecimal(obj.amount).multiply(new BigDecimal(100000000));
             amountBuilder = new StringBuilder(BRExchange.getAmountFromSatoshis(getActivity(), iso, satoshiAmount).toPlainString());
-
             updateText();
 
         }
