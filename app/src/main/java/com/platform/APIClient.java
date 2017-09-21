@@ -463,7 +463,9 @@ public class APIClient {
                 throw new NullPointerException("failed to write bundle to file");
 
             boolean b = tryExtractTar();
-            if (!b) throw new NullPointerException("failed to extract the bundle tar");
+            if (!b) {
+                Log.e(TAG, "updateBundle: Failed to extract tar");
+            }
         }
 
         logFiles("updateBundle after", ctx);
