@@ -25,16 +25,6 @@ model {
                     }
                 }
             }
-            create("demo") {
-                applicationId "com.breaddemo"
-                resValues.with {
-                    create() {
-                        type = "string"
-                        name = "app_name"
-                        value = "bread-demo"
-                    }
-                }
-            }
 
         }
 
