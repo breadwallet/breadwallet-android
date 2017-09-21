@@ -442,7 +442,6 @@ public class APIClient {
                     Log.d(TAG, bundleFile + ": updateBundle: don't have the most recent version, download diff");
                     downloadDiff(currentTarVersion);
                     tryExtractTar();
-
                 }
             } else {
                 Log.d(TAG, bundleFile + ": updateBundle: latestVersion is null");
@@ -519,6 +518,7 @@ public class APIClient {
 
         } catch (IOException | InvalidHeaderException | CompressorException | NullPointerException e) {
             Log.e(TAG, "downloadDiff: ", e);
+            new File(getBundleResource(ctx, BREAD_POINT + ".tar")).delete();
         } finally {
             if (patchFile != null)
                 patchFile.delete();

@@ -524,7 +524,6 @@ Java_com_breadwallet_wallet_BRWalletManager_feeForTransactionAmount(JNIEnv *env,
     if (!_wallet) return 0;
 
     uint64_t fee = BRWalletFeeForTxAmount(_wallet, (uint64_t) amount);
-
     return (jlong) fee;
 }
 
@@ -694,7 +693,7 @@ JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRWalletManager_setFeePerKb(J
                                                                                jobject obj,
                                                                                jlong fee,
                                                                                jboolean ignore) {
-    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "setFeePerKb");
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "setFeePerKb, ignore:%d, fee: %lli", ignore, fee);
     if (!_wallet || ignore) return;
     BRWalletSetFeePerKb(_wallet, (uint64_t) fee);
 }
