@@ -587,11 +587,13 @@ public class FragmentSend extends Fragment {
         isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
         isoButton.setText(String.format("%s(%s)", BRCurrency.getCurrencyName(getActivity(), selectedIso), BRCurrency.getSymbolByIso(getActivity(), selectedIso)));
         //Balance depending on ISO
+        long satoshis = Utils.isNullOrEmpty(tmpAmount) ? 0 :
+                (selectedIso.equalsIgnoreCase("btc") ? BRExchange.getSatoshisForBitcoin(getActivity(), new BigDecimal(tmpAmount)).longValue() : BRExchange.getSatoshisFromAmount(getActivity(), selectedIso, new BigDecimal(tmpAmount)).longValue());
         BigDecimal balanceForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance));
         //formattedBalance
         String formattedBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, balanceForISO);
         //Balance depending on ISO
-        long fee = curBalance == 0 ? 0 : BRWalletManager.getInstance().feeForTransactionAmount(curBalance);
+        long fee = satoshis == 0 ? 0 : BRWalletManager.getInstance().feeForTransactionAmount(satoshis);
         Log.e(TAG, "updateText: retrieved fee is: " + fee);
         BigDecimal feeForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance == 0 ? 0 : fee));
         //formattedBalance
@@ -659,7 +661,7 @@ public class FragmentSend extends Fragment {
     private void setButton(boolean isRegular) {
         if (isRegular) {
             isEconomyFee = false;
-            BRWalletManager.getInstance().setFeePerKb(BRSharedPrefs.getFeePerKb(getContext()), isEconomyFee);
+            BRWalletManager.getInstance().setFeePerKb(BRSharedPrefs.getFeePerKb(getContext()), false);
             regular.setTextColor(getContext().getColor(R.color.white));
             regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue));
             economy.setTextColor(getContext().getColor(R.color.dark_blue));
@@ -668,7 +670,7 @@ public class FragmentSend extends Fragment {
             warningText.getLayoutParams().height = 0;
         } else {
             isEconomyFee = true;
-            BRWalletManager.getInstance().setFeePerKb(BRSharedPrefs.getEconomyFeePerKb(getContext()), isEconomyFee);
+            BRWalletManager.getInstance().setFeePerKb(BRSharedPrefs.getEconomyFeePerKb(getContext()), false);
             regular.setTextColor(getContext().getColor(R.color.dark_blue));
             regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue_stroke));
             economy.setTextColor(getContext().getColor(R.color.white));
