@@ -138,7 +138,6 @@ public class HTTPFileMiddleware implements Middleware {
             } else {
                 return BRHTTPHelper.handleSuccess(200, body, baseRequest, response, null);
             }
-
         }
 
     }

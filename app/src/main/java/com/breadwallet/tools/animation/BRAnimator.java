@@ -34,6 +34,7 @@ import com.breadwallet.presenter.activities.PinActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.TxItem;
+import com.breadwallet.presenter.fragments.FragmentGreetings;
 import com.breadwallet.presenter.fragments.FragmentMenu;
 import com.breadwallet.presenter.fragments.FragmentSignal;
 import com.breadwallet.presenter.fragments.FragmentReceive;
@@ -319,6 +320,18 @@ public class BRAnimator {
         transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
         transaction.add(android.R.id.content, new FragmentMenu(), FragmentMenu.class.getName());
         transaction.addToBackStack(FragmentMenu.class.getName());
+        transaction.commit();
+
+    }
+    public static void showGreetingsMessage(Activity app) {
+        if (app == null) {
+            Log.e(TAG, "showGreetingsMessage: app is null");
+            return;
+        }
+        FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
+        transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
+        transaction.add(android.R.id.content, new FragmentGreetings(), FragmentGreetings.class.getName());
+        transaction.addToBackStack(FragmentGreetings.class.getName());
         transaction.commit();
 
     }
