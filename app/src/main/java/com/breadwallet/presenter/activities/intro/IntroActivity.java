@@ -12,6 +12,7 @@ import android.widget.ImageButton;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.SetPinActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
@@ -153,7 +154,7 @@ public class IntroActivity extends BRActivity implements Serializable {
                 Intent intent = new Intent(IntroActivity.this, SetPinActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-
+                BRSharedPrefs.putGreetingsShown(IntroActivity.this, true);
             }
         });
 
@@ -164,6 +165,7 @@ public class IntroActivity extends BRActivity implements Serializable {
                 Intent intent = new Intent(IntroActivity.this, RecoverActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                BRSharedPrefs.putGreetingsShown(IntroActivity.this, true);
 
             }
         });

@@ -170,6 +170,15 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
         TxManager.getInstance().init(this);
 
+        if (!BRSharedPrefs.getGreetingsShown(BreadActivity.this))
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    BRAnimator.showGreetingsMessage(BreadActivity.this);
+                    BRSharedPrefs.putGreetingsShown(BreadActivity.this, true);
+                }
+            }, 1000);
+
     }
 
     @Override

@@ -15,6 +15,7 @@ import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.util.FileHelper;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
@@ -433,7 +434,7 @@ public class APIClient {
 
             currentTarVersion = Utils.bytesToHex(hash);
             Log.d(TAG, bundleFile + ": updateBundle: version of the current tar: " + currentTarVersion);
-            FileAssert.printDirectoryTree(new File(getExtractedPath(ctx, null)));
+//            FileHelper.printDirectoryTree(new File(getExtractedPath(ctx, null)));
             if (latestVersion != null) {
                 if (latestVersion.equals(currentTarVersion)) {
                     Log.d(TAG, bundleFile + ": updateBundle: have the latest version");
@@ -446,8 +447,7 @@ public class APIClient {
             } else {
                 Log.d(TAG, bundleFile + ": updateBundle: latestVersion is null");
             }
-            Log.e(TAG, "updateBundle: After extract");
-            FileAssert.printDirectoryTree(new File(getExtractedPath(ctx, null)));
+//            FileHelper.printDirectoryTree(new File(getExtractedPath(ctx, null)));
 
         } else {
             Log.d(TAG, bundleFile + ": updateBundle: bundle doesn't exist, downloading new copy");
@@ -791,54 +791,4 @@ public class APIClient {
         }
     }
 
-}
-
-class FileAssert {
-    private static final String TAG = FileAssert.class.getName();
-
-    public static void printDirectoryTree(File folder) {
-        if (!folder.isDirectory()) {
-            throw new IllegalArgumentException("folder is not a Directory");
-        }
-        Log.e(TAG, folder.getAbsolutePath());
-        int indent = 0;
-        StringBuilder sb = new StringBuilder();
-        printDirectoryTree(folder, indent, sb);
-        Log.e(TAG, sb.toString());
-    }
-
-    private static void printDirectoryTree(File folder, int indent,
-                                           StringBuilder sb) {
-        if (!folder.isDirectory()) {
-            throw new IllegalArgumentException("folder is not a Directory");
-        }
-        sb.append(getIndentString(indent));
-        sb.append("+--");
-        sb.append(folder.getName());
-        sb.append("/");
-        sb.append("\n");
-        for (File file : folder.listFiles()) {
-            if (file.isDirectory()) {
-                printDirectoryTree(file, indent + 1, sb);
-            } else {
-                printFile(file, indent + 1, sb);
-            }
-        }
-
-    }
-
-    private static void printFile(File file, int indent, StringBuilder sb) {
-        sb.append(getIndentString(indent));
-        sb.append("+--");
-        sb.append(file.getName());
-        sb.append("\n");
-    }
-
-    private static String getIndentString(int indent) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < indent; i++) {
-            sb.append("|  ");
-        }
-        return sb.toString();
-    }
 }
