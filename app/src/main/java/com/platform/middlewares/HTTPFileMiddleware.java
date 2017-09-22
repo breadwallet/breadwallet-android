@@ -5,8 +5,11 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.crypto.CryptoHelper;
+import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
 import com.platform.HTTPServer;
@@ -15,6 +18,7 @@ import com.platform.interfaces.Middleware;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.json.JSONObject;
 
 import java.io.File;
 import java.io.IOException;
@@ -23,6 +27,11 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import okhttp3.MediaType;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 
 /**
@@ -51,6 +60,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class HTTPFileMiddleware implements Middleware {
     public static final String TAG = HTTPFileMiddleware.class.getName();
+    private final static String DEBUG_URL = null; //modify for testing
 
     @Override
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
@@ -63,50 +73,74 @@ public class HTTPFileMiddleware implements Middleware {
             Log.e(TAG, "handle: app is null!");
             return true;
         }
-
-        File temp;
-        String requestedFile = APIClient.getInstance(app).getExtractedPath(app, target);
-        temp = new File(requestedFile);
-        if (temp.exists() && !temp.isDirectory()) {
-            Log.d(TAG, "handle: found bundle for:" + target);
-        } else {
-            Log.d(TAG, "handle: no bundle found for: " + target);
-            return false;
-        }
-
-        Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-        boolean modified = true;
-        byte[] md5 = CryptoHelper.md5(TypesConverter.long2byteArray(temp.lastModified()));
-        String hexEtag = Utils.bytesToHex(md5);
-        response.setHeader("ETag", hexEtag);
-
-        // if the client sends an if-none-match header, determine if we have a newer version of the file
-        String etag = request.getHeader("if-none-match");
-        if (etag != null && etag.equalsIgnoreCase(hexEtag)) modified = false;
-
+        File temp = null;
         byte[] body = null;
-        if (modified) {
+        if (DEBUG_URL == null) {
+            // fetch the file locally
+            String requestedFile = APIClient.getInstance(app).getExtractedPath(app, target);
+            temp = new File(requestedFile);
+            if (temp.exists() && !temp.isDirectory()) {
+                Log.d(TAG, "handle: found bundle for:" + target);
+            } else {
+                Log.d(TAG, "handle: no bundle found for: " + target);
+                return false;
+            }
+
+            Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+            boolean modified = true;
+            byte[] md5 = CryptoHelper.md5(TypesConverter.long2byteArray(temp.lastModified()));
+            String hexEtag = Utils.bytesToHex(md5);
+            response.setHeader("ETag", hexEtag);
+
+            // if the client sends an if-none-match header, determine if we have a newer version of the file
+            String etag = request.getHeader("if-none-match");
+            if (etag != null && etag.equalsIgnoreCase(hexEtag)) modified = false;
+
+            if (modified) {
+                try {
+                    body = FileUtils.readFileToByteArray(temp);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (body == null) {
+                    return BRHTTPHelper.handleError(400, "could not read the file", baseRequest, response);
+                }
+            } else {
+                return BRHTTPHelper.handleSuccess(304, null, baseRequest, response, null);
+            }
+            response.setContentType(detectContentType(temp));
+
+        } else {
+            // download the file from the debug endpoint
+            String debugUrl = DEBUG_URL + target;
+
+            Request debugRequest = new Request.Builder()
+                    .url(debugUrl)
+                    .get().build();
+            Response debugResp;
             try {
-                body = FileUtils.readFileToByteArray(temp);
+                debugResp = APIClient.getInstance(app).sendRequest(debugRequest, false, 0);
+                if (debugResp != null)
+                    body = debugResp.body().bytes();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            if (body == null) {
-                return BRHTTPHelper.handleError(400, "could not read the file", baseRequest, response);
-            }
-        } else {
-            return BRHTTPHelper.handleSuccess(304, null, baseRequest, response, null);
-        }
-        response.setContentType(detectContentType(temp));
 
+        }
 
         String rangeString = request.getHeader("range");
         if (!Utils.isNullOrEmpty(rangeString)) {
             // Range header should match format "bytes=n-n,n-n,n-n...". If not, then return 416.
             return handlePartialRequest(baseRequest, response, temp);
         } else {
-            return BRHTTPHelper.handleSuccess(200, body, baseRequest, response, null);
+            if(body == null) {
+                return BRHTTPHelper.handleError(404, "not found", baseRequest, response);
+            } else {
+                return BRHTTPHelper.handleSuccess(200, body, baseRequest, response, null);
+            }
+
         }
+
     }
 
     private boolean handlePartialRequest(org.eclipse.jetty.server.Request request, HttpServletResponse response, File file) {
