@@ -262,7 +262,7 @@ public class FragmentTransactionItem extends Fragment {
         mCommentText.setText(commentString);
 
         mAmountText.setText(amountString);
-        mAddressText.setText(sent ? item.getFrom()[0] : item.getTo()[0]);
+        mAddressText.setText(addr);
     }
 
     @Override
