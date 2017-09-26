@@ -264,8 +264,8 @@ public class AuthManager {
         } else {
             BRDialog.showCustomDialog(app,
                     "",
-                    "A device screen lock is needed to safeguard your wallet. Go to \"Settings\" > \"Security\" > \"Screen lock\" and enable to continue.",
-                    "close",
+                    app.getString(R.string.Warning_encryption_body_Android),
+                    app.getString(R.string.AccessibilityLabels_close),
                     null,
                     new BRDialogView.BROnClickListener() {
                 @Override

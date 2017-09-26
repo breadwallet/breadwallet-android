@@ -40,6 +40,6 @@
     <!-- Fingerprint was not recognized by the scanner, please try scanning again -->
     <string name="Fingerprint.not.recognized.Android">Fingerprint not recognized. Try again</string>
     <!-- Instruction how to enable device encryption -->
-    <string name="Warning.encryption.body.Android">A device screen lock is needed to safeguard your wallet. Go to \"Settings\" > \"Security\" > \"Screen lock\"</string>
+    <string name="Warning.encryption.body.Android">A device screen lock is needed to safeguard your wallet. Go to \"Settings\" > \"Security\" > \"Screen lock\" and enable to continue.</string>
 
 </resources>

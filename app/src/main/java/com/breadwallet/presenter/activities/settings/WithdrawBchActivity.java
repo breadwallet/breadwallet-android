@@ -229,8 +229,8 @@ public class WithdrawBchActivity extends BRActivity {
     }
 
     public static void confirmSendingBCH(final Activity app, final String theAddress) {
-        if (BRPeerManager.getCurrentBlockHeight() < 478559) { //todo fix translations for this class
-            BRDialog.showCustomDialog(app, "Not synced", "Please wait for syncing to complete before using this feature.", app.getString(R.string.AccessibilityLabels_close), null,
+        if (BRPeerManager.getCurrentBlockHeight() < 478559) {
+            BRDialog.showCustomDialog(app, "", app.getString(R.string.Send_isRescanning), app.getString(R.string.AccessibilityLabels_close), null,
                     new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
@@ -240,7 +240,7 @@ public class WithdrawBchActivity extends BRActivity {
         } else {
             address = theAddress;
             if (BRWalletManager.getBCashBalance(BRKeyStore.getMasterPublicKey(app)) == 0) {
-                BRDialog.showCustomDialog(app, "No balance", "You have 0 BCH", app.getString(R.string.AccessibilityLabels_close), null,
+                BRDialog.showCustomDialog(app, "", app.getString(R.string.BCH_genericError), app.getString(R.string.AccessibilityLabels_close), null,
                         new BRDialogView.BROnClickListener() {
                             @Override
                             public void onClick(BRDialogView brDialogView) {
@@ -248,7 +248,7 @@ public class WithdrawBchActivity extends BRActivity {
                             }
                         }, null, null, 0);
             } else {
-                AuthManager.getInstance().authPrompt(app, "Sending out BCH", theAddress, true, new BRAuthCompletion() {
+                AuthManager.getInstance().authPrompt(app, app.getString(R.string.BCH_confirmationTitle), theAddress, true, new BRAuthCompletion() {
                     @Override
                     public void onComplete() {
                         PostAuth.getInstance().onSendBch(getApp(), false, address);
