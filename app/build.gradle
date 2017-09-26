@@ -1,6 +1,7 @@
 apply plugin: 'com.android.model.application'
 
 model {
+
     android {
         compileSdkVersion = 25
         buildToolsVersion = '25.0.3'
@@ -10,8 +11,9 @@ model {
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
             targetSdkVersion.apiLevel = 25
-            versionCode = 109
-            versionName = "109"
+            versionCode = 111
+            versionName = "111"
+
         }
 
         productFlavors.with {
@@ -23,7 +25,38 @@ model {
                         name = "app_name"
                         value = "bread"
                     }
+
                 }
+                buildConfigFields {
+                    create() {
+                        type = "boolean"
+                        name = "BITCOIN_TESTNET"
+                        value = "false"
+                    }
+                }
+            }
+            create("bread-testnet") {
+                applicationId "com.breadtestnet"
+                resValues.with {
+                    create() {
+                        type = "string"
+                        name = "app_name"
+                        value = "bread-testnet"
+                    }
+
+                }
+                buildConfigFields {
+                    create() {
+                        type = "boolean"
+                        name = "BITCOIN_TESTNET"
+                        value = "true"
+                    }
+                }
+
+                ndk {
+                    CFlags.addAll(['-DBITCOIN_TESTNET=1'])
+                }
+
             }
 
         }
@@ -66,15 +99,7 @@ model {
                 minifyEnabled = false
                 debuggable = false
 
-                buildConfigFields.with {
-                    create() {
-                        type = "boolean"
-                        name = "BITCOIN_TESTNET"
-                        value = "false"
-                    }
-                }
                 ndk {
-                    CFlags.addAll(['-DBITCOIN_TESTNET=0'])
                     minifyEnabled = false
                     debuggable = false
                 }
@@ -83,15 +108,8 @@ model {
                 proguardFiles.add(file('proguard-rules.pro'))
                 debuggable = true
                 minifyEnabled = false
-                buildConfigFields.with {
-                    create() {
-                        type = "boolean"
-                        name = "BITCOIN_TESTNET"
-                        value = "true"
-                    }
-                }
+
                 ndk {
-                    CFlags.addAll(['-DBITCOIN_TESTNET=1'])
                     minifyEnabled = false
                     debuggable = true
                 }
