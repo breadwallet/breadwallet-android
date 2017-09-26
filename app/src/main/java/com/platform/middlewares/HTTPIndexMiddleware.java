@@ -56,7 +56,8 @@ public class HTTPIndexMiddleware implements Middleware {
             return true;
         }
 
-        String indexFile = APIClient.getInstance(app).getExtractedPath(app, "/index.html");
+        String indexFile = APIClient.getInstance(app).getExtractedPath(app, rTrim(target, "/") + "/index.html");
+        Log.e(TAG, "handle: indexFile: " + indexFile);
 
         File temp = new File(indexFile);
         if (!temp.exists()) {
@@ -76,5 +77,12 @@ public class HTTPIndexMiddleware implements Middleware {
             return BRHTTPHelper.handleError(500, null, baseRequest, response);
         }
 
+    }
+
+    public String rTrim(String str, String piece) {
+        if (str.endsWith(piece)) {
+            return str.substring(str.lastIndexOf(piece), str.length());
+        }
+        return str;
     }
 }
