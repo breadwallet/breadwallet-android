@@ -3,13 +3,16 @@ package com.breadwallet.tools.security;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
+import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.security.InvalidKeyException;
@@ -56,11 +59,13 @@ public class BRErrorPipe {
                     }, null, new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialogInterface) {
-                            if (context instanceof IntroActivity) {
-//                                if (BRAnimator.checkTheMultipressingAvailability()) {
-//                                    ((IntroActivity) context).showRecoverWalletFragment();
-//                                }
-                                //todo fix
+                            if (context instanceof Activity) {
+                                if (!BRAnimator.isClickAllowed()) return;
+                                Intent intent = new Intent(context, RecoverActivity.class);
+                                context.startActivity(intent);
+                                ((Activity) context).overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                                BRSharedPrefs.putGreetingsShown(context, true);
+
                             }
                         }
                     });
@@ -69,10 +74,11 @@ public class BRErrorPipe {
                     context instanceof IntroActivity ?
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {
-//                                    if (BRAnimator.checkTheMultipressingAvailability()) {
-//                                        ((IntroActivity) context).showRecoverWalletFragment();
-//                                    }
-                                    //todo fix
+                                    if (!BRAnimator.isClickAllowed()) return;
+                                    Intent intent = new Intent(context, RecoverActivity.class);
+                                    context.startActivity(intent);
+                                    ((Activity) context).overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                                    BRSharedPrefs.putGreetingsShown(context, true);
                                 }
                             } : null, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
