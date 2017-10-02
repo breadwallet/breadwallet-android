@@ -51,7 +51,7 @@ public class AboutActivity extends BRActivity {
         }
         int verCode = pInfo != null ? pInfo.versionCode : 0;
 
-        infoText.setText(String.format(Locale.getDefault(), "%s %d", getString(R.string.About_footer), verCode));
+        infoText.setText(String.format(Locale.getDefault(), getString(R.string.About_footer) , verCode));
 
         redditShare = (ImageView) findViewById(R.id.reddit_share_button);
         twitterShare = (ImageView) findViewById(R.id.twitter_share_button);
