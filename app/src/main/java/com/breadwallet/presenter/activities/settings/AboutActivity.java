@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.platform.HTTPServer;
 
 import java.util.Locale;
@@ -56,7 +57,7 @@ public class AboutActivity extends BRActivity {
         }
         int verCode = pInfo != null ? pInfo.versionCode : 0;
 
-        infoText.setText(String.format(Locale.getDefault(), getString(R.string.About_footer) , verCode));
+        infoText.setText(String.format(Locale.getDefault(), getString(R.string.About_footer), verCode));
 
         redditShare = (ImageView) findViewById(R.id.reddit_share_button);
         twitterShare = (ImageView) findViewById(R.id.twitter_share_button);
@@ -114,7 +115,11 @@ public class AboutActivity extends BRActivity {
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        if (ActivityUTILS.isLast(this)) {
+            BRAnimator.startBreadActivity(this, false);
+        } else {
+            super.onBackPressed();
+        }
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 
