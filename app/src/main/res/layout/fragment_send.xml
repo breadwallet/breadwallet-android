@@ -156,9 +156,9 @@
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/amount_layout"
-            android:animateLayoutChanges="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:animateLayoutChanges="true"
             android:orientation="horizontal">
 
             <com.breadwallet.presenter.customviews.BRText
@@ -167,13 +167,14 @@
                 android:layout_height="wrap_content"
                 android:layout_centerVertical="true"
                 android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
                 android:text="$"
                 android:textSize="28sp"
                 app:customFont="CircularPro-Medium.otf"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.478"/>
+                app:layout_constraintVertical_bias="0.0"/>
 
             <com.breadwallet.presenter.customviews.BREdit
                 android:id="@+id/amount_edit"
