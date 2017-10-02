@@ -27,6 +27,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
@@ -253,6 +254,17 @@ public class FragmentSend extends Fragment {
 
                 }
 
+            }
+        });
+
+        //needed to fix the overlap bug
+        commentEdit.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    amountLayout.requestLayout();
+                    return true;
+                }
+                return false;
             }
         });
 
@@ -587,7 +599,7 @@ public class FragmentSend extends Fragment {
         isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
         isoButton.setText(String.format("%s(%s)", BRCurrency.getCurrencyName(getActivity(), selectedIso), BRCurrency.getSymbolByIso(getActivity(), selectedIso)));
         //Balance depending on ISO
-        long satoshis = Utils.isNullOrEmpty(tmpAmount) ? 0 :
+        long satoshis = (Utils.isNullOrEmpty(tmpAmount) || tmpAmount.equalsIgnoreCase(".")) ? 0 :
                 (selectedIso.equalsIgnoreCase("btc") ? BRExchange.getSatoshisForBitcoin(getActivity(), new BigDecimal(tmpAmount)).longValue() : BRExchange.getSatoshisFromAmount(getActivity(), selectedIso, new BigDecimal(tmpAmount)).longValue());
         BigDecimal balanceForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance));
         //formattedBalance
@@ -612,7 +624,7 @@ public class FragmentSend extends Fragment {
         balanceString = String.format(getString(R.string.Send_balance), formattedBalance);
         balanceText.setText(String.format("%s", balanceString));
         feeText.setText(String.format(getString(R.string.Send_fee), aproxFee));
-
+        amountLayout.requestLayout();
     }
 
     public void setUrl(String url) {
@@ -693,8 +705,10 @@ public class FragmentSend extends Fragment {
 
         // Checks whether a hardware keyboard is available
         if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO) {
+            Log.e(TAG, "onConfigurationChanged: hidden");
             showKeyboard(true);
         } else if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_YES) {
+            Log.e(TAG, "onConfigurationChanged: shown");
             showKeyboard(false);
         }
     }
