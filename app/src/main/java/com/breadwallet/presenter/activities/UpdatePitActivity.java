@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,6 +17,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.util.BRConstants;
 
 public class UpdatePitActivity extends BRActivity {
     private static final String TAG = UpdatePitActivity.class.getName();
@@ -36,6 +38,7 @@ public class UpdatePitActivity extends BRActivity {
     public static final int ENTER_NEW_PIN = 2;
     public static final int RE_ENTER_NEW_PIN = 3;
 
+    private ImageButton faq;
     private LinearLayout pinLayout;
     private String curNewPin = "";
     public static boolean appVisible = false;
@@ -63,6 +66,16 @@ public class UpdatePitActivity extends BRActivity {
         dot4 = findViewById(R.id.dot4);
         dot5 = findViewById(R.id.dot5);
         dot6 = findViewById(R.id.dot6);
+
+        faq = (ImageButton) findViewById(R.id.faq_button);
+
+        faq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
+                BRAnimator.showSupportFragment(app, BRConstants.setPin);
+            }
+        });
 
 
         keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {
