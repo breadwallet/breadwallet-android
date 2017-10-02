@@ -1,7 +1,9 @@
 package com.breadwallet.presenter.activities.util;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.Intent;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -17,6 +19,10 @@ import com.breadwallet.tools.manager.ConnectionManager;
 import com.breadwallet.tools.manager.CurrencyFetchManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.platform.HTTPServer;
+
+import java.util.List;
+
+import static android.content.Context.ACTIVITY_SERVICE;
 
 
 /**
@@ -44,6 +50,8 @@ import com.platform.HTTPServer;
  * THE SOFTWARE.
  */
 public class ActivityUTILS {
+
+    private static final String TAG = ActivityUTILS.class.getName();
 
     private static void setStatusBarColor(Activity app, int color) {
         if (app == null) return;
@@ -84,5 +92,17 @@ public class ActivityUTILS {
         app.startActivity(intent);
         app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
 
+    }
+
+    public static boolean isLast(Activity app) {
+        ActivityManager mngr = (ActivityManager) app.getSystemService(ACTIVITY_SERVICE);
+
+        List<ActivityManager.RunningTaskInfo> taskList = mngr.getRunningTasks(10);
+
+        if (taskList.get(0).numActivities == 1 &&
+                taskList.get(0).topActivity.getClassName().equals(app.getClass().getName())) {
+            return true;
+        }
+        return false;
     }
 }

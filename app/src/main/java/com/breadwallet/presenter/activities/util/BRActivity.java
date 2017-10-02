@@ -6,6 +6,7 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
