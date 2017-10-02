@@ -1,15 +1,20 @@
 package com.breadwallet.presenter.activities.settings;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.platform.HTTPServer;
 
 import java.util.Locale;
 
@@ -57,6 +62,39 @@ public class AboutActivity extends BRActivity {
         twitterShare = (ImageView) findViewById(R.id.twitter_share_button);
         blogShare = (ImageView) findViewById(R.id.blog_share_button);
 
+        redditShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://reddit.com/r/breadwallet/"));
+                startActivity(browserIntent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+            }
+        });
+
+        twitterShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/breadapp"));
+                startActivity(browserIntent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+            }
+        });
+        blogShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://breadapp.com/blog/"));
+                startActivity(browserIntent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+            }
+        });
+        policyText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://breadapp.com/privacy-policy"));
+                startActivity(browserIntent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+            }
+        });
 
     }
 

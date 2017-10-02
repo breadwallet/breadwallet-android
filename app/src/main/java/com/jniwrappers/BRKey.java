@@ -1,6 +1,10 @@
 package com.jniwrappers;
 
+import android.util.Log;
+
 import com.breadwallet.tools.util.Utils;
+
+import java.util.Arrays;
 
 /**
  * BreadWallet
@@ -32,7 +36,7 @@ public class BRKey {
     public BRKey(byte[] key) throws IllegalArgumentException {
         if (Utils.isNullOrEmpty(key)) throw new NullPointerException("key is empty");
         if (!setPrivKey(key)) {
-            throw new IllegalArgumentException("Failed to setup the key");
+            throw new IllegalArgumentException("Failed to setup the key: " + Arrays.toString(key));
         }
     }
 

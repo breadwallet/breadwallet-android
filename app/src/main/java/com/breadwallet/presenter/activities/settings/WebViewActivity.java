@@ -157,7 +157,7 @@ public class WebViewActivity extends BRActivity {
         } else if (url.equalsIgnoreCase(HTTPServer.URL_EA)) {
             HTTPServer.mode = HTTPServer.ServerMode.EA;
         } else {
-            throw new RuntimeException("unknown url: " + url);
+            Log.e(TAG, "setupServerMode: " + "unknown url: " + url);
         }
     }
 
