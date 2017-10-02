@@ -5,6 +5,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="bottom"
+            android:animateLayoutChanges="true"
             android:background="@color/black_trans"
             android:filterTouchesWhenObscured="true"
             android:isScrollContainer="false">
@@ -155,6 +156,7 @@
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/amount_layout"
+            android:animateLayoutChanges="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
