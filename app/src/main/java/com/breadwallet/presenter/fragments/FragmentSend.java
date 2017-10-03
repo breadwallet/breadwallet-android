@@ -153,6 +153,7 @@ public class FragmentSend extends Fragment {
         isoText.setText(getString(R.string.Send_amountLabel));
         isoText.setTextSize(18);
         isoText.setTextColor(getContext().getColor(R.color.light_gray));
+        isoText.requestLayout();
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
 
         signalLayout.setOnClickListener(new View.OnClickListener() {
@@ -200,8 +201,8 @@ public class FragmentSend extends Fragment {
             @Override
             public void onClick(View v) {
                 showKeyboard(true);
-                amountLabelOn = false;
-                if (amountEdit.getHint() == null || !amountEdit.getHint().toString().equalsIgnoreCase("0")) { //only first time
+                if (amountLabelOn) { //only first time
+                    amountLabelOn = false;
                     amountEdit.setHint("0");
                     amountEdit.setTextSize(24);
                     balanceText.setVisibility(View.VISIBLE);
@@ -248,11 +249,11 @@ public class FragmentSend extends Fragment {
                     TransitionManager.beginDelayedTransition(amountLayout, tr);
 
                     int px4 = Utils.getPixelsFromDps(getContext(), 4);
-                    int px8 = Utils.getPixelsFromDps(getContext(), 8);
+//                    int px8 = Utils.getPixelsFromDps(getContext(), 8);
                     set.connect(balanceText.getId(), ConstraintSet.TOP, isoText.getId(), ConstraintSet.BOTTOM, px4);
                     set.connect(feeText.getId(), ConstraintSet.TOP, balanceText.getId(), ConstraintSet.BOTTOM, px4);
                     set.connect(feeText.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px4);
-                    set.connect(isoText.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, px8);
+                    set.connect(isoText.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, px4);
                     set.connect(isoText.getId(), ConstraintSet.BOTTOM, -1, ConstraintSet.TOP, -1);
                     set.applyTo(amountLayout);
 
