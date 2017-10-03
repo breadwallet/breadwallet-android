@@ -115,6 +115,7 @@ public class FragmentSend extends Fragment {
     private BRText feeDescription;
     private BRText warningText;
     public static boolean isEconomyFee;
+    private boolean amountLabelOn = true;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -199,6 +200,7 @@ public class FragmentSend extends Fragment {
             @Override
             public void onClick(View v) {
                 showKeyboard(true);
+                amountLabelOn = false;
                 if (amountEdit.getHint() == null || !amountEdit.getHint().toString().equalsIgnoreCase("0")) { //only first time
                     amountEdit.setHint("0");
                     amountEdit.setTextSize(24);
@@ -465,7 +467,7 @@ public class FragmentSend extends Fragment {
                 setButton(false);
             }
         });
-        updateText();
+//        updateText();
 
     }
 
@@ -601,7 +603,8 @@ public class FragmentSend extends Fragment {
         String balanceString;
         String iso = selectedIso;
         curBalance = BRWalletManager.getInstance().getBalance(getActivity());
-        isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
+        if (!amountLabelOn)
+            isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
         isoButton.setText(String.format("%s(%s)", BRCurrency.getCurrencyName(getActivity(), selectedIso), BRCurrency.getSymbolByIso(getActivity(), selectedIso)));
         //Balance depending on ISO
         long satoshis = (Utils.isNullOrEmpty(tmpAmount) || tmpAmount.equalsIgnoreCase(".")) ? 0 :
@@ -618,12 +621,14 @@ public class FragmentSend extends Fragment {
             balanceText.setTextColor(getContext().getColor(R.color.warning_color));
             feeText.setTextColor(getContext().getColor(R.color.warning_color));
             amountEdit.setTextColor(getContext().getColor(R.color.warning_color));
-            isoText.setTextColor(getContext().getColor(R.color.warning_color));
+            if (!amountLabelOn)
+                isoText.setTextColor(getContext().getColor(R.color.warning_color));
         } else {
             balanceText.setTextColor(getContext().getColor(R.color.light_gray));
             feeText.setTextColor(getContext().getColor(R.color.light_gray));
             amountEdit.setTextColor(getContext().getColor(R.color.almost_black));
-            isoText.setTextColor(getContext().getColor(R.color.almost_black));
+            if (!amountLabelOn)
+                isoText.setTextColor(getContext().getColor(R.color.almost_black));
         }
         balanceString = String.format(getString(R.string.Send_balance), formattedBalance);
         balanceText.setText(String.format("%s", balanceString));
