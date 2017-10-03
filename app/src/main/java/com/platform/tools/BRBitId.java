@@ -136,9 +136,9 @@ public class BRBitId {
             _promptString = "BitID Authentication Request";
         }
 
-        Log.e(TAG, "signBitID: _bitUri: " + _bitUri);
-        Log.e(TAG, "signBitID: _strToSign: " + _strToSign);
-        Log.e(TAG, "signBitID: _index: " + _index);
+//        Log.e(TAG, "signBitID: _bitUri: " + _bitUri);
+//        Log.e(TAG, "signBitID: _strToSign: " + _strToSign);
+//        Log.e(TAG, "signBitID: _index: " + _index);
 
         new Thread(new Runnable() {
             @Override

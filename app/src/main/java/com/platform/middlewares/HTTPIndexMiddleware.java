@@ -57,11 +57,10 @@ public class HTTPIndexMiddleware implements Middleware {
         }
 
         String indexFile = APIClient.getInstance(app).getExtractedPath(app, rTrim(target, "/") + "/index.html");
-        Log.e(TAG, "handle: indexFile: " + indexFile);
 
         File temp = new File(indexFile);
         if (!temp.exists()) {
-            Log.e(TAG, "handle: FILE DOES NOT EXIST: " + temp.getAbsolutePath());
+//            Log.d(TAG, "handle: FILE DOES NOT EXIST: " + temp.getAbsolutePath());
             return false;
         }
 

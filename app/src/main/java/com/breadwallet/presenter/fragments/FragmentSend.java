@@ -611,7 +611,6 @@ public class FragmentSend extends Fragment {
         String formattedBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, balanceForISO);
         //Balance depending on ISO
         long fee = satoshis == 0 ? 0 : BRWalletManager.getInstance().feeForTransactionAmount(satoshis);
-        Log.e(TAG, "updateText: retrieved fee is: " + fee);
         BigDecimal feeForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance == 0 ? 0 : fee));
         //formattedBalance
         String aproxFee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, feeForISO);
