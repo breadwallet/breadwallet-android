@@ -73,7 +73,7 @@ public class KVStorePlugin implements Plugin {
                     KVItem kv = getObj.kv;
 
                     if (kv == null || kv.deleted > 0) {
-                        Log.e(TAG, "handle: kv store does not contain the kv: " + key);
+                        Log.w(TAG, "handle: kv store does not contain the kv: " + key);
                         return BRHTTPHelper.handleError(404, null, baseRequest, decorateResponse(0, 0, response));
                     }
                     try {

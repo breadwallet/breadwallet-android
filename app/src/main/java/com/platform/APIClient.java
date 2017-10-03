@@ -388,7 +388,7 @@ public class APIClient {
             byte[] decompressed = gZipExtract(data);
             ResponseBody postReqBody = ResponseBody.create(null, decompressed);
             try {
-                Log.e(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
+                Log.d(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
                         request.url(), response.code(), response.message(), new String(decompressed, "utf-8")));
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -405,7 +405,7 @@ public class APIClient {
 
         ResponseBody postReqBody = ResponseBody.create(null, data);
         if (needsAuth && isBreadChallenge(response)) {
-            Log.e(TAG, "sendRequest: got authentication challenge from API - will attempt to get token");
+            Log.d(TAG, "sendRequest: got authentication challenge from API - will attempt to get token");
             getToken();
             if (retryCount < 1) {
                 sendRequest(request, true, retryCount + 1);
@@ -689,7 +689,7 @@ public class APIClient {
                 APIClient apiClient = APIClient.getInstance(ctx);
                 apiClient.updateBundle();
                 long endTime = System.currentTimeMillis();
-                Log.e(TAG, "updateBundle " + BREAD_POINT + ": DONE in " + (endTime - startTime) + "ms");
+                Log.d(TAG, "updateBundle " + BREAD_POINT + ": DONE in " + (endTime - startTime) + "ms");
                 itemFinished();
             }
         }).start();
