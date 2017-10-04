@@ -210,8 +210,8 @@ public class TxManager {
             ((Activity) app).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    txList.swapAdapter(adapter, true);
-
+                    if (txList.getAdapter() == null) txList.setAdapter(adapter);
+//                    txList.swapAdapter(adapter, true);
                     adapter.notifyDataSetChanged();
                 }
             });
