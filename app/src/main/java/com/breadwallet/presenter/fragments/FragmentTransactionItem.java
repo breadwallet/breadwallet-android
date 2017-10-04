@@ -185,7 +185,7 @@ public class FragmentTransactionItem extends Fragment {
         String eb = String.format(getString(R.string.Transaction_ending), endingBalance);
         String amountString = String.format("%s %s\n\n%s\n%s", amount, item.getFee() == -1 ? "" : String.format(getString(R.string.Transaction_fee), fee), sb, eb);
 
-        String addr = sent ? item.getTo()[0] : item.getFrom()[0];
+        String addr = item.getTo()[0];
         String toFrom = sent ? String.format(getString(R.string.TransactionDetails_to), addr) : String.format(getString(R.string.TransactionDetails_from), addr);
 
         mTxHash.setText(item.getTxHashHexReversed());
