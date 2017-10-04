@@ -11,6 +11,8 @@ import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
+import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
@@ -176,7 +178,7 @@ public class BRKeyStore {
 
             }
 
-            String encryptedDataFilePath = getEncryptedDataFilePath(alias_file, context);
+            String encryptedDataFilePath = createDataPath(alias_file, context);
 
             SecretKey secret = (SecretKey) keyStore.getKey(alias, null);
             if (secret == null) {
@@ -185,28 +187,21 @@ public class BRKeyStore {
                 return false;
             }
             Cipher inCipher = Cipher.getInstance(CIPHER_ALGORITHM);
-//            try {
             inCipher.init(Cipher.ENCRYPT_MODE, secret);
-//            } catch (InvalidKeyException ex) {
-//                /** store this data with the new algorithm */
-//                Log.e(TAG, "_setData: Old algorithm, clearing...");
-//                boolean deleteIv = new File(getEncryptedDataFilePath(alias_iv, context)).delete();
-//                boolean deleteData = new File(getEncryptedDataFilePath(alias_file, context)).delete();
-//                if (deleteIv && deleteData) {
-//                    keyStore.deleteEntry(alias);
-//                    boolean needsAuth = alias.equalsIgnoreCase(CANARY_ALIAS) || alias.equalsIgnoreCase(PHRASE_ALIAS);
-//                    return _setData(context, data, alias, alias_file, alias_iv, request_code, needsAuth);
-//                } else {
-//                    Log.e(TAG, "_setData: deleteIv:" + deleteIv + ", deleteData: " + deleteData);
-//                }
-//            }
             byte[] iv = inCipher.getIV();
-            String path = getEncryptedDataFilePath(alias_iv, context);
+            String path = createDataPath(alias_iv, context);
             boolean success = writeBytesToFile(path, iv);
             if (!success) {
                 RuntimeException ex = new NullPointerException("failed to writeBytesToFile: " + alias);
                 BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
-                throw ex;
+                BRDialog.showCustomDialog(context, "KeyStore Error", "Failed to save the iv file for: " + alias, "close", null, new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        brDialogView.dismissWithAnimation();
+                    }
+                }, null, null, 0);
+                keyStore.deleteEntry(alias);
+                return false;
             }
             CipherOutputStream cipherOutputStream = new CipherOutputStream(
                     new FileOutputStream(encryptedDataFilePath), inCipher);
@@ -239,7 +234,7 @@ public class BRKeyStore {
         }
         KeyStore keyStore;
 
-        String encryptedDataFilePath = getEncryptedDataFilePath(alias_file, context);
+        String encryptedDataFilePath = createDataPath(alias_file, context);
         byte[] result = new byte[0];
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
@@ -257,8 +252,8 @@ public class BRKeyStore {
                 return null;
             }
 
-            boolean ivExists = new File(getEncryptedDataFilePath(alias_iv, context)).exists();
-            boolean aliasExists = new File(getEncryptedDataFilePath(alias_file, context)).exists();
+            boolean ivExists = new File(createDataPath(alias_iv, context)).exists();
+            boolean aliasExists = new File(createDataPath(alias_file, context)).exists();
             if (!ivExists || !aliasExists) {
                 removeAliasAndFiles(alias, context);
                 //report it if one exists and not the other.
@@ -273,45 +268,13 @@ public class BRKeyStore {
                 }
             }
 
-            byte[] iv = readBytesFromFile(getEncryptedDataFilePath(alias_iv, context));
+            byte[] iv = readBytesFromFile(createDataPath(alias_iv, context));
             Cipher outCipher;
-//            boolean isOldAlgorithm = false;
-//            try {
             outCipher = Cipher.getInstance(CIPHER_ALGORITHM);
             outCipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
-//            } catch (InvalidAlgorithmParameterException ignored) {
-//                /** means the keys are created with the old algorithm */
-//                Log.e(TAG, "_getData: found old keys");
-//                outCipher = Cipher.getInstance("AES/CBC/PKCS7Padding");
-//                try {
-//                    outCipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
-//                    isOldAlgorithm = true;
-//                    Log.e(TAG, "_getData: recovered old keys");
-//                } catch (InvalidAlgorithmParameterException e) {
-//                    e.printStackTrace();
-//                    BRErrorPipe.parseKeyStoreError(context, e, alias, true);
-//                    return null;
-//                }
-//            }
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            byte[] data = BytesUtil.readBytesFromStream(cipherInputStream);
-
-//            if (isOldAlgorithm) {
-//                /** store this data with the new algorithm */
-//
-//                boolean deleteIv = new File(getEncryptedDataFilePath(alias_iv, context)).delete();
-//                boolean deleteData = new File(getEncryptedDataFilePath(alias_file, context)).delete();
-//                if (deleteIv && deleteData) {
-//                    keyStore.deleteEntry(alias);
-//                    boolean needsAuth = alias.equalsIgnoreCase(CANARY_ALIAS) || alias.equalsIgnoreCase(PHRASE_ALIAS);
-//                    _setData(context, data, alias, alias_file, alias_iv, request_code, needsAuth);
-//                } else {
-//                    Log.e(TAG, "_getData: deleteIv:" + deleteIv + ", deleteData: " + deleteData);
-//                }
-//            }
-
-            return data;
+            return BytesUtil.readBytesFromStream(cipherInputStream);
         } catch (InvalidKeyException e) {
             if (e instanceof UserNotAuthenticatedException) {
                 /** user not authenticated, ask the system for authentication */
@@ -345,7 +308,7 @@ public class BRKeyStore {
         }
     }
 
-    public static String getEncryptedDataFilePath(String fileName, Context context) {
+    public static String createDataPath(String fileName, Context context) {
         String filesDirectory = context.getFilesDir().getAbsolutePath();
         return filesDirectory + File.separator + fileName;
     }
@@ -687,8 +650,8 @@ public class BRKeyStore {
     public static void removeAliasAndFiles(String alias, Context context) {
         KeyStore keyStore;
         try {
-            boolean b1 = new File(getEncryptedDataFilePath(aliasObjectMap.get(alias).datafileName, context)).delete();
-            boolean b2 = new File(getEncryptedDataFilePath(aliasObjectMap.get(alias).ivFileName, context)).delete();
+            boolean b1 = new File(createDataPath(aliasObjectMap.get(alias).datafileName, context)).delete();
+            boolean b2 = new File(createDataPath(aliasObjectMap.get(alias).ivFileName, context)).delete();
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
             keyStore.deleteEntry(alias);

@@ -4,7 +4,6 @@ import android.security.keystore.UserNotAuthenticatedException;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.security.BRKeyStore;
 
@@ -292,13 +291,13 @@ public class KeyStoreTests {
     }
 
     public void assertFilesExist(String alias) {
-        Assert.assertTrue(new File(BRKeyStore.getEncryptedDataFilePath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
-        Assert.assertTrue(new File(BRKeyStore.getEncryptedDataFilePath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
+        Assert.assertTrue(new File(BRKeyStore.createDataPath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
+        Assert.assertTrue(new File(BRKeyStore.createDataPath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
     }
 
     public void assertFilesDontExist(String alias) {
-        Assert.assertFalse(new File(BRKeyStore.getEncryptedDataFilePath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
-        Assert.assertFalse(new File(BRKeyStore.getEncryptedDataFilePath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
+        Assert.assertFalse(new File(BRKeyStore.createDataPath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
+        Assert.assertFalse(new File(BRKeyStore.createDataPath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
     }
 
 }
