@@ -201,7 +201,7 @@ public class TxManager {
     }
 
     //BLOCKS
-    public void updateTxList(final Context app) {
+    public synchronized void updateTxList(final Context app) {
         final TxItem[] arr = BRWalletManager.getInstance().getTransactions();
         updateTxMetaData(app, arr);
         List<TxItem> items = arr == null ? null : new LinkedList<>(Arrays.asList(arr));

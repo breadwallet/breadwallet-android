@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.constraint.ConstraintLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -50,8 +51,7 @@ public class BRDialogView extends DialogFragment {
     private DialogInterface.OnDismissListener dismissListener;
     private int iconRes = 0;
 
-    private LinearLayout mainLayout;
-
+    private ConstraintLayout mainLayout;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -63,9 +63,9 @@ public class BRDialogView extends DialogFragment {
         TextView messageText = (TextView) view.findViewById(R.id.dialog_text);
         Button positiveButton = (Button) view.findViewById(R.id.pos_button);
         Button negativeButton = (Button) view.findViewById(R.id.neg_button);
-        ImageView icon = (ImageView) view.findViewById(R.id.dialog_icon);
+//        ImageView icon = (ImageView) view.findViewById(R.id.dialog_icon);
 
-        mainLayout = (LinearLayout) view.findViewById(R.id.main_layout);
+        mainLayout = (ConstraintLayout) view.findViewById(R.id.main_layout);
 
         titleText.setText(title);
         messageText.setText(message);
@@ -85,8 +85,8 @@ public class BRDialogView extends DialogFragment {
                 negListener.onClick(BRDialogView.this);
             }
         });
-        if (iconRes != 0)
-            icon.setImageResource(iconRes);
+//        if (iconRes != 0)
+//            icon.setImageResource(iconRes);
 
         builder.setView(view);
 //        builder.setOnDismissListener(dismissListener);

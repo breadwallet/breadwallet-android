@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.TypedValue;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -63,6 +64,7 @@ public class BRText extends TextView {
         String customFont = a.getString(R.styleable.BRText_customFont);
         TypefacesManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Book.otf" : customFont);
         a.recycle();
+        setLineSpacing(0, 1.3f);
     }
 
 }
