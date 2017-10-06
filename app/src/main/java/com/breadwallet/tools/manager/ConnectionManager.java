@@ -1,10 +1,13 @@
 package com.breadwallet.tools.manager;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.wallet.BRPeerManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +38,7 @@ import java.util.List;
  * THE SOFTWARE.
  */
 
-public class ConnectionManager {
+public class ConnectionManager extends BroadcastReceiver {
 
     private static final String TAG = ConnectionManager.class.getName();
     public static List<ConnectionReceiverListener> connectionReceiverListeners;
@@ -61,18 +64,25 @@ public class ConnectionManager {
             connectionReceiverListeners.add(listener);
     }
 
-//    public void startNetworkJob(Context context){
-//        JobScheduler js1 =
-//                (JobScheduler) context.getSystemService(Context.JOB_SCHEDULER_SERVICE);
-//        JobInfo job1 = new JobInfo.Builder(
-//                MY_BACKGROUND_JOB,
-//                new ComponentName(context, NetworkChangeService.class))
-//                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_UNMETERED)
-//                .setRequiresCharging(false)
-//                .build();
-//        js1.schedule(job1);
-//
-//    }
+    @Override
+    public void onReceive(final Context context, final Intent intent) {
+        boolean connected = false;
+
+        if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
+            NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
+            if (networkInfo != null && networkInfo.getDetailedState() == NetworkInfo.DetailedState.CONNECTED) {
+                connected = true;
+                BRPeerManager.getInstance().networkChanged(true);
+            } else if (networkInfo != null && networkInfo.getDetailedState() == NetworkInfo.DetailedState.DISCONNECTED) {
+                BRPeerManager.getInstance().networkChanged(false);
+                connected = false;
+            }
+            BREventManager.getInstance().pushEvent(connected ? "reachability.isReachble" : "reachability.isNotReachable");
+            for (ConnectionReceiverListener listener : connectionReceiverListeners) {
+                listener.onConnectionChanged(connected);
+            }
+        }
+    }
 
     public boolean isConnected() {
         ConnectivityManager
@@ -85,7 +95,7 @@ public class ConnectionManager {
 
 
     public interface ConnectionReceiverListener {
-        void onNetworkConnectionChanged(boolean isConnected);
+        void onConnectionChanged(boolean isConnected);
     }
 
 }

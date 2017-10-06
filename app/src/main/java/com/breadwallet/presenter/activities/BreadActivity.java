@@ -1,9 +1,7 @@
 package com.breadwallet.presenter.activities;
 
 import android.animation.LayoutTransition;
-import android.animation.ValueAnimator;
 import android.app.FragmentTransaction;
-import android.app.SharedElementCallback;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -17,7 +15,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.transition.TransitionManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -43,7 +40,6 @@ import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
-import com.breadwallet.tools.util.NetworkChangeReceiver;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
@@ -51,7 +47,6 @@ import com.platform.APIClient;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import static com.breadwallet.presenter.activities.intro.IntroActivity.introActivity;
 import static com.breadwallet.presenter.activities.ReEnterPinActivity.reEnterPinActivity;
@@ -96,7 +91,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     private LinearLayout menuButton;
     public static final Point screenParametersPoint = new Point();
 
-    private NetworkChangeReceiver mNetworkStateReceiver;
+    private ConnectionManager mConnectionReceiver;
 
     private TextView primaryPrice;
     private TextView secondaryPrice;
@@ -147,8 +142,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
         app = this;
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
-        // Always cast your custom Toolbar here, and set it as the ActionBar.
-        toolBar = (Toolbar) findViewById(R.id.bread_bar);
 
         initializeViews();
 
@@ -343,9 +336,9 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     }
 
     private void setupNetworking() {
-        if (mNetworkStateReceiver == null) mNetworkStateReceiver = new NetworkChangeReceiver();
+        if (mConnectionReceiver == null) mConnectionReceiver = ConnectionManager.getInstance();
         IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(mNetworkStateReceiver, mNetworkStateFilter);
+        registerReceiver(mConnectionReceiver, mNetworkStateFilter);
         ConnectionManager.addConnectionListener(this);
     }
 
@@ -369,7 +362,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     protected void onDestroy() {
         super.onDestroy();
 
-        unregisterReceiver(mNetworkStateReceiver);
+        unregisterReceiver(mConnectionReceiver);
 
         //sync the kv stores
         if (PLATFORM_ON) {
@@ -385,6 +378,8 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     }
 
     private void initializeViews() {
+        // Always cast your custom Toolbar here, and set it as the ActionBar.
+        toolBar = (Toolbar) findViewById(R.id.bread_bar);
         sendButton = (LinearLayout) findViewById(R.id.send_layout);
         receiveButton = (LinearLayout) findViewById(R.id.receive_layout);
         manageText = (TextView) findViewById(R.id.manage_text);
@@ -486,14 +481,8 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-//                        boolean preferredBtc = BRSharedPrefs.getPreferredBTC(BreadActivity.this);
-//                        if (!isSwapped) {
                         primaryPrice.setText(formattedBTCAmount);
                         secondaryPrice.setText(String.format("%s", formattedCurAmount));
-//                        } else {
-//                            primaryPrice.setText(String.format(" = %s", preferredBtc ? formattedCurAmount : formattedBTCAmount));
-//                            secondaryPrice.setText((preferredBtc ? formattedBTCAmount : formattedCurAmount));
-//                        }
 
                     }
                 });
@@ -593,7 +582,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     }
 
     @Override
-    public void onNetworkConnectionChanged(boolean isConnected) {
+    public void onConnectionChanged(boolean isConnected) {
         if (isConnected) {
             if (barFlipper != null) {
                 if (barFlipper.getDisplayedChild() == 2)

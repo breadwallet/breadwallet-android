@@ -9,6 +9,7 @@ import android.content.pm.ApplicationInfo;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -59,6 +60,12 @@ public class BreadApp extends Application {
         if (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
             HOST = "stage.breadwallet.com";
         }
+
+        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                .detectAll()
+                .penaltyLog()
+//                .penaltyDeath()
+                .build());
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();

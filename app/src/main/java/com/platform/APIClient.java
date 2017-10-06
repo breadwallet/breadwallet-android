@@ -423,7 +423,9 @@ public class APIClient {
 
             byte[] bFile = new byte[0];
             try {
-                bFile = IOUtils.toByteArray(new FileInputStream(bundleFile));
+                FileInputStream in = new FileInputStream(bundleFile);
+                bFile = IOUtils.toByteArray(in);
+                in.close();
             } catch (IOException e) {
                 e.printStackTrace();
             }
