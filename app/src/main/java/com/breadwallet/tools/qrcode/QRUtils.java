@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.tools.util.Utils;
 import com.google.zxing.BarcodeFormat;
@@ -107,31 +109,34 @@ public class QRUtils {
             return;
         }
 
-        String path = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), app);
-        Uri uri;
-        if (path == null) {
-            uri = null;
-        } else {
-            File qrFile = new File(path);
-            uri = Uri.fromFile(qrFile);
-        }
+//        File file = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), app);
+//        Uri uri = null;
+//        if (file != null)
+//            uri = Uri.parse("file://" + file.getAbsolutePath());
+//            uri = FileProvider.getUriForFile(app,
+//                    BuildConfig.APPLICATION_ID + ".provider",
+//                    file);
 
-        Intent intent = new Intent(Intent.ACTION_SENDTO);
-        intent.setData(Uri.parse(via));
+        Intent intent = new Intent();
 
         if (via.equalsIgnoreCase("sms:")) {
+            intent.setAction(Intent.ACTION_VIEW);
+            intent.setData(Uri.parse("sms:"));
             intent.putExtra("sms_body", bitcoinUri);
             intent.putExtra("exit_on_sent", true);
+
         } else {
+            intent.setAction(android.content.Intent.ACTION_SEND);
+            intent.setType("vnd.android.cursor.dir/email");
             intent.putExtra(Intent.EXTRA_SUBJECT, "Bitcoin Address");
             intent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
         }
-        if (uri != null)
-            intent.putExtra(Intent.EXTRA_STREAM, uri);
-        app.startActivity(Intent.createChooser(intent, "Bitcoin Address"));
+//        if (uri != null)
+//            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        app.startActivity(intent);
     }
 
-    private static String saveToExternalStorage(Bitmap bitmapImage, Activity app) {
+    private static File saveToExternalStorage(Bitmap bitmapImage, Activity app) {
         if (app == null) {
             Log.e(TAG, "saveToExternalStorage: app is null");
             return null;
@@ -141,10 +146,11 @@ public class QRUtils {
         String fileName = "qrcode.jpg";
 
         bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, bytes);
-        File f = new File(app.getFilesDir().getAbsolutePath() + File.separator + fileName);
+        File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), fileName);
+
+        if (f.exists()) f.delete();
 
         try {
-            boolean result = f.createNewFile();
             FileOutputStream fo = new FileOutputStream(f);
             fo.write(bytes.toByteArray());
         } catch (Exception e) {
@@ -156,6 +162,6 @@ public class QRUtils {
                 e.printStackTrace();
             }
         }
-        return f.getAbsolutePath();
+        return f;
     }
 }
