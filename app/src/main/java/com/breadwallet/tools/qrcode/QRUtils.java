@@ -141,7 +141,8 @@ public class QRUtils {
         String fileName = "qrcode.jpg";
 
         bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, bytes);
-        File f = new File(Environment.getExternalStorageDirectory() + File.separator + fileName);
+        File f = new File(app.getFilesDir().getAbsolutePath() + File.separator + fileName);
+
         try {
             boolean result = f.createNewFile();
             FileOutputStream fo = new FileOutputStream(f);

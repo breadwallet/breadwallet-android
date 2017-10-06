@@ -5,6 +5,7 @@ import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -31,6 +32,8 @@ import com.platform.tools.KVStoreManager;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.locks.ReentrantLock;
 
 
 /**
@@ -61,11 +64,10 @@ public class TxManager {
 
     private static final String TAG = TxManager.class.getName();
     private static TxManager instance;
-    public RecyclerView txList;
+    private RecyclerView txList;
     public TransactionListAdapter adapter;
     public PromptManager.PromptItem currentPrompt;
     private boolean isMetaDataUpdating;
-
     public PromptManager.PromptInfo promptInfo;
     public TransactionListAdapter.SyncingHolder syncingHolder;
 
@@ -120,20 +122,20 @@ public class TxManager {
     }
 
     public void onResume(final Activity app) {
+        crashIfNotMain();
         new Thread(new Runnable() {
             @Override
             public void run() {
                 final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(app));
-
                 app.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                         if (progress > 0 && progress < 1) {
                             currentPrompt = PromptManager.PromptItem.SYNCING;
+                            updateCard(app);
                         } else {
                             showNextPrompt(app);
                         }
-                        updateCard(app);
                     }
                 });
 
@@ -143,6 +145,7 @@ public class TxManager {
     }
 
     public void showPrompt(Activity app, PromptManager.PromptItem item) {
+        crashIfNotMain();
         if (item == null) throw new RuntimeException("can't be null");
         BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".displayed");
         if (currentPrompt != PromptManager.PromptItem.SYNCING) {
@@ -152,22 +155,12 @@ public class TxManager {
     }
 
     public void hidePrompt(final Activity app, final PromptManager.PromptItem item) {
+        crashIfNotMain();
         currentPrompt = null;
         updateCard(app);
         if (item == PromptManager.PromptItem.SYNCING) {
-            app.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            showNextPrompt(app);
-                            updateCard(app);
-                        }
-                    }, 1000);
-
-                }
-            });
+            showNextPrompt(app);
+            updateCard(app);
         } else {
             if (item != null)
                 BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".dismissed");
@@ -178,22 +171,13 @@ public class TxManager {
 
     }
 
-    public void showInfoCard(boolean show, PromptManager.PromptInfo info) {
-        if (show) {
-            promptInfo = info;
-        } else {
-            promptInfo = null;
-        }
-
-    }
-
     private void showNextPrompt(Activity app) {
+        crashIfNotMain();
         PromptManager.PromptItem toShow = PromptManager.getInstance().nextPrompt(app);
         if (toShow != null) {
             Log.d(TAG, "showNextPrompt: " + toShow);
             currentPrompt = toShow;
-            PromptManager.PromptInfo info = PromptManager.getInstance().promptInfo(app, currentPrompt);
-            showInfoCard(true, info);
+            promptInfo = PromptManager.getInstance().promptInfo(app, currentPrompt);
             updateCard(app);
         } else {
             Log.i(TAG, "showNextPrompt: nothing to show");
@@ -210,8 +194,7 @@ public class TxManager {
             ((Activity) app).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    if (txList.getAdapter() == null) txList.setAdapter(adapter);
-//                    txList.swapAdapter(adapter, true);
+                    txList.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                 }
             });
@@ -303,6 +286,12 @@ public class TxManager {
 
         public CustomLinearLayoutManager(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
             super(context, attrs, defStyleAttr, defStyleRes);
+        }
+    }
+
+    private void crashIfNotMain() {
+        if (Looper.myLooper() != Looper.getMainLooper()) {
+            throw new IllegalAccessError("Can only call from main thread");
         }
     }
 

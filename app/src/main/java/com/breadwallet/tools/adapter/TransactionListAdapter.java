@@ -115,6 +115,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
+
         switch (holder.getItemViewType()) {
             case txType:
                 setTexts((TxHolder) holder, position);
@@ -146,14 +147,12 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void setTexts(final TxHolder convertView, int position) {
-
         TxItem item = itemFeed.get(TxManager.getInstance().currentPrompt == null ? position : position - 1);
         if (Utils.isNullOrEmpty(tempAuthKey)) {
             tempAuthKey = BRKeyStore.getAuthKey(mContext);
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Log.e(TAG, "clearing out tempAuthKey: ");
                     Arrays.fill(tempAuthKey, (byte) 0);
                     tempAuthKey = null;
                 }
@@ -167,7 +166,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             ConstraintSet set = new ConstraintSet();
             set.clone(convertView.constraintLayout);
             int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, mContext.getResources().getDisplayMetrics());
-
             set.connect(R.id.status, ConstraintSet.TOP, convertView.toFrom.getId(), ConstraintSet.BOTTOM, px);
             // Apply the changes
             set.applyTo(convertView.constraintLayout);
@@ -177,7 +175,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             ConstraintSet set = new ConstraintSet();
             set.clone(convertView.constraintLayout);
             int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, mContext.getResources().getDisplayMetrics());
-
             set.connect(R.id.status, ConstraintSet.TOP, convertView.comment.getId(), ConstraintSet.BOTTOM, px);
             // Apply the changes
             set.applyTo(convertView.constraintLayout);
@@ -275,7 +272,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void setPrompt(final PromptHolder prompt) {
-
+        Log.d(TAG, "setPrompt: " + TxManager.getInstance().promptInfo.title);
         if (TxManager.getInstance().promptInfo == null) {
             throw new RuntimeException("can't happen, showing prompt with null PromptInfo");
         }
@@ -431,6 +428,5 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             progress = (ProgressBar) view.findViewById(R.id.sync_progress);
         }
     }
-
 
 }

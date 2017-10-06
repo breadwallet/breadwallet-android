@@ -306,7 +306,12 @@ public class BRPeerManager {
                 running = false;
                 progressStatus = 0;
                 if (app != null)
-                    TxManager.getInstance().hidePrompt(app, PromptManager.PromptItem.SYNCING);
+                    app.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            TxManager.getInstance().hidePrompt(app, PromptManager.PromptItem.SYNCING);
+                        }
+                    });
             }
 
         }

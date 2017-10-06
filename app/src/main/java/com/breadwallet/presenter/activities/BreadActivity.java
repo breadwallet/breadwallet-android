@@ -338,7 +338,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
         BRAnimator.showFragmentByTag(this, savedFragmentTag);
         savedFragmentTag = null;
-
         TxManager.getInstance().onResume(BreadActivity.this);
 
     }
