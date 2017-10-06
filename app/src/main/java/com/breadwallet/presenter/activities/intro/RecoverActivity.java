@@ -26,7 +26,6 @@ public class RecoverActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro_recover);
 
-
         nextButton = (Button) findViewById(R.id.send_button);
 
         nextButton.setOnClickListener(new View.OnClickListener() {
