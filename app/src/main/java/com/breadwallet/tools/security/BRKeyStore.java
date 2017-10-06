@@ -274,7 +274,12 @@ public class BRKeyStore {
             outCipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
             CipherInputStream cipherInputStream = new CipherInputStream(
                     new FileInputStream(encryptedDataFilePath), outCipher);
-            return BytesUtil.readBytesFromStream(cipherInputStream);
+            byte[] r = BytesUtil.readBytesFromStream(cipherInputStream);
+            try {
+                cipherInputStream.close();
+            } catch (Exception ignored) {
+            }
+            return r;
         } catch (InvalidKeyException e) {
             if (e instanceof UserNotAuthenticatedException) {
                 /** user not authenticated, ask the system for authentication */
@@ -688,6 +693,11 @@ public class BRKeyStore {
             File file = new File(path);
             FileInputStream fin = new FileInputStream(file);
             bytes = BytesUtil.readBytesFromStream(fin);
+            try {
+                fin.close();
+            } catch (Exception ignored) {
+
+            }
         } catch (IOException e) {
             e.printStackTrace();
         }

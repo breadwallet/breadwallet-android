@@ -90,6 +90,10 @@ public class ReplicatedKVStore {
         return dbHelper.getWritableDatabase();
     }
 
+    public void closeDB() {
+//        dbHelper.close();
+    }
+
     /**
      * Set the value of a key locally in the database. If syncImmediately is true (the default) then immediately
      * after successfully saving locally, replicate to server. The `localVer` key must be the same as is currently
@@ -159,6 +163,7 @@ public class ReplicatedKVStore {
         } finally {
             db.endTransaction();
             dbLock.unlock();
+            closeDB();
         }
         return new CompletionObject(newVer, time, null);
     }
@@ -186,6 +191,7 @@ public class ReplicatedKVStore {
             return false;
         } finally {
             dbLock.unlock();
+            closeDB();
         }
     }
 
@@ -244,6 +250,8 @@ public class ReplicatedKVStore {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                closeDB();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -287,6 +295,7 @@ public class ReplicatedKVStore {
         } finally {
             if (cursor != null)
                 cursor.close();
+            closeDB();
         }
         return new CompletionObject(version, time, null);
     }
@@ -299,6 +308,7 @@ public class ReplicatedKVStore {
             e.printStackTrace();
         } finally {
             dbLock.unlock();
+            closeDB();
         }
 
     }
@@ -334,6 +344,7 @@ public class ReplicatedKVStore {
             if (cursor != null) {
                 cursor.close();
             }
+            closeDB();
         }
 
         return kvs;
@@ -633,6 +644,7 @@ public class ReplicatedKVStore {
         } else {
             Log.e(TAG, "Key is invalid: " + key);
         }
+        closeDB();
         return version;
     }
 
@@ -687,6 +699,7 @@ public class ReplicatedKVStore {
             } finally {
                 db.endTransaction();
                 if (c != null) c.close();
+                closeDB();
             }
         } else {
             Log.e(TAG, "Key is invalid: " + key);
@@ -753,6 +766,7 @@ public class ReplicatedKVStore {
             } finally {
                 db.endTransaction();
                 dbLock.unlock();
+                closeDB();
             }
             return new CompletionObject(newVer, time, null);
         } catch (Exception e) {
