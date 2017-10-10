@@ -72,7 +72,7 @@ public class WithdrawBchActivity extends BRActivity {
         txHash = (TextView) findViewById(R.id.tx_hash);
         addressEdit = (EditText) findViewById(R.id.address_edit);
 
-        String balance = BRCurrency.getFormattedCurrencyString(this, BRSharedPrefs.getPreferredBTC(this) ? "BTC" : BRSharedPrefs.getIso(this), new BigDecimal(BRWalletManager.getBCashBalance(BRKeyStore.getMasterPublicKey(app))));
+        String balance = BRCurrency.getFormattedCurrencyString(this, BRSharedPrefs.getPreferredBTC(this) ? "BTC" : BRSharedPrefs.getIso(this), new BigDecimal(BRWalletManager.getBCashBalance(BRKeyStore.getMasterPublicKey(this))));
         description.setText(String.format(getString(R.string.BCH_body), balance));
 
 
