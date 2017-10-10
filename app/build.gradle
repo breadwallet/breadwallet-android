@@ -11,8 +11,8 @@ model {
             applicationId = 'com.breadwallet'
             minSdkVersion.apiLevel = 23
             targetSdkVersion.apiLevel = 25
-            versionCode = 111
-            versionName = "111"
+            versionCode = 121
+            versionName = "121"
 
         }
 

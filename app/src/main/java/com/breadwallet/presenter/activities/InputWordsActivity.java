@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -70,6 +71,23 @@ public class InputWordsActivity extends BRActivity {
         setContentView(R.layout.activity_input_words);
 
         nextButton = (Button) findViewById(R.id.send_button);
+
+        if (Utils.isUsingCustomInputMethod(this)) {
+            BRDialog.showCustomDialog(this, "Warning", "It looks like you are using a third-party keyboard, which can record what you type and steal your Paper Key. Please switch to the default Android keyboard for extra protection.",
+                    getString(R.string.Button_ok), getString(R.string.JailbreakWarnings_close), new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            InputMethodManager imeManager = (InputMethodManager) getApplicationContext().getSystemService(INPUT_METHOD_SERVICE);
+                            imeManager.showInputMethodPicker();
+                            brDialogView.dismissWithAnimation();
+                        }
+                    }, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismissWithAnimation();
+                        }
+                    }, null, 0);
+        }
 
         ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
 
