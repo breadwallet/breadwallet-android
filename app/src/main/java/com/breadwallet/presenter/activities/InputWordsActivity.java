@@ -73,7 +73,7 @@ public class InputWordsActivity extends BRActivity {
         nextButton = (Button) findViewById(R.id.send_button);
 
         if (Utils.isUsingCustomInputMethod(this)) {
-            BRDialog.showCustomDialog(this, "Warning", "It looks like you are using a third-party keyboard, which can record what you type and steal your Paper Key. Please switch to the default Android keyboard for extra protection.",
+            BRDialog.showCustomDialog(this, getString(R.string.JailbreakWarnings_title), "It looks like you are using a third-party keyboard, which can record what you type and steal your Paper Key. Please switch to the default Android keyboard for extra protection.",
                     getString(R.string.Button_ok), getString(R.string.JailbreakWarnings_close), new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
