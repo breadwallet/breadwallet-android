@@ -61,11 +61,11 @@ public class BreadApp extends Application {
             HOST = "stage.breadwallet.com";
         }
 
-        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-                .detectAll()
-                .penaltyLog()
-//                .penaltyDeath()
-                .build());
+//        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+//                .detectAll()
+//                .penaltyLog()
+////                .penaltyDeath()
+//                .build());
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();

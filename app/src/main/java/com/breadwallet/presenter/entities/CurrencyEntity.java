@@ -45,6 +45,5 @@ public class CurrencyEntity implements Serializable {
     }
 
     public CurrencyEntity() {
-
     }
 }
