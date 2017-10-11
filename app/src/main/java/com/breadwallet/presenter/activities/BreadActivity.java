@@ -34,6 +34,7 @@ import com.breadwallet.presenter.fragments.FragmentManage;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.ConnectionManager;
+import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
@@ -595,7 +596,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                     final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(BreadActivity.this));
 //                    Log.e(TAG, "run: " + progress);
                     if (progress < 1 && progress > 0) {
-                        BRPeerManager.getInstance().startSyncingProgressThread();
+                        SyncManager.getInstance().startSyncingProgressThread();
                     }
                 }
             }).start();
@@ -603,7 +604,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         } else {
             if (barFlipper != null)
                 barFlipper.setDisplayedChild(2);
-            BRPeerManager.getInstance().stopSyncingProgressThread();
+            SyncManager.getInstance().stopSyncingProgressThread();
         }
 
     }

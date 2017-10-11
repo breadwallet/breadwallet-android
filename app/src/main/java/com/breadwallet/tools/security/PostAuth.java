@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.NetworkOnMainThreadException;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 

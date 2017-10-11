@@ -237,8 +237,14 @@ public class TxManager {
         }).start();
     }
 
-    public void updateCard(Context app) {
-        updateTxList(app);
+    public void updateCard(final Context app) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                updateTxList(app);
+            }
+        }).start();
+
     }
 
     private void setupSwipe(final Activity app) {
