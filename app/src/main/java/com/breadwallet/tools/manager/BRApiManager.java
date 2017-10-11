@@ -61,24 +61,24 @@ import static com.breadwallet.presenter.fragments.FragmentSend.isEconomyFee;
  * THE SOFTWARE.
  */
 
-public class CurrencyFetchManager {
-    private static final String TAG = CurrencyFetchManager.class.getName();
+public class BRApiManager {
+    private static final String TAG = BRApiManager.class.getName();
 
-    private static CurrencyFetchManager instance;
+    private static BRApiManager instance;
     private Timer timer;
 
     private TimerTask timerTask;
 
     private Handler handler;
 
-    private CurrencyFetchManager() {
+    private BRApiManager() {
         handler = new Handler();
     }
 
-    public static CurrencyFetchManager getInstance() {
+    public static BRApiManager getInstance() {
 
         if (instance == null) {
-            instance = new CurrencyFetchManager();
+            instance = new BRApiManager();
         }
         return instance;
     }
@@ -133,7 +133,7 @@ public class CurrencyFetchManager {
         protected Object doInBackground(Object[] params) {
             if (!BreadApp.isAnyActivityOn()) {
                 Log.e(TAG, "doInBackground: Stopping timer, no activity on.");
-                CurrencyFetchManager.getInstance().stopTimerTask();
+                BRApiManager.getInstance().stopTimerTask();
             }
             tmp = getCurrencies((Activity) context);
             return null;

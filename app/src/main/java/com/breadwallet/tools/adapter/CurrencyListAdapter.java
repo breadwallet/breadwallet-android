@@ -14,7 +14,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.util.Utils;
+import com.breadwallet.tools.manager.FontManager;
 
 import java.util.Currency;
 
@@ -73,7 +73,7 @@ public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
         }
         // get the TextView and then set the text (item name) and tag (item ID) values
         textViewItem = (TextView) convertView.findViewById(R.id.currency_item_text);
-        Utils.overrideFonts(textViewItem);
+        FontManager.overrideFonts(textViewItem);
         String iso = getItem(position).code;
         Currency c = null;
         try {

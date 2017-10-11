@@ -1,31 +1,16 @@
 package com.breadwallet.presenter.customviews;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Shader;
 import android.support.annotation.ColorInt;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.manager.TypefacesManager;
-import com.breadwallet.tools.util.Utils;
-
-import static android.R.attr.background;
-import static android.R.attr.paddingLeft;
-import static android.R.attr.paddingRight;
-import static android.R.attr.paddingTop;
-import static android.R.attr.path;
-import static com.breadwallet.R.attr.customFont;
 
 /**
  * BreadWallet

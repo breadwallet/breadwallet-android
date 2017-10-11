@@ -25,7 +25,6 @@ package com.breadwallet.tools.util;
  * THE SOFTWARE.
  */
 public class TrustedNode {
-
     public static  String getNodeHost(String input) {
         if (input.contains(":")) {
             return input.split(":")[0];
