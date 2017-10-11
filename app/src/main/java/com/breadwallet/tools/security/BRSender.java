@@ -2,11 +2,13 @@ package com.breadwallet.tools.security;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.PaymentItem;
@@ -253,6 +255,7 @@ public class BRSender {
 
     //BLOCKS
     public void confirmPay(final Context ctx, final PaymentItem request) {
+        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         if (ctx == null) {
             Log.e(TAG, "confirmPay: context is null");
             return;

@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities.util;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Intent;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
@@ -104,5 +105,9 @@ public class ActivityUTILS {
             return true;
         }
         return false;
+    }
+
+    public static boolean isMainThread(){
+        return Looper.myLooper() == Looper.getMainLooper();
     }
 }

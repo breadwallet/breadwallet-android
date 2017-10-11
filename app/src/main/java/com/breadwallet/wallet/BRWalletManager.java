@@ -12,6 +12,7 @@ import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
+import android.os.NetworkOnMainThreadException;
 import android.os.SystemClock;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
@@ -26,6 +27,7 @@ import android.widget.Toast;
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
@@ -95,10 +97,7 @@ public class BRWalletManager {
     private static final String TAG = BRWalletManager.class.getName();
 
     private static BRWalletManager instance;
-    private static final int WHITE = 0xFFFFFFFF;
-    private static final int BLACK = 0xFF000000;
     public List<OnBalanceChanged> balanceListeners;
-
 
     public void setBalance(Context context, long balance) {
         if (context == null) {
@@ -248,6 +247,7 @@ public class BRWalletManager {
 
     //BLOCKS
     public static boolean refreshAddress(Context ctx) {
+        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         String address = getReceiveAddress();
         if (Utils.isNullOrEmpty(address)) {
             Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
@@ -528,6 +528,7 @@ public class BRWalletManager {
 
     //BLOCKS
     public void setUpTheWallet(final Context ctx) {
+        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         Log.d(TAG, "setUpTheWallet:" + Thread.currentThread().getName());
         if (ctx == null) {
             Log.e(TAG, "setUpTheWallet: ctx is null");
