@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.NetworkOnMainThreadException;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -15,6 +16,7 @@ import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
@@ -186,6 +188,7 @@ public class TxManager {
 
     //BLOCKS
     public synchronized void updateTxList(final Context app) {
+        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         final TxItem[] arr = BRWalletManager.getInstance().getTransactions();
         updateTxMetaData(app, arr);
         List<TxItem> items = arr == null ? null : new LinkedList<>(Arrays.asList(arr));

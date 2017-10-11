@@ -14,6 +14,7 @@ import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.WithdrawBchActivity;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -169,6 +170,7 @@ public class PostAuth {
 
     //BLOCKS
     public void onPublishTxAuth(final Context app, boolean authAsked) {
+        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
 
         final BRWalletManager walletManager = BRWalletManager.getInstance();
         byte[] rawSeed;
