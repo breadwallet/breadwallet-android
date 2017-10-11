@@ -7,7 +7,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.listeners.SyncReceiver;
+import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.BRPeerManager;
 
 import java.util.concurrent.TimeUnit;
 
@@ -40,6 +43,9 @@ public class SyncManager {
     private static final String TAG = SyncManager.class.getName();
     private static SyncManager instance;
     private static final long SYNC_PERIOD = TimeUnit.HOURS.toMillis(24);
+    private static SyncProgressTask syncTask;
+    public boolean running;
+//    private final Object lock = new Object();
 
     public static SyncManager getInstance() {
         if (instance == null) instance = new SyncManager();
@@ -59,6 +65,133 @@ public class SyncManager {
 
     public void updateAlarms(Activity app) {
         createAlarm(app, System.currentTimeMillis() + SYNC_PERIOD);
+    }
+
+    public void startSyncingProgressThread() {
+        Log.d(TAG, "startSyncingProgressThread:" + Thread.currentThread().getName());
+
+        try {
+            if (syncTask != null) {
+                if (running) {
+                    Log.e(TAG, "startSyncingProgressThread: syncTask.running == true, returning");
+                    return;
+                }
+                syncTask.interrupt();
+                syncTask = null;
+            }
+            syncTask = new SyncProgressTask();
+            syncTask.start();
+
+        } catch (IllegalThreadStateException ex) {
+            ex.printStackTrace();
+        }
+
+    }
+
+    public void stopSyncingProgressThread() {
+        Log.d(TAG, "stopSyncingProgressThread");
+        final BreadActivity ctx = BreadActivity.getApp();
+        if (ctx == null) {
+            Log.e(TAG, "stopSyncingProgressThread: ctx is null");
+            return;
+        }
+        try {
+            if (syncTask != null) {
+                syncTask.interrupt();
+                syncTask = null;
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    private class SyncProgressTask extends Thread {
+        public double progressStatus = 0;
+        private BreadActivity app;
+
+        public SyncProgressTask() {
+            progressStatus = 0;
+        }
+
+        @Override
+        public void run() {
+            if (running) return;
+            try {
+                app = BreadActivity.getApp();
+                progressStatus = 0;
+                running = true;
+                Log.d(TAG, "run: starting: " + progressStatus);
+
+                if (app != null) {
+                    final long lastBlockTimeStamp = BRPeerManager.getInstance().getLastBlockTimestamp() * 1000;
+                    app.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            if (TxManager.getInstance().syncingHolder != null)
+                                TxManager.getInstance().syncingHolder.progress.setProgress((int) (progressStatus * 100));
+                            if (TxManager.getInstance().syncingHolder != null)
+                                TxManager.getInstance().syncingHolder.date.setText(Utils.formatTimeStamp(lastBlockTimeStamp, "MMM. dd, yyyy  ha"));
+                        }
+                    });
+                }
+
+                while (running) {
+                    if (app != null) {
+                        int startHeight = BRSharedPrefs.getStartHeight(app);
+                        progressStatus = BRPeerManager.syncProgress(startHeight);
+//                    Log.e(TAG, "run: progressStatus: " + progressStatus);
+                        if (progressStatus == 1) {
+                            running = false;
+                            continue;
+                        }
+                        final long lastBlockTimeStamp = BRPeerManager.getInstance().getLastBlockTimestamp() * 1000;
+//                        Log.e(TAG, "run: changing the progress to: " + progressStatus + ": " + Thread.currentThread().getName());
+                        app.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                if (TxManager.getInstance().currentPrompt != PromptManager.PromptItem.SYNCING) {
+                                    Log.e(TAG, "run: currentPrompt != SYNCING, showPrompt(SYNCING) ....");
+                                    TxManager.getInstance().showPrompt(app, PromptManager.PromptItem.SYNCING);
+                                }
+
+                                if (TxManager.getInstance().syncingHolder != null)
+                                    TxManager.getInstance().syncingHolder.progress.setProgress((int) (progressStatus * 100));
+                                if (TxManager.getInstance().syncingHolder != null)
+                                    TxManager.getInstance().syncingHolder.date.setText(Utils.formatTimeStamp(lastBlockTimeStamp, "MMM. dd, yyyy  ha"));
+                            }
+                        });
+
+                    } else {
+//                        Log.e(TAG, "run: app is null");
+                        app = BreadActivity.getApp();
+                    }
+
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        Log.e(TAG, "run: Thread.sleep was Interrupted:" + Thread.currentThread().getName(), e);
+                    }
+
+                }
+
+                Log.d(TAG, "run: SyncProgress task finished:" + Thread.currentThread().getName());
+            } finally {
+                if (progressStatus != 1) {
+                    throw new RuntimeException("didn't finish");
+                }
+                running = false;
+                progressStatus = 0;
+                if (app != null)
+                    app.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            TxManager.getInstance().hidePrompt(app, PromptManager.PromptItem.SYNCING);
+                        }
+                    });
+            }
+
+        }
     }
 
 }
