@@ -562,26 +562,6 @@ public class BRWalletManager {
             }).start();
     }
 
-    public boolean generateQR(Context ctx, String bitcoinURL, ImageView qrcode) {
-        if (qrcode == null || bitcoinURL == null || bitcoinURL.isEmpty()) return false;
-        WindowManager manager = (WindowManager) ctx.getSystemService(Activity.WINDOW_SERVICE);
-        Display display = manager.getDefaultDisplay();
-        Point point = new Point();
-        display.getSize(point);
-        int width = point.x;
-        int height = point.y;
-        int smallerDimension = width < height ? width : height;
-        smallerDimension = (int) (smallerDimension * 0.55f);
-        Bitmap bitmap = null;
-        bitmap = QRUtils.encodeAsBitmap(bitcoinURL, smallerDimension);
-        //qrcode.setPadding(1, 1, 1, 1);
-        //qrcode.setBackgroundResource(R.color.gray);
-        if (bitmap == null) return false;
-        qrcode.setImageBitmap(bitmap);
-        return true;
-
-    }
-
     public void addBalanceChangedListener(OnBalanceChanged listener) {
         if (balanceListeners == null) {
             Log.e(TAG, "addBalanceChangedListener: statusUpdateListeners is null");

@@ -292,7 +292,7 @@ public class FragmentReceive extends Fragment {
                     public void run() {
                         receiveAddress = BRSharedPrefs.getReceiveAddress(finalCtx1);
                         mAddress.setText(receiveAddress);
-                        boolean generated = BRWalletManager.getInstance().generateQR(finalCtx1, "bitcoin:" + receiveAddress, mQrImage);
+                        boolean generated = QRUtils.generateQR(finalCtx1, "bitcoin:" + receiveAddress, mQrImage);
                         if (!generated)
                             throw new RuntimeException("failed to generate qr image for address");
                     }
