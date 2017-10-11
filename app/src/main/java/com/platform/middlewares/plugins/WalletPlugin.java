@@ -90,7 +90,7 @@ public class WalletPlugin implements Plugin {
                 Log.e(TAG, "handle: json error: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "json error", baseRequest, response);
             }
-        } else if (target.startsWith("/_event") && request.getMethod().equalsIgnoreCase("get")) {
+        } else if (target.startsWith("/_wallet/_event") && request.getMethod().equalsIgnoreCase("get")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             byte[] rawData = BRHTTPHelper.getBody(request);
             String name = target.replace("/_event/", "");

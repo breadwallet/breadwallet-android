@@ -116,8 +116,6 @@ public class BRWalletManager {
         return BRSharedPrefs.getCatchedBalance(context);
     }
 
-//    private static int messageId = 0;
-
     private BRWalletManager() {
         balanceListeners = new ArrayList<>();
     }
