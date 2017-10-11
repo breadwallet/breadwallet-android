@@ -22,6 +22,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
+import com.breadwallet.tools.security.SmartValidator;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
@@ -116,7 +117,7 @@ public class IntroActivity extends BRActivity implements Serializable {
         byte[] masterPubKey = BRKeyStore.getMasterPublicKey(this);
         boolean isFirstAddressCorrect = false;
         if (masterPubKey != null && masterPubKey.length != 0) {
-            isFirstAddressCorrect = checkFirstAddress(masterPubKey);
+            isFirstAddressCorrect = SmartValidator.checkFirstAddress(this, masterPubKey);
         }
         if (!isFirstAddressCorrect) {
             BRWalletManager.getInstance().wipeWalletButKeystore(this);
@@ -171,14 +172,7 @@ public class IntroActivity extends BRActivity implements Serializable {
         });
     }
 
-    public boolean checkFirstAddress(byte[] mpk) {
-        String addressFromPrefs = BRSharedPrefs.getFirstAddress(this);
-        String generatedAddress = BRWalletManager.getFirstAddress(mpk);
-        if (!addressFromPrefs.equalsIgnoreCase(generatedAddress) && addressFromPrefs.length() != 0 && generatedAddress.length() != 0) {
-            Log.e(TAG, "checkFirstAddress: WARNING, addresses don't match: Prefs:" + addressFromPrefs + ", gen:" + generatedAddress);
-        }
-        return addressFromPrefs.equals(generatedAddress);
-    }
+
 
     @Override
     protected void onResume() {

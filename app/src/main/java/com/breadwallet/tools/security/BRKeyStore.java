@@ -605,25 +605,6 @@ public class BRKeyStore {
         return result != null && result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
     }
 
-    public static boolean phraseIsValid(String insertedPhrase, Context activity) {
-        String normalizedPhrase = Normalizer.normalize(insertedPhrase.trim(), Normalizer.Form.NFKD);
-        if (!BRWalletManager.getInstance().validatePhrase(activity, normalizedPhrase))
-            return false;
-        BRWalletManager m = BRWalletManager.getInstance();
-        byte[] rawPhrase = normalizedPhrase.getBytes();
-        byte[] bytePhrase = TypesConverter.getNullTerminatedPhrase(rawPhrase);
-        byte[] pubKey = m.getMasterPubKey(bytePhrase);
-        byte[] pubKeyFromKeyStore = new byte[0];
-        try {
-            pubKeyFromKeyStore = BRKeyStore.getMasterPublicKey(activity);
-        } catch (Exception e) {
-            e.printStackTrace();
-            BRErrorPipe.parseKeyStoreError(activity, e, "", true);
-        }
-        Arrays.fill(bytePhrase, (byte) 0);
-        return Arrays.equals(pubKey, pubKeyFromKeyStore);
-    }
-
     public static boolean resetWalletKeyStore(Context context) {
         KeyStore keyStore;
         try {

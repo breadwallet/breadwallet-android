@@ -14,7 +14,6 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
-import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -23,17 +22,12 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
+import com.breadwallet.tools.security.SmartValidator;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.wallet.BRWalletManager;
-
-import java.util.List;
-
-import static com.breadwallet.tools.util.Bip39Reader.getAllWordLists;
-import static com.platform.HTTPServer.URL_SUPPORT;
 
 public class InputWordsActivity extends BRActivity {
     private static final String TAG = InputWordsActivity.class.getName();
@@ -146,10 +140,10 @@ public class InputWordsActivity extends BRActivity {
                 if (phraseToCheck == null) return;
                 String cleanPhrase = Bip39Reader.cleanPhrase(app, phraseToCheck);
 
-                if (BRWalletManager.getInstance().validatePhrase(app, cleanPhrase)) {
+                if (SmartValidator.isPaperKeyValid(app, cleanPhrase)) {
 
                     if (restore || resetPin) {
-                        if (BRKeyStore.phraseIsValid(cleanPhrase, app)) {
+                        if (SmartValidator.isPaperKeyCorrect(cleanPhrase, app)) {
                             Utils.hideKeyboard(app);
                             clearWords();
                             Intent intent;
