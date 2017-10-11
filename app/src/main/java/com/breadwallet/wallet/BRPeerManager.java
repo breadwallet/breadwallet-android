@@ -48,11 +48,10 @@ import java.util.List;
 public class BRPeerManager {
     public static final String TAG = BRPeerManager.class.getName();
     private static BRPeerManager instance;
-    private static SyncProgressTask syncTask;
+
     private static List<OnTxStatusUpdate> statusUpdateListeners;
     private static OnSyncSucceeded onSyncFinished;
-    public boolean running;
-    private final Object lock = new Object();
+
 
     private BRPeerManager() {
         statusUpdateListeners = new ArrayList<>();
@@ -83,7 +82,7 @@ public class BRPeerManager {
         int startHeight = BRSharedPrefs.getStartHeight(ctx);
         int lastHeight = BRSharedPrefs.getLastBlockHeight(ctx);
         if (startHeight > lastHeight) BRSharedPrefs.putStartHeight(ctx, lastHeight);
-        getInstance().startSyncingProgressThread();
+        SyncManager.getInstance().startSyncingProgressThread();
     }
 
     public static void syncSucceeded() {
@@ -93,7 +92,7 @@ public class BRPeerManager {
         BRSharedPrefs.putLastSyncTime(app, System.currentTimeMillis());
         SyncManager.getInstance().updateAlarms(app);
         BRSharedPrefs.putAllowSpend(app, true);
-        getInstance().stopSyncingProgressThread();
+        SyncManager.getInstance().stopSyncingProgressThread();
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -106,12 +105,12 @@ public class BRPeerManager {
 
     public static void syncFailed() {
         Log.d(TAG, "syncFailed");
-        getInstance().stopSyncingProgressThread();
+        SyncManager.getInstance().stopSyncingProgressThread();
         Activity ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
         Log.e(TAG, "Network Not Available, showing not connected bar  ");
 
-        BRPeerManager.getInstance().stopSyncingProgressThread();
+        SyncManager.getInstance().stopSyncingProgressThread();
         if (onSyncFinished != null) onSyncFinished.onFinished();
     }
 
@@ -190,132 +189,6 @@ public class BRPeerManager {
 
     }
 
-    public void startSyncingProgressThread() {
-        Log.d(TAG, "startSyncingProgressThread:" + Thread.currentThread().getName());
-
-        try {
-            if (syncTask != null) {
-                if (running) {
-                    Log.e(TAG, "startSyncingProgressThread: syncTask.running == true, returning");
-                    return;
-                }
-                syncTask.interrupt();
-                syncTask = null;
-            }
-            syncTask = new SyncProgressTask();
-            syncTask.start();
-
-        } catch (IllegalThreadStateException ex) {
-            ex.printStackTrace();
-        }
-
-    }
-
-    public void stopSyncingProgressThread() {
-        Log.d(TAG, "stopSyncingProgressThread");
-        final BreadActivity ctx = BreadActivity.getApp();
-        if (ctx == null) {
-            Log.e(TAG, "stopSyncingProgressThread: ctx is null");
-            return;
-        }
-        try {
-            if (syncTask != null) {
-                syncTask.interrupt();
-                syncTask = null;
-            }
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
-    private class SyncProgressTask extends Thread {
-        public double progressStatus = 0;
-        private BreadActivity app;
-
-        public SyncProgressTask() {
-            progressStatus = 0;
-        }
-
-        @Override
-        public void run() {
-            if (running) return;
-            try {
-                app = BreadActivity.getApp();
-                progressStatus = 0;
-                running = true;
-                Log.d(TAG, "run: starting: " + progressStatus);
-
-                if (app != null) {
-                    final long lastBlockTimeStamp = BRPeerManager.getInstance().getLastBlockTimestamp() * 1000;
-                    app.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            if (TxManager.getInstance().syncingHolder != null)
-                                TxManager.getInstance().syncingHolder.progress.setProgress((int) (progressStatus * 100));
-                            if (TxManager.getInstance().syncingHolder != null)
-                                TxManager.getInstance().syncingHolder.date.setText(Utils.formatTimeStamp(lastBlockTimeStamp, "MMM. dd, yyyy  ha"));
-                        }
-                    });
-                }
-
-                while (running) {
-                    if (app != null) {
-                        int startHeight = BRSharedPrefs.getStartHeight(app);
-                        progressStatus = syncProgress(startHeight);
-//                    Log.e(TAG, "run: progressStatus: " + progressStatus);
-                        if (progressStatus == 1) {
-                            running = false;
-                            continue;
-                        }
-                        final long lastBlockTimeStamp = BRPeerManager.getInstance().getLastBlockTimestamp() * 1000;
-//                        Log.e(TAG, "run: changing the progress to: " + progressStatus + ": " + Thread.currentThread().getName());
-                        app.runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-
-                                if (TxManager.getInstance().currentPrompt != PromptManager.PromptItem.SYNCING) {
-                                    Log.e(TAG, "run: currentPrompt != SYNCING, showPrompt(SYNCING) ....");
-                                    TxManager.getInstance().showPrompt(app, PromptManager.PromptItem.SYNCING);
-                                }
-
-                                if (TxManager.getInstance().syncingHolder != null)
-                                    TxManager.getInstance().syncingHolder.progress.setProgress((int) (progressStatus * 100));
-                                if (TxManager.getInstance().syncingHolder != null)
-                                    TxManager.getInstance().syncingHolder.date.setText(Utils.formatTimeStamp(lastBlockTimeStamp, "MMM. dd, yyyy  ha"));
-                            }
-                        });
-
-                    } else {
-//                        Log.e(TAG, "run: app is null");
-                        app = BreadActivity.getApp();
-                    }
-
-                    try {
-                        Thread.sleep(300);
-                    } catch (InterruptedException e) {
-                        Log.e(TAG, "run: Thread.sleep was Interrupted:" + Thread.currentThread().getName(), e);
-                    }
-
-                }
-
-                Log.d(TAG, "run: SyncProgress task finished:" + Thread.currentThread().getName());
-            } finally {
-                if (progressStatus != 1) {
-                    throw new RuntimeException("didn't finish");
-                }
-                running = false;
-                progressStatus = 0;
-                if (app != null)
-                    app.runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            TxManager.getInstance().hidePrompt(app, PromptManager.PromptItem.SYNCING);
-                        }
-                    });
-            }
-
-        }
-    }
 
     public void updateFixedPeer(Context ctx) {
         String node = BRSharedPrefs.getTrustNode(ctx);
