@@ -34,7 +34,6 @@ import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
-import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -403,7 +402,7 @@ public class BRWalletManager {
                         String amCur = BRCurrency.getFormattedCurrencyString(ctx, BRSharedPrefs.getIso(ctx), BRExchange.getAmountFromSatoshis(ctx, BRSharedPrefs.getIso(ctx), new BigDecimal(amount)));
                         String formatted = String.format("%s (%s)", am, amCur);
                         String strToShow = String.format(ctx.getString(R.string.TransactionDetails_received), formatted);
-                        showToast(ctx, strToShow);
+                        showToastWithMessage(ctx, strToShow);
                     }
 
                 });
@@ -415,7 +414,7 @@ public class BRWalletManager {
             Log.e(TAG, "onTxAdded: ctx is null!");
     }
 
-    private static void showToast(Context ctx, final String message) {
+    private static void showToastWithMessage(Context ctx, final String message) {
         if (ctx == null) ctx = BreadApp.getBreadContext();
         if (ctx != null) {
             final Context finalCtx = ctx;
@@ -440,7 +439,7 @@ public class BRWalletManager {
 
 
         } else {
-            Log.e(TAG, "showToast: failed, ctx is null");
+            Log.e(TAG, "showToastWithMessage: failed, ctx is null");
         }
     }
 
@@ -465,40 +464,7 @@ public class BRWalletManager {
         }
     }
 
-    public boolean validatePhrase(Context ctx, String phrase) {
-        String[] words = new String[0];
-        List<String> list;
 
-        String[] cleanWordList = null;
-        try {
-            boolean isLocal = true;
-            String languageCode = ctx.getString(R.string.lang);
-            list = Bip39Reader.getWordList(ctx, languageCode);
-
-            String[] phraseWords = phrase.split(" ");
-            if (!list.contains(phraseWords[0])) {
-                isLocal = false;
-            }
-            if (!isLocal) {
-                String lang = Bip39Reader.getLang(ctx, phraseWords[0]);
-                if (lang != null) {
-                    list = Bip39Reader.getWordList(ctx, lang);
-                }
-
-            }
-            words = list.toArray(new String[list.size()]);
-            cleanWordList = Bip39Reader.cleanWordList(words);
-            if (cleanWordList == null) return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        if (words.length != 2048) {
-            RuntimeException ex = new IllegalArgumentException("words.length is not 2048");
-            FirebaseCrash.report(ex);
-            throw ex;
-        }
-        return validateRecoveryPhrase(cleanWordList, phrase);
-    }
 
     public void startTheWalletIfExists(final Activity app) {
         final BRWalletManager m = BRWalletManager.getInstance();
@@ -681,7 +647,7 @@ public class BRWalletManager {
 
     public native void walletFreeEverything();
 
-    private native boolean validateRecoveryPhrase(String[] words, String phrase);
+    public native boolean validateRecoveryPhrase(String[] words, String phrase);
 
     public native static String getFirstAddress(byte[] mpk);
 
