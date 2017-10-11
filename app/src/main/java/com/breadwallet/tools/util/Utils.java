@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.Uri;
 import android.os.Build;
@@ -23,11 +22,9 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 
-import okhttp3.internal.Util;
 
 /**
  * BreadWallet
@@ -55,21 +52,6 @@ import okhttp3.internal.Util;
 
 public class Utils {
     public static final String TAG = Utils.class.getName();
-
-    public static void overrideFonts(TextView... v) {
-        if (v == null) return;
-        Typeface FONT_REGULAR = Typeface.create("sans-serif-light", Typeface.NORMAL);
-        for (TextView view : v) {
-            try {
-                if (view != null) {
-                    view.setTypeface(FONT_REGULAR);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
 
     public static boolean isUsingCustomInputMethod(Activity context) {
         if (context == null) return false;

@@ -57,4 +57,3 @@ public class SyncReceiver extends IntentService {
             }
     }
 }
-

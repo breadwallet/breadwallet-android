@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Intent;
 import android.os.Looper;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.InputWordsActivity;
@@ -17,7 +15,7 @@ import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.tools.manager.ConnectionManager;
-import com.breadwallet.tools.manager.CurrencyFetchManager;
+import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.platform.HTTPServer;
 
@@ -74,7 +72,7 @@ public class ActivityUTILS {
         ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
         ConnectionManager.getInstance();
         if (!(app instanceof IntroActivity || app instanceof RecoverActivity || app instanceof WriteDownActivity))
-            CurrencyFetchManager.getInstance().startTimer(app);
+            BRApiManager.getInstance().startTimer(app);
         //show wallet locked if it is
         if (!isAppSafe(app))
             if (AuthManager.getInstance().isWalletDisabled(app))

@@ -5,11 +5,10 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.TypedValue;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.manager.TypefacesManager;
+import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.util.Utils;
 
 /**
@@ -62,7 +61,7 @@ public class BRText extends TextView {
     private void init(Context ctx, AttributeSet attrs) {
         TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.BRText);
         String customFont = a.getString(R.styleable.BRText_customFont);
-        TypefacesManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Book.otf" : customFont);
+        FontManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Book.otf" : customFont);
         a.recycle();
         setLineSpacing(0, 1.3f);
     }

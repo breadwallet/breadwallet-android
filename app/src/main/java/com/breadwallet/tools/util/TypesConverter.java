@@ -80,7 +80,6 @@ public class TypesConverter {
     }
 
     public static long byteArray2long(byte[] b) {
-
         ByteBuffer buf = ByteBuffer.wrap(b);
         return buf.getLong();
     }
