@@ -1,12 +1,17 @@
 package com.breadwallet.tools.qrcode;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Point;
 import android.net.Uri;
 import android.os.Environment;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
+import android.view.Display;
+import android.view.WindowManager;
+import android.widget.ImageView;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
@@ -91,6 +96,26 @@ public class QRUtils {
         Bitmap bitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
         bitmap.setPixels(pixels, 0, width, 0, 0, width, height);
         return bitmap;
+    }
+
+    public static boolean generateQR(Context ctx, String bitcoinURL, ImageView qrcode) {
+        if (qrcode == null || bitcoinURL == null || bitcoinURL.isEmpty()) return false;
+        WindowManager manager = (WindowManager) ctx.getSystemService(Activity.WINDOW_SERVICE);
+        Display display = manager.getDefaultDisplay();
+        Point point = new Point();
+        display.getSize(point);
+        int width = point.x;
+        int height = point.y;
+        int smallerDimension = width < height ? width : height;
+        smallerDimension = (int) (smallerDimension * 0.55f);
+        Bitmap bitmap = null;
+        bitmap = QRUtils.encodeAsBitmap(bitcoinURL, smallerDimension);
+        //qrcode.setPadding(1, 1, 1, 1);
+        //qrcode.setBackgroundResource(R.color.gray);
+        if (bitmap == null) return false;
+        qrcode.setImageBitmap(bitmap);
+        return true;
+
     }
 
     private static String guessAppropriateEncoding(CharSequence contents) {
