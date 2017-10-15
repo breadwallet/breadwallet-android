@@ -48,7 +48,7 @@ public class BRErrorPipe {
         if (report) FirebaseCrash.report(e);
 
         if (e instanceof KeyPermanentlyInvalidatedException) {
-            BRErrorPipe.showKeyStoreDialog(context, "KeyStore Error: " + alias, "Your Breadwallet encrypted data was recently invalidated because your Android lock screen was disabled.", context.getString(R.string.Button_ok), null,
+            BRErrorPipe.showKeyStoreDialog(context, "KeyStore Error: " + alias, "Your Loafwallet encrypted data was recently invalidated because your Android lock screen was disabled.", context.getString(R.string.Button_ok), null,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
@@ -65,7 +65,7 @@ public class BRErrorPipe {
                         }
                     });
         } else if (e instanceof InvalidKeyException) {
-            showKeyStoreDialog(context, "KeyStore Error", "Failed to load KeyStore(" + alias + "). Please try again later or enter your phrase to recover your Breadwallet now.", "recover now", "try later",
+            showKeyStoreDialog(context, "KeyStore Error", "Failed to load KeyStore(" + alias + "). Please try again later or enter your phrase to recover your Loafwallet now.", "recover now", "try later",
                     context instanceof IntroActivity ?
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int which) {

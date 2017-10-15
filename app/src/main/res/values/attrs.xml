@@ -11,7 +11,7 @@
     </declare-styleable>
 
     <declare-styleable name="BRButton">
-        <attr name="isBreadButton" format="boolean"/>
+        <attr name="isLoafButton" format="boolean"/>
         <attr name="buttonType" format="integer"/>
     </declare-styleable>
 

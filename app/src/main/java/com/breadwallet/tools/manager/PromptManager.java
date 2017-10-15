@@ -152,7 +152,7 @@ public class PromptManager {
                     }
                 });
             case SHARE_DATA:
-                return new PromptInfo("Share Anonymous Data", "Help improve Bread by sharing your anonymous data with us", new View.OnClickListener() {
+                return new PromptInfo("Share Anonymous Data", "Help improve Loaf by sharing your anonymous data with us", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         new Thread(new Runnable() {
