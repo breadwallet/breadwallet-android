@@ -94,9 +94,9 @@ public class CurrencyFetchManager {
                     CurrencyEntity tmp = new CurrencyEntity();
                     try {
                         JSONObject tmpObj = (JSONObject) arr.get(i);
-                        tmp.name = tmpObj.getString("name");
+                        tmp.name = tmpObj.getString("code");
                         tmp.code = tmpObj.getString("code");
-                        tmp.rate = (float) tmpObj.getDouble("rate");
+                        tmp.rate = (float) tmpObj.getDouble("n");
                         String selectedISO = BRSharedPrefs.getIso(context);
 //                        Log.e(TAG,"selectedISO: " + selectedISO);
                         if (tmp.code.equalsIgnoreCase(selectedISO)) {
@@ -183,12 +183,12 @@ public class CurrencyFetchManager {
 
 
     public static JSONArray getJSonArray(Activity activity) {
-        String jsonString = callURL(activity, String.format("https://%s/rates", BreadApp.HOST));
+        String jsonString = callURL(activity, "https://litecoin.com/api/v1/ticker");
         JSONArray jsonArray = null;
         if (jsonString == null) return null;
         try {
             JSONObject obj = new JSONObject(jsonString);
-            jsonArray = obj.getJSONArray("body");
+            jsonArray = obj.getJSONArray("price");
 
         } catch (JSONException ignored) {
         }
