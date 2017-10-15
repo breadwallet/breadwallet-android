@@ -39,7 +39,8 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     }
 
     public static BRSQLiteHelper getInstance(Context context) {
-        if (instance == null) instance = new BRSQLiteHelper(context);
+        // Use the application context to ensure that we don't accidentally leak an Activity's context
+        if (instance == null) instance = new BRSQLiteHelper(context.getApplicationContext());
         return instance;
     }
 
