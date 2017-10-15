@@ -120,11 +120,11 @@ public class BitcoinUrlHandler {
 
         String tmp = str.trim().replaceAll("\n", "").replaceAll(" ", "%20");
 
-        if (!tmp.startsWith("bitcoin://")) {
-            if (!tmp.startsWith("bitcoin:"))
-                tmp = "bitcoin://".concat(tmp);
+        if (!tmp.startsWith("litecoin://")) {
+            if (!tmp.startsWith("litecoin:"))
+                tmp = "litecoin://".concat(tmp);
             else
-                tmp = tmp.replace("bitcoin:", "bitcoin://");
+                tmp = tmp.replace("litecoin:", "litecoin://");
         }
         URI uri = URI.create(tmp);
 

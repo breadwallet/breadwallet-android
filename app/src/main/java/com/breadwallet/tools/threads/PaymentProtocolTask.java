@@ -78,7 +78,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             Log.e(TAG, "the uri: " + params[0]);
             URL url = new URL(params[0]);
             urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestProperty("Accept", "application/bitcoin-paymentrequest");
+            urlConnection.setRequestProperty("Accept", "application/litecoin-paymentrequest");
             urlConnection.setConnectTimeout(3000);
             urlConnection.setReadTimeout(3000);
             urlConnection.setUseCaches(false);

@@ -339,7 +339,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived());
 
         boolean isBTCPreferred = BRSharedPrefs.getPreferredBTC(mContext);
-        String iso = isBTCPreferred ? "BTC" : BRSharedPrefs.getIso(mContext);
+        String iso = isBTCPreferred ? "LTC" : BRSharedPrefs.getIso(mContext);
         convertView.amount.setText(BRCurrency.getFormattedCurrencyString(mContext, iso, BRExchange.getAmountFromSatoshis(mContext, iso, new BigDecimal(satoshisAmount))));
 
         //if it's 0 we use the current time.

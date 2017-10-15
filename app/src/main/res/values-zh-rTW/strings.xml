@@ -140,8 +140,8 @@
   <string name="ConfirmPaperPhrase.label">要確保每項資料都正確寫下，請從紙上金鑰輸入下列字組。</string>
   <!-- Word label eg. Word #1, Word #2 -->
   <string name="ConfirmPaperPhrase.word">字組 #%1$s</string>
-  <!-- Bitcoin denomination picker label -->
-  <string name="DefaultCurrency.bitcoinLabel">比特幣顯示單位</string>
+  <!-- Litecoin denomination picker label -->
+  <string name="DefaultCurrency.g">比特幣顯示單位</string>
   <!-- Exchange rate label -->
   <string name="DefaultCurrency.rateLabel">匯率</string>
   <!-- Email unavailable alert title -->

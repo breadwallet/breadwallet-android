@@ -89,7 +89,7 @@
   <!-- Approve button label -->
   <string name="BitID.approve">Godkänn</string>
   <!-- <sitename> is requesting authentication using your bitcoin wallet -->
-  <string name="BitID.authenticationRequest">%1$s begär autentisering med hjälp av din bitcoin-plånbok</string>
+  <string name="BitID.authenticationRequest">%1$s begär autentisering med hjälp av din Litecoin-plånbok</string>
   <!-- Deny button label -->
   <string name="BitID.deny">Avslå</string>
   <!-- BitID error alert title -->
@@ -140,8 +140,8 @@
   <string name="ConfirmPaperPhrase.label">Ange följande ord från din ordnyckel, för att vara säker på att allt skrevs korrekt.</string>
   <!-- Word label eg. Word #1, Word #2 -->
   <string name="ConfirmPaperPhrase.word">Ord #%1$s</string>
-  <!-- Bitcoin denomination picker label -->
-  <string name="DefaultCurrency.bitcoinLabel">Bitcoin visningsenhet</string>
+  <!-- Litecoin denomination picker label -->
+  <string name="DefaultCurrency.litecoinLabel">Litecoin visningsenhet</string>
   <!-- Exchange rate label -->
   <string name="DefaultCurrency.rateLabel">Växelkurs</string>
   <!-- Email unavailable alert title -->
@@ -171,7 +171,7 @@
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Kontrollerar privat nyckelsaldo...</string>
   <!-- Sweep private key confirmation message -->
-  <string name="Import.confirm">Skicka %1$s från denna privata nyckel till din plånbok? Bitcoins nätverk tar en avgift på %2$s.</string>
+  <string name="Import.confirm">Skicka %1$s från denna privata nyckel till din plånbok? Litecoins nätverk tar en avgift på %2$s.</string>
   <!-- Duplicate key error message -->
   <string name="Import.Error.duplicate">Denna privata nyckel finns redan i din plånbok.</string>
   <!-- empty private key error message -->
@@ -215,9 +215,9 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Ignorera</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Töm denna plånbok direkt och återupprätta den på en säker enhet.</string>
+  <string name="JailbreakWarnings.messageWithBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina Litecoin! Töm denna plånbok direkt och återupprätta den på en säker enhet.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Använd Bread endast på en säker enhet.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina Litecoin! Använd Bread endast på en säker enhet.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">VARNING</string>
   <!-- Wipe wallet button -->
@@ -235,7 +235,7 @@
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">Hantera plånbok</string>
   <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">Köp Bitcoin</string>
+  <string name="MenuButton.buy">Köp Litecoin</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Lås plånbok</string>
   <!-- Menu button title -->
@@ -267,7 +267,7 @@
   <!-- Node status label -->
   <string name="NodeSelector.statusLabel">Nodens anslutningsstatus</string>
   <!-- Node Selector view title -->
-  <string name="NodeSelector.title">Bitcoin-noder</string>
+  <string name="NodeSelector.title">Litecoin-noder</string>
   <!-- Bad Payment request alert title -->
   <string name="PaymentProtocol.Errors.badPaymentRequest">Felaktig utbetalningsbegäran</string>
   <!-- Error opening payment protocol file message -->
@@ -279,9 +279,9 @@
   <!-- Payment too small alert title -->
   <string name="PaymentProtocol.Errors.smallOutputError">Kunde inte göra utbetalning</string>
   <!-- Amount too small error message -->
-  <string name="PaymentProtocol.Errors.smallPayment">Utbetalning av Bitcoin får inte vara lägre än %1$s.</string>
+  <string name="PaymentProtocol.Errors.smallPayment">Utbetalning av Litecoin får inte vara lägre än %1$s.</string>
   <!-- Output too small error message. -->
-  <string name="PaymentProtocol.Errors.smallTransaction">Utbetalningstransaktioner av Bitcoin får inte vara lägre än %1$s.</string>
+  <string name="PaymentProtocol.Errors.smallTransaction">Utbetalningstransaktioner av Litecoin får inte vara lägre än %1$s.</string>
   <!-- Unsupported signature type payment protocol error message -->
   <string name="PaymentProtocol.Errors.unsupportedSignatureType">signaturtypen saknar stöd</string>
   <!-- Untrusted certificate payment protocol error message -->
@@ -379,7 +379,7 @@
   <!-- extimated time -->
   <string name="ReScan.body1">20-45 minuter</string>
   <!-- Syncing explanation -->
-  <string name="ReScan.body2">Om en transaktion visar sig som klar i bitcoins nätverk men inte i Bread.</string>
+  <string name="ReScan.body2">Om en transaktion visar sig som klar i Litecoins nätverk men inte i Bread.</string>
   <!-- Syncing explanation -->
   <string name="ReScan.body3">Du får gång på gång ett meddelande som säger att din transaktion avvisades.</string>
   <!-- Start Sync button label -->
@@ -405,7 +405,7 @@
   <!-- Security Center Info -->
   <string name="SecurityCenter.info">Aktivera alla säkerhetsfunktioner för maximal säkerhet.</string>
   <!-- Paper Key button description -->
-  <string name="SecurityCenter.paperKeyDescription">Det enda sättet att komma åt dina bitcoin om du förlorar eller uppgraderar din telefon.</string>
+  <string name="SecurityCenter.paperKeyDescription">Det enda sättet att komma åt dina Litecoin om du förlorar eller uppgraderar din telefon.</string>
   <!-- Paper Key button title -->
   <string name="SecurityCenter.paperKeyTitle">Ordnyckel</string>
   <!-- PIN button description -->
@@ -445,9 +445,9 @@
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">Betalningsmottagaren är inte certifierad.</string>
   <!-- Invalid address alert message -->
-  <string name="Send.invalidAddressMessage">Mottagaradressen är inte en giltig bitcoin-adress.</string>
+  <string name="Send.invalidAddressMessage">Mottagaradressen är inte en giltig Litecoin-adress.</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">Urklipp innehåller inte en giltig bitcoinadress.</string>
+  <string name="Send.invalidAddressOnPasteboard">Urklipp innehåller inte en giltig Litecoinadress.</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">Ogiltig adress</string>
   <!-- Is rescanning error message -->
@@ -473,7 +473,7 @@
   <!-- Send money to label -->
   <string name="Send.toLabel">Till</string>
   <!-- Adress already used alert message - first part -->
-  <string name="Send.UsedAddress.firstLine">Bitcoin-adresser är avsedda för engångsanvändning.</string>
+  <string name="Send.UsedAddress.firstLine">Litecoin-adresser är avsedda för engångsanvändning.</string>
   <!-- Adress already used alert message - second part -->
   <string name="Send.UsedAddress.secondLIne">Återanvändning minskar sekretessen både för dig och mottagaren och kan sluta i förlust om mottagaren inte direkt kontrollerar adressen.</string>
   <!-- Adress already used alert title -->
@@ -525,7 +525,7 @@
   <!-- Argument is date -->
   <string name="StartPaperPhrase.date">Senast skrev du ner din ordnyckel på %1$s</string>
   <!-- Start view message -->
-  <string name="StartViewController.message">Det säkraste och tryggaste sättet att använda bitcoin.</string>
+  <string name="StartViewController.message">Det säkraste och tryggaste sättet att använda Litecoin.</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Ansluter</string>
   <!-- Syncing view header text -->
@@ -635,7 +635,7 @@
   <!-- "Sent [$5] to [address]" => This is the "to [address]" part. -->
   <string name="TransactionDetails.to">till %1$s</string>
   <!-- Transaction ID header -->
-  <string name="TransactionDetails.txHashHeader">Bitcoin transaktions-ID</string>
+  <string name="TransactionDetails.txHashHeader">Litecoin transaktions-ID</string>
   <!-- (this transaction was) Received at this address: -->
   <string name="TransactionDirection.address">Togs emot på den här adressen</string>
   <!-- (this transaction was) Sent to this address: -->
@@ -663,7 +663,7 @@
   <!-- Wallet unlocked message -->
   <string name="UnlockScreen.unlocked">Plånbok upplåst</string>
   <!-- Update PIN caption text -->
-  <string name="UpdatePin.caption">Kom ihåg PIN-koden. Om du glömmer den, kommer du inte åt dina bitcoin.</string>
+  <string name="UpdatePin.caption">Kom ihåg PIN-koden. Om du glömmer den, kommer du inte åt dina Litecoin.</string>
   <!-- PIN creation info. -->
   <string name="UpdatePin.createInstruction">Din PIN-kod används för att låsa upp ditt Bread och skicka pengar</string>
   <!-- Update PIN title -->

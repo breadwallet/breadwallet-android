@@ -89,7 +89,7 @@
   <!-- Approve button label -->
   <string name="BitID.approve">批准</string>
   <!-- <sitename> is requesting authentication using your bitcoin wallet -->
-  <string name="BitID.authenticationRequest">%1$s 正使用您的比特币钱包请求验证</string>
+  <string name="BitID.authenticationRequest">%1$s 正使用您的莱特币钱包请求验证</string>
   <!-- Deny button label -->
   <string name="BitID.deny">拒绝</string>
   <!-- BitID error alert title -->
@@ -140,8 +140,8 @@
   <string name="ConfirmPaperPhrase.label">为确保一切均被正确地书写，请在您的纸键输入以下文字。</string>
   <!-- Word label eg. Word #1, Word #2 -->
   <string name="ConfirmPaperPhrase.word">单词#%1$s</string>
-  <!-- Bitcoin denomination picker label -->
-  <string name="DefaultCurrency.bitcoinLabel">比特币显示单位</string>
+  <!-- Litecoin denomination picker label -->
+  <string name="DefaultCurrency.litecoinLabel">莱特币显示单位</string>
   <!-- Exchange rate label -->
   <string name="DefaultCurrency.rateLabel">汇率</string>
   <!-- Email unavailable alert title -->
@@ -171,7 +171,7 @@
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">正在查看私人密钥余额...</string>
   <!-- Sweep private key confirmation message -->
-  <string name="Import.confirm">从这个私人密钥中发送 %1$s 到您的钱包吗？比特币网络将收到 %2$s 费用。</string>
+  <string name="Import.confirm">从这个私人密钥中发送 %1$s 到您的钱包吗？莱特币网络将收到 %2$s 费用。</string>
   <!-- Duplicate key error message -->
   <string name="Import.Error.duplicate">本私钥已在您的钱包里。</string>
   <!-- empty private key error message -->
@@ -215,9 +215,9 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">忽略</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">设备安全性受损\n任何\'越狱\'应用都可能访问 Bread 的密钥链数据并盗取您的比特币！立即擦除这个钱包并在一台安全设备上进行恢复。</string>
+  <string name="JailbreakWarnings.messageWithBalance">设备安全性受损\n任何\'越狱\'应用都可能访问 Bread 的密钥链数据并盗取您的莱特币！立即擦除这个钱包并在一台安全设备上进行恢复。</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">设备安全性受损\n任何\'越狱\'应用都可能访问 Bread 的密钥链数据并盗取您的比特币！请您仅在未越狱设备上使用 Bread 。</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">设备安全性受损\n任何\'越狱\'应用都可能访问 Bread 的密钥链数据并盗取您的莱特币！请您仅在未越狱设备上使用 Bread 。</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">警告</string>
   <!-- Wipe wallet button -->
@@ -235,7 +235,7 @@
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">管理钱包</string>
   <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">购买比特币</string>
+  <string name="MenuButton.buy">购买莱特币</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">锁住钱包</string>
   <!-- Menu button title -->
@@ -267,7 +267,7 @@
   <!-- Node status label -->
   <string name="NodeSelector.statusLabel">节点连接状态</string>
   <!-- Node Selector view title -->
-  <string name="NodeSelector.title">比特币节点</string>
+  <string name="NodeSelector.title">莱特币节点</string>
   <!-- Bad Payment request alert title -->
   <string name="PaymentProtocol.Errors.badPaymentRequest">假的付款请求</string>
   <!-- Error opening payment protocol file message -->
@@ -279,9 +279,9 @@
   <!-- Payment too small alert title -->
   <string name="PaymentProtocol.Errors.smallOutputError">无法付款</string>
   <!-- Amount too small error message -->
-  <string name="PaymentProtocol.Errors.smallPayment">比特币支付不能小于%1$s。</string>
+  <string name="PaymentProtocol.Errors.smallPayment">莱特币支付不能小于%1$s。</string>
   <!-- Output too small error message. -->
-  <string name="PaymentProtocol.Errors.smallTransaction">比特币交易输出不能小于 %1$s。</string>
+  <string name="PaymentProtocol.Errors.smallTransaction">莱特币交易输出不能小于 %1$s。</string>
   <!-- Unsupported signature type payment protocol error message -->
   <string name="PaymentProtocol.Errors.unsupportedSignatureType">不受支持的签名类型</string>
   <!-- Untrusted certificate payment protocol error message -->
@@ -379,7 +379,7 @@
   <!-- extimated time -->
   <string name="ReScan.body1">20-45 分钟</string>
   <!-- Syncing explanation -->
-  <string name="ReScan.body2">如果某次交易在比特币网络上显示为已完成，却不在您的 Bread 里。</string>
+  <string name="ReScan.body2">如果某次交易在莱特币网络上显示为已完成，却不在您的 Bread 里。</string>
   <!-- Syncing explanation -->
   <string name="ReScan.body3">你反复得到交易被拒绝的出错信息。</string>
   <!-- Start Sync button label -->
@@ -405,7 +405,7 @@
   <!-- Security Center Info -->
   <string name="SecurityCenter.info">启用所有安全功能以获得最大保护。</string>
   <!-- Paper Key button description -->
-  <string name="SecurityCenter.paperKeyDescription">若您丢失或升级您的手机，访问您的比特币的唯一方法。</string>
+  <string name="SecurityCenter.paperKeyDescription">若您丢失或升级您的手机，访问您的莱特币的唯一方法。</string>
   <!-- Paper Key button title -->
   <string name="SecurityCenter.paperKeyTitle">纸键</string>
   <!-- PIN button description -->
@@ -445,9 +445,9 @@
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">收款人身份未经认证。</string>
   <!-- Invalid address alert message -->
-  <string name="Send.invalidAddressMessage">目标地址不是有效的比特币地址。</string>
+  <string name="Send.invalidAddressMessage">目标地址不是有效的莱特币地址。</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">粘贴板中没有有效的比特币地址</string>
+  <string name="Send.invalidAddressOnPasteboard">粘贴板中没有有效的莱特币地址</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">无效地址</string>
   <!-- Is rescanning error message -->
@@ -473,7 +473,7 @@
   <!-- Send money to label -->
   <string name="Send.toLabel">至</string>
   <!-- Adress already used alert message - first part -->
-  <string name="Send.UsedAddress.firstLine">比特币地址仅供一次性使用。</string>
+  <string name="Send.UsedAddress.firstLine">莱特币地址仅供一次性使用。</string>
   <!-- Adress already used alert message - second part -->
   <string name="Send.UsedAddress.secondLIne">重复使用会削弱您和收件人的隐私，如果收件人不直接控制地址，可能会导致损失。</string>
   <!-- Adress already used alert title -->
@@ -525,7 +525,7 @@
   <!-- Argument is date -->
   <string name="StartPaperPhrase.date">您最后一次记录纸上密钥是在 %1$s</string>
   <!-- Start view message -->
-  <string name="StartViewController.message">使用比特币最安全且最可靠的方式。</string>
+  <string name="StartViewController.message">使用莱特币最安全且最可靠的方式。</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">连接中</string>
   <!-- Syncing view header text -->
@@ -635,7 +635,7 @@
   <!-- "Sent [$5] to [address]" => This is the "to [address]" part. -->
   <string name="TransactionDetails.to">到 %1$s</string>
   <!-- Transaction ID header -->
-  <string name="TransactionDetails.txHashHeader">比特币交易 ID</string>
+  <string name="TransactionDetails.txHashHeader">莱特币交易 ID</string>
   <!-- (this transaction was) Received at this address: -->
   <string name="TransactionDirection.address">已在此地址接收</string>
   <!-- (this transaction was) Sent to this address: -->
@@ -663,7 +663,7 @@
   <!-- Wallet unlocked message -->
   <string name="UnlockScreen.unlocked">钱包已解锁</string>
   <!-- Update PIN caption text -->
-  <string name="UpdatePin.caption">请牢记此 PIN 码。如果您忘记，您将无法访问您的比特币。</string>
+  <string name="UpdatePin.caption">请牢记此 PIN 码。如果您忘记，您将无法访问您的莱特币。</string>
   <!-- PIN creation info. -->
   <string name="UpdatePin.createInstruction">您的 PIN 码将用于解锁您的 Bread 并发送款项。</string>
   <!-- Update PIN title -->

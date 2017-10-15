@@ -113,7 +113,7 @@ public class KVStoreManager {
 
         //sanity check
         if (old.classVersion == 0) old.classVersion = 1;
-        if (old.name != null) old.name = "My Bread";
+        if (old.name != null) old.name = "My Loaf";
 
         JSONObject obj = new JSONObject();
         byte[] result;

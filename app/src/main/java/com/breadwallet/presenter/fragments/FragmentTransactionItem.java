@@ -160,7 +160,7 @@ public class FragmentTransactionItem extends Fragment {
 //        Log.e(TAG, "fillTexts fee: " + item.getFee());
 //        Log.e(TAG, "fillTexts hash: " + item.getHexId());
         //get the current iso
-        String iso = BRSharedPrefs.getPreferredBTC(getActivity()) ? "BTC" : BRSharedPrefs.getIso(getContext());
+        String iso = BRSharedPrefs.getPreferredBTC(getActivity()) ? "LTC" : BRSharedPrefs.getIso(getContext());
 //        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
 //            @Override
 //            public void run() {

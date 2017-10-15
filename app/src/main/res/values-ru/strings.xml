@@ -140,8 +140,8 @@
   <string name="ConfirmPaperPhrase.label">Чтобы убедиться, что всё записано корректно, пожалуйста, введите следующие слова с вашего бумажного ключа.</string>
   <!-- Word label eg. Word #1, Word #2 -->
   <string name="ConfirmPaperPhrase.word">Слово #%1$s</string>
-  <!-- Bitcoin denomination picker label -->
-  <string name="DefaultCurrency.bitcoinLabel">Единица отображения биткойна</string>
+  <!-- Litecoin denomination picker label -->
+  <string name="DefaultCurrency.litecoinLabel">Единица отображения биткойна</string>
   <!-- Exchange rate label -->
   <string name="DefaultCurrency.rateLabel">Обменный курс</string>
   <!-- Email unavailable alert title -->
@@ -235,7 +235,7 @@
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">Управление кошельком</string>
   <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">Купить Bitcoin</string>
+  <string name="MenuButton.buy">Купить Litecoin</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Заблокировать кошелек</string>
   <!-- Menu button title -->

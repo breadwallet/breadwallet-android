@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="lang">en</string>
+    <!-- Device authentication title -->
+    <string name="App.name.Android">loaf</string>
+    <!-- Device authentication title -->
+    <string name="Auth.title.Android">Authentication required</string>
+    <!-- Instruction to touch the sensor for fingerprint authentication -->
+    <string name="Auth.touch.Android">Touch Sensor</string>
+    <!-- Device authentication body -->
+    <string name="Auth.body.Android">Please unlock your device to continue.</string>
+    <!-- Enable Fingerprint prompt body -->
+    <string name="Prompts.Fingerprint.body.Android">Tap here to enable Fingerprint</string>
+    <!-- Enable Fingerprint prompt title -->
+    <string name="Prompts.Fingerprint.title.Android">Enable Fingerprint</string>
+    <!-- Fingerprint -->
+    <string name="Fingerprint.Android">Fingerprint</string>
+    <!-- Enable fingerprint for this wallet called Loaf -->
+    <string name="Fingerprint.enable.Android">Enable Fingerprint for Loaf</string>
+    <!-- Fingerprint enabling description body -->
+    <string name="Fingerprint.body.Android">You can customize your Fingerprint Spending Limit from the Fingerprint Spending Limit screen</string>
+    <!-- Fingerprint limit -->
+    <string name="Fingerprint.limit.Android">Fingerprint Limit</string>
+    <!-- Fingerprint Is Not Setup -->
+    <string name="Fingerprint.warning.title.Android">Fingerprint Not Setup</string>
+    <!-- Instruction for the fingerprint setup -->
+    <string name="Fingerprint.warning.body.Android">You have not setup any fingerprints on this device. Go to Settings -> Security to setup a fingerprint.</string>
+    <!-- Instruction for how you can customize the spending limit -->
+    <string name="Fingerprint.customize.body.Android">You can customize your Fingerprint Spending Limit from the Fingerprint Spending Limit screen</string>
+    <!-- The fingerprint spending limit -->
+    <string name="Settings.fingerprintLimit.Android">Fingerprint Spending Limit</string>
+    <!-- Permission required -->
+    <string name="Permissions.title.Android">Permission Required</string>
+    <!-- Instructions how to allow the camera access for the app -->
+    <string name="Permissions.body.Android">Allow camera access in \"Settings\" > \"Apps\" > \"loafwallet\" > \"Permissions\"</string>
+    <!-- Switch button from fingerprint to PIN insert -->
+    <string name="Pin.title.Android">PIN</string>
+    <!-- Fingerprint was recognized by the scanner -->
+    <string name="Fingerprint.recognized.Android">Fingerprint recognized</string>
+    <!-- Fingerprint was not recognized by the scanner, please try scanning again -->
+    <string name="Fingerprint.not.recognized.Android">Fingerprint not recognized. Try again</string>
+    <!-- Instruction how to enable device encryption -->
+    <string name="Warning.encryption.body.Android">A device screen lock is needed to safeguard your wallet. Go to \"Settings\" > \"Security\" > \"Screen lock\"</string>
+
+</resources>

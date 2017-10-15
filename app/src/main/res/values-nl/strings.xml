@@ -89,7 +89,7 @@
   <!-- Approve button label -->
   <string name="BitID.approve">Keur goed</string>
   <!-- <sitename> is requesting authentication using your bitcoin wallet -->
-  <string name="BitID.authenticationRequest">%1$s vraagt om authenticatie om je bitcoin-portemonnee te gebruiken</string>
+  <string name="BitID.authenticationRequest">%1$s vraagt om authenticatie om je Litecoin-portemonnee te gebruiken</string>
   <!-- Deny button label -->
   <string name="BitID.deny">Weigeren</string>
   <!-- BitID error alert title -->
@@ -140,8 +140,8 @@
   <string name="ConfirmPaperPhrase.label">Voer de volgende woorden in van je papieren sleutel om te verzekeren dat alles correct is opgeschreven.</string>
   <!-- Word label eg. Word #1, Word #2 -->
   <string name="ConfirmPaperPhrase.word">Woord #%1$s</string>
-  <!-- Bitcoin denomination picker label -->
-  <string name="DefaultCurrency.bitcoinLabel">Bitcoin-eenheid</string>
+  <!-- Litecoin denomination picker label -->
+  <string name="DefaultCurrency.litecoinLabel">Litecoin-eenheid</string>
   <!-- Exchange rate label -->
   <string name="DefaultCurrency.rateLabel">Wisselkoers</string>
   <!-- Email unavailable alert title -->
@@ -171,7 +171,7 @@
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Persoonlijke sleutel balans checken...</string>
   <!-- Sweep private key confirmation message -->
-  <string name="Import.confirm">%1$s van deze persoonlijke sleutel naar je portemonnee sturen? Het Bitcoin netwerk zal een heffing ontvangen van %2$s.</string>
+  <string name="Import.confirm">%1$s van deze persoonlijke sleutel naar je portemonnee sturen? Het Litecoin netwerk zal een heffing ontvangen van %2$s.</string>
   <!-- Duplicate key error message -->
   <string name="Import.Error.duplicate">Deze persoonlijke sleutel zit al in je portemonnee.</string>
   <!-- empty private key error message -->
@@ -215,9 +215,9 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Negeren</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">APPARAAT BEVEILIGING BESCHADIGD\nElke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan hiermee je Bitcoins stelen! Wis deze portemonnee direct en herstel het op een veilig apparaat.</string>
+  <string name="JailbreakWarnings.messageWithBalance">APPARAAT BEVEILIGING BESCHADIGD\nElke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan hiermee je Litecoins stelen! Wis deze portemonnee direct en herstel het op een veilig apparaat.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">APPARAAT BEVEILIGING BESCHADIGD\nElke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan hiermee je Bitcoins stelen. Gebruik Bread a.u.b. alleen op een niet-gejailbreakt apparaat.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">APPARAAT BEVEILIGING BESCHADIGD\nElke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan hiermee je Litecoins stelen. Gebruik Bread a.u.b. alleen op een niet-gejailbreakt apparaat.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">WAARSCHUWING</string>
   <!-- Wipe wallet button -->
@@ -235,7 +235,7 @@
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">Portemonnee Beheren</string>
   <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">Bitcoins Kopen</string>
+  <string name="MenuButton.buy">Litecoins Kopen</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Portemonnee Vergrendelen</string>
   <!-- Menu button title -->
@@ -267,7 +267,7 @@
   <!-- Node status label -->
   <string name="NodeSelector.statusLabel">Connectiestatus van de node</string>
   <!-- Node Selector view title -->
-  <string name="NodeSelector.title">Bitcoin-nodes</string>
+  <string name="NodeSelector.title">Litecoin-nodes</string>
   <!-- Bad Payment request alert title -->
   <string name="PaymentProtocol.Errors.badPaymentRequest">Slecht Betalingsverzoek</string>
   <!-- Error opening payment protocol file message -->
@@ -279,9 +279,9 @@
   <!-- Payment too small alert title -->
   <string name="PaymentProtocol.Errors.smallOutputError">Kon de betaling niet uitvoeren</string>
   <!-- Amount too small error message -->
-  <string name="PaymentProtocol.Errors.smallPayment">Bitcoin betalingen kunnen niet minder zijn dan %1$s.</string>
+  <string name="PaymentProtocol.Errors.smallPayment">Litecoin betalingen kunnen niet minder zijn dan %1$s.</string>
   <!-- Output too small error message. -->
-  <string name="PaymentProtocol.Errors.smallTransaction">Bitcoin transactie outputs kunnen niet minder zijn dan %1$s.</string>
+  <string name="PaymentProtocol.Errors.smallTransaction">Litecoin transactie outputs kunnen niet minder zijn dan %1$s.</string>
   <!-- Unsupported signature type payment protocol error message -->
   <string name="PaymentProtocol.Errors.unsupportedSignatureType">niet-ondersteund handtekening type</string>
   <!-- Untrusted certificate payment protocol error message -->
@@ -379,7 +379,7 @@
   <!-- extimated time -->
   <string name="ReScan.body1">20-45 minuten</string>
   <!-- Syncing explanation -->
-  <string name="ReScan.body2">Als een transactie als voltooid staat op het Bitcoin netwerk maar niet in je Bread.</string>
+  <string name="ReScan.body2">Als een transactie als voltooid staat op het Litecoin netwerk maar niet in je Bread.</string>
   <!-- Syncing explanation -->
   <string name="ReScan.body3">Je kreeg herhaaldelijk een foutmelding die zei dat je transactie werd afgewezen.</string>
   <!-- Start Sync button label -->
@@ -405,7 +405,7 @@
   <!-- Security Center Info -->
   <string name="SecurityCenter.info">Activeer alle veiligheidsmaatregelen voor maximale bescherming.</string>
   <!-- Paper Key button description -->
-  <string name="SecurityCenter.paperKeyDescription">De enige manier om toegang te hebben tot je Bitcoins is als je je telefoon verliest of upgrade.</string>
+  <string name="SecurityCenter.paperKeyDescription">De enige manier om toegang te hebben tot je Litecoins is als je je telefoon verliest of upgrade.</string>
   <!-- Paper Key button title -->
   <string name="SecurityCenter.paperKeyTitle">Papieren Sleutel</string>
   <!-- PIN button description -->
@@ -445,9 +445,9 @@
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">Begunstigde is niet gecertifcieerd.</string>
   <!-- Invalid address alert message -->
-  <string name="Send.invalidAddressMessage">Het bestemmingsadres is geen geldig bitcoin-adres.</string>
+  <string name="Send.invalidAddressMessage">Het bestemmingsadres is geen geldig Litecoin-adres.</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">Plakbord bevat geen geldig bitcoin adres.</string>
+  <string name="Send.invalidAddressOnPasteboard">Plakbord bevat geen geldig Litecoin adres.</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">Ongeldig Adres</string>
   <!-- Is rescanning error message -->
@@ -473,7 +473,7 @@
   <!-- Send money to label -->
   <string name="Send.toLabel">Naar</string>
   <!-- Adress already used alert message - first part -->
-  <string name="Send.UsedAddress.firstLine">Bitcoin adressen zijn alleen bedoeld voor enkel gebruik.</string>
+  <string name="Send.UsedAddress.firstLine">Litecoin adressen zijn alleen bedoeld voor enkel gebruik.</string>
   <!-- Adress already used alert message - second part -->
   <string name="Send.UsedAddress.secondLIne">Hergebruikt vermindert privacy voor zowel jou en de ontvanger en kan resulteren in verlies als de ontvanger niet direct het adres beheert.</string>
   <!-- Adress already used alert title -->
@@ -525,7 +525,7 @@
   <!-- Argument is date -->
   <string name="StartPaperPhrase.date">Je hebt voor het laatst je papieren sleutel opgeschreven op %1$s</string>
   <!-- Start view message -->
-  <string name="StartViewController.message">De veiligste en betrouwbaarste manier om bitcoin te gebruiken.</string>
+  <string name="StartViewController.message">De veiligste en betrouwbaarste manier om Litecoin te gebruiken.</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Aan het verbinden</string>
   <!-- Syncing view header text -->
@@ -635,7 +635,7 @@
   <!-- "Sent [$5] to [address]" => This is the "to [address]" part. -->
   <string name="TransactionDetails.to">aan %1$s</string>
   <!-- Transaction ID header -->
-  <string name="TransactionDetails.txHashHeader">Bitcoin Transactie-ID</string>
+  <string name="TransactionDetails.txHashHeader">Litecoin Transactie-ID</string>
   <!-- (this transaction was) Received at this address: -->
   <string name="TransactionDirection.address">Ontvangen op dit adres</string>
   <!-- (this transaction was) Sent to this address: -->
@@ -663,7 +663,7 @@
   <!-- Wallet unlocked message -->
   <string name="UnlockScreen.unlocked">Portemonnee Ontgrendeld</string>
   <!-- Update PIN caption text -->
-  <string name="UpdatePin.caption">Onthoud deze PIN. Als je deze vergeet, zul je niet in staat zijn om bij je Bitcoins te kunnen.</string>
+  <string name="UpdatePin.caption">Onthoud deze PIN. Als je deze vergeet, zul je niet in staat zijn om bij je Litecoins te kunnen.</string>
   <!-- PIN creation info. -->
   <string name="UpdatePin.createInstruction">Je PIN zal worden gebruikt om je Bread te ontgrendelen en geld te versturen.</string>
   <!-- Update PIN title -->

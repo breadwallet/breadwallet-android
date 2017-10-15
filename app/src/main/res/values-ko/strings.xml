@@ -89,7 +89,7 @@
   <!-- Approve button label -->
   <string name="BitID.approve">승인</string>
   <!-- <sitename> is requesting authentication using your bitcoin wallet -->
-  <string name="BitID.authenticationRequest">%1$s(이)가 귀하의 비트코인 월렛 이용에 대한 인증을 요청하고 있습니다.</string>
+  <string name="BitID.authenticationRequest">%1$s(이)가 귀하의 라이트코인 월렛 이용에 대한 인증을 요청하고 있습니다.</string>
   <!-- Deny button label -->
   <string name="BitID.deny">거부</string>
   <!-- BitID error alert title -->
@@ -140,8 +140,8 @@
   <string name="ConfirmPaperPhrase.label">모든 것이 정확하게 적혀 있는지 확인하기 위해, 귀하의 종이 열쇠로부터 다음의 단어들을 입력해 주세요.</string>
   <!-- Word label eg. Word #1, Word #2 -->
   <string name="ConfirmPaperPhrase.word">단어 #%1$s</string>
-  <!-- Bitcoin denomination picker label -->
-  <string name="DefaultCurrency.bitcoinLabel">Bitcoin Display Unit</string>
+  <!-- Litecoin denomination picker label -->
+  <string name="DefaultCurrency.litecoinLabel">Litecoin Display Unit</string>
   <!-- Exchange rate label -->
   <string name="DefaultCurrency.rateLabel">환율</string>
   <!-- Email unavailable alert title -->
@@ -171,7 +171,7 @@
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">개인 열쇠 잔고 확인 중...</string>
   <!-- Sweep private key confirmation message -->
-  <string name="Import.confirm">이 개인 열쇠로부터 귀하의 지갑으로 %1$s 를 보낼까요? 비트코인 네트워크가 %2$s의 수수료를 받게 됩니다.</string>
+  <string name="Import.confirm">이 개인 열쇠로부터 귀하의 지갑으로 %1$s 를 보낼까요? 라이트코인 네트워크가 %2$s의 수수료를 받게 됩니다.</string>
   <!-- Duplicate key error message -->
   <string name="Import.Error.duplicate">이 개인 열쇠가 이미 귀하의 지갑에 있습니다.</string>
   <!-- empty private key error message -->
@@ -215,9 +215,9 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">무시</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! 이 지갑을 바로 지우시고 안전한 장치에서 복구하세요.</string>
+  <string name="JailbreakWarnings.messageWithBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 라이트코인을 훔칠 수 있습니다! 이 지갑을 바로 지우시고 안전한 장치에서 복구하세요.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! Bread를 비-jailbroken 장치에서만 사용해 주세요.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 라이트코인을 훔칠 수 있습니다! Bread를 비-jailbroken 장치에서만 사용해 주세요.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">경고</string>
   <!-- Wipe wallet button -->
@@ -235,7 +235,7 @@
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">지갑 관리</string>
   <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">비트코인 구매</string>
+  <string name="MenuButton.buy">라이트코인 구매</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">지갑 잠그기</string>
   <!-- Menu button title -->
@@ -267,7 +267,7 @@
   <!-- Node status label -->
   <string name="NodeSelector.statusLabel">노드 연결 상태</string>
   <!-- Node Selector view title -->
-  <string name="NodeSelector.title">비트코인 노드</string>
+  <string name="NodeSelector.title">라이트코인 노드</string>
   <!-- Bad Payment request alert title -->
   <string name="PaymentProtocol.Errors.badPaymentRequest">틀린 결제 요청</string>
   <!-- Error opening payment protocol file message -->
@@ -279,9 +279,9 @@
   <!-- Payment too small alert title -->
   <string name="PaymentProtocol.Errors.smallOutputError">결제를 할 수 없습니다</string>
   <!-- Amount too small error message -->
-  <string name="PaymentProtocol.Errors.smallPayment">비트코인 결제는 %1$s 보다 작을 수 없습니다.</string>
+  <string name="PaymentProtocol.Errors.smallPayment">라이트코인 결제는 %1$s 보다 작을 수 없습니다.</string>
   <!-- Output too small error message. -->
-  <string name="PaymentProtocol.Errors.smallTransaction">비트코인 거래 출력들은 %1$s보다 작을 수 없습니다.</string>
+  <string name="PaymentProtocol.Errors.smallTransaction">라이트코인 거래 출력들은 %1$s보다 작을 수 없습니다.</string>
   <!-- Unsupported signature type payment protocol error message -->
   <string name="PaymentProtocol.Errors.unsupportedSignatureType">지원되지 않는 서명 형태</string>
   <!-- Untrusted certificate payment protocol error message -->
@@ -379,7 +379,7 @@
   <!-- extimated time -->
   <string name="ReScan.body1">20-45분</string>
   <!-- Syncing explanation -->
-  <string name="ReScan.body2">거래가 비트코인 네트워크에는 완료된 것으로 표시되지만, 브레드에는 표시되지 않는 경우.</string>
+  <string name="ReScan.body2">거래가 라이트코인 네트워크에는 완료된 것으로 표시되지만, 브레드에는 표시되지 않는 경우.</string>
   <!-- Syncing explanation -->
   <string name="ReScan.body3">거래가 거절되었음을 알리는 오류 메시지가 반복적으로 나타납니다.</string>
   <!-- Start Sync button label -->
@@ -405,7 +405,7 @@
   <!-- Security Center Info -->
   <string name="SecurityCenter.info">최대한의 보호를 위해 모든 보안 기능을 사용하시기 바랍니다.</string>
   <!-- Paper Key button description -->
-  <string name="SecurityCenter.paperKeyDescription">전화를 분실하거나 업그레이드하는 경우, 비트코인에 액세스할 수 있는 유일한 방법입니다.</string>
+  <string name="SecurityCenter.paperKeyDescription">전화를 분실하거나 업그레이드하는 경우, 라이트코인에 액세스할 수 있는 유일한 방법입니다.</string>
   <!-- Paper Key button title -->
   <string name="SecurityCenter.paperKeyTitle">페이퍼 키</string>
   <!-- PIN button description -->
@@ -445,9 +445,9 @@
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">인증되지 않은 수취인입니다.</string>
   <!-- Invalid address alert message -->
-  <string name="Send.invalidAddressMessage">해당 수취인 주소는 비트코인에서 유효하지 않은 주소입니다.</string>
+  <string name="Send.invalidAddressMessage">해당 수취인 주소는 라이트코인에서 유효하지 않은 주소입니다.</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">클립보드가 유효한 비트코인 주소를 가지고 있지 않습니다</string>
+  <string name="Send.invalidAddressOnPasteboard">클립보드가 유효한 라이트코인 주소를 가지고 있지 않습니다</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">유효하지 않은 주소입니다</string>
   <!-- Is rescanning error message -->
@@ -473,7 +473,7 @@
   <!-- Send money to label -->
   <string name="Send.toLabel">수취인</string>
   <!-- Adress already used alert message - first part -->
-  <string name="Send.UsedAddress.firstLine">비트코인 주소는 일회용입니다.</string>
+  <string name="Send.UsedAddress.firstLine">라이트코인 주소는 일회용입니다.</string>
   <!-- Adress already used alert message - second part -->
   <string name="Send.UsedAddress.secondLIne">주소를 재사용할 경우 귀하와 받는 사람 모두의 개인 정보 보호가 약해지며, 받는 사람이 직접 주소를 관리하지 않을 경우 분실을 초래할 수 있습니다.</string>
   <!-- Adress already used alert title -->
@@ -525,7 +525,7 @@
   <!-- Argument is date -->
   <string name="StartPaperPhrase.date">%1$s에 마지막으로 페이퍼 키를 작성하셨습니다.</string>
   <!-- Start view message -->
-  <string name="StartViewController.message">비트코인을 사용하는 가장 안정되고 안전한 방법.</string>
+  <string name="StartViewController.message">라이트코인을 사용하는 가장 안정되고 안전한 방법.</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">연결 중</string>
   <!-- Syncing view header text -->
@@ -635,7 +635,7 @@
   <!-- "Sent [$5] to [address]" => This is the "to [address]" part. -->
   <string name="TransactionDetails.to">%1$s에게</string>
   <!-- Transaction ID header -->
-  <string name="TransactionDetails.txHashHeader">Bitcoin Transaction ID</string>
+  <string name="TransactionDetails.txHashHeader">Litecoin Transaction ID</string>
   <!-- (this transaction was) Received at this address: -->
   <string name="TransactionDirection.address">이 주소에서 받음</string>
   <!-- (this transaction was) Sent to this address: -->
@@ -663,7 +663,7 @@
   <!-- Wallet unlocked message -->
   <string name="UnlockScreen.unlocked">월렛의 잠금이 해제됨</string>
   <!-- Update PIN caption text -->
-  <string name="UpdatePin.caption">이 PIN 코드를 기억하세요. PIN 코드를 잊어버리면 자신의 비트코인을 사용할 수 없게 됩니다.</string>
+  <string name="UpdatePin.caption">이 PIN 코드를 기억하세요. PIN 코드를 잊어버리면 자신의 라이트코인을 사용할 수 없게 됩니다.</string>
   <!-- PIN creation info. -->
   <string name="UpdatePin.createInstruction">귀하의 PIN 코드는 Bread의 잠금을 해제하고 돈을 송금하는 데 사용됩니다.</string>
   <!-- Update PIN title -->

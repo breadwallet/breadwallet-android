@@ -156,7 +156,7 @@ public class FragmentRequestAmount extends Fragment {
         signalLayout.removeView(request);
 
         showCurrencyList(false);
-        selectedIso = BRSharedPrefs.getPreferredBTC(getContext()) ? "BTC" : BRSharedPrefs.getIso(getContext());
+        selectedIso = BRSharedPrefs.getPreferredBTC(getContext()) ? "LTC" : BRSharedPrefs.getIso(getContext());
 
         signalLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -269,7 +269,7 @@ public class FragmentRequestAmount extends Fragment {
             @Override
             public void onClick(View v) {
                 if (selectedIso.equalsIgnoreCase(BRSharedPrefs.getIso(getContext()))) {
-                    selectedIso = "BTC";
+                    selectedIso = "LTC";
                 } else {
                     selectedIso = BRSharedPrefs.getIso(getContext());
                 }
@@ -326,7 +326,7 @@ public class FragmentRequestAmount extends Fragment {
                     @Override
                     public void run() {
                         mAddress.setText(receiveAddress);
-                        boolean generated = generateQrImage(receiveAddress, "0", "BTC");
+                        boolean generated = generateQrImage(receiveAddress, "0", "LTC");
                         if (!generated)
                             throw new RuntimeException("failed to generate qr image for address");
                     }
@@ -452,7 +452,7 @@ public class FragmentRequestAmount extends Fragment {
             String am = new BigDecimal(amount).divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString();
             amountArg = "?amount=" + am;
         }
-        return QRUtils.generateQR(getActivity(), "bitcoin:" + address + amountArg, mQrImage);
+        return QRUtils.generateQR(getActivity(), "litecoin:" + address + amountArg, mQrImage);
     }
 
 

@@ -150,7 +150,7 @@ public class QRUtils {
         } else {
             intent.setAction(android.content.Intent.ACTION_SEND);
             intent.setType("plain/text");
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Bitcoin Address");
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Litecoin Address");
             intent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
             app.startActivity(Intent.createChooser(intent, "Open mail app"));
         }
