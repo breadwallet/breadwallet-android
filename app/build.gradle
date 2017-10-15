@@ -7,7 +7,7 @@ model {
 
         defaultConfig {
             testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
-            applicationId = 'com.breadwallet'
+            applicationId = 'com.loafwallet'
             minSdkVersion.apiLevel = 23
             targetSdkVersion.apiLevel = 25
             versionCode = 109
@@ -15,23 +15,23 @@ model {
         }
 
         productFlavors.with {
-            create("bread") {
-                applicationId "com.breadwallet"
+            create("loaf") {
+                applicationId "com.loafwallet"
                 resValues.with {
                     create() {
                         type = "string"
                         name = "app_name"
-                        value = "bread"
+                        value = "loaf"
                     }
                 }
             }
             create("demo") {
-                applicationId "com.breaddemo"
+                applicationId "com.loafdemo"
                 resValues.with {
                     create() {
                         type = "string"
                         name = "app_name"
-                        value = "bread-demo"
+                        value = "loaf-demo"
                     }
                 }
             }
