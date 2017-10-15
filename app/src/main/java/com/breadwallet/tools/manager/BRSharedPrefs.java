@@ -247,7 +247,7 @@ public class BRSharedPrefs {
     //if the user prefers all in bitcoin units, not other currencies
     public static boolean getPreferredBTC(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getBoolean("priceSetToBitcoin", true);
+        return prefs.getBoolean("priceSetToLitecoin", true);
     }
 
     //if the user prefers all in bitcoin units, not other currencies
@@ -255,7 +255,7 @@ public class BRSharedPrefs {
         Log.e(TAG, "putPreferredBTC: " + b);
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("priceSetToBitcoin", b);
+        editor.putBoolean("priceSetToLitecoin", b);
         editor.apply();
     }
 

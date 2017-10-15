@@ -123,7 +123,7 @@ public class APIClient {
     private Context ctx;
 
     public enum FeatureFlags {
-        BUY_BITCOIN("buy-bitcoin"),
+        BUY_BITCOIN("buy-litecoin"),
         EARLY_ACCESS("early-access");
 
         private final String text;
@@ -293,7 +293,7 @@ public class APIClient {
         boolean isTestVersion = BREAD_POINT.contains("staging");
         boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
         String lang = getCurrentLocale(ctx);
-        Request request = locRequest.newBuilder().header("X-Testflight", isTestVersion ? "true" : "false").header("X-Bitcoin-Testnet", isTestNet ? "true" : "false").header("Accept-Language", lang).build();
+        Request request = locRequest.newBuilder().header("X-Testflight", isTestVersion ? "true" : "false").header("X-Litecoin-Testnet", isTestNet ? "true" : "false").header("Accept-Language", lang).build();
         if (needsAuth) {
             Request.Builder modifiedRequest = request.newBuilder();
             String base58Body = "";

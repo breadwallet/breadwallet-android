@@ -123,12 +123,12 @@ public class QRUtils {
             intent.putExtra("sms_body", bitcoinUri);
             intent.putExtra("exit_on_sent", true);
         } else {
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Bitcoin Address");
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Litecoin Address");
             intent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
         }
         if (uri != null)
             intent.putExtra(Intent.EXTRA_STREAM, uri);
-        app.startActivity(Intent.createChooser(intent, "Bitcoin Address"));
+        app.startActivity(Intent.createChooser(intent, "Litecoin Address"));
     }
 
     private static String saveToExternalStorage(Bitmap bitmapImage, Activity app) {
