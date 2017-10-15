@@ -128,8 +128,8 @@
   <string name="ConfirmPaperPhrase.label">Para ter certeza que tudo foi escrito corretamente, por favor introduza as seguintes palavras da sua chave de papel.</string>
   <!-- Word label eg. Word #1, Word #2 -->
   <string name="ConfirmPaperPhrase.word">Palavra #%1$s</string>
-  <!-- Bitcoin denomination picker label -->
-  <string name="DefaultCurrency.bitcoinLabel">Moeda de apresentação da bitcoin</string>
+  <!-- Litecoin denomination picker label -->
+  <string name="DefaultCurrency.litecoinLabel">Moeda de apresentação da bitcoin</string>
   <!-- Exchange rate label -->
   <string name="DefaultCurrency.rateLabel">Taxa de Câmbio</string>
   <!-- Email unavailable alert title -->
@@ -219,7 +219,7 @@
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">Gerir Carteira</string>
   <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">Comprar Bitcoins</string>
+  <string name="MenuButton.buy">Comprar Litecoins</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Bloquear Carteira</string>
   <!-- Menu button title -->
@@ -589,7 +589,7 @@
   <!-- "Sent [$5] to [address]" => This is the "to [address]" part. -->
   <string name="TransactionDetails.to">para %1$s</string>
   <!-- Transaction ID header -->
-  <string name="TransactionDetails.txHashHeader">ID da Transação de Bitcoin</string>
+  <string name="TransactionDetails.txHashHeader">ID da Transação de Litecoin</string>
   <!-- (this transaction was) Received at this address: -->
   <string name="TransactionDirection.address">Recebida neste endereço</string>
   <!-- (this transaction was) Sent to this address: -->

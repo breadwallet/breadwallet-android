@@ -128,8 +128,8 @@
   <string name="ConfirmPaperPhrase.label">Para asegurarte de que todo se ha guardado de forma correcta, introduce las palabras a continuación de la clave en papel.</string>
   <!-- Word label eg. Word #1, Word #2 -->
   <string name="ConfirmPaperPhrase.word">Palabra #%1$s</string>
-  <!-- Bitcoin denomination picker label -->
-  <string name="DefaultCurrency.bitcoinLabel">Unidad de visualización Bitcoin</string>
+  <!-- Litecoin denomination picker label -->
+  <string name="DefaultCurrency.litecoinLabel">Unidad de visualización Litecoin</string>
   <!-- Exchange rate label -->
   <string name="DefaultCurrency.rateLabel">Tasa de cambio</string>
   <!-- Email unavailable alert title -->
@@ -251,7 +251,7 @@
   <!-- Node status label -->
   <string name="NodeSelector.statusLabel">Estado de la conexión del nodo</string>
   <!-- Node Selector view title -->
-  <string name="NodeSelector.title">Nodos Bitcoin</string>
+  <string name="NodeSelector.title">Nodos Litecoin</string>
   <!-- Bad Payment request alert title -->
   <string name="PaymentProtocol.Errors.badPaymentRequest">Solicitud de pago incorrecta</string>
   <!-- Error opening payment protocol file message -->
@@ -441,7 +441,7 @@
   <!-- Send money to label -->
   <string name="Send.toLabel">A</string>
   <!-- Adress already used alert message - first part -->
-  <string name="Send.UsedAddress.firstLine">Las direcciones Bitcoin están diseñadas para un solo uso.</string>
+  <string name="Send.UsedAddress.firstLine">Las direcciones Litecoin están diseñadas para un solo uso.</string>
   <!-- Adress already used alert message - second part -->
   <string name="Send.UsedAddress.secondLIne">La reutilización reduce la privacidad tanto para ti como para el destinatario y puede resultar en pérdida si el destinatario no controla la dirección directamente.</string>
   <!-- Adress already used alert title -->
@@ -589,7 +589,7 @@
   <!-- "Sent [$5] to [address]" => This is the "to [address]" part. -->
   <string name="TransactionDetails.to">a %1$s</string>
   <!-- Transaction ID header -->
-  <string name="TransactionDetails.txHashHeader">Identificador de transacción de Bitcoin</string>
+  <string name="TransactionDetails.txHashHeader">Identificador de transacción de Litecoin</string>
   <!-- (this transaction was) Received at this address: -->
   <string name="TransactionDirection.address">Recibido en esta dirección</string>
   <!-- (this transaction was) Sent to this address: -->

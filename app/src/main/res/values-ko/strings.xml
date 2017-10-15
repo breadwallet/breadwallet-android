@@ -128,8 +128,8 @@
   <string name="ConfirmPaperPhrase.label">모든 것이 정확하게 적혀 있는지 확인하기 위해, 귀하의 종이 열쇠로부터 다음의 단어들을 입력해 주세요.</string>
   <!-- Word label eg. Word #1, Word #2 -->
   <string name="ConfirmPaperPhrase.word">단어 #%1$s</string>
-  <!-- Bitcoin denomination picker label -->
-  <string name="DefaultCurrency.bitcoinLabel">Bitcoin Display Unit</string>
+  <!-- Litecoin denomination picker label -->
+  <string name="DefaultCurrency.litecoinLabel">Litecoin Display Unit</string>
   <!-- Exchange rate label -->
   <string name="DefaultCurrency.rateLabel">환율</string>
   <!-- Email unavailable alert title -->
@@ -589,7 +589,7 @@
   <!-- "Sent [$5] to [address]" => This is the "to [address]" part. -->
   <string name="TransactionDetails.to">%1$s에게</string>
   <!-- Transaction ID header -->
-  <string name="TransactionDetails.txHashHeader">Bitcoin Transaction ID</string>
+  <string name="TransactionDetails.txHashHeader">Litecoin Transaction ID</string>
   <!-- (this transaction was) Received at this address: -->
   <string name="TransactionDirection.address">이 주소에서 받음</string>
   <!-- (this transaction was) Sent to this address: -->

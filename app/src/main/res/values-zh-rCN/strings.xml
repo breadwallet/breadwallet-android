@@ -128,8 +128,8 @@
   <string name="ConfirmPaperPhrase.label">为确保一切均被正确地书写，请在您的纸键输入以下文字。</string>
   <!-- Word label eg. Word #1, Word #2 -->
   <string name="ConfirmPaperPhrase.word">单词#%1$s</string>
-  <!-- Bitcoin denomination picker label -->
-  <string name="DefaultCurrency.bitcoinLabel">比特币显示单位</string>
+  <!-- Litecoin denomination picker label -->
+  <string name="DefaultCurrency.litecoinLabel">比特币显示单位</string>
   <!-- Exchange rate label -->
   <string name="DefaultCurrency.rateLabel">汇率</string>
   <!-- Email unavailable alert title -->

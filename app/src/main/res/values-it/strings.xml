@@ -128,8 +128,8 @@
   <string name="ConfirmPaperPhrase.label">Per assicurarti che tutto sia stato scritto correttamente, per favore inserisci le seguenti parole della tua chiave cartacea.</string>
   <!-- Word label eg. Word #1, Word #2 -->
   <string name="ConfirmPaperPhrase.word">Parola n°%1$s</string>
-  <!-- Bitcoin denomination picker label -->
-  <string name="DefaultCurrency.bitcoinLabel">Unità di visualizzazione bitcoin</string>
+  <!-- Litecoin denomination picker label -->
+  <string name="DefaultCurrency.litecoinLabel">Unità di visualizzazione bitcoin</string>
   <!-- Exchange rate label -->
   <string name="DefaultCurrency.rateLabel">Tasso di Cambio</string>
   <!-- Email unavailable alert title -->
@@ -219,7 +219,7 @@
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">Gestisci Portafoglio</string>
   <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">Acquista Bitcoin</string>
+  <string name="MenuButton.buy">Acquista Litecoin</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Blocca Portafoglio</string>
   <!-- Menu button title -->
@@ -263,9 +263,9 @@
   <!-- Payment too small alert title -->
   <string name="PaymentProtocol.Errors.smallOutputError">Impossibile effettuare il pagamento</string>
   <!-- Amount too small error message -->
-  <string name="PaymentProtocol.Errors.smallPayment">I pagamenti in Bitcoin non possono essere inferiori a %1$s.</string>
+  <string name="PaymentProtocol.Errors.smallPayment">I pagamenti in Litecoin non possono essere inferiori a %1$s.</string>
   <!-- Output too small error message. -->
-  <string name="PaymentProtocol.Errors.smallTransaction">Gli output di transazione Bitcoin non possono essere inferiori a $@.</string>
+  <string name="PaymentProtocol.Errors.smallTransaction">Gli output di transazione Litecoin non possono essere inferiori a $@.</string>
   <!-- Unsupported signature type payment protocol error message -->
   <string name="PaymentProtocol.Errors.unsupportedSignatureType">tipo di firma non supportato</string>
   <!-- Untrusted certificate payment protocol error message -->
@@ -441,7 +441,7 @@
   <!-- Send money to label -->
   <string name="Send.toLabel">A</string>
   <!-- Adress already used alert message - first part -->
-  <string name="Send.UsedAddress.firstLine">Gli indirizzi Bitcoin dovrebbero essere utilizzati una sola volta.</string>
+  <string name="Send.UsedAddress.firstLine">Gli indirizzi Litecoin dovrebbero essere utilizzati una sola volta.</string>
   <!-- Adress already used alert message - second part -->
   <string name="Send.UsedAddress.secondLIne">Il riutilizzo riduce la privacy sia tua che del destinatario e può causare perdite se il destinatario non controlla direttamente l\'indirizzo.</string>
   <!-- Adress already used alert title -->

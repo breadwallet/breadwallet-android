@@ -128,8 +128,8 @@
   <string name="ConfirmPaperPhrase.label">Pour vous assurer que tout a été écrit correctement, entrez les mots suivants à partir de votre clé de papier.</string>
   <!-- Word label eg. Word #1, Word #2 -->
   <string name="ConfirmPaperPhrase.word">Mot no.%1$s</string>
-  <!-- Bitcoin denomination picker label -->
-  <string name="DefaultCurrency.bitcoinLabel">Bitcoin Display Unit</string>
+  <!-- Litecoin denomination picker label -->
+  <string name="DefaultCurrency.litecoinLabel">Litecoin Display Unit</string>
   <!-- Exchange rate label -->
   <string name="DefaultCurrency.rateLabel">Taux de change</string>
   <!-- Email unavailable alert title -->
@@ -251,7 +251,7 @@
   <!-- Node status label -->
   <string name="NodeSelector.statusLabel">Statut de connexion du nœud</string>
   <!-- Node Selector view title -->
-  <string name="NodeSelector.title">Nœuds Bitcoin</string>
+  <string name="NodeSelector.title">Nœuds Litecoin</string>
   <!-- Bad Payment request alert title -->
   <string name="PaymentProtocol.Errors.badPaymentRequest">Mauvaise demande de paiement</string>
   <!-- Error opening payment protocol file message -->
@@ -263,9 +263,9 @@
   <!-- Payment too small alert title -->
   <string name="PaymentProtocol.Errors.smallOutputError">Impossible de faire un paiement</string>
   <!-- Amount too small error message -->
-  <string name="PaymentProtocol.Errors.smallPayment">Les paiements par Bitcoin ne peuvent être inférieurs à %1$s.</string>
+  <string name="PaymentProtocol.Errors.smallPayment">Les paiements par Litecoin ne peuvent être inférieurs à %1$s.</string>
   <!-- Output too small error message. -->
-  <string name="PaymentProtocol.Errors.smallTransaction">Les résultats des transactions de Bitcoin ne peuvent pas être inférieurs à $@.</string>
+  <string name="PaymentProtocol.Errors.smallTransaction">Les résultats des transactions de Litecoin ne peuvent pas être inférieurs à $@.</string>
   <!-- Unsupported signature type payment protocol error message -->
   <string name="PaymentProtocol.Errors.unsupportedSignatureType">type de signature non pris en charge</string>
   <!-- Untrusted certificate payment protocol error message -->
@@ -441,7 +441,7 @@
   <!-- Send money to label -->
   <string name="Send.toLabel">Pour</string>
   <!-- Adress already used alert message - first part -->
-  <string name="Send.UsedAddress.firstLine">Les adresses Bitcoin sont destinées à une utilisation unique.</string>
+  <string name="Send.UsedAddress.firstLine">Les adresses Litecoin sont destinées à une utilisation unique.</string>
   <!-- Adress already used alert message - second part -->
   <string name="Send.UsedAddress.secondLIne">La réutilisation réduit la confidentialité pour vous et le destinataire et peut entraîner une perte si le destinataire ne contrôle pas directement l\'adresse.</string>
   <!-- Adress already used alert title -->

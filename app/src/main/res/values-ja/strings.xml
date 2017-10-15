@@ -128,8 +128,8 @@
   <string name="ConfirmPaperPhrase.label">すべてが正しく書き留められていることを確認するため、紙の鍵に記入した下記のフレーズを入力してください。</string>
   <!-- Word label eg. Word #1, Word #2 -->
   <string name="ConfirmPaperPhrase.word">フレーズ #%1$s</string>
-  <!-- Bitcoin denomination picker label -->
-  <string name="DefaultCurrency.bitcoinLabel">ビットコインの表示単位</string>
+  <!-- Litecoin denomination picker label -->
+  <string name="DefaultCurrency.litecoinLabel">ビットコインの表示単位</string>
   <!-- Exchange rate label -->
   <string name="DefaultCurrency.rateLabel">為替レート</string>
   <!-- Email unavailable alert title -->

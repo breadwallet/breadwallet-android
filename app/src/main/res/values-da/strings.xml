@@ -128,8 +128,8 @@
   <string name="ConfirmPaperPhrase.label">For at sørge for, at alt blev skrevet korrekt, bedes du indtaste følgende ord fra din paper key.</string>
   <!-- Word label eg. Word #1, Word #2 -->
   <string name="ConfirmPaperPhrase.word">Ord #%1$s</string>
-  <!-- Bitcoin denomination picker label -->
-  <string name="DefaultCurrency.bitcoinLabel">Bitcoin visningsenhed</string>
+  <!-- Litecoin denomination picker label -->
+  <string name="DefaultCurrency.litecoinLabel">Litecoin visningsenhed</string>
   <!-- Exchange rate label -->
   <string name="DefaultCurrency.rateLabel">Valutakurs</string>
   <!-- Email unavailable alert title -->
@@ -155,7 +155,7 @@
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Tjekker beløb på privat nøgle...</string>
   <!-- Sweep private key confirmation message -->
-  <string name="Import.confirm">Send %1$s fra denne private nøgle til din pung? Bitcoin netværket vil modtage et gebyr på %2$s.</string>
+  <string name="Import.confirm">Send %1$s fra denne private nøgle til din pung? Litecoin netværket vil modtage et gebyr på %2$s.</string>
   <!-- Duplicate key error message -->
   <string name="Import.Error.duplicate">Denne private nøgle findes allerede i din pung.</string>
   <!-- empty private key error message -->
@@ -219,7 +219,7 @@
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">Administrer pung</string>
   <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">Køb Bitcoin</string>
+  <string name="MenuButton.buy">Køb Litecoin</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Lås pung</string>
   <!-- Menu button title -->
@@ -251,7 +251,7 @@
   <!-- Node status label -->
   <string name="NodeSelector.statusLabel">Node forbindelsesstatus</string>
   <!-- Node Selector view title -->
-  <string name="NodeSelector.title">Bitcoin-nodes</string>
+  <string name="NodeSelector.title">Litecoin-nodes</string>
   <!-- Bad Payment request alert title -->
   <string name="PaymentProtocol.Errors.badPaymentRequest">Dårlig betalingsanmodning</string>
   <!-- Error opening payment protocol file message -->
@@ -263,9 +263,9 @@
   <!-- Payment too small alert title -->
   <string name="PaymentProtocol.Errors.smallOutputError">Kunne ikke foretage betaling</string>
   <!-- Amount too small error message -->
-  <string name="PaymentProtocol.Errors.smallPayment">Bitcoin betalinger kan ikke være mindre end %1$s.</string>
+  <string name="PaymentProtocol.Errors.smallPayment">Litecoin betalinger kan ikke være mindre end %1$s.</string>
   <!-- Output too small error message. -->
-  <string name="PaymentProtocol.Errors.smallTransaction">Bitcoin transaktionsoutput kan ikke være mindre end $@.</string>
+  <string name="PaymentProtocol.Errors.smallTransaction">Litecoin transaktionsoutput kan ikke være mindre end $@.</string>
   <!-- Unsupported signature type payment protocol error message -->
   <string name="PaymentProtocol.Errors.unsupportedSignatureType">ikke understøttet signaturtype</string>
   <!-- Untrusted certificate payment protocol error message -->
@@ -441,7 +441,7 @@
   <!-- Send money to label -->
   <string name="Send.toLabel">Til</string>
   <!-- Adress already used alert message - first part -->
-  <string name="Send.UsedAddress.firstLine">Bitcoin adresser er kun beregnet til en enkelt anvendelse.</string>
+  <string name="Send.UsedAddress.firstLine">Litecoin adresser er kun beregnet til en enkelt anvendelse.</string>
   <!-- Adress already used alert message - second part -->
   <string name="Send.UsedAddress.secondLIne">Genbrug reducerer privatliv for både dig og modtageren og kan resultere i tab, hvis modtageren ikke har direkte kontrol over adressen.</string>
   <!-- Adress already used alert title -->
@@ -589,7 +589,7 @@
   <!-- "Sent [$5] to [address]" => This is the "to [address]" part. -->
   <string name="TransactionDetails.to">til %1$s</string>
   <!-- Transaction ID header -->
-  <string name="TransactionDetails.txHashHeader">Bitcoin transaktions-ID</string>
+  <string name="TransactionDetails.txHashHeader">Litecoin transaktions-ID</string>
   <!-- (this transaction was) Received at this address: -->
   <string name="TransactionDirection.address">Modtaget på denne adresse</string>
   <!-- (this transaction was) Sent to this address: -->
