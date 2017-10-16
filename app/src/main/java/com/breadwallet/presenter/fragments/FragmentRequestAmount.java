@@ -42,6 +42,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.platform.HTTPServer.URL_SUPPORT;
+
 
 /**
  * BreadWallet
@@ -127,6 +129,22 @@ public class FragmentRequestAmount extends Fragment {
         shareButtonsLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.share_buttons_layout);
         close = (ImageButton) rootView.findViewById(R.id.close_button);
         keyboardIndex = signalLayout.indexOfChild(keyboardLayout);
+
+        ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
+
+        faq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
+                Activity app = getActivity();
+                if (app == null) {
+                    Log.e(TAG, "onClick: app is null, can't start the webview with url: " + URL_SUPPORT);
+                    return;
+                }
+
+                BRAnimator.showSupportFragment(app, BRConstants.receive);
+            }
+        });
 
         mTitle.setText(getString(R.string.Receive_request));
         setListeners();
