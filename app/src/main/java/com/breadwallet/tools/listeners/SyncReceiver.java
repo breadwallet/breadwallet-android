@@ -42,7 +42,7 @@ import java.util.Calendar;
 public class SyncReceiver extends IntentService {
     public final String TAG = SyncReceiver.class.getSimpleName();
     public final static String SYNC_RECEIVER = "SYNC_RECEIVER";
-    private Calendar c = Calendar.getInstance();
+//    private Calendar c = Calendar.getInstance();
 
     public SyncReceiver() {
         super("SyncReceiver");

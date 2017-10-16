@@ -9,8 +9,6 @@ import android.content.pm.ApplicationInfo;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Handler;
-import android.os.StrictMode;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
