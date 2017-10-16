@@ -2,6 +2,7 @@ package com.breadwallet.tools.security;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 import android.widget.Toast;
@@ -89,7 +90,8 @@ public class BRSender {
                     return;
                 } catch (FeeNeedsAdjust feeNeedsAdjust) {
                     //offer to change amount, so it would be enough for fee
-                    showFailed(app); //just show failed for now
+//                    showFailed(app); //just show failed for now
+                    showAdjustFee((Activity) app, request);
                     return;
                 }
 
@@ -189,6 +191,35 @@ public class BRSender {
             }
         }).start();
 
+
+    }
+
+    private void showAdjustFee(final Activity app, PaymentItem item) {
+        BRWalletManager m = BRWalletManager.getInstance();
+        long maxAmountDouble = m.getMaxOutputAmount();
+        if (maxAmountDouble == -1) {
+            RuntimeException ex = new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL");
+            FirebaseCrash.report(ex);
+            return;
+        }
+        if (maxAmountDouble == 0) {
+            BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), "Insufficient amount for transaction fee, send maximum amount?", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                @Override
+                public void onClick(BRDialogView brDialogView) {
+                    brDialogView.dismissWithAnimation();
+                }
+            }, null, null, 0);
+        } else {
+//            long fee = m.feeForTransaction(item.addresses[0], maxAmountDouble);
+//            feeForTx += (m.getBalance(app) - request.amount) % 100;
+//            BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), "Insufficient amount for transaction fee", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+//                @Override
+//                public void onClick(BRDialogView brDialogView) {
+//                    brDialogView.dismissWithAnimation();
+//                }
+//            }, null, null, 0);
+            //todo fix this fee adjustment
+        }
 
     }
 
