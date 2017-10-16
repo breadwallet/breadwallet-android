@@ -62,6 +62,7 @@ public class SyncBlockchainActivity extends BRActivity {
                                     @Override
                                     public void run() {
                                         BRSharedPrefs.putStartHeight(SyncBlockchainActivity.this, 0);
+                                        BRSharedPrefs.putAllowSpend(SyncBlockchainActivity.this, false);
                                         BRPeerManager.getInstance().rescan();
                                         BRAnimator.startBreadActivity(SyncBlockchainActivity.this, false);
 
