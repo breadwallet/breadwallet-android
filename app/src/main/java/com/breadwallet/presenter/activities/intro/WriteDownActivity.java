@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities.intro;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -82,11 +83,15 @@ public class WriteDownActivity extends BRActivity {
 
     @Override
     public void onBackPressed() {
-        close();
-
+        if (getFragmentManager().getBackStackEntryCount() == 0) {
+            close();
+        } else {
+            getFragmentManager().popBackStack();
+        }
     }
 
     private void close() {
+        Log.e(TAG, "close: ");
         BRAnimator.startBreadActivity(this, false);
         overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
         if (!isDestroyed()) finish();
