@@ -150,7 +150,7 @@ public class PaperKeyActivity extends BRActivity {
     }
 
     private void setButtonEnabled(boolean b) {
-        previousButton.setTextColor(getColor(b ? R.color.button_secondary_text : R.color.extra_light_gray));
+        previousButton.setTextColor(getColor(b ? R.color.light_gray : R.color.extra_light_gray));
         Resources r = getResources();
         float px = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, b ? 8 : 0, r.getDisplayMetrics());
         previousButton.setElevation(px);
