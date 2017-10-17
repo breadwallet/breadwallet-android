@@ -348,8 +348,8 @@ public class InputWordsActivity extends BRActivity {
 
     private void validateWord(EditText view) {
         String word = view.getText().toString();
-//        Bip39Reader.
-        SmartValidator.
+        view.setTextColor(getColor(SmartValidator.isWordValid(this, word) ? R.color.extra_light_gray : R.color.red_text));
+        SpringAnimator.failShakeAnimation(this, view);
     }
 
 }
