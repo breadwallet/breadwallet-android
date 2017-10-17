@@ -109,6 +109,19 @@ public class InputWordsActivity extends BRActivity {
         word11 = (EditText) findViewById(R.id.word11);
         word12 = (EditText) findViewById(R.id.word12);
 
+        word1.setOnFocusChangeListener(new FocusListener());
+        word2.setOnFocusChangeListener(new FocusListener());
+        word3.setOnFocusChangeListener(new FocusListener());
+        word4.setOnFocusChangeListener(new FocusListener());
+        word5.setOnFocusChangeListener(new FocusListener());
+        word6.setOnFocusChangeListener(new FocusListener());
+        word7.setOnFocusChangeListener(new FocusListener());
+        word8.setOnFocusChangeListener(new FocusListener());
+        word9.setOnFocusChangeListener(new FocusListener());
+        word10.setOnFocusChangeListener(new FocusListener());
+        word11.setOnFocusChangeListener(new FocusListener());
+        word12.setOnFocusChangeListener(new FocusListener());
+
         restore = getIntent().getExtras() != null && getIntent().getExtras().getBoolean("restore");
         resetPin = getIntent().getExtras() != null && getIntent().getExtras().getBoolean("resetPin");
 
@@ -321,6 +334,21 @@ public class InputWordsActivity extends BRActivity {
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+    }
+
+    private class FocusListener implements View.OnFocusChangeListener {
+
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (!hasFocus) {
+                validateWord((EditText) v);
+            }
+        }
+    }
+
+    private void validateWord(EditText view) {
+        String word = view.getText().toString();
+        Bip39Reader.
     }
 
 }
