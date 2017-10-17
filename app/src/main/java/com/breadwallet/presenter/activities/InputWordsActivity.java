@@ -342,6 +342,8 @@ public class InputWordsActivity extends BRActivity {
         public void onFocusChange(View v, boolean hasFocus) {
             if (!hasFocus) {
                 validateWord((EditText) v);
+            } else {
+                ((EditText) v).setTextColor(getColor(R.color.extra_light_gray));
             }
         }
     }
