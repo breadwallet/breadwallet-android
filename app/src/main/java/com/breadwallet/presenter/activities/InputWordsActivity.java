@@ -151,7 +151,7 @@ public class InputWordsActivity extends BRActivity {
                 final Activity app = InputWordsActivity.this;
                 String phraseToCheck = getPhrase();
                 if (phraseToCheck == null) return;
-                String cleanPhrase = Bip39Reader.cleanPhrase(app, phraseToCheck);
+                String cleanPhrase = SmartValidator.cleanPaperKey(app, phraseToCheck);
 
                 if (SmartValidator.isPaperKeyValid(app, cleanPhrase)) {
 
@@ -348,7 +348,8 @@ public class InputWordsActivity extends BRActivity {
 
     private void validateWord(EditText view) {
         String word = view.getText().toString();
-        Bip39Reader.
+//        Bip39Reader.
+        SmartValidator.
     }
 
 }
