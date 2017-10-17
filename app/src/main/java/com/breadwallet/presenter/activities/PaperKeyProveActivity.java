@@ -24,6 +24,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.security.SmartValidator;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
 import com.google.firebase.crash.FirebaseCrash;
@@ -115,19 +116,12 @@ public class PaperKeyProveActivity extends BRActivity {
                         }
                     });
                 } else {
-                    String languageCode = getString(R.string.lang);
-                    List<String> list;
-                    try {
-                        list = Bip39Reader.getWordList(PaperKeyProveActivity.this, languageCode);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        throw new NullPointerException("No word list");
-                    }
-                    if (!list.contains(edit1) || !edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0)))) {
+
+                    if (!SmartValidator.isWordValid(PaperKeyProveActivity.this, edit1) || !edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0)))) {
                         SpringAnimator.failShakeAnimation(PaperKeyProveActivity.this, wordTextFirst);
                     }
 
-                    if (!list.contains(edit2) || !edit2.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)))) {
+                    if (!SmartValidator.isWordValid(PaperKeyProveActivity.this, edit2) || !edit2.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)))) {
                         SpringAnimator.failShakeAnimation(PaperKeyProveActivity.this, wordTextSecond);
                     }
                 }
