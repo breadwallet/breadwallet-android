@@ -206,6 +206,7 @@ public class SettingsActivity extends BRActivity {
             }
         }, false));
         boolean eaEnabled = APIClient.getInstance(this).isFeatureEnabled(APIClient.FeatureFlags.EARLY_ACCESS.toString());
+        eaEnabled = false;
         if (eaEnabled)
             items.add(new BRSettingsItem(getString(R.string.Settings_earlyAccess), "", new View.OnClickListener() {
                 @Override

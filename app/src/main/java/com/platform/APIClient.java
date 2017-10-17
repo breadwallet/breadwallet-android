@@ -630,6 +630,7 @@ public class APIClient {
                     String description = obj.getString("description");
                     boolean selected = obj.getBoolean("selected");
                     boolean enabled = obj.getBoolean("enabled");
+                    boolean isPrivate = obj.getBoolean("private");
                     BRSharedPrefs.putFeatureEnabled(ctx, enabled, name);
                 } catch (Exception e) {
                     Log.e(TAG, "malformed feature at position: " + i + ", whole json: " + j, e);
@@ -649,7 +650,9 @@ public class APIClient {
     }
 
     public boolean isFeatureEnabled(String feature) {
-        return BRSharedPrefs.getFeatureEnabled(ctx, feature);
+        boolean b = BRSharedPrefs.getFeatureEnabled(ctx, feature);
+        Log.e(TAG, "isFeatureEnabled: " + feature + " - " + b);
+        return b;
     }
 
     public String buildUrl(String path) {
