@@ -350,8 +350,10 @@ public class InputWordsActivity extends BRActivity {
 
     private void validateWord(EditText view) {
         String word = view.getText().toString();
-        view.setTextColor(getColor(SmartValidator.isWordValid(this, word) ? R.color.extra_light_gray : R.color.red_text));
-        SpringAnimator.failShakeAnimation(this, view);
+        boolean valid = SmartValidator.isWordValid(this, word);
+        view.setTextColor(getColor(valid ? R.color.extra_light_gray : R.color.red_text));
+        if (!valid)
+            SpringAnimator.failShakeAnimation(this, view);
     }
 
 }
