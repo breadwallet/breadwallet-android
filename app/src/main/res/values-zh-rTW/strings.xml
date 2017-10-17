@@ -265,7 +265,7 @@
   <!-- Amount too small error message -->
   <string name="PaymentProtocol.Errors.smallPayment">比特幣付款不能少於 %1$s。</string>
   <!-- Output too small error message. -->
-  <string name="PaymentProtocol.Errors.smallTransaction">比特幣交易輸出不能少於 $@。</string>
+  <string name="PaymentProtocol.Errors.smallTransaction">比特幣交易輸出不能少於 %1$s。</string>
   <!-- Unsupported signature type payment protocol error message -->
   <string name="PaymentProtocol.Errors.unsupportedSignatureType">不受支援的簽章類型</string>
   <!-- Untrusted certificate payment protocol error message -->

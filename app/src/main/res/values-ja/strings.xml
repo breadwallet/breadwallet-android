@@ -265,7 +265,7 @@
   <!-- Amount too small error message -->
   <string name="PaymentProtocol.Errors.smallPayment">%1$s未満のビットコインの支払いは行えません。</string>
   <!-- Output too small error message. -->
-  <string name="PaymentProtocol.Errors.smallTransaction">ビットコインのトランザクションの出力は$@以上である必要があります。</string>
+  <string name="PaymentProtocol.Errors.smallTransaction">ビットコインのトランザクションの出力は%1$s以上である必要があります。</string>
   <!-- Unsupported signature type payment protocol error message -->
   <string name="PaymentProtocol.Errors.unsupportedSignatureType">署名の種類がサポートされていません</string>
   <!-- Untrusted certificate payment protocol error message -->

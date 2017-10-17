@@ -265,7 +265,7 @@
   <!-- Amount too small error message -->
   <string name="PaymentProtocol.Errors.smallPayment">비트코인 결제는 %1$s 보다 작을 수 없습니다.</string>
   <!-- Output too small error message. -->
-  <string name="PaymentProtocol.Errors.smallTransaction">비트코인 거래 출력들은 $@보다 작을 수 없습니다.</string>
+  <string name="PaymentProtocol.Errors.smallTransaction">비트코인 거래 출력들은 %1$s보다 작을 수 없습니다.</string>
   <!-- Unsupported signature type payment protocol error message -->
   <string name="PaymentProtocol.Errors.unsupportedSignatureType">지원되지 않는 서명 형태</string>
   <!-- Untrusted certificate payment protocol error message -->
