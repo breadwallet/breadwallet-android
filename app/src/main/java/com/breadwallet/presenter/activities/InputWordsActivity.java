@@ -159,22 +159,33 @@ public class InputWordsActivity extends BRActivity {
                         if (SmartValidator.isPaperKeyCorrect(cleanPhrase, app)) {
                             Utils.hideKeyboard(app);
                             clearWords();
-                            Intent intent;
+
                             if (restore) {
-                                BRWalletManager m = BRWalletManager.getInstance();
-                                m.wipeWalletButKeystore(app);
-                                m.wipeKeyStore(app);
-                                intent = new Intent(app, IntroActivity.class);
+                                BRDialog.showCustomDialog(InputWordsActivity.this, getString(R.string.WipeWallet_alertTitle), getString(R.string.WipeWallet_alertMessage), getString(R.string.WipeWallet_wipe), getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
+                                    @Override
+                                    public void onClick(BRDialogView brDialogView) {
+                                        brDialogView.dismissWithAnimation();
+                                        BRWalletManager m = BRWalletManager.getInstance();
+                                        m.wipeWalletButKeystore(app);
+                                        m.wipeKeyStore(app);
+                                        Intent intent = new Intent(app, IntroActivity.class);
+                                        finalizeIntent(intent);
+
+                                    }
+                                }, new BRDialogView.BROnClickListener() {
+                                    @Override
+                                    public void onClick(BRDialogView brDialogView) {
+                                        brDialogView.dismissWithAnimation();
+                                    }
+                                }, null, 0);
+
                             } else {
                                 AuthManager.getInstance().setPinCode("", InputWordsActivity.this);
-                                intent = new Intent(app, SetPinActivity.class);
+                                Intent intent = new Intent(app, SetPinActivity.class);
                                 intent.putExtra("noPin", true);
+                                finalizeIntent(intent);
                             }
 
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                            startActivity(intent);
-                            if (!InputWordsActivity.this.isDestroyed()) finish();
 
                         } else {
                             BRDialog.showCustomDialog(app, "", getString(R.string.RecoverWallet_invalid), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
@@ -209,6 +220,13 @@ public class InputWordsActivity extends BRActivity {
             }
         });
 
+    }
+
+    private void finalizeIntent(Intent intent) {
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+        startActivity(intent);
+        if (!InputWordsActivity.this.isDestroyed()) finish();
     }
 
     @Override
