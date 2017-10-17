@@ -265,7 +265,7 @@
   <!-- Amount too small error message -->
   <string name="PaymentProtocol.Errors.smallPayment">Bitcoin-Zahlungen können nicht geringer als %1$s sein.</string>
   <!-- Output too small error message. -->
-  <string name="PaymentProtocol.Errors.smallTransaction">Bitcoin-Transaktionsausgaben können nicht geringer als $@ sein.</string>
+  <string name="PaymentProtocol.Errors.smallTransaction">Bitcoin-Transaktionsausgaben können nicht geringer als %1$s sein.</string>
   <!-- Unsupported signature type payment protocol error message -->
   <string name="PaymentProtocol.Errors.unsupportedSignatureType">Nicht unterstützter Signaturtyp</string>
   <!-- Untrusted certificate payment protocol error message -->

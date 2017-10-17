@@ -185,7 +185,7 @@
   <!-- Amount too small error message -->
   <string name="PaymentProtocol.Errors.smallPayment">پرداخت‌های بیتکوین نمی‌توانند کمتر از %1$s باشند.</string>
   <!-- Output too small error message. -->
-  <string name="PaymentProtocol.Errors.smallTransaction">مقدار خروجی در مبادلات بیتکوین نمی‌تواند کمتر از $@ باشد.</string>
+  <string name="PaymentProtocol.Errors.smallTransaction">مقدار خروجی در مبادلات بیتکوین نمی‌تواند کمتر از %1$s باشد.</string>
   <!-- Unsupported signature type payment protocol error message -->
   <string name="PaymentProtocol.Errors.unsupportedSignatureType">الگوی امضا قابل قبول نیست</string>
   <!-- Untrusted certificate payment protocol error message -->
