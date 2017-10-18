@@ -6,9 +6,11 @@ import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
@@ -152,6 +154,15 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
 
             }
         });
+        searchEdit.setOnKeyListener(new View.OnKeyListener() {
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    onShow(false);
+                    return true;
+                }
+                return false;
+            }
+        });
 
         sentFilter.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -213,6 +224,10 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
             }, 400);
         } else {
             keyboard.hideSoftInputFromWindow(searchEdit.getWindowToken(), 0);
+            clearSwitches();
+            updateFilterButtonsUI(filterSwitches);
+            if (TxManager.getInstance().adapter != null)
+                TxManager.getInstance().adapter.filterBy("", filterSwitches);
         }
     }
 
