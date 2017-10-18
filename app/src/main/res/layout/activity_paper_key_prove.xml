@@ -108,7 +108,7 @@
 
         <com.breadwallet.presenter.customviews.BREdit
             android:id="@+id/word_edittext_first"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/bread_margin"
             android:layout_marginStart="@dimen/bread_margin"
@@ -118,7 +118,8 @@
             android:inputType="textPersonName"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/word_number_first"/>
+            app:layout_constraintTop_toBottomOf="@+id/word_number_first"
+            app:layout_constraintHorizontal_bias="0.0"/>
 
         <View
             android:id="@+id/line1"
@@ -142,7 +143,7 @@
 
         <com.breadwallet.presenter.customviews.BREdit
             android:id="@+id/word_edittext_second"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/bread_margin"
             android:layout_marginStart="@dimen/bread_margin"
@@ -153,7 +154,9 @@
             android:inputType="textPersonName"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/word_number_second"/>
+            app:layout_constraintTop_toBottomOf="@+id/word_number_second"
+            android:layout_marginTop="0dp"
+            app:layout_constraintHorizontal_bias="0.0"/>
 
         <View
             android:id="@+id/line2"
