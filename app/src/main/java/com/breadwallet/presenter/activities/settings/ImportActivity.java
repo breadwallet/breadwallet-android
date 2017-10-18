@@ -1,7 +1,5 @@
-package com.breadwallet.presenter.activities;
+package com.breadwallet.presenter.activities.settings;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -59,7 +57,6 @@ public class ImportActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-
                 BRAnimator.openScanner(ImportActivity.this, BRConstants.SCANNER_REQUEST);
             }
         });
