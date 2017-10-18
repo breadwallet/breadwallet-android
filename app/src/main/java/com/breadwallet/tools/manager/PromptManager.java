@@ -6,10 +6,9 @@ import android.content.Intent;
 import android.view.View;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.UpdatePitActivity;
+import com.breadwallet.presenter.activities.UpdatePinActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.FingerprintActivity;
-import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.settings.ShareDataActivity;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.wallet.BRPeerManager;
@@ -132,7 +131,7 @@ public class PromptManager {
                 return new PromptInfo(app.getString(R.string.Prompts_UpgradePin_title), app.getString(R.string.Prompts_UpgradePin_body), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(app, UpdatePitActivity.class);
+                        Intent intent = new Intent(app, UpdatePinActivity.class);
                         app.startActivity(intent);
                         app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                     }
