@@ -69,6 +69,7 @@ public class SecurityCenterActivity extends BRActivity {
                 onBackPressed();
             }
         });
+
         updateList();
 
         ImageButton faq = (ImageButton) findViewById(R.id.faq_button);

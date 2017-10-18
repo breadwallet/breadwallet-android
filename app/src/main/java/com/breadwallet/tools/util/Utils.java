@@ -1,20 +1,24 @@
 package com.breadwallet.tools.util;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.presenter.activities.BreadActivity;
 
@@ -24,6 +28,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+
+import static android.content.Context.FINGERPRINT_SERVICE;
 
 
 /**
@@ -182,9 +188,13 @@ public class Utils {
     }
 
     public static boolean isFingerprintAvailable(Context app) {
-        FingerprintManagerCompat fingerprintManagerCompat = FingerprintManagerCompat.from(app);
+        FingerprintManager fingerprintManager = (FingerprintManager) app.getSystemService(FINGERPRINT_SERVICE);
         // Device doesn't support fingerprint authentication
-        return fingerprintManagerCompat.isHardwareDetected();
+        if (ActivityCompat.checkSelfPermission(app, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(app, "Fingerprint authentication permission not enabled", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return fingerprintManager.isHardwareDetected();
     }
 
     public static void hideKeyboard(Context app) {
