@@ -94,7 +94,7 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".presenter.activities.ImportActivity"
+            android:name=".presenter.activities.settings.ImportActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>

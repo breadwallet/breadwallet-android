@@ -58,7 +58,6 @@ public class ActivityUTILS {
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         window.setStatusBarColor(app.getColor(color));
-
     }
 
     public static void init(Activity app) {
