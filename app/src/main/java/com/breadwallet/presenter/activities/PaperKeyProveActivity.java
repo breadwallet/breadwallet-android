@@ -5,6 +5,8 @@ import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.transition.TransitionManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.SparseArray;
 import android.view.KeyEvent;
@@ -13,6 +15,7 @@ import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -43,6 +46,8 @@ public class PaperKeyProveActivity extends BRActivity {
     private EditText wordEditSecond;
     private TextView wordTextFirst;
     private TextView wordTextSecond;
+    private ImageView checkMark1;
+    private ImageView checkMark2;
     private SparseArray<String> sparseArrayWords = new SparseArray<>();
     public static boolean appVisible = false;
     private static PaperKeyProveActivity app;
@@ -66,8 +71,14 @@ public class PaperKeyProveActivity extends BRActivity {
         wordTextFirst = (TextView) findViewById(R.id.word_number_first);
         wordTextSecond = (TextView) findViewById(R.id.word_number_second);
 
+        checkMark1 = (ImageView) findViewById(R.id.check_mark_1);
+        checkMark2 = (ImageView) findViewById(R.id.check_mark_2);
+
         wordEditFirst.setOnFocusChangeListener(new FocusListener());
         wordEditSecond.setOnFocusChangeListener(new FocusListener());
+
+        wordEditFirst.addTextChangedListener(new BRTextWatcher());
+        wordEditSecond.addTextChangedListener(new BRTextWatcher());
 
         constraintLayout = (ConstraintLayout) findViewById(R.id.constraintLayout);
         resetConstraintSet.clone(constraintLayout);
@@ -105,10 +116,8 @@ public class PaperKeyProveActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                String edit1 = wordEditFirst.getText().toString().replaceAll("[^a-zA-Z]", "");
-                String edit2 = wordEditSecond.getText().toString().replaceAll("[^a-zA-Z]", "");
 
-                if (edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0))) && edit2.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)))) {
+                if (isWordCorrect(true) && isWordCorrect(false)) {
                     Utils.hideKeyboard(PaperKeyProveActivity.this);
                     BRSharedPrefs.putPhraseWroteDown(PaperKeyProveActivity.this, true);
                     BRAnimator.showBreadSignal(PaperKeyProveActivity.this, getString(R.string.Alerts_paperKeySet), getString(R.string.Alerts_paperKeySetSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
@@ -121,12 +130,12 @@ public class PaperKeyProveActivity extends BRActivity {
                     });
                 } else {
 
-                    if (!SmartValidator.isWordValid(PaperKeyProveActivity.this, edit1) || !edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0)))) {
+                    if (isWordCorrect(true)) {
                         wordEditFirst.setTextColor(getColor(R.color.red_text));
                         SpringAnimator.failShakeAnimation(PaperKeyProveActivity.this, wordEditFirst);
                     }
 
-                    if (!SmartValidator.isWordValid(PaperKeyProveActivity.this, edit2) || !edit2.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)))) {
+                    if (isWordCorrect(false)) {
                         wordEditFirst.setTextColor(getColor(R.color.red_text));
                         SpringAnimator.failShakeAnimation(PaperKeyProveActivity.this, wordEditSecond);
                     }
@@ -197,6 +206,16 @@ public class PaperKeyProveActivity extends BRActivity {
 
     }
 
+    private boolean isWordCorrect(boolean first) {
+        if (first) {
+            String edit = wordEditFirst.getText().toString().replaceAll("[^a-zA-Z]", "");
+            return SmartValidator.isWordValid(PaperKeyProveActivity.this, edit) && edit.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0)));
+        } else {
+            String edit = wordEditSecond.getText().toString().replaceAll("[^a-zA-Z]", "");
+            return SmartValidator.isWordValid(PaperKeyProveActivity.this, edit) && edit.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)));
+        }
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
     }
@@ -220,4 +239,34 @@ public class PaperKeyProveActivity extends BRActivity {
         if (!valid)
             SpringAnimator.failShakeAnimation(this, view);
     }
+
+    class BRTextWatcher implements TextWatcher {
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {
+            if (isWordCorrect(true)) {
+                checkMark1.setVisibility(View.VISIBLE);
+            } else {
+                checkMark1.setVisibility(View.INVISIBLE);
+            }
+
+            if (isWordCorrect(false)) {
+                checkMark2.setVisibility(View.VISIBLE);
+            } else {
+                checkMark2.setVisibility(View.INVISIBLE);
+            }
+        }
+
+        @Override
+        public void afterTextChanged(Editable s) {
+
+        }
+    }
+
+
 }

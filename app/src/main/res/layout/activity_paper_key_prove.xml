@@ -56,6 +56,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/title"/>
+
     </android.support.constraint.ConstraintLayout>
 
     <android.support.constraint.ConstraintLayout
@@ -82,17 +83,43 @@
             android:layout_marginEnd="@dimen/bread_margin"
             android:layout_marginStart="@dimen/bread_margin"
             android:layout_marginTop="32dp"
-            app:buttonType="1"
             android:elevation="8dp"
             android:padding="10dp"
             android:text="@string/Button.submit"
             android:textColor="@color/white"
             android:textSize="18sp"
+            app:buttonType="1"
             app:isBreadButton="true"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/line2"/>
+
+        <ImageView
+            android:id="@+id/check_mark_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="0dp"
+            android:src="@drawable/ic_check_mark_blue"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/word_edittext_first"
+            app:layout_constraintLeft_toRightOf="@+id/word_edittext_first"
+            app:layout_constraintTop_toTopOf="@+id/word_edittext_first"/>
+
+        <ImageView
+            android:id="@+id/check_mark_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="0dp"
+            android:src="@drawable/ic_check_mark_blue"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/word_edittext_second"
+            app:layout_constraintLeft_toRightOf="@+id/word_edittext_second"
+            app:layout_constraintTop_toTopOf="@+id/word_edittext_second"/>
 
         <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/word_number_first"
@@ -147,16 +174,16 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="@dimen/bread_margin"
             android:layout_marginStart="@dimen/bread_margin"
+            android:layout_marginTop="0dp"
             android:background="@android:color/transparent"
             android:ems="10"
             android:imeActionId="@+id/submit"
             android:imeOptions="actionSend"
             android:inputType="textPersonName"
+            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/word_number_second"
-            android:layout_marginTop="0dp"
-            app:layout_constraintHorizontal_bias="0.0"/>
+            app:layout_constraintTop_toBottomOf="@+id/word_number_second"/>
 
         <View
             android:id="@+id/line2"
