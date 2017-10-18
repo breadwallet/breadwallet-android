@@ -66,6 +66,9 @@ public class PaperKeyProveActivity extends BRActivity {
         wordTextFirst = (TextView) findViewById(R.id.word_number_first);
         wordTextSecond = (TextView) findViewById(R.id.word_number_second);
 
+        wordEditFirst.setOnFocusChangeListener(new FocusListener());
+        wordEditSecond.setOnFocusChangeListener(new FocusListener());
+
         constraintLayout = (ConstraintLayout) findViewById(R.id.constraintLayout);
         resetConstraintSet.clone(constraintLayout);
         applyConstraintSet.clone(constraintLayout);
@@ -119,11 +122,13 @@ public class PaperKeyProveActivity extends BRActivity {
                 } else {
 
                     if (!SmartValidator.isWordValid(PaperKeyProveActivity.this, edit1) || !edit1.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0)))) {
-                        SpringAnimator.failShakeAnimation(PaperKeyProveActivity.this, wordTextFirst);
+                        wordEditFirst.setTextColor(getColor(R.color.red_text));
+                        SpringAnimator.failShakeAnimation(PaperKeyProveActivity.this, wordEditFirst);
                     }
 
                     if (!SmartValidator.isWordValid(PaperKeyProveActivity.this, edit2) || !edit2.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)))) {
-                        SpringAnimator.failShakeAnimation(PaperKeyProveActivity.this, wordTextSecond);
+                        wordEditFirst.setTextColor(getColor(R.color.red_text));
+                        SpringAnimator.failShakeAnimation(PaperKeyProveActivity.this, wordEditSecond);
                     }
                 }
 
@@ -189,9 +194,30 @@ public class PaperKeyProveActivity extends BRActivity {
 
         wordTextFirst.setText(String.format(Locale.getDefault(), getString(R.string.ConfirmPaperPhrase_word), (sparseArrayWords.keyAt(0) + 1)));
         wordTextSecond.setText(String.format(Locale.getDefault(), getString(R.string.ConfirmPaperPhrase_word), (sparseArrayWords.keyAt(1) + 1)));
+
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
+    }
+
+    private class FocusListener implements View.OnFocusChangeListener {
+
+        @Override
+        public void onFocusChange(View v, boolean hasFocus) {
+            if (!hasFocus) {
+                validateWord((EditText) v);
+            } else {
+                ((EditText) v).setTextColor(getColor(R.color.light_gray));
+            }
+        }
+    }
+
+    private void validateWord(EditText view) {
+        String word = view.getText().toString();
+        boolean valid = SmartValidator.isWordValid(this, word);
+        view.setTextColor(getColor(valid ? R.color.light_gray : R.color.red_text));
+        if (!valid)
+            SpringAnimator.failShakeAnimation(this, view);
     }
 }
