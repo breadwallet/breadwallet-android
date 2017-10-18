@@ -1,10 +1,12 @@
 package com.platform;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.tools.util.Utils;
 import com.platform.interfaces.Middleware;
 import com.platform.interfaces.Plugin;
 import com.platform.middlewares.APIProxy;
@@ -162,11 +164,21 @@ public class HTTPServer {
             }
 
             return false;
-        } else if(target.equalsIgnoreCase("_email")){
+        } else if (target.equalsIgnoreCase("_email")) {
             Uri uri = Uri.parse(target);
             String address = uri.getQueryParameter("address");
+            if (Utils.isNullOrEmpty(address)) {
+                return BRHTTPHelper.handleError(400, "no address", baseRequest, response);
+            }
 
-            return true;
+            Intent email = new Intent(Intent.ACTION_SEND);
+            email.putExtra(Intent.EXTRA_EMAIL, new String[]{address});
+
+            //need this to prompts email client only
+            email.setType("message/rfc822");
+
+            app.startActivity(Intent.createChooser(email, "Choose an Email client :"));
+            return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
         }
 
         for (Middleware m : middlewares) {

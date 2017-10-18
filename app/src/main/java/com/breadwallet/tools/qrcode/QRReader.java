@@ -106,8 +106,7 @@ public class QRReader {
         this.surfaceView = builder.surfaceView;
         if (builder.barcodeDetector == null) {
             this.barcodeDetector = getBarcodeDetector(context);
-        }
-        else {
+        } else {
             this.barcodeDetector = builder.barcodeDetector;
         }
     }
@@ -147,9 +146,9 @@ public class QRReader {
             });
 
             cameraSource = new CameraSource.Builder(context, barcodeDetector).setAutoFocusEnabled(autoFocusEnabled)
-                            .setFacing(facing)
-                            .setRequestedPreviewSize(width, height)
-                            .build();
+                    .setFacing(facing)
+                    .setRequestedPreviewSize(width, height)
+                    .build();
         } else {
             Log.e(LOG, "Barcode detector is not operational");
         }
@@ -174,8 +173,7 @@ public class QRReader {
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED) {
                 Log.e(LOG, "Permission not granted!");
-            }
-            else if (!cameraRunning && cameraSource != null && surfaceView != null) {
+            } else if (!cameraRunning && cameraSource != null && surfaceView != null) {
                 cameraSource.start(surfaceView.getHolder());
                 cameraRunning = true;
             }
@@ -262,6 +260,7 @@ public class QRReader {
             this.facing = facing;
             return this;
         }
+
         public QRReader build() {
             return new QRReader(this);
         }
