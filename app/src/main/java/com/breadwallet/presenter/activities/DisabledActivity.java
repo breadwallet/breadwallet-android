@@ -24,7 +24,6 @@ import com.breadwallet.tools.util.BRConstants;
 import java.util.Locale;
 
 
-
 public class DisabledActivity extends BRActivity {
     private static final String TAG = DisabledActivity.class.getName();
     private TextView untilLabel;
@@ -104,7 +103,7 @@ public class DisabledActivity extends BRActivity {
         timer = new CountDownTimer(seconds * 1000, 1000) {
             public void onTick(long millisUntilFinished) {
                 long durationSeconds = (millisUntilFinished / 1000);
-                untilLabel.setText(String.format(Locale.getDefault(),"%02d:%02d:%02d", durationSeconds / 3600,
+                untilLabel.setText(String.format(Locale.getDefault(), "%02d:%02d:%02d", durationSeconds / 3600,
                         (durationSeconds % 3600) / 60, (durationSeconds % 60)));
             }
 
@@ -116,7 +115,7 @@ public class DisabledActivity extends BRActivity {
                     }
                 }, 2000);
                 long durationSeconds = 0;
-                untilLabel.setText(String.format(Locale.getDefault(),"%02d:%02d:%02d", durationSeconds / 3600,
+                untilLabel.setText(String.format(Locale.getDefault(), "%02d:%02d:%02d", durationSeconds / 3600,
                         (durationSeconds % 3600) / 60, (durationSeconds % 60)));
             }
         }.start();
@@ -131,7 +130,9 @@ public class DisabledActivity extends BRActivity {
 
     @Override
     public void onBackPressed() {
-        if (AuthManager.getInstance().isWalletDisabled(DisabledActivity.this)) {
+        if (getFragmentManager().getBackStackEntryCount() > 0) {
+            getFragmentManager().popBackStack();
+        } else if (AuthManager.getInstance().isWalletDisabled(DisabledActivity.this)) {
             SpringAnimator.failShakeAnimation(DisabledActivity.this, disabled);
         } else {
             BRAnimator.startBreadActivity(DisabledActivity.this, true);
