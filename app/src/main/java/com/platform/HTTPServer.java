@@ -1,6 +1,7 @@
 package com.platform;
 
 import android.app.Activity;
+import android.net.Uri;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -161,6 +162,11 @@ public class HTTPServer {
             }
 
             return false;
+        } else if(target.equalsIgnoreCase("_email")){
+            Uri uri = Uri.parse(target);
+            String address = uri.getQueryParameter("address");
+
+            return true;
         }
 
         for (Middleware m : middlewares) {

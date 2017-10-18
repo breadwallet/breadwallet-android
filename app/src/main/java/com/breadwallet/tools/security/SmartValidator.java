@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.TypesConverter;
@@ -73,9 +74,7 @@ public class SmartValidator {
             e.printStackTrace();
         }
         if (words.length != 2048) {
-            RuntimeException ex = new IllegalArgumentException("words.length is not 2048");
-            FirebaseCrash.report(ex);
-            throw ex;
+            BRReportsManager.reportBug(new IllegalArgumentException("words.length is not 2048"), true);
         }
         return BRWalletManager.getInstance().validateRecoveryPhrase(cleanWordList, phrase);
 

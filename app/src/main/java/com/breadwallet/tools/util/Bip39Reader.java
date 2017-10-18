@@ -3,6 +3,7 @@ package com.breadwallet.tools.util;
 import android.content.Context;
 import android.content.res.AssetManager;
 
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.BufferedReader;
@@ -57,16 +58,13 @@ public class Bip39Reader {
                 wordList.add(line);
             }
         } catch (Exception ex) {
-            ex.printStackTrace();
-            FirebaseCrash.report(ex);
+            BRReportsManager.reportBug(ex);
         } finally {
             assert reader != null;
             reader.close();
         }
         if (wordList.size() != WORD_LIST_SIZE) {
-            RuntimeException ex = new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items");
-            FirebaseCrash.report(ex);
-            throw ex;
+            BRReportsManager.reportBug(new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items"), true);
         }
         return wordList;
     }
@@ -102,9 +100,7 @@ public class Bip39Reader {
                 }
             }
             if (wordList.size() != WORD_LIST_SIZE) {
-                RuntimeException ex = new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items");
-                FirebaseCrash.report(ex);
-                throw ex;
+                BRReportsManager.reportBug(new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items"), true);
             }
             if (wordList.contains(incorrect)) {
                 lang = l;
@@ -155,9 +151,7 @@ public class Bip39Reader {
                 }
             }
             if (wordList.size() != WORD_LIST_SIZE){
-                RuntimeException ex = new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items");
-                FirebaseCrash.report(ex);
-                throw ex;
+                BRReportsManager.reportBug(new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items"), true);
             }
             result.addAll(wordList);
 

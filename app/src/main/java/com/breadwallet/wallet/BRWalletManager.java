@@ -40,6 +40,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BREventManager;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -139,16 +140,12 @@ public class BRWalletManager {
         }
         byte[] randomSeed = sr.generateSeed(16);
         if (words.length < 2000) {
-            RuntimeException ex = new IllegalArgumentException("the list is wrong, size: " + words.length);
-            FirebaseCrash.report(ex);
-            throw ex;
+            BRReportsManager.reportBug(new IllegalArgumentException("the list is wrong, size: " + words.length),true);
         }
         if (randomSeed.length == 0) throw new NullPointerException("failed to create the seed");
         byte[] strPhrase = encodeSeed(randomSeed, words);
         if (strPhrase == null || strPhrase.length == 0) {
-            RuntimeException ex = new NullPointerException("failed to encodeSeed");
-            FirebaseCrash.report(ex);
-            throw ex;
+            BRReportsManager.reportBug(new NullPointerException("failed to encodeSeed"), true);
         }
         boolean success = false;
         try {
@@ -170,9 +167,7 @@ public class BRWalletManager {
         if (seed == null || seed.length == 0) throw new RuntimeException("seed is null");
         byte[] authKey = getAuthPrivKeyForAPI(seed);
         if (authKey == null || authKey.length == 0) {
-            RuntimeException ex = new IllegalArgumentException("authKey is invalid");
-            FirebaseCrash.report(ex);
-            throw ex;
+            BRReportsManager.reportBug(new IllegalArgumentException("authKey is invalid"), true);
         }
         BRKeyStore.putAuthKey(authKey, ctx);
         int walletCreationTime = (int) (System.currentTimeMillis() / 1000);

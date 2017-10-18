@@ -12,6 +12,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.google.firebase.crash.FirebaseCrash;
 
@@ -48,7 +49,9 @@ public class BRErrorPipe {
     private static android.app.AlertDialog dialog;
 
     public static void parseKeyStoreError(final Context context, Exception e, String alias, boolean report) {
-        if (report) FirebaseCrash.report(e);
+        if (report) {
+            BRReportsManager.reportBug(e);
+        }
 
         if (e instanceof KeyPermanentlyInvalidatedException) {
             BRErrorPipe.showKeyStoreDialog(context, "KeyStore Error: " + alias, "Your Breadwallet encrypted data was recently invalidated because your Android lock screen was disabled.", context.getString(R.string.Button_ok), null,
@@ -109,7 +112,7 @@ public class BRErrorPipe {
     }
 
     public static void parseError(final Context context, String message, Exception ex, final boolean critical) {
-        FirebaseCrash.report(ex);
+        BRReportsManager.reportBug(ex);
         showKeyStoreDialog(context,
                 "Internal error:",
                 message,

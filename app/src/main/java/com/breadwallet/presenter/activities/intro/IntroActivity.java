@@ -18,6 +18,7 @@ import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -106,9 +107,7 @@ public class IntroActivity extends BRActivity implements Serializable {
 
         if (!BuildConfig.DEBUG && BRKeyStore.AUTH_DURATION_SEC != 300) {
             Log.e(TAG, "onCreate: BRKeyStore.AUTH_DURATION_SEC != 300");
-            RuntimeException ex = new RuntimeException("AUTH_DURATION_SEC should be 300");
-            FirebaseCrash.report(ex);
-            throw ex;
+            BRReportsManager.reportBug(new RuntimeException("AUTH_DURATION_SEC should be 300"), true);
         }
         introActivity = this;
 
