@@ -50,7 +50,7 @@
         android:layout_marginEnd="32dp"
         android:layout_marginStart="8dp"
         android:lineSpacingMultiplier="1.4"
-        android:text="@string/WipeWallet.startWaring"
+        android:text="@string/WipeWallet.startWarning"
         android:textColor="@color/almost_black"
         android:textSize="18sp"
         app:layout_constraintHorizontal_bias="0.333"
