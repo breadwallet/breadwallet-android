@@ -22,6 +22,7 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.fragments.FragmentPhraseWord;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.Utils;
 import com.google.firebase.crash.FirebaseCrash;
@@ -116,7 +117,7 @@ public class PaperKeyActivity extends BRActivity {
                             brDialogView.dismissWithAnimation();
                         }
                     }, null, null, 0);
-            FirebaseCrash.report(new IllegalArgumentException("Paper Key error, please contact support at breadwallet.com"));
+            BRReportsManager.reportBug(new IllegalArgumentException("Paper Key error, please contact support at breadwallet.com"), false);
 
         } else {
             WordPagerAdapter adapter = new WordPagerAdapter(getFragmentManager());

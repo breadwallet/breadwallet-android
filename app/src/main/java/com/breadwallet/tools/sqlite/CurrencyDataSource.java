@@ -34,6 +34,7 @@ import android.util.Log;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
@@ -82,8 +83,7 @@ public class CurrencyDataSource {
 
             database.setTransactionSuccessful();
         } catch (Exception ex) {
-            FirebaseCrash.report(ex);
-            Log.e(TAG, "Error inserting into SQLite", ex);
+            BRReportsManager.reportBug(ex);
             //Error in between database transaction
         } finally {
             database.endTransaction();

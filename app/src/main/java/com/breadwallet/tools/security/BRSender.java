@@ -16,6 +16,7 @@ import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
@@ -123,9 +124,7 @@ public class BRSender {
         if (paymentRequest == null || paymentRequest.addresses == null) {
             Log.e(TAG, "handlePay: WRONG PARAMS");
             String message = paymentRequest == null ? "paymentRequest is null" : "addresses is null";
-            RuntimeException ex = new RuntimeException("paymentRequest is malformed: " + message);
-            FirebaseCrash.report(ex);
-            throw ex;
+            BRReportsManager.reportBug(new RuntimeException("paymentRequest is malformed: " + message), true);
         }
         long amount = paymentRequest.amount;
         long balance = BRWalletManager.getInstance().getBalance(app);
@@ -152,9 +151,7 @@ public class BRSender {
         if (notEnoughForFee(app, paymentRequest)) {
             //weird bug when the core BRWalletManager is NULL
             if (maxOutputAmount == -1) {
-                RuntimeException ex = new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL");
-                FirebaseCrash.report(ex);
-                throw ex;
+                BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
             }
             // max you can spend is smaller than the min you can spend
             if (maxOutputAmount < minOutputAmount) {
@@ -198,8 +195,7 @@ public class BRSender {
         BRWalletManager m = BRWalletManager.getInstance();
         long maxAmountDouble = m.getMaxOutputAmount();
         if (maxAmountDouble == -1) {
-            RuntimeException ex = new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL");
-            FirebaseCrash.report(ex);
+            BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"));
             return;
         }
         if (maxAmountDouble == 0) {
@@ -358,9 +354,7 @@ public class BRSender {
         if (feeForTx == 0) {
             long maxAmount = m.getMaxOutputAmount();
             if (maxAmount == -1) {
-                RuntimeException ex = new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL");
-                FirebaseCrash.report(ex);
-                throw ex;
+                BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"),true);
             }
             if (maxAmount == 0) {
                 BRDialog.showCustomDialog(ctx, "", ctx.getString(R.string.Alerts_sendFailure), ctx.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {

@@ -13,6 +13,7 @@ import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
@@ -293,7 +294,7 @@ public class BRKeyStore {
         } catch (IOException | CertificateException | KeyStoreException e) {
             /** keyStore.load(null) threw the Exception, meaning the keystore is unavailable */
             Log.e(TAG, "_getData: keyStore.load(null) threw the Exception, meaning the keystore is unavailable", e);
-            FirebaseCrash.report(e);
+            BRReportsManager.reportBug(e);
             if (e instanceof FileNotFoundException) {
                 Log.e(TAG, "_getData: File not found exception", e);
 
@@ -660,7 +661,7 @@ public class BRKeyStore {
                 app.startActivityForResult(intent, requestCode);
             } else {
                 Log.e(TAG, "showAuthenticationScreen: failed to create intent for auth");
-                FirebaseCrash.report(new RuntimeException("showAuthenticationScreen: failed to create intent for auth"));
+                BRReportsManager.reportBug(new RuntimeException("showAuthenticationScreen: failed to create intent for auth"));
                 app.finish();
             }
         } else {

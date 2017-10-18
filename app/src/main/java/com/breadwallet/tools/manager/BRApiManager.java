@@ -235,7 +235,7 @@ public class BRApiManager {
                 BRSharedPrefs.putEconomyFeePerKb(activity, economyFee);
             }
         } catch (JSONException e) {
-            FirebaseCrash.report(e);
+            BRReportsManager.reportBug(e);
             e.printStackTrace();
         }
     }

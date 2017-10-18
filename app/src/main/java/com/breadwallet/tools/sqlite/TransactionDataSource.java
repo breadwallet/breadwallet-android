@@ -33,6 +33,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.breadwallet.presenter.entities.BRTransactionEntity;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
@@ -103,7 +104,7 @@ public class TransactionDataSource {
             }
             return transactionEntity1;
         } catch (Exception ex) {
-            FirebaseCrash.report(ex);
+            BRReportsManager.reportBug(ex);
             Log.e(TAG, "Error inserting into SQLite", ex);
             //Error in between database transaction
         } finally {
