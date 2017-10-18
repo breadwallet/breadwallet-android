@@ -19,8 +19,8 @@ import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
 
-public class UpdatePitActivity extends BRActivity {
-    private static final String TAG = UpdatePitActivity.class.getName();
+public class UpdatePinActivity extends BRActivity {
+    private static final String TAG = UpdatePinActivity.class.getName();
     private BRKeyboard keyboard;
     private View dot1;
     private View dot2;
@@ -42,9 +42,9 @@ public class UpdatePitActivity extends BRActivity {
     private LinearLayout pinLayout;
     private String curNewPin = "";
     public static boolean appVisible = false;
-    private static UpdatePitActivity app;
+    private static UpdatePinActivity app;
 
-    public static UpdatePitActivity getApp() {
+    public static UpdatePinActivity getApp() {
         return app;
     }
 
@@ -178,7 +178,7 @@ public class UpdatePitActivity extends BRActivity {
                     BRAnimator.showBreadSignal(this, getString(R.string.Alerts_pinSet), getString(R.string.UpdatePin_caption), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                         @Override
                         public void onComplete() {
-                            BRAnimator.startBreadActivity(UpdatePitActivity.this, false);
+                            BRAnimator.startBreadActivity(UpdatePinActivity.this, false);
                         }
                     });
                 } else {

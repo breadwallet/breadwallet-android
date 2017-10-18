@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,7 +20,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
-import com.breadwallet.presenter.activities.UpdatePitActivity;
+import com.breadwallet.presenter.activities.UpdatePinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSecurityCenterItem;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -156,7 +155,7 @@ public class SecurityCenterActivity extends BRActivity {
                 isPinSet ? R.drawable.ic_check_mark_blue : R.drawable.ic_check_mark_grey, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SecurityCenterActivity.this, UpdatePitActivity.class);
+                Intent intent = new Intent(SecurityCenterActivity.this, UpdatePinActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
