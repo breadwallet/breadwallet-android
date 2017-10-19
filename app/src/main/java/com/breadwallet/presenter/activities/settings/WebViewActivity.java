@@ -47,7 +47,6 @@ public class WebViewActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
 
-//        if (webView != null) webView.destroy();
         webView = (WebView) findViewById(R.id.web_view);
         webView.setBackgroundColor(0);
         webView.setWebChromeClient(new BRWebChromeClient());
@@ -56,14 +55,12 @@ public class WebViewActivity extends BRActivity {
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl());
 //                Log.d(TAG, "shouldOverrideUrlLoading: " + request.getMethod());
-                if (onCloseUrl != null && request.getUrl().toString().equalsIgnoreCase(onCloseUrl)) {
+                if ((onCloseUrl != null && request.getUrl().toString().equalsIgnoreCase(onCloseUrl)) || request.getUrl().toString().contains("_close")) {
                     onBackPressed();
                     onCloseUrl = null;
+                    return true;
                 }
-                if (request.getUrl().toString().contains("_close")) {
-                    onBackPressed();
-                }
-                return true;
+                return false;
             }
 
             @Override
@@ -75,7 +72,10 @@ public class WebViewActivity extends BRActivity {
 
         theUrl = getIntent().getStringExtra("url");
         String json = getIntent().getStringExtra("json");
-        setupServerMode(theUrl);
+        if (!setupServerMode(theUrl)) {
+            webView.loadUrl(theUrl);
+            return;
+        }
         String articleId = getIntent().getStringExtra("articleId");
         if (Utils.isNullOrEmpty(theUrl)) throw new IllegalArgumentException("No url extra!");
 
@@ -149,7 +149,7 @@ public class WebViewActivity extends BRActivity {
         });
     }
 
-    private void setupServerMode(String url) {
+    private boolean setupServerMode(String url) {
         if (url.equalsIgnoreCase(HTTPServer.URL_BUY)) {
             HTTPServer.mode = HTTPServer.ServerMode.BUY;
         } else if (url.equalsIgnoreCase(HTTPServer.URL_SUPPORT)) {
@@ -158,7 +158,9 @@ public class WebViewActivity extends BRActivity {
             HTTPServer.mode = HTTPServer.ServerMode.EA;
         } else {
             Log.e(TAG, "setupServerMode: " + "unknown url: " + url);
+            return false;
         }
+        return true;
     }
 
     @Override
