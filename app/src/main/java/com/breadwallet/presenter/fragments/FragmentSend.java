@@ -736,6 +736,14 @@ public class FragmentSend extends Fragment {
         if (!amountBuilder.toString().isEmpty())
             savedAmount = amountBuilder.toString();
         savedIso = selectedIso;
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                savedIso = null;
+                savedAmount = null;
+                savedMemo = null;
+            }
+        }, 1000 * 300);
     }
 
     private void loadMetaData() {
@@ -751,7 +759,7 @@ public class FragmentSend extends Fragment {
                     amountEdit.performClick();
                     updateText();
                 }
-            },500);
+            }, 500);
 
         }
     }
