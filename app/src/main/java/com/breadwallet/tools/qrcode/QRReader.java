@@ -59,7 +59,7 @@ public class QRReader {
     private final Context context;
     private final SurfaceView surfaceView;
     private boolean autoFocusEnabled;
-    private String debugData = "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF"; 
+    private String debugData = null; //"2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF";
 
     private boolean cameraRunning = false;
 
