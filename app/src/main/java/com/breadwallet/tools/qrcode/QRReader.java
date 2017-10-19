@@ -59,6 +59,7 @@ public class QRReader {
     private final Context context;
     private final SurfaceView surfaceView;
     private boolean autoFocusEnabled;
+    private String debugData = "2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF"; 
 
     private boolean cameraRunning = false;
 
@@ -102,6 +103,8 @@ public class QRReader {
         this.height = builder.height;
         this.facing = builder.facing;
         this.qrDataListener = builder.qrDataListener;
+        if (debugData != null)
+            qrDataListener.onDetected(debugData);
         this.context = builder.context;
         this.surfaceView = builder.surfaceView;
         if (builder.barcodeDetector == null) {
@@ -170,6 +173,7 @@ public class QRReader {
             throw new IllegalStateException("Camera already started!");
         }
         try {
+
             if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
                     != PackageManager.PERMISSION_GRANTED) {
                 Log.e(LOG, "Permission not granted!");

@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.fragments;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,6 +17,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
@@ -183,7 +185,7 @@ public class FragmentPin extends Fragment {
     }
 
     private void updateDots() {
-        if(dot1 == null) return;
+        if (dot1 == null) return;
         AuthManager.getInstance().updateDots(getActivity(), pinLimit, pin.toString(), dot1, dot2, dot3, dot4, dot5, dot6, R.drawable.ic_pin_dot_gray, new AuthManager.OnPinSuccess() {
             @Override
             public void onSuccess() {
@@ -209,8 +211,10 @@ public class FragmentPin extends Fragment {
                 }
                 authSucceeded = true;
                 completion.onComplete();
-                AuthManager.getInstance().authSuccess(getActivity());
-                getActivity().getFragmentManager().popBackStack();
+                Activity app = getActivity();
+                AuthManager.getInstance().authSuccess(app);
+                if (app != null)
+                    getActivity().getFragmentManager().popBackStack();
 
             }
         }).start();
