@@ -159,6 +159,7 @@ public class TxManager {
     public void hidePrompt(final Activity app, final PromptManager.PromptItem item) {
         crashIfNotMain();
         currentPrompt = null;
+        if (txList.getAdapter() != null)
             txList.getAdapter().notifyItemRemoved(0);
         if (item == PromptManager.PromptItem.SYNCING) {
             showNextPrompt(app);
