@@ -164,7 +164,7 @@ public class HTTPServer {
             }
 
             return false;
-        } else if (target.equalsIgnoreCase("_email")) {
+        } else if (target.toLowerCase().startsWith("_email")) {
             Uri uri = Uri.parse(target);
             String address = uri.getQueryParameter("address");
             if (Utils.isNullOrEmpty(address)) {
