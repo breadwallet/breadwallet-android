@@ -57,7 +57,6 @@ public class BRConstants {
     public static final int SCANNER_BCH_REQUEST = 202;
     public static final int REQUEST_IMAGE_CAPTURE = 203;
 
-
     public static final String CANARY_STRING = "canary";
     public static final String FIRST_ADDRESS = "firstAddress";
     public static final String SECURE_TIME_PREFS = "secureTime";
@@ -71,14 +70,12 @@ public class BRConstants {
     public static final int ONE_BITCOIN = 100000000;
     public static final int HUNDRED_BITS = 10000000;
 
-
     /**
      * BRWalletManager
      */
     public static final long TX_FEE_PER_KB = 5000;
     public static final long DEFAULT_FEE_PER_KB = (TX_FEE_PER_KB * 1000 + 190) / 191;
     public static final long MAX_FEE_PER_KB = (100100 * 1000 + 190) / 191;
-
 
     /**
      * BRSharedPrefs
@@ -113,7 +110,6 @@ public class BRConstants {
 
     public static boolean PLATFORM_ON = true;
     public static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_EVEN;
-
 
     /**
      * Support Center article ids.
