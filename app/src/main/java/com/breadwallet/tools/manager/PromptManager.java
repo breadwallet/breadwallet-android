@@ -11,6 +11,7 @@ import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.FingerprintActivity;
 import com.breadwallet.presenter.activities.settings.ShareDataActivity;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 
 import static com.breadwallet.tools.manager.PromptManager.PromptItem.FINGER_PRINT;
@@ -84,7 +85,7 @@ public class PromptManager {
         assert (app != null);
         switch (item) {
             case FINGER_PRINT:
-                return !BRSharedPrefs.getUseFingerprint(app);
+                return !BRSharedPrefs.getUseFingerprint(app) && Utils.isFingerprintAvailable(app);
             case PAPER_KEY:
                 return !BRSharedPrefs.getPhraseWroteDown(app);
             case UPGRADE_PIN:
