@@ -117,6 +117,10 @@ public class FragmentSend extends Fragment {
     public static boolean isEconomyFee;
     private boolean amountLabelOn = true;
 
+    private static String savedMemo;
+    private static String savedIso;
+    private static String savedAmount;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -375,6 +379,7 @@ public class FragmentSend extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
+                saveMetaData();
                 BRAnimator.openScanner(getActivity(), BRConstants.SCANNER_REQUEST);
 
             }
@@ -543,6 +548,8 @@ public class FragmentSend extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        loadMetaData();
+
     }
 
     @Override
@@ -723,23 +730,23 @@ public class FragmentSend extends Fragment {
         }
     }
 
-//    private class BRTextWatcher implements TextWatcher {
-//
-//        @Override
-//        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-//            amountLayout.requestLayout();
-//
-//        }
-//
-//        @Override
-//        public void onTextChanged(CharSequence s, int start, int before, int count) {
-//
-//        }
-//
-//        @Override
-//        public void afterTextChanged(Editable s) {
-//
-//        }
-//    }
+    private void saveMetaData() {
+        if (!commentEdit.getText().toString().isEmpty())
+            savedMemo = commentEdit.getText().toString();
+        if (!amountBuilder.toString().isEmpty())
+            savedAmount = amountBuilder.toString();
+        savedIso = selectedIso;
+    }
+
+    private void loadMetaData() {
+
+        if (!Utils.isNullOrEmpty(savedMemo))
+            commentEdit.setText(savedMemo);
+        if (!Utils.isNullOrEmpty(savedIso))
+            selectedIso = savedIso;
+        if (!Utils.isNullOrEmpty(savedAmount))
+            amountBuilder = new StringBuilder(savedAmount);
+    }
+
 
 }
