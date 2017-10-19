@@ -68,7 +68,7 @@ public class ActivityUTILS {
             }
         }).start();
         //set status bar color
-        ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
+//        ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
         ConnectionManager.getInstance();
         if (!(app instanceof IntroActivity || app instanceof RecoverActivity || app instanceof WriteDownActivity))
             BRApiManager.getInstance().startTimer(app);

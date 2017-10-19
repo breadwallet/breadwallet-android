@@ -81,7 +81,7 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
  * THE SOFTWARE.
  */
 
-public class BreadActivity extends BRActivity implements BRWalletManager.OnBalanceChanged,
+public class    BreadActivity extends BRActivity implements BRWalletManager.OnBalanceChanged,
         BRPeerManager.OnTxStatusUpdate, BRSharedPrefs.OnIsoChangedListener,
         TransactionDataSource.OnTxAddedListener, FragmentManage.OnNameChanged, ConnectionManager.ConnectionReceiverListener {
 
