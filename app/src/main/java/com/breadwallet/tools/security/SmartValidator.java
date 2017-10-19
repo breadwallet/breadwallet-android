@@ -4,14 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.R;
-import com.breadwallet.presenter.activities.PaperKeyProveActivity;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.wallet.BRWalletManager;
-import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.IOException;
 import java.text.Normalizer;
@@ -53,8 +50,7 @@ public class SmartValidator {
         String[] cleanWordList = null;
         try {
             boolean isLocal = true;
-            String languageCode = ctx.getString(R.string.lang);
-            list = Bip39Reader.getWordList(ctx, languageCode);
+            list = Bip39Reader.getAllWordLists(ctx);
 
             String[] phraseWords = phrase.split(" ");
             if (!list.contains(phraseWords[0])) {
@@ -78,7 +74,6 @@ public class SmartValidator {
         }
         return BRWalletManager.getInstance().validateRecoveryPhrase(cleanWordList, phrase);
 
-
     }
 
     public static boolean isPaperKeyCorrect(String insertedPhrase, Context activity) {
@@ -100,7 +95,7 @@ public class SmartValidator {
         return Arrays.equals(pubKey, pubKeyFromKeyStore);
     }
 
-    public static boolean checkFirstAddress(Activity app,  byte[] mpk) {
+    public static boolean checkFirstAddress(Activity app, byte[] mpk) {
         String addressFromPrefs = BRSharedPrefs.getFirstAddress(app);
         String generatedAddress = BRWalletManager.getFirstAddress(mpk);
         if (!addressFromPrefs.equalsIgnoreCase(generatedAddress) && addressFromPrefs.length() != 0 && generatedAddress.length() != 0) {
@@ -147,15 +142,9 @@ public class SmartValidator {
         return phrase;
     }
 
-    public static boolean isWordValid(Context ctx, String word){
+    public static boolean isWordValid(Context ctx, String word) {
         List<String> list;
-        String languageCode = ctx.getString(R.string.lang);
-        try {
-            list = Bip39Reader.getWordList(ctx, languageCode);
-        } catch (IOException e) {
-            e.printStackTrace();
-            throw new NullPointerException("No word list");
-        }
+        list = Bip39Reader.getAllWordLists(ctx);
         return list.contains(word);
 
     }
