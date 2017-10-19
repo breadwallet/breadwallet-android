@@ -95,7 +95,8 @@ public class BRAnimator {
         transaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_bottom, R.animator.from_bottom, R.animator.to_bottom);
         transaction.add(android.R.id.content, fragmentSignal, fragmentSignal.getClass().getName());
         transaction.addToBackStack(null);
-        transaction.commit();
+        if (!activity.isDestroyed())
+            transaction.commit();
     }
 
     public static void init(Activity app) {
@@ -160,6 +161,7 @@ public class BRAnimator {
         }
 
     }
+
     public static void showSupportFragment(Activity app, String articleId) {
         if (app == null) {
             Log.e(TAG, "showSupportFragment: app is null");
@@ -323,6 +325,7 @@ public class BRAnimator {
         transaction.commit();
 
     }
+
     public static void showGreetingsMessage(Activity app) {
         if (app == null) {
             Log.e(TAG, "showGreetingsMessage: app is null");
