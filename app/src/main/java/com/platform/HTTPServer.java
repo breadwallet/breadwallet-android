@@ -162,11 +162,11 @@ public class HTTPServer {
                 });
                 return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
             }
-
-            return false;
+            return true;
         } else if (target.toLowerCase().startsWith("/_email")) {
-            Uri uri = Uri.parse(target);
-            String address = uri.getQueryParameter("address");
+            Log.e(TAG, "dispatch: uri: " + baseRequest.getUri().toString());
+            String address = Uri.parse(baseRequest.getUri().toString()).getQueryParameter("address");
+            Log.e(TAG, "dispatch: address: " + address);
             if (Utils.isNullOrEmpty(address)) {
                 return BRHTTPHelper.handleError(400, "no address", baseRequest, response);
             }
