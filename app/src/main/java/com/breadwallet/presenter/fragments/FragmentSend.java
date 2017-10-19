@@ -739,13 +739,21 @@ public class FragmentSend extends Fragment {
     }
 
     private void loadMetaData() {
-
         if (!Utils.isNullOrEmpty(savedMemo))
             commentEdit.setText(savedMemo);
         if (!Utils.isNullOrEmpty(savedIso))
             selectedIso = savedIso;
-        if (!Utils.isNullOrEmpty(savedAmount))
+        if (!Utils.isNullOrEmpty(savedAmount)) {
             amountBuilder = new StringBuilder(savedAmount);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    amountEdit.performClick();
+                    updateText();
+                }
+            },500);
+
+        }
     }
 
 
