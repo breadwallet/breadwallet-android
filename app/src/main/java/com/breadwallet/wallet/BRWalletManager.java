@@ -65,6 +65,7 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 import static com.breadwallet.presenter.fragments.FragmentSend.isEconomyFee;
 
@@ -132,7 +133,7 @@ public class BRWalletManager {
         String[] words = new String[0];
         List<String> list;
         try {
-            String languageCode = ctx.getString(R.string.lang);
+            String languageCode = Locale.getDefault().getLanguage();
             list = Bip39Reader.getWordList(ctx, languageCode);
             words = list.toArray(new String[list.size()]);
         } catch (IOException e) {
@@ -140,7 +141,7 @@ public class BRWalletManager {
         }
         byte[] randomSeed = sr.generateSeed(16);
         if (words.length < 2000) {
-            BRReportsManager.reportBug(new IllegalArgumentException("the list is wrong, size: " + words.length),true);
+            BRReportsManager.reportBug(new IllegalArgumentException("the list is wrong, size: " + words.length), true);
         }
         if (randomSeed.length == 0) throw new NullPointerException("failed to create the seed");
         byte[] strPhrase = encodeSeed(randomSeed, words);
@@ -458,7 +459,6 @@ public class BRWalletManager {
             Log.e(TAG, "onTxDeleted: Failed! ctx is null");
         }
     }
-
 
 
     public void startTheWalletIfExists(final Activity app) {
