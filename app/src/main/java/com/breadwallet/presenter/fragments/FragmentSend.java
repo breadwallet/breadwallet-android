@@ -121,6 +121,8 @@ public class FragmentSend extends Fragment {
     private static String savedIso;
     private static String savedAmount;
 
+    private boolean ignoreCleanup;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
@@ -165,6 +167,7 @@ public class FragmentSend extends Fragment {
             public void onClick(View v) {
             }
         });
+
 
         showFeeSelectionButtons(feeButtonsShown);
 
@@ -556,6 +559,11 @@ public class FragmentSend extends Fragment {
     public void onPause() {
         super.onPause();
         Utils.hideKeyboard(getActivity());
+        if (!ignoreCleanup) {
+            savedIso = null;
+            savedAmount = null;
+            savedMemo = null;
+        }
     }
 
     private void handleClick(String key) {
@@ -736,17 +744,11 @@ public class FragmentSend extends Fragment {
         if (!amountBuilder.toString().isEmpty())
             savedAmount = amountBuilder.toString();
         savedIso = selectedIso;
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                savedIso = null;
-                savedAmount = null;
-                savedMemo = null;
-            }
-        }, 1000 * 300);
+        ignoreCleanup = true;
     }
 
     private void loadMetaData() {
+        ignoreCleanup = false;
         if (!Utils.isNullOrEmpty(savedMemo))
             commentEdit.setText(savedMemo);
         if (!Utils.isNullOrEmpty(savedIso))
@@ -763,6 +765,5 @@ public class FragmentSend extends Fragment {
 
         }
     }
-
 
 }
