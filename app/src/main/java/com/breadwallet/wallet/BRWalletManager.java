@@ -362,8 +362,8 @@ public class BRWalletManager {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        BRAnimator.showBreadSignal(app, error == 0 ? "Send Confirmation" : "Error",
-                                error == 0 ? "Money Sent!" : message, error == 0 ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
+                        BRAnimator.showBreadSignal(app, error == 0 ? app.getString(R.string.Alerts_sendSuccess) : app.getString(R.string.Alert_error),
+                                error == 0 ? app.getString(R.string.Alerts_sendSuccessSubheader) : message, error == 0 ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
                                     @Override
                                     public void onComplete() {
                                         if (app != null && !app.isDestroyed())

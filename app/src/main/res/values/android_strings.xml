@@ -40,5 +40,15 @@
     <string name="Fingerprint.not.recognized.Android">Fingerprint not recognized. Try again</string>
     <!-- Instruction how to enable device encryption -->
     <string name="Warning.encryption.body.Android">A device screen lock is needed to safeguard your wallet. Go to \"Settings\" > \"Security\" > \"Screen lock\" and enable to continue.</string>
+    <!-- Keystore error -->
+    <string name="Warning.keystore.error.Android">Paper Key error, please contact support@breadwallet.com</string>
+    <!-- Third party keyboard warning -->
+    <string name="Warning.keyboard.error.Android">It looks like you are using a third-party keyboard, which can record what you type and steal your Paper Key. Please switch to the default Android keyboard for extra protection.</string>
+    <!-- Pin attempts remaining with placeholder -->
+    <string name="Disabled.remainingAttempts.Android">%1$d attempts remaining</string>
+    <!-- Pin attempts remaining with placeholder -->
+    <string name="KeyStore.error.title.Android">KeyStore Error</string>
+    <!-- KeyStore error, keys are invalidated error -->
+    <string name="KeyStore.invalidatedKeys.body.Android">Your Bread encrypted data was recently invalidated because your Android lock screen was disabled.</string>
 
 </resources>

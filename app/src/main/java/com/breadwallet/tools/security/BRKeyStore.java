@@ -195,7 +195,7 @@ public class BRKeyStore {
             if (!success) {
                 RuntimeException ex = new NullPointerException("failed to writeBytesToFile: " + alias);
                 BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
-                BRDialog.showCustomDialog(context, "KeyStore Error", "Failed to save the iv file for: " + alias, "close", null, new BRDialogView.BROnClickListener() {
+                BRDialog.showCustomDialog(context, context.getString(R.string.KeyStore_error_title_Android), "Failed to save the iv file for: " + alias, "close", null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         brDialogView.dismissWithAnimation();
@@ -655,7 +655,7 @@ public class BRKeyStore {
         if (context instanceof Activity) {
             Activity app = (Activity) context;
             KeyguardManager mKeyguardManager = (KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE);
-            Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent("Authentication required", context.getString(R.string.Auth_body_Android));
+            Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(context.getString(R.string.Auth_title_Android), context.getString(R.string.Auth_body_Android));
 //        Assert.assertTrue(intent != null);
             if (intent != null) {
                 app.startActivityForResult(intent, requestCode);

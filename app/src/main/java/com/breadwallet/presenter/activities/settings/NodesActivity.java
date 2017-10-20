@@ -198,7 +198,7 @@ public class NodesActivity extends BRActivity {
                     }
 
                 } else {
-                    customTitle.setText("invalid node");
+                    customTitle.setText("Invalid Node");
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {

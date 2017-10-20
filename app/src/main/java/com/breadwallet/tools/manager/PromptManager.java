@@ -138,7 +138,7 @@ public class PromptManager {
                     }
                 });
             case RECOMMEND_RESCAN:
-                return new PromptInfo("Transaction Rejected", "Your wallet may be out of sync. This can often be fixed by rescanning the blockchain.", new View.OnClickListener() {
+                return new PromptInfo(app.getString(R.string.Prompts_RecommendRescan_title), app.getString(R.string.Prompts_RecommendRescan_body), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         new Thread(new Runnable() {
@@ -152,7 +152,7 @@ public class PromptManager {
                     }
                 });
             case SHARE_DATA:
-                return new PromptInfo("Share Anonymous Data", "Help improve Bread by sharing your anonymous data with us", new View.OnClickListener() {
+                return new PromptInfo(app.getString(R.string.Prompts_ShareData_title), app.getString(R.string.Prompts_ShareData_body), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         new Thread(new Runnable() {

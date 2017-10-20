@@ -111,7 +111,7 @@ public class PaperKeyActivity extends BRActivity {
 
         if (wordArray.length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
             BRDialog.showCustomDialog(this, getString(R.string.JailbreakWarnings_title),
-                    "Paper Key error, please contact support at breadwallet.com", getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                    getString(R.string.Warning_keystore_error_Android), getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();

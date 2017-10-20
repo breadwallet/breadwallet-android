@@ -120,9 +120,9 @@ public class CameraPlugin implements Plugin {
                     // Should we show an explanation?
                     if (ActivityCompat.shouldShowRequestPermissionRationale(app,
                             Manifest.permission.CAMERA)) {
-                        BRDialog.showCustomDialog(app, "Permission Required.",
-                                "Allow camera access in \"Settings\" > \"Apps\" > \"breadwallet\" > \"Permissions\"",
-                                "close", null, new BRDialogView.BROnClickListener() {
+                        BRDialog.showCustomDialog(app, app.getString(R.string.Permissions_title_Android),
+                                app.getString(R.string.Permissions_body_Android),
+                                app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                                     @Override
                                     public void onClick(BRDialogView brDialogView) {
                                         brDialogView.dismiss();
