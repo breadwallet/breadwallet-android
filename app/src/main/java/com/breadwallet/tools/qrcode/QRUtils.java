@@ -107,7 +107,7 @@ public class QRUtils {
         int width = point.x;
         int height = point.y;
         int smallerDimension = width < height ? width : height;
-        smallerDimension = (int) (smallerDimension * 0.55f);
+        smallerDimension = (int) (smallerDimension * 0.45f);
         Bitmap bitmap = null;
         bitmap = QRUtils.encodeAsBitmap(bitcoinURL, smallerDimension);
         //qrcode.setPadding(1, 1, 1, 1);
