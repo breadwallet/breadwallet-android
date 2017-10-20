@@ -34,6 +34,9 @@ model {
                         value = "false"
                     }
                 }
+//                ndk {
+//                    CFlags.addAll(['-DBITCOIN_TESTNET=1'])
+//                }
             }
             create("bread-testnet") {
                 applicationId "com.breadtestnet"
