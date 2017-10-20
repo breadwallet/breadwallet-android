@@ -101,7 +101,7 @@ public class BRSender {
                     ((Activity) app).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            BRDialog.showCustomDialog(app, errTitle[0], errMessage[0], "Ok", null, new BRDialogView.BROnClickListener() {
+                            BRDialog.showCustomDialog(app, errTitle[0], errMessage[0], app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                                 @Override
                                 public void onClick(BRDialogView brDialogView) {
                                     brDialogView.dismiss();
@@ -380,9 +380,9 @@ public class BRSender {
 
         //formatted text
         return receiver + "\n\n"
-                + "amount: " + formattedAmountBTC + " (" + formattedAmount + ")"
-                + "\nnetwork fee: +" + formattedFeeBTC + " (" + formattedFee + ")"
-                + "\ntotal: " + formattedTotalBTC + " (" + formattedTotal + ")"
+                + ctx.getString(R.string.Confirmation_amountLabel) + " " + formattedAmountBTC + " (" + formattedAmount + ")"
+                + "\n"  + ctx.getString(R.string.Confirmation_feeLabel) + " " + formattedFeeBTC + " (" + formattedFee + ")"
+                + "\n"  + ctx.getString(R.string.Confirmation_totalLabel) + " "  + formattedTotalBTC + " (" + formattedTotal + ")"
                 + (request.comment == null ? "" : "\n\n" + request.comment);
     }
 

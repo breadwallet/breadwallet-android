@@ -76,7 +76,7 @@ public class DisabledActivity extends BRActivity {
 
         int failCount = BRKeyStore.getFailCount(this);
         untilLabel.setText("");
-        attempts.setText(String.format(Locale.getDefault(), "%d attempts remaining", 8 - failCount));
+        attempts.setText(String.format(Locale.getDefault(), getString(R.string.Disabled_remainingAttempts_Android), (8 - failCount)));
 
     }
 

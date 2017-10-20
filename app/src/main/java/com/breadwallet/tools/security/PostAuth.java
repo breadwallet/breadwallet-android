@@ -231,7 +231,7 @@ public class PostAuth {
         assert (serializedTx != null);
         if (serializedTx == null) {
             Log.e(TAG, "onSendBch:serializedTx is null");
-            BRErrorPipe.showKeyStoreDialog(app, "No balance", "You have 0 BCH", "close", null,
+            BRErrorPipe.showKeyStoreDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.BCH_genericError), app.getString(R.string.AccessibilityLabels_close), null,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
@@ -263,18 +263,18 @@ public class PostAuth {
                     Log.e(TAG, "onSendBch:" + (response == null ? "resp is null" : response.code() + ":" + response.message()));
                     boolean success = true;
                     if (response != null) {
-                        title = "Failed";
+                        title = app.getString(R.string.WipeWallet_failedTitle);
                         if (response.isSuccessful()) {
-                            title = "Success";
+                            title = app.getString(R.string.Import_success);
                             message = "";
                         } else if (response.code() == 503) {
-                            message = "Your BCH has already been sent, or your wallet did not contain BCH before the fork.";
+                            message = app.getString(R.string.BCH_genericError);
                         } else {
                             success = false;
                             message = "(" + response.code() + ")" + "[" + response.message() + "]" + responseBody;
                         }
                     } else {
-                        title = "Failed to send";
+                        title = app.getString(R.string.Alerts_sendFailure);
                         message = "Something went wrong";
                     }
                     if (!success) {
@@ -287,7 +287,7 @@ public class PostAuth {
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            BRErrorPipe.showKeyStoreDialog(app, finalTitle, finalMessage, "close", null,
+                            BRErrorPipe.showKeyStoreDialog(app, finalTitle, finalMessage, app.getString(R.string.AccessibilityLabels_close), null,
                                     new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int which) {
                                             dialog.cancel();
