@@ -197,7 +197,7 @@ public class BRApiManager {
     }
 
     public static void updateFeePerKb(Activity activity) {
-        String jsonString = urlGET(activity, String.format("https://%s/fee-per-kb", BreadApp.HOST));
+        String jsonString = urlGET(activity, "https://api.loafwallet.org/fee-per-kb");
         if (jsonString == null || jsonString.isEmpty()) {
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
             return;

@@ -59,7 +59,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
     public ImportPrivKeyTask(Activity activity) {
         app = activity;
-        UNSPENT_URL = BuildConfig.BITCOIN_TESTNET ? "https://test-insight.bitpay.com/api/addrs/" : String.format("https://%s/q/addr/", BreadApp.HOST);
+        UNSPENT_URL = BuildConfig.BITCOIN_TESTNET ? "https://testnet.litecore.io/api/addrs/" : "https://insight.litecore.io/api/addrs/";
     }
 
     @Override
