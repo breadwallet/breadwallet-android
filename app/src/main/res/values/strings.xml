@@ -22,6 +22,10 @@
   <string name="Account.loadingMessage">Loading Wallet</string>
   <!-- Default wallet name -->
   <string name="AccountHeader.defaultWalletName">My Loaf</string>
+  <!-- Equals symbol -->
+  <string name="AccountHeader.equals">=</string>
+  <!-- Manage wallet button title -->
+  <string name="AccountHeader.manageButtonName">ADMINISTRER</string>
   <!-- Error alert title -->
   <string name="Alert.error">Error</string>
   <!-- No internet alert message -->
@@ -200,6 +204,8 @@
   <string name="JailbreakWarnings.messageWithoutBalance">DEVICE SECURITY COMPROMISED\n Any \'jailbreak\' app can access Loaf\'s keychain data and steal your litecoin. Please only use Loaf on a non-jailbroken device.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">WARNING</string>
+  <!-- Wipe wallet button -->
+  <string name="JailbreakWarnings.wipe">Ryd</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Location services are disabled.</string>
   <!-- No permissions for location services -->

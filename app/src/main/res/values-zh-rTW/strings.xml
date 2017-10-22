@@ -129,7 +129,7 @@
   <!-- Word label eg. Word #1, Word #2 -->
   <string name="ConfirmPaperPhrase.word">字組 #%1$s</string>
   <!-- Litecoin denomination picker label -->
-  <string name="DefaultCurrency.g">比特幣顯示單位</string>
+  <string name="DefaultCurrency.litecoinLabel">比特幣顯示單位</string>
   <!-- Exchange rate label -->
   <string name="DefaultCurrency.rateLabel">匯率</string>
   <!-- Email unavailable alert title -->
