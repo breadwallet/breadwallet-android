@@ -131,7 +131,7 @@ public class BRCurrency {
                         currencySymbolString = BRConstants.bitcoinLowercase;
                         break;
                     case BRConstants.CURRENT_UNIT_MBITS:
-                        currencySymbolString = "m" + BRConstants.bitcoinUppercase;
+                        currencySymbolString = BRConstants.bitcoinLowercase;
                         break;
                     case BRConstants.CURRENT_UNIT_BITCOINS:
                         currencySymbolString = BRConstants.bitcoinUppercase;
@@ -160,7 +160,7 @@ public class BRCurrency {
                     case CURRENT_UNIT_BITS:
                         return "Bits";
                     case BRConstants.CURRENT_UNIT_MBITS:
-                        return "MBits";
+                        return "lites";
                     case BRConstants.CURRENT_UNIT_BITCOINS:
                         return "LTC";
                 }

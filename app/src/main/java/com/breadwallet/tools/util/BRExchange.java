@@ -96,7 +96,7 @@ public class BRExchange {
 //                        currencyFormat.setMinimumFractionDigits(1);
                     break;
                 case BRConstants.CURRENT_UNIT_MBITS:
-                    currencySymbolString = "m" + BRConstants.bitcoinUppercase;
+                    currencySymbolString = BRConstants.bitcoinLowercase;
                     break;
                 case BRConstants.CURRENT_UNIT_BITCOINS:
                     currencySymbolString = BRConstants.bitcoinUppercase;
