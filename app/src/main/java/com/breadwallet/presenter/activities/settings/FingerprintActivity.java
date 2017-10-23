@@ -74,9 +74,9 @@ public class FingerprintActivity extends BRActivity {
                         }
                     }, null, null, 0);
                     buttonView.setChecked(false);
-                    return;
+                } else {
+                    BRSharedPrefs.putUseFingerprint(app, isChecked);
                 }
-                BRSharedPrefs.putUseFingerprint(app, isChecked);
 
             }
         });
