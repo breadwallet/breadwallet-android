@@ -5,7 +5,10 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -15,6 +18,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.util.Utils;
 
 /**
  * BreadWallet
@@ -42,6 +46,8 @@ import com.breadwallet.tools.animation.BRAnimator;
  */
 public class BRDialogView extends DialogFragment {
 
+    private static final String TAG = BRDialogView.class.getName();
+
     private String title = "";
     private String message = "";
     private String posButton = "";
@@ -50,6 +56,8 @@ public class BRDialogView extends DialogFragment {
     private BRDialogView.BROnClickListener negListener;
     private DialogInterface.OnDismissListener dismissListener;
     private int iconRes = 0;
+    private Button negativeButton;
+    private LinearLayout buttonsLayout;
 
     private ConstraintLayout mainLayout;
 
@@ -62,10 +70,10 @@ public class BRDialogView extends DialogFragment {
         TextView titleText = (TextView) view.findViewById(R.id.dialog_title);
         TextView messageText = (TextView) view.findViewById(R.id.dialog_text);
         Button positiveButton = (Button) view.findViewById(R.id.pos_button);
-        Button negativeButton = (Button) view.findViewById(R.id.neg_button);
+        negativeButton = (Button) view.findViewById(R.id.neg_button);
 //        ImageView icon = (ImageView) view.findViewById(R.id.dialog_icon);
-
         mainLayout = (ConstraintLayout) view.findViewById(R.id.main_layout);
+        buttonsLayout = (LinearLayout) view.findViewById(R.id.linearLayout3);
 
         titleText.setText(title);
         messageText.setText(message);
@@ -77,6 +85,18 @@ public class BRDialogView extends DialogFragment {
                 posListener.onClick(BRDialogView.this);
             }
         });
+        if (Utils.isNullOrEmpty(negButton)) {
+
+//            ConstraintSet set = new ConstraintSet();
+//            set.clone((ConstraintLayout) positiveButton.getParent().getParent());
+//            int px16 = Utils.getPixelsFromDps(getContext(), 16);
+//            set.connect(positiveButton.getId(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, px16);
+//            set.applyTo((ConstraintLayout) positiveButton.getParent().getParent());
+//            positiveButton.requestLayout();
+            Log.e(TAG, "onCreateDialog: removing negative button");
+            buttonsLayout.removeView(negativeButton);
+            buttonsLayout.requestLayout();
+        }
         negativeButton.setText(negButton);
         negativeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -115,7 +135,7 @@ public class BRDialogView extends DialogFragment {
         this.message = message;
     }
 
-    public void setPosButton(String posButton) {
+    public void setPosButton(@NonNull String posButton) {
         this.posButton = posButton;
     }
 
