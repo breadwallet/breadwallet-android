@@ -7,10 +7,12 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.Build;
+import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -164,7 +166,9 @@ public class APIClient {
 
     //returns the fee per kb or 0 if something went wrong
     public long feePerKb() {
-
+        if (ActivityUTILS.isMainThread()) {
+            throw new NetworkOnMainThreadException();
+        }
         try {
             String strUtl = BASE_URL + FEE_PER_KB_URL;
             Request request = new Request.Builder().url(strUtl).get().build();
@@ -187,6 +191,9 @@ public class APIClient {
 
     //only for testing
     public Response buyBitcoinMe() {
+        if (ActivityUTILS.isMainThread()) {
+            throw new NetworkOnMainThreadException();
+        }
         if (ctx == null) ctx = BreadApp.getBreadContext();
         if (ctx == null) return null;
         String strUtl = BASE_URL + ME;
@@ -213,6 +220,9 @@ public class APIClient {
     }
 
     public String getToken() {
+        if (ActivityUTILS.isMainThread()) {
+            throw new NetworkOnMainThreadException();
+        }
         if (ctx == null) ctx = BreadApp.getBreadContext();
         if (ctx == null) return null;
         try {
@@ -292,6 +302,9 @@ public class APIClient {
     public Response sendRequest(Request locRequest, boolean needsAuth, int retryCount) {
         if (retryCount > 1)
             throw new RuntimeException("sendRequest: Warning retryCount is: " + retryCount);
+        if (ActivityUTILS.isMainThread()) {
+            throw new NetworkOnMainThreadException();
+        }
         boolean isTestVersion = BREAD_POINT.contains("staging");
         boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
         String lang = getCurrentLocale(ctx);
@@ -416,6 +429,9 @@ public class APIClient {
     }
 
     public void updateBundle() {
+        if (ActivityUTILS.isMainThread()) {
+            throw new NetworkOnMainThreadException();
+        }
         File bundleFile = new File(getBundleResource(ctx, BREAD_FILE));
         Log.d(TAG, "updateBundle: " + bundleFile);
         if (bundleFile.exists()) {
@@ -474,6 +490,9 @@ public class APIClient {
     }
 
     public String getLatestVersion() {
+        if (ActivityUTILS.isMainThread()) {
+            throw new NetworkOnMainThreadException();
+        }
         String latestVersion = null;
         String response = null;
         try {
@@ -499,6 +518,9 @@ public class APIClient {
     }
 
     public void downloadDiff(String currentTarVersion) {
+        if (ActivityUTILS.isMainThread()) {
+            throw new NetworkOnMainThreadException();
+        }
         Request diffRequest = new Request.Builder()
                 .url(String.format("%s/assets/bundles/%s/diff/%s", BASE_URL, BREAD_POINT, currentTarVersion))
                 .get().build();
@@ -600,6 +622,9 @@ public class APIClient {
     }
 
     public void updateFeatureFlag() {
+        if (ActivityUTILS.isMainThread()) {
+            throw new NetworkOnMainThreadException();
+        }
         String furl = "/me/features";
         Request req = new Request.Builder()
                 .url(buildUrl(furl))
@@ -690,6 +715,7 @@ public class APIClient {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Thread.currentThread().setName("UpdateBundle");
                 final long startTime = System.currentTimeMillis();
                 APIClient apiClient = APIClient.getInstance(ctx);
                 apiClient.updateBundle();
@@ -703,6 +729,7 @@ public class APIClient {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Thread.currentThread().setName("updateFeatureFlag");
                 final long startTime = System.currentTimeMillis();
                 APIClient apiClient = APIClient.getInstance(ctx);
                 apiClient.updateFeatureFlag();
@@ -716,6 +743,7 @@ public class APIClient {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Thread.currentThread().setName("updatePlatform");
                 final long startTime = System.currentTimeMillis();
                 APIClient apiClient = APIClient.getInstance(ctx);
                 apiClient.syncKvStore();
@@ -737,6 +765,9 @@ public class APIClient {
     }
 
     public void syncKvStore() {
+        if (ActivityUTILS.isMainThread()) {
+            throw new NetworkOnMainThreadException();
+        }
         final APIClient client = this;
         //sync the kv stores
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(client);
