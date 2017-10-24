@@ -214,7 +214,7 @@ public class FragmentPin extends Fragment {
                 Activity app = getActivity();
                 AuthManager.getInstance().authSuccess(app);
                 if (app != null)
-                    getActivity().getFragmentManager().popBackStack();
+                    app.getFragmentManager().popBackStack();
 
             }
         }).start();
