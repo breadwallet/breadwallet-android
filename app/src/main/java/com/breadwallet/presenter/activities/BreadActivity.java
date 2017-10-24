@@ -220,8 +220,6 @@ public class    BreadActivity extends BRActivity implements BRWalletManager.OnBa
                 if (!BRAnimator.isClickAllowed()) return;
                 //start the server for Buy Bitcoin
                 BRAnimator.showMenuFragment(BreadActivity.this);
-                WebView view = new WebView(BreadActivity.this);
-                view.loadUrl(HTTPServer.URL_SUPPORT);
 
             }
         });
