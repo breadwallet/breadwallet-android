@@ -51,6 +51,7 @@ public class BRDialog {
         ((Activity) app).runOnUiThread(new Runnable() {
             @Override
             public void run() {
+
                 BRDialogView dialog = new BRDialogView();
                 dialog.setTitle(title);
                 dialog.setMessage(message);

@@ -9,7 +9,6 @@
                                              android:orientation="vertical"
     >
 
-
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/dialog_title"
         android:layout_width="0dp"

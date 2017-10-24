@@ -36,6 +36,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
     private BRSQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        setWriteAheadLoggingEnabled(false);
     }
 
     public static BRSQLiteHelper getInstance(Context context) {
@@ -112,6 +113,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         database.execSQL(TX_DATABASE_CREATE);
         database.execSQL(PEER_DATABASE_CREATE);
         database.execSQL(CURRENCY_DATABASE_CREATE);
+//        database.execSQL("PRAGMA journal_mode=WAL;");
     }
 
     @Override
@@ -126,6 +128,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         db.execSQL(TX_DATABASE_CREATE);
         db.execSQL(PEER_DATABASE_CREATE);
         db.execSQL(CURRENCY_DATABASE_CREATE);
+//        db.execSQL("PRAGMA journal_mode=WAL;");
 
     }
 }
