@@ -1,12 +1,10 @@
 package com.breadwallet.presenter.activities.settings;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -15,13 +13,12 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.platform.HTTPServer;
 
 import java.util.Locale;
 
 public class AboutActivity extends BRActivity {
     private static final String TAG = AboutActivity.class.getName();
-    private TextView termsText;
+//    private TextView termsText;
     private TextView policyText;
     private TextView infoText;
 
@@ -46,7 +43,7 @@ public class AboutActivity extends BRActivity {
         setContentView(R.layout.activity_about);
 
         infoText = (TextView) findViewById(R.id.info_text);
-        termsText = (TextView) findViewById(R.id.terms_text);
+//        termsText = (TextView) findViewById(R.id.terms_text);
         policyText = (TextView) findViewById(R.id.policy_text);
 
         PackageInfo pInfo = null;
@@ -96,6 +93,14 @@ public class AboutActivity extends BRActivity {
                 app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
             }
         });
+//        termsText.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://breadapp.com/privacy-policy"));
+//                startActivity(browserIntent);
+//                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+//            }
+//        });
 
     }
 
