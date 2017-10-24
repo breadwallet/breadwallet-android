@@ -2,6 +2,7 @@ package com.breadwallet.tools.util;
 
 import android.content.Context;
 import android.content.res.AssetManager;
+import android.util.Log;
 
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.google.firebase.crash.FirebaseCrash;
@@ -42,7 +43,7 @@ import java.util.List;
 public class Bip39Reader {
 
     private static final String TAG = Bip39Reader.class.getName();
-    private static final int WORD_LIST_SIZE = 2048;
+    public static final int WORD_LIST_SIZE = 2048;
 
     public static List<String> getWordList(Context context, String languageCode) throws IOException {
 
@@ -63,8 +64,8 @@ public class Bip39Reader {
             assert reader != null;
             reader.close();
         }
-        if (wordList.size() != WORD_LIST_SIZE) {
-            BRReportsManager.reportBug(new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items"), true);
+        if (wordList.size() % WORD_LIST_SIZE != 0) {
+            BRReportsManager.reportBug(new IllegalArgumentException("The list size should divide by " + WORD_LIST_SIZE ), true);
         }
         return wordList;
     }
@@ -99,8 +100,8 @@ public class Bip39Reader {
                     e.printStackTrace();
                 }
             }
-            if (wordList.size() != WORD_LIST_SIZE) {
-                BRReportsManager.reportBug(new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items"), true);
+            if (wordList.size() % WORD_LIST_SIZE != 0) {
+                BRReportsManager.reportBug(new IllegalArgumentException("The list size should divide by " + WORD_LIST_SIZE ), true);
             }
             if (wordList.contains(incorrect)) {
                 lang = l;
@@ -111,7 +112,15 @@ public class Bip39Reader {
     }
 
     public static String[] cleanWordList(String[] words) {
-        if (words == null || words.length != 2048) return null;
+        if (words == null ) {
+            Log.e(TAG, "cleanWordList: String[] words - is null");
+            return null;
+        }
+        if (words.length % 2048 != 0 ) {
+            Log.e(TAG, "cleanWordList: String[] words is not dividable by 2048: " + words.length);
+            return null;
+        }
+
         int length = words.length;
         String[] result = new String[length];
 
@@ -150,8 +159,8 @@ public class Bip39Reader {
                     e.printStackTrace();
                 }
             }
-            if (wordList.size() != WORD_LIST_SIZE){
-                BRReportsManager.reportBug(new IllegalArgumentException("The list should have " + WORD_LIST_SIZE + " items"), true);
+            if (wordList.size() % WORD_LIST_SIZE != 0){
+                BRReportsManager.reportBug(new IllegalArgumentException("The list size should divide by " + WORD_LIST_SIZE ), true);
             }
             result.addAll(wordList);
 

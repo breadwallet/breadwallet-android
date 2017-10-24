@@ -47,30 +47,16 @@ public class SmartValidator {
         String[] words = new String[0];
         List<String> list;
 
-        String[] cleanWordList = null;
-        try {
-            boolean isLocal = true;
-            list = Bip39Reader.getAllWordLists(ctx);
-
-            String[] phraseWords = phrase.split(" ");
-            if (!list.contains(phraseWords[0])) {
-                isLocal = false;
-            }
-            if (!isLocal) {
-                String lang = Bip39Reader.getLang(ctx, phraseWords[0]);
-                if (lang != null) {
-                    list = Bip39Reader.getWordList(ctx, lang);
-                }
-
-            }
-            words = list.toArray(new String[list.size()]);
-            cleanWordList = Bip39Reader.cleanWordList(words);
-            if (cleanWordList == null) return false;
-        } catch (IOException e) {
-            e.printStackTrace();
+        list = Bip39Reader.getAllWordLists(ctx);
+        words = list.toArray(new String[list.size()]);
+        String[] cleanWordList = Bip39Reader.cleanWordList(words);
+        if (cleanWordList == null) {
+            Log.e(TAG, "isPaperKeyValid: cleanWordList is null, failed to clean all the words");
+            return false;
         }
-        if (words.length != 2048) {
-            BRReportsManager.reportBug(new IllegalArgumentException("words.length is not 2048"), true);
+        if (words.length % Bip39Reader.WORD_LIST_SIZE != 0) {
+            Log.e(TAG, "isPaperKeyValid: " + "The list size should divide by " + Bip39Reader.WORD_LIST_SIZE );
+            BRReportsManager.reportBug(new IllegalArgumentException("words.length is not dividable by " + Bip39Reader.WORD_LIST_SIZE), true);
         }
         return BRWalletManager.getInstance().validateRecoveryPhrase(cleanWordList, phrase);
 

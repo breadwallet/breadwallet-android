@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -45,6 +46,7 @@ public class InputWordsActivity extends BRActivity {
     private EditText word10;
     private EditText word11;
     private EditText word12;
+    private String debugPhrase;
 
     private TextView title;
     private TextView description;
@@ -63,6 +65,10 @@ public class InputWordsActivity extends BRActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_words);
+
+        if (Utils.isEmulatorOrDebug(this)) {
+//            debugPhrase = "stick sword keen   afraid smile sting   huge relax nominee   arena area gift "
+        }
 
         nextButton = (Button) findViewById(R.id.send_button);
 
@@ -152,7 +158,6 @@ public class InputWordsActivity extends BRActivity {
                 String phraseToCheck = getPhrase();
                 if (phraseToCheck == null) return;
                 String cleanPhrase = SmartValidator.cleanPaperKey(app, phraseToCheck);
-
                 if (SmartValidator.isPaperKeyValid(app, cleanPhrase)) {
 
                     if (restore || resetPin) {
@@ -170,7 +175,6 @@ public class InputWordsActivity extends BRActivity {
                                         m.wipeKeyStore(app);
                                         Intent intent = new Intent(app, IntroActivity.class);
                                         finalizeIntent(intent);
-
                                     }
                                 }, new BRDialogView.BROnClickListener() {
                                     @Override
@@ -207,9 +211,7 @@ public class InputWordsActivity extends BRActivity {
                     }
 
                 } else {
-                    String message = getResources().getString(R.string.RecoverWallet_invalid);
-
-                    BRDialog.showCustomDialog(app, "", message, getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                    BRDialog.showCustomDialog(app, "", getResources().getString(R.string.RecoverWallet_invalid), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();
