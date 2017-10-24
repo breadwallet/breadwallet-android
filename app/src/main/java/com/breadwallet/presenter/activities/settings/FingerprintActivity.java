@@ -12,6 +12,7 @@ import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
@@ -20,9 +21,11 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.Utils;
@@ -56,6 +59,16 @@ public class FingerprintActivity extends BRActivity {
         toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
         limitExchange = (TextView) findViewById(R.id.limit_exchange);
         limitInfo = (TextView) findViewById(R.id.limit_info);
+
+        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+
+        faq.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
+                BRAnimator.showSupportFragment(app, BRConstants.enableFingerprint);
+            }
+        });
 
         toggleButton.setChecked(BRSharedPrefs.getUseFingerprint(this));
 

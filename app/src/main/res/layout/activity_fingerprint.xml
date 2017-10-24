@@ -42,7 +42,7 @@
                 app:customFont="CircularPro-Bold.otf"/>
 
             <ImageButton
-                android:id="@+id/imageButton3"
+                android:id="@+id/faq_button"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
