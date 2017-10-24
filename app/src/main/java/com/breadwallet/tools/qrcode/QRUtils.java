@@ -26,6 +26,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.EnumMap;
 import java.util.Map;
 
@@ -134,16 +136,11 @@ public class QRUtils {
             return;
         }
 
-//        File file = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), app);
-//        Uri uri = null;
-//        if (file != null)
-//            uri = Uri.parse("file://" + file.getAbsolutePath());
-//            uri = FileProvider.getUriForFile(app,
-//                    BuildConfig.APPLICATION_ID + ".provider",
-//                    file);
+        File file = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), app);
+        Uri uri = Uri.fromFile(file);
 
         Intent intent = new Intent();
-
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         if (via.equalsIgnoreCase("sms:")) {
             intent.setAction(Intent.ACTION_VIEW);
             intent.setData(Uri.parse("sms:"));
@@ -152,12 +149,12 @@ public class QRUtils {
 
         } else {
             intent.setAction(android.content.Intent.ACTION_SEND);
-            intent.setType("vnd.android.cursor.dir/email");
+            intent.setType("image/png");
             intent.putExtra(Intent.EXTRA_SUBJECT, "Bitcoin Address");
             intent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
         }
-//        if (uri != null)
-//            intent.putExtra(Intent.EXTRA_STREAM, uri);
+        if (uri != null)
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
         app.startActivity(intent);
     }
 
@@ -170,9 +167,16 @@ public class QRUtils {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         String fileName = "qrcode.jpg";
 
-        bitmapImage.compress(Bitmap.CompressFormat.PNG, 100, bytes);
-        File f = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM), fileName);
-
+        bitmapImage.compress(Bitmap.CompressFormat.PNG, 0, bytes);
+        File f = new File(app.getCacheDir(), fileName);
+        f.setReadable(true, false);
+        try {
+            boolean a = f.createNewFile();
+            if(!a) Log.e(TAG, "saveToExternalStorage: createNewFile: failed");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Log.e(TAG, "saveToExternalStorage: " + f.getAbsolutePath());
         if (f.exists()) f.delete();
 
         try {
