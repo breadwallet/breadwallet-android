@@ -87,12 +87,6 @@ public class BRDialogView extends DialogFragment {
         });
         if (Utils.isNullOrEmpty(negButton)) {
 
-//            ConstraintSet set = new ConstraintSet();
-//            set.clone((ConstraintLayout) positiveButton.getParent().getParent());
-//            int px16 = Utils.getPixelsFromDps(getContext(), 16);
-//            set.connect(positiveButton.getId(), ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, px16);
-//            set.applyTo((ConstraintLayout) positiveButton.getParent().getParent());
-//            positiveButton.requestLayout();
             Log.e(TAG, "onCreateDialog: removing negative button");
             buttonsLayout.removeView(negativeButton);
             buttonsLayout.requestLayout();
