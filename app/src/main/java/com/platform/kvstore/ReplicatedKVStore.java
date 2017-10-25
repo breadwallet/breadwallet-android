@@ -45,6 +45,7 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
@@ -53,11 +54,14 @@ import java.util.regex.Pattern;
 public class ReplicatedKVStore {
     private static final String TAG = ReplicatedKVStore.class.getName();
 
+    private AtomicInteger mOpenCounter = new AtomicInteger();
+    private SQLiteDatabase mDatabase;
+
     private static final String KEY_REGEX = "^[^_][\\w-]{1,255}$";
 
     public final boolean encrypted = true;
     public final boolean encryptedReplication = true;
-    private Lock dbLock = new ReentrantLock();
+//    private Lock dbLock = new ReentrantLock();
     public boolean syncImmediately = false;
     private boolean syncRunning = false;
     private KVStoreAdaptor remoteKvStore;
@@ -82,16 +86,30 @@ public class ReplicatedKVStore {
     }
 
     public SQLiteDatabase getWritable() {
-        dbLock.lock();
-        return dbHelper.getWritableDatabase();
+        if (mOpenCounter.incrementAndGet() == 1) {
+            // Opening new database
+            mDatabase = dbHelper.getWritableDatabase();
+        }
+//        Log.d(TAG, "getWritable open counter: " + String.valueOf(mOpenCounter.get()));
+        return mDatabase;
     }
 
     public SQLiteDatabase getReadable() {
-        return dbHelper.getWritableDatabase();
+        if (mOpenCounter.incrementAndGet() == 1) {
+            // Opening new database
+            mDatabase = dbHelper.getWritableDatabase();
+        }
+//        Log.d(TAG, "getReadable open counter: " + String.valueOf(mOpenCounter.get()));
+        return mDatabase;
     }
 
     public void closeDB() {
-//        dbHelper.close();
+        if (mOpenCounter.decrementAndGet() == 0) {
+            // Closing database
+            mDatabase.close();
+
+        }
+//        Log.d(TAG, "closeDB open counter: " + String.valueOf(mOpenCounter.get()));
     }
 
     /**
@@ -162,7 +180,7 @@ public class ReplicatedKVStore {
             db.setTransactionSuccessful();
         } finally {
             db.endTransaction();
-            dbLock.unlock();
+//            dbLock.unlock();
             closeDB();
         }
         return new CompletionObject(newVer, time, null);
@@ -190,7 +208,7 @@ public class ReplicatedKVStore {
             e.printStackTrace();
             return false;
         } finally {
-            dbLock.unlock();
+//            dbLock.unlock();
             closeDB();
         }
     }
@@ -307,7 +325,7 @@ public class ReplicatedKVStore {
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
-            dbLock.unlock();
+//            dbLock.unlock();
             closeDB();
         }
 
@@ -765,7 +783,7 @@ public class ReplicatedKVStore {
                 db.setTransactionSuccessful();
             } finally {
                 db.endTransaction();
-                dbLock.unlock();
+//                dbLock.unlock();
                 closeDB();
             }
             return new CompletionObject(newVer, time, null);
