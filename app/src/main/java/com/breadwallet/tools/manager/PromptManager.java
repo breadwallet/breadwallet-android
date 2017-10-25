@@ -156,14 +156,14 @@ public class PromptManager {
                 return new PromptInfo(app.getString(R.string.Prompts_ShareData_title), app.getString(R.string.Prompts_ShareData_body), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        new Thread(new Runnable() {
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
                                 Intent intent = new Intent(app, ShareDataActivity.class);
                                 app.startActivity(intent);
                                 app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                             }
-                        }).start();
+                        });
                     }
                 });
 

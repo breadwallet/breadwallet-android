@@ -283,7 +283,7 @@ public class FragmentReceive extends Fragment {
         if (ctx == null) ctx = BreadApp.getBreadContext();
         final Context finalCtx = ctx;
         final Activity finalCtx1 = ctx;
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 boolean success = BRWalletManager.refreshAddress(finalCtx);
@@ -299,7 +299,7 @@ public class FragmentReceive extends Fragment {
                     }
                 });
             }
-        }).start();
+        });
 
     }
 

@@ -461,7 +461,7 @@ public class    BreadActivity extends BRActivity implements BRWalletManager.OnBa
     }
 
     public void updateUI() {
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI");
@@ -488,8 +488,7 @@ public class    BreadActivity extends BRActivity implements BRWalletManager.OnBa
                 });
                 TxManager.getInstance().updateTxList(BreadActivity.this);
             }
-        }).start();
-
+        });
     }
 
     @Override
