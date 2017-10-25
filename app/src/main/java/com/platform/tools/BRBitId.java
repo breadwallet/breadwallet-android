@@ -11,6 +11,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
@@ -139,8 +140,7 @@ public class BRBitId {
 //        Log.e(TAG, "signBitID: _bitUri: " + _bitUri);
 //        Log.e(TAG, "signBitID: _strToSign: " + _strToSign);
 //        Log.e(TAG, "signBitID: _index: " + _index);
-
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -171,7 +171,7 @@ public class BRBitId {
                 }
 
             }
-        }).start();
+        });
     }
 
     public static void completeBitID(final Activity app, boolean authenticated) {
@@ -207,7 +207,7 @@ public class BRBitId {
         }
 
         //run the callback
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -230,7 +230,7 @@ public class BRBitId {
                     Arrays.fill(seed, (byte) 0);
                 }
             }
-        }).start();
+        });
 
     }
 
@@ -261,7 +261,7 @@ public class BRBitId {
         if (!bitIdKeys.containsKey(biUri)) {
             bitIdKeys.put(biUri, true);
             Log.d(TAG, "run: saved temporary sig for key: " + biUri);
-            new Thread(new Runnable() {
+            BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
@@ -273,7 +273,7 @@ public class BRBitId {
                     if (bitIdKeys != null)
                         bitIdKeys.remove(biUri);
                 }
-            }).start();
+            });
         }
         WalletPlugin.sendBitIdResponse(postJson, true);
     }

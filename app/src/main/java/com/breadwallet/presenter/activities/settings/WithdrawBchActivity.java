@@ -28,6 +28,7 @@ import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
@@ -135,14 +136,14 @@ public class WithdrawBchActivity extends BRActivity {
                     if (BRWalletManager.validateAddress(ifAddress.trim())) {
                         final BRWalletManager m = BRWalletManager.getInstance();
                         final String finalIfAddress = ifAddress;
-                        new Thread(new Runnable() {
+                        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
                                 final boolean contained = m.addressContainedInWallet(finalIfAddress);
                                 final boolean used = m.addressIsUsed(finalIfAddress);
                                 if (used)
                                     throw new RuntimeException("address used for BCH? can't happen, we don't keep track");
-                                WithdrawBchActivity.this.runOnUiThread(new Runnable() {
+                                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                     @Override
                                     public void run() {
                                         if (contained) {
@@ -165,7 +166,7 @@ public class WithdrawBchActivity extends BRActivity {
                                     }
                                 });
                             }
-                        }).start();
+                        });
 
                     } else {
                         //builder.setTitle(getResources().getString(R.string.alert));

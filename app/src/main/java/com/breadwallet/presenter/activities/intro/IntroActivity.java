@@ -24,6 +24,7 @@ import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.security.SmartValidator;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
@@ -133,7 +134,7 @@ public class IntroActivity extends BRActivity implements Serializable {
     }
 
     private void updateBundles() {
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 Thread.currentThread().setName("updateBundle");
@@ -143,7 +144,7 @@ public class IntroActivity extends BRActivity implements Serializable {
                 long endTime = System.currentTimeMillis();
                 Log.d(TAG, "updateBundle DONE in " + (endTime - startTime) + "ms");
             }
-        }).start();
+        });
     }
 
 

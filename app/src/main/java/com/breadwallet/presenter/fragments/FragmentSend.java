@@ -48,6 +48,7 @@ import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.BRSender;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.BRCurrency;
@@ -310,7 +311,7 @@ public class FragmentSend extends Fragment {
                         Log.e(TAG, "paste onClick: app is null");
                         return;
                     }
-                    new Thread(new Runnable() {
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
                             if (wm.addressContainedInWallet(finalAddress)) {
@@ -356,7 +357,7 @@ public class FragmentSend extends Fragment {
                                 });
                             }
                         }
-                    }).start();
+                    });
 
                 } else {
                     showClipboardError();

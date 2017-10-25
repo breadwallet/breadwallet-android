@@ -21,6 +21,7 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
@@ -85,12 +86,12 @@ public class NodesActivity extends BRActivity {
                     if (!updatingNode) {
                         updatingNode = true;
                         BRSharedPrefs.putTrustNode(NodesActivity.this, "");
-                        new Thread(new Runnable() {
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
                                 BRPeerManager.getInstance().updateFixedPeer(NodesActivity.this);
                                 updatingNode = false;
-                                runOnUiThread(new Runnable() {
+                                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                     @Override
                                     public void run() {
                                         updateButtonText();
@@ -98,7 +99,7 @@ public class NodesActivity extends BRActivity {
                                 });
 
                             }
-                        }).start();
+                        });
                     }
 
                 }
@@ -174,12 +175,12 @@ public class NodesActivity extends BRActivity {
                     if (!updatingNode) {
                         updatingNode = true;
                         customTitle.setText(getString(R.string.Webview_updating));
-                        new Thread(new Runnable() {
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
                                 BRPeerManager.getInstance().updateFixedPeer(app);
                                 updatingNode = false;
-                                runOnUiThread(new Runnable() {
+                                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                     @Override
                                     public void run() {
                                         customTitle.setText(getString(R.string.RecoverWallet_done));
@@ -194,7 +195,7 @@ public class NodesActivity extends BRActivity {
                                     }
                                 });
                             }
-                        }).start();
+                        });
                     }
 
                 } else {

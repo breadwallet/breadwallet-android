@@ -47,6 +47,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.BRNotificationManager;
@@ -175,12 +176,12 @@ public class BRWalletManager {
         BRKeyStore.putWalletCreationTime(walletCreationTime, ctx);
         final WalletInfo info = new WalletInfo();
         info.creationDate = walletCreationTime;
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 KVStoreManager.getInstance().putWalletInfo(ctx, info); //push the creation time to the kv store
             }
-        }).start();
+        });
 
         byte[] strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
         byte[] pubKey = BRWalletManager.getInstance().getMasterPubKey(strBytes);
@@ -253,13 +254,13 @@ public class BRWalletManager {
 
     public void wipeWalletButKeystore(final Context ctx) {
         Log.d(TAG, "wipeWalletButKeystore");
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 BRPeerManager.getInstance().peerManagerFreeEverything();
                 walletFreeEverything();
             }
-        }).start();
+        });
 
         TransactionDataSource.getInstance(ctx).deleteAllTransactions();
         MerkleBlockDataSource.getInstance(ctx).deleteAllBlocks();
@@ -310,7 +311,7 @@ public class BRWalletManager {
 
                             final String pass = editText.getText().toString();
                             Log.e(TAG, "onClick: before");
-                            new Thread(new Runnable() {
+                            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                                 @Override
                                 public void run() {
                                     String decryptedKey = decryptBip38Key(privKey, pass);
@@ -323,8 +324,7 @@ public class BRWalletManager {
                                         confirmSweep(ctx, decryptedKey);
                                     }
                                 }
-                            }).start();
-
+                            });
 
                         }
                     });
@@ -548,12 +548,12 @@ public class BRWalletManager {
         BRPeerManager.getInstance().updateFixedPeer(ctx);
         pm.connect();
         if (BRSharedPrefs.getStartHeight(ctx) == 0)
-            new Thread(new Runnable() {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     BRSharedPrefs.putStartHeight(ctx, BRPeerManager.getCurrentBlockHeight());
                 }
-            }).start();
+            });
     }
 
     public void addBalanceChangedListener(OnBalanceChanged listener) {

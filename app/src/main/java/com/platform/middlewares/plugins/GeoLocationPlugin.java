@@ -11,6 +11,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.platform.BRHTTPHelper;
 import com.platform.GeoLocationManager;
@@ -58,7 +59,7 @@ public class GeoLocationPlugin implements Plugin {
     private static Request globalBaseRequest;
 
     public static void handleGeoPermission(final boolean granted) {
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 if (continuation == null) {
@@ -86,8 +87,7 @@ public class GeoLocationPlugin implements Plugin {
                     globalBaseRequest = null;
                 }
             }
-        }).start();
-
+        });
 
     }
 

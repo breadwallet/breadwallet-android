@@ -24,6 +24,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
@@ -125,11 +126,11 @@ public class TxManager {
 
     public void onResume(final Activity app) {
         crashIfNotMain();
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(app));
-                app.runOnUiThread(new Runnable() {
+                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
                         if (progress > 0 && progress < 1) {
@@ -140,9 +141,8 @@ public class TxManager {
                         }
                     }
                 });
-
             }
-        }).start();
+        });
 
     }
 
@@ -240,13 +240,12 @@ public class TxManager {
     }
 
     public void updateCard(final Context app) {
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 updateTxList(app);
             }
-        }).start();
-
+        });
     }
 
     private void setupSwipe(final Activity app) {

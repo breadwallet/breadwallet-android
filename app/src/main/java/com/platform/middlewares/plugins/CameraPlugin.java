@@ -18,6 +18,7 @@ import com.breadwallet.presenter.activities.camera.CameraActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.crypto.CryptoHelper;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
@@ -176,7 +177,7 @@ public class CameraPlugin implements Plugin {
     }
 
     public static void handleCameraImageTaken(final Context context, final byte[] data) {
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -243,7 +244,7 @@ public class CameraPlugin implements Plugin {
                 }
 
             }
-        }).start();
+        });
 
     }
 

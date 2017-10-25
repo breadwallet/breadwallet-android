@@ -14,6 +14,7 @@ import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 
@@ -93,12 +94,12 @@ public class BRPeerManager {
         SyncManager.getInstance().updateAlarms(app);
         BRSharedPrefs.putAllowSpend(app, true);
         SyncManager.getInstance().stopSyncingProgressThread();
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 BRSharedPrefs.putStartHeight(app, getCurrentBlockHeight());
             }
-        }).start();
+        });
         if (onSyncFinished != null) onSyncFinished.onFinished();
 
     }
@@ -120,12 +121,12 @@ public class BRPeerManager {
         for (OnTxStatusUpdate listener : statusUpdateListeners) {
             if (listener != null) listener.onStatusUpdate();
         }
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 updateLastBlockHeight(getCurrentBlockHeight());
             }
-        }).start();
+        });
 
     }
 
@@ -134,13 +135,13 @@ public class BRPeerManager {
 
         final Activity ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 if (replace) MerkleBlockDataSource.getInstance(ctx).deleteAllBlocks();
                 MerkleBlockDataSource.getInstance(ctx).putMerkleBlocks(blockEntities);
             }
-        }).start();
+        });
 
     }
 
@@ -148,13 +149,13 @@ public class BRPeerManager {
         Log.d(TAG, "savePeers: " + peerEntities.length);
         final Activity ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 if (replace) PeerDataSource.getInstance(ctx).deleteAllPeers();
                 PeerDataSource.getInstance(ctx).putPeers(peerEntities);
             }
-        }).start();
+        });
 
     }
 
@@ -167,12 +168,12 @@ public class BRPeerManager {
         Log.d(TAG, "deleteBlocks");
         final Activity ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 MerkleBlockDataSource.getInstance(ctx).deleteAllBlocks();
             }
-        }).start();
+        });
 
     }
 
@@ -180,12 +181,12 @@ public class BRPeerManager {
         Log.d(TAG, "deletePeers");
         final Activity ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 PeerDataSource.getInstance(ctx).deleteAllPeers();
             }
-        }).start();
+        });
 
     }
 
@@ -207,12 +208,12 @@ public class BRPeerManager {
 
     public void networkChanged(boolean isOnline) {
         if (isOnline)
-            new Thread(new Runnable() {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     BRPeerManager.getInstance().connect();
                 }
-            }).start();
+            });
 
     }
 

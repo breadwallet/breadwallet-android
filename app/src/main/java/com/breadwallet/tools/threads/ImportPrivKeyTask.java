@@ -107,7 +107,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         BRDialog.showCustomDialog(app, "", message, posButton, app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {
-                new Thread(new Runnable() {
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
                         boolean result = BRWalletManager.getInstance().confirmKeySweep(importPrivKeyEntity.getTx(), key);
@@ -127,7 +127,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
                         }
                     }
-                }).start();
+                });
 
                 brDialogView.dismissWithAnimation();
 

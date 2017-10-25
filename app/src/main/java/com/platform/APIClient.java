@@ -18,6 +18,7 @@ import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.FileHelper;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
@@ -712,7 +713,7 @@ public class APIClient {
         platformUpdating = true;
 
         //update Bundle
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 Thread.currentThread().setName("UpdateBundle");
@@ -723,10 +724,10 @@ public class APIClient {
                 Log.d(TAG, "updateBundle " + BREAD_POINT + ": DONE in " + (endTime - startTime) + "ms");
                 itemFinished();
             }
-        }).start();
+        });
 
         //update feature flags
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 Thread.currentThread().setName("updateFeatureFlag");
@@ -737,10 +738,10 @@ public class APIClient {
                 Log.d(TAG, "updateFeatureFlag: DONE in " + (endTime - startTime) + "ms");
                 itemFinished();
             }
-        }).start();
+        });
 
         //update kvStore
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 Thread.currentThread().setName("updatePlatform");
@@ -751,7 +752,7 @@ public class APIClient {
                 Log.d(TAG, "updatePlatform: DONE in " + (endTime - startTime) + "ms");
                 itemFinished();
             }
-        }).start();
+        });
 
     }
 

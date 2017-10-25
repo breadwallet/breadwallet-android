@@ -6,6 +6,7 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
@@ -182,8 +183,7 @@ public class WalletPlugin implements Plugin {
 
 
     public static void sendBitIdResponse(final JSONObject restJson, final boolean authenticated) {
-
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -230,7 +230,7 @@ public class WalletPlugin implements Plugin {
                     globalBaseRequest = null;
                 }
             }
-        }).start();
+        });
 
     }
 }

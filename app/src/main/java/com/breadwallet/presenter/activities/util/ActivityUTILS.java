@@ -17,6 +17,7 @@ import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.tools.manager.ConnectionManager;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.security.AuthManager;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.platform.HTTPServer;
 
 import java.util.List;
@@ -61,12 +62,12 @@ public class ActivityUTILS {
     }
 
     public static void init(Activity app) {
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 HTTPServer.startServer();
             }
-        }).start();
+        });
         //set status bar color
 //        ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
         ConnectionManager.getInstance();

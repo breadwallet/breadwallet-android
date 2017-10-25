@@ -18,6 +18,7 @@ import com.breadwallet.presenter.fragments.FragmentPin;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.jniwrappers.BRKey;
@@ -86,18 +87,18 @@ public class AuthManager {
 
     public void authSuccess(final Context app) {
         //put the new total limit in 3 seconds, leave some time for the core to register any new tx
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(3000);
+                    Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 AuthManager.getInstance().setTotalLimit(app, BRWalletManager.getInstance().getTotalSent()
                         + BRKeyStore.getSpendLimit(app));
             }
-        }).start();
+        });
 
         BRKeyStore.putFailCount(0, app);
         BRKeyStore.putLastPinUsedTime(System.currentTimeMillis(), app);
@@ -150,14 +151,14 @@ public class AuthManager {
         if (activity == null) return;
         long limit = AuthManager.getInstance().getTotalLimit(activity);
         if (limit == 0) {
-            new Thread(new Runnable() {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     long totalSpent = BRWalletManager.getInstance().getTotalSent();
                     long totalLimit = totalSpent + BRKeyStore.getSpendLimit(activity);
                     setTotalLimit(activity, totalLimit);
                 }
-            }).start();
+            });
 
         }
     }

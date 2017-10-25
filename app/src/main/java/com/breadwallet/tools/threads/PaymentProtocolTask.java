@@ -325,7 +325,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 
         final String iso = BRSharedPrefs.getIso(app);
         final StringBuilder finalAllAddresses = allAddresses;
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 double minOutput = BRWalletManager.getInstance().getMinOutputAmount();
@@ -379,7 +379,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     }
                 });
             }
-        }).start();
+        });
 
     }
 

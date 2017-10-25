@@ -9,6 +9,7 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.PostAuth;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.tools.BRBitId;
@@ -60,13 +61,12 @@ public class BRActivity extends Activity {
 
             case BRConstants.PAY_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    new Thread(new Runnable() {
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
                             PostAuth.getInstance().onPublishTxAuth(BRActivity.this, true);
                         }
-                    }).start();
-
+                    });
                 }
                 break;
             case BRConstants.REQUEST_PHRASE_BITID:

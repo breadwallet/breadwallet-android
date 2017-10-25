@@ -18,6 +18,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
@@ -72,7 +73,7 @@ public class BRSender {
         //array in order to be able to modify the first element from an inner block (can't be final)
         final String[] errTitle = {null};
         final String[] errMessage = {null};
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -98,7 +99,7 @@ public class BRSender {
 
                 //show the message if we have one to show
                 if (errTitle[0] != null && errMessage[0] != null)
-                    ((Activity) app).runOnUiThread(new Runnable() {
+                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                         @Override
                         public void run() {
                             BRDialog.showCustomDialog(app, errTitle[0], errMessage[0], app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
@@ -111,7 +112,7 @@ public class BRSender {
                     });
 
             }
-        }).start();
+        });
 
     }
 
@@ -162,7 +163,7 @@ public class BRSender {
             throw new FeeNeedsAdjust(amount, balance, feeForTx);
         }
         // payment successful
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 byte[] tmpTx = m.tryTransaction(paymentRequest.addresses[0], paymentRequest.amount);
@@ -186,8 +187,7 @@ public class BRSender {
                 PostAuth.getInstance().setPaymentItem(paymentRequest);
                 confirmPay(app, paymentRequest);
             }
-        }).start();
-
+        });
 
     }
 
