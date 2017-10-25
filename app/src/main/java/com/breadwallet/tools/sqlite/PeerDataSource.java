@@ -39,9 +39,12 @@ import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class PeerDataSource {
+public class PeerDataSource implements BRDataSourceInterface{
     private static final String TAG = PeerDataSource.class.getName();
+
+    private AtomicInteger mOpenCounter = new AtomicInteger();
 
     // Database fields
     private SQLiteDatabase database;
@@ -67,7 +70,7 @@ public class PeerDataSource {
     }
 
     public void putPeers(PeerEntity[] peerEntities) {
-        database = dbHelper.getWritableDatabase();
+        database = openDatabase();
         database.beginTransaction();
         try {
             for (PeerEntity p : peerEntities) {
@@ -86,16 +89,18 @@ public class PeerDataSource {
             //Error in between database transaction
         } finally {
             database.endTransaction();
+            closeDatabase();
         }
 
     }
 
     public void deletePeer(BRPeerEntity peerEntity) {
-        database = dbHelper.getWritableDatabase();
+        database = openDatabase();
         long id = peerEntity.getId();
         Log.e(TAG, "Peer deleted with id: " + id);
         database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID
                 + " = " + id, null);
+        closeDatabase();
     }
 
     public void deleteAllPeers() {
@@ -104,7 +109,7 @@ public class PeerDataSource {
     }
 
     public List<BRPeerEntity> getAllPeers() {
-        database = dbHelper.getReadableDatabase();
+        database = openDatabase();
         List<BRPeerEntity> peers = new ArrayList<>();
 
         Cursor cursor = database.query(BRSQLiteHelper.PEER_TABLE_NAME,
@@ -120,6 +125,7 @@ public class PeerDataSource {
 
         Log.e(TAG, "peers: " + peers.size());
         cursor.close();
+        closeDatabase();
         return peers;
     }
 
@@ -127,5 +133,25 @@ public class PeerDataSource {
         BRPeerEntity peerEntity = new BRPeerEntity(cursor.getBlob(1), cursor.getBlob(2), cursor.getBlob(3));
         peerEntity.setId(cursor.getInt(0));
         return peerEntity;
+    }
+
+    @Override
+    public synchronized SQLiteDatabase openDatabase() {
+        if (mOpenCounter.incrementAndGet() == 1) {
+            // Opening new database
+            database = dbHelper.getWritableDatabase();
+        }
+//        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
+        return database;
+    }
+
+    @Override
+    public synchronized void closeDatabase() {
+        if (mOpenCounter.decrementAndGet() == 0) {
+            // Closing database
+            database.close();
+
+        }
+//        Log.d("Database open counter: " , String.valueOf(mOpenCounter.get()));
     }
 }

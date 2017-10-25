@@ -39,9 +39,12 @@ import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class MerkleBlockDataSource {
+public class MerkleBlockDataSource implements BRDataSourceInterface{
     private static final String TAG = MerkleBlockDataSource.class.getName();
+
+    private AtomicInteger mOpenCounter = new AtomicInteger();
 
     // Database fields
     private SQLiteDatabase database;
@@ -66,7 +69,7 @@ public class MerkleBlockDataSource {
     }
 
     public void putMerkleBlocks(BlockEntity[] blockEntities) {
-        database = dbHelper.getWritableDatabase();
+        database = openDatabase();
         database.beginTransaction();
         try {
             for (BlockEntity b : blockEntities) {
@@ -82,24 +85,27 @@ public class MerkleBlockDataSource {
             //Error in between database transaction
         } finally {
             database.endTransaction();
+            closeDatabase();
         }
     }
 
     public void deleteAllBlocks() {
-        database = dbHelper.getWritableDatabase();
+        database = openDatabase();
         database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_COLUMN_ID + " <> -1", null);
+        closeDatabase();
     }
 
     public void deleteMerkleBlock(BRMerkleBlockEntity merkleBlock) {
-        database = dbHelper.getWritableDatabase();
+        database = openDatabase();
         long id = merkleBlock.getId();
         Log.e(TAG, "MerkleBlock deleted with id: " + id);
         database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_COLUMN_ID
                 + " = " + id, null);
+        closeDatabase();
     }
 
     public List<BRMerkleBlockEntity> getAllMerkleBlocks() {
-        database = dbHelper.getReadableDatabase();
+        database = openDatabase();
         List<BRMerkleBlockEntity> merkleBlocks = new ArrayList<>();
 
         Cursor cursor = database.query(BRSQLiteHelper.MB_TABLE_NAME,
@@ -114,6 +120,7 @@ public class MerkleBlockDataSource {
         Log.e(TAG, "merkleBlocks: " + merkleBlocks.size());
         // make sure to close the cursor
         cursor.close();
+        closeDatabase();
         return merkleBlocks;
     }
 
@@ -122,5 +129,25 @@ public class MerkleBlockDataSource {
         merkleBlockEntity.setId(cursor.getInt(0));
 
         return merkleBlockEntity;
+    }
+
+    @Override
+    public synchronized SQLiteDatabase openDatabase() {
+        if (mOpenCounter.incrementAndGet() == 1) {
+            // Opening new database
+            database = dbHelper.getWritableDatabase();
+        }
+//        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
+        return database;
+    }
+
+    @Override
+    public synchronized void closeDatabase() {
+        if (mOpenCounter.decrementAndGet() == 0) {
+            // Closing database
+            database.close();
+
+        }
+//        Log.d("Database open counter: " , String.valueOf(mOpenCounter.get()));
     }
 }

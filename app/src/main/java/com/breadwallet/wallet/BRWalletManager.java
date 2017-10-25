@@ -485,7 +485,6 @@ public class BRWalletManager {
         }
     }
 
-    //BLOCKS
     public void setUpTheWallet(final Context ctx) {
         if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         Log.d(TAG, "setUpTheWallet:" + Thread.currentThread().getName());
