@@ -19,6 +19,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -37,6 +38,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 
@@ -304,66 +306,66 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public void filterBy(String query, boolean[] switches) {
+        if (!ActivityUTILS.isMainThread())
+            throw new IllegalArgumentException("this should only be called in the main thread");
         filter(query, switches);
     }
 
     private void filter(final String query, final boolean[] switches) {
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String lowerQuery = query.toLowerCase().trim();
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+        long start = System.currentTimeMillis();
+        String lowerQuery = query.toLowerCase().trim();
 
-                int switchesON = 0;
-                for (boolean i : switches) if (i) switchesON++;
+        int switchesON = 0;
+        for (boolean i : switches) if (i) switchesON++;
 
-                final List<TxItem> filteredList = new ArrayList<>();
-                TxMetaData metaData;
-                for (TxItem item : backUpFeed) {
-                    metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
-                    if (item.getTxHashHexReversed().toLowerCase().contains(lowerQuery)
-                            || item.getFrom()[0].toLowerCase().contains(lowerQuery)
-                            || item.getTo()[0].toLowerCase().contains(lowerQuery) ||
-                            (metaData.comment != null && metaData.comment.toLowerCase().contains(lowerQuery))) {
-                        if (switchesON == 0) {
-                            filteredList.add(item);
-                        } else {
-                            boolean willAdd = true;
-                            //filter by sent and this is received
-                            if (switches[0] && (item.getSent() - item.getReceived() <= 0)) {
-                                willAdd = false;
-                            }
-                            //filter by received and this is sent
-                            if (switches[1] && (item.getSent() - item.getReceived() > 0)) {
-                                willAdd = false;
-                            }
-
-                            int confirms = item.getBlockHeight() == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext) - item.getBlockHeight() + 1;
-                            //filter by pending and this is complete
-                            if (switches[2] && confirms >= 6) {
-                                willAdd = false;
-                            }
-
-                            //filter by completed and this is pending
-                            if (switches[3] && confirms < 6) {
-                                willAdd = false;
-                            }
-
-                            if (willAdd) filteredList.add(item);
-                        }
-
+        final List<TxItem> filteredList = new LinkedList<>();
+        TxMetaData metaData;
+        for (TxItem item : backUpFeed) {
+            metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
+            if (item.getTxHashHexReversed().toLowerCase().contains(lowerQuery)
+                    || item.getFrom()[0].toLowerCase().contains(lowerQuery)
+                    || item.getTo()[0].toLowerCase().contains(lowerQuery) ||
+                    (metaData.comment != null && metaData.comment.toLowerCase().contains(lowerQuery))) {
+                if (switchesON == 0) {
+                    filteredList.add(item);
+                } else {
+                    boolean willAdd = true;
+                    //filter by sent and this is received
+                    if (switches[0] && (item.getSent() - item.getReceived() <= 0)) {
+                        willAdd = false;
+                    }
+                    //filter by received and this is sent
+                    if (switches[1] && (item.getSent() - item.getReceived() > 0)) {
+                        willAdd = false;
                     }
 
+                    int confirms = item.getBlockHeight() == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext) - item.getBlockHeight() + 1;
+                    //filter by pending and this is complete
+                    if (switches[2] && confirms >= 6) {
+                        willAdd = false;
+                    }
+
+                    //filter by completed and this is pending
+                    if (switches[3] && confirms < 6) {
+                        willAdd = false;
+                    }
+
+                    if (willAdd) filteredList.add(item);
                 }
-                ((Activity) mContext).runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        itemFeed = filteredList;
-                        notifyDataSetChanged();
-                    }
-                });
-            }
-        }).start();
 
+            }
+
+
+        }
+        itemFeed = filteredList;
+        notifyDataSetChanged();
+//            }
+//        }).start();
+
+        Log.e(TAG, "filter: " + query + " took: " + (System.currentTimeMillis() - start));
     }
 
     private class TxHolder extends RecyclerView.ViewHolder {

@@ -187,8 +187,8 @@ public class TxManager {
         }
     }
 
-    //BLOCKS
     public synchronized void updateTxList(final Context app) {
+        Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI" );
         if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         final TxItem[] arr = BRWalletManager.getInstance().getTransactions();
         updateTxMetaData(app, arr);
@@ -212,6 +212,7 @@ public class TxManager {
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Thread.currentThread().setName(Thread.currentThread().getName() + ":updateTxMetaData");
                 if (arr != null) {
                     for (TxItem item : arr) {
                         KVStoreManager kvM = KVStoreManager.getInstance();

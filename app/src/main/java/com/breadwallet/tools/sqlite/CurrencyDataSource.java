@@ -40,10 +40,12 @@ import com.google.firebase.crash.FirebaseCrash;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class CurrencyDataSource {
+public class CurrencyDataSource implements BRDataSourceInterface{
     private static final String TAG = CurrencyDataSource.class.getName();
+
+    private AtomicInteger mOpenCounter = new AtomicInteger();
 
     // Database fields
     private SQLiteDatabase database;
@@ -69,7 +71,7 @@ public class CurrencyDataSource {
 
     public void putCurrencies(Collection<CurrencyEntity> currencyEntities) {
         if (currencyEntities == null) return;
-        database = dbHelper.getWritableDatabase();
+        database = openDatabase();
         database.beginTransaction();
         try {
             for (CurrencyEntity c : currencyEntities) {
@@ -87,49 +89,19 @@ public class CurrencyDataSource {
             //Error in between database transaction
         } finally {
             database.endTransaction();
+            closeDatabase();
         }
 
     }
-//    public void putCurrencies(Set<CurrencyEntity> currencyEntities) {
-//        if(currencyEntities == null) return;
-//        database = dbHelper.getWritableDatabase();
-//        database.beginTransaction();
-//        try {
-//            for (CurrencyEntity c : currencyEntities) {
-//                Log.e(TAG,"sqlite peer saved: " + Arrays.toString(p.getPeerTimeStamp()));
-//                ContentValues values = new ContentValues();
-//                values.put(BRSQLiteHelper.CURRENCY_CODE, c.code);
-//                values.put(BRSQLiteHelper.CURRENCY_NAME, c.name);
-//                values.put(BRSQLiteHelper.CURRENCY_RATE, c.rate);
-//                database.insert(BRSQLiteHelper.CURRENCY_TABLE_NAME, null, values);
-//            }
-//
-//            database.setTransactionSuccessful();
-//        } catch (Exception ex) {
-//            FirebaseCrash.report(ex);
-//            Log.e(TAG, "Error inserting into SQLite", ex);
-//            //Error in between database transaction
-//        } finally {
-//            database.endTransaction();
-//        }
-//
-//    }
-
-//    public void deleteCurrency(BRPeerEntity peerEntity) {
-//        database = dbHelper.getWritableDatabase();
-//        long id = peerEntity.getId();
-//        Log.e(TAG, "Peer deleted with id: " + id);
-//        database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID
-//                + " = " + id, null);
-//    }
 
     public void deleteAllCurrencies() {
-        database = dbHelper.getWritableDatabase();
+        database = openDatabase();
         database.delete(BRSQLiteHelper.CURRENCY_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID + " <> -1", null);
+        closeDatabase();
     }
 
     public List<CurrencyEntity> getAllCurrencies() {
-        database = dbHelper.getReadableDatabase();
+        database = openDatabase();
         List<CurrencyEntity> currencies = new ArrayList<>();
 
         Cursor cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
@@ -145,11 +117,12 @@ public class CurrencyDataSource {
 
         cursor.close();
         Log.e(TAG, "getAllCurrencies: " + currencies.size());
+        closeDatabase();
         return currencies;
     }
 
     public List<String> getAllISOs() {
-        database = dbHelper.getReadableDatabase();
+        database = openDatabase();
         List<String> ISOs = new ArrayList<>();
 
         Cursor cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
@@ -164,11 +137,12 @@ public class CurrencyDataSource {
         // make sure to close the cursor
 
         cursor.close();
+        closeDatabase();
         return ISOs;
     }
 
     public CurrencyEntity getCurrencyByIso(String iso) {
-        database = dbHelper.getReadableDatabase();
+        database = openDatabase();
 
         Cursor cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
                 allColumns, BRSQLiteHelper.CURRENCY_CODE + "=\'" + iso + "\'", null, null, null, null);
@@ -181,6 +155,7 @@ public class CurrencyDataSource {
         } finally {
             if (cursor != null)
                 cursor.close();
+            closeDatabase();
         }
 
         return null;
@@ -188,5 +163,25 @@ public class CurrencyDataSource {
 
     private CurrencyEntity cursorToCurrency(Cursor cursor) {
         return new CurrencyEntity(cursor.getString(0), cursor.getString(1), cursor.getFloat(2));
+    }
+
+    @Override
+    public synchronized SQLiteDatabase openDatabase() {
+        if (mOpenCounter.incrementAndGet() == 1) {
+            // Opening new database
+            database = dbHelper.getWritableDatabase();
+        }
+//        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
+        return database;
+    }
+
+    @Override
+    public synchronized void closeDatabase() {
+        if (mOpenCounter.decrementAndGet() == 0) {
+            // Closing database
+            database.close();
+
+        }
+//        Log.d("Database open counter: " , String.valueOf(mOpenCounter.get()));
     }
 }

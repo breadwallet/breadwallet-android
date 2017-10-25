@@ -38,9 +38,12 @@ import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class TransactionDataSource {
+public class TransactionDataSource implements BRDataSourceInterface{
     private static final String TAG = TransactionDataSource.class.getName();
+
+    private AtomicInteger mOpenCounter = new AtomicInteger();
 
     // Database fields
     private SQLiteDatabase database;
@@ -83,7 +86,7 @@ public class TransactionDataSource {
     }
 
     public BRTransactionEntity putTransaction(BRTransactionEntity transactionEntity) {
-        database = dbHelper.getWritableDatabase();
+        database = openDatabase();
         ContentValues values = new ContentValues();
         values.put(BRSQLiteHelper.TX_COLUMN_ID, transactionEntity.getTxHash());
         values.put(BRSQLiteHelper.TX_BUFF, transactionEntity.getBuff());
@@ -109,6 +112,7 @@ public class TransactionDataSource {
             //Error in between database transaction
         } finally {
             database.endTransaction();
+            closeDatabase();
         }
         return null;
 
@@ -116,12 +120,13 @@ public class TransactionDataSource {
     }
 
     public void deleteAllTransactions() {
-        database = dbHelper.getWritableDatabase();
+        database = openDatabase();
         database.delete(BRSQLiteHelper.TX_TABLE_NAME, null, null);
+        closeDatabase();
     }
 
     public List<BRTransactionEntity> getAllTransactions() {
-        database = dbHelper.getReadableDatabase();
+        database = openDatabase();
         List<BRTransactionEntity> transactions = new ArrayList<>();
 
         Cursor cursor = database.query(BRSQLiteHelper.TX_TABLE_NAME,
@@ -140,6 +145,7 @@ public class TransactionDataSource {
 //            Log.e(TAG, "getAllTransactions: hash: " + ent.getTxHash());
 //        }
         cursor.close();
+        closeDatabase();
         return transactions;
     }
 
@@ -148,7 +154,7 @@ public class TransactionDataSource {
     }
 
     public void updateTxBlockHeight(String hash, int blockHeight, int timeStamp) {
-        database = dbHelper.getWritableDatabase();
+        database = openDatabase();
         Log.e(TAG, "transaction updated with id: " + hash);
         String strFilter = "_id=\'" + hash + "\'";
         ContentValues args = new ContentValues();
@@ -158,14 +164,34 @@ public class TransactionDataSource {
         Log.e(TAG, "updateTxBlockHeight: size before updating: " + getAllTransactions().size());
         database.update(BRSQLiteHelper.TX_TABLE_NAME, args, strFilter, null);
         Log.e(TAG, "updateTxBlockHeight: size after updating: " + getAllTransactions().size());
-
-
+        closeDatabase();
     }
 
     public void deleteTxByHash(String hash) {
-        database = dbHelper.getWritableDatabase();
+        database = openDatabase();
         Log.e(TAG, "transaction deleted with id: " + hash);
         database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID
                 + " = \'" + hash + "\'", null);
+        closeDatabase();
+    }
+
+    @Override
+    public synchronized SQLiteDatabase openDatabase() {
+        if (mOpenCounter.incrementAndGet() == 1) {
+            // Opening new database
+            database = dbHelper.getWritableDatabase();
+        }
+//        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
+        return database;
+    }
+
+    @Override
+    public synchronized void closeDatabase() {
+        if (mOpenCounter.decrementAndGet() == 0) {
+            // Closing database
+            database.close();
+
+        }
+//        Log.d("Database open counter: " , String.valueOf(mOpenCounter.get()));
     }
 }

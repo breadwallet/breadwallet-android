@@ -464,6 +464,7 @@ public class    BreadActivity extends BRActivity implements BRWalletManager.OnBa
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI");
                 //sleep a little in order to make sure all the commits are finished (like SharePreferences commits)
                 String iso = BRSharedPrefs.getIso(BreadActivity.this);
 
