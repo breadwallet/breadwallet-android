@@ -14,6 +14,7 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRPeerManager;
 
@@ -58,7 +59,7 @@ public class SyncBlockchainActivity extends BRActivity {
                             @Override
                             public void onClick(BRDialogView brDialogView) {
                                 brDialogView.dismissWithAnimation();
-                                new Thread(new Runnable() {
+                                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                                     @Override
                                     public void run() {
                                         BRSharedPrefs.putStartHeight(SyncBlockchainActivity.this, 0);
@@ -67,7 +68,7 @@ public class SyncBlockchainActivity extends BRActivity {
                                         BRAnimator.startBreadActivity(SyncBlockchainActivity.this, false);
 
                                     }
-                                }).start();
+                                });
                             }
                         }, new BRDialogView.BROnClickListener() {
                             @Override

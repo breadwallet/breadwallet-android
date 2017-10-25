@@ -209,7 +209,7 @@ public class TxManager {
     private void updateTxMetaData(final Context app, final TxItem[] arr) {
         if (isMetaDataUpdating) return;
         isMetaDataUpdating = true;
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 Thread.currentThread().setName(Thread.currentThread().getName() + ":updateTxMetaData");
@@ -236,7 +236,7 @@ public class TxManager {
                 }
                 isMetaDataUpdating = false;
             }
-        }).start();
+        });
     }
 
     public void updateCard(final Context app) {
