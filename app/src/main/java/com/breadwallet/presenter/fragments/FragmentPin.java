@@ -24,6 +24,7 @@ import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 
 /**
@@ -201,7 +202,7 @@ public class FragmentPin extends Fragment {
     }
 
     private void handleSuccess() {
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 try {
@@ -217,8 +218,7 @@ public class FragmentPin extends Fragment {
                     app.getFragmentManager().popBackStack();
 
             }
-        }).start();
-
+        });
     }
 
     private void handleFail() {

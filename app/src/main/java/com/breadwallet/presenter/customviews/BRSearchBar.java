@@ -16,6 +16,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.TxManager;
+import com.breadwallet.tools.threads.BRExecutor;
 
 /**
  * BreadWallet
@@ -96,12 +97,12 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
             }
         }, 200); //use 300 to make it run when coming back from lock screen
 
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 TxManager.getInstance().updateTxList(breadActivity);
             }
-        }).start();
+        });
 
     }
 

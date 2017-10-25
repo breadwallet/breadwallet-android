@@ -34,6 +34,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.jniwrappers.BRKey;
 import com.platform.interfaces.KVStoreAdaptor;
@@ -83,6 +84,7 @@ public class ReplicatedKVStore {
         this.context = context;
         this.remoteKvStore = remoteKvStore;
         dbHelper = new PlatformSqliteHelper(context);
+        dbHelper.setWriteAheadLoggingEnabled(true);
     }
 
     public SQLiteDatabase getWritable() {
@@ -415,18 +417,30 @@ public class ReplicatedKVStore {
     /**
      * Sync an individual key. Normally this is only called internally and you should call syncAllKeys
      */
-    public void syncKey(String key, long remoteVersion, long remoteTime, CompletionObject.RemoteKVStoreError err) {
+    public void syncKey(final String key, final long remoteVersion, final long remoteTime, final CompletionObject.RemoteKVStoreError err) {
         if (syncRunning) return;
         syncRunning = true;
 
         try {
             if (remoteVersion == 0 || remoteTime == 0) {
-                CompletionObject completionObject = remoteKvStore.ver(key);
+                final CompletionObject completionObject = remoteKvStore.ver(key);
                 Log.e(TAG, String.format("syncKey: completionObject: version: %d, value: %s, err: %s, time: %d",
                         completionObject.version, Arrays.toString(completionObject.value), completionObject.err, completionObject.time));
-                _syncKey(key, completionObject.version, completionObject.time, completionObject.err);
+                BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        _syncKey(key, completionObject.version, completionObject.time, completionObject.err);
+                    }
+                });
+
             } else {
-                _syncKey(key, remoteVersion, remoteTime, err);
+                BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        _syncKey(key, remoteVersion, remoteTime, err);
+                    }
+                });
+
             }
 
         } catch (Exception ex) {

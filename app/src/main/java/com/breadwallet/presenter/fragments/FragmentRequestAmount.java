@@ -32,6 +32,7 @@ import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
@@ -312,7 +313,7 @@ public class FragmentRequestAmount extends Fragment {
             }
         });
 
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 boolean success = BRWalletManager.refreshAddress(getActivity());
@@ -320,7 +321,7 @@ public class FragmentRequestAmount extends Fragment {
 
                 receiveAddress = BRSharedPrefs.getReceiveAddress(getActivity());
 
-                getActivity().runOnUiThread(new Runnable() {
+                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
                         mAddress.setText(receiveAddress);
@@ -330,7 +331,7 @@ public class FragmentRequestAmount extends Fragment {
                     }
                 });
             }
-        }).start();
+        });
 
     }
 

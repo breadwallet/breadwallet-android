@@ -38,6 +38,7 @@ import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
@@ -319,12 +320,12 @@ public class    BreadActivity extends BRActivity implements BRWalletManager.OnBa
         setupNetworking();
 
         if (!BRWalletManager.getInstance().isCreated()) {
-            new Thread(new Runnable() {
+            BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     BRWalletManager.getInstance().setUpTheWallet(BreadActivity.this);
                 }
-            }).start();
+            });
 
         }
 
@@ -365,13 +366,12 @@ public class    BreadActivity extends BRActivity implements BRWalletManager.OnBa
 
         //sync the kv stores
         if (PLATFORM_ON) {
-            new Thread(new Runnable() {
+            BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     APIClient.getInstance(BreadActivity.this).syncKvStore();
                 }
-            }).start();
-
+            });
         }
 
     }
@@ -494,12 +494,12 @@ public class    BreadActivity extends BRActivity implements BRWalletManager.OnBa
 
     @Override
     public void onStatusUpdate() {
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 TxManager.getInstance().updateTxList(BreadActivity.this);
             }
-        }).start();
+        });
 
     }
 
@@ -510,12 +510,12 @@ public class    BreadActivity extends BRActivity implements BRWalletManager.OnBa
 
     @Override
     public void onTxAdded() {
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 TxManager.getInstance().updateTxList(BreadActivity.this);
             }
-        }).start();
+        });
     }
 
     //    private void setWalletLoading() {
@@ -588,17 +588,16 @@ public class    BreadActivity extends BRActivity implements BRWalletManager.OnBa
                 if (barFlipper.getDisplayedChild() == 2)
                     barFlipper.setDisplayedChild(0);
             }
-            new Thread(new Runnable() {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-
                     final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(BreadActivity.this));
 //                    Log.e(TAG, "run: " + progress);
                     if (progress < 1 && progress > 0) {
                         SyncManager.getInstance().startSyncingProgressThread();
                     }
                 }
-            }).start();
+            });
 
         } else {
             if (barFlipper != null)

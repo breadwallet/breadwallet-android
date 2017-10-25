@@ -19,6 +19,7 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
@@ -239,7 +240,7 @@ public class PostAuth {
                     }, null, null);
         } else {
             Log.e(TAG, "onSendBch:serializedTx is:" + serializedTx.length);
-            new Thread(new Runnable() {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     String title = "Failed";
@@ -284,7 +285,7 @@ public class PostAuth {
 
                     final String finalTitle = title;
                     final String finalMessage = message;
-                    app.runOnUiThread(new Runnable() {
+                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                         @Override
                         public void run() {
                             BRErrorPipe.showKeyStoreDialog(app, finalTitle, finalMessage, app.getString(R.string.AccessibilityLabels_close), null,
@@ -297,7 +298,7 @@ public class PostAuth {
                     });
 
                 }
-            }).start();
+            });
 
         }
 
@@ -320,7 +321,7 @@ public class PostAuth {
 
         final byte[] seed = TypesConverter.getNullTerminatedPhrase(rawSeed);
 
-        new Thread(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 byte[] txHash = BRWalletManager.getInstance().publishSerializedTransaction(paymentRequest.serializedTx, seed);
@@ -329,8 +330,7 @@ public class PostAuth {
                 Arrays.fill(seed, (byte) 0);
                 paymentRequest = null;
             }
-        }).start();
-
+        });
 
     }
 

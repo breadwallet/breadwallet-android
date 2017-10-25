@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.google.firebase.crash.FirebaseCrash;
 
@@ -148,7 +149,7 @@ public class GeoLocationManager {
             sending = true;
             if (session != null && session.isOpen()) {
                 final String jsonLocation = getJsonLocation(location);
-                new Thread(new Runnable() {
+                BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
                         try {
@@ -159,7 +160,7 @@ public class GeoLocationManager {
                             sending = false;
                         }
                     }
-                }).start();
+                });
 
             } else {
                 sending = false;
@@ -182,7 +183,7 @@ public class GeoLocationManager {
         public void onLocationChanged(final Location location) {
             if (processing) return;
             processing = true;
-            new Thread(new Runnable() {
+            BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     // Called when a new location is found by the network location provider.
@@ -231,7 +232,7 @@ public class GeoLocationManager {
 
                     }
                 }
-            }).start();
+            });
 
         }
 

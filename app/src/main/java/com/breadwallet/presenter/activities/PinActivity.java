@@ -33,6 +33,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
@@ -206,12 +207,12 @@ public class PinActivity extends BRActivity {
         inputAllowed = true;
         ActivityUTILS.init(this);
         if (!BRWalletManager.getInstance().isCreated()) {
-            new Thread(new Runnable() {
+            BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     BRWalletManager.getInstance().setUpTheWallet(PinActivity.this);
                 }
-            }).start();
+            });
         }
         if (PLATFORM_ON)
             APIClient.getInstance(this).updatePlatform();

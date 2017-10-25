@@ -36,11 +36,11 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
     private BRSQLiteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        setWriteAheadLoggingEnabled(false);
     }
 
     public static BRSQLiteHelper getInstance(Context context) {
         if (instance == null) instance = new BRSQLiteHelper(context);
+        instance.setWriteAheadLoggingEnabled(true);
         return instance;
     }
 

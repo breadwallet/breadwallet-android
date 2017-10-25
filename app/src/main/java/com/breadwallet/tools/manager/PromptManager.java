@@ -11,6 +11,7 @@ import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.FingerprintActivity;
 import com.breadwallet.presenter.activities.settings.ShareDataActivity;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 
@@ -141,14 +142,14 @@ public class PromptManager {
                 return new PromptInfo(app.getString(R.string.Prompts_RecommendRescan_title), app.getString(R.string.Prompts_RecommendRescan_body), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        new Thread(new Runnable() {
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
                                 BRSharedPrefs.putStartHeight(app, 0);
                                 BRPeerManager.getInstance().rescan();
                                 BRSharedPrefs.putScanRecommended(app, false);
                             }
-                        }).start();
+                        });
                     }
                 });
             case SHARE_DATA:
