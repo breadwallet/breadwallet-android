@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class PeerDataSource implements BRDataSourceInterface{
+public class PeerDataSource implements BRDataSourceInterface {
     private static final String TAG = PeerDataSource.class.getName();
 
     private AtomicInteger mOpenCounter = new AtomicInteger();
@@ -69,10 +69,11 @@ public class PeerDataSource implements BRDataSourceInterface{
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
-    public void putPeers(PeerEntity[] peerEntities) {
-        database = openDatabase();
-        database.beginTransaction();
+    public synchronized void putPeers(PeerEntity[] peerEntities) {
+
         try {
+            database = openDatabase();
+            database.beginTransaction();
             for (PeerEntity p : peerEntities) {
 //                Log.e(TAG,"sqlite peer saved: " + Arrays.toString(p.getPeerTimeStamp()));
                 ContentValues values = new ContentValues();
@@ -94,38 +95,52 @@ public class PeerDataSource implements BRDataSourceInterface{
 
     }
 
-    public void deletePeer(BRPeerEntity peerEntity) {
-        database = openDatabase();
-        long id = peerEntity.getId();
-        Log.e(TAG, "Peer deleted with id: " + id);
-        database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID
-                + " = " + id, null);
-        closeDatabase();
-    }
-
-    public void deleteAllPeers() {
-        database = dbHelper.getWritableDatabase();
-        database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID + " <> -1", null);
-    }
-
-    public List<BRPeerEntity> getAllPeers() {
-        database = openDatabase();
-        List<BRPeerEntity> peers = new ArrayList<>();
-
-        Cursor cursor = database.query(BRSQLiteHelper.PEER_TABLE_NAME,
-                allColumns, null, null, null, null, null);
-
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            BRPeerEntity peerEntity = cursorToPeer(cursor);
-            peers.add(peerEntity);
-            cursor.moveToNext();
+    public synchronized void deletePeer(BRPeerEntity peerEntity) {
+        try {
+            database = openDatabase();
+            long id = peerEntity.getId();
+            Log.e(TAG, "Peer deleted with id: " + id);
+            database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID
+                    + " = " + id, null);
+        } finally {
+            closeDatabase();
         }
-        // make sure to close the cursor
 
-        Log.e(TAG, "peers: " + peers.size());
-        cursor.close();
-        closeDatabase();
+    }
+
+    public synchronized void deleteAllPeers() {
+        try {
+            database = dbHelper.getWritableDatabase();
+            database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID + " <> -1", null);
+        } finally {
+            closeDatabase();
+        }
+    }
+
+    public synchronized List<BRPeerEntity> getAllPeers() {
+        List<BRPeerEntity> peers = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            database = openDatabase();
+
+            cursor = database.query(BRSQLiteHelper.PEER_TABLE_NAME,
+                    allColumns, null, null, null, null, null);
+
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                BRPeerEntity peerEntity = cursorToPeer(cursor);
+                peers.add(peerEntity);
+                cursor.moveToNext();
+            }
+            // make sure to close the cursor
+
+            Log.e(TAG, "peers: " + peers.size());
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
+
         return peers;
     }
 

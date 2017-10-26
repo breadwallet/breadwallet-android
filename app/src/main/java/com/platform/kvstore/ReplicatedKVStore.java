@@ -87,30 +87,30 @@ public class ReplicatedKVStore {
         dbHelper.setWriteAheadLoggingEnabled(true);
     }
 
-    public SQLiteDatabase getWritable() {
-        if (mOpenCounter.incrementAndGet() == 1) {
+    public synchronized SQLiteDatabase getWritable() {
+//        if (mOpenCounter.incrementAndGet() == 1) {
             // Opening new database
             mDatabase = dbHelper.getWritableDatabase();
-        }
+//        }
 //        Log.d(TAG, "getWritable open counter: " + String.valueOf(mOpenCounter.get()));
         return mDatabase;
     }
 
-    public SQLiteDatabase getReadable() {
-        if (mOpenCounter.incrementAndGet() == 1) {
+    public synchronized SQLiteDatabase getReadable() {
+//        if (mOpenCounter.incrementAndGet() == 1) {
             // Opening new database
             mDatabase = dbHelper.getWritableDatabase();
-        }
+//        }
 //        Log.d(TAG, "getReadable open counter: " + String.valueOf(mOpenCounter.get()));
         return mDatabase;
     }
 
-    public void closeDB() {
-        if (mOpenCounter.decrementAndGet() == 0) {
+    public synchronized void closeDB() {
+//        if (mOpenCounter.decrementAndGet() == 0) {
             // Closing database
-            mDatabase.close();
+//            mDatabase.close();
 
-        }
+//        }
 //        Log.d(TAG, "closeDB open counter: " + String.valueOf(mOpenCounter.get()));
     }
 
@@ -301,8 +301,8 @@ public class ReplicatedKVStore {
         long version = 0;
         long time = System.currentTimeMillis();
         Cursor cursor = null;
-        SQLiteDatabase db = getReadable();
         try {
+            SQLiteDatabase db = getReadable();
             String selectQuery = "SELECT " + PlatformSqliteHelper.KV_VERSION + ", " + PlatformSqliteHelper.KV_TIME + " FROM " + PlatformSqliteHelper.KV_STORE_TABLE_NAME + " WHERE key = ? ORDER BY version DESC LIMIT 1";
             cursor = db.rawQuery(selectQuery, new String[]{key});
             cursor.moveToNext();
@@ -321,8 +321,8 @@ public class ReplicatedKVStore {
     }
 
     public synchronized void deleteAllKVs() {
-        SQLiteDatabase db = getWritable();
         try {
+            SQLiteDatabase db = getWritable();
             db.delete(PlatformSqliteHelper.KV_STORE_TABLE_NAME, PlatformSqliteHelper.KV_TIME + " <> -1", null);
         } catch (SQLException e) {
             e.printStackTrace();
@@ -336,8 +336,8 @@ public class ReplicatedKVStore {
     public synchronized List<KVItem> getAllKVs() {
         List<KVItem> kvs = new ArrayList<>();
         Cursor cursor = null;
-        SQLiteDatabase db = getReadable();
         try {
+            SQLiteDatabase db = getReadable();
             String selectQuery = "SELECT kvs.version, kvs.remote_version, kvs.key, kvs.value, kvs.thetime, kvs.deleted FROM " + PlatformSqliteHelper.KV_STORE_TABLE_NAME + " kvs " +
                     "INNER JOIN ( " +
                     "   SELECT MAX(version) AS latest_version, key " +
@@ -657,9 +657,10 @@ public class ReplicatedKVStore {
     public synchronized long remoteVersion(String key) {
         long version = 0;
         Cursor cursor = null;
-        SQLiteDatabase db = getReadable();
         if (isKeyValid(key)) {
+
             try {
+                SQLiteDatabase db = getReadable();
                 String selectQuery = "SELECT " + PlatformSqliteHelper.KV_REMOTE_VERSION + " FROM " + PlatformSqliteHelper.KV_STORE_TABLE_NAME + " WHERE key = ? ORDER BY version DESC LIMIT 1";
                 cursor = db.rawQuery(selectQuery, new String[]{key});
                 cursor.moveToNext();
@@ -672,11 +673,12 @@ public class ReplicatedKVStore {
             } finally {
                 if (cursor != null)
                     cursor.close();
+                closeDB();
             }
         } else {
             Log.e(TAG, "Key is invalid: " + key);
         }
-        closeDB();
+
         return version;
     }
 

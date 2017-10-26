@@ -41,7 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class MerkleBlockDataSource implements BRDataSourceInterface{
+public class MerkleBlockDataSource implements BRDataSourceInterface {
     private static final String TAG = MerkleBlockDataSource.class.getName();
 
     private AtomicInteger mOpenCounter = new AtomicInteger();
@@ -68,10 +68,10 @@ public class MerkleBlockDataSource implements BRDataSourceInterface{
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
-    public void putMerkleBlocks(BlockEntity[] blockEntities) {
-        database = openDatabase();
-        database.beginTransaction();
+    public synchronized void putMerkleBlocks(BlockEntity[] blockEntities) {
         try {
+            database = openDatabase();
+            database.beginTransaction();
             for (BlockEntity b : blockEntities) {
                 ContentValues values = new ContentValues();
                 values.put(BRSQLiteHelper.MB_BUFF, b.getBlockBytes());
@@ -89,38 +89,49 @@ public class MerkleBlockDataSource implements BRDataSourceInterface{
         }
     }
 
-    public void deleteAllBlocks() {
-        database = openDatabase();
-        database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_COLUMN_ID + " <> -1", null);
-        closeDatabase();
-    }
-
-    public void deleteMerkleBlock(BRMerkleBlockEntity merkleBlock) {
-        database = openDatabase();
-        long id = merkleBlock.getId();
-        Log.e(TAG, "MerkleBlock deleted with id: " + id);
-        database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_COLUMN_ID
-                + " = " + id, null);
-        closeDatabase();
-    }
-
-    public List<BRMerkleBlockEntity> getAllMerkleBlocks() {
-        database = openDatabase();
-        List<BRMerkleBlockEntity> merkleBlocks = new ArrayList<>();
-
-        Cursor cursor = database.query(BRSQLiteHelper.MB_TABLE_NAME,
-                allColumns, null, null, null, null, null);
-
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            BRMerkleBlockEntity merkleBlockEntity = cursorToMerkleBlock(cursor);
-            merkleBlocks.add(merkleBlockEntity);
-            cursor.moveToNext();
+    public synchronized void deleteAllBlocks() {
+        try {
+            database = openDatabase();
+            database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_COLUMN_ID + " <> -1", null);
+        } finally {
+            closeDatabase();
         }
-        Log.e(TAG, "merkleBlocks: " + merkleBlocks.size());
-        // make sure to close the cursor
-        cursor.close();
-        closeDatabase();
+    }
+
+    public synchronized void deleteMerkleBlock(BRMerkleBlockEntity merkleBlock) {
+        try {
+            database = openDatabase();
+            long id = merkleBlock.getId();
+            Log.e(TAG, "MerkleBlock deleted with id: " + id);
+            database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_COLUMN_ID
+                    + " = " + id, null);
+        } finally {
+            closeDatabase();
+        }
+    }
+
+    public synchronized List<BRMerkleBlockEntity> getAllMerkleBlocks() {
+        List<BRMerkleBlockEntity> merkleBlocks = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            database = openDatabase();
+
+            cursor = database.query(BRSQLiteHelper.MB_TABLE_NAME,
+                    allColumns, null, null, null, null, null);
+
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                BRMerkleBlockEntity merkleBlockEntity = cursorToMerkleBlock(cursor);
+                merkleBlocks.add(merkleBlockEntity);
+                cursor.moveToNext();
+            }
+            Log.e(TAG, "merkleBlocks: " + merkleBlocks.size());
+            // make sure to close the cursor
+
+        } finally {
+            closeDatabase();
+            if (cursor != null) cursor.close();
+        }
         return merkleBlocks;
     }
 

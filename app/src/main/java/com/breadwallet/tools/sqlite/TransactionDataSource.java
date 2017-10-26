@@ -40,7 +40,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class TransactionDataSource implements BRDataSourceInterface{
+public class TransactionDataSource implements BRDataSourceInterface {
     private static final String TAG = TransactionDataSource.class.getName();
 
     private AtomicInteger mOpenCounter = new AtomicInteger();
@@ -86,15 +86,15 @@ public class TransactionDataSource implements BRDataSourceInterface{
     }
 
     public BRTransactionEntity putTransaction(BRTransactionEntity transactionEntity) {
-        database = openDatabase();
-        ContentValues values = new ContentValues();
-        values.put(BRSQLiteHelper.TX_COLUMN_ID, transactionEntity.getTxHash());
-        values.put(BRSQLiteHelper.TX_BUFF, transactionEntity.getBuff());
-        values.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, transactionEntity.getBlockheight());
-        values.put(BRSQLiteHelper.TX_TIME_STAMP, transactionEntity.getTimestamp());
-
-        database.beginTransaction();
         try {
+            database = openDatabase();
+            ContentValues values = new ContentValues();
+            values.put(BRSQLiteHelper.TX_COLUMN_ID, transactionEntity.getTxHash());
+            values.put(BRSQLiteHelper.TX_BUFF, transactionEntity.getBuff());
+            values.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, transactionEntity.getBlockheight());
+            values.put(BRSQLiteHelper.TX_TIME_STAMP, transactionEntity.getTimestamp());
+
+            database.beginTransaction();
             database.insert(BRSQLiteHelper.TX_TABLE_NAME, null, values);
             Cursor cursor = database.query(BRSQLiteHelper.TX_TABLE_NAME,
                     allColumns, null, null, null, null, null);
@@ -119,33 +119,36 @@ public class TransactionDataSource implements BRDataSourceInterface{
 
     }
 
-    public void deleteAllTransactions() {
-        database = openDatabase();
-        database.delete(BRSQLiteHelper.TX_TABLE_NAME, null, null);
-        closeDatabase();
+    public synchronized void deleteAllTransactions() {
+        try {
+            database = openDatabase();
+            database.delete(BRSQLiteHelper.TX_TABLE_NAME, null, null);
+        } finally {
+            closeDatabase();
+        }
     }
 
-    public List<BRTransactionEntity> getAllTransactions() {
-        database = openDatabase();
+    public synchronized List<BRTransactionEntity> getAllTransactions() {
         List<BRTransactionEntity> transactions = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            database = openDatabase();
 
-        Cursor cursor = database.query(BRSQLiteHelper.TX_TABLE_NAME,
-                allColumns, null, null, null, null, null);
+            cursor = database.query(BRSQLiteHelper.TX_TABLE_NAME,
+                    allColumns, null, null, null, null, null);
 
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            BRTransactionEntity transactionEntity = cursorToTransaction(cursor);
-            transactions.add(transactionEntity);
-            cursor.moveToNext();
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                BRTransactionEntity transactionEntity = cursorToTransaction(cursor);
+                transactions.add(transactionEntity);
+                cursor.moveToNext();
+            }
+
+        } finally {
+            closeDatabase();
+            if (cursor != null)
+                cursor.close();
         }
-        // make sure to close the cursor
-
-//        Log.e(TAG, "transactions: " + transactions.size());
-//        for (BRTransactionEntity ent : transactions) {
-//            Log.e(TAG, "getAllTransactions: hash: " + ent.getTxHash());
-//        }
-        cursor.close();
-        closeDatabase();
         return transactions;
     }
 
@@ -153,26 +156,33 @@ public class TransactionDataSource implements BRDataSourceInterface{
         return new BRTransactionEntity(cursor.getBlob(1), cursor.getInt(2), cursor.getLong(3), cursor.getString(0));
     }
 
-    public void updateTxBlockHeight(String hash, int blockHeight, int timeStamp) {
-        database = openDatabase();
-        Log.e(TAG, "transaction updated with id: " + hash);
-        String strFilter = "_id=\'" + hash + "\'";
-        ContentValues args = new ContentValues();
-        args.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, blockHeight);
-        args.put(BRSQLiteHelper.TX_TIME_STAMP, timeStamp);
+    public synchronized void updateTxBlockHeight(String hash, int blockHeight, int timeStamp) {
+        try {
+            database = openDatabase();
+            Log.e(TAG, "transaction updated with id: " + hash);
+            String strFilter = "_id=\'" + hash + "\'";
+            ContentValues args = new ContentValues();
+            args.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, blockHeight);
+            args.put(BRSQLiteHelper.TX_TIME_STAMP, timeStamp);
 
-        Log.e(TAG, "updateTxBlockHeight: size before updating: " + getAllTransactions().size());
-        database.update(BRSQLiteHelper.TX_TABLE_NAME, args, strFilter, null);
-        Log.e(TAG, "updateTxBlockHeight: size after updating: " + getAllTransactions().size());
-        closeDatabase();
+            Log.e(TAG, "updateTxBlockHeight: size before updating: " + getAllTransactions().size());
+            database.update(BRSQLiteHelper.TX_TABLE_NAME, args, strFilter, null);
+            Log.e(TAG, "updateTxBlockHeight: size after updating: " + getAllTransactions().size());
+        } finally {
+            closeDatabase();
+        }
+
     }
 
-    public void deleteTxByHash(String hash) {
-        database = openDatabase();
-        Log.e(TAG, "transaction deleted with id: " + hash);
-        database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID
-                + " = \'" + hash + "\'", null);
-        closeDatabase();
+    public synchronized void deleteTxByHash(String hash) {
+        try {
+            database = openDatabase();
+            Log.e(TAG, "transaction deleted with id: " + hash);
+            database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID
+                    + " = \'" + hash + "\'", null);
+        } finally {
+            closeDatabase();
+        }
     }
 
     @Override
