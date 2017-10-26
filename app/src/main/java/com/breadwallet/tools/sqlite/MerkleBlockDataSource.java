@@ -144,21 +144,21 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
 
     @Override
     public synchronized SQLiteDatabase openDatabase() {
-        if (mOpenCounter.incrementAndGet() == 1) {
+//        if (mOpenCounter.incrementAndGet() == 1) {
             // Opening new database
             database = dbHelper.getWritableDatabase();
-        }
+//        }
 //        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
         return database;
     }
 
     @Override
     public synchronized void closeDatabase() {
-        if (mOpenCounter.decrementAndGet() == 0) {
-            // Closing database
-            database.close();
-
-        }
+//        if (mOpenCounter.decrementAndGet() == 0) {
+//            // Closing database
+//            database.close();
+//
+//        }
 //        Log.d("Database open counter: " , String.valueOf(mOpenCounter.get()));
     }
 }
