@@ -149,14 +149,15 @@ public class BRErrorPipe {
                             else
                                 return;
                         }
-                        dialog = new android.app.AlertDialog.Builder(finalApp).
-                                setTitle(title)
-                                .setMessage(message)
-                                .setPositiveButton(posButton, posButtonListener)
-                                .setNegativeButton(negButton, negButtonListener)
-                                .setOnDismissListener(dismissListener)
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .show();
+                        if (!finalApp.isDestroyed())
+                            dialog = new android.app.AlertDialog.Builder(finalApp).
+                                    setTitle(title)
+                                    .setMessage(message)
+                                    .setPositiveButton(posButton, posButtonListener)
+                                    .setNegativeButton(negButton, negButtonListener)
+                                    .setOnDismissListener(dismissListener)
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .show();
                     }
                 }
             });

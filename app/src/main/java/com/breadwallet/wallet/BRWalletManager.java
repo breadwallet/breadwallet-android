@@ -485,11 +485,11 @@ public class BRWalletManager {
         }
     }
 
-    public void setUpTheWallet(final Context ctx) {
+    public void initWallet(final Context ctx) {
         if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
-        Log.d(TAG, "setUpTheWallet:" + Thread.currentThread().getName());
+        Log.d(TAG, "initWallet:" + Thread.currentThread().getName());
         if (ctx == null) {
-            Log.e(TAG, "setUpTheWallet: ctx is null");
+            Log.e(TAG, "initWallet: ctx is null");
             return;
         }
         BRWalletManager m = BRWalletManager.getInstance();
@@ -541,7 +541,7 @@ public class BRWalletManager {
 
             int walletTime = BRKeyStore.getWalletCreationTime(ctx);
 
-            Log.e(TAG, "setUpTheWallet: walletTime: " + walletTime);
+            Log.e(TAG, "initWallet: walletTime: " + walletTime);
             pm.create(walletTime, blocksCount, peersCount);
 
         }
