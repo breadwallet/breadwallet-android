@@ -74,8 +74,8 @@ public class PaperKeyProveActivity extends BRActivity {
         checkMark1 = (ImageView) findViewById(R.id.check_mark_1);
         checkMark2 = (ImageView) findViewById(R.id.check_mark_2);
 
-        wordEditFirst.setOnFocusChangeListener(new FocusListener());
-        wordEditSecond.setOnFocusChangeListener(new FocusListener());
+//        wordEditFirst.setOnFocusChangeListener(new FocusListener());
+//        wordEditSecond.setOnFocusChangeListener(new FocusListener());
 
         wordEditFirst.addTextChangedListener(new BRTextWatcher());
         wordEditSecond.addTextChangedListener(new BRTextWatcher());
@@ -130,13 +130,13 @@ public class PaperKeyProveActivity extends BRActivity {
                     });
                 } else {
 
-                    if (isWordCorrect(true)) {
+                    if (!isWordCorrect(true)) {
                         wordEditFirst.setTextColor(getColor(R.color.red_text));
                         SpringAnimator.failShakeAnimation(PaperKeyProveActivity.this, wordEditFirst);
                     }
 
-                    if (isWordCorrect(false)) {
-                        wordEditFirst.setTextColor(getColor(R.color.red_text));
+                    if (!isWordCorrect(false)) {
+                        wordEditSecond.setTextColor(getColor(R.color.red_text));
                         SpringAnimator.failShakeAnimation(PaperKeyProveActivity.this, wordEditSecond);
                     }
                 }
@@ -220,27 +220,38 @@ public class PaperKeyProveActivity extends BRActivity {
     protected void onSaveInstanceState(Bundle outState) {
     }
 
-    private class FocusListener implements View.OnFocusChangeListener {
-
-        @Override
-        public void onFocusChange(View v, boolean hasFocus) {
-            if (!hasFocus) {
-                validateWord((EditText) v);
-            } else {
-                ((EditText) v).setTextColor(getColor(R.color.light_gray));
-            }
-        }
-    }
+//    private class FocusListener implements View.OnFocusChangeListener {
+//
+//        @Override
+//        public void onFocusChange(View v, boolean hasFocus) {
+//            if (!hasFocus) {
+//                validateWord((EditText) v);
+//            } else {
+//                ((EditText) v).setTextColor(getColor(R.color.light_gray));
+//            }
+//        }
+//    }
 
     private void validateWord(EditText view) {
         String word = view.getText().toString();
         boolean valid = SmartValidator.isWordValid(this, word);
         view.setTextColor(getColor(valid ? R.color.light_gray : R.color.red_text));
-        if (!valid)
-            SpringAnimator.failShakeAnimation(this, view);
+//        if (!valid)
+//            SpringAnimator.failShakeAnimation(this, view);
+        if (isWordCorrect(true)) {
+            checkMark1.setVisibility(View.VISIBLE);
+        } else {
+            checkMark1.setVisibility(View.INVISIBLE);
+        }
+
+        if (isWordCorrect(false)) {
+            checkMark2.setVisibility(View.VISIBLE);
+        } else {
+            checkMark2.setVisibility(View.INVISIBLE);
+        }
     }
 
-    class BRTextWatcher implements TextWatcher {
+    private class BRTextWatcher implements TextWatcher {
 
         @Override
         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -249,17 +260,9 @@ public class PaperKeyProveActivity extends BRActivity {
 
         @Override
         public void onTextChanged(CharSequence s, int start, int before, int count) {
-            if (isWordCorrect(true)) {
-                checkMark1.setVisibility(View.VISIBLE);
-            } else {
-                checkMark1.setVisibility(View.INVISIBLE);
-            }
+            validateWord(wordEditFirst);
+            validateWord(wordEditSecond);
 
-            if (isWordCorrect(false)) {
-                checkMark2.setVisibility(View.VISIBLE);
-            } else {
-                checkMark2.setVisibility(View.INVISIBLE);
-            }
         }
 
         @Override

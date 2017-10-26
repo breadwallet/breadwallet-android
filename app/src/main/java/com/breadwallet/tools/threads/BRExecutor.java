@@ -84,9 +84,9 @@ public class BRExecutor implements RejectedExecutionHandler {
 
         // setting the thread pool executor for mForBackgroundTasks;
         mForBackgroundTasks = new ThreadPoolExecutor(
-                NUMBER_OF_CORES * 5,
-                NUMBER_OF_CORES * 20,
-                120L,
+                NUMBER_OF_CORES * 4,
+                NUMBER_OF_CORES * 8,
+                60L,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>(),
                 backgroundPriorityThreadFactory,
@@ -95,9 +95,9 @@ public class BRExecutor implements RejectedExecutionHandler {
 
         // setting the thread pool executor for mForLightWeightBackgroundTasks;
         mForLightWeightBackgroundTasks = new ThreadPoolExecutor(
-                NUMBER_OF_CORES * 3,
                 NUMBER_OF_CORES * 8,
-                30L,
+                NUMBER_OF_CORES * 16,
+                5L,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>(),
                 backgroundPriorityThreadFactory,

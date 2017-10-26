@@ -1,19 +1,9 @@
 package com.breadwallet.tools.listeners;
 
 import android.app.IntentService;
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.util.Log;
-import android.widget.Toast;
 
-import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.wallet.BRWalletManager;
-
-import java.util.Calendar;
 
 /**
  * BreadWallet
@@ -53,7 +43,7 @@ public class SyncReceiver extends IntentService {
         if (workIntent != null)
             if (SYNC_RECEIVER.equals(workIntent.getAction())) {
 //                BRToast.showCustomToast(getApplication(), "Starting background syncing...", BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
-                BRWalletManager.getInstance().setUpTheWallet(getApplication());
+                BRWalletManager.getInstance().initWallet(getApplication());
             }
     }
 }

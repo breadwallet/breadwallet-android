@@ -62,7 +62,7 @@ public class ReplicatedKVStore {
 
     public final boolean encrypted = true;
     public final boolean encryptedReplication = true;
-//    private Lock dbLock = new ReentrantLock();
+    //    private Lock dbLock = new ReentrantLock();
     public boolean syncImmediately = false;
     private boolean syncRunning = false;
     private KVStoreAdaptor remoteKvStore;
@@ -89,8 +89,8 @@ public class ReplicatedKVStore {
 
     public synchronized SQLiteDatabase getWritable() {
 //        if (mOpenCounter.incrementAndGet() == 1) {
-            // Opening new database
-            mDatabase = dbHelper.getWritableDatabase();
+        // Opening new database
+        mDatabase = dbHelper.getWritableDatabase();
 //        }
 //        Log.d(TAG, "getWritable open counter: " + String.valueOf(mOpenCounter.get()));
         return mDatabase;
@@ -98,8 +98,8 @@ public class ReplicatedKVStore {
 
     public synchronized SQLiteDatabase getReadable() {
 //        if (mOpenCounter.incrementAndGet() == 1) {
-            // Opening new database
-            mDatabase = dbHelper.getWritableDatabase();
+        // Opening new database
+        mDatabase = dbHelper.getWritableDatabase();
 //        }
 //        Log.d(TAG, "getReadable open counter: " + String.valueOf(mOpenCounter.get()));
         return mDatabase;
@@ -107,7 +107,7 @@ public class ReplicatedKVStore {
 
     public synchronized void closeDB() {
 //        if (mOpenCounter.decrementAndGet() == 0) {
-            // Closing database
+        // Closing database
 //            mDatabase.close();
 
 //        }
@@ -203,7 +203,7 @@ public class ReplicatedKVStore {
             long n = db.insertWithOnConflict(PlatformSqliteHelper.KV_STORE_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_IGNORE);
             if (n == -1) {
                 //try updating if inserting failed
-                n = db.update(PlatformSqliteHelper.KV_STORE_TABLE_NAME, values, "key=?", new String[]{kv.key});
+                n = db.updateWithOnConflict(PlatformSqliteHelper.KV_STORE_TABLE_NAME, values, "key=?", new String[]{kv.key}, SQLiteDatabase.CONFLICT_REPLACE);
             }
             return n != -1;
         } catch (Exception e) {
@@ -228,50 +228,44 @@ public class ReplicatedKVStore {
         long curVer = 0;
 
         try {
-            try {
-                //if no version, fine the version
-                SQLiteDatabase db = getReadable();
-                if (version == 0) {
-                    curVer = _localVersion(key).version;
-                } else {
+            //if no version, fine the version
+            SQLiteDatabase db = getReadable();
+            if (version == 0) {
+                curVer = _localVersion(key).version;
+            } else {
 //                    curVer = version;
-                    //if we have a version, check if it's correct
-                    cursor = db.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
-                            allColumns, "key = ? AND version = ?", new String[]{key, String.valueOf(version)},
-                            null, null, "version DESC", "1");
-                    boolean success = cursor.moveToNext();
-                    if (success)
-                        curVer = cursor.getLong(0);
-                    else
-                        curVer = 0;
-                }
-                if (cursor != null)
-                    cursor.close();
-                //if still 0 then version is non-existent or wrong.
-                if (curVer == 0) {
-                    return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
-                }
-
+                //if we have a version, check if it's correct
                 cursor = db.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
-                        allColumns, "key = ? AND version = ?", new String[]{key, String.valueOf(curVer)},
+                        allColumns, "key = ? AND version = ?", new String[]{key, String.valueOf(version)},
                         null, null, "version DESC", "1");
-                if (cursor.getCount() != 0) {
-                    cursor.moveToNext();
-                    kv = cursorToKv(cursor);
+                boolean success = cursor.moveToNext();
+                if (success)
+                    curVer = cursor.getLong(0);
+                else
+                    curVer = 0;
+            }
+            if (cursor != null)
+                cursor.close();
+            //if still 0 then version is non-existent or wrong.
+            if (curVer == 0) {
+                return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
+            }
+
+            cursor = db.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
+                    allColumns, "key = ? AND version = ?", new String[]{key, String.valueOf(curVer)},
+                    null, null, "version DESC", "1");
+            if (cursor.getCount() != 0) {
+                cursor.moveToNext();
+                kv = cursorToKv(cursor);
+            }
+            if (kv != null) {
+                byte[] val = kv.value;
+                kv.value = encrypted ? decrypt(val, context, authKey) : val;
+                if (val != null && Utils.isNullOrEmpty(kv.value)) {
+                    //decrypting failed
+                    Log.e(TAG, "get: Decrypting failed for key: " + key + ", deleting the kv");
+                    delete(key, curVer);
                 }
-                if (kv != null) {
-                    byte[] val = kv.value;
-                    kv.value = encrypted ? decrypt(val, context, authKey) : val;
-                    if (val != null && Utils.isNullOrEmpty(kv.value)) {
-                        //decrypting failed
-                        Log.e(TAG, "get: Decrypting failed for key: " + key + ", deleting the kv");
-                        delete(key, curVer);
-                    }
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                closeDB();
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -279,6 +273,7 @@ public class ReplicatedKVStore {
             if (cursor != null) {
                 cursor.close();
             }
+            closeDB();
         }
 
         return kv == null ? new CompletionObject(CompletionObject.RemoteKVStoreError.notFound) : new CompletionObject(kv, null);
@@ -657,26 +652,30 @@ public class ReplicatedKVStore {
     public synchronized long remoteVersion(String key) {
         long version = 0;
         Cursor cursor = null;
-        if (isKeyValid(key)) {
+        try {
+            if (isKeyValid(key)) {
 
-            try {
-                SQLiteDatabase db = getReadable();
-                String selectQuery = "SELECT " + PlatformSqliteHelper.KV_REMOTE_VERSION + " FROM " + PlatformSqliteHelper.KV_STORE_TABLE_NAME + " WHERE key = ? ORDER BY version DESC LIMIT 1";
-                cursor = db.rawQuery(selectQuery, new String[]{key});
-                cursor.moveToNext();
-                if (!cursor.isAfterLast())
-                    version = cursor.getLong(0);
-                else
-                    Log.e(TAG, "remoteVersion: cursor is null for: " + selectQuery);
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                if (cursor != null)
-                    cursor.close();
-                closeDB();
+                try {
+                    SQLiteDatabase db = getReadable();
+                    String selectQuery = "SELECT " + PlatformSqliteHelper.KV_REMOTE_VERSION + " FROM " + PlatformSqliteHelper.KV_STORE_TABLE_NAME + " WHERE key = ? ORDER BY version DESC LIMIT 1";
+                    cursor = db.rawQuery(selectQuery, new String[]{key});
+                    cursor.moveToNext();
+                    if (!cursor.isAfterLast())
+                        version = cursor.getLong(0);
+                    else
+                        Log.e(TAG, "remoteVersion: cursor is null for: " + selectQuery);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    if (cursor != null)
+                        cursor.close();
+                    closeDB();
+                }
+            } else {
+                Log.e(TAG, "Key is invalid: " + key);
             }
-        } else {
-            Log.e(TAG, "Key is invalid: " + key);
+        } finally {
+            if (cursor != null) cursor.close();
         }
 
         return version;

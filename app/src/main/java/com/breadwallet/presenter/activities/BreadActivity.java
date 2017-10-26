@@ -19,7 +19,6 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
-import android.webkit.WebView;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -46,7 +45,6 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
-import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
 
@@ -323,7 +321,7 @@ public class    BreadActivity extends BRActivity implements BRWalletManager.OnBa
             BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    BRWalletManager.getInstance().setUpTheWallet(BreadActivity.this);
+                    BRWalletManager.getInstance().initWallet(BreadActivity.this);
                 }
             });
 

@@ -210,7 +210,7 @@ public class PinActivity extends BRActivity {
             BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    BRWalletManager.getInstance().setUpTheWallet(PinActivity.this);
+                    BRWalletManager.getInstance().initWallet(PinActivity.this);
                 }
             });
         }

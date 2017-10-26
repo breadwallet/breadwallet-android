@@ -86,6 +86,7 @@ public class TransactionDataSource implements BRDataSourceInterface {
     }
 
     public BRTransactionEntity putTransaction(BRTransactionEntity transactionEntity) {
+        Cursor cursor = null;
         try {
             database = openDatabase();
             ContentValues values = new ContentValues();
@@ -96,11 +97,11 @@ public class TransactionDataSource implements BRDataSourceInterface {
 
             database.beginTransaction();
             database.insert(BRSQLiteHelper.TX_TABLE_NAME, null, values);
-            Cursor cursor = database.query(BRSQLiteHelper.TX_TABLE_NAME,
+            cursor = database.query(BRSQLiteHelper.TX_TABLE_NAME,
                     allColumns, null, null, null, null, null);
             cursor.moveToFirst();
             BRTransactionEntity transactionEntity1 = cursorToTransaction(cursor);
-            cursor.close();
+
             database.setTransactionSuccessful();
             for (OnTxAddedListener listener : listeners) {
                 if (listener != null) listener.onTxAdded();
@@ -113,6 +114,7 @@ public class TransactionDataSource implements BRDataSourceInterface {
         } finally {
             database.endTransaction();
             closeDatabase();
+            if (cursor != null) cursor.close();
         }
         return null;
 
@@ -188,8 +190,8 @@ public class TransactionDataSource implements BRDataSourceInterface {
     @Override
     public synchronized SQLiteDatabase openDatabase() {
 //        if (mOpenCounter.incrementAndGet() == 1) {
-            // Opening new database
-            database = dbHelper.getWritableDatabase();
+        // Opening new database
+        database = dbHelper.getWritableDatabase();
 //        }
 //        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
         return database;
