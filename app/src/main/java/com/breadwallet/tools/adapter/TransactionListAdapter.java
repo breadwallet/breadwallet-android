@@ -312,23 +312,20 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void filter(final String query, final boolean[] switches) {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-        long start = System.currentTimeMillis();
+//        long start = System.currentTimeMillis();
         String lowerQuery = query.toLowerCase().trim();
 
         int switchesON = 0;
         for (boolean i : switches) if (i) switchesON++;
 
         final List<TxItem> filteredList = new LinkedList<>();
-        TxMetaData metaData;
+//        TxMetaData metaData;
         for (TxItem item : backUpFeed) {
-            metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
+//            metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
             if (item.getTxHashHexReversed().toLowerCase().contains(lowerQuery)
                     || item.getFrom()[0].toLowerCase().contains(lowerQuery)
                     || item.getTo()[0].toLowerCase().contains(lowerQuery) ||
-                    (metaData.comment != null && metaData.comment.toLowerCase().contains(lowerQuery))) {
+                    (item.metaData != null && item.metaData.comment != null && item.metaData.comment.toLowerCase().contains(lowerQuery))) {
                 if (switchesON == 0) {
                     filteredList.add(item);
                 } else {
@@ -362,10 +359,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
         itemFeed = filteredList;
         notifyDataSetChanged();
-//            }
-//        }).start();
 
-        Log.e(TAG, "filter: " + query + " took: " + (System.currentTimeMillis() - start));
+//        Log.e(TAG, "filter: " + query + " took: " + (System.currentTimeMillis() - start));
     }
 
     private class TxHolder extends RecyclerView.ViewHolder {

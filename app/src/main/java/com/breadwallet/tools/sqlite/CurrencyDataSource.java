@@ -42,7 +42,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class CurrencyDataSource implements BRDataSourceInterface{
+public class CurrencyDataSource implements BRDataSourceInterface {
     private static final String TAG = CurrencyDataSource.class.getName();
 
     private AtomicInteger mOpenCounter = new AtomicInteger();
@@ -69,11 +69,12 @@ public class CurrencyDataSource implements BRDataSourceInterface{
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
-    public void putCurrencies(Collection<CurrencyEntity> currencyEntities) {
+    public synchronized void putCurrencies(Collection<CurrencyEntity> currencyEntities) {
         if (currencyEntities == null) return;
-        database = openDatabase();
-        database.beginTransaction();
+
         try {
+            database = openDatabase();
+            database.beginTransaction();
             for (CurrencyEntity c : currencyEntities) {
                 ContentValues values = new ContentValues();
                 values.put(BRSQLiteHelper.CURRENCY_CODE, c.code);
@@ -94,60 +95,75 @@ public class CurrencyDataSource implements BRDataSourceInterface{
 
     }
 
-    public void deleteAllCurrencies() {
-        database = openDatabase();
-        database.delete(BRSQLiteHelper.CURRENCY_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID + " <> -1", null);
-        closeDatabase();
+    public synchronized void deleteAllCurrencies() {
+        try {
+            database = openDatabase();
+            database.delete(BRSQLiteHelper.CURRENCY_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID + " <> -1", null);
+        } finally {
+            closeDatabase();
+        }
     }
 
-    public List<CurrencyEntity> getAllCurrencies() {
-        database = openDatabase();
+    public synchronized List<CurrencyEntity> getAllCurrencies() {
+
         List<CurrencyEntity> currencies = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            database = openDatabase();
 
-        Cursor cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
-                allColumns, null, null, null, null, "\'" + BRSQLiteHelper.CURRENCY_CODE + "\'");
+            cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
+                    allColumns, null, null, null, null, "\'" + BRSQLiteHelper.CURRENCY_CODE + "\'");
 
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            CurrencyEntity curEntity = cursorToCurrency(cursor);
-            currencies.add(curEntity);
-            cursor.moveToNext();
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                CurrencyEntity curEntity = cursorToCurrency(cursor);
+                currencies.add(curEntity);
+                cursor.moveToNext();
+            }
+            // make sure to close the cursor
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
         }
-        // make sure to close the cursor
 
-        cursor.close();
-        Log.e(TAG, "getAllCurrencies: " + currencies.size());
-        closeDatabase();
         return currencies;
     }
 
-    public List<String> getAllISOs() {
-        database = openDatabase();
+    public synchronized List<String> getAllISOs() {
         List<String> ISOs = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            database = openDatabase();
 
-        Cursor cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
-                allColumns, null, null, null, null, null);
+            cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
+                    allColumns, null, null, null, null, null);
 
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            CurrencyEntity curEntity = cursorToCurrency(cursor);
-            ISOs.add(curEntity.code);
-            cursor.moveToNext();
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                CurrencyEntity curEntity = cursorToCurrency(cursor);
+                ISOs.add(curEntity.code);
+                cursor.moveToNext();
+            }
+            // make sure to close the cursor
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
         }
-        // make sure to close the cursor
 
-        cursor.close();
-        closeDatabase();
         return ISOs;
     }
 
-    public CurrencyEntity getCurrencyByIso(String iso) {
-        database = openDatabase();
-
-        Cursor cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
-                allColumns, BRSQLiteHelper.CURRENCY_CODE + "=\'" + iso + "\'", null, null, null, null);
-
+    public synchronized CurrencyEntity getCurrencyByIso(String iso) {
+        Cursor cursor = null;
         try {
+            database = openDatabase();
+
+            cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
+                    allColumns, BRSQLiteHelper.CURRENCY_CODE + "=\'" + iso + "\'", null, null, null, null);
+
+
             cursor.moveToFirst();
             if (!cursor.isAfterLast()) {
                 return cursorToCurrency(cursor);

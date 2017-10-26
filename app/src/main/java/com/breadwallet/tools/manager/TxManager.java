@@ -232,6 +232,7 @@ public class TxManager {
                         tx.comment = comment == null ? "" : comment;
 //                        tx.classVersion = ...
                         kvM.putTxMetaData(app, tx, item.getTxHash());
+                        item.metaData = tx;
                     }
                 }
                 isMetaDataUpdating = false;

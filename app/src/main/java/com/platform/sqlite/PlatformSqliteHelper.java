@@ -36,7 +36,7 @@ public class PlatformSqliteHelper extends SQLiteOpenHelper {
 //    private static PlatformSqliteHelper instance;
 
     public static final String DATABASE_NAME = "platform.db";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
 
 //    public static synchronized PlatformSqliteHelper getInstance(Context context) {
 //
@@ -73,6 +73,7 @@ public class PlatformSqliteHelper extends SQLiteOpenHelper {
 
     public PlatformSqliteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        setWriteAheadLoggingEnabled(true);
     }
 
     @Override

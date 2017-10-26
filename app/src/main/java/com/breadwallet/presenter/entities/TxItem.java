@@ -2,6 +2,7 @@ package com.breadwallet.presenter.entities;
 
 
 import com.breadwallet.tools.util.Utils;
+import com.platform.entities.TxMetaData;
 
 /**
  * BreadWallet
@@ -42,6 +43,7 @@ public class TxItem {
     private long outAmounts[];
     private boolean isValid;
     private int txSize;
+    public TxMetaData metaData;
 
     private TxItem() {
     }
@@ -118,4 +120,5 @@ public class TxItem {
     public boolean isValid() {
         return isValid;
     }
+
 }

@@ -3,6 +3,7 @@ package com.breadwallet.tools.threads;
 import android.util.Log;
 
 import java.util.concurrent.Executor;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -45,11 +46,11 @@ public class BRExecutor implements RejectedExecutionHandler {
     /*
     * thread pool executor for background tasks
     */
-    private final PriorityThreadPoolExecutor mForBackgroundTasks;
+    private final ThreadPoolExecutor mForBackgroundTasks;
     /*
     * thread pool executor for light weight background tasks
     */
-    private final PriorityThreadPoolExecutor mForLightWeightBackgroundTasks;
+    private final ThreadPoolExecutor mForLightWeightBackgroundTasks;
     /*
     * thread pool executor for main thread tasks
     */
@@ -82,21 +83,23 @@ public class BRExecutor implements RejectedExecutionHandler {
                 PriorityThreadFactory(android.os.Process.THREAD_PRIORITY_BACKGROUND);
 
         // setting the thread pool executor for mForBackgroundTasks;
-        mForBackgroundTasks = new PriorityThreadPoolExecutor(
+        mForBackgroundTasks = new ThreadPoolExecutor(
                 NUMBER_OF_CORES * 5,
                 NUMBER_OF_CORES * 20,
                 120L,
                 TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>(),
                 backgroundPriorityThreadFactory,
                 this
         );
 
         // setting the thread pool executor for mForLightWeightBackgroundTasks;
-        mForLightWeightBackgroundTasks = new PriorityThreadPoolExecutor(
+        mForLightWeightBackgroundTasks = new ThreadPoolExecutor(
                 NUMBER_OF_CORES * 3,
                 NUMBER_OF_CORES * 8,
                 30L,
                 TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>(),
                 backgroundPriorityThreadFactory,
                 this
         );
