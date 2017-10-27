@@ -961,7 +961,7 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             final Fragment parent = getParentFragment();
             return new AlertDialog.Builder(getActivity())
-                    .setMessage(getString(R.string.Permissions_title_Android))
+                    .setMessage(getString(R.string.Send_cameraUnavailabeTitle_Android))
                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {

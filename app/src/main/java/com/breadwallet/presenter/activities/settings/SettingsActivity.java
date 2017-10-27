@@ -155,7 +155,7 @@ public class SettingsActivity extends BRActivity {
         }, false));
 
         if (AuthManager.isFingerPrintAvailableAndSetup(this)) {
-            items.add(new BRSettingsItem(getString(R.string.Settings_fingerprintLimit_Android), "", new View.OnClickListener() {
+            items.add(new BRSettingsItem(getString(R.string.Settings_touchIdLimit_Android), "", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     AuthManager.getInstance().authPrompt(SettingsActivity.this, null, getString(R.string.VerifyPin_continueBody), true, new BRAuthCompletion() {

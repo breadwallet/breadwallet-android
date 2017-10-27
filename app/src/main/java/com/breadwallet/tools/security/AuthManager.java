@@ -265,7 +265,7 @@ public class AuthManager {
         } else {
             BRDialog.showCustomDialog(app,
                     "",
-                    app.getString(R.string.Warning_encryption_body_Android),
+                    app.getString(R.string.Prompts_NoScreenLock_body_Android),
                     app.getString(R.string.AccessibilityLabels_close),
                     null,
                     new BRDialogView.BROnClickListener() {
