@@ -18,6 +18,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -188,7 +189,7 @@ public class TxManager {
     }
 
     public synchronized void updateTxList(final Context app) {
-        Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI" );
+        Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI");
         if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         final TxItem[] arr = BRWalletManager.getInstance().getTransactions();
         updateTxMetaData(app, arr);
@@ -217,7 +218,8 @@ public class TxManager {
                     for (TxItem item : arr) {
                         KVStoreManager kvM = KVStoreManager.getInstance();
                         String iso = BRSharedPrefs.getIso(app);
-                        double rate = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso).rate;
+                        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
+                        double rate = ent == null ? 0 : ent.rate;
                         TxMetaData temp = kvM.getTxMetaData(app, item.getTxHash());
                         String comment = temp == null ? "" : temp.comment;
 
