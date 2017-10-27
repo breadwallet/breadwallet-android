@@ -52,6 +52,10 @@ public class BRExecutor implements RejectedExecutionHandler {
     */
     private final ThreadPoolExecutor mForLightWeightBackgroundTasks;
     /*
+    * thread pool executor for serialized tasks (one at the time)
+    */
+    private final ThreadPoolExecutor mForSerializedTasks;
+    /*
     * thread pool executor for main thread tasks
     */
     private final Executor mMainThreadExecutor;
@@ -103,6 +107,16 @@ public class BRExecutor implements RejectedExecutionHandler {
                 backgroundPriorityThreadFactory,
                 this
         );
+        // setting the thread pool executor for mForLightWeightBackgroundTasks;
+        mForSerializedTasks = new ThreadPoolExecutor(
+                1,
+                1,
+                30L,
+                TimeUnit.SECONDS,
+                new LinkedBlockingQueue<Runnable>(),
+                backgroundPriorityThreadFactory,
+                this
+        );
 
         // setting the thread pool executor for mMainThreadExecutor;
         mMainThreadExecutor = new MainThreadExecutor();
@@ -121,6 +135,13 @@ public class BRExecutor implements RejectedExecutionHandler {
     */
     public ThreadPoolExecutor forLightWeightBackgroundTasks() {
         return mForLightWeightBackgroundTasks;
+    }
+
+    /*
+    * returns the thread pool executor for serialized task
+    */
+    public ThreadPoolExecutor forSerializedTasks() {
+        return mForSerializedTasks;
     }
 
     /*

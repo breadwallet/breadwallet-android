@@ -40,7 +40,6 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
     public static BRSQLiteHelper getInstance(Context context) {
         if (instance == null) instance = new BRSQLiteHelper(context);
-        instance.setWriteAheadLoggingEnabled(true);
         return instance;
     }
 
