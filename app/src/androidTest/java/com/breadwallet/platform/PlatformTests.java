@@ -7,6 +7,7 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.util.BRCompressor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.jniwrappers.BRKey;
 import com.platform.APIClient;
@@ -79,7 +80,7 @@ public class PlatformTests {
 
     //loading the native library
     static {
-        System.loadLibrary("core");
+        System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
     }
 
     @Test

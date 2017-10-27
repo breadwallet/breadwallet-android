@@ -2,6 +2,7 @@ package com.breadwallet.wallet;
 
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
+import com.breadwallet.tools.util.BRConstants;
 
 
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class WalletTests {
     public static final String TAG = WalletTests.class.getName();
 
     static {
-        System.loadLibrary("core");
+        System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
     }
 
     @Test

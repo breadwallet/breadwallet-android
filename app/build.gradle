@@ -12,65 +12,81 @@ android {
         targetSdkVersion  26
         versionCode = 123
         versionName = "123"
+        multiDexEnabled true
+
+        // Similar to other properties in the defaultConfig block,
+        // you can configure the ndk block for each product flavor
+        // in your build configuration.
+        ndk {
+            // Specifies the ABI configurations of your native
+            // libraries Gradle should build and package with your APK.
+            abiFilters 'x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+        }
+        externalNativeBuild {
+            cmake {
+                arguments  "-DANDROID_TOOLCHAIN=clang"
+            }
+        }
 
     }
 
+//    packagingOptions {
+//        exclude 'protobuf.meta'
+//    }
+
+    externalNativeBuild {
+        cmake {
+            // When you specify a version of CMake, as shown below,
+            // the Android plugin searches for its binary within your
+            // PATH environmental variable.
+            path "CMakeLists.txt"  //path can only be set outside (in android block)
+
+        }
+    }
+
     // Specifies two flavor dimensions.
-    flavorDimensions "MN", "TN"
+    flavorDimensions "mode"
 
     productFlavors {
         bread {
             applicationId "com.breadwallet"
-            dimension "MN"
+            dimension "mode"
             resValue "string", "app_name", "bread"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
+
             externalNativeBuild {
                 cmake {
 
                     // When you specify a version of CMake, as shown below,
                     // the Android plugin searches for its binary within your
                     // PATH environmental variable.
-                    version "3.10.0-rc3"
+                    cFlags "-DBITCOIN_TESTNET=0"
+                    targets "core-lib"
                 }
             }
-//                ndk {
-//                    CFlags.addAll(['-DBITCOIN_TESTNET=1'])
-//                }
         }
-        bread_testnet {
+
+        breadTestnet {
             applicationId "com.breadtestnet"
-            dimension "TN"
+            dimension "mode"
             resValue "string", "app_name", "bread-testnet"
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"
 
-//            ndk {
-//                CFlags.addAll(['-DBITCOIN_TESTNET=1'])
-//            }
+            externalNativeBuild {
+                cmake {
+                    // When you specify a version of CMake, as shown below,
+                    // the Android plugin searches for its binary within your
+                    // PATH environmental variable.
+                    cFlags "-DBITCOIN_TESTNET=1"
+                    targets "core-lib"
+                }
+            }
 
         }
 
     }
 
-//    ndk {
-//        platformVersion = "23"
-//        abiFilters.addAll(['x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'arm64-v8a'])
-//        moduleName = "core"
-//        toolchain = "clang"
-//
-//        CFlags.addAll(['-std=c99', '-g', '-DBITCOIN_TESTNET=0', '-I' + file('src/main/secp/secp256k1/include'),
-//                       '-I' + file('src/main/secp/secp256k1'), '-I' + file('src/main/secp'), '-I' + file('src/main/jni/breadwallet-core'),
-//                       '-I' + file('src/main/jni/transition'), '-Wno-trigraphs', /**'-Wmissing',*/
-//                       '-Wno-missing-prototypes', '-Werror=return-type',
-//                       '-Wdocumentation', '-Wunreachable-code-aggressive', '-Wno-missing-braces', '-Wparentheses', '-Wswitch', '-Wno-unused-function',
-//                       '-Wunused-label', '-Wno-unused-parameter', '-Wunused-variable', '-Wunused-value', '-Wempty-body',
-//                       '-Wconditional-uninitialized', '-Wno-unknown-pragmas', '-pedantic', '-Wshadow', '-Wfour-char-constants',
-//                       '-Wno-conversion', '-Wconstant-conversion', '-Wint-conversion', '-Wbool-conversion ', '-Wenum-conversion',
-//                       '-Wassign-enum', '-Wno-shorten-64-to-32', '-Wpointer-sign', '-Wnewline-eof', '-Wdeprecated-declarations', '-Wno-sign-conversion'])
-//        ldLibs.addAll(['android', 'log'])
-//        stl = 'gnustl_static'
-//    }
-
-    lintOptions.with {
+    lintOptions {
         // set to true to turn off analysis progress reporting by lint
         quiet = false
         explainIssues = true
@@ -84,7 +100,7 @@ android {
 
     buildTypes {
         gitUpdateModules()
-//        proguardFiles  'proguard-rules.pro'
+//        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         release {
             minifyEnabled = false
             debuggable = false
@@ -114,6 +130,7 @@ def gitUpdateModules() {
 
 repositories {
     mavenCentral()
+    google()
 }
 
 dependencies {
@@ -134,9 +151,9 @@ dependencies {
     implementation 'io.sigpipe:jbsdiff:1.0'
     implementation 'com.google.zxing:core:3.2.1'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-//    androidTestCompile 'com.android.support:support-annotations:27.0.0'
-//    androidTestCompile 'com.android.support.test:runner:1.0.1'
-//    androidTestCompile 'com.android.support.test:rules:1.0.1'
-//    androidTestCompile 'junit:junit:4.12'
-//    androidTestCompile 'com.android.support.test.espresso:espresso-core:3.0.1'
+//    implementation 'com.android.support:support-annotations:27.0.0'
+    implementation 'com.android.support.test:runner:1.0.1'
+    implementation 'com.android.support.test:rules:1.0.1'
+    implementation 'junit:junit:4.12'
+    implementation 'com.android.support.test.espresso:espresso-core:3.0.1'
 }

@@ -123,7 +123,7 @@ public class    BreadActivity extends BRActivity implements BRWalletManager.OnBa
     }
 
     static {
-        System.loadLibrary("core");
+        System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
     }
 
     @Override
