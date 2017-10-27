@@ -279,21 +279,21 @@ public class FragmentReceive extends Fragment {
     }
 
     private void updateQr() {
-        Activity ctx = (Activity) getContext();
-        if (ctx == null) ctx = BreadApp.getBreadContext();
-        final Context finalCtx = ctx;
-        final Activity finalCtx1 = ctx;
+       final Activity ctx = getContext() == null? BreadApp.getBreadContext() : (Activity) getContext();
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                boolean success = BRWalletManager.refreshAddress(finalCtx);
-                if (!success) throw new RuntimeException("failed to retrieve address");
-                finalCtx1.runOnUiThread(new Runnable() {
+                boolean success = BRWalletManager.refreshAddress(ctx);
+                if (!success) {
+                    ctx.onBackPressed();
+                    return;
+                }
+                ctx.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        receiveAddress = BRSharedPrefs.getReceiveAddress(finalCtx1);
+                        receiveAddress = BRSharedPrefs.getReceiveAddress(ctx);
                         mAddress.setText(receiveAddress);
-                        boolean generated = QRUtils.generateQR(finalCtx1, "bitcoin:" + receiveAddress, mQrImage);
+                        boolean generated = QRUtils.generateQR(ctx, "bitcoin:" + receiveAddress, mQrImage);
                         if (!generated)
                             throw new RuntimeException("failed to generate qr image for address");
                     }

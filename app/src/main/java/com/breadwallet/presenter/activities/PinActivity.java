@@ -207,7 +207,7 @@ public class PinActivity extends BRActivity {
         inputAllowed = true;
         ActivityUTILS.init(this);
         if (!BRWalletManager.getInstance().isCreated()) {
-            BRExecutor.getInstance().forSerializedTasks().execute(new Runnable() {
+            BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     BRWalletManager.getInstance().initWallet(PinActivity.this);

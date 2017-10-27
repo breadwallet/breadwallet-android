@@ -318,7 +318,7 @@ public class    BreadActivity extends BRActivity implements BRWalletManager.OnBa
         setupNetworking();
 
         if (!BRWalletManager.getInstance().isCreated()) {
-            BRExecutor.getInstance().forSerializedTasks().execute(new Runnable() {
+            BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     BRWalletManager.getInstance().initWallet(BreadActivity.this);
