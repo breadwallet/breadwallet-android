@@ -741,7 +741,7 @@ public class APIClient {
         });
 
         //update kvStore
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+        BRExecutor.getInstance().forSerializedTasks().execute(new Runnable() {
             @Override
             public void run() {
                 Thread.currentThread().setName("updatePlatform");

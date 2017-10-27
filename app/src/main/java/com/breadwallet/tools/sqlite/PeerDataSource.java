@@ -153,8 +153,10 @@ public class PeerDataSource implements BRDataSourceInterface {
     @Override
     public synchronized SQLiteDatabase openDatabase() {
 //        if (mOpenCounter.incrementAndGet() == 1) {
-            // Opening new database
+        // Opening new database
+        if (database == null)
             database = dbHelper.getWritableDatabase();
+        dbHelper.setWriteAheadLoggingEnabled(true);
 //        }
 //        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
         return database;
@@ -163,7 +165,7 @@ public class PeerDataSource implements BRDataSourceInterface {
     @Override
     public synchronized void closeDatabase() {
 //        if (mOpenCounter.decrementAndGet() == 0) {
-            // Closing database
+        // Closing database
 //            database.close();
 
 //        }

@@ -318,7 +318,7 @@ public class    BreadActivity extends BRActivity implements BRWalletManager.OnBa
         setupNetworking();
 
         if (!BRWalletManager.getInstance().isCreated()) {
-            BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            BRExecutor.getInstance().forSerializedTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     BRWalletManager.getInstance().initWallet(BreadActivity.this);
@@ -364,7 +364,7 @@ public class    BreadActivity extends BRActivity implements BRWalletManager.OnBa
 
         //sync the kv stores
         if (PLATFORM_ON) {
-            BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            BRExecutor.getInstance().forSerializedTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     APIClient.getInstance(BreadActivity.this).syncKvStore();

@@ -46,16 +46,13 @@ import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class ReplicatedKVStore {
     private static final String TAG = ReplicatedKVStore.class.getName();
 
-    private AtomicInteger mOpenCounter = new AtomicInteger();
+//    private AtomicInteger mOpenCounter = new AtomicInteger();
     private SQLiteDatabase mDatabase;
 
     private static final String KEY_REGEX = "^[^_][\\w-]{1,255}$";
@@ -81,16 +78,18 @@ public class ReplicatedKVStore {
     };
 
     public ReplicatedKVStore(Context context, KVStoreAdaptor remoteKvStore) {
+//        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         this.context = context;
         this.remoteKvStore = remoteKvStore;
         dbHelper = new PlatformSqliteHelper(context);
-        dbHelper.setWriteAheadLoggingEnabled(true);
     }
 
     public synchronized SQLiteDatabase getWritable() {
 //        if (mOpenCounter.incrementAndGet() == 1) {
         // Opening new database
-        mDatabase = dbHelper.getWritableDatabase();
+        if (mDatabase == null)
+            mDatabase = dbHelper.getWritableDatabase();
+        dbHelper.setWriteAheadLoggingEnabled(true);
 //        }
 //        Log.d(TAG, "getWritable open counter: " + String.valueOf(mOpenCounter.get()));
         return mDatabase;
@@ -99,7 +98,9 @@ public class ReplicatedKVStore {
     public synchronized SQLiteDatabase getReadable() {
 //        if (mOpenCounter.incrementAndGet() == 1) {
         // Opening new database
-        mDatabase = dbHelper.getWritableDatabase();
+        if (mDatabase == null)
+            mDatabase = dbHelper.getWritableDatabase();
+        dbHelper.setWriteAheadLoggingEnabled(true);
 //        }
 //        Log.d(TAG, "getReadable open counter: " + String.valueOf(mOpenCounter.get()));
         return mDatabase;
@@ -222,7 +223,7 @@ public class ReplicatedKVStore {
     /**
      * get kv by key and version (version can be 0)
      */
-    public CompletionObject get(String key, long version, byte[] authKey) {
+    public synchronized CompletionObject get(String key, long version, byte[] authKey) {
         KVItem kv = null;
         Cursor cursor = null;
         long curVer = 0;
