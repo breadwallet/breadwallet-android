@@ -24,15 +24,15 @@ android {
         }
         externalNativeBuild {
             cmake {
-                arguments  "-DANDROID_TOOLCHAIN=clang"
+                arguments "-DANDROID_TOOLCHAIN=clang"
             }
         }
 
     }
 
-//    packagingOptions {
-//        exclude 'protobuf.meta'
-//    }
+    packagingOptions {
+        pickFirst 'protobuf.meta'
+    }
 
     externalNativeBuild {
         cmake {
