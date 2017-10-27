@@ -55,7 +55,7 @@
                         android:layout_height="wrap_content"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
-                        android:text="@string/App.name.Android"
+                        android:text="@string/About.appName.Android"
                         android:textColor="@color/white"
                         android:textSize="36sp"
                         android:textStyle="bold"

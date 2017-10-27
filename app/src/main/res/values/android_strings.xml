@@ -1,54 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- Device authentication title -->
-    <string name="App.name.Android">bread</string>
-    <!-- Device authentication title -->
-    <string name="Auth.title.Android">Authentication required</string>
-    <!-- Instruction to touch the sensor for fingerprint authentication -->
-    <string name="Auth.touch.Android">Touch Sensor</string>
-    <!-- Device authentication body -->
-    <string name="Auth.body.Android">Please unlock your device to continue.</string>
-    <!-- Enable Fingerprint prompt body -->
-    <string name="Prompts.Fingerprint.body.Android">Tap here to enable Fingerprint</string>
-    <!-- Enable Fingerprint prompt title -->
-    <string name="Prompts.Fingerprint.title.Android">Enable Fingerprint</string>
+    <!-- Device authentication title [from App.name]-->
+    <string name="About.appName.Android">Bread</string>
+    <!-- Device authentication title [from Auth.title.Android] -->
+    <string name="UnlockScreen.touchIdTitle.Android">Authentication required</string>
+    <!-- Instruction to touch the sensor for fingerprint authentication [from Auth.touch.Android] -->
+    <string name="UnlockScreen.touchIdInstructions.Android">Touch Sensor</string>
+    <!-- Device authentication body [from Auth.body.Android] -->
+    <string name="UnlockScreen.touchIdPrompt.Android">Please unlock your device to continue.</string>
+    <!-- Enable Fingerprint prompt body [from Prompts.Fingerprint.body.Android]-->
+    <string name="Prompts.TouchId.body.Android">Tap here to enable fingerprint authentication</string>
+    <!-- Enable Fingerprint prompt title [from Prompts.Fingerprint.title.Android]-->
+    <string name="Prompts.TouchId.title.Android">Enable Fingerprint Authentication</string>
+    <!-- Fingerprint [from Fingerprint.Android]-->
+    <string name="TouchIdSettings.title.Android">Fingerprint Authentication</string>
+    <!-- Enable fingerprint for this wallet called Bread [from Fingerprint.enable.Android]-->
+    <string name="TouchIdSettings.switchLabel.Android">Enable Fingerprint Authentication for Bread</string>
+    <!-- Fingerprint enabling description body [from Fingerprint.body.Android]-->
+    <string name="TouchIdSettings.customizeText.Android">You can customize your Fingerprint Authentication Spending Limit from the Fingerprint Authorization Spending Limit screen</string>
+    <!-- Fingerprint limit [from Fingerprint.limit.Android]-->
+    <string name="TouchIdSpendingLimit.title.Android">Fingerprint Authorization Spending Limit</string>
+    <!-- Fingerprint Is Not Setup [from Fingerprint.warning.title.Android]-->
+    <string name="TouchIdSettings.disabledWarning.title.Android">Fingerprint Authentication Not Enabled</string>
+    <!-- Instruction for the fingerprint setup [from Fingerprint.warning.body.Android]-->
+    <string name="TouchIdSettings.disabledWarning.body.Android">You have not enabled fingerprint authentication on this device. Go to Settings -> Security to set up fingerprint authentication.</string>
+    <!-- Fingerprint was recognized by the scanner [from Fingerprint.recognized.Android]-->
+    <string name="Alerts.touchIdSucceeded.Android">Fingerprint recognized</string>
+    <!-- Fingerprint was not recognized by the scanner, please try scanning again [from Fingerprint.not.recognized.Android]-->
+    <string name="ErrorMessages.touchIdFailed.Android">Fingerprint not recognized. Please try again.</string>
+    <!-- The fingerprint spending limit [from Settings.fingerprintLimit.Android]-->
+    <string name="Settings.touchIdLimit.Android">Fingerprint Authentication Spending Limit</string>
+    <!-- Permission required [from Permissions.title.Android]-->
+    <string name="Send.cameraUnavailabeTitle.Android">Bread is now allowed to access the camera</string>
+    <!-- Instructions how to allow the camera access for the app [from Permissions.body.Android]-->
+    <string name="Send.cameraUnavailabeMessage.Android">Allow camera access in \"Settings\" > \"Apps\" > \"Bread\" > \"Permissions\"</string>
+    <!-- Button on fingerprint prompt so the user can enter their PIN instead [from Pin.title.Android]-->
+    <string name="Prompts.TouchId.usePin.Android">PIN</string>
+    <!-- Instruction how to enable device encryption [from Warning.encryption.body.Android]-->
+    <string name="Prompts.NoScreenLock.body.Android">A device screen lock is needed to safeguard your wallet. Go to \"Settings\" > \"Security\" > \"Screen lock\" and enable to continue.</string>
+    <!-- Prompt title [new]-->
+    <string name="Prompts.NoScreenLock.title.Android">Screen lock disabled</string>
+
+        //Missed ones
     <!-- Fingerprint -->
     <string name="Fingerprint.Android">Fingerprint</string>
-    <!-- Enable fingerprint for this wallet called Bread -->
-    <string name="Fingerprint.enable.Android">Enable Fingerprint for Bread</string>
-    <!-- Fingerprint enabling description body -->
-    <string name="Fingerprint.body.Android">You can customize your Fingerprint Spending Limit from the Fingerprint Spending Limit screen</string>
-    <!-- Fingerprint limit -->
-    <string name="Fingerprint.limit.Android">Fingerprint Limit</string>
-    <!-- Fingerprint Is Not Setup -->
-    <string name="Fingerprint.warning.title.Android">Fingerprint Not Setup</string>
-    <!-- Instruction for the fingerprint setup -->
-    <string name="Fingerprint.warning.body.Android">You have not setup any fingerprints on this device. Go to Settings -> Security to setup a fingerprint.</string>
-    <!-- Instruction for how you can customize the spending limit -->
-    <string name="Fingerprint.customize.body.Android">You can customize your Fingerprint Spending Limit from the Fingerprint Spending Limit screen</string>
-    <!-- The fingerprint spending limit -->
-    <string name="Settings.fingerprintLimit.Android">Fingerprint Spending Limit</string>
-    <!-- Permission required -->
-    <string name="Permissions.title.Android">Permission Required</string>
-    <!-- Instructions how to allow the camera access for the app -->
-    <string name="Permissions.body.Android">Allow camera access in \"Settings\" > \"Apps\" > \"breadwallet\" > \"Permissions\"</string>
-    <!-- Switch button from fingerprint to PIN insert -->
-    <string name="Pin.title.Android">PIN</string>
-    <!-- Fingerprint was recognized by the scanner -->
-    <string name="Fingerprint.recognized.Android">Fingerprint recognized</string>
-    <!-- Fingerprint was not recognized by the scanner, please try scanning again -->
-    <string name="Fingerprint.not.recognized.Android">Fingerprint not recognized. Try again</string>
-    <!-- Instruction how to enable device encryption -->
-    <string name="Warning.encryption.body.Android">A device screen lock is needed to safeguard your wallet. Go to \"Settings\" > \"Security\" > \"Screen lock\" and enable to continue.</string>
-    <!-- Keystore error -->
-    <string name="Warning.keystore.error.Android">Paper Key error, please contact support@breadwallet.com</string>
-    <!-- Third party keyboard warning -->
-    <string name="Warning.keyboard.error.Android">It looks like you are using a third-party keyboard, which can record what you type and steal your Paper Key. Please switch to the default Android keyboard for extra protection.</string>
-    <!-- Pin attempts remaining with placeholder -->
-    <string name="Disabled.remainingAttempts.Android">%1$d attempts remaining</string>
     <!-- Pin attempts remaining with placeholder -->
     <string name="KeyStore.error.title.Android">KeyStore Error</string>
     <!-- KeyStore error, keys are invalidated error -->
     <string name="KeyStore.invalidatedKeys.body.Android">Your Bread encrypted data was recently invalidated because your Android lock screen was disabled.</string>
+    <!-- Pin attempts remaining with placeholder -->
+    <string name="Disabled.remainingAttempts.Android">%1$d attempts remaining</string>
+    <!-- Third party keyboard warning -->
+    <string name="Warning.keyboard.error.Android">It looks like you are using a third-party keyboard, which can record what you type and steal your Paper Key. Please switch to the default Android keyboard for extra protection.</string>
+    <!-- Keystore error -->
+    <string name="Warning.keystore.error.Android">Paper Key error, please contact support@breadwallet.com</string>
+
 
 </resources>
