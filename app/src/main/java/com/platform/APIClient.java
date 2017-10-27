@@ -119,6 +119,7 @@ public class APIClient {
     private static String BREAD_EXTRACTED;
     private static final boolean PRINT_FILES = false;
 
+    private SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
 
     private boolean platformUpdating = false;
     private AtomicInteger itemsLeftToUpdate = new AtomicInteger(0);
@@ -328,8 +329,6 @@ public class APIClient {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            SimpleDateFormat sdf =
-                    new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
             sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
             String httpDate = sdf.format(new Date());
 
@@ -362,70 +361,74 @@ public class APIClient {
         }
 
         Response response = null;
-        byte[] data = new byte[0];
+        ResponseBody postReqBody = null;
         try {
-            OkHttpClient client = new OkHttpClient.Builder().followRedirects(false).connectTimeout(60, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
-//            Log.e(TAG, "sendRequest: before executing the request: " + request.headers().toString());
-            Log.d(TAG, "sendRequest: headers for : " + request.url() + "\n" + request.headers());
-            String agent = Utils.getAgentString(ctx, "OkHttp/3.4.1");
-//            Log.e(TAG, "sendRequest: agent: " + agent);
-            request = request.newBuilder().header("User-agent", agent).build();
-            response = client.newCall(request).execute();
-            String s = null;
+            byte[] data = new byte[0];
             try {
-                data = response.body().bytes();
-                s = new String(data);
+                OkHttpClient client = new OkHttpClient.Builder().followRedirects(false).connectTimeout(60, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
+//            Log.e(TAG, "sendRequest: before executing the request: " + request.headers().toString());
+                Log.d(TAG, "sendRequest: headers for : " + request.url() + "\n" + request.headers());
+                String agent = Utils.getAgentString(ctx, "OkHttp/3.4.1");
+//            Log.e(TAG, "sendRequest: agent: " + agent);
+                request = request.newBuilder().header("User-agent", agent).build();
+                response = client.newCall(request).execute();
+                String s = null;
+                try {
+                    data = response.body().bytes();
+                    s = new String(data);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                if (response.isRedirect()) {
+                    String newLocation = request.url().scheme() + "://" + request.url().host() + response.header("location");
+                    Uri newUri = Uri.parse(newLocation);
+                    if (newUri == null) {
+                        Log.e(TAG, "sendRequest: redirect uri is null");
+                    } else if (!newUri.getHost().equalsIgnoreCase(BreadApp.HOST) || !newUri.getScheme().equalsIgnoreCase(PROTO)) {
+                        Log.e(TAG, "sendRequest: WARNING: redirect is NOT safe: " + newLocation);
+                    } else {
+                        Log.w(TAG, "redirecting: " + request.url() + " >>> " + newLocation);
+                        return sendRequest(new Request.Builder().url(newLocation).get().build(), needsAuth, 0);
+                    }
+                    return new Response.Builder().code(500).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
+                return new Response.Builder().code(599).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build();
             }
 
-            if (response.isRedirect()) {
-                String newLocation = request.url().scheme() + "://" + request.url().host() + response.header("location");
-                Uri newUri = Uri.parse(newLocation);
-                if (newUri == null) {
-                    Log.e(TAG, "sendRequest: redirect uri is null");
-                } else if (!newUri.getHost().equalsIgnoreCase(BreadApp.HOST) || !newUri.getScheme().equalsIgnoreCase(PROTO)) {
-                    Log.e(TAG, "sendRequest: WARNING: redirect is NOT safe: " + newLocation);
-                } else {
-                    Log.w(TAG, "redirecting: " + request.url() + " >>> " + newLocation);
-                    return sendRequest(new Request.Builder().url(newLocation).get().build(), needsAuth, 0);
+            if (response.header("content-encoding") != null && response.header("content-encoding").equalsIgnoreCase("gzip")) {
+                Log.d(TAG, "sendRequest: the content is gzip, unzipping");
+                byte[] decompressed = gZipExtract(data);
+                postReqBody = ResponseBody.create(null, decompressed);
+                try {
+                    Log.d(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
+                            request.url(), response.code(), response.message(), new String(decompressed, "utf-8")));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
                 }
-                return new Response.Builder().code(500).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build();
+                return response.newBuilder().body(postReqBody).build();
+            } else {
+                try {
+                    Log.d(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
+                            request.url(), response.code(), response.message(), new String(data, "utf-8")));
+                } catch (UnsupportedEncodingException e) {
+                    e.printStackTrace();
+                }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-            return new Response.Builder().code(599).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build();
-        }
 
-        if (response.header("content-encoding") != null && response.header("content-encoding").equalsIgnoreCase("gzip")) {
-            Log.d(TAG, "sendRequest: the content is gzip, unzipping");
-            byte[] decompressed = gZipExtract(data);
-            ResponseBody postReqBody = ResponseBody.create(null, decompressed);
-            try {
-                Log.d(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
-                        request.url(), response.code(), response.message(), new String(decompressed, "utf-8")));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
+            postReqBody = ResponseBody.create(null, data);
+            if (needsAuth && isBreadChallenge(response)) {
+                Log.d(TAG, "sendRequest: got authentication challenge from API - will attempt to get token");
+                getToken();
+                if (retryCount < 1) {
+                    sendRequest(request, true, retryCount + 1);
+                }
             }
-            return response.newBuilder().body(postReqBody).build();
-        } else {
-            try {
-                Log.d(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
-                        request.url(), response.code(), response.message(), new String(data, "utf-8")));
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-            }
+        } finally {
+            if(response!=null) response.close();
         }
-
-        ResponseBody postReqBody = ResponseBody.create(null, data);
-        if (needsAuth && isBreadChallenge(response)) {
-            Log.d(TAG, "sendRequest: got authentication challenge from API - will attempt to get token");
-            getToken();
-            if (retryCount < 1) {
-                sendRequest(request, true, retryCount + 1);
-            }
-        }
-
         return response.newBuilder().body(postReqBody).build();
     }
 
