@@ -31,6 +31,12 @@ import java.util.concurrent.TimeUnit;
 public class BRConstants {
 
     /**
+     * Native library name
+     */
+    public static final String NATIVE_LIB_NAME =  "core-lib";
+
+
+    /**
      * Permissions
      */
     public static final int CAMERA_REQUEST_ID = 34;

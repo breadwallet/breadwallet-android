@@ -70,7 +70,7 @@ public class PinActivity extends BRActivity {
     private Button rightButton;
 
     static {
-        System.loadLibrary("core");
+        System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
     }
 
     public static PinActivity getApp() {

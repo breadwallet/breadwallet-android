@@ -26,7 +26,7 @@ public class ImportActivity extends BRActivity {
     }
 
     static {
-        System.loadLibrary("core");
+        System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
     }
 
     @Override
