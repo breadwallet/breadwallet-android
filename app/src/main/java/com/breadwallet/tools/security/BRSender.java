@@ -3,12 +3,9 @@ package com.breadwallet.tools.security;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -81,7 +78,7 @@ public class BRSender {
                     long minAmount = BRWalletManager.getInstance().getMinOutputAmountRequested();
                     errTitle[0] = app.getString(R.string.Alerts_sendFailure);
                     errMessage[0] = String.format(Locale.getDefault(), app.getString(R.string.PaymentProtocol_Errors_smallPayment),
-                            BRConstants.bitcoinLowercase + new BigDecimal(minAmount).divide(new BigDecimal(100), BRConstants.ROUNDING_MODE));
+                            BRConstants.litecoinLowercase + new BigDecimal(minAmount).divide(new BigDecimal(100), BRConstants.ROUNDING_MODE));
                 } catch (SpendingNotAllowed spendingNotAllowed) {
                     showSpendNotAllowed(app);
                     return;
@@ -270,7 +267,7 @@ public class BRSender {
         //amount can't be less than the min
         if (request.amount < minOutput) {
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.PaymentProtocol_Errors_smallTransaction),
-                    BRConstants.bitcoinLowercase + new BigDecimal(minOutput).divide(new BigDecimal("100")));
+                    BRConstants.litecoinLowercase + new BigDecimal(minOutput).divide(new BigDecimal("100")));
 
 
             ((Activity) ctx).runOnUiThread(new Runnable() {
