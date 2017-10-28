@@ -11,7 +11,7 @@ import java.util.Currency;
 import java.util.Locale;
 import java.util.Objects;
 
-import static com.breadwallet.tools.util.BRConstants.CURRENT_UNIT_BITS;
+import static com.breadwallet.tools.util.BRConstants.CURRENT_UNIT_PHOTONS;
 
 /**
  * BreadWallet
@@ -107,7 +107,7 @@ public class BRCurrency {
         decimalFormatSymbols.setCurrencySymbol(symbol);
 //        currencyFormat.setMaximumFractionDigits(decimalPoints);
         currencyFormat.setGroupingUsed(true);
-        currencyFormat.setMaximumFractionDigits(BRSharedPrefs.getCurrencyUnit(app) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
+        currencyFormat.setMaximumFractionDigits(BRSharedPrefs.getCurrencyUnit(app) == BRConstants.CURRENT_UNIT_LITECOINS ? 8 : 2);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
         currencyFormat.setNegativeSuffix("");
@@ -123,18 +123,18 @@ public class BRCurrency {
     public static String getSymbolByIso(Context app, String iso) {
         String symbol;
         if (Objects.equals(iso, "LTC")) {
-            String currencySymbolString = BRConstants.bitcoinLowercase;
+            String currencySymbolString = BRConstants.litecoinLowercase;
             if (app != null) {
                 int unit = BRSharedPrefs.getCurrencyUnit(app);
                 switch (unit) {
-                    case CURRENT_UNIT_BITS:
-                        currencySymbolString = BRConstants.bitcoinLowercase;
+                    case CURRENT_UNIT_PHOTONS:
+                        currencySymbolString = "m" + BRConstants.litecoinLowercase;
                         break;
-                    case BRConstants.CURRENT_UNIT_MBITS:
-                        currencySymbolString = "m" + BRConstants.bitcoinUppercase;
+                    case BRConstants.CURRENT_UNIT_LITES:
+                        currencySymbolString = BRConstants.litecoinLowercase;
                         break;
-                    case BRConstants.CURRENT_UNIT_BITCOINS:
-                        currencySymbolString = BRConstants.bitcoinUppercase;
+                    case BRConstants.CURRENT_UNIT_LITECOINS:
+                        currencySymbolString = BRConstants.litecoinUppercase;
                         break;
                 }
             }
@@ -157,11 +157,11 @@ public class BRCurrency {
             if (app != null) {
                 int unit = BRSharedPrefs.getCurrencyUnit(app);
                 switch (unit) {
-                    case CURRENT_UNIT_BITS:
-                        return "Bits";
-                    case BRConstants.CURRENT_UNIT_MBITS:
-                        return "MBits";
-                    case BRConstants.CURRENT_UNIT_BITCOINS:
+                    case CURRENT_UNIT_PHOTONS:
+                        return "photons";
+                    case BRConstants.CURRENT_UNIT_LITES:
+                        return "lites";
+                    case BRConstants.CURRENT_UNIT_LITECOINS:
                         return "LTC";
                 }
             }

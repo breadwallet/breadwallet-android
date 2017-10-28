@@ -1,6 +1,5 @@
 package com.breadwallet.tools.manager;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -338,7 +337,7 @@ public class BRSharedPrefs {
 
     public static int getCurrencyUnit(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
-        return settingsToGet.getInt(BRConstants.CURRENT_UNIT, BRConstants.CURRENT_UNIT_BITCOINS);
+        return settingsToGet.getInt(BRConstants.CURRENT_UNIT, BRConstants.CURRENT_UNIT_LITES);
     }
 
     public static void putCurrencyUnit(Context context, int unit) {
