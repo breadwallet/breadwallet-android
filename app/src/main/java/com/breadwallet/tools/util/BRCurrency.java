@@ -11,7 +11,7 @@ import java.util.Currency;
 import java.util.Locale;
 import java.util.Objects;
 
-import static com.breadwallet.tools.util.BRConstants.CURRENT_UNIT_BITS;
+import static com.breadwallet.tools.util.BRConstants.CURRENT_UNIT_PHOTONS;
 
 /**
  * BreadWallet
@@ -107,7 +107,7 @@ public class BRCurrency {
         decimalFormatSymbols.setCurrencySymbol(symbol);
 //        currencyFormat.setMaximumFractionDigits(decimalPoints);
         currencyFormat.setGroupingUsed(true);
-        currencyFormat.setMaximumFractionDigits(BRSharedPrefs.getCurrencyUnit(app) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
+        currencyFormat.setMaximumFractionDigits(BRSharedPrefs.getCurrencyUnit(app) == BRConstants.CURRENT_UNIT_LITECOINS ? 8 : 2);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
         currencyFormat.setNegativeSuffix("");
@@ -127,13 +127,13 @@ public class BRCurrency {
             if (app != null) {
                 int unit = BRSharedPrefs.getCurrencyUnit(app);
                 switch (unit) {
-                    case CURRENT_UNIT_BITS:
+                    case CURRENT_UNIT_PHOTONS:
+                        currencySymbolString = "m" + BRConstants.bitcoinLowercase;
+                        break;
+                    case BRConstants.CURRENT_UNIT_LITES:
                         currencySymbolString = BRConstants.bitcoinLowercase;
                         break;
-                    case BRConstants.CURRENT_UNIT_MBITS:
-                        currencySymbolString = BRConstants.bitcoinLowercase;
-                        break;
-                    case BRConstants.CURRENT_UNIT_BITCOINS:
+                    case BRConstants.CURRENT_UNIT_LITECOINS:
                         currencySymbolString = BRConstants.bitcoinUppercase;
                         break;
                 }
@@ -157,11 +157,11 @@ public class BRCurrency {
             if (app != null) {
                 int unit = BRSharedPrefs.getCurrencyUnit(app);
                 switch (unit) {
-                    case CURRENT_UNIT_BITS:
-                        return "Bits";
-                    case BRConstants.CURRENT_UNIT_MBITS:
+                    case CURRENT_UNIT_PHOTONS:
+                        return "photons";
+                    case BRConstants.CURRENT_UNIT_LITES:
                         return "lites";
-                    case BRConstants.CURRENT_UNIT_BITCOINS:
+                    case BRConstants.CURRENT_UNIT_LITECOINS:
                         return "LTC";
                 }
             }
