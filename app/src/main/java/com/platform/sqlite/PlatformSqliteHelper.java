@@ -35,21 +35,20 @@ import com.breadwallet.BreadApp;
 public class PlatformSqliteHelper extends SQLiteOpenHelper {
     private static final String TAG = PlatformSqliteHelper.class.getName();
 
-//    private static PlatformSqliteHelper instance;
+    private static PlatformSqliteHelper instance;
 
     public static final String DATABASE_NAME = "platform.db";
     private static final int DATABASE_VERSION = 2;
 
-//    public static synchronized PlatformSqliteHelper getInstance(Context context) {
-//
-//        // Use the application context, which will ensure that you
-//        // don't accidentally leak an Activity's context.
-//        // See this article for more information: http://bit.ly/6LRzfx
-//        if (instance == null) {
-//            instance = new PlatformSqliteHelper(context.getApplicationContext());
-//        }
-//        return instance;
-//    }
+    private PlatformSqliteHelper(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    }
+
+    public static PlatformSqliteHelper getInstance() {
+        // Use the application context to ensure that we don't accidentally leak an Activity's context
+        if (instance == null) instance = new PlatformSqliteHelper(BreadApp.getInstance());
+        return instance;
+    }
 
     /**
      * KV Store table
@@ -72,11 +71,6 @@ public class PlatformSqliteHelper extends SQLiteOpenHelper {
             "   %s         INTEGER    NOT NULL, " +
             "   PRIMARY KEY (%s, %s) " +
             ");", KV_STORE_TABLE_NAME, KV_VERSION, KV_REMOTE_VERSION, KV_KEY, KV_VALUE, KV_TIME, KV_DELETED, KV_KEY, KV_VERSION);
-
-    public PlatformSqliteHelper() {
-        // Use the application context to ensure that we don't accidentally leak an Activity's context
-        super(BreadApp.getInstance(), DATABASE_NAME, null, DATABASE_VERSION);
-    }
 
     @Override
     public void onCreate(SQLiteDatabase database) {
