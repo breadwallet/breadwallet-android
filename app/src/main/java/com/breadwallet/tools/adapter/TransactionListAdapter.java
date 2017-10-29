@@ -3,6 +3,8 @@ package com.breadwallet.tools.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
+import android.support.annotation.UiThread;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v7.widget.RecyclerView;
@@ -78,6 +80,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private final int promptType = 1;
     private final int syncingType = 2;
     private byte[] tempAuthKey;
+    private PromptManager.PromptItem promptItem;
 
     public TransactionListAdapter(Context mContext, List<TxItem> items) {
         itemFeed = items;
@@ -131,9 +134,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0 && TxManager.getInstance().currentPrompt == PromptManager.PromptItem.SYNCING) {
+        if (position == 0 && promptItem == PromptManager.PromptItem.SYNCING) {
             return syncingType;
-        } else if (position == 0 && TxManager.getInstance().currentPrompt != null) {
+        } else if (position == 0 && promptItem != null) {
             return promptType;
         } else {
             return txType;
@@ -142,12 +145,28 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemCount() {
-        return TxManager.getInstance().currentPrompt == null ? itemFeed.size() : itemFeed.size() + 1;
+        return promptItem == null ? itemFeed.size() : itemFeed.size() + 1;
+    }
+
+    public void setPromptItem(final PromptManager.PromptItem promptItem) {
+        // Wait for a layout pass to complete before adding/changing a prompt
+        new Handler(Looper.getMainLooper()).post(new Runnable() {
+            @Override
+            public void run() {
+                boolean isNew = TransactionListAdapter.this.promptItem == null;
+                TransactionListAdapter.this.promptItem = promptItem;
+                if (isNew) {
+                    notifyItemInserted(0);
+                } else {
+                    notifyItemChanged(0);
+                }
+            }
+        });
     }
 
     private void setTexts(final TxHolder convertView, int position) {
 
-        TxItem item = itemFeed.get(TxManager.getInstance().currentPrompt == null ? position : position - 1);
+        TxItem item = itemFeed.get(promptItem == null ? position : position - 1);
         if (Utils.isNullOrEmpty(tempAuthKey)) {
             tempAuthKey = BRKeyStore.getAuthKey(mContext);
             new Handler().postDelayed(new Runnable() {
@@ -294,7 +313,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private int getResourceByPos(int pos) {
-        if (TxManager.getInstance().currentPrompt != null) pos--;
+        if (promptItem != null) pos--;
         if (itemFeed != null && itemFeed.size() == 1) {
             return R.drawable.tx_rounded;
         } else if (pos == 0) {

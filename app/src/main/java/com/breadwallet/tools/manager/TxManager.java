@@ -14,15 +14,11 @@ import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.tools.sqlite.TransactionDataSource;
-import com.breadwallet.tools.util.BRExchange;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.entities.TxMetaData;
@@ -100,7 +96,7 @@ public class TxManager {
                             PromptManager.PromptInfo info = PromptManager.getInstance().promptInfo(app, currentPrompt);
                             if (info != null)
                                 info.listener.onClick(view);
-                            currentPrompt = null;
+                            setPrompt(null);
                         }
                     }
                 }
@@ -129,7 +125,7 @@ public class TxManager {
                     @Override
                     public void run() {
                         if (progress > 0 && progress < 1) {
-                            currentPrompt = PromptManager.PromptItem.SYNCING;
+                            setPrompt(PromptManager.PromptItem.SYNCING);
                         } else {
                             showNextPrompt(app);
                         }
@@ -142,17 +138,22 @@ public class TxManager {
 
     }
 
+    private void setPrompt(PromptManager.PromptItem item) {
+        currentPrompt = item;
+        adapter.setPromptItem(currentPrompt);
+    }
+
     public void showPrompt(Activity app, PromptManager.PromptItem item) {
         if (item == null) throw new RuntimeException("can't be null");
         BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".displayed");
         if (currentPrompt != PromptManager.PromptItem.SYNCING) {
-            currentPrompt = item;
+            setPrompt(item);
         }
         updateCard(app);
     }
 
     public void hidePrompt(final Activity app, final PromptManager.PromptItem item) {
-        currentPrompt = null;
+        setPrompt(null);
         updateCard(app);
         if (item == PromptManager.PromptItem.SYNCING) {
             app.runOnUiThread(new Runnable() {
@@ -191,7 +192,7 @@ public class TxManager {
         PromptManager.PromptItem toShow = PromptManager.getInstance().nextPrompt(app);
         if (toShow != null) {
             Log.d(TAG, "showNextPrompt: " + toShow);
-            currentPrompt = toShow;
+            setPrompt(toShow);
             PromptManager.PromptInfo info = PromptManager.getInstance().promptInfo(app, currentPrompt);
             showInfoCard(true, info);
             updateCard(app);

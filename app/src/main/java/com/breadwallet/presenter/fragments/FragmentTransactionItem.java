@@ -240,10 +240,9 @@ public class FragmentTransactionItem extends Fragment {
                 break;
         }
 
-        if (availableForSpend && !sent) {
-            mAvailableSpend.setText(getString(R.string.Transaction_available));
-        } else {
-            signalLayout.removeView(mAvailableSpend);
+        Log.d(TAG, "confirmation percentage = " + percentage + (sent? "": ", available to spend"));
+        if (!sent && availableForSpend) {
+            mAvailableSpend.setVisibility(View.VISIBLE);
         }
 
         if (level == 6) {
