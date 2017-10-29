@@ -36,11 +36,7 @@ public class PaymentItem {
     public String comment;
 
     public PaymentItem(String[] addresses, byte[] tx, long theAmount, String theCn, boolean isAmountRequested) {
-        this.isAmountRequested = isAmountRequested;
-        this.serializedTx = tx;
-        this.addresses = addresses;
-        this.amount = theAmount;
-        this.cn = theCn;
+        this(addresses, tx, theAmount, theCn, isAmountRequested, "");
     }
 
     public PaymentItem(String[] addresses, byte[] tx,long theAmount, String theCn, boolean isAmountRequested, String comment) {

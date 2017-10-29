@@ -597,7 +597,7 @@ public class FragmentSend extends Fragment {
         BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) ? "0" : amountStr);
         BigDecimal satoshiAmount = BRExchange.getSatoshisFromAmount(getActivity(), iso, bigAmount);
 
-        long fee = Utils.isNullOrEmpty(amountStr) ? 0 : BRWalletManager.getInstance().feeForTransactionAmount(satoshiAmount.longValue());
+        long fee = satoshiAmount.longValue() == 0 ? 0 : BRWalletManager.getInstance().feeForTransactionAmount(satoshiAmount.longValue());
         BigDecimal feeForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance == 0 ? 0 : fee));
 
         //formattedBalance
@@ -666,7 +666,8 @@ public class FragmentSend extends Fragment {
     private void setButton(boolean isRegular) {
         if (isRegular) {
             isEconomyFee = false;
-            BRWalletManager.getInstance().setFeePerKb(BRSharedPrefs.getFeePerKb(getContext()), isEconomyFee);
+            // set wallet fee to regular
+            BRWalletManager.getInstance().setFeePerKb(BRSharedPrefs.getFeePerKb(getContext()), false);
             regular.setTextColor(getContext().getColor(R.color.white));
             regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue));
             economy.setTextColor(getContext().getColor(R.color.dark_blue));
@@ -675,7 +676,8 @@ public class FragmentSend extends Fragment {
             warningText.getLayoutParams().height = 0;
         } else {
             isEconomyFee = true;
-            BRWalletManager.getInstance().setFeePerKb(BRSharedPrefs.getEconomyFeePerKb(getContext()), isEconomyFee);
+            // set wallet fee to economy
+            BRWalletManager.getInstance().setFeePerKb(BRSharedPrefs.getEconomyFeePerKb(getContext()), false);
             regular.setTextColor(getContext().getColor(R.color.dark_blue));
             regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue_stroke));
             economy.setTextColor(getContext().getColor(R.color.white));
