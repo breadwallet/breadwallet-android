@@ -147,7 +147,7 @@ public class HTTPServer {
 
     private static boolean dispatch(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         Log.d(TAG, "TRYING TO HANDLE: " + target + " (" + request.getMethod() + ")");
-        final Activity app = BreadApp.getBreadContext();
+        final Activity app = BreadApp.getCurrentActivity();
         boolean result = false;
         if (target.equalsIgnoreCase("/_close")) {
             if (app != null) {

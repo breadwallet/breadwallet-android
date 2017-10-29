@@ -54,7 +54,7 @@ public class KVStorePlugin implements Plugin {
         if (target.startsWith("/_kv/")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             String key = target.replace("/_kv/", "");
-            Activity app = BreadApp.getBreadContext();
+            Activity app = BreadApp.getCurrentActivity();
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);

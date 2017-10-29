@@ -566,6 +566,8 @@
   <string name="TransactionDetails.emptyMessage">Your transactions will appear here.</string>
   <!-- "Received [$5] at [which of my addresses]" => This is the "at [which of my addresses]" part. -->
   <string name="TransactionDetails.from">at %1$s</string>
+  <!-- "Received [$5] from an address" -->
+  <string name="TransactionDetails.fromAddress">from %1$s</string>
   <!-- More button title -->
   <string name="TransactionDetails.more">More...</string>
   <!-- Moved $5.00 (as in "I moved $5 to another location") -->
@@ -594,6 +596,8 @@
   <string name="TransactionDirection.address">Received at this Address</string>
   <!-- (this transaction was) Sent to this address: -->
   <string name="TransactionDirection.to">Sent to this Address</string>
+  <!-- (this transaction was) Sent from this address: -->
+  <string name="TransactionDetails.sentFromAddress">Sent from this Address</string>
   <!-- Disabled until date -->
   <string name="UnlockScreen.disabled">Disabled until: %1$s</string>
   <!-- My Address button title -->

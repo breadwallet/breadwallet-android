@@ -15,10 +15,8 @@ import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.util.BytesUtil;
 
 import java.io.DataOutputStream;
-import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
-import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
@@ -146,7 +144,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
     }
 
     public static void handleMessage() {
-        Activity app = BreadApp.getBreadContext();
+        Activity app = BreadApp.getCurrentActivity();
         if (app != null && message != null) {
             if (!message.isEmpty()) {
                 BRToast.

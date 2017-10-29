@@ -32,7 +32,6 @@ import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
-import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -361,7 +360,7 @@ public class BRWalletManager {
      */
     public static void publishCallback(final String message, final int error, byte[] txHash) {
         Log.e(TAG, "publishCallback: " + message + ", err:" + error + ", txHash: " + Arrays.toString(txHash));
-        final Activity app = BreadApp.getBreadContext();
+        final Activity app = BreadApp.getCurrentActivity();
         app.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -394,7 +393,7 @@ public class BRWalletManager {
     public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, String hash) {
         Log.d(TAG, "onTxAdded: " + String.format("tx.length: %d, blockHeight: %d, timestamp: %d, amount: %d, hash: %s", tx.length, blockHeight, timestamp, amount, hash));
 
-        final Activity app = BreadApp.getBreadContext();
+        final Activity app = BreadApp.getCurrentActivity();
         final Context context = BreadApp.getInstance();
         TransactionDataSource.getInstance().putTransaction(new BRTransactionEntity(tx, blockHeight, timestamp, hash));
         if (amount > 0)
@@ -422,7 +421,7 @@ public class BRWalletManager {
                 @Override
                 public void run() {
                     if (!BRToast.isToastShown()) {
-                        BRToast.showCustomToast(finalCtx, message,
+                        BRToast.showCustomToast(BreadApp.getCurrentActivity(), message,
                                 BreadApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
                         AudioManager audioManager = (AudioManager) finalCtx.getSystemService(Context.AUDIO_SERVICE);
                         if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {

@@ -3,7 +3,6 @@ package com.breadwallet.presenter.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -20,7 +19,6 @@ import android.widget.TextView;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
@@ -279,7 +277,7 @@ public class FragmentReceive extends Fragment {
 
     private void updateQr() {
         Activity ctx = (Activity) getContext();
-        if (ctx == null) ctx = BreadApp.getBreadContext();
+        if (ctx == null) ctx = BreadApp.getCurrentActivity();
         final Context finalCtx = ctx;
         final Activity finalCtx1 = ctx;
         new Thread(new Runnable() {

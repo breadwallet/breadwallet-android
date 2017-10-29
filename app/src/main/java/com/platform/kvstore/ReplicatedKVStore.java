@@ -787,7 +787,7 @@ public class ReplicatedKVStore {
             Log.e(TAG, "encrypt: data is null");
             return null;
         }
-        if (app == null) app = BreadApp.getBreadContext();
+        if (app == null) app = BreadApp.getCurrentActivity();
         if (app == null) {
             Log.e(TAG, "encrypt: app is null");
             return null;
@@ -827,7 +827,7 @@ public class ReplicatedKVStore {
             Log.e(TAG, "decrypt: failed to decrypt: " + (data == null ? null : data.length));
             return null;
         }
-        if (app == null) app = BreadApp.getBreadContext();
+        if (app == null) app = BreadApp.getCurrentActivity();
         if (app == null) return null;
         if (authKey == null)
             authKey = BRKeyStore.getAuthKey(app);

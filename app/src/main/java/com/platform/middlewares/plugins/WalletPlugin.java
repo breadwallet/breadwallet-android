@@ -1,6 +1,5 @@
 package com.platform.middlewares.plugins;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -167,7 +166,7 @@ public class WalletPlugin implements Plugin {
                 continuation = ContinuationSupport.getContinuation(request);
                 continuation.suspend(response);
                 globalBaseRequest = baseRequest;
-                BRBitId.signBitID(BreadApp.getBreadContext(), null, obj);
+                BRBitId.signBitID(BreadApp.getCurrentActivity(), null, obj);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG, "handle: Failed to parse Json request body: " + target + " " + baseRequest.getMethod());

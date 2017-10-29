@@ -9,7 +9,6 @@ import android.content.pm.ApplicationInfo;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Handler;
-import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
@@ -73,8 +72,8 @@ public class BreadApp extends Application {
     }
 
 
-    public static Activity getBreadContext() {
-//        Log.e(TAG, "getBreadContext: " + currentActivity.getClass().getName());
+    public static Activity getCurrentActivity() {
+//        Log.e(TAG, "getCurrentActivity: " + currentActivity.getClass().getName());
         return currentActivity;
     }
 
@@ -118,7 +117,7 @@ public class BreadApp extends Application {
 
     public static boolean isAnyActivityOn() {
         //        if(!on) Log.e(TAG, "isAnyActivityOn: NO ACTIVITY ON");
-        return getBreadContext() != null;
+        return getCurrentActivity() != null;
     }
 
     public interface OnAppBackgrounded {

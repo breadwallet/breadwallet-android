@@ -9,7 +9,6 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
-import com.breadwallet.tools.animation.BRAnimator;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.security.InvalidKeyException;
@@ -131,7 +130,7 @@ public class BRErrorPipe {
                                           final DialogInterface.OnClickListener negButtonListener,
                                           final DialogInterface.OnDismissListener dismissListener) {
         Activity app = (Activity) context;
-        if (app == null) app = BreadApp.getBreadContext();
+        if (app == null) app = BreadApp.getCurrentActivity();
         if (app == null) {
             Log.e(TAG, "showKeyStoreDialog: app is null");
             return;
