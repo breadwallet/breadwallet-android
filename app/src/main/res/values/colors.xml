@@ -27,8 +27,8 @@
     <item name="warning_status_bar" type="color">#7f5225</item>
     <item name="camera_guideline" type="color">#50636363</item>
 
-    <item name="logo_gradient_start" type="color">#F8A445</item>
-    <item name="logo_gradient_end" type="color">#fc5394</item>
+    <item name="logo_gradient_start" type="color">#83afe0</item>
+    <item name="logo_gradient_end" type="color">#767ee3</item>
 
     <item name="finger_gradient_start" type="color">#9c7ee2</item>
     <item name="finger_gradient_end" type="color">#7F52E6</item>
@@ -36,8 +36,8 @@
     <item name="recover_gradient_start" type="color">#e5affc</item>
     <item name="recover_gradient_end" type="color">#d17df5</item>
 
-    <item name="restore_gradient_start" type="color">#fabe7a</item>
-    <item name="restore_gradient_end" type="color">#F8A445</item>
+    <item name="restore_gradient_start" type="color">#83afe0</item>
+    <item name="restore_gradient_end" type="color">#767ee3</item>
 
     <item name="import_gradient_start" type="color">#76b0fd</item>
     <item name="import_gradient_end" type="color">#4C98FD</item>
