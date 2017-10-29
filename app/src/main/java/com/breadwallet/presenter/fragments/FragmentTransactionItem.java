@@ -235,14 +235,14 @@ public class FragmentTransactionItem extends Fragment {
                 availableForSpend = true;
                 break;
             case 5:
+            case 6:
                 percentage = "100%";
                 availableForSpend = true;
                 break;
         }
 
-        Log.d(TAG, "confirmation percentage = " + percentage + (sent? "": ", available to spend"));
-        if (!sent && availableForSpend) {
-            mAvailableSpend.setVisibility(View.VISIBLE);
+        if (sent || !availableForSpend) {
+            mAvailableSpend.setText("");
         }
 
         if (level == 6) {

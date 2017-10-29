@@ -163,8 +163,7 @@
                     android:text="@string/Transaction.available"
                     android:textColor="#48F0B8"
                     android:textIsSelectable="true"
-                    app:customFont="CircularPro-Bold.otf"
-                    android:visibility="gone"/>
+                    app:customFont="CircularPro-Bold.otf"/>
 
                 <View
                     android:layout_width="match_parent"
