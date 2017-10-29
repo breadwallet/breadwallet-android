@@ -60,7 +60,7 @@ public class DisplayCurrencyActivity extends BRActivity {
         exchangeText = (TextView) findViewById(R.id.exchange_text);
         listView = (ListView) findViewById(R.id.currency_list_view);
         adapter = new CurrencyListAdapter(this);
-        adapter.addAll(CurrencyDataSource.getInstance(this).getAllCurrencies());
+        adapter.addAll(CurrencyDataSource.getInstance().getAllCurrencies());
         leftButton = (Button) findViewById(R.id.left_button);
         rightButton = (Button) findViewById(R.id.right_button);
         leftButton.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +107,7 @@ public class DisplayCurrencyActivity extends BRActivity {
     private void updateExchangeRate() {
         //set the rate from the last saved
         String iso = BRSharedPrefs.getIso(this);
-        CurrencyEntity entity = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso);
+        CurrencyEntity entity = CurrencyDataSource.getInstance().getCurrencyByIso(iso);
         if (entity != null) {
             String finalExchangeRate = BRCurrency.getFormattedCurrencyString(DisplayCurrencyActivity.this, BRSharedPrefs.getIso(this), new BigDecimal(entity.rate));
             boolean bits = BRSharedPrefs.getCurrencyUnit(this) == BRConstants.CURRENT_UNIT_PHOTONS;

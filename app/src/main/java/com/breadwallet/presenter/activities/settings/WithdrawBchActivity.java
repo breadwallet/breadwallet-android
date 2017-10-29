@@ -202,8 +202,7 @@ public class WithdrawBchActivity extends BRActivity {
             BRSharedPrefs.putBCHTxId(app, txId);
             updateUi(app);
         } else {
-            Activity activity = BreadApp.getBreadContext();
-            BRSharedPrefs.putBCHTxId(activity, txId);
+            BRSharedPrefs.putBCHTxId(BreadApp.getInstance(), txId);
             Log.e(TAG, "updateUi: app is null");
         }
     }

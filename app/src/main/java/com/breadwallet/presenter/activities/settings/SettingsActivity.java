@@ -207,7 +207,7 @@ public class SettingsActivity extends BRActivity {
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false));
-        boolean eaEnabled = APIClient.getInstance(this).isFeatureEnabled(APIClient.FeatureFlags.EARLY_ACCESS.toString());
+        boolean eaEnabled = APIClient.getInstance().isFeatureEnabled(APIClient.FeatureFlags.EARLY_ACCESS.toString());
         if (eaEnabled)
             items.add(new BRSettingsItem(getString(R.string.Settings_earlyAccess), "", new View.OnClickListener() {
                 @Override

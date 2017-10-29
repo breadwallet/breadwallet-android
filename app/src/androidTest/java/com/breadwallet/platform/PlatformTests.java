@@ -84,7 +84,7 @@ public class PlatformTests {
 
     @Test
     public void testFeePerKbFetch() {
-        long fee = APIClient.getInstance(mActivityRule.getActivity()).feePerKb();
+        long fee = APIClient.getInstance().feePerKb();
         System.out.println("testFeePerKbFetch: fee: " + fee);
         Assert.assertNotSame(fee, (long) 0);
 
@@ -92,7 +92,7 @@ public class PlatformTests {
 
     @Test
     public void bundleExtractTest() {
-        APIClient apiClient = APIClient.getInstance(mActivityRule.getActivity());
+        APIClient apiClient = APIClient.getInstance();
 
         Request request = new Request.Builder()
                 .url(String.format("%s/assets/bundles/%s/download", BASE_URL, BREAD_POINT))
@@ -118,7 +118,7 @@ public class PlatformTests {
 
     @Test
     public void bundleDownloadTest() {
-        APIClient apiClient = APIClient.getInstance(mActivityRule.getActivity());
+        APIClient apiClient = APIClient.getInstance();
         Request request = new Request.Builder()
                 .get()
                 .url("https://s3.amazonaws.com/breadwallet-assets/bread-buy/7f5bc5c6cc005df224a6ea4567e508491acaffdc2e4769e5262a52f5b785e261.tar").build();
@@ -211,7 +211,7 @@ public class PlatformTests {
 
     @Test
     public void testGetToken() {
-        APIClient apiClient = APIClient.getInstance(mActivityRule.getActivity());
+        APIClient apiClient = APIClient.getInstance();
         String token = apiClient.getToken();
         Assert.assertNotNull(token);
         Assert.assertNotEquals(token.length(), 0);
@@ -219,7 +219,7 @@ public class PlatformTests {
 
     @Test
     public void testMeRequest() {
-        APIClient apiClient = APIClient.getInstance(mActivityRule.getActivity());
+        APIClient apiClient = APIClient.getInstance();
         Response response = apiClient.buyBitcoinMe();
         Assert.assertTrue(response.isSuccessful());
     }

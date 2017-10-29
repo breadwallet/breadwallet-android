@@ -32,6 +32,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.google.firebase.crash.FirebaseCrash;
 
@@ -69,16 +70,16 @@ public class TransactionDataSource {
 
     private static TransactionDataSource instance;
 
-    public static TransactionDataSource getInstance(Context context) {
+    public static TransactionDataSource getInstance() {
         if (instance == null) {
-            instance = new TransactionDataSource(context);
+            instance = new TransactionDataSource();
         }
         return instance;
     }
 
 
-    private TransactionDataSource(Context context) {
-        dbHelper = BRSQLiteHelper.getInstance(context);
+    private TransactionDataSource() {
+        dbHelper = BRSQLiteHelper.getInstance();
     }
 
     public BRTransactionEntity putTransaction(BRTransactionEntity transactionEntity) {

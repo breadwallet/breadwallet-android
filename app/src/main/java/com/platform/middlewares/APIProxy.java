@@ -71,11 +71,7 @@ public class APIProxy implements Middleware {
             "connection"};
 
     public APIProxy() {
-        Activity app = BreadApp.getBreadContext();
-        if (app == null) {
-            Log.e(TAG, "APIProxy: app is null!");
-        }
-        apiInstance = APIClient.getInstance(app);
+        apiInstance = APIClient.getInstance();
     }
 
     @Override

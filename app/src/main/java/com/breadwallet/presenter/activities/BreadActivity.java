@@ -1,9 +1,7 @@
 package com.breadwallet.presenter.activities;
 
 import android.animation.LayoutTransition;
-import android.animation.ValueAnimator;
 import android.app.FragmentTransaction;
-import android.app.SharedElementCallback;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
@@ -17,13 +15,13 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.transition.TransitionManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
 import android.webkit.WebView;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -51,7 +49,6 @@ import com.platform.APIClient;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
-import java.util.List;
 
 import static com.breadwallet.presenter.activities.intro.IntroActivity.introActivity;
 import static com.breadwallet.presenter.activities.ReEnterPinActivity.reEnterPinActivity;
@@ -104,7 +101,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     private TextView priceChange;
 
     private TextView manageText;
-    private TextView walletName;
+    private ImageView walletName;
     private TextView emptyTip;
     private ConstraintLayout walletProgressLayout;
 
@@ -284,7 +281,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         set.connect(R.id.equals, ConstraintSet.START, !btcPreferred ? secondaryPrice.getId() : primaryPrice.getId(), ConstraintSet.END, px4);
         //align second item after equals
         set.connect(!btcPreferred ? R.id.primary_price : R.id.secondary_price, ConstraintSet.START, equals.getId(), ConstraintSet.END, px4);
-//        align the second item to the baseline of the first
+        //align the second item to the baseline of the first
 //        set.connect(!btcPreferred ? R.id.primary_price : R.id.secondary_price, ConstraintSet.BASELINE, btcPreferred ? R.id.primary_price : R.id.secondary_price, ConstraintSet.BASELINE, 0);
         // Apply the changes
         set.applyTo(toolBarConstraintLayout);
@@ -315,7 +312,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         app = this;
         ActivityUTILS.init(this);
         if (PLATFORM_ON)
-            APIClient.getInstance(this).updatePlatform();
+            APIClient.getInstance().updatePlatform();
 
         setupNetworking();
 
@@ -370,7 +367,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    APIClient.getInstance(BreadActivity.this).syncKvStore();
+                    APIClient.getInstance().syncKvStore();
                 }
             }).start();
 
@@ -382,7 +379,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         sendButton = (LinearLayout) findViewById(R.id.send_layout);
         receiveButton = (LinearLayout) findViewById(R.id.receive_layout);
         manageText = (TextView) findViewById(R.id.manage_text);
-        walletName = (TextView) findViewById(R.id.wallet_name_text);
+        walletName = (ImageView) findViewById(R.id.wallet_logo);
         menuButton = (LinearLayout) findViewById(R.id.menu_layout);
         primaryPrice = (TextView) findViewById(R.id.primary_price);
         secondaryPrice = (TextView) findViewById(R.id.secondary_price);
@@ -583,7 +580,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
     @Override
     public void onNameChanged(String name) {
-        walletName.setText(name);
     }
 
     @Override

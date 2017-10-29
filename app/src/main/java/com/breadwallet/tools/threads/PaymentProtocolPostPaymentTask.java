@@ -1,6 +1,7 @@
 package com.breadwallet.tools.threads;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -102,12 +103,10 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
 //            PostAuth.getInstance().setTmpPaymentRequest(paymentRequest);
 //            PostAuth.getInstance().onPaymentProtocolRequest(app,false);
         } catch (Exception e) {
-            Activity app = BreadApp.getBreadContext();
+            Context context = BreadApp.getInstance();
             if (e instanceof java.net.UnknownHostException) {
-                if (app != null) {
-                    pendingErrorMessages.put(TITLE, app.getString(R.string.Alert_error));
-                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.Send_remoteRequestError));
-                }
+                pendingErrorMessages.put(TITLE, context.getString(R.string.Alert_error));
+                pendingErrorMessages.put(MESSAGE, context.getString(R.string.Send_remoteRequestError));
             }
 //            else if (e instanceof FileNotFoundException) {
 //                if (app != null) {

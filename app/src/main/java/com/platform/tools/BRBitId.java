@@ -325,7 +325,7 @@ public class BRBitId {
                 .post(requestBody)
                 .header("Content-Type", "application/json")
                 .build();
-        Response res = APIClient.getInstance(app).sendRequest(request, true, 0);
+        Response res = APIClient.getInstance().sendRequest(request, true, 0);
         Log.e(TAG, "completeBitID: res.code: " + res.code());
         Log.e(TAG, "completeBitID: res.code: " + res.message());
         try {

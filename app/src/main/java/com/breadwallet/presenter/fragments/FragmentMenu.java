@@ -94,7 +94,7 @@ public class FragmentMenu extends Fragment {
         close = (ImageButton) rootView.findViewById(R.id.close_button);
 
         itemList = new ArrayList<>();
-        boolean buyBitcoinEnabled = APIClient.getInstance(getActivity()).isFeatureEnabled(APIClient.FeatureFlags.BUY_BITCOIN.toString());
+        boolean buyBitcoinEnabled = APIClient.getInstance().isFeatureEnabled(APIClient.FeatureFlags.BUY_BITCOIN.toString());
         if (buyBitcoinEnabled)
             itemList.add(new BRMenuItem(getString(R.string.MenuButton_buy), R.drawable.buy_bitcoin, new View.OnClickListener() {
                 @Override

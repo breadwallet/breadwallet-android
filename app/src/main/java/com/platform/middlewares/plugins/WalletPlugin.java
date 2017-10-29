@@ -1,6 +1,7 @@
 package com.platform.middlewares.plugins;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -62,11 +63,11 @@ public class WalletPlugin implements Plugin {
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (!target.startsWith("/_wallet")) return false;
-        Activity app = BreadApp.getBreadContext();
+        Context context = BreadApp.getInstance();
 
         if (target.startsWith("/_wallet/info") && request.getMethod().equalsIgnoreCase("get")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            if (app == null) {
+            if (context == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
@@ -74,13 +75,13 @@ public class WalletPlugin implements Plugin {
             JSONObject jsonResp = new JSONObject();
             try {
                 /**whether or not the users wallet is set up yet, or is currently locked*/
-                jsonResp.put("no_wallet", wm.noWalletForPlatform(app));
+                jsonResp.put("no_wallet", wm.noWalletForPlatform(context));
 
                 /**the current receive address*/
                 jsonResp.put("receive_address", BRWalletManager.getReceiveAddress());
 
                 /**how digits after the decimal point. 2 = bits 8 = btc 6 = mbtc*/
-                jsonResp.put("ltc_denomiation_digits", BRSharedPrefs.getCurrencyUnit(app) == BRConstants.CURRENT_UNIT_LITECOINS ? 8 : 2);
+                jsonResp.put("ltc_denomiation_digits", BRSharedPrefs.getCurrencyUnit(context) == BRConstants.CURRENT_UNIT_LITECOINS ? 8 : 2);
 
                 /**the users native fiat currency as an ISO 4217 code. Should be uppercased */
                 jsonResp.put("local_currency_code", Currency.getInstance(Locale.getDefault()).getCurrencyCode().toUpperCase());
@@ -141,7 +142,7 @@ public class WalletPlugin implements Plugin {
              "signature": "oibwaeofbawoefb" // base64-encoded signature
              }
              */
-            if (app == null) {
+            if (context == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
@@ -166,7 +167,7 @@ public class WalletPlugin implements Plugin {
                 continuation = ContinuationSupport.getContinuation(request);
                 continuation.suspend(response);
                 globalBaseRequest = baseRequest;
-                BRBitId.signBitID(app, null, obj);
+                BRBitId.signBitID(BreadApp.getBreadContext(), null, obj);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG, "handle: Failed to parse Json request body: " + target + " " + baseRequest.getMethod());

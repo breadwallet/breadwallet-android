@@ -111,7 +111,7 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
             Log.e(TAG, "saveEvents: insert json to array: " + obj);
             array.put(obj);
         }
-        Context app = BreadApp.getBreadContext();
+        Context app = BreadApp.getInstance();
         if (app != null) {
             String fileName = app.getFilesDir().getAbsolutePath() + "/events/" + UUID.randomUUID().toString();
             writeEventsToDisk(fileName, array.toString());
@@ -122,7 +122,7 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
 
     private void pushToServer() {
         Log.d(TAG, "pushToServer");
-        Context app = BreadApp.getBreadContext();
+        Context app = BreadApp.getInstance();
         if (app != null) {
             List<JSONArray> arrs = getEventsFromDisk(app);
             int fails = 0;
@@ -152,7 +152,7 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
                     String strResponse = null;
                     Response response;
                     try {
-                        response = APIClient.getInstance(app).sendRequest(request, true, 0);
+                        response = APIClient.getInstance().sendRequest(request, true, 0);
                         if (response != null)
                             strResponse = response.body().string();
                     } catch (IOException e) {

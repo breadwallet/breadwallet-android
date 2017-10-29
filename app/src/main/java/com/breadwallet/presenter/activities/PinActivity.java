@@ -214,7 +214,7 @@ public class PinActivity extends BRActivity {
             }).start();
         }
         if (PLATFORM_ON)
-            APIClient.getInstance(this).updatePlatform();
+            APIClient.getInstance().updatePlatform();
     }
 
     @Override

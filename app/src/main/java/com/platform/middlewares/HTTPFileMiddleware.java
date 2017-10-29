@@ -58,14 +58,9 @@ public class HTTPFileMiddleware implements Middleware {
         if (target.equals("/favicon.ico")) {
             return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
         }
-        Activity app = BreadApp.getBreadContext();
-        if (app == null) {
-            Log.e(TAG, "handle: app is null!");
-            return true;
-        }
 
         File temp;
-        String requestedFile = APIClient.getInstance(app).getExtractedPath(app, target);
+        String requestedFile = APIClient.getInstance().getExtractedPath(BreadApp.getInstance(), target);
         temp = new File(requestedFile);
         if (temp.exists() && !temp.isDirectory()) {
             Log.d(TAG, "handle: found bundle for:" + target);

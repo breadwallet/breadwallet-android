@@ -238,9 +238,8 @@ public class BRWalletManager {
         return keyguardManager.isKeyguardSecure();
     }
 
-    public boolean isNetworkAvailable(Context ctx) {
-        if (ctx == null) return false;
-        ConnectivityManager cm = (ConnectivityManager) ctx.getSystemService(Context.CONNECTIVITY_SERVICE);
+    public boolean isNetworkAvailable() {
+        ConnectivityManager cm = (ConnectivityManager) BreadApp.getInstance().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netInfo = cm.getActiveNetworkInfo();
         return netInfo != null && netInfo.isConnectedOrConnecting();
 
@@ -268,9 +267,9 @@ public class BRWalletManager {
             }
         }).start();
 
-        TransactionDataSource.getInstance(ctx).deleteAllTransactions();
-        MerkleBlockDataSource.getInstance(ctx).deleteAllBlocks();
-        PeerDataSource.getInstance(ctx).deleteAllPeers();
+        TransactionDataSource.getInstance().deleteAllTransactions();
+        MerkleBlockDataSource.getInstance().deleteAllBlocks();
+        PeerDataSource.getInstance().deleteAllPeers();
         BRSharedPrefs.clearAllPrefs(ctx);
     }
 
@@ -387,38 +386,36 @@ public class BRWalletManager {
 
     public static void onBalanceChanged(final long balance) {
         Log.d(TAG, "onBalanceChanged:  " + balance);
-        Activity app = BreadApp.getBreadContext();
-        BRWalletManager.getInstance().setBalance(app, balance);
+        Context context = BreadApp.getInstance();
+        BRWalletManager.getInstance().setBalance(context, balance);
 
     }
 
     public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, String hash) {
         Log.d(TAG, "onTxAdded: " + String.format("tx.length: %d, blockHeight: %d, timestamp: %d, amount: %d, hash: %s", tx.length, blockHeight, timestamp, amount, hash));
 
-        final Activity ctx = BreadApp.getBreadContext();
+        final Activity app = BreadApp.getBreadContext();
+        final Context context = BreadApp.getInstance();
+        TransactionDataSource.getInstance().putTransaction(new BRTransactionEntity(tx, blockHeight, timestamp, hash));
         if (amount > 0)
-            if (ctx != null) {
-                ctx.runOnUiThread(new Runnable() {
+            if (app != null) {
+                app.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        String am = BRCurrency.getFormattedCurrencyString(ctx, "LTC", BRExchange.getBitcoinForSatoshis(ctx, new BigDecimal(amount)));
-                        String amCur = BRCurrency.getFormattedCurrencyString(ctx, BRSharedPrefs.getIso(ctx), BRExchange.getAmountFromSatoshis(ctx, BRSharedPrefs.getIso(ctx), new BigDecimal(amount)));
+                        String am = BRCurrency.getFormattedCurrencyString(context, "LTC", BRExchange.getBitcoinForSatoshis(context, new BigDecimal(amount)));
+                        String amCur = BRCurrency.getFormattedCurrencyString(context, BRSharedPrefs.getIso(context), BRExchange.getAmountFromSatoshis(context, BRSharedPrefs.getIso(context), new BigDecimal(amount)));
                         String formatted = String.format("%s (%s)", am, amCur);
-                        String strToShow = String.format(ctx.getString(R.string.TransactionDetails_received), formatted);
-                        showToast(ctx, strToShow);
+                        String strToShow = String.format(context.getString(R.string.TransactionDetails_received), formatted);
+                        showToast(context, strToShow);
                     }
 
                 });
 
             }
-        if (ctx != null)
-            TransactionDataSource.getInstance(ctx).putTransaction(new BRTransactionEntity(tx, blockHeight, timestamp, hash));
-        else
-            Log.e(TAG, "onTxAdded: ctx is null!");
     }
 
     private static void showToast(Context ctx, final String message) {
-        if (ctx == null) ctx = BreadApp.getBreadContext();
+        if (ctx == null) ctx = BreadApp.getInstance();
         if (ctx != null) {
             final Context finalCtx = ctx;
             new Handler().postDelayed(new Runnable() {
@@ -448,23 +445,13 @@ public class BRWalletManager {
 
     public static void onTxUpdated(String hash, int blockHeight, int timeStamp) {
         Log.d(TAG, "onTxUpdated: " + String.format("hash: %s, blockHeight: %d, timestamp: %d", hash, blockHeight, timeStamp));
-        Activity ctx = BreadApp.getBreadContext();
-        if (ctx != null) {
-            TransactionDataSource.getInstance(ctx).updateTxBlockHeight(hash, blockHeight, timeStamp);
-
-        } else {
-            Log.e(TAG, "onTxUpdated: Failed, ctx is null");
-        }
+        TransactionDataSource.getInstance().updateTxBlockHeight(hash, blockHeight, timeStamp);
     }
 
     public static void onTxDeleted(String hash, int notifyUser, final int recommendRescan) {
         Log.e(TAG, "onTxDeleted: " + String.format("hash: %s, notifyUser: %d, recommendRescan: %d", hash, notifyUser, recommendRescan));
-        final Activity ctx = BreadApp.getBreadContext();
-        if (ctx != null) {
-            BRSharedPrefs.putScanRecommended(ctx, true);
-        } else {
-            Log.e(TAG, "onTxDeleted: Failed! ctx is null");
-        }
+        final Context ctx = BreadApp.getInstance();
+        BRSharedPrefs.putScanRecommended(ctx, true);
     }
 
     public boolean validatePhrase(Context ctx, String phrase) {
@@ -537,7 +524,7 @@ public class BRWalletManager {
         final BRPeerManager pm = BRPeerManager.getInstance();
 
         if (!m.isCreated()) {
-            List<BRTransactionEntity> transactions = TransactionDataSource.getInstance(ctx).getAllTransactions();
+            List<BRTransactionEntity> transactions = TransactionDataSource.getInstance().getAllTransactions();
             int transactionsCount = transactions.size();
             if (transactionsCount > 0) {
                 m.createTxArrayWithCount(transactionsCount);
@@ -561,8 +548,8 @@ public class BRWalletManager {
         }
 
         if (!pm.isCreated()) {
-            List<BRMerkleBlockEntity> blocks = MerkleBlockDataSource.getInstance(ctx).getAllMerkleBlocks();
-            List<BRPeerEntity> peers = PeerDataSource.getInstance(ctx).getAllPeers();
+            List<BRMerkleBlockEntity> blocks = MerkleBlockDataSource.getInstance().getAllMerkleBlocks();
+            List<BRPeerEntity> peers = PeerDataSource.getInstance().getAllPeers();
             final int blocksCount = blocks.size();
             final int peersCount = peers.size();
             if (blocksCount > 0) {

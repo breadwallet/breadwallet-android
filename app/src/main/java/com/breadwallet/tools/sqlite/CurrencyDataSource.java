@@ -31,6 +31,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
@@ -55,15 +56,15 @@ public class CurrencyDataSource {
 
     private static CurrencyDataSource instance;
 
-    public static CurrencyDataSource getInstance(Context context) {
+    public static CurrencyDataSource getInstance() {
         if (instance == null) {
-            instance = new CurrencyDataSource(context);
+            instance = new CurrencyDataSource();
         }
         return instance;
     }
 
-    public CurrencyDataSource(Context context) {
-        dbHelper = BRSQLiteHelper.getInstance(context);
+    private CurrencyDataSource() {
+        dbHelper = BRSQLiteHelper.getInstance();
     }
 
     public void putCurrencies(Collection<CurrencyEntity> currencyEntities) {

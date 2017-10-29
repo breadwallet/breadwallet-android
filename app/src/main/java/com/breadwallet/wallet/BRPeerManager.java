@@ -79,7 +79,7 @@ public class BRPeerManager {
     public static void syncStarted() {
         Log.d(TAG, "syncStarted: " + Thread.currentThread().getName());
 //        BRPeerManager.getInstance().refreshConnection();
-        Context ctx = BreadApp.getBreadContext();
+        Context ctx = BreadApp.getInstance();
         int startHeight = BRSharedPrefs.getStartHeight(ctx);
         int lastHeight = BRSharedPrefs.getLastBlockHeight(ctx);
         if (startHeight > lastHeight) BRSharedPrefs.putStartHeight(ctx, lastHeight);
@@ -88,16 +88,15 @@ public class BRPeerManager {
 
     public static void syncSucceeded() {
         Log.d(TAG, "syncSucceeded");
-        final Activity app = BreadApp.getBreadContext();
-        if (app == null) return;
-        BRSharedPrefs.putLastSyncTime(app, System.currentTimeMillis());
-        SyncManager.getInstance().updateAlarms(app);
-        BRSharedPrefs.putAllowSpend(app, true);
+        final Context context = BreadApp.getInstance();
+        BRSharedPrefs.putLastSyncTime(context, System.currentTimeMillis());
+        SyncManager.getInstance().updateAlarms(context);
+        BRSharedPrefs.putAllowSpend(context, true);
         getInstance().stopSyncingProgressThread();
         new Thread(new Runnable() {
             @Override
             public void run() {
-                BRSharedPrefs.putStartHeight(app, getCurrentBlockHeight());
+                BRSharedPrefs.putStartHeight(context, getCurrentBlockHeight());
             }
         }).start();
         if (onSyncFinished != null) onSyncFinished.onFinished();
@@ -107,8 +106,6 @@ public class BRPeerManager {
     public static void syncFailed() {
         Log.d(TAG, "syncFailed");
         getInstance().stopSyncingProgressThread();
-        Activity ctx = BreadApp.getBreadContext();
-        if (ctx == null) return;
         Log.e(TAG, "Network Not Available, showing not connected bar  ");
 
         BRPeerManager.getInstance().stopSyncingProgressThread();
@@ -132,14 +129,11 @@ public class BRPeerManager {
 
     public static void saveBlocks(final BlockEntity[] blockEntities, final boolean replace) {
         Log.d(TAG, "saveBlocks: " + blockEntities.length);
-
-        final Activity ctx = BreadApp.getBreadContext();
-        if (ctx == null) return;
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (replace) MerkleBlockDataSource.getInstance(ctx).deleteAllBlocks();
-                MerkleBlockDataSource.getInstance(ctx).putMerkleBlocks(blockEntities);
+                if (replace) MerkleBlockDataSource.getInstance().deleteAllBlocks();
+                MerkleBlockDataSource.getInstance().putMerkleBlocks(blockEntities);
             }
         }).start();
 
@@ -147,13 +141,11 @@ public class BRPeerManager {
 
     public static void savePeers(final PeerEntity[] peerEntities, final boolean replace) {
         Log.d(TAG, "savePeers: " + peerEntities.length);
-        final Activity ctx = BreadApp.getBreadContext();
-        if (ctx == null) return;
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if (replace) PeerDataSource.getInstance(ctx).deleteAllPeers();
-                PeerDataSource.getInstance(ctx).putPeers(peerEntities);
+                if (replace) PeerDataSource.getInstance().deleteAllPeers();
+                PeerDataSource.getInstance().putPeers(peerEntities);
             }
         }).start();
 
@@ -161,17 +153,15 @@ public class BRPeerManager {
 
     public static boolean networkIsReachable() {
         Log.d(TAG, "networkIsReachable");
-        return BRWalletManager.getInstance().isNetworkAvailable(BreadApp.getBreadContext());
+        return BRWalletManager.getInstance().isNetworkAvailable();
     }
 
     public static void deleteBlocks() {
         Log.d(TAG, "deleteBlocks");
-        final Activity ctx = BreadApp.getBreadContext();
-        if (ctx == null) return;
         new Thread(new Runnable() {
             @Override
             public void run() {
-                MerkleBlockDataSource.getInstance(ctx).deleteAllBlocks();
+                MerkleBlockDataSource.getInstance().deleteAllBlocks();
             }
         }).start();
 
@@ -179,12 +169,10 @@ public class BRPeerManager {
 
     public static void deletePeers() {
         Log.d(TAG, "deletePeers");
-        final Activity ctx = BreadApp.getBreadContext();
-        if (ctx == null) return;
         new Thread(new Runnable() {
             @Override
             public void run() {
-                PeerDataSource.getInstance(ctx).deleteAllPeers();
+                PeerDataSource.getInstance().deleteAllPeers();
             }
         }).start();
 
@@ -367,9 +355,7 @@ public class BRPeerManager {
     }
 
     public static void updateLastBlockHeight(int blockHeight) {
-        final Activity ctx = BreadApp.getBreadContext();
-        if (ctx == null) return;
-        BRSharedPrefs.putLastBlockHeight(ctx, blockHeight);
+        BRSharedPrefs.putLastBlockHeight(BreadApp.getInstance(), blockHeight);
     }
 
     public native String getCurrentPeerName();

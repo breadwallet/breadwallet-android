@@ -31,6 +31,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.google.firebase.crash.FirebaseCrash;
@@ -52,15 +53,15 @@ public class MerkleBlockDataSource {
 
     private static MerkleBlockDataSource instance;
 
-    public static MerkleBlockDataSource getInstance(Context context) {
+    public static MerkleBlockDataSource getInstance() {
         if (instance == null) {
-            instance = new MerkleBlockDataSource(context);
+            instance = new MerkleBlockDataSource();
         }
         return instance;
     }
 
-    private MerkleBlockDataSource(Context context) {
-        dbHelper = BRSQLiteHelper.getInstance(context);
+    private MerkleBlockDataSource() {
+        dbHelper = BRSQLiteHelper.getInstance();
     }
 
     public void putMerkleBlocks(BlockEntity[] blockEntities) {

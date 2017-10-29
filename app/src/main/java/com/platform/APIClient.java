@@ -144,9 +144,9 @@ public class APIClient {
         }
     }
 
-    public static synchronized APIClient getInstance(Context context) {
+    public static synchronized APIClient getInstance() {
 
-        if (ourInstance == null) ourInstance = new APIClient(context);
+        if (ourInstance == null) ourInstance = new APIClient(BreadApp.getInstance());
         return ourInstance;
     }
 
@@ -185,8 +185,7 @@ public class APIClient {
 
     //only for testing
     public Response buyBitcoinMe() {
-        if (ctx == null) ctx = BreadApp.getBreadContext();
-        if (ctx == null) return null;
+        if (ctx == null) ctx = BreadApp.getInstance();
         String strUtl = BASE_URL + ME;
         Request request = new Request.Builder()
                 .url(strUtl)
@@ -211,8 +210,7 @@ public class APIClient {
     }
 
     public String getToken() {
-        if (ctx == null) ctx = BreadApp.getBreadContext();
-        if (ctx == null) return null;
+        if (ctx == null) ctx = BreadApp.getInstance();
         try {
             String strUtl = BASE_URL + TOKEN;
 
@@ -556,11 +554,6 @@ public class APIClient {
     }
 
     public boolean tryExtractTar() {
-        Activity app = BreadApp.getBreadContext();
-        if (app == null) {
-            Log.e(TAG, "tryExtractTar: failed to extract, app is null");
-            return false;
-        }
         File bundleFile = new File(getBundleResource(ctx, BREAD_POINT + ".tar"));
         boolean result = false;
         TarArchiveInputStream debInputStream = null;
@@ -682,7 +675,7 @@ public class APIClient {
             @Override
             public void run() {
                 final long startTime = System.currentTimeMillis();
-                APIClient apiClient = APIClient.getInstance(ctx);
+                APIClient apiClient = APIClient.getInstance();
                 apiClient.updateBundle();
                 long endTime = System.currentTimeMillis();
                 Log.e(TAG, "updateBundle " + BREAD_POINT + ": DONE in " + (endTime - startTime) + "ms");
@@ -695,7 +688,7 @@ public class APIClient {
             @Override
             public void run() {
                 final long startTime = System.currentTimeMillis();
-                APIClient apiClient = APIClient.getInstance(ctx);
+                APIClient apiClient = APIClient.getInstance();
                 apiClient.updateFeatureFlag();
                 long endTime = System.currentTimeMillis();
                 Log.d(TAG, "updateFeatureFlag: DONE in " + (endTime - startTime) + "ms");
@@ -708,7 +701,7 @@ public class APIClient {
             @Override
             public void run() {
                 final long startTime = System.currentTimeMillis();
-                APIClient apiClient = APIClient.getInstance(ctx);
+                APIClient apiClient = APIClient.getInstance();
                 apiClient.syncKvStore();
                 long endTime = System.currentTimeMillis();
                 Log.d(TAG, "updatePlatform: DONE in " + (endTime - startTime) + "ms");

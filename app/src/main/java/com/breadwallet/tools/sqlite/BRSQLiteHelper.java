@@ -5,6 +5,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
+
 /**
  * BreadWallet
  * <p/>
@@ -38,9 +40,9 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
 
-    public static BRSQLiteHelper getInstance(Context context) {
+    public static BRSQLiteHelper getInstance() {
         // Use the application context to ensure that we don't accidentally leak an Activity's context
-        if (instance == null) instance = new BRSQLiteHelper(context.getApplicationContext());
+        if (instance == null) instance = new BRSQLiteHelper(BreadApp.getInstance());
         return instance;
     }
 

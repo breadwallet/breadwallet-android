@@ -229,7 +229,7 @@ public class TxManager {
                     for (TxItem item : arr) {
                         KVStoreManager kvM = KVStoreManager.getInstance();
                         String iso = BRSharedPrefs.getIso(app);
-                        double rate = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso).rate;
+                        double rate = CurrencyDataSource.getInstance().getCurrencyByIso(iso).rate;
                         TxMetaData temp = kvM.getTxMetaData(app, item.getTxHash());
                         String comment = temp == null ? "" : temp.comment;
 

@@ -250,7 +250,7 @@ public class PostAuth {
                             .url(strUtl)
                             .header("Content-Type", "application/bchdata")
                             .post(requestBody).build();
-                    Response response = APIClient.getInstance(app).sendRequest(request, true, 0);
+                    Response response = APIClient.getInstance().sendRequest(request, true, 0);
                     String responseBody = null;
                     try {
                         responseBody = response == null ? null : response.body().string();

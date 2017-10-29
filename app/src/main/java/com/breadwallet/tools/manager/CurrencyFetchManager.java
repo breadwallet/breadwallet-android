@@ -142,7 +142,7 @@ public class CurrencyFetchManager {
         @Override
         protected void onPostExecute(Object o) {
             if (tmp.size() > 0) {
-                CurrencyDataSource.getInstance(context).putCurrencies(tmp);
+                CurrencyDataSource.getInstance().putCurrencies(tmp);
             }
         }
     }

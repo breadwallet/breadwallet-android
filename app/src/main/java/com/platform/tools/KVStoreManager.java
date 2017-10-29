@@ -56,7 +56,7 @@ public class KVStoreManager {
 
     public WalletInfo getWalletInfo(Context app) {
         WalletInfo result = new WalletInfo();
-        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
+        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance());
         ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
         long ver = kvStore.localVersion(walletInfoKey).version;
         CompletionObject obj = kvStore.get(walletInfoKey, ver);
@@ -127,7 +127,7 @@ public class KVStoreManager {
             return;
         }
         byte[] compressed = BRCompressor.bz2Compress(result);
-        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
+        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance());
         ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
         long localVer = kvStore.localVersion(walletInfoKey).version;
         long removeVer = kvStore.remoteVersion(walletInfoKey);
@@ -146,7 +146,7 @@ public class KVStoreManager {
         String key = txKey(txHash);
 
         TxMetaData result = new TxMetaData();
-        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
+        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance());
         ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
         long ver = kvStore.localVersion(key).version;
 
@@ -277,7 +277,7 @@ public class KVStoreManager {
             return;
         }
         byte[] compressed = BRCompressor.bz2Compress(result);
-        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
+        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance());
         ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
         long localVer = kvStore.localVersion(key).version;
         long removeVer = kvStore.remoteVersion(key);

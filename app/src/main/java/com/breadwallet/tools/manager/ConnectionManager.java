@@ -76,7 +76,7 @@ public class ConnectionManager {
 
     public boolean isConnected() {
         ConnectivityManager
-                cm = (ConnectivityManager) BreadApp.getBreadContext().getApplicationContext()
+                cm = (ConnectivityManager) BreadApp.getInstance()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null

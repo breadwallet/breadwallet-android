@@ -32,6 +32,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
 import com.google.firebase.crash.FirebaseCrash;
@@ -54,15 +55,15 @@ public class PeerDataSource {
 
     private static PeerDataSource instance;
 
-    public static PeerDataSource getInstance(Context context) {
+    public static PeerDataSource getInstance() {
         if (instance == null) {
-            instance = new PeerDataSource(context);
+            instance = new PeerDataSource();
         }
         return instance;
     }
 
-    private PeerDataSource(Context context) {
-        dbHelper = BRSQLiteHelper.getInstance(context);
+    private PeerDataSource() {
+        dbHelper = BRSQLiteHelper.getInstance();
     }
 
     public void putPeers(PeerEntity[] peerEntities) {

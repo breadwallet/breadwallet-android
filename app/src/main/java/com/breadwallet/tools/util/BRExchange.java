@@ -44,7 +44,7 @@ public class BRExchange {
         final long MAX_BTC = 84000000;
         if (iso.equalsIgnoreCase("LTC"))
             return getBitcoinForSatoshis(context, new BigDecimal(MAX_BTC * 100000000));
-        CurrencyEntity ent = CurrencyDataSource.getInstance(context).getCurrencyByIso(iso);
+        CurrencyEntity ent = CurrencyDataSource.getInstance().getCurrencyByIso(iso);
         if (ent == null) throw new RuntimeException("no currency in DB for: " + iso);
         return new BigDecimal(ent.rate * MAX_BTC);
     }
@@ -114,7 +114,7 @@ public class BRExchange {
             result = getBitcoinForSatoshis(app, amount);
         } else {
             //multiply by 100 because core function localAmount accepts the smallest amount e.g. cents
-            CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
+            CurrencyEntity ent = CurrencyDataSource.getInstance().getCurrencyByIso(iso);
             if (ent == null) return new BigDecimal(0);
             BigDecimal rate = new BigDecimal(ent.rate).multiply(new BigDecimal(100));
             result = new BigDecimal(BRWalletManager.getInstance().localAmount(amount.longValue(),rate.doubleValue()))
@@ -134,7 +134,7 @@ public class BRExchange {
             result = BRExchange.getSatoshisForBitcoin(app, amount);
         } else {
             //multiply by 100 because core function localAmount accepts the smallest amount e.g. cents
-            CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
+            CurrencyEntity ent = CurrencyDataSource.getInstance().getCurrencyByIso(iso);
             if (ent == null) return new BigDecimal(0);
             BigDecimal rate = new BigDecimal(ent.rate).multiply(new BigDecimal(100));
             result = new BigDecimal(BRWalletManager.getInstance().bitcoinAmount(amount.multiply(new BigDecimal(100)).longValue(),rate.doubleValue()));

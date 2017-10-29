@@ -64,7 +64,7 @@ public class KVStorePlugin implements Plugin {
                 return BRHTTPHelper.handleError(400, null, baseRequest, response);
             }
 
-            RemoteKVStore remote = RemoteKVStore.getInstance(APIClient.getInstance(app));
+            RemoteKVStore remote = RemoteKVStore.getInstance(APIClient.getInstance());
             ReplicatedKVStore store = new ReplicatedKVStore(app, remote);
             switch (request.getMethod()) {
                 case "GET":
