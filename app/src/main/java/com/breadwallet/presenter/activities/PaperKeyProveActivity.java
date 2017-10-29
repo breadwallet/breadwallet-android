@@ -146,13 +146,13 @@ public class PaperKeyProveActivity extends BRActivity {
 
         if (wordArray.length == 12 && cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
             BRDialog.showCustomDialog(this, getString(R.string.JailbreakWarnings_title),
-                    "Paper Key error, please contact support at loafwallet.com", getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                    "Paper Key error, please contact support at @LTCFoundation", getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();
                         }
                     }, null, null, 0);
-            FirebaseCrash.report(new IllegalArgumentException("Paper Key error, please contact support at loafwallet.com"));
+            FirebaseCrash.report(new IllegalArgumentException("Paper Key error, please contact support at @LTCFoundation"));
 
         } else {
             randomWordsSetUp(wordArray);

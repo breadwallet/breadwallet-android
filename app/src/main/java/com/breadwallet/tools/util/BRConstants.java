@@ -139,9 +139,10 @@ public class BRConstants {
     public static final String startView = "start-view";
     public static final String wipeWallet = "wipe-wallet";
 
-    // or https://twitter.com/ltcfoundation
-    public static final String TWITTER_LINK = "https://twitter.com/loafwallet";
+    // or https://twitter.com/loafwallet
+    public static final String TWITTER_LINK = "https://twitter.com/ltcfoundation";
     public static final String REDDIT_LINK = "https://www.reddit.com/r/litecoin";
+    public static final String BLOG_LINK = "http://loafwallet.org";
 
     private BRConstants() {
     }

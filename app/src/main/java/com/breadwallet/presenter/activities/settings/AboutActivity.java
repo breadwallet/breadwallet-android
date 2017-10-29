@@ -57,8 +57,16 @@ public class AboutActivity extends BRActivity {
 
         infoText.setText(getString(R.string.About_footer, verCode));
 
+        blogShare = (ImageView) findViewById(R.id.blog_share_button);
         redditShare = (ImageView) findViewById(R.id.reddit_share_button);
         twitterShare = (ImageView) findViewById(R.id.twitter_share_button);
+
+        blogShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openUrl(BRConstants.BLOG_LINK);
+            }
+        });
 
         redditShare.setOnClickListener(new View.OnClickListener() {
             @Override
