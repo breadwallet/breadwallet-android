@@ -3,7 +3,7 @@
   <!-- About screen blog label -->
   <string name="About.blog">Blog</string>
   <!-- About screen footer -->
-  <string name="About.footer">Criada pela equipa Bread global. Versão %1$s</string>
+  <string name="About.footer">Criada pela equipa Bread global. Versão %1$s.</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">Política de Privacidade</string>
   <!-- About screen reddit label -->

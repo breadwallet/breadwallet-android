@@ -3,7 +3,7 @@
   <!-- About screen blog label -->
   <string name="About.blog">بلاگ</string>
   <!-- About screen footer -->
-  <string name="About.footer">ساخته شده توسط تیم جهانی برِد. نسخهٔ %1$s</string>
+  <string name="About.footer">ساخته شده توسط تیم جهانی برِد. نسخهٔ %1$s.</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">سیاست حریم خصوصی</string>
   <!-- About screen reddit label -->

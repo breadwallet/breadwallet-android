@@ -3,7 +3,7 @@
   <!-- About screen blog label -->
   <string name="About.blog">部落格</string>
   <!-- About screen footer -->
-  <string name="About.footer">由全球 Bread 團隊製作。版本 %1$s</string>
+  <string name="About.footer">由全球 Bread 團隊製作。版本 %1$s。</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">隱私政策</string>
   <!-- About screen reddit label -->
