@@ -21,7 +21,7 @@ model {
                     create() {
                         type = "string"
                         name = "app_name"
-                        value = "loaf"
+                        value = "LoafWallet"
                     }
                 }
             }
@@ -31,7 +31,7 @@ model {
                     create() {
                         type = "string"
                         name = "app_name"
-                        value = "loaf-demo"
+                        value = "LoafWallet-demo"
                     }
                 }
             }
