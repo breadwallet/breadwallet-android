@@ -149,16 +149,25 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public void setPromptItem(final PromptManager.PromptItem promptItem) {
+        if (promptItem == null && TransactionListAdapter.this.promptItem == null) {
+            // Nothing to do
+            return;
+        }
         // Wait for a layout pass to complete before adding/changing a prompt
         new Handler(Looper.getMainLooper()).post(new Runnable() {
             @Override
             public void run() {
-                boolean isNew = TransactionListAdapter.this.promptItem == null;
+                boolean updatingExisting = TransactionListAdapter.this.promptItem != null && promptItem != null;
+                boolean removing = TransactionListAdapter.this.promptItem == null;
                 TransactionListAdapter.this.promptItem = promptItem;
-                if (isNew) {
-                    notifyItemInserted(0);
-                } else {
+                if (updatingExisting) {
                     notifyItemChanged(0);
+                } else {
+                    if (removing) {
+                        notifyItemRemoved(0);
+                    } else {
+                        notifyItemInserted(0);
+                    }
                 }
             }
         });
