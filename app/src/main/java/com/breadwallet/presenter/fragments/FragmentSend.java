@@ -29,7 +29,6 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
@@ -592,8 +591,15 @@ public class FragmentSend extends Fragment {
         //formattedBalance
         String formattedBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, balanceForISO);
         //Balance depending on ISO
-        long fee = curBalance == 0 ? 0 : BRWalletManager.getInstance().feeForTransactionAmount(curBalance);
+        String address = addressEdit.getText().toString();
+
+        String amountStr = amountBuilder.toString();
+        BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) ? "0" : amountStr);
+        BigDecimal satoshiAmount = BRExchange.getSatoshisFromAmount(getActivity(), iso, bigAmount);
+
+        long fee = Utils.isNullOrEmpty(amountStr) ? 0 : BRWalletManager.getInstance().feeForTransactionAmount(satoshiAmount.longValue());
         BigDecimal feeForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance == 0 ? 0 : fee));
+
         //formattedBalance
         String aproxFee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, feeForISO);
         if (new BigDecimal((tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".")) ? "0" : tmpAmount).doubleValue() > balanceForISO.doubleValue()) {
