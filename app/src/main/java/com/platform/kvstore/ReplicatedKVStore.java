@@ -75,10 +75,10 @@ public class ReplicatedKVStore {
             PlatformSqliteHelper.KV_DELETED
     };
 
-    public ReplicatedKVStore(Context context, KVStoreAdaptor remoteKvStore) {
-        this.context = context;
+    public ReplicatedKVStore(KVStoreAdaptor remoteKvStore) {
+        this.context = BreadApp.getInstance();
         this.remoteKvStore = remoteKvStore;
-        dbHelper = new PlatformSqliteHelper(context);
+        dbHelper = new PlatformSqliteHelper();
     }
 
     public SQLiteDatabase getWritable() {

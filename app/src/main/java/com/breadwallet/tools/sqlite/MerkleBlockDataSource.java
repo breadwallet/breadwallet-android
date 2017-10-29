@@ -65,6 +65,7 @@ public class MerkleBlockDataSource {
     }
 
     public void putMerkleBlocks(BlockEntity[] blockEntities) {
+        Log.d(TAG, "putMerkleBlocks");
         database = dbHelper.getWritableDatabase();
         database.beginTransaction();
         try {
@@ -85,11 +86,13 @@ public class MerkleBlockDataSource {
     }
 
     public void deleteAllBlocks() {
+        Log.d(TAG, "deleteAllBlocks");
         database = dbHelper.getWritableDatabase();
         database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_COLUMN_ID + " <> -1", null);
     }
 
     public void deleteMerkleBlock(BRMerkleBlockEntity merkleBlock) {
+        Log.d(TAG, "deleteMerkleBlock");
         database = dbHelper.getWritableDatabase();
         long id = merkleBlock.getId();
         Log.e(TAG, "MerkleBlock deleted with id: " + id);
@@ -98,6 +101,7 @@ public class MerkleBlockDataSource {
     }
 
     public List<BRMerkleBlockEntity> getAllMerkleBlocks() {
+        Log.d(TAG, "getAllMerkleBlocks");
         database = dbHelper.getReadableDatabase();
         List<BRMerkleBlockEntity> merkleBlocks = new ArrayList<>();
 

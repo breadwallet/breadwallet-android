@@ -724,7 +724,7 @@ public class APIClient {
         final APIClient client = this;
         //sync the kv stores
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(client);
-        ReplicatedKVStore kvStore = new ReplicatedKVStore(ctx, remoteKVStore);
+        ReplicatedKVStore kvStore = new ReplicatedKVStore(remoteKVStore);
         kvStore.syncAllKeys();
     }
 

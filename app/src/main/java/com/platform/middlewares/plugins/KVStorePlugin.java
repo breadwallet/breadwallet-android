@@ -65,7 +65,7 @@ public class KVStorePlugin implements Plugin {
             }
 
             RemoteKVStore remote = RemoteKVStore.getInstance(APIClient.getInstance());
-            ReplicatedKVStore store = new ReplicatedKVStore(app, remote);
+            ReplicatedKVStore store = new ReplicatedKVStore(remote);
             switch (request.getMethod()) {
                 case "GET":
                     Log.i(TAG, "handle: " + target + " " + baseRequest.getMethod() + ", key: " + key);

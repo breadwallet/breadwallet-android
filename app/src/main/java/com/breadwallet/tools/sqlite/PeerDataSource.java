@@ -67,6 +67,7 @@ public class PeerDataSource {
     }
 
     public void putPeers(PeerEntity[] peerEntities) {
+        Log.d(TAG, "putPeers");
         database = dbHelper.getWritableDatabase();
         database.beginTransaction();
         try {
@@ -91,6 +92,7 @@ public class PeerDataSource {
     }
 
     public void deletePeer(BRPeerEntity peerEntity) {
+        Log.d(TAG, "deletePeer");
         database = dbHelper.getWritableDatabase();
         long id = peerEntity.getId();
         Log.e(TAG, "Peer deleted with id: " + id);
@@ -99,11 +101,13 @@ public class PeerDataSource {
     }
 
     public void deleteAllPeers() {
+        Log.d(TAG, "deleteAllPeers");
         database = dbHelper.getWritableDatabase();
         database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID + " <> -1", null);
     }
 
     public List<BRPeerEntity> getAllPeers() {
+        Log.d(TAG, "getAllPeers");
         database = dbHelper.getReadableDatabase();
         List<BRPeerEntity> peers = new ArrayList<>();
 

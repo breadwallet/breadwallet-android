@@ -83,6 +83,7 @@ public class TransactionDataSource {
     }
 
     public BRTransactionEntity putTransaction(BRTransactionEntity transactionEntity) {
+        Log.d(TAG, "putTransaction");
         database = dbHelper.getWritableDatabase();
         ContentValues values = new ContentValues();
         values.put(BRSQLiteHelper.TX_COLUMN_ID, transactionEntity.getTxHash());
@@ -116,11 +117,13 @@ public class TransactionDataSource {
     }
 
     public void deleteAllTransactions() {
+        Log.d(TAG, "deleteAllTransactions");
         database = dbHelper.getWritableDatabase();
         database.delete(BRSQLiteHelper.TX_TABLE_NAME, null, null);
     }
 
     public List<BRTransactionEntity> getAllTransactions() {
+        Log.d(TAG, "getAllTransactions");
         database = dbHelper.getReadableDatabase();
         List<BRTransactionEntity> transactions = new ArrayList<>();
 
@@ -148,6 +151,7 @@ public class TransactionDataSource {
     }
 
     public void updateTxBlockHeight(String hash, int blockHeight, int timeStamp) {
+        Log.d(TAG, "updateTxBlockHeight");
         database = dbHelper.getWritableDatabase();
         Log.e(TAG, "transaction updated with id: " + hash);
         String strFilter = "_id=\'" + hash + "\'";
@@ -163,6 +167,7 @@ public class TransactionDataSource {
     }
 
     public void deleteTxByHash(String hash) {
+        Log.d(TAG, "deleteTxByHash");
         database = dbHelper.getWritableDatabase();
         Log.e(TAG, "transaction deleted with id: " + hash);
         database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID

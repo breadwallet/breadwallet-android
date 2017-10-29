@@ -30,6 +30,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
+
 public class PlatformSqliteHelper extends SQLiteOpenHelper {
     private static final String TAG = PlatformSqliteHelper.class.getName();
 
@@ -71,8 +73,9 @@ public class PlatformSqliteHelper extends SQLiteOpenHelper {
             "   PRIMARY KEY (%s, %s) " +
             ");", KV_STORE_TABLE_NAME, KV_VERSION, KV_REMOTE_VERSION, KV_KEY, KV_VALUE, KV_TIME, KV_DELETED, KV_KEY, KV_VERSION);
 
-    public PlatformSqliteHelper(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    public PlatformSqliteHelper() {
+        // Use the application context to ensure that we don't accidentally leak an Activity's context
+        super(BreadApp.getInstance(), DATABASE_NAME, null, DATABASE_VERSION);
     }
 
     @Override

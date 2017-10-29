@@ -26,21 +26,18 @@ package com.breadwallet.tools.sqlite;
  */
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
-import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.presenter.entities.PeerEntity;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 public class CurrencyDataSource {
     private static final String TAG = CurrencyDataSource.class.getName();
@@ -55,10 +52,12 @@ public class CurrencyDataSource {
     };
 
     private static CurrencyDataSource instance;
+    private Map<String, CurrencyEntity> currencyEntityMap;
 
     public static CurrencyDataSource getInstance() {
         if (instance == null) {
             instance = new CurrencyDataSource();
+            instance.currencyEntityMap = instance.getCurrencyMap();
         }
         return instance;
     }
@@ -68,6 +67,7 @@ public class CurrencyDataSource {
     }
 
     public void putCurrencies(Collection<CurrencyEntity> currencyEntities) {
+        Log.d(TAG, "putCurrencies");
         if (currencyEntities == null) return;
         database = dbHelper.getWritableDatabase();
         database.beginTransaction();
@@ -125,13 +125,15 @@ public class CurrencyDataSource {
 //    }
 
     public void deleteAllCurrencies() {
+        Log.d(TAG, "deleteAllCurrencies");
         database = dbHelper.getWritableDatabase();
         database.delete(BRSQLiteHelper.CURRENCY_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID + " <> -1", null);
     }
 
-    public List<CurrencyEntity> getAllCurrencies() {
+    private Map<String, CurrencyEntity> getCurrencyMap() {
+        Log.d(TAG, "getCurrencyMap");
         database = dbHelper.getReadableDatabase();
-        List<CurrencyEntity> currencies = new ArrayList<>();
+        Map<String, CurrencyEntity> currencies = new HashMap<>();
 
         Cursor cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
                 allColumns, null, null, null, null, "\'" + BRSQLiteHelper.CURRENCY_CODE + "\'");
@@ -139,17 +141,26 @@ public class CurrencyDataSource {
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
             CurrencyEntity curEntity = cursorToCurrency(cursor);
-            currencies.add(curEntity);
+            currencies.put(curEntity.code, curEntity);
             cursor.moveToNext();
         }
         // make sure to close the cursor
 
         cursor.close();
-        Log.e(TAG, "getAllCurrencies: " + currencies.size());
+        Log.d(TAG, "getCurrencyMap: " + currencies.size());
         return currencies;
     }
 
+    public List<CurrencyEntity> getAllCurrencies() {
+        List<CurrencyEntity> allCurrencies = new ArrayList<>();
+        for (CurrencyEntity currencyEntity : currencyEntityMap.values()) {
+            allCurrencies.add(currencyEntity);
+        }
+        return allCurrencies;
+    }
+
     public List<String> getAllISOs() {
+        Log.d(TAG, "getAllISOs");
         database = dbHelper.getReadableDatabase();
         List<String> ISOs = new ArrayList<>();
 
@@ -169,22 +180,7 @@ public class CurrencyDataSource {
     }
 
     public CurrencyEntity getCurrencyByIso(String iso) {
-        database = dbHelper.getReadableDatabase();
-
-        Cursor cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
-                allColumns, BRSQLiteHelper.CURRENCY_CODE + "=\'" + iso + "\'", null, null, null, null);
-
-        try {
-            cursor.moveToFirst();
-            if (!cursor.isAfterLast()) {
-                return cursorToCurrency(cursor);
-            }
-        } finally {
-            if (cursor != null)
-                cursor.close();
-        }
-
-        return null;
+        return currencyEntityMap.get(iso);
     }
 
     private CurrencyEntity cursorToCurrency(Cursor cursor) {
