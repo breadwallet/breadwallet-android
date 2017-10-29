@@ -51,8 +51,8 @@
 
                     <ImageView
                         android:id="@+id/wallet_logo"
-                        android:layout_width="@dimen/home_logo_size"
-                        android:layout_height="@dimen/home_logo_size"
+                        android:layout_width="@dimen/standard_logo_size"
+                        android:layout_height="@dimen/standard_logo_size"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:src="@drawable/ltc_logo"

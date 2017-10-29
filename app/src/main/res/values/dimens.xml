@@ -17,5 +17,5 @@
     <dimen name="radius">4dp</dimen>
 
     <dimen name="enter_pin_screen_logo_size">32dp</dimen>
-    <dimen name="home_logo_size">28dp</dimen>
+    <dimen name="standard_logo_size">28dp</dimen>
 </resources>

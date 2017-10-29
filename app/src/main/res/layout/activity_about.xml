@@ -9,18 +9,31 @@
     android:background="@color/extra_light_blue_background"
     tools:context="com.breadwallet.presenter.activities.SetPinActivity">
 
-    <View
+    <RelativeLayout
         android:id="@+id/view3"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
-        android:background="@drawable/logo_circle"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title"/>
+        app:layout_constraintTop_toBottomOf="@+id/title">
+        <View
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:background="@drawable/logo_circle" />
+
+        <ImageView
+            android:layout_width="@dimen/standard_logo_size"
+            android:layout_height="@dimen/standard_logo_size"
+            android:layout_marginStart="26dp"
+            android:layout_marginTop="26dp"
+            android:src="@drawable/ltc_logo" />
+
+    </RelativeLayout>
+
 
     <com.breadwallet.presenter.customviews.BRText
         app:customFont="Celevenia.otf"
