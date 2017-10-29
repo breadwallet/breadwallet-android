@@ -183,13 +183,11 @@ public class CurrencyFetchManager {
 
 
     public static JSONArray getJSonArray(Activity activity) {
-        String jsonString = callURL(activity, "https://litecoin.com/api/v1/ticker");
+        String jsonString = callURL(activity, "https://litecoin.com/api/v1/rates");
         JSONArray jsonArray = null;
         if (jsonString == null) return null;
         try {
-            JSONObject obj = new JSONObject(jsonString);
-            jsonArray = obj.getJSONArray("price");
-
+            jsonArray = new JSONArray(jsonString);
         } catch (JSONException ignored) {
         }
         return jsonArray == null ? getBackUpJSonArray(activity) : jsonArray;

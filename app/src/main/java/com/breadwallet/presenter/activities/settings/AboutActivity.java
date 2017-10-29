@@ -1,15 +1,19 @@
 package com.breadwallet.presenter.activities.settings;
 
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.tools.util.BRConstants;
 
 import java.util.Locale;
 
@@ -51,13 +55,30 @@ public class AboutActivity extends BRActivity {
         }
         int verCode = pInfo != null ? pInfo.versionCode : 0;
 
-        infoText.setText(String.format(Locale.getDefault(), "%s %d", getString(R.string.About_footer), verCode));
+        infoText.setText(getString(R.string.About_footer, verCode));
 
         redditShare = (ImageView) findViewById(R.id.reddit_share_button);
         twitterShare = (ImageView) findViewById(R.id.twitter_share_button);
-        blogShare = (ImageView) findViewById(R.id.blog_share_button);
 
+        redditShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openUrl(BRConstants.REDDIT_LINK);
+            }
+        });
 
+        twitterShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openUrl(BRConstants.TWITTER_LINK);
+            }
+        });
+    }
+
+    private void openUrl(String url) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse(url));
+        startActivity(browserIntent);
     }
 
     @Override

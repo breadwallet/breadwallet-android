@@ -118,18 +118,6 @@
         app:layout_constraintBottom_toTopOf="@+id/view4"
         app:layout_constraintLeft_toLeftOf="@+id/divider1"/>
 
-    <com.breadwallet.presenter.customviews.BRText
-        app:customFont="CircularPro-Book.otf"
-        android:id="@+id/textView24"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        android:layout_marginLeft="0dp"
-        android:text="@string/About.blog"
-        android:textSize="18sp"
-        app:layout_constraintBottom_toTopOf="@+id/view5"
-        app:layout_constraintLeft_toLeftOf="@+id/divider1"/>
-
     <ImageView
         android:id="@+id/twitter_share_button"
         android:layout_width="16dp"
@@ -137,18 +125,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/textView22"
         app:layout_constraintRight_toRightOf="@+id/view4"
         app:layout_constraintTop_toTopOf="@+id/textView22"
-        android:src="@drawable/ic_share"/>
-
-    <ImageView
-        android:id="@+id/blog_share_button"
-        android:layout_width="16dp"
-        android:layout_height="16dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginEnd="0dp"
-        android:layout_marginTop="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/textView24"
-        app:layout_constraintRight_toRightOf="@+id/view5"
-        app:layout_constraintTop_toTopOf="@+id/textView24"
         android:src="@drawable/ic_share"/>
 
     <com.breadwallet.presenter.customviews.BRText
