@@ -2,6 +2,7 @@ package com.breadwallet.tools.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
@@ -242,4 +243,9 @@ public class Utils {
         return result.reverse().toString();
     }
 
+    public static void openUrl(Context context, String url) {
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                Uri.parse(url));
+        context.startActivity(browserIntent);
+    }
 }

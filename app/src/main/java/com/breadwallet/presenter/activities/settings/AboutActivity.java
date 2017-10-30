@@ -14,6 +14,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Utils;
 
 import java.util.Locale;
 
@@ -64,29 +65,23 @@ public class AboutActivity extends BRActivity {
         blogShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openUrl(BRConstants.BLOG_LINK);
+                Utils.openUrl(AboutActivity.this, BRConstants.BLOG_LINK);
             }
         });
 
         redditShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openUrl(BRConstants.REDDIT_LINK);
+                Utils.openUrl(AboutActivity.this, BRConstants.REDDIT_LINK);
             }
         });
 
         twitterShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openUrl(BRConstants.TWITTER_LINK);
+                Utils.openUrl(AboutActivity.this, BRConstants.TWITTER_LINK);
             }
         });
-    }
-
-    private void openUrl(String url) {
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW,
-                Uri.parse(url));
-        startActivity(browserIntent);
     }
 
     @Override

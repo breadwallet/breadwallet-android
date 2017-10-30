@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -83,6 +84,7 @@ public class FragmentTransactionItem extends Fragment {
     private TextView mDateText;
     private TextView mToFromBottom;
     private TextView mTxHash;
+    private LinearLayout mTxHashContainer;
     private TxItem item;
     private LinearLayout signalLayout;
     private ImageButton close;
@@ -106,6 +108,7 @@ public class FragmentTransactionItem extends Fragment {
         mConfirmationText = (TextView) rootView.findViewById(R.id.confirmation_text);
         mAvailableSpend = (TextView) rootView.findViewById(R.id.available_spend);
         mTxHash = (TextView) rootView.findViewById(R.id.tx_hash);
+        mTxHashContainer = (LinearLayout) rootView.findViewById(R.id.tx_hash_container);
         close = (ImageButton) rootView.findViewById(R.id.close_button);
 
         ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
@@ -189,6 +192,14 @@ public class FragmentTransactionItem extends Fragment {
         String toFrom = sent ? String.format(getString(R.string.TransactionDetails_to), addr) : String.format(getString(R.string.TransactionDetails_from), addr);
 
         mTxHash.setText(item.getTxHashHexReversed());
+        mTxHashContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String txUrl = BRConstants.BLOCK_EXPLORER_BASE_URL + item.getTxHashHexReversed();
+                Log.d(TAG, "txUrl = " + txUrl);
+                Utils.openUrl(FragmentTransactionItem.this.getContext(), txUrl);
+            }
+        });
 
         int relayCount = BRPeerManager.getRelayCount(item.getTxHash());
 

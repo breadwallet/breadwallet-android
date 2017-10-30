@@ -1,5 +1,7 @@
 package com.breadwallet.tools.util;
 
+import com.breadwallet.BuildConfig;
+
 import java.math.RoundingMode;
 import java.util.concurrent.TimeUnit;
 
@@ -143,6 +145,8 @@ public class BRConstants {
     public static final String TWITTER_LINK = "https://twitter.com/ltcfoundation";
     public static final String REDDIT_LINK = "https://www.reddit.com/r/litecoin";
     public static final String BLOG_LINK = "http://loafwallet.org";
+
+    public static final String BLOCK_EXPLORER_BASE_URL = BuildConfig.BITCOIN_TESTNET ? "http://explorer.litecointools.com/tx/" :"https://insight.litecore.io/tx/";
 
     private BRConstants() {
     }
