@@ -39,7 +39,7 @@
                     android:text="@string/Receive.title"
                     android:textColor="@color/almost_black"
                     android:textSize="20sp"
-                    app:customFont="CircularPro-Bold.otf"
+                    app:customTFont="CircularPro-Bold.otf"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintHorizontal_bias="0.498"
                     app:layout_constraintLeft_toLeftOf="parent"

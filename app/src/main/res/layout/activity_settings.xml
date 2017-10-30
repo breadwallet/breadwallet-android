@@ -10,7 +10,7 @@
     tools:context="com.breadwallet.presenter.activities.SetPinActivity">
 
     <com.breadwallet.presenter.customviews.BRText
-        app:customFont="CircularPro-Bold.otf"
+        app:customTFont="CircularPro-Bold.otf"
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

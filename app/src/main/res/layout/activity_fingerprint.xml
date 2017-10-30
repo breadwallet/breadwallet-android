@@ -39,7 +39,7 @@
                 android:text="@string/TouchIdSettings.title.Android"
                 android:textColor="@color/white"
                 android:textSize="18sp"
-                app:customFont="CircularPro-Bold.otf"/>
+                app:customTFont="CircularPro-Bold.otf"/>
 
             <ImageButton
                 android:id="@+id/faq_button"
@@ -84,7 +84,7 @@
         android:text="@string/TouchIdSettings.switchLabel.Android"
         android:textColor="@color/almost_black"
         android:textSize="16sp"
-        app:customFont="CircularPro-Bold.otf"/>
+        app:customTFont="CircularPro-Bold.otf"/>
 
     <ToggleButton
         android:id="@+id/toggleButton"

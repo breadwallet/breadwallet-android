@@ -21,7 +21,7 @@
         />
 
     <com.breadwallet.presenter.customviews.BRText
-        app:customFont="CircularPro-Medium.otf"
+        app:customTFont="CircularPro-Medium.otf"
         android:id="@+id/item_addon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

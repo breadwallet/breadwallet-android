@@ -50,7 +50,7 @@
                 android:text="@string/TransactionDetails.title"
                 android:textColor="@color/almost_black"
                 android:textSize="18sp"
-                app:customFont="CircularPro-Bold.otf"
+                app:customTFont="CircularPro-Bold.otf"
                 />
 
             <ImageButton
@@ -95,7 +95,7 @@
                     android:textColor="@color/light_gray"
                     android:textIsSelectable="true"
                     android:textSize="18sp"
-                    app:customFont="CircularPro-Bold.otf"
+                    app:customTFont="CircularPro-Bold.otf"
                     />
 
                 <com.breadwallet.presenter.customviews.BRText
@@ -109,7 +109,7 @@
                     android:textColor="@color/almost_black"
                     android:textIsSelectable="true"
                     android:textSize="30sp"
-                    app:customFont="CircularPro-Bold.otf"
+                    app:customTFont="CircularPro-Bold.otf"
                     />
 
                 <com.breadwallet.presenter.customviews.BRText
@@ -119,14 +119,13 @@
                     android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="8dp"
-                    android:maxLines="1"
-                    android:lines="1"
+                    android:singleLine="true"
                     android:ellipsize="middle"
                     android:text=""
                     android:textColor="@color/almost_black"
                     android:textIsSelectable="false"
                     android:textSize="16sp"
-                    app:customFont="CircularPro-Book.otf"
+                    app:customTFont="CircularPro-Book.otf"
                     />
 
                 <View
@@ -144,7 +143,7 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/TransactionDetails.statusHeader"
                     android:textColor="@color/light_gray"
-                    app:customFont="CircularPro-Bold.otf"
+                    app:customTFont="CircularPro-Bold.otf"
                     />
 
                 <com.breadwallet.presenter.customviews.BRText
@@ -163,7 +162,7 @@
                     android:text="@string/Transaction.available"
                     android:textColor="#48F0B8"
                     android:textIsSelectable="true"
-                    app:customFont="CircularPro-Bold.otf"/>
+                    app:customTFont="CircularPro-Bold.otf"/>
 
                 <View
                     android:layout_width="match_parent"
@@ -180,7 +179,7 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/TransactionDetails.commentsHeader"
                     android:textColor="@color/light_gray"
-                    app:customFont="CircularPro-Bold.otf"
+                    app:customTFont="CircularPro-Bold.otf"
                     />
 
                 <EditText
@@ -207,7 +206,7 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/TransactionDetails.amountHeader"
                     android:textColor="@color/light_gray"
-                    app:customFont="CircularPro-Bold.otf"
+                    app:customTFont="CircularPro-Bold.otf"
                     />
 
                 <com.breadwallet.presenter.customviews.BRText
@@ -234,7 +233,7 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/Confirmation.to"
                     android:textColor="@color/light_gray"
-                    app:customFont="CircularPro-Bold.otf"
+                    app:customTFont="CircularPro-Bold.otf"
                     />
 
                 <com.breadwallet.presenter.customviews.BRText
@@ -262,7 +261,7 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/TransactionDetails.txHashHeader"
                     android:textColor="@color/light_gray"
-                    app:customFont="CircularPro-Bold.otf"
+                    app:customTFont="CircularPro-Bold.otf"
                     />
 
                 <com.breadwallet.presenter.customviews.BRText
