@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:layout_marginTop="8dp"
-            app:customFont="CircularPro-Book.otf"
+            app:customTFont="CircularPro-Book.otf"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="@+id/syncing_label"
             app:layout_constraintTop_toBottomOf="@+id/sync_progress"/>
@@ -41,7 +41,7 @@
             android:layout_marginTop="16dp"
             android:text="@string/SyncingView.header"
             android:textColor="@color/almost_black"
-            app:customFont="CircularPro-Bold.otf"
+            app:customTFont="CircularPro-Bold.otf"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 

@@ -18,7 +18,7 @@
         android:text="@string/About.appName.Android"
         android:textColor="@color/white"
         android:textSize="48sp"
-        app:customFont="Celevenia.otf"
+        app:customTFont="Celevenia.otf"
         app:layout_constraintBottom_toTopOf="@+id/unlocked_text"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
@@ -89,7 +89,7 @@
         android:text="@string/UnlockScreen.subheader"
         android:textColor="@color/almost_black"
         android:textSize="18sp"
-        app:customFont="CircularPro-Book.otf"
+        app:customTFont="CircularPro-Book.otf"
         app:layout_constraintBottom_toTopOf="@+id/pinLayout"
         app:layout_constraintLeft_toLeftOf="@+id/pinLayout"
         app:layout_constraintRight_toRightOf="@+id/pinLayout"/>
@@ -121,7 +121,7 @@
             android:text="@string/UnlockScreen.myAddress"
             android:textColor="@color/white"
             android:textSize="14sp"
-            app:customFont="CircularPro-Medium.otf"
+            app:customBFont="CircularPro-Medium.otf"
             app:isBreadButton="false"
             />
 
@@ -136,7 +136,7 @@
             android:text="@string/UnlockScreen.scan"
             android:textColor="@color/white"
             android:textSize="14sp"
-            app:customFont="CircularPro-Medium.otf"
+            app:customBFont="CircularPro-Medium.otf"
             />
     </LinearLayout>
 
@@ -166,7 +166,7 @@
         android:text="@string/UnlockScreen.unlocked"
         android:textColor="@color/white"
         android:textSize="18sp"
-        app:customFont="CircularPro-Book.otf"
+        app:customTFont="CircularPro-Book.otf"
         app:layout_constraintBottom_toTopOf="@+id/unlocked_image"
         app:layout_constraintHorizontal_bias="0.461"
         app:layout_constraintLeft_toLeftOf="@+id/unlocked_image"

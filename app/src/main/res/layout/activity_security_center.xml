@@ -45,7 +45,7 @@
                 android:text="@string/SecurityCenter.title"
                 android:textColor="@color/white"
                 android:textSize="18sp"
-                app:customFont="CircularPro-Bold.otf"
+                app:customTFont="CircularPro-Bold.otf"
                 />
 
             <ImageButton

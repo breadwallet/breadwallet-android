@@ -59,7 +59,7 @@
                         android:textColor="@color/white"
                         android:textSize="36sp"
                         android:textStyle="bold"
-                        app:customFont="Celevenia.otf"
+                        app:customTFont="Celevenia.otf"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -75,7 +75,7 @@
                         android:text="$0"
                         android:textColor="@color/white"
                         android:textSize="16sp"
-                        app:customFont="CircularPro-Book.otf"
+                        app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/wallet_name_text"
@@ -92,7 +92,7 @@
                         android:text="="
                         android:textColor="@color/white"
                         android:textSize="16sp"
-                        app:customFont="CircularPro-Book.otf"
+                        app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toRightOf="@+id/primary_price"
                         app:layout_constraintTop_toBottomOf="@+id/wallet_name_text"
@@ -109,7 +109,7 @@
                         android:text="b0"
                         android:textColor="@color/white"
                         android:textSize="16sp"
-                        app:customFont="CircularPro-Book.otf"
+                        app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintLeft_toRightOf="@+id/equals"
                         app:layout_constraintTop_toBottomOf="@+id/wallet_name_text"
@@ -122,7 +122,7 @@
                         android:text=""
                         android:textColor="@color/almost_black"
                         android:textSize="16sp"
-                        app:customFont="CircularPro-Book.otf"
+                        app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintLeft_toLeftOf="@+id/primary_price"
                         app:layout_constraintTop_toBottomOf="@+id/primary_price"/>
 
@@ -135,7 +135,7 @@
                         android:textColor="@color/white"
                         android:textSize="18sp"
                         android:visibility="gone"
-                        app:customFont="CircularPro-Bold.otf"
+                        app:customTFont="CircularPro-Bold.otf"
                         app:layout_constraintBottom_toBottomOf="@+id/wallet_name_text"
                         app:layout_constraintRight_toRightOf="parent"
                         app:layout_constraintTop_toTopOf="@+id/wallet_name_text"/>
@@ -204,7 +204,7 @@
                 android:layout_marginTop="8dp"
                 android:text="@string/Account.loadingMessage"
                 android:textColor="@color/white"
-                app:customFont="CircularPro-Bold.otf"
+                app:customTFont="CircularPro-Bold.otf"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHorizontal_bias="0.501"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -269,7 +269,7 @@
         android:text="@string/TransactionDetails.emptyMessage"
         android:textColor="@color/light_gray"
         android:textSize="18sp"
-        app:customFont="CircularPro-Book.otf"
+        app:customTFont="CircularPro-Book.otf"
         tools:layout_constraintBottom_creator="1"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
@@ -314,7 +314,7 @@
                 android:text="@string/Send.sendLabel"
                 android:textAllCaps="true"
                 android:textColor="@color/pin_pad_text"
-                app:customFont="CircularPro-Medium.otf"/>
+                app:customTFont="CircularPro-Medium.otf"/>
         </LinearLayout>
 
         <LinearLayout
@@ -341,7 +341,7 @@
                 android:text="@string/Button.receive"
                 android:textAllCaps="true"
                 android:textColor="@color/pin_pad_text"
-                app:customFont="CircularPro-Medium.otf"/>
+                app:customTFont="CircularPro-Medium.otf"/>
         </LinearLayout>
 
         <LinearLayout
@@ -368,7 +368,7 @@
                 android:text="@string/Button.menu"
                 android:textAllCaps="true"
                 android:textColor="@color/pin_pad_text"
-                app:customFont="CircularPro-Medium.otf"/>
+                app:customTFont="CircularPro-Medium.otf"/>
         </LinearLayout>
 
     </LinearLayout>

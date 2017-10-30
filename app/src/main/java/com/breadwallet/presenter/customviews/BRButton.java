@@ -95,8 +95,8 @@ public class BRButton extends Button {
         bPaintStroke = new Paint();
         shadowRect = new Rect(0, 0, 100, 100);
         bRect = new RectF(0, 0, 100, 100);
-        TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.BRText);
-        String customFont = a.getString(R.styleable.BRText_customFont);
+        TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.BRButton);
+        String customFont = a.getString(R.styleable.BRButton_customBFont);
         FontManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Medium.otf" : customFont);
         float px16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics());
         //check attributes you need, for example all paddings
@@ -105,14 +105,16 @@ public class BRButton extends Button {
         TypedArray arr = ctx.obtainStyledAttributes(attrs, attributes);
         //You can check if attribute exists (in this example checking paddingRight)
 
-        isBreadButton = arr.getBoolean(4, false);
-
+        isBreadButton = a.getBoolean(R.styleable.BRButton_isBreadButton, false);
+        Log.e(TAG, "init: isBreadButton: " + isBreadButton);
         int paddingLeft = arr.hasValue(0) ? arr.getDimensionPixelOffset(0, -1) : (int) px16;
         int paddingTop = arr.hasValue(1) ? arr.getDimensionPixelOffset(1, -1) : 0;
         int paddingRight = arr.hasValue(2) ? arr.getDimensionPixelOffset(2, -1) : (int) px16;
         int paddingBottom = arr.hasValue(3) ? arr.getDimensionPixelOffset(3, -1) + (isBreadButton ? (int) px16 : 0) : (isBreadButton ? (int) px16 : 0);
 
-        setType(arr.getInteger(5, 0));
+        int type = a.getInteger(R.styleable.BRButton_buttonType, 0);
+        Log.e(TAG, "init: type: " + type);
+        setType(type);
 
         bPaint.setAntiAlias(true);
         bPaintStroke.setAntiAlias(true);

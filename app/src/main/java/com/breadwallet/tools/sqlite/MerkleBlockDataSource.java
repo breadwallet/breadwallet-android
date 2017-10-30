@@ -143,7 +143,7 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
     }
 
     @Override
-    public synchronized SQLiteDatabase openDatabase() {
+    public  SQLiteDatabase openDatabase() {
 //        if (mOpenCounter.incrementAndGet() == 1) {
         // Opening new database
         if (database == null)
@@ -155,7 +155,7 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
     }
 
     @Override
-    public synchronized void closeDatabase() {
+    public  void closeDatabase() {
 //        if (mOpenCounter.decrementAndGet() == 0) {
 //            // Closing database
 //            database.close();

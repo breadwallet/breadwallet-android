@@ -19,7 +19,7 @@
         android:text="@string/Settings.sync"
         android:textColor="@color/almost_black"
         android:textSize="30sp"
-        app:customFont="CircularPro-Bold.otf"
+        app:customTFont="CircularPro-Bold.otf"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
@@ -33,7 +33,7 @@
         android:text="@string/ReScan.subheader1"
         android:textColor="@color/almost_black"
         android:textSize="18sp"
-        app:customFont="CircularPro-Bold.otf"
+        app:customTFont="CircularPro-Bold.otf"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/title"
         app:layout_constraintRight_toRightOf="parent"
@@ -66,7 +66,7 @@
         android:text="@string/ReScan.subheader2"
         android:textColor="@color/almost_black"
         android:textSize="18sp"
-        app:customFont="CircularPro-Bold.otf"
+        app:customTFont="CircularPro-Bold.otf"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/exchange_text"
         app:layout_constraintRight_toRightOf="parent"

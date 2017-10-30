@@ -25,7 +25,7 @@
             android:layout_marginTop="16dp"
             android:text="Sent"
             android:textColor="@color/almost_black"
-            app:customFont="CircularPro-Book.otf"
+            app:customTFont="CircularPro-Book.otf"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
@@ -38,7 +38,7 @@
             android:layout_marginTop="0dp"
             android:text="$25"
             android:textColor="@color/almost_black"
-            app:customFont="CircularPro-Bold.otf"
+            app:customTFont="CircularPro-Bold.otf"
             app:layout_constraintBottom_toBottomOf="@+id/sent_received"
             app:layout_constraintLeft_toRightOf="@+id/sent_received"
             app:layout_constraintTop_toTopOf="@+id/sent_received"/>
@@ -51,7 +51,7 @@
             android:layout_marginTop="8dp"
             android:text="to"
             android:textColor="@color/almost_black"
-            app:customFont="CircularPro-Book.otf"
+            app:customTFont="CircularPro-Book.otf"
             app:layout_constraintLeft_toLeftOf="@+id/sent_received"
             app:layout_constraintTop_toBottomOf="@+id/sent_received"/>
 
@@ -64,10 +64,10 @@
             android:layout_marginStart="0dp"
             android:layout_marginTop="0dp"
             android:ellipsize="middle"
-            android:maxLines="1"
+            android:singleLine="true"
             android:text="account"
             android:textColor="@color/almost_black"
-            app:customFont="CircularPro-Bold.otf"
+            app:customTFont="CircularPro-Bold.otf"
             app:layout_constraintBottom_toBottomOf="@+id/to_from"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toRightOf="@+id/to_from"
@@ -84,7 +84,7 @@
             android:layout_marginTop="8dp"
             android:text="Completed"
             android:textColor="@color/almost_black"
-            app:customFont="CircularPro-Book.otf"
+            app:customTFont="CircularPro-Book.otf"
             app:layout_constraintLeft_toLeftOf="@+id/sent_received"
             app:layout_constraintTop_toBottomOf="@+id/comment"
             />
@@ -98,7 +98,7 @@
             android:layout_marginTop="8dp"
             android:text="@string/Transaction.available"
             android:textColor="#48F0B8"
-            app:customFont="CircularPro-Bold.otf"
+            app:customTFont="CircularPro-Bold.otf"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="@+id/sent_received"
             app:layout_constraintTop_toBottomOf="@+id/status"
@@ -112,7 +112,7 @@
             android:layout_marginTop="16dp"
             android:text="2d"
             android:textColor="@color/light_gray"
-            app:customFont="CircularPro-Medium.otf"
+            app:customTFont="CircularPro-Medium.otf"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
@@ -124,7 +124,7 @@
             android:layout_marginTop="8dp"
             android:text="For Love"
             android:textColor="@color/almost_black"
-            app:customFont="CircularPro-Book.otf"
+            app:customTFont="CircularPro-Book.otf"
             app:layout_constraintLeft_toLeftOf="@+id/sent_received"
             app:layout_constraintTop_toBottomOf="@+id/to_from"/>
 

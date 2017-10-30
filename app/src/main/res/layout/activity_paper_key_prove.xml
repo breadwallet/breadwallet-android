@@ -33,7 +33,7 @@
             android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="20sp"
-            app:customFont="CircularPro-Bold.otf"
+            app:customTFont="CircularPro-Bold.otf"
             app:layout_constraintLeft_toLeftOf="@+id/description"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>

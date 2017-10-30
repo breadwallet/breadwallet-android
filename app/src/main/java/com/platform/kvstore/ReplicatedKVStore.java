@@ -95,7 +95,7 @@ public class ReplicatedKVStore {
         dbHelper = PlatformSqliteHelper.getInstance(context);
     }
 
-    public synchronized SQLiteDatabase getWritable() {
+    public  SQLiteDatabase getWritable() {
 //        if (mOpenCounter.incrementAndGet() == 1) {
         // Opening new database
         if (mDatabase == null)
@@ -106,7 +106,7 @@ public class ReplicatedKVStore {
         return mDatabase;
     }
 
-    public synchronized SQLiteDatabase getReadable() {
+    public  SQLiteDatabase getReadable() {
 //        if (mOpenCounter.incrementAndGet() == 1) {
         // Opening new database
         if (mDatabase == null)
@@ -117,7 +117,7 @@ public class ReplicatedKVStore {
         return mDatabase;
     }
 
-    public synchronized void closeDB() {
+    public  void closeDB() {
 //        if (mOpenCounter.decrementAndGet() == 0) {
         // Closing database
 //            mDatabase.close();

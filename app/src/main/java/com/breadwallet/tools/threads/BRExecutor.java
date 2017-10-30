@@ -78,18 +78,30 @@ public class BRExecutor implements RejectedExecutionHandler {
 
     }
 
+    android.os.Handler handler = new android.os.Handler();
+    int count = 0;
+
     /*
     * constructor for  BRExecutor
     */
     private BRExecutor() {
 
-//        new android.os.Handler().postDelayed(new Runnable() {
-//            @Override
-//            public void run() {
-//                Log.e(TAG, "BRExecutor: Background: " + mForBackgroundTasks.getActiveCount() + ", lightBackground: " + mForLightWeightBackgroundTasks.getActiveCount() + ", serialized: " + mForSerializedTasks.getActiveCount());
-//            }
-//        }, 30000);
-        // setting the thread factory
+        Runnable runnableCode = new Runnable() {
+            @Override
+            public void run() {
+                Log.e(TAG, "BRExecutor: Background: " + mForBackgroundTasks.getActiveCount() + ":" + mForBackgroundTasks.getQueue().size() +
+                        ", lightBackground: " + mForLightWeightBackgroundTasks.getActiveCount() + ":" + mForLightWeightBackgroundTasks.getQueue().size() +
+                        ", serialized: " + mForSerializedTasks.getActiveCount() + ":" + mForSerializedTasks.getQueue().size());
+                count++;
+                handler.postDelayed(this, 2000);
+//                if (count > 30) {
+//                    // Removes pending code execution
+//                    handler.removeCallbacks(this);
+//                }
+            }
+        };
+        handler.post(runnableCode);
+
         ThreadFactory backgroundPriorityThreadFactory = new
                 PriorityThreadFactory(android.os.Process.THREAD_PRIORITY_BACKGROUND);
 

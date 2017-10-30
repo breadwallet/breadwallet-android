@@ -21,7 +21,7 @@
         app:layout_constraintRight_toRightOf="parent">
 
         <com.breadwallet.presenter.customviews.BRText
-            app:customFont="CircularPro-Bold.otf"
+            app:customTFont="CircularPro-Bold.otf"
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:textSize="22sp"
