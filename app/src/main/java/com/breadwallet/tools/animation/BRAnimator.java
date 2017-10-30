@@ -28,6 +28,7 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 import android.widget.TextView;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.PinActivity;
@@ -45,6 +46,7 @@ import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.List;
 
@@ -160,6 +162,23 @@ public class BRAnimator {
 
     }
     public static void showSupportFragment(Activity app, String articleId) {
+        BRDialog.showCustomDialog(
+                app,
+                BreadApp.getInstance().getString(R.string.Support_Title),
+                BreadApp.getInstance().getString(R.string.Support_Message),
+                null,
+                null,
+                new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        brDialogView.dismissWithAnimation();
+                    }
+                },
+                null,
+                null,
+                0);
+        FirebaseCrash.log("showSupportFragment");
+
         // Temporarily disable SupportFragment
 //        if (app == null) {
 //            Log.e(TAG, "showSupportFragment: app is null");
