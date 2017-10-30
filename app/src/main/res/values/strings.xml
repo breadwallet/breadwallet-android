@@ -654,6 +654,8 @@
   <string name="VerifyPin.title">PIN Required</string>
   <!-- Authorize transaction with touch id message -->
   <string name="VerifyPin.touchIdMessage">Authorize this transaction</string>
+  <!-- View a transaction on the blockchain explorer -->
+  <string name="ViewOnBlockchain">View on blockchain</string>
   <!-- 'No wallet' warning for watch app -->
   <string name="Watch.noWalletWarning">Open the Loaf iPhone app to set up your wallet.</string>
   <!-- Dismiss button label -->
