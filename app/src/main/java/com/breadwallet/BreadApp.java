@@ -12,6 +12,14 @@ import android.os.Handler;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.breadwallet.tools.sqlite.BRSQLiteHelper;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
+import com.breadwallet.tools.sqlite.PeerDataSource;
+import com.breadwallet.tools.sqlite.TransactionDataSource;
+import com.platform.kvstore.ReplicatedKVStore;
+import com.platform.sqlite.PlatformSqliteHelper;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -56,6 +64,14 @@ public class BreadApp extends Application {
     public void onCreate() {
         super.onCreate();
         instance = this;
+
+        // initialize DB stuff
+        PlatformSqliteHelper.getInstance();
+        BRSQLiteHelper.getInstance();
+        CurrencyDataSource.getInstance();
+        MerkleBlockDataSource.getInstance();
+        PeerDataSource.getInstance();
+        TransactionDataSource.getInstance();
 
         if (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
             HOST = "stage.breadwallet.com";

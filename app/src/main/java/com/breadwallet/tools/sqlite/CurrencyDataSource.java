@@ -35,6 +35,7 @@ import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -52,7 +53,7 @@ public class CurrencyDataSource {
     };
 
     private static CurrencyDataSource instance;
-    private Map<String, CurrencyEntity> currencyEntityMap;
+    private Map<String, CurrencyEntity> currencyEntityMap = Collections.synchronizedMap(new HashMap<String, CurrencyEntity>());
 
     public static CurrencyDataSource getInstance() {
         if (instance == null) {
@@ -89,6 +90,9 @@ public class CurrencyDataSource {
         } finally {
             database.endTransaction();
         }
+
+        // update currency map
+        currencyEntityMap = getCurrencyMap();
 
     }
 //    public void putCurrencies(Set<CurrencyEntity> currencyEntities) {

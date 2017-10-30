@@ -84,12 +84,12 @@ public class ReplicatedKVStore {
         dbHelper = PlatformSqliteHelper.getInstance();
     }
 
-    public SQLiteDatabase getWritable() {
+    private SQLiteDatabase getWritable() {
         writeLock.lock();
         return dbHelper.getWritableDatabase();
     }
 
-    public SQLiteDatabase getReadable() {
+    private SQLiteDatabase getReadable() {
         readLock.lock();
         return dbHelper.getWritableDatabase();
     }

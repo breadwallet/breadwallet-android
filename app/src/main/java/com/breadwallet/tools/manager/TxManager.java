@@ -14,6 +14,7 @@ import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -230,7 +231,8 @@ public class TxManager {
                     for (TxItem item : arr) {
                         KVStoreManager kvM = KVStoreManager.getInstance();
                         String iso = BRSharedPrefs.getIso(app);
-                        double rate = CurrencyDataSource.getInstance().getCurrencyByIso(iso).rate;
+                        CurrencyEntity currencyEntity = CurrencyDataSource.getInstance().getCurrencyByIso(iso);
+                        double rate = currencyEntity == null ? 0f: currencyEntity.rate;
                         TxMetaData temp = kvM.getTxMetaData(app, item.getTxHash());
                         String comment = temp == null ? "" : temp.comment;
 
