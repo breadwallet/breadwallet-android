@@ -69,7 +69,7 @@ public class PeerDataSource implements BRDataSourceInterface {
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
-    public synchronized void putPeers(PeerEntity[] peerEntities) {
+    public  void putPeers(PeerEntity[] peerEntities) {
 
         try {
             database = openDatabase();
@@ -95,7 +95,7 @@ public class PeerDataSource implements BRDataSourceInterface {
 
     }
 
-    public synchronized void deletePeer(BRPeerEntity peerEntity) {
+    public  void deletePeer(BRPeerEntity peerEntity) {
         try {
             database = openDatabase();
             long id = peerEntity.getId();
@@ -108,7 +108,7 @@ public class PeerDataSource implements BRDataSourceInterface {
 
     }
 
-    public synchronized void deleteAllPeers() {
+    public  void deleteAllPeers() {
         try {
             database = dbHelper.getWritableDatabase();
             database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID + " <> -1", null);
@@ -117,7 +117,7 @@ public class PeerDataSource implements BRDataSourceInterface {
         }
     }
 
-    public synchronized List<BRPeerEntity> getAllPeers() {
+    public  List<BRPeerEntity> getAllPeers() {
         List<BRPeerEntity> peers = new ArrayList<>();
         Cursor cursor = null;
         try {
@@ -156,7 +156,7 @@ public class PeerDataSource implements BRDataSourceInterface {
         // Opening new database
         if (database == null)
             database = dbHelper.getWritableDatabase();
-        dbHelper.setWriteAheadLoggingEnabled(true);
+        dbHelper.setWriteAheadLoggingEnabled(false);
 //        }
 //        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
         return database;

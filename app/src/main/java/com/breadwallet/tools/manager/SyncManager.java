@@ -168,7 +168,7 @@ public class SyncManager {
                     }
 
                     try {
-                        Thread.sleep(300);
+                        Thread.sleep(500);
                     } catch (InterruptedException e) {
                         Log.e(TAG, "run: Thread.sleep was Interrupted:" + Thread.currentThread().getName(), e);
                     }

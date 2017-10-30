@@ -29,6 +29,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.TxManager;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
@@ -284,12 +285,17 @@ public class FragmentTransactionItem extends Fragment {
             TxMetaData md = new TxMetaData();
             md.comment = comment;
             KVStoreManager.getInstance().putTxMetaData(app, md, item.getTxHash());
-            new Handler().postDelayed(new Runnable() {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
+                    try {
+                        Thread.sleep(200);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     TxManager.getInstance().updateTxList(app);
                 }
-            }, 200);
+            });
 
         }
         oldComment = null;

@@ -95,43 +95,42 @@ public class APIProxy implements Middleware {
         }
 
         Response res = apiInstance.sendRequest(req, auth, 0);
-
-//        if (res.code() == 599) {
-//            Log.e(TAG, "handle: code 599: " + target + " " + baseRequest.getMethod());
-//            return BRHTTPHelper.handleError(599, null, baseRequest, response);
-//        }
-        ResponseBody body = res.body();
-        String cType = body.contentType() == null ? null : body.contentType().toString();
-        String resString = null;
-        byte[] bodyBytes = new byte[0];
         try {
-            bodyBytes = body.bytes();
-            resString = new String(bodyBytes);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+            ResponseBody body = res.body();
+            String cType = body.contentType() == null ? null : body.contentType().toString();
+            String resString = null;
+            byte[] bodyBytes = new byte[0];
+            try {
+                bodyBytes = body.bytes();
+                resString = new String(bodyBytes);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
-        response.setContentType(cType);
-        Headers headers = res.headers();
-        for (String s : headers.names()) {
-            if (Arrays.asList(bannedReceiveHeaders).contains(s.toLowerCase())) continue;
-            response.addHeader(s, res.header(s));
-        }
-        response.setContentLength(bodyBytes.length);
+            response.setContentType(cType);
+            Headers headers = res.headers();
+            for (String s : headers.names()) {
+                if (Arrays.asList(bannedReceiveHeaders).contains(s.toLowerCase())) continue;
+                response.addHeader(s, res.header(s));
+            }
+            response.setContentLength(bodyBytes.length);
 
-        if (!res.isSuccessful()) {
-            Log.e(TAG, "RES IS NOT SUCCESSFUL: " + res.request().url() + ": " + res.code() + "(" + res.message() + ")");
+            if (!res.isSuccessful()) {
+                Log.e(TAG, "RES IS NOT SUCCESSFUL: " + res.request().url() + ": " + res.code() + "(" + res.message() + ")");
 //            return BRHTTPHelper.handleSuccess(res.code(), bodyBytes, baseRequest, response, null);
-        }
+            }
 
-        try {
-            response.setStatus(res.code());
-            if (cType != null && !cType.isEmpty())
-                response.setContentType(cType);
-            response.getOutputStream().write(bodyBytes);
-            baseRequest.setHandled(true);
-        } catch (IOException e) {
-            e.printStackTrace();
+            try {
+                response.setStatus(res.code());
+                if (cType != null && !cType.isEmpty())
+                    response.setContentType(cType);
+                response.getOutputStream().write(bodyBytes);
+                baseRequest.setHandled(true);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } finally {
+            if (res != null) res.close();
         }
         return true;
 

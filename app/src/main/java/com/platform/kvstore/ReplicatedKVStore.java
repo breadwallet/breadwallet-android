@@ -34,6 +34,8 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.sqlite.BRSQLiteHelper;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.jniwrappers.BRKey;
@@ -52,7 +54,7 @@ import java.util.regex.Pattern;
 public class ReplicatedKVStore {
     private static final String TAG = ReplicatedKVStore.class.getName();
 
-//    private AtomicInteger mOpenCounter = new AtomicInteger();
+    //    private AtomicInteger mOpenCounter = new AtomicInteger();
     private SQLiteDatabase mDatabase;
 
     private static final String KEY_REGEX = "^[^_][\\w-]{1,255}$";
@@ -77,11 +79,20 @@ public class ReplicatedKVStore {
             PlatformSqliteHelper.KV_DELETED
     };
 
-    public ReplicatedKVStore(Context context, KVStoreAdaptor remoteKvStore) {
+    private static ReplicatedKVStore instance;
+
+    public static ReplicatedKVStore getInstance(Context context, KVStoreAdaptor remoteKvStore) {
+        if (instance == null) {
+            instance = new ReplicatedKVStore(context, remoteKvStore);
+        }
+        return instance;
+    }
+
+    private ReplicatedKVStore(Context context, KVStoreAdaptor remoteKvStore) {
 //        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         this.context = context;
         this.remoteKvStore = remoteKvStore;
-        dbHelper = new PlatformSqliteHelper(context);
+        dbHelper = PlatformSqliteHelper.getInstance(context);
     }
 
     public synchronized SQLiteDatabase getWritable() {
@@ -89,7 +100,7 @@ public class ReplicatedKVStore {
         // Opening new database
         if (mDatabase == null)
             mDatabase = dbHelper.getWritableDatabase();
-        dbHelper.setWriteAheadLoggingEnabled(true);
+        dbHelper.setWriteAheadLoggingEnabled(false);
 //        }
 //        Log.d(TAG, "getWritable open counter: " + String.valueOf(mOpenCounter.get()));
         return mDatabase;
@@ -100,7 +111,7 @@ public class ReplicatedKVStore {
         // Opening new database
         if (mDatabase == null)
             mDatabase = dbHelper.getWritableDatabase();
-        dbHelper.setWriteAheadLoggingEnabled(true);
+        dbHelper.setWriteAheadLoggingEnabled(false);
 //        }
 //        Log.d(TAG, "getReadable open counter: " + String.valueOf(mOpenCounter.get()));
         return mDatabase;
@@ -130,7 +141,7 @@ public class ReplicatedKVStore {
             set(kv);
     }
 
-    public CompletionObject set(KVItem kv) {
+    public  CompletionObject set(KVItem kv) {
         try {
             if (isKeyValid(kv.key)) {
                 CompletionObject obj = new CompletionObject(CompletionObject.RemoteKVStoreError.unknown);
@@ -160,7 +171,7 @@ public class ReplicatedKVStore {
         }
     }
 
-    private synchronized CompletionObject _set(KVItem kv) throws Exception {
+    private CompletionObject _set(KVItem kv) throws Exception {
         Log.d(TAG, "_set: " + kv.key);
         long localVer = kv.version;
         long newVer = 0;
@@ -223,7 +234,7 @@ public class ReplicatedKVStore {
     /**
      * get kv by key and version (version can be 0)
      */
-    public synchronized CompletionObject get(String key, long version, byte[] authKey) {
+    public CompletionObject get(String key, long version, byte[] authKey) {
         KVItem kv = null;
         Cursor cursor = null;
         long curVer = 0;
@@ -245,13 +256,12 @@ public class ReplicatedKVStore {
                 else
                     curVer = 0;
             }
-            if (cursor != null)
-                cursor.close();
+
             //if still 0 then version is non-existent or wrong.
             if (curVer == 0) {
                 return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
             }
-
+            if (cursor != null) cursor.close();
             cursor = db.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
                     allColumns, "key = ? AND version = ?", new String[]{key, String.valueOf(curVer)},
                     null, null, "version DESC", "1");
@@ -284,7 +294,7 @@ public class ReplicatedKVStore {
      * Gets the local version of the provided key, or 0 if it doesn't exist
      */
 
-    public CompletionObject localVersion(String key) {
+    public  CompletionObject localVersion(String key) {
         if (isKeyValid(key)) {
             return _localVersion(key);
         } else {
@@ -293,7 +303,7 @@ public class ReplicatedKVStore {
         return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
     }
 
-    private synchronized CompletionObject _localVersion(String key) {
+    private CompletionObject _localVersion(String key) {
         long version = 0;
         long time = System.currentTimeMillis();
         Cursor cursor = null;
@@ -316,7 +326,7 @@ public class ReplicatedKVStore {
         return new CompletionObject(version, time, null);
     }
 
-    public synchronized void deleteAllKVs() {
+    public  void deleteAllKVs() {
         try {
             SQLiteDatabase db = getWritable();
             db.delete(PlatformSqliteHelper.KV_STORE_TABLE_NAME, PlatformSqliteHelper.KV_TIME + " <> -1", null);
@@ -329,7 +339,7 @@ public class ReplicatedKVStore {
 
     }
 
-    public synchronized List<KVItem> getAllKVs() {
+    public  List<KVItem> getAllKVs() {
         List<KVItem> kvs = new ArrayList<>();
         Cursor cursor = null;
         try {
@@ -413,7 +423,7 @@ public class ReplicatedKVStore {
     /**
      * Sync an individual key. Normally this is only called internally and you should call syncAllKeys
      */
-    public void syncKey(final String key, final long remoteVersion, final long remoteTime, final CompletionObject.RemoteKVStoreError err) {
+    public  void syncKey(final String key, final long remoteVersion, final long remoteTime, final CompletionObject.RemoteKVStoreError err) {
         if (syncRunning) return;
         syncRunning = true;
 
@@ -422,13 +432,13 @@ public class ReplicatedKVStore {
                 final CompletionObject completionObject = remoteKvStore.ver(key);
                 Log.e(TAG, String.format("syncKey: completionObject: version: %d, value: %s, err: %s, time: %d",
                         completionObject.version, Arrays.toString(completionObject.value), completionObject.err, completionObject.time));
-                        _syncKey(key, completionObject.version, completionObject.time, completionObject.err);
+                _syncKey(key, completionObject.version, completionObject.time, completionObject.err);
 
             } else {
 //                BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
 //                    @Override
 //                    public void run() {
-                        _syncKey(key, remoteVersion, remoteTime, err);
+                _syncKey(key, remoteVersion, remoteTime, err);
 //                    }
 //                });
 
@@ -445,7 +455,7 @@ public class ReplicatedKVStore {
      * the syncKey kernel - this is provided so syncAllKeys can provide get a bunch of key versions at once
      * and fan out the _syncKey operations
      */
-    private synchronized boolean _syncKey(String key, long remoteVersion, long remoteTime, CompletionObject.RemoteKVStoreError err) {
+    private boolean _syncKey(String key, long remoteVersion, long remoteTime, CompletionObject.RemoteKVStoreError err) {
         // this is a basic last-write-wins strategy. data loss is possible but in general
         // we will attempt to sync before making any local modifications to the data
         // and concurrency will be so low that we don't really need a fancier solution than this.
@@ -580,7 +590,7 @@ public class ReplicatedKVStore {
     /**
      * Sync all kvs to and from the remote kv store adaptor
      */
-    public synchronized boolean syncAllKeys() {
+    public  boolean syncAllKeys() {
         // update all kvs locally and on the remote server, replacing missing kvs
         //
         // 1. get a list of all kvs from the server
@@ -644,7 +654,7 @@ public class ReplicatedKVStore {
      * return 0
      * }
      */
-    public synchronized long remoteVersion(String key) {
+    public  long remoteVersion(String key) {
         long version = 0;
         Cursor cursor = null;
         try {
@@ -679,7 +689,7 @@ public class ReplicatedKVStore {
     /**
      * Record the remote version for the object in a new version of the local key
      */
-    public synchronized CompletionObject setRemoteVersion(String key, long localVer, long remoteVer) {
+    public  CompletionObject setRemoteVersion(String key, long localVer, long remoteVer) {
         if (localVer < 1)
             return new CompletionObject(CompletionObject.RemoteKVStoreError.conflict); // setRemoteVersion can't be used for creates
         if (isKeyValid(key)) {
@@ -765,7 +775,7 @@ public class ReplicatedKVStore {
         return new CompletionObject(CompletionObject.RemoteKVStoreError.unknown);
     }
 
-    private synchronized CompletionObject _delete(String key, long localVersion) throws Exception {
+    private  CompletionObject _delete(String key, long localVersion) throws Exception {
         if (localVersion == 0)
             return new CompletionObject(CompletionObject.RemoteKVStoreError.notFound);
         long newVer = 0;

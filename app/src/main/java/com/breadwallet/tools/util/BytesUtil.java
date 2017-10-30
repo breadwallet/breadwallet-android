@@ -37,7 +37,7 @@ import java.io.StreamCorruptedException;
 
 public class BytesUtil {
 
-    public static byte[] readBytesFromStream(InputStream in){
+    public static byte[] readBytesFromStream(InputStream in) {
 
         // this dynamically extends to take the bytes you read
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
@@ -54,6 +54,17 @@ public class BytesUtil {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                byteBuffer.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (in != null) try {
+                in.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
         // and then we can return your byte array.

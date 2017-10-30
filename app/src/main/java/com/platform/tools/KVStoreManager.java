@@ -54,10 +54,10 @@ public class KVStoreManager {
         return instance;
     }
 
-    public WalletInfo getWalletInfo(Context app) {
+    public  WalletInfo getWalletInfo(Context app) {
         WalletInfo result = new WalletInfo();
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
-        ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
+        ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
         long ver = kvStore.localVersion(walletInfoKey).version;
         CompletionObject obj = kvStore.get(walletInfoKey, ver);
         if (obj.kv == null) {
@@ -94,7 +94,7 @@ public class KVStoreManager {
         return result;
     }
 
-    public void putWalletInfo(Context app, WalletInfo info) {
+    public  void putWalletInfo(Context app, WalletInfo info) {
 
         WalletInfo old = getWalletInfo(app);
         if (old == null) old = new WalletInfo(); //create new one if it's null
@@ -128,7 +128,7 @@ public class KVStoreManager {
         }
         byte[] compressed = BRCompressor.bz2Compress(result);
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
-        ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
+        ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
         long localVer = kvStore.localVersion(walletInfoKey).version;
         long removeVer = kvStore.remoteVersion(walletInfoKey);
         CompletionObject compObj = kvStore.set(localVer, removeVer, walletInfoKey, compressed, System.currentTimeMillis(), 0);
@@ -142,12 +142,12 @@ public class KVStoreManager {
         return getTxMetaData(app, txHash, null);
     }
 
-    public TxMetaData getTxMetaData(Context app, byte[] txHash, byte[] authKey) {
+    public  TxMetaData getTxMetaData(Context app, byte[] txHash, byte[] authKey) {
         String key = txKey(txHash);
 
         TxMetaData result = new TxMetaData();
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
-        ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
+        ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
         long ver = kvStore.localVersion(key).version;
 
         CompletionObject obj = kvStore.get(key, ver, authKey);
@@ -189,7 +189,7 @@ public class KVStoreManager {
         return result;
     }
 
-    public void putTxMetaData(Context app, TxMetaData data, byte[] txHash) {
+    public  void putTxMetaData(Context app, TxMetaData data, byte[] txHash) {
         String key = txKey(txHash);
         TxMetaData old = getTxMetaData(app, txHash);
 
@@ -278,7 +278,7 @@ public class KVStoreManager {
         }
         byte[] compressed = BRCompressor.bz2Compress(result);
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
-        ReplicatedKVStore kvStore = new ReplicatedKVStore(app, remoteKVStore);
+        ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
         long localVer = kvStore.localVersion(key).version;
         long removeVer = kvStore.remoteVersion(key);
         CompletionObject compObj = kvStore.set(localVer, removeVer, key, compressed, System.currentTimeMillis(), 0);
