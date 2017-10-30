@@ -118,7 +118,7 @@ public class BRButton extends Button {
         bPaintStroke.setAntiAlias(true);
 
         if (isBreadButton) {
-            setBackground(getResources().getDrawable(R.drawable.shadow_trans));
+            setBackground(getContext().getDrawable(R.drawable.shadow_trans));
         }
 
         setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);

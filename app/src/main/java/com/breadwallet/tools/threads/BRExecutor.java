@@ -8,6 +8,7 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Handler;
 
 /**
  * BreadWallet
@@ -82,6 +83,12 @@ public class BRExecutor implements RejectedExecutionHandler {
     */
     private BRExecutor() {
 
+//        new android.os.Handler().postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                Log.e(TAG, "BRExecutor: Background: " + mForBackgroundTasks.getActiveCount() + ", lightBackground: " + mForLightWeightBackgroundTasks.getActiveCount() + ", serialized: " + mForSerializedTasks.getActiveCount());
+//            }
+//        }, 30000);
         // setting the thread factory
         ThreadFactory backgroundPriorityThreadFactory = new
                 PriorityThreadFactory(android.os.Process.THREAD_PRIORITY_BACKGROUND);

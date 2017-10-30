@@ -70,7 +70,7 @@ public class InputWordsActivity extends BRActivity {
 //            debugPhrase = "stick sword keen   afraid smile sting   huge relax nominee   arena area gift "
         }
 
-        nextButton = (Button) findViewById(R.id.send_button);
+        nextButton = findViewById(R.id.send_button);
 
         if (Utils.isUsingCustomInputMethod(this)) {
             BRDialog.showCustomDialog(this, getString(R.string.JailbreakWarnings_title), getString(R.string.Warning_keyboard_error_Android),

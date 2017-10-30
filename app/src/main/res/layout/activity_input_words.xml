@@ -72,6 +72,7 @@
         android:background="@drawable/b_blue"
         android:elevation="8dp"
         android:padding="10dp"
+        app:isBreadButton="true"
         android:text="@string/RecoverWallet.next"
         android:textColor="@color/white"
         android:textSize="18sp"

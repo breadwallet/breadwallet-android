@@ -422,20 +422,15 @@ public class ReplicatedKVStore {
                 final CompletionObject completionObject = remoteKvStore.ver(key);
                 Log.e(TAG, String.format("syncKey: completionObject: version: %d, value: %s, err: %s, time: %d",
                         completionObject.version, Arrays.toString(completionObject.value), completionObject.err, completionObject.time));
-                BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
                         _syncKey(key, completionObject.version, completionObject.time, completionObject.err);
-                    }
-                });
 
             } else {
-                BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
+//                BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+//                    @Override
+//                    public void run() {
                         _syncKey(key, remoteVersion, remoteTime, err);
-                    }
-                });
+//                    }
+//                });
 
             }
 
@@ -621,8 +616,7 @@ public class ReplicatedKVStore {
             Log.i(TAG, String.format("Syncing %d kvs", allKvs.size()));
             int failures = 0;
             for (KVItem k : allKvs) {
-                String s = k.key;
-                boolean success = _syncKey(s, k.remoteVersion == -1 ? k.version : k.remoteVersion, k.time, k.err);
+                boolean success = _syncKey(k.key, k.remoteVersion == -1 ? k.version : k.remoteVersion, k.time, k.err);
                 if (!success) failures++;
             }
             Log.i(TAG, String.format("Finished syncing in %d, with failures: %d", (System.currentTimeMillis() - startTime), failures));
