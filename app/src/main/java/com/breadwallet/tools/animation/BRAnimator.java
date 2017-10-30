@@ -160,29 +160,30 @@ public class BRAnimator {
 
     }
     public static void showSupportFragment(Activity app, String articleId) {
-        if (app == null) {
-            Log.e(TAG, "showSupportFragment: app is null");
-            return;
-        }
-        FragmentSupport fragmentSupport = (FragmentSupport) app.getFragmentManager().findFragmentByTag(FragmentSupport.class.getName());
-        if (fragmentSupport != null && fragmentSupport.isAdded()) {
-            app.getFragmentManager().popBackStack();
-            return;
-        }
-        try {
-            fragmentSupport = new FragmentSupport();
-            if (articleId != null && !articleId.isEmpty()) {
-                Bundle bundle = new Bundle();
-                bundle.putString("articleId", articleId);
-                fragmentSupport.setArguments(bundle);
-            }
-            app.getFragmentManager().beginTransaction()
-                    .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                    .add(android.R.id.content, fragmentSupport, FragmentSend.class.getName())
-                    .addToBackStack(FragmentSend.class.getName()).commit();
-        } finally {
-
-        }
+        // Temporarily disable SupportFragment
+//        if (app == null) {
+//            Log.e(TAG, "showSupportFragment: app is null");
+//            return;
+//        }
+//        FragmentSupport fragmentSupport = (FragmentSupport) app.getFragmentManager().findFragmentByTag(FragmentSupport.class.getName());
+//        if (fragmentSupport != null && fragmentSupport.isAdded()) {
+//            app.getFragmentManager().popBackStack();
+//            return;
+//        }
+//        try {
+//            fragmentSupport = new FragmentSupport();
+//            if (articleId != null && !articleId.isEmpty()) {
+//                Bundle bundle = new Bundle();
+//                bundle.putString("articleId", articleId);
+//                fragmentSupport.setArguments(bundle);
+//            }
+//            app.getFragmentManager().beginTransaction()
+//                    .setCustomAnimations(0, 0, 0, R.animator.plain_300)
+//                    .add(android.R.id.content, fragmentSupport, FragmentSend.class.getName())
+//                    .addToBackStack(FragmentSend.class.getName()).commit();
+//        } finally {
+//
+//        }
 
     }
 
