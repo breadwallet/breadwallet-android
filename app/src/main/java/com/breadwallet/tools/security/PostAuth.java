@@ -255,28 +255,33 @@ public class PostAuth {
                             .header("Content-Type", "application/bchdata")
                             .post(requestBody).build();
                     Response response = APIClient.getInstance(app).sendRequest(request, true, 0);
-                    String responseBody = null;
-                    try {
-                        responseBody = response == null ? null : response.body().string();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    Log.e(TAG, "onSendBch:" + (response == null ? "resp is null" : response.code() + ":" + response.message()));
                     boolean success = true;
-                    if (response != null) {
-                        title = app.getString(R.string.WipeWallet_failedTitle);
-                        if (response.isSuccessful()) {
-                            title = app.getString(R.string.Import_success);
-                            message = "";
-                        } else if (response.code() == 503) {
-                            message = app.getString(R.string.BCH_genericError);
-                        } else {
-                            success = false;
-                            message = "(" + response.code() + ")" + "[" + response.message() + "]" + responseBody;
+                    try {
+                        String responseBody = null;
+                        try {
+                            responseBody = response == null ? null : response.body().string();
+                        } catch (IOException e) {
+                            e.printStackTrace();
                         }
-                    } else {
-                        title = app.getString(R.string.Alerts_sendFailure);
-                        message = "Something went wrong";
+                        Log.e(TAG, "onSendBch:" + (response == null ? "resp is null" : response.code() + ":" + response.message()));
+
+                        if (response != null) {
+                            title = app.getString(R.string.WipeWallet_failedTitle);
+                            if (response.isSuccessful()) {
+                                title = app.getString(R.string.Import_success);
+                                message = "";
+                            } else if (response.code() == 503) {
+                                message = app.getString(R.string.BCH_genericError);
+                            } else {
+                                success = false;
+                                message = "(" + response.code() + ")" + "[" + response.message() + "]" + responseBody;
+                            }
+                        } else {
+                            title = app.getString(R.string.Alerts_sendFailure);
+                            message = "Something went wrong";
+                        }
+                    } finally {
+                        if (response != null) response.close();
                     }
                     if (!success) {
                         BRSharedPrefs.putBCHTxId(app, "");

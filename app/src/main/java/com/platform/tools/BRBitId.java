@@ -332,6 +332,8 @@ public class BRBitId {
             Log.e(TAG, "completeBitID: body: " + res.body().string());
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            res.close();
         }
     }
 

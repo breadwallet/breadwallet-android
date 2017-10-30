@@ -101,19 +101,23 @@ public class PlatformTests {
 
         Response response = null;
         response = apiClient.sendRequest(request, false, 0);
-        apiClient.writeBundleToFile(response);
-        String extractFolderName = apiClient.getExtractedPath(mActivityRule.getActivity(), null);
-        apiClient.tryExtractTar();
-        File temp = new File(extractFolderName);
-        int filesExtracted = temp.listFiles().length;
-        Log.e(TAG, "bundleExtractTest: filesExtracted: " + filesExtracted);
-        Assert.assertNotSame(filesExtracted, 0);
-        Log.e(TAG, "bundleExtractTest: ");
-        if (temp.isDirectory()) {
-            String[] children = temp.list();
-            for (int i = 0; i < children.length; i++) {
-                new File(temp, children[i]).delete();
+        try {
+            apiClient.writeBundleToFile(response);
+            String extractFolderName = apiClient.getExtractedPath(mActivityRule.getActivity(), null);
+            apiClient.tryExtractTar();
+            File temp = new File(extractFolderName);
+            int filesExtracted = temp.listFiles().length;
+            Log.e(TAG, "bundleExtractTest: filesExtracted: " + filesExtracted);
+            Assert.assertNotSame(filesExtracted, 0);
+            Log.e(TAG, "bundleExtractTest: ");
+            if (temp.isDirectory()) {
+                String[] children = temp.list();
+                for (int i = 0; i < children.length; i++) {
+                    new File(temp, children[i]).delete();
+                }
             }
+        } finally {
+            response.close();
         }
     }
 
@@ -124,15 +128,19 @@ public class PlatformTests {
                 .get()
                 .url("https://s3.amazonaws.com/breadwallet-assets/bread-buy/7f5bc5c6cc005df224a6ea4567e508491acaffdc2e4769e5262a52f5b785e261.tar").build();
         Response response = apiClient.sendRequest(request, false, 0);
-        File bundleFile = new File(apiClient.getBundleResource(mActivityRule.getActivity(), BREAD_POINT + ".tar"));
-        apiClient.writeBundleToFile(response);
-        String latestVersion = apiClient.getLatestVersion();
-        Assert.assertNotNull(latestVersion);
-        String currentTarVersion = getCurrentVersion(bundleFile);
-        Log.e(TAG, "bundleUpdateTest: latestVersion: " + latestVersion + ", currentTarVersion: " + currentTarVersion);
+        try {
+            File bundleFile = new File(apiClient.getBundleResource(mActivityRule.getActivity(), BREAD_POINT + ".tar"));
+            apiClient.writeBundleToFile(response);
+            String latestVersion = apiClient.getLatestVersion();
+            Assert.assertNotNull(latestVersion);
+            String currentTarVersion = getCurrentVersion(bundleFile);
+            Log.e(TAG, "bundleUpdateTest: latestVersion: " + latestVersion + ", currentTarVersion: " + currentTarVersion);
 
-        Assert.assertNotNull(currentTarVersion);
-        Assert.assertNotEquals(latestVersion, currentTarVersion);
+            Assert.assertNotNull(currentTarVersion);
+            Assert.assertNotEquals(latestVersion, currentTarVersion);
+        } finally {
+            response.close();
+        }
     }
 
     @Test
@@ -223,6 +231,7 @@ public class PlatformTests {
         APIClient apiClient = APIClient.getInstance(mActivityRule.getActivity());
         Response response = apiClient.buyBitcoinMe();
         Assert.assertTrue(response.isSuccessful());
+        response.close();
     }
 
     @Test

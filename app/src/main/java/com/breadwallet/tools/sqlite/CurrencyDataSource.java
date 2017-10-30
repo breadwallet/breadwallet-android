@@ -69,7 +69,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
-    public synchronized void putCurrencies(Collection<CurrencyEntity> currencyEntities) {
+    public  void putCurrencies(Collection<CurrencyEntity> currencyEntities) {
         if (currencyEntities == null) return;
 
         try {
@@ -95,7 +95,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
 
     }
 
-    public synchronized void deleteAllCurrencies() {
+    public  void deleteAllCurrencies() {
         try {
             database = openDatabase();
             database.delete(BRSQLiteHelper.CURRENCY_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID + " <> -1", null);
@@ -104,7 +104,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         }
     }
 
-    public synchronized List<CurrencyEntity> getAllCurrencies() {
+    public  List<CurrencyEntity> getAllCurrencies() {
 
         List<CurrencyEntity> currencies = new ArrayList<>();
         Cursor cursor = null;
@@ -130,7 +130,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         return currencies;
     }
 
-    public synchronized List<String> getAllISOs() {
+    public  List<String> getAllISOs() {
         List<String> ISOs = new ArrayList<>();
         Cursor cursor = null;
         try {
@@ -155,7 +155,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         return ISOs;
     }
 
-    public synchronized CurrencyEntity getCurrencyByIso(String iso) {
+    public  CurrencyEntity getCurrencyByIso(String iso) {
         Cursor cursor = null;
         try {
             database = openDatabase();
@@ -187,7 +187,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         // Opening new database
         if (database == null)
             database = dbHelper.getWritableDatabase();
-        dbHelper.setWriteAheadLoggingEnabled(true);
+        dbHelper.setWriteAheadLoggingEnabled(false);
 //        }
 //        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
         return database;

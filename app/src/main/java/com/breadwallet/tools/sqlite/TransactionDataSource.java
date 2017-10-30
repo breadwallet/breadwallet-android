@@ -121,7 +121,7 @@ public class TransactionDataSource implements BRDataSourceInterface {
 
     }
 
-    public synchronized void deleteAllTransactions() {
+    public  void deleteAllTransactions() {
         try {
             database = openDatabase();
             database.delete(BRSQLiteHelper.TX_TABLE_NAME, null, null);
@@ -130,7 +130,7 @@ public class TransactionDataSource implements BRDataSourceInterface {
         }
     }
 
-    public synchronized List<BRTransactionEntity> getAllTransactions() {
+    public  List<BRTransactionEntity> getAllTransactions() {
         List<BRTransactionEntity> transactions = new ArrayList<>();
         Cursor cursor = null;
         try {
@@ -158,7 +158,7 @@ public class TransactionDataSource implements BRDataSourceInterface {
         return new BRTransactionEntity(cursor.getBlob(1), cursor.getInt(2), cursor.getLong(3), cursor.getString(0));
     }
 
-    public synchronized void updateTxBlockHeight(String hash, int blockHeight, int timeStamp) {
+    public  void updateTxBlockHeight(String hash, int blockHeight, int timeStamp) {
         try {
             database = openDatabase();
             Log.e(TAG, "transaction updated with id: " + hash);
@@ -167,16 +167,16 @@ public class TransactionDataSource implements BRDataSourceInterface {
             args.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, blockHeight);
             args.put(BRSQLiteHelper.TX_TIME_STAMP, timeStamp);
 
-            Log.e(TAG, "updateTxBlockHeight: size before updating: " + getAllTransactions().size());
+//            Log.e(TAG, "updateTxBlockHeight: size before updating: " + getAllTransactions().size());
             database.update(BRSQLiteHelper.TX_TABLE_NAME, args, strFilter, null);
-            Log.e(TAG, "updateTxBlockHeight: size after updating: " + getAllTransactions().size());
+//            Log.e(TAG, "updateTxBlockHeight: size after updating: " + getAllTransactions().size());
         } finally {
             closeDatabase();
         }
 
     }
 
-    public synchronized void deleteTxByHash(String hash) {
+    public  void deleteTxByHash(String hash) {
         try {
             database = openDatabase();
             Log.e(TAG, "transaction deleted with id: " + hash);
@@ -193,7 +193,7 @@ public class TransactionDataSource implements BRDataSourceInterface {
         // Opening new database
         if (database == null)
             database = dbHelper.getWritableDatabase();
-        dbHelper.setWriteAheadLoggingEnabled(true);
+        dbHelper.setWriteAheadLoggingEnabled(false);
 //        }
 //        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
         return database;

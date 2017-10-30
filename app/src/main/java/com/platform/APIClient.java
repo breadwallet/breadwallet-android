@@ -171,12 +171,13 @@ public class APIClient {
         if (ActivityUTILS.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
+        Response response = null;
         try {
             String strUtl = BASE_URL + FEE_PER_KB_URL;
             Request request = new Request.Builder().url(strUtl).get().build();
             String body = null;
             try {
-                Response response = sendRequest(request, false, 0);
+                response = sendRequest(request, false, 0);
                 body = response.body().string();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -187,6 +188,8 @@ public class APIClient {
         } catch (JSONException e) {
             e.printStackTrace();
 
+        } finally {
+            if (response != null) response.close();
         }
         return 0;
     }
@@ -209,6 +212,7 @@ public class APIClient {
             res = sendRequest(request, true, 0);
             response = res.body().string();
             if (response.isEmpty()) {
+                res.close();
                 res = sendRequest(request, true, 0);
                 response = res.body().string();
             }
@@ -244,13 +248,15 @@ public class APIClient {
                     .header("Accept", "application/json")
                     .post(requestBody).build();
             String strResponse = null;
-            Response response;
+            Response response = null;
             try {
                 response = sendRequest(request, false, 0);
                 if (response != null)
                     strResponse = response.body().string();
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                if (response != null) response.close();
             }
             if (Utils.isNullOrEmpty(strResponse)) {
                 Log.e(TAG, "getToken: retrieving token failed");
@@ -312,124 +318,129 @@ public class APIClient {
         String lang = getCurrentLocale(ctx);
         Request request = locRequest.newBuilder().header("X-Testflight", isTestVersion ? "true" : "false").header("X-Bitcoin-Testnet", isTestNet ? "true" : "false").header("Accept-Language", lang).build();
         if (needsAuth) {
-            Request.Builder modifiedRequest = request.newBuilder();
-            String base58Body = "";
-            RequestBody body = request.body();
-            try {
-                if (body != null && body.contentLength() != 0) {
-                    BufferedSink sink = new Buffer();
-                    try {
-                        body.writeTo(sink);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                    byte[] bytes = sink.buffer().readByteArray();
-                    base58Body = CryptoHelper.base58ofSha256(bytes);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
-            String httpDate = sdf.format(new Date());
-
-            request = modifiedRequest.header("Date", httpDate.substring(0, httpDate.length() - 6)).build();
-
-            String queryString = request.url().encodedQuery();
-
-            String requestString = createRequest(request.method(), base58Body,
-                    request.header("Content-Type"), request.header("Date"), request.url().encodedPath()
-                            + ((queryString != null && !queryString.isEmpty()) ? ("?" + queryString) : ""));
-            String signedRequest = signRequest(requestString);
-            if (signedRequest == null) return null;
-            byte[] tokenBytes = BRKeyStore.getToken(ctx);
-            String token = tokenBytes == null ? "" : new String(tokenBytes);
-            if (token.isEmpty()) token = getToken();
-            if (token == null || token.isEmpty()) {
-                Log.e(TAG, "sendRequest: failed to retrieve token");
-                return null;
-            }
-            String authValue = "bread " + token + ":" + signedRequest;
-//            Log.e(TAG, "sendRequest: authValue: " + authValue);
-            modifiedRequest = request.newBuilder();
-
-            try {
-                request = modifiedRequest.header("Authorization", authValue).build();
-            } catch (Exception e) {
-                BRReportsManager.reportBug(e);
-            }
-
+            request = authenticateRequest(request);
+            if (request == null) return null;
         }
 
         Response response = null;
         ResponseBody postReqBody = null;
+        byte[] data = new byte[0];
         try {
-            byte[] data = new byte[0];
-            try {
-                OkHttpClient client = new OkHttpClient.Builder().followRedirects(false).connectTimeout(60, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
+            OkHttpClient client = new OkHttpClient.Builder().followRedirects(false).connectTimeout(60, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
 //            Log.e(TAG, "sendRequest: before executing the request: " + request.headers().toString());
-                Log.d(TAG, "sendRequest: headers for : " + request.url() + "\n" + request.headers());
-                String agent = Utils.getAgentString(ctx, "OkHttp/3.4.1");
+            Log.d(TAG, "sendRequest: headers for : " + request.url() + "\n" + request.headers());
+            String agent = Utils.getAgentString(ctx, "OkHttp/3.4.1");
 //            Log.e(TAG, "sendRequest: agent: " + agent);
-                request = request.newBuilder().header("User-agent", agent).build();
-                response = client.newCall(request).execute();
-                String s = null;
+            request = request.newBuilder().header("User-agent", agent).build();
+            response = client.newCall(request).execute();
+            String s = null;
+            try {
+                data = response.body().bytes();
+                s = new String(data);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            if (response.isRedirect()) {
+                String newLocation = request.url().scheme() + "://" + request.url().host() + response.header("location");
+                Uri newUri = Uri.parse(newLocation);
+                if (newUri == null) {
+                    Log.e(TAG, "sendRequest: redirect uri is null");
+                } else if (!newUri.getHost().equalsIgnoreCase(BreadApp.HOST) || !newUri.getScheme().equalsIgnoreCase(PROTO)) {
+                    Log.e(TAG, "sendRequest: WARNING: redirect is NOT safe: " + newLocation);
+                } else {
+                    Log.w(TAG, "redirecting: " + request.url() + " >>> " + newLocation);
+                    response.close();
+                    return sendRequest(new Request.Builder().url(newLocation).get().build(), needsAuth, 0);
+                }
+                return new Response.Builder().code(500).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return new Response.Builder().code(599).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build();
+        }
+
+        if (response.header("content-encoding") != null && response.header("content-encoding").equalsIgnoreCase("gzip")) {
+            Log.d(TAG, "sendRequest: the content is gzip, unzipping");
+            byte[] decompressed = gZipExtract(data);
+            postReqBody = ResponseBody.create(null, decompressed);
+            try {
+                Log.d(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
+                        request.url(), response.code(), response.message(), new String(decompressed, "utf-8")));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+            return response.newBuilder().body(postReqBody).build();
+        } else {
+            try {
+                Log.d(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
+                        request.url(), response.code(), response.message(), new String(data, "utf-8")));
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            }
+        }
+
+        postReqBody = ResponseBody.create(null, data);
+        if (needsAuth && isBreadChallenge(response)) {
+            Log.d(TAG, "sendRequest: got authentication challenge from API - will attempt to get token");
+            getToken();
+            if (retryCount < 1) {
+                response.close();
+                sendRequest(request, true, retryCount + 1);
+            }
+        }
+        return response.newBuilder().body(postReqBody).build();
+    }
+
+    private Request authenticateRequest(Request request) {
+        Request.Builder modifiedRequest = request.newBuilder();
+        String base58Body = "";
+        RequestBody body = request.body();
+
+        try {
+            if (body != null && body.contentLength() != 0) {
+                BufferedSink sink = new Buffer();
                 try {
-                    data = response.body().bytes();
-                    s = new String(data);
+                    body.writeTo(sink);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-
-                if (response.isRedirect()) {
-                    String newLocation = request.url().scheme() + "://" + request.url().host() + response.header("location");
-                    Uri newUri = Uri.parse(newLocation);
-                    if (newUri == null) {
-                        Log.e(TAG, "sendRequest: redirect uri is null");
-                    } else if (!newUri.getHost().equalsIgnoreCase(BreadApp.HOST) || !newUri.getScheme().equalsIgnoreCase(PROTO)) {
-                        Log.e(TAG, "sendRequest: WARNING: redirect is NOT safe: " + newLocation);
-                    } else {
-                        Log.w(TAG, "redirecting: " + request.url() + " >>> " + newLocation);
-                        return sendRequest(new Request.Builder().url(newLocation).get().build(), needsAuth, 0);
-                    }
-                    return new Response.Builder().code(500).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-                return new Response.Builder().code(599).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build();
+                byte[] bytes = sink.buffer().readByteArray();
+                base58Body = CryptoHelper.base58ofSha256(bytes);
             }
-
-            if (response.header("content-encoding") != null && response.header("content-encoding").equalsIgnoreCase("gzip")) {
-                Log.d(TAG, "sendRequest: the content is gzip, unzipping");
-                byte[] decompressed = gZipExtract(data);
-                postReqBody = ResponseBody.create(null, decompressed);
-                try {
-                    Log.d(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
-                            request.url(), response.code(), response.message(), new String(decompressed, "utf-8")));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-                return response.newBuilder().body(postReqBody).build();
-            } else {
-                try {
-                    Log.d(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
-                            request.url(), response.code(), response.message(), new String(data, "utf-8")));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-            }
-
-            postReqBody = ResponseBody.create(null, data);
-            if (needsAuth && isBreadChallenge(response)) {
-                Log.d(TAG, "sendRequest: got authentication challenge from API - will attempt to get token");
-                getToken();
-                if (retryCount < 1) {
-                    sendRequest(request, true, retryCount + 1);
-                }
-            }
-        } finally {
-            if(response!=null) response.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-        return response.newBuilder().body(postReqBody).build();
+        sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String httpDate = sdf.format(new Date());
+
+        request = modifiedRequest.header("Date", httpDate.substring(0, httpDate.length() - 6)).build();
+
+        String queryString = request.url().encodedQuery();
+
+        String requestString = createRequest(request.method(), base58Body,
+                request.header("Content-Type"), request.header("Date"), request.url().encodedPath()
+                        + ((queryString != null && !queryString.isEmpty()) ? ("?" + queryString) : ""));
+        String signedRequest = signRequest(requestString);
+        if (signedRequest == null) return null;
+        byte[] tokenBytes = BRKeyStore.getToken(ctx);
+        String token = tokenBytes == null ? "" : new String(tokenBytes);
+        if (token.isEmpty()) token = getToken();
+        if (token == null || token.isEmpty()) {
+            Log.e(TAG, "sendRequest: failed to retrieve token");
+            return null;
+        }
+        String authValue = "bread " + token + ":" + signedRequest;
+//            Log.e(TAG, "sendRequest: authValue: " + authValue);
+        modifiedRequest = request.newBuilder();
+
+        try {
+            request = modifiedRequest.header("Authorization", authValue).build();
+        } catch (Exception e) {
+            BRReportsManager.reportBug(e);
+            return null;
+        }
+        return request;
     }
 
     public void updateBundle() {
@@ -478,9 +489,14 @@ public class APIClient {
                     .url(String.format("%s/assets/bundles/%s/download", BASE_URL, BREAD_POINT))
                     .get().build();
             Response response = null;
-            response = sendRequest(request, false, 0);
-            Log.d(TAG, bundleFile + ": updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
-            byte[] body = writeBundleToFile(response);
+            byte[] body;
+            try {
+                response = sendRequest(request, false, 0);
+                Log.d(TAG, bundleFile + ": updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
+                body = writeBundleToFile(response);
+            } finally {
+                if (response != null) response.close();
+            }
             if (Utils.isNullOrEmpty(body))
                 throw new NullPointerException("failed to write bundle to file");
 
@@ -498,17 +514,25 @@ public class APIClient {
             throw new NetworkOnMainThreadException();
         }
         String latestVersion = null;
-        String response = null;
+        Response response = null;
+        String respBody = null;
         try {
             response = sendRequest(new Request.Builder()
                     .get()
                     .url(String.format("%s/assets/bundles/%s/versions", BASE_URL, BREAD_POINT))
-                    .build(), false, 0).body().string();
-        } catch (IOException e) {
-            e.printStackTrace();
+                    .build(), false, 0);
+        } finally {
+            if (response != null) {
+                try {
+                    respBody = response.body().string();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                response.close();
+            }
         }
-        String respBody;
-        respBody = response;
+
+        if (respBody == null) return null;
         try {
             JSONObject versionsJson = new JSONObject(respBody);
             JSONArray jsonArray = versionsJson.getJSONArray("versions");
@@ -554,6 +578,7 @@ public class APIClient {
                 patchFile.delete();
             if (tempFile != null)
                 tempFile.delete();
+            if (diffResponse != null) diffResponse.close();
         }
 
         logFiles("downloadDiff", ctx);
@@ -669,6 +694,8 @@ public class APIClient {
         } catch (IOException | JSONException e) {
             Log.e(TAG, "updateFeatureFlag: failed to pull up features");
             e.printStackTrace();
+        } finally {
+            res.close();
         }
 
     }
@@ -775,7 +802,7 @@ public class APIClient {
         final APIClient client = this;
         //sync the kv stores
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(client);
-        ReplicatedKVStore kvStore = new ReplicatedKVStore(ctx, remoteKVStore);
+        ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(ctx, remoteKVStore);
         kvStore.syncAllKeys();
     }
 

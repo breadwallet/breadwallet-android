@@ -68,7 +68,7 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
-    public synchronized void putMerkleBlocks(BlockEntity[] blockEntities) {
+    public  void putMerkleBlocks(BlockEntity[] blockEntities) {
         try {
             database = openDatabase();
             database.beginTransaction();
@@ -89,7 +89,7 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
         }
     }
 
-    public synchronized void deleteAllBlocks() {
+    public  void deleteAllBlocks() {
         try {
             database = openDatabase();
             database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_COLUMN_ID + " <> -1", null);
@@ -98,7 +98,7 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
         }
     }
 
-    public synchronized void deleteMerkleBlock(BRMerkleBlockEntity merkleBlock) {
+    public  void deleteMerkleBlock(BRMerkleBlockEntity merkleBlock) {
         try {
             database = openDatabase();
             long id = merkleBlock.getId();
@@ -110,7 +110,7 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
         }
     }
 
-    public synchronized List<BRMerkleBlockEntity> getAllMerkleBlocks() {
+    public  List<BRMerkleBlockEntity> getAllMerkleBlocks() {
         List<BRMerkleBlockEntity> merkleBlocks = new ArrayList<>();
         Cursor cursor = null;
         try {
@@ -148,7 +148,7 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
         // Opening new database
         if (database == null)
             database = dbHelper.getWritableDatabase();
-        dbHelper.setWriteAheadLoggingEnabled(true);
+        dbHelper.setWriteAheadLoggingEnabled(false);
 //        }
 //        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
         return database;

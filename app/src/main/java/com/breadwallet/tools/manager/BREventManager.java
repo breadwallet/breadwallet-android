@@ -150,7 +150,7 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
                             .header("Accept", "application/json")
                             .post(requestBody).build();
                     String strResponse = null;
-                    Response response;
+                    Response response = null;
                     try {
                         response = APIClient.getInstance(app).sendRequest(request, true, 0);
                         if (response != null)
@@ -158,6 +158,8 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
                     } catch (IOException e) {
                         e.printStackTrace();
                         fails++;
+                    } finally {
+                        if (response != null) response.close();
                     }
                     if (Utils.isNullOrEmpty(strResponse)) {
                         Log.e(TAG, "pushToServer: response is empty");
