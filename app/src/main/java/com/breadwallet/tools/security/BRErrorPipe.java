@@ -55,7 +55,7 @@ public class BRErrorPipe {
         }
 
         if (e instanceof KeyPermanentlyInvalidatedException) {
-            BRErrorPipe.showKeyStoreDialog(context, context.getString(R.string.KeyStore_error_title_Android) + ": " + alias, context.getString(R.string.KeyStore_invalidatedKeys_body_Android), context.getString(R.string.Button_ok), null,
+            BRErrorPipe.showKeyStoreDialog(context, context.getString(R.string.Alert_keystore_title_android) + ": " + alias, context.getString(R.string.Alert_keystore_invalidated_android), context.getString(R.string.Button_ok), null,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
@@ -74,7 +74,7 @@ public class BRErrorPipe {
                         }
                     });
         } else if (e instanceof InvalidKeyException) {
-            showKeyStoreDialog(context, context.getString(R.string.KeyStore_error_title_Android), "Failed to load KeyStore(" + alias + "). Please try again later or enter your phrase to recover your Bread now.", context.getString(R.string.AccessibilityLabels_close), null,
+            showKeyStoreDialog(context, context.getString(R.string.Alert_keystore_title_android), "Failed to load KeyStore(" + alias + "). Please try again later or enter your phrase to recover your Bread now.", context.getString(R.string.AccessibilityLabels_close), null,
                     null, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             ((Activity) context).finish();
@@ -83,7 +83,7 @@ public class BRErrorPipe {
                     null);
         } else {
             showKeyStoreDialog(context,
-                    context.getString(R.string.KeyStore_error_title_Android),
+                    context.getString(R.string.Alert_keystore_title_android),
                     "Failed to load KeyStore:\n" + e.getClass().getSimpleName() + "\n" + e.getMessage(),
                     context.getString(R.string.AccessibilityLabels_close), null,
                     new DialogInterface.OnClickListener() {

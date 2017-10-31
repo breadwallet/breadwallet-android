@@ -116,7 +116,7 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
 
     @Override
     public void onAuthenticationFailed() {
-        showError(mContext.getString(R.string.ErrorMessages_touchIdFailed_Android));
+        showError(mContext.getString(R.string.ErrorMessages_touchIdFailed_android));
     }
 
     @Override
@@ -125,7 +125,7 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
         mIcon.setImageResource(R.drawable.ic_fingerprint_success);
         mErrorTextView.setTextColor(
                 mErrorTextView.getResources().getColor(R.color.success_color, null));
-        mErrorTextView.setText(mContext.getString(R.string.Alerts_touchIdSucceeded_Android));
+        mErrorTextView.setText(mContext.getString(R.string.Alerts_touchIdSucceeded_android));
         mIcon.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -148,7 +148,7 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
         public void run() {
             mErrorTextView.setTextColor(
                     mErrorTextView.getResources().getColor(R.color.hint_color, null));
-            mErrorTextView.setText(mContext.getString(R.string.UnlockScreen_touchIdInstructions_Android));
+            mErrorTextView.setText(mContext.getString(R.string.UnlockScreen_touchIdInstructions_android));
             mIcon.setImageResource(R.drawable.ic_fp_40px);
         }
     };

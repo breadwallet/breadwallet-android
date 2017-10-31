@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="96dp"
-        android:text="@string/About.appName.Android"
+        android:text="@string/About.appName.android"
         android:textColor="@color/white"
         android:textSize="65sp"
         app:customTFont="Celevenia.otf"

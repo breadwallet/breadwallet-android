@@ -40,7 +40,7 @@
             android:layout_marginTop="16dp"
             android:filterTouchesWhenObscured="true"
             android:gravity="center"
-            android:text="@string/UnlockScreen.touchIdTitle.Android"
+            android:text="@string/UnlockScreen.touchIdTitle.android"
             android:textAlignment="center"
             android:textAppearance="@android:style/TextAppearance.Material.Subhead"
             android:textColor="?android:attr/textColorSecondary"
@@ -87,7 +87,7 @@
                 android:layout_toEndOf="@+id/fingerprint_icon"
                 android:filterTouchesWhenObscured="true"
                 android:gravity="center_vertical"
-                android:text="@string/UnlockScreen.touchIdInstructions.Android"
+                android:text="@string/UnlockScreen.touchIdInstructions.android"
                 android:textColor="@color/hint_color"/>
         </RelativeLayout>
 

@@ -28,7 +28,7 @@ public class DisabledActivity extends BRActivity {
     private static final String TAG = DisabledActivity.class.getName();
     private TextView untilLabel;
     private TextView disabled;
-    private TextView attempts;
+//    private TextView attempts;
     private ConstraintLayout layout;
     private Button resetButton;
     private CountDownTimer timer;
@@ -43,7 +43,7 @@ public class DisabledActivity extends BRActivity {
         untilLabel = (TextView) findViewById(R.id.until_label);
         layout = (ConstraintLayout) findViewById(R.id.layout);
         disabled = (TextView) findViewById(R.id.disabled);
-        attempts = (TextView) findViewById(R.id.attempts_label);
+//        attempts = (TextView) findViewById(R.id.attempts_label);
         resetButton = (Button) findViewById(R.id.reset_button);
 
         ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
@@ -74,9 +74,9 @@ public class DisabledActivity extends BRActivity {
         });
 
 
-        int failCount = BRKeyStore.getFailCount(this);
+//        int failCount = BRKeyStore.getFailCount(this);
         untilLabel.setText("");
-        attempts.setText(String.format(Locale.getDefault(), getString(R.string.Disabled_remainingAttempts_Android), (8 - failCount)));
+//        attempts.setText(String.format(Locale.getDefault(), getString(R.string.Disabled_remainingAttempts_Android), (8 - failCount)));
 
     }
 

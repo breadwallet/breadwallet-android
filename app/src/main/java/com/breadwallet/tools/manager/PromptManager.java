@@ -112,7 +112,7 @@ public class PromptManager {
     public PromptInfo promptInfo(final Activity app, PromptItem item) {
         switch (item) {
             case FINGER_PRINT:
-                return new PromptInfo(app.getString(R.string.Prompts_TouchId_title_Android), app.getString(R.string.Prompts_TouchId_body_Android), new View.OnClickListener() {
+                return new PromptInfo(app.getString(R.string.Prompts_TouchId_title_android), app.getString(R.string.Prompts_TouchId_body_android), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         Intent intent = new Intent(app, FingerprintActivity.class);
