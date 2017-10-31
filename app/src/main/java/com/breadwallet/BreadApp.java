@@ -17,7 +17,6 @@ import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
-import com.platform.kvstore.ReplicatedKVStore;
 import com.platform.sqlite.PlatformSqliteHelper;
 
 import java.util.ArrayList;
@@ -84,7 +83,6 @@ public class BreadApp extends Application {
         int DISPLAY_WIDTH_PX = size.x;
         DISPLAY_HEIGHT_PX = size.y;
         mFingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
-
     }
 
 
