@@ -14,13 +14,13 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.BRConstants;
 
 
-public class RestoreActivity extends BRActivity {
+public class WipeActivity extends BRActivity {
     private Button nextButton;
     private ImageButton close;
     public static boolean appVisible = false;
-    private static RestoreActivity app;
+    private static WipeActivity app;
 
-    public static RestoreActivity getApp() {
+    public static WipeActivity getApp() {
         return app;
     }
 
@@ -46,11 +46,11 @@ public class RestoreActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                Intent intent = new Intent(RestoreActivity.this, InputWordsActivity.class);
+                Intent intent = new Intent(WipeActivity.this, InputWordsActivity.class);
                 intent.putExtra("restore", true);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                if (!RestoreActivity.this.isDestroyed()) finish();
+                if (!WipeActivity.this.isDestroyed()) finish();
             }
         });
         close.setOnClickListener(new View.OnClickListener() {

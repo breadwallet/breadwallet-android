@@ -89,7 +89,7 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".presenter.activities.settings.RestoreActivity"
+            android:name=".presenter.activities.settings.WipeActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>
