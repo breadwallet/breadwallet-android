@@ -142,8 +142,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         });
         BRSharedPrefs.addIsoChangedListener(this);
 
-        BRErrorPipe.parseError(this, "Error TEST", new NullPointerException("Test 127"), false);
-
         app = this;
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
 
