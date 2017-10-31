@@ -162,6 +162,7 @@ public class BRWalletManager {
         } catch (UserNotAuthenticatedException e) {
             throw new RuntimeException("Failed to retrieve the phrase even though at this point the system auth was asked for sure.");
         }
+        if (Utils.isNullOrEmpty(phrase)) throw new NullPointerException("phrase is null!!");
         byte[] nulTermPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
         if (nulTermPhrase == null || nulTermPhrase.length == 0)
             throw new RuntimeException("nulTermPhrase is null");
@@ -506,7 +507,8 @@ public class BRWalletManager {
             }
 
             byte[] pubkeyEncoded = BRKeyStore.getMasterPublicKey(ctx);
-
+            if (Utils.isNullOrEmpty(pubkeyEncoded))
+                throw new NullPointerException("pubkey is null!");
             //Save the first address for future check
             m.createWallet(transactionsCount, pubkeyEncoded);
             String firstAddress = BRWalletManager.getFirstAddress(pubkeyEncoded);

@@ -140,7 +140,7 @@ public class KVStoreTests {
             ((MockUpAdapter) remote).putKv(new KVItem(1, 1, "testkey" + i, ReplicatedKVStore.encrypt(("testkey" + i).getBytes(), mActivityRule.getActivity()), System.currentTimeMillis(), 0));
         }
 
-        store = new ReplicatedKVStore(mActivityRule.getActivity(), remote);
+        store = ReplicatedKVStore.getInstance(mActivityRule.getActivity(), remote);
         store.deleteAllKVs();
         Assert.assertEquals(22, ((MockUpAdapter) remote).remoteKVs.size());
     }

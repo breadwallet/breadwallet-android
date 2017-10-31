@@ -2,6 +2,9 @@ package com.breadwallet.tools.threads;
 
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
+import com.breadwallet.tools.util.Utils;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -79,28 +82,35 @@ public class BRExecutor implements RejectedExecutionHandler {
     }
 
     android.os.Handler handler = new android.os.Handler();
-    int count = 0;
 
     /*
     * constructor for  BRExecutor
     */
     private BRExecutor() {
-
-        Runnable runnableCode = new Runnable() {
-            @Override
-            public void run() {
-                Log.e(TAG, "BRExecutor: Background: " + mForBackgroundTasks.getActiveCount() + ":" + mForBackgroundTasks.getQueue().size() +
-                        ", lightBackground: " + mForLightWeightBackgroundTasks.getActiveCount() + ":" + mForLightWeightBackgroundTasks.getQueue().size() +
-                        ", serialized: " + mForSerializedTasks.getActiveCount() + ":" + mForSerializedTasks.getQueue().size());
-                count++;
-                handler.postDelayed(this, 2000);
+        if (Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
+            Runnable runnableCode = new Runnable() {
+                @Override
+                public void run() {
+                    int bActive = mForBackgroundTasks.getActiveCount();
+                    int bQueue = mForBackgroundTasks.getQueue().size();
+                    int lActive = mForLightWeightBackgroundTasks.getActiveCount();
+                    int lQueue = mForLightWeightBackgroundTasks.getQueue().size();
+                    int sActive = mForSerializedTasks.getActiveCount();
+                    int sQueue = mForSerializedTasks.getQueue().size();
+                    if (bActive > 10 || bQueue > 10 || lActive > 10 || lQueue > 10 || sActive > 10 || sQueue > 10) {
+                        Log.e(TAG, "BRExecutor: Background: " + bActive + ":" + bQueue +
+                                ", lightBackground: " + lActive + ":" + lQueue +
+                                ", serialized: " + sActive + ":" + sQueue);
+                    }
+                    handler.postDelayed(this, 2000);
 //                if (count > 30) {
 //                    // Removes pending code execution
 //                    handler.removeCallbacks(this);
 //                }
-            }
-        };
-        handler.post(runnableCode);
+                }
+            };
+            handler.post(runnableCode);
+        }
 
         ThreadFactory backgroundPriorityThreadFactory = new
                 PriorityThreadFactory(android.os.Process.THREAD_PRIORITY_BACKGROUND);

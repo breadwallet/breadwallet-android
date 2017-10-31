@@ -106,14 +106,12 @@ public class BRButton extends Button {
         //You can check if attribute exists (in this example checking paddingRight)
 
         isBreadButton = a.getBoolean(R.styleable.BRButton_isBreadButton, false);
-        Log.e(TAG, "init: isBreadButton: " + isBreadButton);
         int paddingLeft = arr.hasValue(0) ? arr.getDimensionPixelOffset(0, -1) : (int) px16;
         int paddingTop = arr.hasValue(1) ? arr.getDimensionPixelOffset(1, -1) : 0;
         int paddingRight = arr.hasValue(2) ? arr.getDimensionPixelOffset(2, -1) : (int) px16;
         int paddingBottom = arr.hasValue(3) ? arr.getDimensionPixelOffset(3, -1) + (isBreadButton ? (int) px16 : 0) : (isBreadButton ? (int) px16 : 0);
 
         int type = a.getInteger(R.styleable.BRButton_buttonType, 0);
-        Log.e(TAG, "init: type: " + type);
         setType(type);
 
         bPaint.setAntiAlias(true);
