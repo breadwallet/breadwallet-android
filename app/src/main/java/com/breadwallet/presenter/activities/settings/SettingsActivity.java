@@ -135,7 +135,7 @@ public class SettingsActivity extends BRActivity {
         items.add(new BRSettingsItem(getString(R.string.Settings_wipe), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, RestoreActivity.class);
+                Intent intent = new Intent(SettingsActivity.this, WipeActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
             }
