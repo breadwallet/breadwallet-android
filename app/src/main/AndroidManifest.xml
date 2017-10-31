@@ -109,7 +109,7 @@
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".presenter.activities.PinActivity"
+            android:name=".presenter.activities.LoginActivity"
             android:launchMode="singleInstance"
             android:screenOrientation="portrait">
         </activity>

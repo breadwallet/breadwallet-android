@@ -35,6 +35,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.ConnectionManager;
 import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.manager.TxManager;
+import com.breadwallet.tools.security.BRErrorPipe;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
@@ -44,6 +45,7 @@ import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
+import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
 
 import java.math.BigDecimal;
@@ -80,7 +82,7 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
  * THE SOFTWARE.
  */
 
-public class    BreadActivity extends BRActivity implements BRWalletManager.OnBalanceChanged,
+public class BreadActivity extends BRActivity implements BRWalletManager.OnBalanceChanged,
         BRPeerManager.OnTxStatusUpdate, BRSharedPrefs.OnIsoChangedListener,
         TransactionDataSource.OnTxAddedListener, FragmentManage.OnNameChanged, ConnectionManager.ConnectionReceiverListener {
 
@@ -139,6 +141,8 @@ public class    BreadActivity extends BRActivity implements BRWalletManager.OnBa
             }
         });
         BRSharedPrefs.addIsoChangedListener(this);
+
+        BRErrorPipe.parseError(this, "Error TEST", new NullPointerException("Test 127"), false);
 
         app = this;
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
