@@ -6,6 +6,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.threads.BRExecutor;
 
 import org.junit.Assert;
 import org.junit.Rule;
@@ -104,6 +105,51 @@ public class KeyStoreTests {
             e.printStackTrace();
         }
         Assert.assertEquals(freshGet, canary);
+    }
+
+    @Test
+    public void setGetMultiple() {
+        final String canary = "canary";
+        for (int i = 0; i < 100; i++) {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        boolean b = BRKeyStore.putCanary(canary, mActivityRule.getActivity(), 0);
+                        Assert.assertTrue(b);
+                    } catch (UserNotAuthenticatedException e) {
+                        e.printStackTrace();
+                        Assert.fail();
+                    }
+                }
+            });
+
+        }
+
+        assertFilesExist(BRKeyStore.CANARY_ALIAS);
+
+
+        for (int i = 0; i < 100; i++) {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    String freshGet = "";
+                    try {
+                        freshGet = BRKeyStore.getCanary(mActivityRule.getActivity(), 0);
+                    } catch (UserNotAuthenticatedException e) {
+                        e.printStackTrace();
+                    }
+                    Assert.assertEquals(freshGet, canary);
+                }
+            });
+
+        }
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Test
@@ -265,7 +311,7 @@ public class KeyStoreTests {
             e.printStackTrace();
         }
 
-        Assert.assertArrayEquals(phrase, new byte[0]);
+        Assert.assertNull(phrase);
         Assert.assertEquals(canary, "");
         Assert.assertArrayEquals(BRKeyStore.getMasterPublicKey(mActivityRule.getActivity()), new byte[0]);
         Assert.assertArrayEquals(BRKeyStore.getAuthKey(mActivityRule.getActivity()), new byte[0]);
@@ -287,7 +333,7 @@ public class KeyStoreTests {
     @Test
     public void testKeyStoreAliasMap() {
         Assert.assertNotNull(aliasObjectMap);
-        Assert.assertEquals(aliasObjectMap.size(), 11);
+        Assert.assertEquals(aliasObjectMap.size(), 12);
     }
 
     public void assertFilesExist(String alias) {
