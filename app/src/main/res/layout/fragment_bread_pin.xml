@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_trans"
-    tools:context="com.breadwallet.presenter.activities.PinActivity">
+    tools:context="com.breadwallet.presenter.activities.LoginActivity">
 
     <RelativeLayout
         android:id="@+id/pin_dialog"

@@ -43,8 +43,8 @@ import static com.breadwallet.R.color.white;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 import static com.breadwallet.tools.util.BRConstants.SCANNER_REQUEST;
 
-public class PinActivity extends BRActivity {
-    private static final String TAG = PinActivity.class.getName();
+public class LoginActivity extends BRActivity {
+    private static final String TAG = LoginActivity.class.getName();
     private BRKeyboard keyboard;
     private LinearLayout pinLayout;
     private View dot1;
@@ -55,7 +55,7 @@ public class PinActivity extends BRActivity {
     private View dot6;
     private StringBuilder pin = new StringBuilder();
     private int pinLimit = 6;
-    private static PinActivity app;
+    private static LoginActivity app;
 
     private ImageView unlockedImage;
     private TextView unlockedText;
@@ -73,7 +73,7 @@ public class PinActivity extends BRActivity {
         System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
     }
 
-    public static PinActivity getApp() {
+    public static LoginActivity getApp() {
         return app;
     }
 
@@ -86,7 +86,7 @@ public class PinActivity extends BRActivity {
             Intent intent = new Intent(this, SetPinActivity.class);
             intent.putExtra("noPin", true);
             startActivity(intent);
-            if (!PinActivity.this.isDestroyed()) finish();
+            if (!LoginActivity.this.isDestroyed()) finish();
             return;
         }
 
@@ -132,7 +132,7 @@ public class PinActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showReceiveFragment(PinActivity.this, false);
+                BRAnimator.showReceiveFragment(LoginActivity.this, false);
 //                chooseWordsSize(true);
             }
         });
@@ -182,10 +182,10 @@ public class PinActivity extends BRActivity {
             fingerPrint.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AuthManager.getInstance().authPrompt(PinActivity.this, "", "", false, new BRAuthCompletion() {
+                    AuthManager.getInstance().authPrompt(LoginActivity.this, "", "", false, new BRAuthCompletion() {
                         @Override
                         public void onComplete() {
-                            BRAnimator.startBreadActivity(PinActivity.this, false);
+                            BRAnimator.startBreadActivity(LoginActivity.this, false);
                         }
 
                         @Override
@@ -210,7 +210,7 @@ public class PinActivity extends BRActivity {
             BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    BRWalletManager.getInstance().initWallet(PinActivity.this);
+                    BRWalletManager.getInstance().initWallet(LoginActivity.this);
                 }
             });
         }
@@ -278,11 +278,11 @@ public class PinActivity extends BRActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Intent intent = new Intent(PinActivity.this, BreadActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, BreadActivity.class);
                         startActivity(intent);
                         overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
-                        if (!PinActivity.this.isDestroyed()) {
-                            PinActivity.this.finish();
+                        if (!LoginActivity.this.isDestroyed()) {
+                            LoginActivity.this.finish();
                         }
                     }
                 }, 400);
@@ -292,7 +292,7 @@ public class PinActivity extends BRActivity {
     }
 
     private void showFailedToUnlock() {
-        SpringAnimator.failShakeAnimation(PinActivity.this, pinLayout);
+        SpringAnimator.failShakeAnimation(LoginActivity.this, pinLayout);
         pin = new StringBuilder("");
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -310,11 +310,11 @@ public class PinActivity extends BRActivity {
                     @Override
                     public void onSuccess() {
                         inputAllowed = false;
-                        if (AuthManager.getInstance().checkAuth(pin.toString(), PinActivity.this)) {
-                            AuthManager.getInstance().authSuccess(PinActivity.this);
+                        if (AuthManager.getInstance().checkAuth(pin.toString(), LoginActivity.this)) {
+                            AuthManager.getInstance().authSuccess(LoginActivity.this);
                             unlockWallet();
                         } else {
-                            AuthManager.getInstance().authFail(PinActivity.this);
+                            AuthManager.getInstance().authFail(LoginActivity.this);
                             showFailedToUnlock();
                         }
                     }

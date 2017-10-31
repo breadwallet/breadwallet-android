@@ -1,5 +1,7 @@
 package com.breadwallet.tools.threads;
 
+import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -87,7 +89,8 @@ public class BRExecutor implements RejectedExecutionHandler {
     * constructor for  BRExecutor
     */
     private BRExecutor() {
-        if (Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
+        Activity app = BreadApp.getBreadContext();
+        if (app != null && Utils.isEmulatorOrDebug(app)) {
             Runnable runnableCode = new Runnable() {
                 @Override
                 public void run() {
