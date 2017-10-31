@@ -466,7 +466,7 @@ public class BRWalletManager {
         final BRWalletManager m = BRWalletManager.getInstance();
         if (!m.isPasscodeEnabled(app)) {
             //Device passcode/password should be enabled for the app to work
-            BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), app.getString(R.string.Prompts_NoScreenLock_body_Android),
+            BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), app.getString(R.string.Prompts_NoScreenLock_body_android),
                     app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {

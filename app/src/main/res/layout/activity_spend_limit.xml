@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/bread_margin"
         android:layout_marginTop="32dp"
-        android:text="@string/TouchIdSpendingLimit.title.Android"
+        android:text="@string/TouchIdSpendingLimit.title.android"
         android:textColor="@color/almost_black"
         android:textSize="30sp"
         app:customTFont="CircularPro-Bold.otf"

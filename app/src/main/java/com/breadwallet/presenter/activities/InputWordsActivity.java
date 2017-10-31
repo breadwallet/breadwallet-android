@@ -73,7 +73,7 @@ public class InputWordsActivity extends BRActivity {
         nextButton = findViewById(R.id.send_button);
 
         if (Utils.isUsingCustomInputMethod(this)) {
-            BRDialog.showCustomDialog(this, getString(R.string.JailbreakWarnings_title), getString(R.string.Warning_keyboard_error_Android),
+            BRDialog.showCustomDialog(this, getString(R.string.JailbreakWarnings_title), getString(R.string.Alert_customKeyboard_android),
                     getString(R.string.Button_ok), getString(R.string.JailbreakWarnings_close), new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
