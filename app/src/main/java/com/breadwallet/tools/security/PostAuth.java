@@ -205,9 +205,7 @@ public class PostAuth {
                 Log.e(TAG, "onPublishTxAuth: seed length is 0!");
                 return;
             }
-        } finally
-
-        {
+        } finally {
             Arrays.fill(seed, (byte) 0);
         }
 

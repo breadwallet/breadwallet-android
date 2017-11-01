@@ -60,7 +60,7 @@ android {
                     // When you specify a version of CMake, as shown below,
                     // the Android plugin searches for its binary within your
                     // PATH environmental variable.
-                    cFlags "-DBITCOIN_TESTNET=0"
+                    cFlags "-DBITCOIN_TESTNET=1"
                     targets "core-lib"
                 }
             }
