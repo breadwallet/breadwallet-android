@@ -1,9 +1,18 @@
 package com.breadwallet.presenter.activities.settings;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
-import android.widget.SeekBar;
+import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -11,27 +20,28 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.wallet.BRWalletManager;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 
 import static com.breadwallet.tools.util.BRConstants.ONE_BITCOIN;
 
 
 public class SpendLimitActivity extends BRActivity {
     private static final String TAG = SpendLimitActivity.class.getName();
-    //    private Button scanButton;
     public static boolean appVisible = false;
     private static SpendLimitActivity app;
-    private SeekBar seekBar;
-    private TextView label;
+    private ListView listView;
+    private LimitAdaptor adapter;
 
-    //    private Spinner curSpiner;
     @Override
     protected void onSaveInstanceState(Bundle outState) {
     }
@@ -45,10 +55,7 @@ public class SpendLimitActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_spend_limit);
 
-        label = (TextView) findViewById(R.id.limit_label);
-        seekBar = (SeekBar) findViewById(R.id.seekBar);
-
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        ImageButton faq = findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,64 +64,55 @@ public class SpendLimitActivity extends BRActivity {
                 BRAnimator.showSupportFragment(app, BRConstants.fingerprintSpendingLimit);
             }
         });
-        int progress = getStepFromLimit(BRKeyStore.getSpendLimit(this));
-        updateText(progress);
-        seekBar.setProgress(progress);
-        seekBar.setMax(3);
-        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
+        listView = findViewById(R.id.limit_list);
+        listView.setFooterDividersEnabled(true);
+        adapter = new LimitAdaptor(this);
+        List<Integer> items = new ArrayList<>();
+        items.add(getAmountByStep(0).intValue());
+        items.add(getAmountByStep(1).intValue());
+        items.add(getAmountByStep(2).intValue());
+        items.add(getAmountByStep(3).intValue());
+        items.add(getAmountByStep(4).intValue());
+
+        adapter.addAll(items);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
-            public void onProgressChanged(SeekBar seekBar, int progressValue, boolean fromUser) {
-                updateText(progressValue);
+            public void onItemClick(AdapterView<?> parent, View view,
+                                    int position, long id) {
+                Log.e(TAG, "onItemClick: " + position);
+                int limit = adapter.getItem(position);
+                BRKeyStore.putSpendLimit(limit, app);
+
+                AuthManager.getInstance().setTotalLimit(app, BRWalletManager.getInstance().getTotalSent()
+                        + BRKeyStore.getSpendLimit(app));
+                adapter.notifyDataSetChanged();
             }
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-            }
         });
+        listView.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
 
-
-    }
-
-    private void updateText(int progress) {
-        //user preferred ISO
-        String iso = BRSharedPrefs.getIso(this);
-        //amount in satoshis
-        BigDecimal satoshis = getAmountBySte(progress);
-        //amount in BTC, mBTC or bits
-        BigDecimal amount = BRExchange.getAmountFromSatoshis(this, "BTC", satoshis);
-        //amount in user preferred ISO (e.g. USD)
-        BigDecimal curAmount = BRExchange.getAmountFromSatoshis(this, iso, satoshis);
-        //formatted string for the label
-        String string = String.format("%s (%s)", BRCurrency.getFormattedCurrencyString(this, "BTC", amount), BRCurrency.getFormattedCurrencyString(this, iso, curAmount));
-        label.setText(string);
-        BRKeyStore.putSpendLimit(satoshis.longValue(), this);
-        updateTotalLimit();
-    }
-
-    private void updateTotalLimit() {
-        AuthManager.getInstance().setTotalLimit(this, BRWalletManager.getInstance().getTotalSent()
-                + BRKeyStore.getSpendLimit(this));
     }
 
     //satoshis
-    private BigDecimal getAmountBySte(int step) {
+    private BigDecimal getAmountByStep(int step) {
         BigDecimal result;
         switch (step) {
             case 0:
-                result = new BigDecimal(ONE_BITCOIN / 100);//   0.01 BTC
+                result = new BigDecimal(0);// 0 always require
                 break;
             case 1:
-                result = new BigDecimal(ONE_BITCOIN / 10);//   0.1 BTC
+                result = new BigDecimal(ONE_BITCOIN / 100);//   0.01 BTC
                 break;
             case 2:
-                result = new BigDecimal(ONE_BITCOIN);//   1 BTC
+                result = new BigDecimal(ONE_BITCOIN / 10);//   0.1 BTC
                 break;
             case 3:
+                result = new BigDecimal(ONE_BITCOIN);//   1 BTC
+                break;
+            case 4:
                 result = new BigDecimal(ONE_BITCOIN * 10);//   10 BTC
                 break;
 
@@ -127,14 +125,17 @@ public class SpendLimitActivity extends BRActivity {
 
     private int getStepFromLimit(long limit) {
         switch ((int) limit) {
-            case ONE_BITCOIN / 100:
+
+            case 0:
                 return 0;
-            case ONE_BITCOIN / 10:
+            case ONE_BITCOIN / 100:
                 return 1;
-            case ONE_BITCOIN:
+            case ONE_BITCOIN / 10:
                 return 2;
-            case ONE_BITCOIN * 10:
+            case ONE_BITCOIN:
                 return 3;
+            case ONE_BITCOIN * 10:
+                return 4;
             default:
                 return 2; //1 BTC Default
         }
@@ -159,6 +160,60 @@ public class SpendLimitActivity extends BRActivity {
     public void onBackPressed() {
         super.onBackPressed();
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
+    }
+
+    public class LimitAdaptor extends ArrayAdapter<Integer> {
+
+        private final Context mContext;
+        private final int layoutResourceId;
+        private TextView textViewItem;
+
+        public LimitAdaptor(Context mContext) {
+
+            super(mContext, R.layout.currency_list_item);
+
+            this.layoutResourceId = R.layout.currency_list_item;
+            this.mContext = mContext;
+        }
+
+        @Override
+        public View getView(int position, View convertView, @NonNull ViewGroup parent) {
+
+            final long limit = BRKeyStore.getSpendLimit(app);
+            if (convertView == null) {
+                // inflate the layout
+                LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+                convertView = inflater.inflate(layoutResourceId, parent, false);
+            }
+            // get the TextView and then set the text (item name) and tag (item ID) values
+            textViewItem = convertView.findViewById(R.id.currency_item_text);
+            FontManager.overrideFonts(textViewItem);
+            Integer item = getItem(position);
+            BigDecimal curAmount = BRExchange.getAmountFromSatoshis(app, BRSharedPrefs.getIso(app), new BigDecimal(item));
+            BigDecimal btcAmount = BRExchange.getBitcoinForSatoshis(app, new BigDecimal(item));
+            String text = String.format(item == 0 ? app.getString(R.string.TouchIdSpendingLimit) : "%s (%s)", curAmount, btcAmount);
+            textViewItem.setText(text);
+            ImageView checkMark = convertView.findViewById(R.id.currency_checkmark);
+
+            if (position == getStepFromLimit(limit)) {
+                checkMark.setVisibility(View.VISIBLE);
+            } else {
+                checkMark.setVisibility(View.GONE);
+            }
+            return convertView;
+
+        }
+
+        @Override
+        public int getCount() {
+            return super.getCount();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return IGNORE_ITEM_VIEW_TYPE;
+        }
+
     }
 
 }

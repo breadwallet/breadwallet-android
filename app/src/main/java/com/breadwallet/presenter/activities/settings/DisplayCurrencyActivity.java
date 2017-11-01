@@ -1,10 +1,18 @@
 package com.breadwallet.presenter.activities.settings;
 
+import android.app.Activity;
+import android.content.Context;
+import android.graphics.Point;
 import android.os.Bundle;
+import android.util.TypedValue;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -12,14 +20,15 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.tools.adapter.CurrencyListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 
 import java.math.BigDecimal;
+import java.util.Currency;
 
 
 public class DisplayCurrencyActivity extends BRActivity {
@@ -47,7 +56,7 @@ public class DisplayCurrencyActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_currency);
 
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        ImageButton faq = findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -57,12 +66,12 @@ public class DisplayCurrencyActivity extends BRActivity {
             }
         });
 
-        exchangeText = (TextView) findViewById(R.id.exchange_text);
-        listView = (ListView) findViewById(R.id.currency_list_view);
+        exchangeText = findViewById(R.id.exchange_text);
+        listView = findViewById(R.id.currency_list_view);
         adapter = new CurrencyListAdapter(this);
         adapter.addAll(CurrencyDataSource.getInstance(this).getAllCurrencies());
-        leftButton = (Button) findViewById(R.id.left_button);
-        rightButton = (Button) findViewById(R.id.right_button);
+        leftButton = findViewById(R.id.left_button);
+        rightButton = findViewById(R.id.right_button);
         leftButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -153,6 +162,88 @@ public class DisplayCurrencyActivity extends BRActivity {
         super.onBackPressed();
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
+
+    public class CurrencyListAdapter extends ArrayAdapter<CurrencyEntity> {
+        public final String TAG = CurrencyListAdapter.class.getName();
+
+        private final Context mContext;
+        private final int layoutResourceId;
+        private TextView textViewItem;
+        private final Point displayParameters = new Point();
+
+        public CurrencyListAdapter(Context mContext) {
+
+            super(mContext, R.layout.currency_list_item);
+
+            this.layoutResourceId = R.layout.currency_list_item;
+            this.mContext = mContext;
+            ((Activity) mContext).getWindowManager().getDefaultDisplay().getSize(displayParameters);
+//        currencyListAdapter = this;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+
+            final int tmp = BRSharedPrefs.getCurrencyListPosition(mContext);
+            if (convertView == null) {
+                // inflate the layout
+                LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
+                convertView = inflater.inflate(layoutResourceId, parent, false);
+            }
+            // get the TextView and then set the text (item name) and tag (item ID) values
+            textViewItem = convertView.findViewById(R.id.currency_item_text);
+            FontManager.overrideFonts(textViewItem);
+            String iso = getItem(position).code;
+            Currency c = null;
+            try {
+                c = Currency.getInstance(iso);
+            } catch (IllegalArgumentException ignored) {
+            }
+            textViewItem.setText(c == null ? iso : String.format("%s (%s)", iso, c.getSymbol()));
+            ImageView checkMark = convertView.findViewById(R.id.currency_checkmark);
+
+            if (position == tmp) {
+                checkMark.setVisibility(View.VISIBLE);
+            } else {
+                checkMark.setVisibility(View.GONE);
+            }
+            normalizeTextView();
+            return convertView;
+
+        }
+
+        @Override
+        public int getCount() {
+            return super.getCount();
+        }
+
+        @Override
+        public int getItemViewType(int position) {
+            return IGNORE_ITEM_VIEW_TYPE;
+        }
+
+        private boolean isTextSizeAcceptable(TextView textView) {
+            textView.measure(0, 0);
+            int textWidth = textView.getMeasuredWidth();
+            int checkMarkWidth = 76 + 20;
+            return (textWidth <= (displayParameters.x - checkMarkWidth));
+        }
+
+        private boolean normalizeTextView() {
+            int count = 0;
+//        Log.d(TAG, "Normalizing the text view !!!!!!");
+            while (!isTextSizeAcceptable(textViewItem)) {
+                count++;
+                float textSize = textViewItem.getTextSize();
+//            Log.e(TAG, "The text size is: " + String.valueOf(textSize));
+                textViewItem.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize - 2);
+                this.notifyDataSetChanged();
+            }
+            return (count > 0);
+        }
+
+    }
+
 
 
 }
