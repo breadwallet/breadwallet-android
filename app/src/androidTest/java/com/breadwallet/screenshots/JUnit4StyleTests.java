@@ -1,18 +1,27 @@
 package com.breadwallet.screenshots;
 
+import android.os.Build;
+import android.support.test.espresso.IdlingPolicies;
 import android.support.test.rule.ActivityTestRule;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
 
+import org.junit.After;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
+import java.util.concurrent.TimeUnit;
+
 import tools.fastlane.screengrab.Screengrab;
+import tools.fastlane.screengrab.UiAutomatorScreenshotStrategy;
 import tools.fastlane.screengrab.locale.LocaleTestRule;
+import tools.fastlane.screengrab.locale.LocaleUtil;
 
 /**
  * BreadWallet
@@ -46,9 +55,30 @@ public class JUnit4StyleTests {
     @Rule
     public ActivityTestRule<BreadActivity> activityRule = new ActivityTestRule<>(BreadActivity.class);
 
+    @BeforeClass
+    public static void beforeClass() {
+        IdlingPolicies.setMasterPolicyTimeout(600, TimeUnit.SECONDS);
+        IdlingPolicies.setIdlingResourceTimeout(600, TimeUnit.SECONDS);
+    }
+
+
+    @Before
+    public void setUp(){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            Screengrab.setDefaultScreenshotStrategy(new UiAutomatorScreenshotStrategy());
+        }
+        activityRule.getActivity();
+        LocaleUtil.changeDeviceLocaleTo(LocaleUtil.getTestLocale());
+    }
+
+    @After
+    public void tearDown(){
+        LocaleUtil.changeDeviceLocaleTo(LocaleUtil.getEndingLocale());
+    }
+
     @Test
     public void testTakeScreenshot() {
-        Screengrab.screenshot("before_button_click");
+        Screengrab.screenshot("transaction_list");
 
 //        onView(withId(R.id.fab)).perform(click());
 //

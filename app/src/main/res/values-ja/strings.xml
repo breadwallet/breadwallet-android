@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+  <!-- App name -->
+  <string name="About.appName.android">ブレッド</string>
   <!-- About screen blog label -->
   <string name="About.blog">ブログ</string>
   <!-- About screen footer -->
@@ -26,8 +28,16 @@
   <string name="AccountHeader.equals">=</string>
   <!-- Manage wallet button title -->
   <string name="AccountHeader.manageButtonName">管理</string>
+  <!-- Third party keyboard warning -->
+  <string name="Alert.customKeyboard.android">現在、サードパーティーのキーボードを使用しているようです。これを使うと入力した内容が記録され、ペーパー・キーが盗まれる可能性があります。追加の保護措置としてAndroidのデフォルトキーボードに切り替えてください。</string>
   <!-- Error alert title -->
   <string name="Alert.error">エラー</string>
+  <!-- Keystore error -->
+  <string name="Alert.keystore.generic.android">Android OSのKeystoreに問題があります。support@breadwallet.com にお問い合わせください。</string>
+  <!-- KeyStore error, keys are invalidated -->
+  <string name="Alert.keystore.invalidated.android">お使いのAndroidロック画面が無効にされたため、暗号化されたブレッドのデータはつい最近無効になりました。</string>
+  <!-- Keystore error title -->
+  <string name="Alert.keystore.title.android">Android KeyStoreエラー</string>
   <!-- No internet alert message -->
   <string name="Alert.noInternet">インターネット接続が見つかりません。接続を確認してから、もう一度お試しください。</string>
   <!-- Warning alert title -->
@@ -48,6 +58,8 @@
   <string name="Alerts.sendSuccess">送金のご確認</string>
   <!-- Send success alert subheader label (e.g. the money was sent) -->
   <string name="Alerts.sendSuccessSubheader">送金しました!</string>
+  <!-- Fingerprint was recognized by the scanner -->
+  <string name="Alerts.touchIdSucceeded.android">指紋が認識されました</string>
   <!-- JSON Serialization error message -->
   <string name="ApiClient.jsonError">JSONシリアル化エラー</string>
   <!-- Wallet not ready error message -->
@@ -140,6 +152,8 @@
   <string name="ErrorMessages.messagingUnavailableMessage">この端末はメール送信の設定がされていません。</string>
   <!-- Messaging unavailable alert title -->
   <string name="ErrorMessages.messagingUnavailableTitle">メッセージの送受信ができません</string>
+  <!-- Fingerprint was not recognized by the scanner, please try scanning again -->
+  <string name="ErrorMessages.touchIdFailed.android">指紋が認識されませんでした。もう一度やり直してください。</string>
   <!-- Economy fee -->
   <string name="FeeSelector.economy">エコノミー</string>
   <!-- Fee Selector economly fee description -->
@@ -274,6 +288,10 @@
   <string name="Prompts.NoPasscode.body">ウォレットを保護するためには端末のパスコードが必要です。設定画面にてパスコードをオンにしてください。</string>
   <!-- No Passcode set warning title -->
   <string name="Prompts.NoPasscode.title">端末のパスコードをオンにする</string>
+  <!-- Instruction how to enable device encryption -->
+  <string name="Prompts.NoScreenLock.body.android">ウォレットを守るため機器の画面をロックする必要があります。「設定」 &gt; 「セキュリティ」 &gt; 「画面ロック」で有効にしてから続行してください。</string>
+  <!-- Device encryption prompt title -->
+  <string name="Prompts.NoScreenLock.title.android">画面ロックが無効になっています</string>
   <!-- Warning about paper key. -->
   <string name="Prompts.PaperKey.body">携帯電話の紛失時や変更時に備えて、お客様のペーパーキーは必ず保管しておいてください。続けるにはここをタップしてください。</string>
   <!-- An action is required (You must do this action). -->
@@ -288,8 +306,14 @@
   <string name="Prompts.ShareData.title">匿名のデータを共有する</string>
   <!-- Enable touch ID prompt body -->
   <string name="Prompts.TouchId.body">Touch IDを有効にするにはこちらをタップしてください</string>
+  <!-- Enable Fingerprint prompt body -->
+  <string name="Prompts.TouchId.body.android">こちらをタップして指紋認証を有効にしてください</string>
   <!-- Enable touch ID prompt title -->
   <string name="Prompts.TouchId.title">Touch IDを有効化する</string>
+  <!-- Enable Fingerprint prompt title -->
+  <string name="Prompts.TouchId.title.android">指紋認証を有効にする</string>
+  <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
+  <string name="Prompts.TouchId.usePin.android">PIN</string>
   <!-- Upgrade PIN prompt body. -->
   <string name="Prompts.UpgradePin.body">ブレッドは6桁のPINコード使用にアップグレードされました。こちらをタップして更新してください。</string>
   <!-- Upgrade PIN prompt title. -->
@@ -392,10 +416,16 @@
   <string name="SecurityCenter.touchIdDescription">Breadロック解除の他、設定した限度額までの送金も指紋認証で出来ます。</string>
   <!-- Touch ID button title -->
   <string name="SecurityCenter.touchIdTitle">Touch ID</string>
+  <!-- Security center fingerprint authentication button -->
+  <string name="SecurityCenter.touchIdTitle.android">指紋認証</string>
   <!-- Send money amount label -->
   <string name="Send.amountLabel">金額</string>
   <!-- Balance: $4.00 -->
   <string name="Send.balance">残高: %1$s</string>
+  <!-- Instructions how to allow the camera access for the app -->
+  <string name="Send.cameraUnavailabeMessage.android">「設定」 &gt; 「アプリ」 &gt; 「ブレッド」 &gt; 「許可」でカメラへのアクセスを許可してください</string>
+  <!-- Permission required to access camera -->
+  <string name="Send.cameraUnavailabeTitle.android">ブレッドはカメラへのアクセスを許可されていません</string>
   <!-- Camera not allowed message -->
   <string name="Send.cameraunavailableMessage">設定画面へ移動し、カメラへのアクセス許可をしてください。</string>
   <!-- Camera not allowed alert title -->
@@ -472,6 +502,8 @@
   <string name="Settings.title">設定</string>
   <!-- Touch ID spending limit label -->
   <string name="Settings.touchIdLimit">Touch IDの利用限度額</string>
+  <!-- The fingerprint spending limit -->
+  <string name="Settings.touchIdLimit.android">指紋認証利用上限</string>
   <!-- Wallet Settings section header -->
   <string name="Settings.wallet">ウォレット</string>
   <!-- Start or recover another wallet menu label. -->
@@ -510,6 +542,12 @@
   <string name="TimeSince.seconds">%1$s秒</string>
   <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
   <string name="TouchIdSettings.customizeText">%1$sからTouch ID利用限度額を変更できます。</string>
+  <!-- Fingerprint enabling description body -->
+  <string name="TouchIdSettings.customizeText.android">指紋認証利用上限は指紋認証利用上限画面でカスタマイズできます</string>
+  <!-- Instruction for the fingerprint setup -->
+  <string name="TouchIdSettings.disabledWarning.body.android">この機器は指紋認証が有効化されていません。設定 -&gt; セキュリティに移動して指紋認証を設定してください。</string>
+  <!-- Fingerprint Is Not Setup -->
+  <string name="TouchIdSettings.disabledWarning.title.android">指紋認証が有効ではありません</string>
   <!-- Touch Id screen label -->
   <string name="TouchIdSettings.label">設定された限度額以下の送金を行う場合には、指紋を使ってご自身のブレッドのロックを解除してください。</string>
   <!-- Link Text (see TouchIdSettings.customizeText) -->
@@ -518,8 +556,12 @@
   <string name="TouchIdSettings.spendingLimit">利用限度: %1$s (%2$s)</string>
   <!-- Touch id switch label. -->
   <string name="TouchIdSettings.switchLabel">ブレッドでTouch IDの有効化</string>
+  <!-- Enable fingerprint for this wallet called Bread -->
+  <string name="TouchIdSettings.switchLabel.android">ブレッド用に指紋認証を有効にする</string>
   <!-- Touch ID settings view title -->
   <string name="TouchIdSettings.title">Touch ID</string>
+  <!-- Fingerprint authentication label -->
+  <string name="TouchIdSettings.title.android">指紋認証</string>
   <!-- Touch ID unavailable alert message -->
   <string name="TouchIdSettings.unavailableAlertMessage">あなたはこの端末でTouch IDの利用設定をしていません。設定-&gt;Touch IDとパスコードに移動し、今すぐ設定してください。</string>
   <!-- Touch ID unavailable alert title -->
@@ -530,6 +572,8 @@
   <string name="TouchIdSpendingLimit.body">限度額を超える金額の送金を行う場合や、最後に6桁のPINコードを入力してから48時間毎に6桁のPINコードの入力が求められます。</string>
   <!-- Touch Id spending limit screen title -->
   <string name="TouchIdSpendingLimit.title">Touch IDの利用限度額</string>
+  <!-- name of spending limit when using fingerprint authorization -->
+  <string name="TouchIdSpendingLimit.title.android">指紋認証利用上限</string>
   <!-- Availability status text -->
   <string name="Transaction.available">利用可能</string>
   <!-- Transaction complete label -->
@@ -604,10 +648,16 @@
   <string name="UnlockScreen.scan">スキャン</string>
   <!-- Unlock Screen sub-header -->
   <string name="UnlockScreen.subheader">PINコードを入力してください</string>
+  <!-- Instruction to touch the sensor for fingerprint authentication -->
+  <string name="UnlockScreen.touchIdInstructions.android">タッチセンサー</string>
   <!-- TouchID prompt text -->
   <string name="UnlockScreen.touchIdPrompt">ブレッドのロックを解除してください。</string>
+  <!-- Device authentication body -->
+  <string name="UnlockScreen.touchIdPrompt.android">続行するためAndroid機器のロックを解除 してください</string>
   <!-- Unlock with TouchID accessibility label -->
   <string name="UnlockScreen.touchIdText">Touch IDでロックを解除する</string>
+  <!-- Device authentication title -->
+  <string name="UnlockScreen.touchIdTitle.android">認証が必要です</string>
   <!-- Wallet unlocked message -->
   <string name="UnlockScreen.unlocked">ウォレットのロックが解除されました</string>
   <!-- Update PIN caption text -->

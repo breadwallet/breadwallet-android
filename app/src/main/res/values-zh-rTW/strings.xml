@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+  <!-- App name -->
+  <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
   <string name="About.blog">部落格</string>
   <!-- About screen footer -->
@@ -26,8 +28,16 @@
   <string name="AccountHeader.equals">=</string>
   <!-- Manage wallet button title -->
   <string name="AccountHeader.manageButtonName">管理</string>
+  <!-- Third party keyboard warning -->
+  <string name="Alert.customKeyboard.android">您似乎在使用第三方鍵盤，這可能會記錄您按下的鍵並竊取您的「紙鑰」。請切換至預設的 Android 鍵盤以獲得額外的保護。</string>
   <!-- Error alert title -->
   <string name="Alert.error">錯誤</string>
+  <!-- Keystore error -->
+  <string name="Alert.keystore.generic.android">您的 Android OS 金鑰儲存區有問題，請聯絡 support@breadwallet.com</string>
+  <!-- KeyStore error, keys are invalidated -->
+  <string name="Alert.keystore.invalidated.android">您的 Bread 加密資料最近已被判定為無效，因爲您的 Android 螢幕鎖定已被停用。</string>
+  <!-- Keystore error title -->
+  <string name="Alert.keystore.title.android">Android 金鑰儲存區錯誤</string>
   <!-- No internet alert message -->
   <string name="Alert.noInternet">找不到網路連線。請檢查您的連線，然後再試一次。</string>
   <!-- Warning alert title -->
@@ -48,6 +58,8 @@
   <string name="Alerts.sendSuccess">寄出確認</string>
   <!-- Send success alert subheader label (e.g. the money was sent) -->
   <string name="Alerts.sendSuccessSubheader">錢已寄出！</string>
+  <!-- Fingerprint was recognized by the scanner -->
+  <string name="Alerts.touchIdSucceeded.android">已辨識指紋</string>
   <!-- JSON Serialization error message -->
   <string name="ApiClient.jsonError">JSON 序列化錯誤</string>
   <!-- Wallet not ready error message -->
@@ -140,6 +152,8 @@
   <string name="ErrorMessages.messagingUnavailableMessage">本裝置並非設定來傳送訊息。</string>
   <!-- Messaging unavailable alert title -->
   <string name="ErrorMessages.messagingUnavailableTitle">無法使用傳訊</string>
+  <!-- Fingerprint was not recognized by the scanner, please try scanning again -->
+  <string name="ErrorMessages.touchIdFailed.android">指紋無法識別。請再試一次。</string>
   <!-- Economy fee -->
   <string name="FeeSelector.economy">經濟</string>
   <!-- Fee Selector economly fee description -->
@@ -274,6 +288,10 @@
   <string name="Prompts.NoPasscode.body">必須有裝置密碼來保護您的錢包。進入設定並開啟密碼。</string>
   <!-- No Passcode set warning title -->
   <string name="Prompts.NoPasscode.title">開啟裝置密碼。</string>
+  <!-- Instruction how to enable device encryption -->
+  <string name="Prompts.NoScreenLock.body.android">需要裝置螢幕鎖定來保護您的錢包。前往「設定」 &gt; 「安全性」 &gt; 「螢幕鎖定」，啟用來繼續。</string>
+  <!-- Device encryption prompt title -->
+  <string name="Prompts.NoScreenLock.title.android">螢幕鎖定已停用</string>
   <!-- Warning about paper key. -->
   <string name="Prompts.PaperKey.body">必須儲存紙上金鑰，以防萬一您遺失或換電話。點選這裡來繼續。</string>
   <!-- An action is required (You must do this action). -->
@@ -288,8 +306,14 @@
   <string name="Prompts.ShareData.title">分享匿名資料</string>
   <!-- Enable touch ID prompt body -->
   <string name="Prompts.TouchId.body">點選這裡來啟用 Touch ID</string>
+  <!-- Enable Fingerprint prompt body -->
+  <string name="Prompts.TouchId.body.android">點選這裡來啟用指紋驗證</string>
   <!-- Enable touch ID prompt title -->
   <string name="Prompts.TouchId.title">啟用 Touch ID</string>
+  <!-- Enable Fingerprint prompt title -->
+  <string name="Prompts.TouchId.title.android">啟用指紋驗證</string>
+  <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
+  <string name="Prompts.TouchId.usePin.android">密碼</string>
   <!-- Upgrade PIN prompt body. -->
   <string name="Prompts.UpgradePin.body">Bread 已經升級至 6 位數 PIN 碼。請點這裡升級。</string>
   <!-- Upgrade PIN prompt title. -->
@@ -392,10 +416,16 @@
   <string name="SecurityCenter.touchIdDescription">輕鬆解鎖您的 Bread，並在設定好的限額內寄送款項。</string>
   <!-- Touch ID button title -->
   <string name="SecurityCenter.touchIdTitle">Touch ID</string>
+  <!-- Security center fingerprint authentication button -->
+  <string name="SecurityCenter.touchIdTitle.android">指紋驗證</string>
   <!-- Send money amount label -->
   <string name="Send.amountLabel">金額</string>
   <!-- Balance: $4.00 -->
   <string name="Send.balance">餘額：%1$s</string>
+  <!-- Instructions how to allow the camera access for the app -->
+  <string name="Send.cameraUnavailabeMessage.android">到「設定」 &gt; 「應用程式」 &gt; 「Bread」 &gt; 「權限」允許相機存取</string>
+  <!-- Permission required to access camera -->
+  <string name="Send.cameraUnavailabeTitle.android">Bread 尚未獲准存取相機</string>
   <!-- Camera not allowed message -->
   <string name="Send.cameraunavailableMessage">請至「設定」允許存取相機。</string>
   <!-- Camera not allowed alert title -->
@@ -472,6 +502,8 @@
   <string name="Settings.title">設定</string>
   <!-- Touch ID spending limit label -->
   <string name="Settings.touchIdLimit">Touch ID 花費上限</string>
+  <!-- The fingerprint spending limit -->
+  <string name="Settings.touchIdLimit.android">指紋驗證花費限制</string>
   <!-- Wallet Settings section header -->
   <string name="Settings.wallet">錢包</string>
   <!-- Start or recover another wallet menu label. -->
@@ -510,6 +542,12 @@
   <string name="TimeSince.seconds">%1$s 秒</string>
   <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
   <string name="TouchIdSettings.customizeText">你可以在%1$s自訂你的 Touch ID 支出限額。</string>
+  <!-- Fingerprint enabling description body -->
+  <string name="TouchIdSettings.customizeText.android">您可以從「指紋授權花費限制」畫面自訂「指紋驗證花費限制」</string>
+  <!-- Instruction for the fingerprint setup -->
+  <string name="TouchIdSettings.disabledWarning.body.android">您尚未啟用此裝置上的指紋驗證。前往「設定」 -&gt; 「安全性」來設定指紋驗證。</string>
+  <!-- Fingerprint Is Not Setup -->
+  <string name="TouchIdSettings.disabledWarning.title.android">指紋驗證並未啟用</string>
   <!-- Touch Id screen label -->
   <string name="TouchIdSettings.label">以您的指紋解鎖 Bread，並在設定好的限額內寄送款項。</string>
   <!-- Link Text (see TouchIdSettings.customizeText) -->
@@ -518,8 +556,12 @@
   <string name="TouchIdSettings.spendingLimit">花費上限：%1$s（%2$s）</string>
   <!-- Touch id switch label. -->
   <string name="TouchIdSettings.switchLabel">為 Bread 啟用 Touch ID</string>
+  <!-- Enable fingerprint for this wallet called Bread -->
+  <string name="TouchIdSettings.switchLabel.android">為 Bread 啓用指紋驗證</string>
   <!-- Touch ID settings view title -->
   <string name="TouchIdSettings.title">Touch ID</string>
+  <!-- Fingerprint authentication label -->
+  <string name="TouchIdSettings.title.android">指紋驗證</string>
   <!-- Touch ID unavailable alert message -->
   <string name="TouchIdSettings.unavailableAlertMessage">您尚未在此裝置設定 Touch ID。請立刻至「設定」-&gt;「 Touch ID 與密碼」進行設定。</string>
   <!-- Touch ID unavailable alert title -->
@@ -530,6 +572,8 @@
   <string name="TouchIdSpendingLimit.body">您必須輸入 6 位數 PIN 碼，才能送出超過您花費上限的交易；上次輸入 6 位數 PIN 碼經過 48 小時後，也必須重新輸入。</string>
   <!-- Touch Id spending limit screen title -->
   <string name="TouchIdSpendingLimit.title">Touch ID 花費上限</string>
+  <!-- name of spending limit when using fingerprint authorization -->
+  <string name="TouchIdSpendingLimit.title.android">指紋授權花費限制</string>
   <!-- Availability status text -->
   <string name="Transaction.available">可花用</string>
   <!-- Transaction complete label -->
@@ -604,10 +648,16 @@
   <string name="UnlockScreen.scan">掃描</string>
   <!-- Unlock Screen sub-header -->
   <string name="UnlockScreen.subheader">輸入 PIN 碼</string>
+  <!-- Instruction to touch the sensor for fingerprint authentication -->
+  <string name="UnlockScreen.touchIdInstructions.android">觸控感測器</string>
   <!-- TouchID prompt text -->
   <string name="UnlockScreen.touchIdPrompt">解鎖您的 Bread。</string>
+  <!-- Device authentication body -->
+  <string name="UnlockScreen.touchIdPrompt.android">請解除鎖定您的 Android 裝置來繼續。</string>
   <!-- Unlock with TouchID accessibility label -->
   <string name="UnlockScreen.touchIdText">以 TouchID 解鎖</string>
+  <!-- Device authentication title -->
+  <string name="UnlockScreen.touchIdTitle.android">需要驗證</string>
   <!-- Wallet unlocked message -->
   <string name="UnlockScreen.unlocked">錢包已解鎖</string>
   <!-- Update PIN caption text -->
