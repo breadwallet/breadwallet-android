@@ -12,7 +12,7 @@ import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
-import com.google.firebase.crash.FirebaseCrash;
+import com.platform.APIClient;
 
 import junit.framework.Assert;
 
@@ -21,10 +21,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -35,6 +39,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import static com.breadwallet.presenter.fragments.FragmentSend.isEconomyFee;
+import okhttp3.Request;
+import okhttp3.Response;
 
 /**
  * BreadWallet
@@ -183,7 +189,7 @@ public class BRApiManager {
 
 
     public static JSONArray getJSonArray(Activity activity) {
-        String jsonString = callURL(activity, String.format("https://%s/rates", BreadApp.HOST));
+        String jsonString = urlGET(activity, String.format("https://%s/rates", BreadApp.HOST));
         JSONArray jsonArray = null;
         if (jsonString == null) return null;
         try {
@@ -196,7 +202,7 @@ public class BRApiManager {
     }
 
     public static JSONArray getBackUpJSonArray(Activity activity) {
-        String jsonString = callURL(activity, "https://bitpay.com/rates");
+        String jsonString = urlGET(activity, "https://bitpay.com/rates");
 
         JSONArray jsonArray = null;
         if (jsonString == null) return null;
@@ -204,11 +210,6 @@ public class BRApiManager {
             JSONObject obj = new JSONObject(jsonString);
 
             jsonArray = obj.getJSONArray("data");
-//            JSONObject headers = obj.getJSONObject("headers");
-//            String secureDate = headers.getString("Date");
-//            @SuppressWarnings("deprecation") long date = Date.parse(secureDate) / 1000;
-
-//            BRSharedPrefs.putSecureTime(activity, date);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -216,7 +217,7 @@ public class BRApiManager {
     }
 
     public static void updateFeePerKb(Activity activity) {
-        String jsonString = callURL(activity, "https://api.breadwallet.com/fee-per-kb");
+        String jsonString = urlGET(activity, "https://api.breadwallet.com/fee-per-kb");
         if (jsonString == null || jsonString.isEmpty()) {
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
             return;
@@ -240,47 +241,35 @@ public class BRApiManager {
         }
     }
 
-    private static String callURL(Context app, String myURL) {
+    private static String urlGET(Context app, String myURL) {
 //        System.out.println("Requested URL_EA:" + myURL);
-        StringBuilder sb = new StringBuilder();
-        HttpURLConnection urlConn = null;
-        InputStreamReader in = null;
+        Request request = new Request.Builder()
+                .url(myURL)
+                .header("Content-Type", "application/json")
+                .header("Accept", "application/json")
+                .header("User-agent", Utils.getAgentString(app, "android/HttpURLConnection"))
+                .get().build();
+        String response = null;
+        Response resp = APIClient.getInstance(app).sendRequest(request, false, 0);
+
         try {
-            URL url = new URL(myURL);
-            urlConn = (HttpURLConnection) url.openConnection();
-
-//            Log.e(TAG, "user agent: " + Utils.getAgentString(app, "android/HttpURLConnection"));
-            urlConn.setRequestProperty("User-agent", Utils.getAgentString(app, "android/HttpURLConnection"));
-            urlConn.setReadTimeout(60 * 1000);
-
-            String strDate = urlConn.getHeaderField("date");
-
-            if (strDate == null || app == null) {
-                Log.e(TAG, "callURL: strDate == null!!!");
-            } else {
-                @SuppressWarnings("deprecation") long date = Date.parse(strDate) / 1000;
-                BRSharedPrefs.putSecureTime(app, date);
-                Assert.assertTrue(date != 0);
+            if (resp == null) {
+                Log.e(TAG, "urlGET: " + myURL + ", resp is null");
+                return null;
             }
+            response = resp.body().string();
+            String strDate = resp.header("date");
+            DateFormat formatter = SimpleDateFormat.getDateInstance();
+            Date date = formatter.parse(strDate);
+           long timeStamp = date.getTime();
+            BRSharedPrefs.putSecureTime(app, timeStamp);
+        } catch (ParseException | IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (resp != null) resp.close();
 
-            if (urlConn.getInputStream() != null) {
-                in = new InputStreamReader(urlConn.getInputStream(),
-                        Charset.defaultCharset());
-                BufferedReader bufferedReader = new BufferedReader(in);
-
-                int cp;
-                while ((cp = bufferedReader.read()) != -1) {
-                    sb.append((char) cp);
-                }
-                bufferedReader.close();
-            }
-            assert in != null;
-            in.close();
-        } catch (Exception e) {
-            return null;
         }
-
-        return sb.toString();
+        return response;
     }
 
 }
