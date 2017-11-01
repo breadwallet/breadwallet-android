@@ -10,8 +10,8 @@ android {
         applicationId = 'com.breadwallet'
         minSdkVersion  23
         targetSdkVersion  26
-        versionCode  129
-        versionName  "129"
+        versionCode  131
+        versionName  "131"
         multiDexEnabled true
 
         // Similar to other properties in the defaultConfig block,
@@ -60,7 +60,7 @@ android {
                     // When you specify a version of CMake, as shown below,
                     // the Android plugin searches for its binary within your
                     // PATH environmental variable.
-                    cFlags "-DBITCOIN_TESTNET=1"
+                    cFlags "-DBITCOIN_TESTNET=1" //todo make this mainnet
                     targets "core-lib"
                 }
             }
@@ -156,4 +156,5 @@ dependencies {
     implementation 'com.android.support.test:rules:1.0.1'
     implementation 'junit:junit:4.12'
     implementation 'com.android.support.test.espresso:espresso-core:3.0.1'
+    androidTestCompile 'tools.fastlane:screengrab:1.1.0'
 }
