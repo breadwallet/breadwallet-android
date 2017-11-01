@@ -49,17 +49,16 @@
                     android:clipChildren="false"
                     android:clipToPadding="false">
 
-                    <com.breadwallet.presenter.customviews.BRText
+                    <ImageView
                         android:id="@+id/wallet_name_text"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="128dp"
+                        android:layout_height="64dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
-                        android:text="@string/About.appName.android"
                         android:textColor="@color/white"
+                        android:src="@drawable/ic_bread_logo_white"
                         android:textSize="36sp"
                         android:textStyle="bold"
-                        app:customTFont="Celevenia.otf"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent"/>
 

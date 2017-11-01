@@ -101,7 +101,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     private TextView priceChange;
 
     private TextView manageText;
-    private TextView walletName;
+//    private TextView walletName;
     private TextView emptyTip;
     private ConstraintLayout walletProgressLayout;
 
@@ -382,7 +382,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         sendButton = (LinearLayout) findViewById(R.id.send_layout);
         receiveButton = (LinearLayout) findViewById(R.id.receive_layout);
         manageText = (TextView) findViewById(R.id.manage_text);
-        walletName = (TextView) findViewById(R.id.wallet_name_text);
+//        walletName = (TextView) findViewById(R.id.wallet_name_text);
         menuButton = (LinearLayout) findViewById(R.id.menu_layout);
         primaryPrice = (TextView) findViewById(R.id.primary_price);
         secondaryPrice = (TextView) findViewById(R.id.secondary_price);
@@ -577,7 +577,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
     @Override
     public void onNameChanged(String name) {
-        walletName.setText(name);
+//        walletName.setText(name);
     }
 
     @Override

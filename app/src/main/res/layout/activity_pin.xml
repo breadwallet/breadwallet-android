@@ -9,19 +9,23 @@
     android:background="@drawable/bread_gradient"
     tools:context="com.breadwallet.presenter.activities.LoginActivity">
 
-    <com.breadwallet.presenter.customviews.BRText
+    <ImageView
         android:id="@+id/title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="128dp"
+        android:layout_height="64dp"
         android:layout_marginBottom="32dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginStart="16dp"
         android:gravity="center_horizontal"
-        android:text="@string/About.appName.android"
+        android:src="@drawable/ic_bread_logo_white"
         android:textColor="@color/white"
         android:textSize="48sp"
         app:customTFont="Celevenia.otf"
         app:layout_constraintBottom_toTopOf="@+id/unlocked_text"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintStart_toStartOf="parent"/>
 
     <LinearLayout
         android:id="@+id/pinLayout"
