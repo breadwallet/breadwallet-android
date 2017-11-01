@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+  <!-- App name -->
+  <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
   <string name="About.blog">Blogue</string>
   <!-- About screen footer -->
@@ -26,8 +28,16 @@
   <string name="AccountHeader.equals">=</string>
   <!-- Manage wallet button title -->
   <string name="AccountHeader.manageButtonName">GÉRER</string>
+  <!-- Third party keyboard warning -->
+  <string name="Alert.customKeyboard.android">Il semble que vous utilisez un clavier tiers. Ce dernier peut enregistrer ce que vous tapez et voler votre portefeuille papier. Veuillez basculer vers le clavier Android par défaut pour plus de sécurité.</string>
   <!-- Error alert title -->
   <string name="Alert.error">Erreur</string>
+  <!-- Keystore error -->
+  <string name="Alert.keystore.generic.android">Un problème est survenu avec votre keystore Android OS, veuillez contacter support@breadwallet.com</string>
+  <!-- KeyStore error, keys are invalidated -->
+  <string name="Alert.keystore.invalidated.android">Vos données cryptées de Bread ont été récemment invalidées, car le verrouillage de l\'écran de votre appareil Android a été désactivé.</string>
+  <!-- Keystore error title -->
+  <string name="Alert.keystore.title.android">Erreur avec le KeyStore Android</string>
   <!-- No internet alert message -->
   <string name="Alert.noInternet">Aucune connexion Internet n\'a été trouvée. Vérifiez votre connexion et réessayez.</string>
   <!-- Warning alert title -->
@@ -48,6 +58,8 @@
   <string name="Alerts.sendSuccess">Envoyer confirmation</string>
   <!-- Send success alert subheader label (e.g. the money was sent) -->
   <string name="Alerts.sendSuccessSubheader">Argent envoyé !</string>
+  <!-- Fingerprint was recognized by the scanner -->
+  <string name="Alerts.touchIdSucceeded.android">Empreinte digitale reconnue</string>
   <!-- JSON Serialization error message -->
   <string name="ApiClient.jsonError">Erreur de sérialisation de JSON</string>
   <!-- Wallet not ready error message -->
@@ -140,6 +152,8 @@
   <string name="ErrorMessages.messagingUnavailableMessage">Cet appareil n\'est pas configuré pour envoyer des messages.</string>
   <!-- Messaging unavailable alert title -->
   <string name="ErrorMessages.messagingUnavailableTitle">Messagerie non disponible</string>
+  <!-- Fingerprint was not recognized by the scanner, please try scanning again -->
+  <string name="ErrorMessages.touchIdFailed.android">L\'empreinte digitale n\'a pas été reconnue. Veuillez réessayer.</string>
   <!-- Economy fee -->
   <string name="FeeSelector.economy">Économie</string>
   <!-- Fee Selector economly fee description -->
@@ -274,6 +288,10 @@
   <string name="Prompts.NoPasscode.body">Un code d\'accès pour l\'appareil est requis pour sécuriser votre portefeuille. Allez aux paramètres et activez le code d\'accès.</string>
   <!-- No Passcode set warning title -->
   <string name="Prompts.NoPasscode.title">Activez le code d\'accès de l\'appareil</string>
+  <!-- Instruction how to enable device encryption -->
+  <string name="Prompts.NoScreenLock.body.android">Il est nécessaire de configurer un verrouillage d\'écran l\'appareil pour protéger votre portefeuille. Allez dans « Paramètres » &gt; « Sécurité » &gt; « Verrouillage d\'écran », puis activez-le pour continuer.</string>
+  <!-- Device encryption prompt title -->
+  <string name="Prompts.NoScreenLock.title.android">Verrouillage d\'écran désactivé</string>
   <!-- Warning about paper key. -->
   <string name="Prompts.PaperKey.body">Votre paperkey doit être sauvegardé au cas où vous perdiez ou changiez votre téléphone. Cliquez ici pour continuer.</string>
   <!-- An action is required (You must do this action). -->
@@ -288,8 +306,14 @@
   <string name="Prompts.ShareData.title">Partager les données anonymes</string>
   <!-- Enable touch ID prompt body -->
   <string name="Prompts.TouchId.body">Tapez ici pour activer Touch ID</string>
+  <!-- Enable Fingerprint prompt body -->
+  <string name="Prompts.TouchId.body.android">Appuyez ici pour activer l\'identification par empreinte digitale</string>
   <!-- Enable touch ID prompt title -->
   <string name="Prompts.TouchId.title">Activer Touch ID</string>
+  <!-- Enable Fingerprint prompt title -->
+  <string name="Prompts.TouchId.title.android">Activer l\'identification par empreinte digitale</string>
+  <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
+  <string name="Prompts.TouchId.usePin.android">PIN</string>
   <!-- Upgrade PIN prompt body. -->
   <string name="Prompts.UpgradePin.body">Bread a été mis à niveau pour utiliser un code PIN à six chiffres. Appuyez ici pour mettre à niveau.</string>
   <!-- Upgrade PIN prompt title. -->
@@ -392,10 +416,16 @@
   <string name="SecurityCenter.touchIdDescription">Débloquez convenablement votre Bread et envoyez de l\'argent jusqu\'à une limite définie.</string>
   <!-- Touch ID button title -->
   <string name="SecurityCenter.touchIdTitle">Touch ID</string>
+  <!-- Security center fingerprint authentication button -->
+  <string name="SecurityCenter.touchIdTitle.android">Identification par empreinte digitale</string>
   <!-- Send money amount label -->
   <string name="Send.amountLabel">Montant</string>
   <!-- Balance: $4.00 -->
   <string name="Send.balance">Solde : %1$s</string>
+  <!-- Instructions how to allow the camera access for the app -->
+  <string name="Send.cameraUnavailabeMessage.android">Autoriser l\'accès à l\'appareil photo en allant dans « Paramètres » &gt; « Apps » &gt; « Bread » &gt; « Permissions »</string>
+  <!-- Permission required to access camera -->
+  <string name="Send.cameraUnavailabeTitle.android">Bread n\'est pas autorisé à accéder à l\'appareil photo</string>
   <!-- Camera not allowed message -->
   <string name="Send.cameraunavailableMessage">Accédez à Paramètres pour autoriser l\'accès à la caméra.</string>
   <!-- Camera not allowed alert title -->
@@ -472,6 +502,8 @@
   <string name="Settings.title">Paramètres</string>
   <!-- Touch ID spending limit label -->
   <string name="Settings.touchIdLimit">Limite de dépenses de Touch ID</string>
+  <!-- The fingerprint spending limit -->
+  <string name="Settings.touchIdLimit.android">Limite de dépenses par identification par empreinte digitale</string>
   <!-- Wallet Settings section header -->
   <string name="Settings.wallet">Portefeuille</string>
   <!-- Start or recover another wallet menu label. -->
@@ -510,6 +542,12 @@
   <string name="TimeSince.seconds">%1$s s</string>
   <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
   <string name="TouchIdSettings.customizeText">Vous pouvez personnaliser votre plafond de dépenses Touch ID à partir de %1$s.</string>
+  <!-- Fingerprint enabling description body -->
+  <string name="TouchIdSettings.customizeText.android">Vous pouvez personnaliser votre limite de dépenses par une identification par empreinte digitale depuis l\'écran consacré à la limite de dépenses par une identification par empreinte digitale</string>
+  <!-- Instruction for the fingerprint setup -->
+  <string name="TouchIdSettings.disabledWarning.body.android">Vous n\'avez pas active l\'identification par empreinte digitale sur cet appareil. Allez dans « Paramètres », puis dans « Sécurité », pour configurer l\'identification par empreinte digitale</string>
+  <!-- Fingerprint Is Not Setup -->
+  <string name="TouchIdSettings.disabledWarning.title.android">L\'identification par empreinte digitale n\'est pas activée</string>
   <!-- Touch Id screen label -->
   <string name="TouchIdSettings.label">Utilisez votre empreinte digitale pour débloquer votre Bread et envoyer de l\'argent jusqu\'à une limite définie.</string>
   <!-- Link Text (see TouchIdSettings.customizeText) -->
@@ -518,8 +556,12 @@
   <string name="TouchIdSettings.spendingLimit">Limite de dépenses : %1$s (%2$s)</string>
   <!-- Touch id switch label. -->
   <string name="TouchIdSettings.switchLabel">Activer Touch ID pour Bread</string>
+  <!-- Enable fingerprint for this wallet called Bread -->
+  <string name="TouchIdSettings.switchLabel.android">Activer l\'identification par empreinte digitale pour Bread</string>
   <!-- Touch ID settings view title -->
   <string name="TouchIdSettings.title">Touch ID</string>
+  <!-- Fingerprint authentication label -->
+  <string name="TouchIdSettings.title.android">Identification par empreinte digitale</string>
   <!-- Touch ID unavailable alert message -->
   <string name="TouchIdSettings.unavailableAlertMessage">Vous n\'avez pas configuré Touch ID sur cet appareil. Accédez à Paramètres -&gt; Touch ID et mot de passe pour le configurer maintenant.</string>
   <!-- Touch ID unavailable alert title -->
@@ -530,6 +572,8 @@
   <string name="TouchIdSpendingLimit.body">Vous devrez entrer votre code PIN à six chiffres pour envoyer une transaction supérieure à votre limite de dépenses et toutes les 48 heures depuis la dernière fois que vous avez entré votre code PIN à six chiffres.</string>
   <!-- Touch Id spending limit screen title -->
   <string name="TouchIdSpendingLimit.title">Limite de dépenses de Touch ID</string>
+  <!-- name of spending limit when using fingerprint authorization -->
+  <string name="TouchIdSpendingLimit.title.android">Limite de dépenses par identification par empreinte digitale</string>
   <!-- Availability status text -->
   <string name="Transaction.available">Disponible pour dépenser</string>
   <!-- Transaction complete label -->
@@ -604,10 +648,16 @@
   <string name="UnlockScreen.scan">Scanner</string>
   <!-- Unlock Screen sub-header -->
   <string name="UnlockScreen.subheader">Entrer le PIN</string>
+  <!-- Instruction to touch the sensor for fingerprint authentication -->
+  <string name="UnlockScreen.touchIdInstructions.android">Appuyez sur le capteur</string>
   <!-- TouchID prompt text -->
   <string name="UnlockScreen.touchIdPrompt">Déverrouillez votre Bread.</string>
+  <!-- Device authentication body -->
+  <string name="UnlockScreen.touchIdPrompt.android">Veuillez déverrouiller votre appareil Android pour continuer.</string>
   <!-- Unlock with TouchID accessibility label -->
   <string name="UnlockScreen.touchIdText">Déverrouiller avec TouchID</string>
+  <!-- Device authentication title -->
+  <string name="UnlockScreen.touchIdTitle.android">Identification nécessaire</string>
   <!-- Wallet unlocked message -->
   <string name="UnlockScreen.unlocked">Portefeuille déverrouillé</string>
   <!-- Update PIN caption text -->

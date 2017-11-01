@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+  <!-- App name -->
+  <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
   <string name="About.blog">Blog</string>
   <!-- About screen footer -->
@@ -26,8 +28,16 @@
   <string name="AccountHeader.equals">=</string>
   <!-- Manage wallet button title -->
   <string name="AccountHeader.manageButtonName">GESTISCI</string>
+  <!-- Third party keyboard warning -->
+  <string name="Alert.customKeyboard.android">Sembra che tu stia utilizzando una tastiera di terze parti, che può registrare ciò che scrivi e rubare la tua Paper Key. Per favore, utilizza la tastiera Android di default per maggiore protezione.</string>
   <!-- Error alert title -->
   <string name="Alert.error">Errore</string>
+  <!-- Keystore error -->
+  <string name="Alert.keystore.generic.android">C’è un problema con il portachiavi del tuo sistema operativo Android, per favore, contatta support@breadwallet.com</string>
+  <!-- KeyStore error, keys are invalidated -->
+  <string name="Alert.keystore.invalidated.android">I tuoi dati criptati di Bread sono stati invalidati recentemente perché la schermata di blocco del tuo Android era disabilitata.</string>
+  <!-- Keystore error title -->
+  <string name="Alert.keystore.title.android">Errore Portachiavi Android</string>
   <!-- No internet alert message -->
   <string name="Alert.noInternet">Non è stata trovata alcuna connessione internet. Controlla la connessione e riprova.</string>
   <!-- Warning alert title -->
@@ -48,6 +58,8 @@
   <string name="Alerts.sendSuccess">Conferma dell\'Invio</string>
   <!-- Send success alert subheader label (e.g. the money was sent) -->
   <string name="Alerts.sendSuccessSubheader">Denaro Inviato!</string>
+  <!-- Fingerprint was recognized by the scanner -->
+  <string name="Alerts.touchIdSucceeded.android">Impronta digitale riconosciuta</string>
   <!-- JSON Serialization error message -->
   <string name="ApiClient.jsonError">Errore di Serializzazione JSON</string>
   <!-- Wallet not ready error message -->
@@ -140,6 +152,8 @@
   <string name="ErrorMessages.messagingUnavailableMessage">Questo dispositivo non è configurato per inviare messaggi.</string>
   <!-- Messaging unavailable alert title -->
   <string name="ErrorMessages.messagingUnavailableTitle">Messaggistica Non Disponibile</string>
+  <!-- Fingerprint was not recognized by the scanner, please try scanning again -->
+  <string name="ErrorMessages.touchIdFailed.android">Impronta non riconosciuta. Per favore, prova di nuovo.</string>
   <!-- Economy fee -->
   <string name="FeeSelector.economy">Economy</string>
   <!-- Fee Selector economly fee description -->
@@ -274,6 +288,10 @@
   <string name="Prompts.NoPasscode.body">È necessaria una password per l\'apparecchio per proteggere il tuo portafogli. Vai alle impostazioni e attiva la password.</string>
   <!-- No Passcode set warning title -->
   <string name="Prompts.NoPasscode.title">Attiva la password dell\'apparecchio</string>
+  <!-- Instruction how to enable device encryption -->
+  <string name="Prompts.NoScreenLock.body.android">È necessaria una schermata di blocco del dispositivo per proteggere il tuo portafogli. Vai su “Impostazioni” &gt; “Sicurezza” &gt; “Schermata di Blocco” e abilitala per continuare.</string>
+  <!-- Device encryption prompt title -->
+  <string name="Prompts.NoScreenLock.title.android">Schermata di blocco disabilitata</string>
   <!-- Warning about paper key. -->
   <string name="Prompts.PaperKey.body">È necessario salvare la tua Paper Key nel caso in cui dovessi perdere o cambiare telefono. Premi qui per continuare.</string>
   <!-- An action is required (You must do this action). -->
@@ -288,8 +306,14 @@
   <string name="Prompts.ShareData.title">Condividi dati anonimamente</string>
   <!-- Enable touch ID prompt body -->
   <string name="Prompts.TouchId.body">Tocca qui per attivare Touch ID</string>
+  <!-- Enable Fingerprint prompt body -->
+  <string name="Prompts.TouchId.body.android">Tocca qui per abilitare l’autenticazione con impronta digitale</string>
   <!-- Enable touch ID prompt title -->
   <string name="Prompts.TouchId.title">Attiva Touch ID</string>
+  <!-- Enable Fingerprint prompt title -->
+  <string name="Prompts.TouchId.title.android">Abilita Autenticazione Impronta</string>
+  <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
+  <string name="Prompts.TouchId.usePin.android">PIN</string>
   <!-- Upgrade PIN prompt body. -->
   <string name="Prompts.UpgradePin.body">Bread è stato aggiornato all\'utilizzo di un PIN a 6 cifre. Tocca qui per aggiornare.</string>
   <!-- Upgrade PIN prompt title. -->
@@ -392,10 +416,16 @@
   <string name="SecurityCenter.touchIdDescription">Sblocca comodamente il tuo Bread e invia denaro fino a un limite impostato.</string>
   <!-- Touch ID button title -->
   <string name="SecurityCenter.touchIdTitle">Touch ID</string>
+  <!-- Security center fingerprint authentication button -->
+  <string name="SecurityCenter.touchIdTitle.android">Autenticazione Impronta Digitale</string>
   <!-- Send money amount label -->
   <string name="Send.amountLabel">Importo</string>
   <!-- Balance: $4.00 -->
   <string name="Send.balance">Saldo: %1$s</string>
+  <!-- Instructions how to allow the camera access for the app -->
+  <string name="Send.cameraUnavailabeMessage.android">Consenti l’accesso alla fotocamera in “Impostazioni” &gt; “Apps” &gt; “Bread” &gt; “Permessi”</string>
+  <!-- Permission required to access camera -->
+  <string name="Send.cameraUnavailabeTitle.android">L’accesso alla fotocamera non è consentito a Bread.</string>
   <!-- Camera not allowed message -->
   <string name="Send.cameraunavailableMessage">Vai su Impostazioni per consentire l\'accesso alla fotocamera.</string>
   <!-- Camera not allowed alert title -->
@@ -472,6 +502,8 @@
   <string name="Settings.title">Impostazioni</string>
   <!-- Touch ID spending limit label -->
   <string name="Settings.touchIdLimit">Limite di Spesa Touch ID</string>
+  <!-- The fingerprint spending limit -->
+  <string name="Settings.touchIdLimit.android">Autenticazione Impronta per il Limite di Spesa</string>
   <!-- Wallet Settings section header -->
   <string name="Settings.wallet">Portafogli</string>
   <!-- Start or recover another wallet menu label. -->
@@ -510,6 +542,12 @@
   <string name="TimeSince.seconds">%1$s secondi</string>
   <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
   <string name="TouchIdSettings.customizeText">Puoi personalizzare il tuo limite di spesa tramite Touch ID %1$s.</string>
+  <!-- Fingerprint enabling description body -->
+  <string name="TouchIdSettings.customizeText.android">Puoi personalizzare l’Autenticazione Impronta per il Limite di Spesa nella schermata Autenticazione Impronta per Limite di Spesa</string>
+  <!-- Instruction for the fingerprint setup -->
+  <string name="TouchIdSettings.disabledWarning.body.android">Non hai abilitato l’autenticazione tramite impronta digitale su questo dispositivo. Vai su Impostazioni -&gt; Sicurezza per impostarla.</string>
+  <!-- Fingerprint Is Not Setup -->
+  <string name="TouchIdSettings.disabledWarning.title.android">Autenticazione Impronta non abilitata</string>
   <!-- Touch Id screen label -->
   <string name="TouchIdSettings.label">Utilizza l\'impronta digitale per sbloccare il tuo Bread e inviare denaro fino a un limite impostato.</string>
   <!-- Link Text (see TouchIdSettings.customizeText) -->
@@ -518,8 +556,12 @@
   <string name="TouchIdSettings.spendingLimit">Limite di spesa: %1$s (%2$s)</string>
   <!-- Touch id switch label. -->
   <string name="TouchIdSettings.switchLabel">Abilita Touch ID per Bread</string>
+  <!-- Enable fingerprint for this wallet called Bread -->
+  <string name="TouchIdSettings.switchLabel.android">Abilita l’Autenticazione con Impronta Digitale per Bread</string>
   <!-- Touch ID settings view title -->
   <string name="TouchIdSettings.title">Touch ID</string>
+  <!-- Fingerprint authentication label -->
+  <string name="TouchIdSettings.title.android">Autenticazione Impronta Digitale</string>
   <!-- Touch ID unavailable alert message -->
   <string name="TouchIdSettings.unavailableAlertMessage">Non hai impostato Touch ID su questo dispositivo. Vai su Impostazioni -&gt; Touch ID e Codice per impostarlo ora.</string>
   <!-- Touch ID unavailable alert title -->
@@ -530,6 +572,8 @@
   <string name="TouchIdSpendingLimit.body">Ti verrà chiesto di inserire il tuo PIN a 6 cifre per inviare qualsiasi transazione superiore al tuo limite di spesa e ogni 48 ore dall\'ultima volta che hai inserito il tuo PIN a 6 cifre.</string>
   <!-- Touch Id spending limit screen title -->
   <string name="TouchIdSpendingLimit.title">Limite di Spesa Touch ID</string>
+  <!-- name of spending limit when using fingerprint authorization -->
+  <string name="TouchIdSpendingLimit.title.android">Autenticazione Impronta per il Limite di Spesa</string>
   <!-- Availability status text -->
   <string name="Transaction.available">Disponibile da Spendere</string>
   <!-- Transaction complete label -->
@@ -604,10 +648,16 @@
   <string name="UnlockScreen.scan">Acquisisci</string>
   <!-- Unlock Screen sub-header -->
   <string name="UnlockScreen.subheader">Inserisci PIN</string>
+  <!-- Instruction to touch the sensor for fingerprint authentication -->
+  <string name="UnlockScreen.touchIdInstructions.android">Sensore Touch</string>
   <!-- TouchID prompt text -->
   <string name="UnlockScreen.touchIdPrompt">Sblocca il tuo Bread.</string>
+  <!-- Device authentication body -->
+  <string name="UnlockScreen.touchIdPrompt.android">Per favore, sblocca il tuo dispositivo Android per continuare.</string>
   <!-- Unlock with TouchID accessibility label -->
   <string name="UnlockScreen.touchIdText">Sblocca con Touch ID</string>
+  <!-- Device authentication title -->
+  <string name="UnlockScreen.touchIdTitle.android">Autenticazione richiesta</string>
   <!-- Wallet unlocked message -->
   <string name="UnlockScreen.unlocked">Portafoglio Sbloccato</string>
   <!-- Update PIN caption text -->

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+  <!-- App name -->
+  <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
   <string name="About.blog">Blog</string>
   <!-- About screen footer -->
@@ -26,8 +28,16 @@
   <string name="AccountHeader.equals">=</string>
   <!-- Manage wallet button title -->
   <string name="AccountHeader.manageButtonName">BEHEREN</string>
+  <!-- Third party keyboard warning -->
+  <string name="Alert.customKeyboard.android">Het lijkt erop dat u een toetsenbord van een derde gebruikt, die kan bijhouden wat u typt en uw sleutel kan stelen. Schakelt u alstublieft over naar het standaard Android toetsenbord voor extra veiligheid.</string>
   <!-- Error alert title -->
   <string name="Alert.error">Error</string>
+  <!-- Keystore error -->
+  <string name="Alert.keystore.generic.android">Er is een probleem het uw Android OS keystore, neemt u alstublieft contact op met support@breadwallet.com</string>
+  <!-- KeyStore error, keys are invalidated -->
+  <string name="Alert.keystore.invalidated.android">Uw door Bread geëncrypteerde data is onlangs ongeldig gemaakt omdat uw Android schermvergrendeling is uitgeschakeld.</string>
+  <!-- Keystore error title -->
+  <string name="Alert.keystore.title.android">Android KeyStore fout</string>
   <!-- No internet alert message -->
   <string name="Alert.noInternet">Er is geen internetconnectie gevonden. Controleer je connectie en probeer opnieuw.</string>
   <!-- Warning alert title -->
@@ -48,6 +58,8 @@
   <string name="Alerts.sendSuccess">Zending Bevestiging</string>
   <!-- Send success alert subheader label (e.g. the money was sent) -->
   <string name="Alerts.sendSuccessSubheader">Geld Verstuurd!</string>
+  <!-- Fingerprint was recognized by the scanner -->
+  <string name="Alerts.touchIdSucceeded.android">Vingerafdruk geaccepteerd</string>
   <!-- JSON Serialization error message -->
   <string name="ApiClient.jsonError">JSON Serialisatie Error</string>
   <!-- Wallet not ready error message -->
@@ -140,6 +152,8 @@
   <string name="ErrorMessages.messagingUnavailableMessage">Dit apparaat is niet geconfigureerd om berichten te sturen.</string>
   <!-- Messaging unavailable alert title -->
   <string name="ErrorMessages.messagingUnavailableTitle">Bericht Sturen Onbeschikbaar</string>
+  <!-- Fingerprint was not recognized by the scanner, please try scanning again -->
+  <string name="ErrorMessages.touchIdFailed.android">Vingerafdruk niet herkend. Probeer het alstublieft opnieuw.</string>
   <!-- Economy fee -->
   <string name="FeeSelector.economy">Enonomy</string>
   <!-- Fee Selector economly fee description -->
@@ -274,6 +288,10 @@
   <string name="Prompts.NoPasscode.body">Er is een apparaat-pascode nodig om je portomonnee te beschermen. Ga naar de instellingen en zet je pascode aan.</string>
   <!-- No Passcode set warning title -->
   <string name="Prompts.NoPasscode.title">Zet pascode voor apparaat aan</string>
+  <!-- Instruction how to enable device encryption -->
+  <string name="Prompts.NoScreenLock.body.android">Een schermvergrendeling voor uw apparaat is nodig om uw portemonnee te beveiligen. Ga naar \"Instellingen\" &gt; \"Beveiliging\" &gt; \"Schermvergrendeling\" en stel in om door te gaan.</string>
+  <!-- Device encryption prompt title -->
+  <string name="Prompts.NoScreenLock.title.android">Schermvergrendeling uitgeschakeld</string>
   <!-- Warning about paper key. -->
   <string name="Prompts.PaperKey.body">Uw Papiersleutel moet opgeslagen worden voor het geval dat u uw telefoon ooit verliest of vervangt. Klik hier om door te gaan.</string>
   <!-- An action is required (You must do this action). -->
@@ -288,8 +306,14 @@
   <string name="Prompts.ShareData.title">Deel Anonieme Data</string>
   <!-- Enable touch ID prompt body -->
   <string name="Prompts.TouchId.body">Tik hier om Touch ID in te schakelen</string>
+  <!-- Enable Fingerprint prompt body -->
+  <string name="Prompts.TouchId.body.android">Klik hier om authenticatie met vingerafdruk in te stellen</string>
   <!-- Enable touch ID prompt title -->
   <string name="Prompts.TouchId.title">Touch ID Inschakelen</string>
+  <!-- Enable Fingerprint prompt title -->
+  <string name="Prompts.TouchId.title.android">Stel authenticatie met vingerafdruk in</string>
+  <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
+  <string name="Prompts.TouchId.usePin.android">PIN</string>
   <!-- Upgrade PIN prompt body. -->
   <string name="Prompts.UpgradePin.body">Bread is geüpgrade naar een 6-cijferige PIN. Tik hier om te upgraden.</string>
   <!-- Upgrade PIN prompt title. -->
@@ -392,10 +416,16 @@
   <string name="SecurityCenter.touchIdDescription">Ontgrendel je Bread handig en stuur geld tot een bepaalde ingestelde limiet.</string>
   <!-- Touch ID button title -->
   <string name="SecurityCenter.touchIdTitle">Touch ID</string>
+  <!-- Security center fingerprint authentication button -->
+  <string name="SecurityCenter.touchIdTitle.android">Authenticatie met vingerafdruk</string>
   <!-- Send money amount label -->
   <string name="Send.amountLabel">Bedrag</string>
   <!-- Balance: $4.00 -->
   <string name="Send.balance">Balans: %1$s</string>
+  <!-- Instructions how to allow the camera access for the app -->
+  <string name="Send.cameraUnavailabeMessage.android">Sta cameratoegang toe via \"Instellingen\" &gt; \"Apps\" &gt; \"Bread\" &gt; \"Toestemmingen\"</string>
+  <!-- Permission required to access camera -->
+  <string name="Send.cameraUnavailabeTitle.android">Bread heeft geen toegang tot de camera</string>
   <!-- Camera not allowed message -->
   <string name="Send.cameraunavailableMessage">Ga naar Instellingen om camera gebruik toe te staan.</string>
   <!-- Camera not allowed alert title -->
@@ -472,6 +502,8 @@
   <string name="Settings.title">Instellingen</string>
   <!-- Touch ID spending limit label -->
   <string name="Settings.touchIdLimit">Touch ID Bestedingslimiet</string>
+  <!-- The fingerprint spending limit -->
+  <string name="Settings.touchIdLimit.android">Uitgavelimiet voor authenticatie met vingerafdruk</string>
   <!-- Wallet Settings section header -->
   <string name="Settings.wallet">Portemonnee</string>
   <!-- Start or recover another wallet menu label. -->
@@ -510,6 +542,12 @@
   <string name="TimeSince.seconds">%1$s s</string>
   <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
   <string name="TouchIdSettings.customizeText">Je kunt je Touch-ID uitgavenlimiet aanpassen van de %1$s.</string>
+  <!-- Fingerprint enabling description body -->
+  <string name="TouchIdSettings.customizeText.android">U kunt uw uitgavelimiet voor authenticatie met vingerafdruk aanpassen in het scherm voor de uitgavelimiet voor authenticatie met vingerafdruk</string>
+  <!-- Instruction for the fingerprint setup -->
+  <string name="TouchIdSettings.disabledWarning.body.android">U heeft authenticatie met vingerafdruk niet ingesteld op dit apparaat. Ga naar Instellingen -&gt; Beveiliging om dit in te stellen.</string>
+  <!-- Fingerprint Is Not Setup -->
+  <string name="TouchIdSettings.disabledWarning.title.android">Authenticatie met vingerafdruk niet ingesteld</string>
   <!-- Touch Id screen label -->
   <string name="TouchIdSettings.label">Gebruik je vingerafdruk om je Bread te ontgrendelen en geld tot een ingestelde limiet te versturen.</string>
   <!-- Link Text (see TouchIdSettings.customizeText) -->
@@ -518,8 +556,12 @@
   <string name="TouchIdSettings.spendingLimit">Bestedingslimiet: %1$s (%2$s)</string>
   <!-- Touch id switch label. -->
   <string name="TouchIdSettings.switchLabel">Schakel Touch ID in voor Bread</string>
+  <!-- Enable fingerprint for this wallet called Bread -->
+  <string name="TouchIdSettings.switchLabel.android">Stel authenticatie met vingerafdruk in voor Bread</string>
   <!-- Touch ID settings view title -->
   <string name="TouchIdSettings.title">Touch ID</string>
+  <!-- Fingerprint authentication label -->
+  <string name="TouchIdSettings.title.android">Authenticatie met vingerafdruk</string>
   <!-- Touch ID unavailable alert message -->
   <string name="TouchIdSettings.unavailableAlertMessage">Je hebt je Touch ID niet ingesteld op dit apparaat. Ga naar Instellingen -&gt; Touch ID &amp; Wachtwoord om het nu in te stellen.</string>
   <!-- Touch ID unavailable alert title -->
@@ -530,6 +572,8 @@
   <string name="TouchIdSpendingLimit.body">Je zal gevraagd worden om je 6-cijferige PIN in te voeren om elke transactie boven je bestedingslimiet te versturen, en elke 48 uur sinds de laatste keer dat je je 6-cijferige PIN hebt ingevoerd.</string>
   <!-- Touch Id spending limit screen title -->
   <string name="TouchIdSpendingLimit.title">Touch ID Bestedingslimiet</string>
+  <!-- name of spending limit when using fingerprint authorization -->
+  <string name="TouchIdSpendingLimit.title.android">Uitgavelimiet voor authenticatie met vingerafdruk</string>
   <!-- Availability status text -->
   <string name="Transaction.available">Beschikbaar om te besteden</string>
   <!-- Transaction complete label -->
@@ -604,10 +648,16 @@
   <string name="UnlockScreen.scan">Scannen</string>
   <!-- Unlock Screen sub-header -->
   <string name="UnlockScreen.subheader">PIN Invoeren</string>
+  <!-- Instruction to touch the sensor for fingerprint authentication -->
+  <string name="UnlockScreen.touchIdInstructions.android">Aanraaksensor</string>
   <!-- TouchID prompt text -->
   <string name="UnlockScreen.touchIdPrompt">Ontgrendel je Bread.</string>
+  <!-- Device authentication body -->
+  <string name="UnlockScreen.touchIdPrompt.android">Ontgrendel alstublieft uw Android-apparaat om door te gaan.</string>
   <!-- Unlock with TouchID accessibility label -->
   <string name="UnlockScreen.touchIdText">Ontgrendel met Touch ID</string>
+  <!-- Device authentication title -->
+  <string name="UnlockScreen.touchIdTitle.android">Authenticatie vereist</string>
   <!-- Wallet unlocked message -->
   <string name="UnlockScreen.unlocked">Portemonnee Ontgrendeld</string>
   <!-- Update PIN caption text -->

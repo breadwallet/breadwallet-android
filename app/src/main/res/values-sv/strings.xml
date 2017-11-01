@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+  <!-- App name -->
+  <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
   <string name="About.blog">Blogg</string>
   <!-- About screen footer -->
@@ -26,8 +28,16 @@
   <string name="AccountHeader.equals">=</string>
   <!-- Manage wallet button title -->
   <string name="AccountHeader.manageButtonName">HANTERA</string>
+  <!-- Third party keyboard warning -->
+  <string name="Alert.customKeyboard.android">Det verkar som att du använder ett tangentbord från tredje part, vilket kan registrera det du skriver och stjäla din kryptonyckel. Byt till Androids standardtangentbord för extra säkerhet.</string>
   <!-- Error alert title -->
   <string name="Alert.error">Fel</string>
+  <!-- Keystore error -->
+  <string name="Alert.keystore.generic.android">Det har uppstått ett problem med KeyStore till Android OS. Kontakta support@breadwallet.com</string>
+  <!-- KeyStore error, keys are invalidated -->
+  <string name="Alert.keystore.invalidated.android">Dina krypterade Bread-uppgifter har nyligen ogiltigförklarats på grund av att Androids skärmlås inaktiverades.</string>
+  <!-- Keystore error title -->
+  <string name="Alert.keystore.title.android">KeyStore-fel för Android</string>
   <!-- No internet alert message -->
   <string name="Alert.noInternet">Ingen anslutning till internet hittades. Kontrollera din anslutning och försök igen.</string>
   <!-- Warning alert title -->
@@ -48,6 +58,8 @@
   <string name="Alerts.sendSuccess">Skicka bekräftelse</string>
   <!-- Send success alert subheader label (e.g. the money was sent) -->
   <string name="Alerts.sendSuccessSubheader">Pengarna skickade!</string>
+  <!-- Fingerprint was recognized by the scanner -->
+  <string name="Alerts.touchIdSucceeded.android">Fingeravtryck bekräftat</string>
   <!-- JSON Serialization error message -->
   <string name="ApiClient.jsonError">Fel vid JSON-serialisering</string>
   <!-- Wallet not ready error message -->
@@ -140,6 +152,8 @@
   <string name="ErrorMessages.messagingUnavailableMessage">Denna enhet är inte konfigurerad för att skicka meddelanden.</string>
   <!-- Messaging unavailable alert title -->
   <string name="ErrorMessages.messagingUnavailableTitle">Meddelandehantering inte tillgänglig</string>
+  <!-- Fingerprint was not recognized by the scanner, please try scanning again -->
+  <string name="ErrorMessages.touchIdFailed.android">Fingeravtryck ej bekräftat. Försök igen.</string>
   <!-- Economy fee -->
   <string name="FeeSelector.economy">Ekonomi</string>
   <!-- Fee Selector economly fee description -->
@@ -274,6 +288,10 @@
   <string name="Prompts.NoPasscode.body">Ett enhets-lösenord behövs för att skydda din plånbok. Gå till inställningar och aktivera lösenord.</string>
   <!-- No Passcode set warning title -->
   <string name="Prompts.NoPasscode.title">Aktivera enhets-lösenord</string>
+  <!-- Instruction how to enable device encryption -->
+  <string name="Prompts.NoScreenLock.body.android">Ett skärmlås krävs på enheten för att skydda din plånbok. Gå till Inställningar &gt; Säkerhet &gt; Skärmlås och aktivera för att fortsätta.</string>
+  <!-- Device encryption prompt title -->
+  <string name="Prompts.NoScreenLock.title.android">Skärmlås inaktiverat</string>
   <!-- Warning about paper key. -->
   <string name="Prompts.PaperKey.body">Din pappersnyckel måste sparas ifall du skulle förlora eller byta ut din telefon. Tryck här för att fortsätta.</string>
   <!-- An action is required (You must do this action). -->
@@ -288,8 +306,14 @@
   <string name="Prompts.ShareData.title">Dela anonyma data</string>
   <!-- Enable touch ID prompt body -->
   <string name="Prompts.TouchId.body">Klicka här för att aktivera Touch ID</string>
+  <!-- Enable Fingerprint prompt body -->
+  <string name="Prompts.TouchId.body.android">Tryck här för att aktivera fingeravtrycksautentisering</string>
   <!-- Enable touch ID prompt title -->
   <string name="Prompts.TouchId.title">Aktivera Touch ID</string>
+  <!-- Enable Fingerprint prompt title -->
+  <string name="Prompts.TouchId.title.android">Aktivera fingeravtrycksautentisering</string>
+  <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
+  <string name="Prompts.TouchId.usePin.android">PIN-kod</string>
   <!-- Upgrade PIN prompt body. -->
   <string name="Prompts.UpgradePin.body">Bread har uppgraderat till att använda 6-siffrig PIN-kod. Klicka här för att uppgradera.</string>
   <!-- Upgrade PIN prompt title. -->
@@ -392,10 +416,16 @@
   <string name="SecurityCenter.touchIdDescription">Lås enkelt upp ditt Bread och skicka pengar upp till en inställd gräns.</string>
   <!-- Touch ID button title -->
   <string name="SecurityCenter.touchIdTitle">Touch ID</string>
+  <!-- Security center fingerprint authentication button -->
+  <string name="SecurityCenter.touchIdTitle.android">Fingeravtrycksautentisering</string>
   <!-- Send money amount label -->
   <string name="Send.amountLabel">Belopp</string>
   <!-- Balance: $4.00 -->
   <string name="Send.balance">Saldo: %1$s</string>
+  <!-- Instructions how to allow the camera access for the app -->
+  <string name="Send.cameraUnavailabeMessage.android">Tillåt kameraåtkomst under Inställningar &gt; Appar &gt; Bread &gt; Behörigheter</string>
+  <!-- Permission required to access camera -->
+  <string name="Send.cameraUnavailabeTitle.android">Bread har inte åtkomst till kameran</string>
   <!-- Camera not allowed message -->
   <string name="Send.cameraunavailableMessage">Gå till Inställningar för att ge tillgång till kameran.</string>
   <!-- Camera not allowed alert title -->
@@ -472,6 +502,8 @@
   <string name="Settings.title">Inställningar</string>
   <!-- Touch ID spending limit label -->
   <string name="Settings.touchIdLimit">Touch ID utnyttjandegräns</string>
+  <!-- The fingerprint spending limit -->
+  <string name="Settings.touchIdLimit.android">Maxbelopp med fingeravtrycksautentisering</string>
   <!-- Wallet Settings section header -->
   <string name="Settings.wallet">Plånbok</string>
   <!-- Start or recover another wallet menu label. -->
@@ -510,6 +542,12 @@
   <string name="TimeSince.seconds">%1$s s</string>
   <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
   <string name="TouchIdSettings.customizeText">Du kan anpassa din utgiftsgräns i Touch ID från %1$s.</string>
+  <!-- Fingerprint enabling description body -->
+  <string name="TouchIdSettings.customizeText.android">Du kan anpassa ditt maxbelopp med fingeravtrycksautentisering från skärmen Maxbelopp med fingeravtrycksauktorisering</string>
+  <!-- Instruction for the fingerprint setup -->
+  <string name="TouchIdSettings.disabledWarning.body.android">Du har inte aktiverat fingeravtrycksautentisering på den här enheten. Gå till Inställningar &gt; Säkerhet för att konfigurera fingeravtrycksautentisering.</string>
+  <!-- Fingerprint Is Not Setup -->
+  <string name="TouchIdSettings.disabledWarning.title.android">Fingeravtrycksautentisering har inte aktiverats</string>
   <!-- Touch Id screen label -->
   <string name="TouchIdSettings.label">Använd ditt fingeravtryck för att låsa upp Bread och skicka pengar upp till en inställd gräns.</string>
   <!-- Link Text (see TouchIdSettings.customizeText) -->
@@ -518,8 +556,12 @@
   <string name="TouchIdSettings.spendingLimit">Utnyttjandegräns: %1$s (%2$s)</string>
   <!-- Touch id switch label. -->
   <string name="TouchIdSettings.switchLabel">Aktivera Touch ID för Bread</string>
+  <!-- Enable fingerprint for this wallet called Bread -->
+  <string name="TouchIdSettings.switchLabel.android">Aktivera fingeravtrycksautentisering för Bread</string>
   <!-- Touch ID settings view title -->
   <string name="TouchIdSettings.title">Touch ID</string>
+  <!-- Fingerprint authentication label -->
+  <string name="TouchIdSettings.title.android">Fingeravtrycksautentisering</string>
   <!-- Touch ID unavailable alert message -->
   <string name="TouchIdSettings.unavailableAlertMessage">Du har inte ställt in Touch ID på denna enhet. Gå till Inställningar-&gt;Touch ID &amp; Lösenkod för att ställa in det nu.</string>
   <!-- Touch ID unavailable alert title -->
@@ -530,6 +572,8 @@
   <string name="TouchIdSpendingLimit.body">Du kommer att behöva ange din 6-siffriga PIN-kod för att skicka transaktioner som överskrider din utnyttjandegräns och varje gång efter 48 timmar sedan du senast angav din 6-siffriga PIN-kod.</string>
   <!-- Touch Id spending limit screen title -->
   <string name="TouchIdSpendingLimit.title">Touch ID utnyttjandegräns</string>
+  <!-- name of spending limit when using fingerprint authorization -->
+  <string name="TouchIdSpendingLimit.title.android">Maxbelopp med fingeravtrycksauktorisering</string>
   <!-- Availability status text -->
   <string name="Transaction.available">Tillgängligt att utnyttja</string>
   <!-- Transaction complete label -->
@@ -604,10 +648,16 @@
   <string name="UnlockScreen.scan">Läs av</string>
   <!-- Unlock Screen sub-header -->
   <string name="UnlockScreen.subheader">Ange PIN-kod</string>
+  <!-- Instruction to touch the sensor for fingerprint authentication -->
+  <string name="UnlockScreen.touchIdInstructions.android">Touchsensor</string>
   <!-- TouchID prompt text -->
   <string name="UnlockScreen.touchIdPrompt">Lås upp Bread.</string>
+  <!-- Device authentication body -->
+  <string name="UnlockScreen.touchIdPrompt.android">Lås upp din Android-enhet för att fortsätta.</string>
   <!-- Unlock with TouchID accessibility label -->
   <string name="UnlockScreen.touchIdText">Lås upp med TouchID</string>
+  <!-- Device authentication title -->
+  <string name="UnlockScreen.touchIdTitle.android">Autentisering krävs</string>
   <!-- Wallet unlocked message -->
   <string name="UnlockScreen.unlocked">Plånbok upplåst</string>
   <!-- Update PIN caption text -->
