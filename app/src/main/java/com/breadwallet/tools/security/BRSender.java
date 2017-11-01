@@ -331,9 +331,21 @@ public class BRSender {
         AuthManager.getInstance().authPrompt(ctx, "", message, forcePin, new BRAuthCompletion() {
             @Override
             public void onComplete() {
-                PostAuth.getInstance().onPublishTxAuth(ctx, true);
-                BRAnimator.killAllFragments((Activity) ctx);
-                BRAnimator.startBreadIfNotStarted((Activity) ctx);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        PostAuth.getInstance().onPublishTxAuth(ctx, true);
+                        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                BRAnimator.killAllFragments((Activity) ctx);
+                                BRAnimator.startBreadIfNotStarted((Activity) ctx);
+                            }
+                        });
+
+                    }
+                });
+
             }
 
             @Override
