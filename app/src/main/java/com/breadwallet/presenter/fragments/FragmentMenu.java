@@ -149,8 +149,8 @@ public class FragmentMenu extends Fragment {
                     app.getFragmentManager().popBackStack();
             }
         });
-        mTitle = (TextView) rootView.findViewById(R.id.title);
-        mListView = (ListView) rootView.findViewById(menu_listview);
+        mTitle = rootView.findViewById(R.id.title);
+        mListView = rootView.findViewById(menu_listview);
         mListView.setAdapter(new MenuListAdapter(getContext(), R.layout.menu_list_item, itemList));
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
 
