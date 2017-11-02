@@ -173,8 +173,6 @@ public class IntroActivity extends BRActivity implements Serializable {
         });
     }
 
-
-
     @Override
     protected void onResume() {
         super.onResume();
