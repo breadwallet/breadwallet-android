@@ -74,6 +74,7 @@ public class FragmentMenu extends Fragment {
     public ConstraintLayout signalLayout;
     private ImageButton close;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -174,13 +175,13 @@ public class FragmentMenu extends Fragment {
 
     public class MenuListAdapter extends ArrayAdapter<BRMenuItem> {
 
-        private List<BRMenuItem> items;
+//        private List<BRMenuItem> items;
         private Context mContext;
         private int defaultLayoutResource = R.layout.menu_list_item;
 
         public MenuListAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<BRMenuItem> items) {
-            super(context, resource);
-            this.items = items;
+            super(context, resource, items);
+//            this.items = items;
             this.mContext = context;
         }
 
@@ -195,9 +196,9 @@ public class FragmentMenu extends Fragment {
             TextView text = (TextView) convertView.findViewById(R.id.item_text);
             ImageView icon = (ImageView) convertView.findViewById(R.id.item_icon);
 
-            text.setText(items.get(position).text);
-            icon.setImageResource(items.get(position).resId);
-            convertView.setOnClickListener(items.get(position).listener);
+            text.setText(getItem(position).text);
+            icon.setImageResource(getItem(position).resId);
+            convertView.setOnClickListener(getItem(position).listener);
 //            applyBlur();
             return convertView;
 
@@ -205,7 +206,7 @@ public class FragmentMenu extends Fragment {
 
         @Override
         public int getCount() {
-            return items == null ? 0 : items.size();
+            return super.getCount();
         }
     }
 
@@ -233,6 +234,5 @@ public class FragmentMenu extends Fragment {
     public void onPause() {
         super.onPause();
     }
-
 
 }
