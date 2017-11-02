@@ -46,7 +46,6 @@ public class Bip39Reader {
     public static final int WORD_LIST_SIZE = 2048;
 
     public static List<String> getWordList(Context context, String languageCode) throws IOException {
-
         String fileName = "words/" + languageCode + "-BIP39Words.txt";
         List<String> wordList = new ArrayList<>();
         BufferedReader reader = null;
