@@ -51,8 +51,16 @@ public class Bip39Reader {
         List<String> wordList = new ArrayList<>();
         BufferedReader reader = null;
         try {
-            AssetManager assetManager = context.getResources().getAssets();
-            InputStream inputStream = assetManager.open(fileName);
+            InputStream inputStream = null;
+            try {
+                AssetManager assetManager = context.getResources().getAssets();
+                inputStream= assetManager.open(fileName);
+            } catch (Exception e) {
+                fileName = "words/en-BIP39Words.txt";
+                AssetManager assetManager = context.getResources().getAssets();
+                inputStream= assetManager.open(fileName);
+            }
+
             reader = new BufferedReader(new InputStreamReader(inputStream));
             String line;
             while ((line = reader.readLine()) != null) {
@@ -61,11 +69,11 @@ public class Bip39Reader {
         } catch (Exception ex) {
             BRReportsManager.reportBug(ex);
         } finally {
-            assert reader != null;
-            reader.close();
+            if (reader != null)
+                reader.close();
         }
         if (wordList.size() % WORD_LIST_SIZE != 0) {
-            BRReportsManager.reportBug(new IllegalArgumentException("The list size should divide by " + WORD_LIST_SIZE ), true);
+            BRReportsManager.reportBug(new IllegalArgumentException("The list size should divide by " + WORD_LIST_SIZE), true);
         }
         return wordList;
     }
@@ -101,7 +109,7 @@ public class Bip39Reader {
                 }
             }
             if (wordList.size() % WORD_LIST_SIZE != 0) {
-                BRReportsManager.reportBug(new IllegalArgumentException("The list size should divide by " + WORD_LIST_SIZE ), true);
+                BRReportsManager.reportBug(new IllegalArgumentException("The list size should divide by " + WORD_LIST_SIZE), true);
             }
             if (wordList.contains(incorrect)) {
                 lang = l;
@@ -112,11 +120,11 @@ public class Bip39Reader {
     }
 
     public static String[] cleanWordList(String[] words) {
-        if (words == null ) {
+        if (words == null) {
             Log.e(TAG, "cleanWordList: String[] words - is null");
             return null;
         }
-        if (words.length % 2048 != 0 ) {
+        if (words.length % 2048 != 0) {
             Log.e(TAG, "cleanWordList: String[] words is not dividable by 2048: " + words.length);
             return null;
         }
@@ -159,8 +167,8 @@ public class Bip39Reader {
                     e.printStackTrace();
                 }
             }
-            if (wordList.size() % WORD_LIST_SIZE != 0){
-                BRReportsManager.reportBug(new IllegalArgumentException("The list size should divide by " + WORD_LIST_SIZE ), true);
+            if (wordList.size() % WORD_LIST_SIZE != 0) {
+                BRReportsManager.reportBug(new IllegalArgumentException("The list size should divide by " + WORD_LIST_SIZE), true);
             }
             result.addAll(wordList);
 

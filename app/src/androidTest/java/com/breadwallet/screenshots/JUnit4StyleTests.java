@@ -1,6 +1,7 @@
 package com.breadwallet.screenshots;
 
 import android.os.Build;
+import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingPolicies;
 import android.support.test.rule.ActivityTestRule;
 
@@ -75,7 +76,7 @@ public class JUnit4StyleTests {
 
 
     @Before
-    public void setUp(){
+    public void setUp() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Screengrab.setDefaultScreenshotStrategy(new UiAutomatorScreenshotStrategy());
         }
@@ -84,37 +85,34 @@ public class JUnit4StyleTests {
     }
 
     @After
-    public void tearDown(){
+    public void tearDown() {
         LocaleUtil.changeDeviceLocaleTo(LocaleUtil.getEndingLocale());
     }
 
     @Test
     public void testTakeScreenshot() {
-        sleep(500);
+        sleep(1000);
         Screengrab.screenshot("transaction_list");
-        BRAnimator.showMenuFragment(activityRule.getActivity());
+        onView(withId(R.id.menu_layout)).perform(click());
         clickMenu(0);
-        sleep(500);
-
+//        sleep(1000);
         Screengrab.screenshot("security_center");
-        activityRule.getActivity().onBackPressed();
+        Espresso.pressBack();
         clickMenu(1);
-        sleep(500);
+        sleep(1000);
         Screengrab.screenshot("support");
-        activityRule.getActivity().onBackPressed();
+        Espresso.pressBack();
         clickMenu(3);
-        sleep(500);
+//        sleep(1000);
         Screengrab.screenshot("unlock_screen");
 
     }
 
-    private void clickMenu(int pos){
-//        onData(anything()).inAdapterView(allOf(withId(R.id.menu_listview), isCompletelyDisplayed()))
-//                .atPosition(0).perform(click());
+    private void clickMenu(int pos) {
         onData(anything()).inAdapterView(withId(R.id.menu_listview)).atPosition(pos).perform(click());
     }
 
-    private void sleep(int milliseconds){
+    private void sleep(int milliseconds) {
         try {
             Thread.sleep(milliseconds);
         } catch (InterruptedException e) {
