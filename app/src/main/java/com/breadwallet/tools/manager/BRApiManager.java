@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -259,9 +260,9 @@ public class BRApiManager {
             }
             response = resp.body().string();
             String strDate = resp.header("date");
-            DateFormat formatter = SimpleDateFormat.getDateInstance();
+            SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
             Date date = formatter.parse(strDate);
-           long timeStamp = date.getTime();
+            long timeStamp = date.getTime();
             BRSharedPrefs.putSecureTime(app, timeStamp);
         } catch (ParseException | IOException e) {
             e.printStackTrace();
