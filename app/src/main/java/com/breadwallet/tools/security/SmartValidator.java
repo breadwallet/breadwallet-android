@@ -10,10 +10,10 @@ import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.wallet.BRWalletManager;
 
-import java.io.IOException;
 import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * BreadWallet
@@ -43,23 +43,31 @@ public class SmartValidator {
 
     private static final String TAG = SmartValidator.class.getName();
 
-    public static boolean isPaperKeyValid(Context ctx, String phrase) {
-        String[] words = new String[0];
-        List<String> list;
-
-        list = Bip39Reader.getAllWordLists(ctx);
-        words = list.toArray(new String[list.size()]);
-        String[] cleanWordList = Bip39Reader.cleanWordList(words);
-        if (cleanWordList == null) {
-            Log.e(TAG, "isPaperKeyValid: cleanWordList is null, failed to clean all the words");
-            return false;
+    public static boolean isPaperKeyValid(Context ctx, String paperKey) {
+        String languageCode = Locale.getDefault().getLanguage();
+        if (!isValid(ctx, paperKey, languageCode)) {
+            //try all langs
+            for (String lang : Bip39Reader.LANGS) {
+                if (isValid(ctx, paperKey, lang)) {
+                    return true;
+                }
+            }
+        } else {
+            return true;
         }
+
+        return false;
+
+    }
+
+    private static boolean isValid(Context ctx, String paperKey, String lang) {
+        List<String> list = Bip39Reader.bip39List(ctx, lang);
+        String[] words = list.toArray(new String[list.size()]);
         if (words.length % Bip39Reader.WORD_LIST_SIZE != 0) {
-            Log.e(TAG, "isPaperKeyValid: " + "The list size should divide by " + Bip39Reader.WORD_LIST_SIZE );
+            Log.e(TAG, "isPaperKeyValid: " + "The list size should divide by " + Bip39Reader.WORD_LIST_SIZE);
             BRReportsManager.reportBug(new IllegalArgumentException("words.length is not dividable by " + Bip39Reader.WORD_LIST_SIZE), true);
         }
-        return BRWalletManager.getInstance().validateRecoveryPhrase(cleanWordList, phrase);
-
+        return BRWalletManager.getInstance().validateRecoveryPhrase(words, paperKey);
     }
 
     public static boolean isPaperKeyCorrect(String insertedPhrase, Context activity) {
@@ -91,47 +99,17 @@ public class SmartValidator {
     }
 
     public static String cleanPaperKey(Context activity, String phraseToCheck) {
-        String phrase = Normalizer.normalize(phraseToCheck, Normalizer.Form.NFKD).replace("　", " ").replace("\n", " ").trim().replaceAll(" +", " ");
 
-        String[] phraseWords = phrase.split(" ");
-
-        String firstWord = phraseWords[0];
-
-        List<String> allWords = Bip39Reader.getAllWordLists(activity);
-
-        String lang = Bip39Reader.getLang(activity, firstWord);
-        if (lang == null) {
-            for (String word : phraseWords) {
-                if (word.length() < 1 || word.charAt(0) < 0x3000 || allWords.contains(word))
-                    continue;
-                int length = word.length();
-                for (int i = 0; i < length; i++) {
-                    for (int j = (length - i > 8) ? 8 : length - i; j > 0; j--) {
-                        String tmp = word.substring(i, i + j);
-                        if (!allWords.contains(tmp)) continue;
-                        phrase = phrase.replace(tmp, " " + tmp + " ");
-                        while (phrase.contains("  ")) {
-                            phrase = phrase.replace("  ", " ");
-                        }
-                        while (phrase.startsWith(" ")) {
-                            phrase = phrase.substring(1, phrase.length());
-                        }
-                        while (phrase.endsWith(" ")) {
-                            phrase = phrase.substring(0, phrase.length() - 1);
-                        }
-                        i += j - 1;
-                        break;
-                    }
-                }
-            }
-        }
-        return phrase;
+        return Normalizer.normalize(phraseToCheck.replace("　", " ").replace("\n", " ").trim().replaceAll(" +", " "), Normalizer.Form.NFKD);
     }
 
     public static boolean isWordValid(Context ctx, String word) {
+        Log.e(TAG, "isWordValid: word:" + word + ":" + word.length());
         List<String> list;
-        list = Bip39Reader.getAllWordLists(ctx);
-        return list.contains(word);
+        list = Bip39Reader.bip39List(ctx, null);
+        String cleanWord = Bip39Reader.cleanWord(word);
+        Log.e(TAG, "isWordValid: cleanWord:" + cleanWord + ":" + cleanWord.length());
+        return list.contains(cleanWord);
 
     }
 }

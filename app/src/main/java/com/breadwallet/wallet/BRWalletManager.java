@@ -131,15 +131,11 @@ public class BRWalletManager {
 
     public boolean generateRandomSeed(final Context ctx) {
         SecureRandom sr = new SecureRandom();
-        String[] words = new String[0];
+        String[] words;
         List<String> list;
-        try {
-            String languageCode = Locale.getDefault().getLanguage();
-            list = Bip39Reader.getWordList(ctx, languageCode);
-            words = list.toArray(new String[list.size()]);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        String languageCode = Locale.getDefault().getLanguage();
+        list = Bip39Reader.bip39List(ctx, languageCode);
+        words = list.toArray(new String[list.size()]);
         byte[] randomSeed = sr.generateSeed(16);
         if (words.length < 2000) {
             BRReportsManager.reportBug(new IllegalArgumentException("the list is wrong, size: " + words.length), true);

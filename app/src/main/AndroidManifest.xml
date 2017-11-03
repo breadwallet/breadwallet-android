@@ -46,7 +46,7 @@
         android:largeHeap="true"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
-        android:windowSoftInputMode="adjustPan|adjustResize"
+        android:windowSoftInputMode="stateVisible|adjustResize"
         >
 
         <activity

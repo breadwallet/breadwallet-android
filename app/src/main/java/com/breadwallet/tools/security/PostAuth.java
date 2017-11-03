@@ -156,7 +156,7 @@ public class PostAuth {
                     app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                     Intent intent = new Intent(app, SetPinActivity.class);
                     intent.putExtra("noPin", true);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     app.startActivity(intent);
                     if (!app.isDestroyed()) app.finish();
                     phraseForKeyStore = null;

@@ -361,7 +361,6 @@ public class BRAnimator {
         Class toStart = auth ? LoginActivity.class : BreadActivity.class;
         Intent intent = new Intent(from, toStart);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         from.startActivity(intent);
         from.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
         if (!from.isDestroyed()) {
