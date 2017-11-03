@@ -208,10 +208,10 @@ public class PaperKeyProveActivity extends BRActivity {
 
     private boolean isWordCorrect(boolean first) {
         if (first) {
-            String edit = wordEditFirst.getText().toString().replaceAll("[^a-zA-Z]", "");
+            String edit = Bip39Reader.cleanWord(wordEditFirst.getText().toString());
             return SmartValidator.isWordValid(PaperKeyProveActivity.this, edit) && edit.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(0)));
         } else {
-            String edit = wordEditSecond.getText().toString().replaceAll("[^a-zA-Z]", "");
+            String edit = Bip39Reader.cleanWord(wordEditSecond.getText().toString());
             return SmartValidator.isWordValid(PaperKeyProveActivity.this, edit) && edit.equalsIgnoreCase(sparseArrayWords.get(sparseArrayWords.keyAt(1)));
         }
     }
