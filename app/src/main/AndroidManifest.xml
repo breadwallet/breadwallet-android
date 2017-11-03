@@ -44,6 +44,7 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
+        android:launchMode="singleTask"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:windowSoftInputMode="stateVisible|adjustResize"
@@ -52,7 +53,7 @@
         <activity
             android:name=".presenter.activities.intro.IntroActivity"
             android:label="@string/app_name"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.MAIN"/>
@@ -63,7 +64,7 @@
         <activity
             android:name=".presenter.activities.BreadActivity"
             android:label="@string/app_name"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme"
             android:windowSoftInputMode="adjustPan"
@@ -86,137 +87,137 @@
         </activity>
         <activity
             android:name=".presenter.activities.SetPinActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.intro.RecoverActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.settings.WipeActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.settings.ImportActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.ReEnterPinActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.UpdatePinActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.LoginActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.settings.SettingsActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.settings.NotificationActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.settings.SyncBlockchainActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.settings.DisplayCurrencyActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.settings.AboutActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.settings.SecurityCenterActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.settings.ShareDataActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.intro.WriteDownActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.PaperKeyActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.settings.SpendLimitActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.PaperKeyProveActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.InputWordsActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.camera.ScanQRActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.settings.WebViewActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.DisabledActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.settings.FingerprintActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.settings.AdvancedActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.settings.WithdrawBchActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.settings.NodesActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
             android:name=".presenter.activities.camera.CameraActivity"
-            android:launchMode="singleInstance"
+            android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
 
