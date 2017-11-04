@@ -41,6 +41,10 @@ model {
         ndk {
             platformVersion = "23"
             // TODO: remove abiFilters once NDK fixes MIPS compile issue
+            // clang crashes when building for MIPS at least since NDK 14.0.3529234 rc1
+            // https://github.com/android-ndk/ndk/issues/290
+            // https://github.com/android-ndk/ndk/issues/314
+            // https://github.com/ntrrgc/jsvm/commit/f7c71cfd6c76dcad67aa1e0638705ad377ee9938
             abiFilters.addAll(['x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'arm64-v8a'])
             moduleName = "core"
             toolchain = "clang"
