@@ -594,7 +594,13 @@ public class FragmentSend extends Fragment {
         String address = addressEdit.getText().toString();
 
         String amountStr = amountBuilder.toString();
-        BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) ? "0" : amountStr);
+        BigDecimal bigAmount;
+        try {
+            bigAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) ? "0" : amountStr);
+        } catch (NumberFormatException exception) {
+            bigAmount = new BigDecimal("0");
+        }
+
         BigDecimal satoshiAmount = BRExchange.getSatoshisFromAmount(getActivity(), iso, bigAmount);
 
         long fee = satoshiAmount.longValue() == 0 ? 0 : BRWalletManager.getInstance().feeForTransactionAmount(satoshiAmount.longValue());
