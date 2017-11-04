@@ -413,57 +413,59 @@ public class APIClient {
     }
 
     public void updateBundle() {
-        File bundleFile = new File(getBundleResource(ctx, BREAD_FILE));
-        Log.d(TAG, "updateBundle: " + bundleFile);
-        if (bundleFile.exists()) {
-            Log.d(TAG, bundleFile + ": updateBundle: exists");
+        // Disable support bundle
 
-            byte[] bFile = new byte[0];
-            try {
-                bFile = IOUtils.toByteArray(new FileInputStream(bundleFile));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            String latestVersion = getLatestVersion();
-            String currentTarVersion = null;
-            byte[] hash = CryptoHelper.sha256(bFile);
-
-            currentTarVersion = Utils.bytesToHex(hash);
-            Log.d(TAG, bundleFile + ": updateBundle: version of the current tar: " + currentTarVersion);
-
-            if (latestVersion != null) {
-                if (latestVersion.equals(currentTarVersion)) {
-                    Log.d(TAG, bundleFile + ": updateBundle: have the latest version");
-                    tryExtractTar();
-                } else {
-                    Log.d(TAG, bundleFile + ": updateBundle: don't have the most recent version, download diff");
-                    downloadDiff(currentTarVersion);
-                    tryExtractTar();
-
-                }
-            } else {
-                Log.d(TAG, bundleFile + ": updateBundle: latestVersion is null");
-            }
-
-        } else {
-            Log.d(TAG, bundleFile + ": updateBundle: bundle doesn't exist, downloading new copy");
-            long startTime = System.currentTimeMillis();
-            Request request = new Request.Builder()
-                    .url(String.format("%s/assets/bundles/%s/download", BASE_URL, BREAD_POINT))
-                    .get().build();
-            Response response = null;
-            response = sendRequest(request, false, 0);
-            Log.d(TAG, bundleFile + ": updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
-            byte[] body = writeBundleToFile(response);
-            if (Utils.isNullOrEmpty(body))
-                throw new NullPointerException("failed to write bundle to file");
-
-            boolean b = tryExtractTar();
-            if (!b) throw new NullPointerException("failed to extract the bundle tar");
-        }
-
-        logFiles("updateBundle after", ctx);
+//        File bundleFile = new File(getBundleResource(ctx, BREAD_FILE));
+//        Log.d(TAG, "updateBundle: " + bundleFile);
+//        if (bundleFile.exists()) {
+//            Log.d(TAG, bundleFile + ": updateBundle: exists");
+//
+//            byte[] bFile = new byte[0];
+//            try {
+//                bFile = IOUtils.toByteArray(new FileInputStream(bundleFile));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//            String latestVersion = getLatestVersion();
+//            String currentTarVersion = null;
+//            byte[] hash = CryptoHelper.sha256(bFile);
+//
+//            currentTarVersion = Utils.bytesToHex(hash);
+//            Log.d(TAG, bundleFile + ": updateBundle: version of the current tar: " + currentTarVersion);
+//
+//            if (latestVersion != null) {
+//                if (latestVersion.equals(currentTarVersion)) {
+//                    Log.d(TAG, bundleFile + ": updateBundle: have the latest version");
+//                    tryExtractTar();
+//                } else {
+//                    Log.d(TAG, bundleFile + ": updateBundle: don't have the most recent version, download diff");
+//                    downloadDiff(currentTarVersion);
+//                    tryExtractTar();
+//
+//                }
+//            } else {
+//                Log.d(TAG, bundleFile + ": updateBundle: latestVersion is null");
+//            }
+//
+//        } else {
+//            Log.d(TAG, bundleFile + ": updateBundle: bundle doesn't exist, downloading new copy");
+//            long startTime = System.currentTimeMillis();
+//            Request request = new Request.Builder()
+//                    .url(String.format("%s/assets/bundles/%s/download", BASE_URL, BREAD_POINT))
+//                    .get().build();
+//            Response response = null;
+//            response = sendRequest(request, false, 0);
+//            Log.d(TAG, bundleFile + ": updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
+//            byte[] body = writeBundleToFile(response);
+//            if (Utils.isNullOrEmpty(body))
+//                throw new NullPointerException("failed to write bundle to file");
+//
+//            boolean b = tryExtractTar();
+//            if (!b) throw new NullPointerException("failed to extract the bundle tar");
+//        }
+//
+//        logFiles("updateBundle after", ctx);
     }
 
     public String getLatestVersion() {
@@ -587,46 +589,48 @@ public class APIClient {
     }
 
     public void updateFeatureFlag() {
-        String furl = "/me/features";
-        Request req = new Request.Builder()
-                .url(buildUrl(furl))
-                .get().build();
-        Response res = sendRequest(req, true, 0);
-        if (res == null) {
-            Log.e(TAG, "updateFeatureFlag: error fetching features");
-            return;
-        }
+        // Disable remote feature flags (including buy support)
 
-        if (!res.isSuccessful()) {
-            Log.e(TAG, "updateFeatureFlag: request was unsuccessful: " + res.code() + ":" + res.message());
-            return;
-        }
-
-        try {
-            String j = res.body().string();
-            if (j.isEmpty()) {
-                Log.e(TAG, "updateFeatureFlag: JSON empty");
-                return;
-            }
-
-            JSONArray arr = new JSONArray(j);
-            for (int i = 0; i < arr.length(); i++) {
-                try {
-                    JSONObject obj = arr.getJSONObject(i);
-                    String name = obj.getString("name");
-                    String description = obj.getString("description");
-                    boolean selected = obj.getBoolean("selected");
-                    boolean enabled = obj.getBoolean("enabled");
-                    BRSharedPrefs.putFeatureEnabled(ctx, enabled, name);
-                } catch (Exception e) {
-                    Log.e(TAG, "malformed feature at position: " + i + ", whole json: " + j, e);
-                }
-
-            }
-        } catch (IOException | JSONException e) {
-            Log.e(TAG, "updateFeatureFlag: failed to pull up features");
-            e.printStackTrace();
-        }
+//        String furl = "/me/features";
+//        Request req = new Request.Builder()
+//                .url(buildUrl(furl))
+//                .get().build();
+//        Response res = sendRequest(req, true, 0);
+//        if (res == null) {
+//            Log.e(TAG, "updateFeatureFlag: error fetching features");
+//            return;
+//        }
+//
+//        if (!res.isSuccessful()) {
+//            Log.e(TAG, "updateFeatureFlag: request was unsuccessful: " + res.code() + ":" + res.message());
+//            return;
+//        }
+//
+//        try {
+//            String j = res.body().string();
+//            if (j.isEmpty()) {
+//                Log.e(TAG, "updateFeatureFlag: JSON empty");
+//                return;
+//            }
+//
+//            JSONArray arr = new JSONArray(j);
+//            for (int i = 0; i < arr.length(); i++) {
+//                try {
+//                    JSONObject obj = arr.getJSONObject(i);
+//                    String name = obj.getString("name");
+//                    String description = obj.getString("description");
+//                    boolean selected = obj.getBoolean("selected");
+//                    boolean enabled = obj.getBoolean("enabled");
+//                    BRSharedPrefs.putFeatureEnabled(ctx, enabled, name);
+//                } catch (Exception e) {
+//                    Log.e(TAG, "malformed feature at position: " + i + ", whole json: " + j, e);
+//                }
+//
+//            }
+//        } catch (IOException | JSONException e) {
+//            Log.e(TAG, "updateFeatureFlag: failed to pull up features");
+//            e.printStackTrace();
+//        }
 
     }
 
