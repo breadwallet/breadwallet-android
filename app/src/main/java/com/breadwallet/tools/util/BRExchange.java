@@ -90,7 +90,7 @@ public class BRExchange {
             int unit = BRSharedPrefs.getCurrencyUnit(app);
             switch (unit) {
                 case CURRENT_UNIT_PHOTONS:
-                    currencySymbolString = BRConstants.litecoinLowercase;
+                    currencySymbolString = "m" + BRConstants.litecoinLowercase;
 //                        decimalPoints = 2;
 //                    if (getNumberOfDecimalPlaces(result.toPlainString()) == 1)
 //                        currencyFormat.setMinimumFractionDigits(1);
