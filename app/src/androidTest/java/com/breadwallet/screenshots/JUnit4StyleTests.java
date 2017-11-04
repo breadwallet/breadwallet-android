@@ -74,7 +74,6 @@ public class JUnit4StyleTests {
         IdlingPolicies.setIdlingResourceTimeout(600, TimeUnit.SECONDS);
     }
 
-
     @Before
     public void setUp() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
