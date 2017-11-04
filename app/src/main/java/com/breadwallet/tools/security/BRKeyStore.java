@@ -9,6 +9,7 @@ import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -346,7 +347,7 @@ public class BRKeyStore {
     }
 
     public static String getEncryptedDataFilePath(String fileName, Context context) {
-        String filesDirectory = context.getFilesDir().getAbsolutePath();
+        String filesDirectory = BreadApp.getInstance().getFilesDir().getAbsolutePath();
         return filesDirectory + File.separator + fileName;
     }
 
