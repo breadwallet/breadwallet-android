@@ -445,71 +445,71 @@ public class APIClient {
     }
 
     public void updateBundle() {
-        if (ActivityUTILS.isMainThread()) {
-            throw new NetworkOnMainThreadException();
-        }
-        File bundleFile = new File(getBundleResource(ctx, BREAD_FILE));
-        Log.d(TAG, "updateBundle: " + bundleFile);
-        if (bundleFile.exists()) {
-            Log.d(TAG, bundleFile + ": updateBundle: exists");
-
-            byte[] bFile = new byte[0];
-            try {
-                FileInputStream in = new FileInputStream(bundleFile);
-                bFile = IOUtils.toByteArray(in);
-                in.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            String latestVersion = getLatestVersion();
-            String currentTarVersion = null;
-            byte[] hash = CryptoHelper.sha256(bFile);
-
-            currentTarVersion = Utils.bytesToHex(hash);
-            Log.d(TAG, bundleFile + ": updateBundle: version of the current tar: " + currentTarVersion);
-//            FileHelper.printDirectoryTree(new File(getExtractedPath(ctx, null)));
-            if (latestVersion != null) {
-                if (latestVersion.equals(currentTarVersion)) {
-                    Log.d(TAG, bundleFile + ": updateBundle: have the latest version");
-                    tryExtractTar();
-                } else {
-                    Log.d(TAG, bundleFile + ": updateBundle: don't have the most recent version, download diff");
-                    downloadDiff(currentTarVersion);
-                    tryExtractTar();
-                }
-            } else {
-                Log.d(TAG, bundleFile + ": updateBundle: latestVersion is null");
-            }
-//            FileHelper.printDirectoryTree(new File(getExtractedPath(ctx, null)));
-
-        } else {
-            Log.d(TAG, bundleFile + ": updateBundle: bundle doesn't exist, downloading new copy");
-            long startTime = System.currentTimeMillis();
-            Request request = new Request.Builder()
-                    .url(String.format("%s/assets/bundles/%s/download", BASE_URL, BREAD_POINT))
-                    .get().build();
-            Response response = null;
-            byte[] body;
-            try {
-                response = sendRequest(request, false, 0);
-                Log.d(TAG, bundleFile + ": updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
-                body = writeBundleToFile(response);
-            } finally {
-                if (response != null) response.close();
-            }
-            if (Utils.isNullOrEmpty(body)) {
-                Log.e(TAG, "updateBundle: body is null, returning.");
-                return;
-            }
-
-            boolean b = tryExtractTar();
-            if (!b) {
-                Log.e(TAG, "updateBundle: Failed to extract tar");
-            }
-        }
-
-        logFiles("updateBundle after", ctx);
+//         if (ActivityUTILS.isMainThread()) {
+//             throw new NetworkOnMainThreadException();
+//         }
+//         File bundleFile = new File(getBundleResource(ctx, BREAD_FILE));
+//         Log.d(TAG, "updateBundle: " + bundleFile);
+//         if (bundleFile.exists()) {
+//             Log.d(TAG, bundleFile + ": updateBundle: exists");
+//
+//             byte[] bFile = new byte[0];
+//             try {
+//                 FileInputStream in = new FileInputStream(bundleFile);
+//                 bFile = IOUtils.toByteArray(in);
+//                 in.close();
+//             } catch (IOException e) {
+//                 e.printStackTrace();
+//             }
+//
+//             String latestVersion = getLatestVersion();
+//             String currentTarVersion = null;
+//             byte[] hash = CryptoHelper.sha256(bFile);
+//
+//             currentTarVersion = Utils.bytesToHex(hash);
+//             Log.d(TAG, bundleFile + ": updateBundle: version of the current tar: " + currentTarVersion);
+// //            FileHelper.printDirectoryTree(new File(getExtractedPath(ctx, null)));
+//             if (latestVersion != null) {
+//                 if (latestVersion.equals(currentTarVersion)) {
+//                     Log.d(TAG, bundleFile + ": updateBundle: have the latest version");
+//                     tryExtractTar();
+//                 } else {
+//                     Log.d(TAG, bundleFile + ": updateBundle: don't have the most recent version, download diff");
+//                     downloadDiff(currentTarVersion);
+//                     tryExtractTar();
+//                 }
+//             } else {
+//                 Log.d(TAG, bundleFile + ": updateBundle: latestVersion is null");
+//             }
+// //            FileHelper.printDirectoryTree(new File(getExtractedPath(ctx, null)));
+//
+//         } else {
+//             Log.d(TAG, bundleFile + ": updateBundle: bundle doesn't exist, downloading new copy");
+//             long startTime = System.currentTimeMillis();
+//             Request request = new Request.Builder()
+//                     .url(String.format("%s/assets/bundles/%s/download", BASE_URL, BREAD_POINT))
+//                     .get().build();
+//             Response response = null;
+//             byte[] body;
+//             try {
+//                 response = sendRequest(request, false, 0);
+//                 Log.d(TAG, bundleFile + ": updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
+//                 body = writeBundleToFile(response);
+//             } finally {
+//                 if (response != null) response.close();
+//             }
+//             if (Utils.isNullOrEmpty(body)) {
+//                 Log.e(TAG, "updateBundle: body is null, returning.");
+//                 return;
+//             }
+//
+//             boolean b = tryExtractTar();
+//             if (!b) {
+//                 Log.e(TAG, "updateBundle: Failed to extract tar");
+//             }
+//         }
+//
+//         logFiles("updateBundle after", ctx);
     }
 
     public String getLatestVersion() {
@@ -654,52 +654,52 @@ public class APIClient {
     }
 
     public void updateFeatureFlag() {
-        if (ActivityUTILS.isMainThread()) {
-            throw new NetworkOnMainThreadException();
-        }
-        String furl = "/me/features";
-        Request req = new Request.Builder()
-                .url(buildUrl(furl))
-                .get().build();
-        Response res = sendRequest(req, true, 0);
-        if (res == null) {
-            Log.e(TAG, "updateFeatureFlag: error fetching features");
-            return;
-        }
-
-        if (!res.isSuccessful()) {
-            Log.e(TAG, "updateFeatureFlag: request was unsuccessful: " + res.code() + ":" + res.message());
-            return;
-        }
-
-        try {
-            String j = res.body().string();
-            if (j.isEmpty()) {
-                Log.e(TAG, "updateFeatureFlag: JSON empty");
-                return;
-            }
-
-            JSONArray arr = new JSONArray(j);
-            for (int i = 0; i < arr.length(); i++) {
-                try {
-                    JSONObject obj = arr.getJSONObject(i);
-                    String name = obj.getString("name");
-                    String description = obj.getString("description");
-                    boolean selected = obj.getBoolean("selected");
-                    boolean enabled = obj.getBoolean("enabled");
-                    boolean isPrivate = obj.getBoolean("private");
-                    BRSharedPrefs.putFeatureEnabled(ctx, enabled, name);
-                } catch (Exception e) {
-                    Log.e(TAG, "malformed feature at position: " + i + ", whole json: " + j, e);
-                }
-
-            }
-        } catch (IOException | JSONException e) {
-            Log.e(TAG, "updateFeatureFlag: failed to pull up features");
-            e.printStackTrace();
-        } finally {
-            res.close();
-        }
+        // if (ActivityUTILS.isMainThread()) {
+        //     throw new NetworkOnMainThreadException();
+        // }
+        // String furl = "/me/features";
+        // Request req = new Request.Builder()
+        //         .url(buildUrl(furl))
+        //         .get().build();
+        // Response res = sendRequest(req, true, 0);
+        // if (res == null) {
+        //     Log.e(TAG, "updateFeatureFlag: error fetching features");
+        //     return;
+        // }
+        //
+        // if (!res.isSuccessful()) {
+        //     Log.e(TAG, "updateFeatureFlag: request was unsuccessful: " + res.code() + ":" + res.message());
+        //     return;
+        // }
+        //
+        // try {
+        //     String j = res.body().string();
+        //     if (j.isEmpty()) {
+        //         Log.e(TAG, "updateFeatureFlag: JSON empty");
+        //         return;
+        //     }
+        //
+        //     JSONArray arr = new JSONArray(j);
+        //     for (int i = 0; i < arr.length(); i++) {
+        //         try {
+        //             JSONObject obj = arr.getJSONObject(i);
+        //             String name = obj.getString("name");
+        //             String description = obj.getString("description");
+        //             boolean selected = obj.getBoolean("selected");
+        //             boolean enabled = obj.getBoolean("enabled");
+        //             boolean isPrivate = obj.getBoolean("private");
+        //             BRSharedPrefs.putFeatureEnabled(ctx, enabled, name);
+        //         } catch (Exception e) {
+        //             Log.e(TAG, "malformed feature at position: " + i + ", whole json: " + j, e);
+        //         }
+        //
+        //     }
+        // } catch (IOException | JSONException e) {
+        //     Log.e(TAG, "updateFeatureFlag: failed to pull up features");
+        //     e.printStackTrace();
+        // } finally {
+        //     res.close();
+        // }
 
     }
 
