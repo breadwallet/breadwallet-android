@@ -15,6 +15,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.transition.TransitionManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -101,7 +102,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     private TextView priceChange;
 
     private TextView manageText;
-//    private TextView walletName;
+    //    private TextView walletName;
     private TextView emptyTip;
     private ConstraintLayout walletProgressLayout;
 
@@ -329,6 +330,8 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
         }
 
+        BRWalletManager.getInstance().refreshBalance(this);
+
         BRAnimator.showFragmentByTag(this, savedFragmentTag);
         savedFragmentTag = null;
         TxManager.getInstance().onResume(BreadActivity.this);
@@ -515,6 +518,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 TxManager.getInstance().updateTxList(BreadActivity.this);
             }
         });
+        BRWalletManager.getInstance().refreshBalance(BreadActivity.this);
     }
 
     //    private void setWalletLoading() {
