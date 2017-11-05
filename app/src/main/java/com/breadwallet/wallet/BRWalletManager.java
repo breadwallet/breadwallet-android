@@ -101,16 +101,30 @@ public class BRWalletManager {
     private static BRWalletManager instance;
     public List<OnBalanceChanged> balanceListeners;
 
-    public void setBalance(Context context, long balance) {
+    public void setBalance(final Context context, long balance) {
         if (context == null) {
             Log.e(TAG, "setBalance: FAILED TO SET THE BALANCE");
             return;
         }
         BRSharedPrefs.putCatchedBalance(context, balance);
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                refreshAddress(context);
+            }
+        });
 
-        refreshAddress(context);
         for (OnBalanceChanged listener : balanceListeners) {
             if (listener != null) listener.onBalanceChanged(balance);
+        }
+    }
+
+    public void refreshBalance(Activity app) {
+        long nativeBalance = nativeBalance();
+        if (nativeBalance != -1) {
+            setBalance(app, nativeBalance);
+        } else {
+            Log.e(TAG, "UpdateUI, nativeBalance is -1 meaning _wallet was null!");
         }
     }
 
