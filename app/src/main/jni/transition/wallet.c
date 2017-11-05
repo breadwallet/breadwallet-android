@@ -993,6 +993,17 @@ JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTxSize(
 
     return (jint) (jlong) BRTransactionSize(tmpTx);
 }
+JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_nativeBalance(
+        JNIEnv *env,
+        jobject thiz) {
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "getSeedFromPhrase");
+
+//    int txLength = (*env)->GetArrayLength(env, serializedTransaction);
+//    jbyte *byteTx = (*env)->GetByteArrayElements(env, serializedTransaction, 0);
+//    BRTransaction *tmpTx = BRTransactionParse((uint8_t *) byteTx, (size_t) txLength);
+    if(!_wallet) return -1;
+    return BRWalletBalance(_wallet);
+}
 
 //creates and signs a bcash tx, returns the serialized tx
 JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_sweepBCash(JNIEnv *env,

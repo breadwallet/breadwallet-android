@@ -649,6 +649,8 @@ public class BRWalletManager {
 //
 //    public native String txHashSha256Hex(String txHash);
 
+    public native long nativeBalance();
+
     public native int getTxCount();
 
     public native long getMinOutputAmountRequested();

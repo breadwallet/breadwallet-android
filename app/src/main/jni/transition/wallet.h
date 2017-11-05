@@ -223,6 +223,9 @@ JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTxSize(JNI
                                                                              jobject thiz,
                                                                              jbyteArray serializedTransaction);
 
+JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_nativeBalance(JNIEnv *env,
+                                                                                  jobject thiz);
+
 #ifdef __cplusplus
 }
 #endif
