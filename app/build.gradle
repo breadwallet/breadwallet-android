@@ -14,8 +14,6 @@ android {
         versionName  "141"
         multiDexEnabled true
 
-
-
         // Similar to other properties in the defaultConfig block,
         // you can configure the ndk block for each product flavor
         // in your build configuration.
@@ -66,7 +64,7 @@ android {
                     // When you specify a version of CMake, as shown below,
                     // the Android plugin searches for its binary within your
                     // PATH environmental variable.
-                    cFlags "-DBITCOIN_TESTNET=1" //todo make this mainnet
+                    cFlags "-DBITCOIN_TESTNET=0"
                     targets "core-lib"
                 }
             }
