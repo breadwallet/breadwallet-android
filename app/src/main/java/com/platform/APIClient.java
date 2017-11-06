@@ -497,8 +497,10 @@ public class APIClient {
             } finally {
                 if (response != null) response.close();
             }
-            if (Utils.isNullOrEmpty(body))
-                throw new NullPointerException("failed to write bundle to file");
+            if (Utils.isNullOrEmpty(body)){
+                Log.e(TAG, "updateBundle: body is null, returning." );
+                return;
+            }
 
             boolean b = tryExtractTar();
             if (!b) {

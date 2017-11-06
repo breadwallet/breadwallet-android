@@ -33,6 +33,7 @@ public class BRReportsManager {
     private static final String TAG = BRReportsManager.class.getName();
 
     public static void reportBug(RuntimeException er, boolean crash) {
+        Log.e(TAG, "reportBug: ", er);
         try {
             FirebaseCrash.report(er);
         } catch (Exception e) {
@@ -42,6 +43,7 @@ public class BRReportsManager {
     }
 
     public static void reportBug(Exception er) {
+        Log.e(TAG, "reportBug: ", er);
         try {
             FirebaseCrash.report(er);
         } catch (Exception e) {
