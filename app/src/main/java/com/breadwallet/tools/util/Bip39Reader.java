@@ -53,7 +53,7 @@ public class Bip39Reader {
         if (lang == null)
             langs = LANGS;
         else
-            langs = new String[] {lang};
+            langs = new String[]{lang};
 
         List<String> result = new ArrayList<>();
 
@@ -74,9 +74,9 @@ public class Bip39Reader {
                 ex.printStackTrace();
 
             } finally {
-                assert reader != null;
                 try {
-                    reader.close();
+                    if (reader != null)
+                        reader.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
