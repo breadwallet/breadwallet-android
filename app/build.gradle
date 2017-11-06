@@ -8,10 +8,10 @@ android {
     defaultConfig {
         testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
         applicationId = 'com.breadwallet'
-        minSdkVersion  23
-        targetSdkVersion  26
-        versionCode  143
-        versionName  "143"
+        minSdkVersion 23
+        targetSdkVersion 26
+        versionCode 143
+        versionName "143"
         multiDexEnabled true
 
         // Similar to other properties in the defaultConfig block,
