@@ -2,8 +2,14 @@
 <resources>
   <!-- About screen blog label -->
   <string name="About.blog">Blog</string>
+  <!-- Equals symbol -->
+  <string name="AccountHeader.equals">=</string>
+  <!-- Wipe wallet button -->
+  <string name="JailbreakWarnings.wipe">Wipe</string>
   <!-- About screen footer -->
   <string name="About.footer">Made by the global Bread team. Version %1$s</string>
+  <!-- Manage wallet button title -->
+  <string name="AccountHeader.manageButtonName">MANAGE</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">Privacy Policy</string>
   <!-- About screen reddit label -->
