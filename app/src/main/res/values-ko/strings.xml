@@ -1,9 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-  <!-- App name -->
-  <string name="About.appName.android">Bread</string>
-  <!-- About screen blog label -->
-  <string name="About.blog">블로그</string>
   <!-- About screen footer -->
   <string name="About.footer">글로벌 Bread 팀 제작. 버전 %1$s</string>
   <!-- Privay Policy button label -->
