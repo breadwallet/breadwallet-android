@@ -73,11 +73,6 @@ public class IntroActivity extends BRActivity implements Serializable {
         return app;
     }
 
-    //loading the native library
-    static {
-        System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
-    }
-
     public static final Point screenParametersPoint = new Point();
 
     @Override

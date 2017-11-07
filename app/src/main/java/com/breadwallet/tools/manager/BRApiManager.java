@@ -14,19 +14,11 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 
-import junit.framework.Assert;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
-import java.nio.charset.Charset;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -93,7 +85,7 @@ public class BRApiManager {
     private Set<CurrencyEntity> getCurrencies(Activity context) {
         Set<CurrencyEntity> set = new LinkedHashSet<>();
         try {
-            JSONArray arr = getJSonArray(context);
+            JSONArray arr = fetchRates(context);
             updateFeePerKb(context);
             if (arr != null) {
                 int length = arr.length();
@@ -189,7 +181,7 @@ public class BRApiManager {
     }
 
 
-    public static JSONArray getJSonArray(Activity activity) {
+    public static JSONArray fetchRates(Activity activity) {
         String jsonString = urlGET(activity, String.format("https://%s/rates", BreadApp.HOST));
         JSONArray jsonArray = null;
         if (jsonString == null) return null;
@@ -199,10 +191,10 @@ public class BRApiManager {
 
         } catch (JSONException ignored) {
         }
-        return jsonArray == null ? getBackUpJSonArray(activity) : jsonArray;
+        return jsonArray == null ? backupFetchRates(activity) : jsonArray;
     }
 
-    public static JSONArray getBackUpJSonArray(Activity activity) {
+    public static JSONArray backupFetchRates(Activity activity) {
         String jsonString = urlGET(activity, "https://bitpay.com/rates");
 
         JSONArray jsonArray = null;
@@ -218,7 +210,7 @@ public class BRApiManager {
     }
 
     public static void updateFeePerKb(Activity activity) {
-        String jsonString = urlGET(activity, "https://api.breadwallet.com/fee-per-kb");
+        String jsonString = urlGET(activity, String.format("https://%s/fee-per-kb", BreadApp.HOST));
         if (jsonString == null || jsonString.isEmpty()) {
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
             return;

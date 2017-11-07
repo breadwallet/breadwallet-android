@@ -69,9 +69,6 @@ public class LoginActivity extends BRActivity {
     private Button leftButton;
     private Button rightButton;
 
-    static {
-        System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
-    }
 
     public static LoginActivity getApp() {
         return app;
