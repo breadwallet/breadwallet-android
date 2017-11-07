@@ -12,7 +12,7 @@
     <FrameLayout
         android:id="@+id/gradient_layout"
         android:layout_width="match_parent"
-        android:layout_height="240dp"
+        android:layout_height="200dp"
         android:background="@drawable/write_down_gradient"
         >
 
@@ -74,7 +74,7 @@
         android:lineSpacingMultiplier="1.3"
         android:text="@string/StartPaperPhrase.body"
         android:textColor="@color/almost_black"
-        android:textSize="20sp"/>
+        android:textSize="18sp"/>
 
     <com.breadwallet.presenter.customviews.BRButton
         android:id="@+id/button_write_down"
@@ -82,7 +82,7 @@
         android:layout_height="@dimen/big_button_height"
         android:layout_alignParentBottom="true"
         android:background="@android:color/transparent"
-        android:layout_marginBottom="48dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="@dimen/bread_margin"
         android:layout_marginStart="@dimen/bread_margin"
         app:buttonType="1"
