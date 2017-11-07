@@ -368,65 +368,6 @@ public class BRAnimator {
         }
     }
 
-//    public static void swapPriceTexts(final Context ctx, final TextView t1, final TextView t2) {
-//        BRSharedPrefs.putPreferredBTC(ctx, !BRSharedPrefs.getPreferredBTC(ctx));
-//
-//        final float t1Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 30, ctx.getResources().getDisplayMetrics());
-//        final float t2Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 14, ctx.getResources().getDisplayMetrics());
-//
-//        final float t1W = t1.getWidth();
-//        final float t2W = t2.getWidth();
-//        final float t1X = t1.getX();
-//        final float t2X = t2.getX();
-//
-//        String t1Text = t1.getText().toString();
-//        String t2Text = t2.getText().toString();
-//        String eq = " = ";
-//        if (!t2Text.substring(0, 3).equalsIgnoreCase(eq))
-//            throw new RuntimeException("secondaryPrice does not start with | = | ");
-//        t1.setText(t2Text.substring(3));
-//        t2.setText(TextUtils.concat(eq, t1Text));
-//
-//        float marLeft = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, ctx.getResources().getDisplayMetrics());
-//
-//
-//        ColorStateList t1Colors = t1.getTextColors();
-//        ColorStateList t2Colors = t2.getTextColors();
-//        t1.setTextColor(t2Colors);
-//        t2.setTextColor(t1Colors);
-//
-//        final int ANIMATION_DURATION = 400;
-//
-//        //Animate the first text
-//        ValueAnimator an1 = ValueAnimator.ofFloat(t1Size, t2Size);
-//        an1.setDuration(ANIMATION_DURATION);
-//        an1.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-//                float animatedValue = (float) valueAnimator.getAnimatedValue();
-//                t1.setTextSize(TypedValue.COMPLEX_UNIT_PX, animatedValue);
-//            }
-//        });
-//        an1.start();
-//
-//        t1.animate().x(t2W * 2).setInterpolator(new DecelerateOvershootInterpolator(0.5f, 0.5f)).setDuration(ANIMATION_DURATION);
-//        //Animate the second text
-//
-//        ValueAnimator an2 = ValueAnimator.ofFloat(t2Size, t1Size);
-//        an2.setDuration(ANIMATION_DURATION);
-//        an2.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-//            @Override
-//            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-//                float animatedValue = (float) valueAnimator.getAnimatedValue();
-//                t2.setTextSize(TypedValue.COMPLEX_UNIT_PX, animatedValue);
-//            }
-//        });
-//        an2.start();
-//
-//        t2.animate().x(marLeft).setInterpolator(new DecelerateOvershootInterpolator(0.5f, 0.5f)).setDuration(ANIMATION_DURATION);
-//
-//    }
-
     public static void animateSignalSlide(ViewGroup signalLayout, final boolean reverse, final OnSlideAnimationEnd listener) {
         float translationY = signalLayout.getTranslationY();
         float signalHeight = signalLayout.getHeight();

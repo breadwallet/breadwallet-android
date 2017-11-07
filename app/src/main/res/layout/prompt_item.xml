@@ -15,7 +15,6 @@
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
         android:elevation="8dp"
-        android:keepScreenOn="true"
         android:visibility="visible"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"
