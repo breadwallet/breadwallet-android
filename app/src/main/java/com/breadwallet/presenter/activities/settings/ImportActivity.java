@@ -25,9 +25,6 @@ public class ImportActivity extends BRActivity {
         return app;
     }
 
-    static {
-        System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

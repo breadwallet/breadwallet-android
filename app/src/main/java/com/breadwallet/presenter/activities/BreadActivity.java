@@ -125,9 +125,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         return app;
     }
 
-    static {
-        System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

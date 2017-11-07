@@ -41,6 +41,10 @@ import com.platform.tools.BRBitId;
 public class BRActivity extends Activity {
     private final String TAG = this.getClass().getName();
 
+    static {
+        System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
