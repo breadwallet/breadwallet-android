@@ -89,6 +89,8 @@ public class IntroActivity extends BRActivity implements Serializable {
         splashScreen = findViewById(R.id.splash_screen);
         setListeners();
         updateBundles();
+        //if this screen is shown then we did not upgrade to the new app, we installed it
+        BRSharedPrefs.putGreetingsShown(IntroActivity.this, true);
 
         SyncManager.getInstance().updateAlarms(this);
         faq = (ImageButton) findViewById(R.id.faq_button);
@@ -148,7 +150,6 @@ public class IntroActivity extends BRActivity implements Serializable {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRSharedPrefs.putGreetingsShown(IntroActivity.this, true);
                 Intent intent = new Intent(IntroActivity.this, SetPinActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -159,7 +160,6 @@ public class IntroActivity extends BRActivity implements Serializable {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRSharedPrefs.putGreetingsShown(IntroActivity.this, true);
                 Intent intent = new Intent(IntroActivity.this, RecoverActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
