@@ -3,6 +3,7 @@ package com.breadwallet.tools.listeners;
 import android.app.IntentService;
 import android.content.Intent;
 
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.BRWalletManager;
 
 /**
@@ -32,7 +33,11 @@ import com.breadwallet.wallet.BRWalletManager;
 public class SyncReceiver extends IntentService {
     public final String TAG = SyncReceiver.class.getSimpleName();
     public final static String SYNC_RECEIVER = "SYNC_RECEIVER";
-//    private Calendar c = Calendar.getInstance();
+
+    //    private Calendar c = Calendar.getInstance();
+    static {
+        System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
+    }
 
     public SyncReceiver() {
         super("SyncReceiver");
