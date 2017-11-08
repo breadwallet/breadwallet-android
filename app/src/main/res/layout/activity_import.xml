@@ -69,7 +69,7 @@
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="0dp"
-        android:layout_height="220dp"
+        android:layout_height="200dp"
         android:background="@drawable/import_gradient"
         app:layout_constraintBaseline_toBaselineOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -115,7 +115,7 @@
         <ImageView
             android:id="@+id/imageView9"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="100dp"
             android:layout_below="@+id/textView2"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="@dimen/bread_margin"

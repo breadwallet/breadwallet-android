@@ -15,6 +15,6 @@
     <dimen name="faq_dimen">24dp</dimen>
     <dimen name="close_dimen">24dp</dimen>
     <dimen name="radius">4dp</dimen>
-    <dimen name="paragraph">18sp</dimen>
+    <dimen name="paragraph">16sp</dimen>
 
 </resources>
