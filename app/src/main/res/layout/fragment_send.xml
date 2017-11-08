@@ -277,6 +277,7 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:text="@string/FeeSelector.title"
+                android:textSize="@dimen/sub_header"
                 android:textColor="@color/almost_black"
                 android:textStyle="bold"/>
 
@@ -337,6 +338,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
+                android:textSize="@dimen/paragraph"
                 android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:text="@string/FeeSelector.economyWarning"
@@ -387,6 +389,7 @@
                 android:layout_marginStart="16dp"
                 android:background="@android:color/transparent"
                 android:hint="@string/Send.descriptionLabel"
+                android:textSize="@dimen/sub_header"
                 android:inputType="textPersonName"
                 android:maxLength="250"
                 />

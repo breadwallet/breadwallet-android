@@ -33,7 +33,7 @@
 
         <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/message"
-            android:textSize="14sp"
+            android:textSize="@dimen/paragraph"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"

@@ -68,20 +68,23 @@
         android:layout_below="@+id/linearLayout"
         android:layout_centerHorizontal="true"
         android:layout_margin="@dimen/bread_margin"
-        android:lineSpacingMultiplier="1.3"
+        android:lineSpacingMultiplier="1.2"
         android:text="@string/TouchIdSettings.label"
         android:textColor="@color/almost_black"
-        android:textSize="18sp"/>
+        android:textSize="@dimen/sub_header"/>
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/enable_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/textView10"
-        android:layout_margin="@dimen/bread_margin"
+        android:layout_marginTop="16dp"
+        android:layout_toStartOf="@+id/toggleButton"
+        android:paddingEnd="8dp"
+        android:paddingStart="16dp"
         android:text="@string/TouchIdSettings.switchLabel.android"
         android:textColor="@color/almost_black"
-        android:textSize="16sp"
+        android:textSize="@dimen/paragraph"
         app:customTFont="CircularPro-Bold.otf"/>
 
     <ToggleButton
@@ -119,12 +122,12 @@
         android:id="@+id/limit_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:lineSpacingMultiplier="1.2"
+        android:layout_alignStart="@+id/limit_exchange"
         android:layout_below="@+id/limit_exchange"
-        android:layout_margin="@dimen/bread_margin"
+        android:layout_marginTop="14dp"
+        android:lineSpacingMultiplier="1.2"
         android:text="@string/TouchIdSettings.customizeText.android"
         android:textColor="@color/almost_black"
-        android:textSize="18sp"
-        />
+        android:textSize="@dimen/sub_header"/>
 
 </com.breadwallet.presenter.customviews.BRRelativeLayout>

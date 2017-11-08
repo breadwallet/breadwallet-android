@@ -22,7 +22,7 @@
         android:text=""
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textColor="@color/almost_black"
-        android:textSize="16sp"
+        android:textSize="@dimen/sub_header"
         app:customTFont="CircularPro-Bold.otf"/>
 
     <ImageView

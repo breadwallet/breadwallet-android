@@ -14,7 +14,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:textSize="16sp"
+        android:textSize="@dimen/sub_header"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="8dp"
         android:textColor="@color/light_gray"

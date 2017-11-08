@@ -78,7 +78,7 @@
         android:lineSpacingMultiplier="1.3"
         android:text="@string/SecurityCenter.info"
         android:textColor="@color/almost_black"
-        android:textSize="18sp"/>
+        android:textSize="@dimen/sub_header"/>
 
     <ListView
         android:id="@+id/menu_listview"
