@@ -26,6 +26,7 @@ import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.security.SmartValidator;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
@@ -109,6 +110,9 @@ public class IntroActivity extends BRActivity implements Serializable {
 
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
 
+        if (Utils.isEmulatorOrDebug(this))
+            Utils.printPhoneSpecs();
+
         byte[] masterPubKey = BRKeyStore.getMasterPublicKey(this);
         boolean isFirstAddressCorrect = false;
         if (masterPubKey != null && masterPubKey.length != 0) {
@@ -148,8 +152,7 @@ public class IntroActivity extends BRActivity implements Serializable {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                //if this screen is shown then we did not upgrade to the new app, we installed it
-                BRSharedPrefs.putGreetingsShown(IntroActivity.this, true);
+
                 Intent intent = new Intent(IntroActivity.this, SetPinActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);

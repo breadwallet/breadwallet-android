@@ -21,6 +21,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.intro.IntroActivity;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -84,7 +85,7 @@ public class Utils {
         String specsTag = "PHONE SPECS";
         Log.e(specsTag, "");
         Log.e(specsTag, "***************************PHONE SPECS***************************");
-        Log.e(specsTag, "* screen X: " + BreadActivity.screenParametersPoint.x + " , screen Y: " + BreadActivity.screenParametersPoint.y);
+        Log.e(specsTag, "* screen X: " + IntroActivity.screenParametersPoint.x + " , screen Y: " + IntroActivity.screenParametersPoint.y);
         Log.e(specsTag, "* Build.CPU_ABI: " + Build.CPU_ABI);
         Runtime rt = Runtime.getRuntime();
         long maxMemory = rt.maxMemory();
