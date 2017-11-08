@@ -16,5 +16,7 @@
     <dimen name="close_dimen">24dp</dimen>
     <dimen name="radius">4dp</dimen>
     <dimen name="paragraph">16sp</dimen>
+    <dimen name="header">20sp</dimen>
+
 
 </resources>

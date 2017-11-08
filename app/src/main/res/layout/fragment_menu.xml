@@ -54,7 +54,7 @@
                 android:layout_margin="@dimen/bread_margin"
                 android:text="@string/MenuViewController.modalTitle"
                 android:textColor="@color/almost_black"
-                android:textSize="18sp"
+                android:textSize="@dimen/header"
                 app:customTFont="CircularPro-Bold.otf"
                 android:layout_marginRight="8dp"
                 app:layout_constraintRight_toRightOf="parent"

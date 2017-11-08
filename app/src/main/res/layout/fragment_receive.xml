@@ -38,7 +38,7 @@
                     android:layout_marginStart="8dp"
                     android:text="@string/Receive.title"
                     android:textColor="@color/almost_black"
-                    android:textSize="20sp"
+                    android:textSize="@dimen/header"
                     app:customTFont="CircularPro-Bold.otf"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintHorizontal_bias="0.498"

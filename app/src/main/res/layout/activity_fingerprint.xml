@@ -32,13 +32,11 @@
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
+                android:layout_alignTop="@+id/faq_button"
                 android:layout_centerHorizontal="true"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
                 android:text="@string/TouchIdSettings.title.android"
                 android:textColor="@color/white"
-                android:textSize="18sp"
+                android:textSize="@dimen/header"
                 app:customTFont="CircularPro-Bold.otf"/>
 
             <ImageButton

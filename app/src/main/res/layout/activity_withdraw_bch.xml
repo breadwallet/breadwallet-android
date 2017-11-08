@@ -18,7 +18,7 @@
         android:lineSpacingMultiplier="1.3"
         android:text="@string/BCH.title"
         android:textColor="@color/almost_black"
-        android:textSize="30sp"
+        android:textSize="@dimen/header"
         app:customTFont="CircularPro-Bold.otf"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>

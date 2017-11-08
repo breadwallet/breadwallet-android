@@ -87,10 +87,9 @@
             android:layout_margin="@dimen/bread_margin"
             android:text="@string/Settings.importTitle"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="@dimen/header"
             app:customTFont="CircularPro-Bold.otf"
             tools:layout_constraintTop_creator="1"/>
-
 
         <ImageButton
             android:id="@+id/close_button"
