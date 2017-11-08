@@ -69,7 +69,7 @@
         android:text="@string/StartViewController.message"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textSize="24sp"
+        android:textSize="@dimen/header"
         app:customTFont="CircularPro-Book.otf"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"

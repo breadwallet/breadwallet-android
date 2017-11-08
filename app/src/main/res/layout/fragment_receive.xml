@@ -234,6 +234,7 @@
                     android:layout_marginBottom="16dp"
                     android:layout_marginTop="16dp"
                     android:gravity="center"
+                    android:textSize="@dimen/paragraph"
                     android:text="@string/Receive.copied"
                     android:textColor="@color/white"/>
             </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>

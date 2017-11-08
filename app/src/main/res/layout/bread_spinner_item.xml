@@ -25,7 +25,8 @@
     android:layout_height="wrap_content"
     android:background="@color/extra_light_blue_background"
     android:ellipsize="marquee"
-    android:maxLines="1"
+    android:textSize="@dimen/paragraph"
+    android:singleLine="true"
     android:textAlignment="inherit"
     android:textColor="@color/light_gray"
    />

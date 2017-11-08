@@ -11,8 +11,8 @@
 
     <ImageView
         android:id="@+id/title"
-        android:layout_width="128dp"
-        android:layout_height="64dp"
+        android:layout_width="96dp"
+        android:layout_height="48dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
@@ -96,7 +96,7 @@
         android:layout_marginBottom="8dp"
         android:text="@string/UnlockScreen.subheader"
         android:textColor="@color/almost_black"
-        android:textSize="18sp"
+        android:textSize="@dimen/sub_header"
         app:customTFont="CircularPro-Book.otf"
         app:layout_constraintBottom_toTopOf="@+id/pinLayout"
         app:layout_constraintLeft_toLeftOf="@+id/pinLayout"

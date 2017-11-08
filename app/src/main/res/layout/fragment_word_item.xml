@@ -17,6 +17,6 @@
         android:gravity="center"
         android:textAlignment="center"
         android:textColor="@color/white"
-        android:textSize="18sp"/>
+        android:textSize="@dimen/sub_header"/>
 
 </RelativeLayout>

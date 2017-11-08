@@ -16,7 +16,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        android:textSize="@dimen/header"
+        android:textSize="@dimen/sub_header"
         android:textColor="@color/almost_black"
         />
 
@@ -26,6 +26,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
+        android:textSize="@dimen/sub_header"
         android:layout_centerVertical="true"
         android:layout_marginEnd="24dp"
         android:textColor="@color/light_gray"
