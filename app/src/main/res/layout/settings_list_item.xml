@@ -16,7 +16,7 @@
         android:layout_marginStart="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        android:textSize="18sp"
+        android:textSize="@dimen/header"
         android:textColor="@color/almost_black"
         />
 

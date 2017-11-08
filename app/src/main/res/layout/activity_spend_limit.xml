@@ -17,7 +17,7 @@
         android:layout_marginStart="16dp"
         android:text="@string/TouchIdSpendingLimit.title.android"
         android:textColor="@color/almost_black"
-        android:textSize="30sp"
+        android:textSize="@dimen/header"
         app:customTFont="CircularPro-Bold.otf"
         app:layout_constraintEnd_toStartOf="@+id/faq_button"
         app:layout_constraintLeft_toLeftOf="parent"

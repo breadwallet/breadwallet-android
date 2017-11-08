@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:text="Settings"
         android:textColor="@color/almost_black"
-        android:textSize="30sp"
+        android:textSize="@dimen/header"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_margin="@dimen/bread_margin"/>

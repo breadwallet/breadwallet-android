@@ -79,8 +79,7 @@
     <RelativeLayout
         android:id="@+id/relativeLayout"
         android:layout_width="0dp"
-        android:layout_height="260dp"
-        android:layout_marginTop="0dp"
+        android:layout_height="220dp"
         android:background="@drawable/restore_gradient"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -100,7 +99,7 @@
             android:layout_marginTop="32dp"
             android:text="@string/Settings.wipe"
             android:textColor="@color/white"
-            android:textSize="20sp"
+            android:textSize="16sp"
             app:customTFont="CircularPro-Bold.otf"
             tools:layout_constraintTop_creator="1"/>
 
@@ -108,9 +107,9 @@
             android:id="@+id/imageView10"
             android:layout_width="160dp"
             android:layout_height="160dp"
-            android:src="@drawable/restore_image"
             android:layout_below="@+id/textView2"
-            android:layout_centerHorizontal="true"/>
+            android:layout_centerHorizontal="true"
+            android:src="@drawable/restore_image"/>
 
         <ImageButton
             android:id="@+id/faq_button"

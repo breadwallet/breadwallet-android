@@ -51,7 +51,7 @@
             android:layout_marginTop="@dimen/bread_margin"
             android:text="@string/RecoverWallet.header"
             android:textColor="@color/white"
-            android:textSize="18sp"
+            android:textSize="@dimen/header"
             tools:layout_constraintTop_creator="1"/>
 
         <ImageView

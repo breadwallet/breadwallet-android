@@ -49,7 +49,7 @@
                 android:layout_margin="@dimen/bread_margin"
                 android:text="@string/TransactionDetails.title"
                 android:textColor="@color/almost_black"
-                android:textSize="18sp"
+                android:textSize="@dimen/header"
                 app:customTFont="CircularPro-Bold.otf"
                 />
 

@@ -15,7 +15,7 @@
         android:layout_marginStart="24dp"
         android:lineSpacingMultiplier="1.3"
         android:textColor="@color/almost_black"
-        android:textSize="18sp"/>
+        android:textSize="@dimen/header"/>
 
     <ImageView
         android:id="@+id/item_icon"

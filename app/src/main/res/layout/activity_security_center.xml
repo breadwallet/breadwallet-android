@@ -44,7 +44,7 @@
                 android:layout_marginTop="16dp"
                 android:text="@string/SecurityCenter.title"
                 android:textColor="@color/white"
-                android:textSize="18sp"
+                android:textSize="@dimen/header"
                 app:customTFont="CircularPro-Bold.otf"
                 />
 

@@ -52,7 +52,7 @@
                 android:layout_margin="@dimen/bread_margin"
                 android:text="@string/Send.title"
                 android:textColor="@color/almost_black"
-                android:textSize="18sp"
+                android:textSize="@dimen/header"
                 app:customTFont="CircularPro-Bold.otf"
                 tools:layout_editor_absoluteX="0dp"
                 tools:layout_editor_absoluteY="81dp"/>
