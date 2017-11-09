@@ -18,8 +18,6 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
-import com.google.firebase.crash.FirebaseCrash;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
@@ -38,8 +36,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
-import java.text.Normalizer;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -179,7 +175,7 @@ public class BRKeyStore {
 
             }
 
-            String encryptedDataFilePath = createDataPath(alias_file, context);
+            String encryptedDataFilePath = getFilePath(alias_file, context);
 
             SecretKey secret = (SecretKey) keyStore.getKey(alias, null);
             if (secret == null) {
@@ -190,7 +186,7 @@ public class BRKeyStore {
             Cipher inCipher = Cipher.getInstance(CIPHER_ALGORITHM);
             inCipher.init(Cipher.ENCRYPT_MODE, secret);
             byte[] iv = inCipher.getIV();
-            String path = createDataPath(alias_iv, context);
+            String path = getFilePath(alias_iv, context);
             boolean success = writeBytesToFile(path, iv);
             if (!success) {
                 RuntimeException ex = new NullPointerException("failed to writeBytesToFile: " + alias);
@@ -209,7 +205,6 @@ public class BRKeyStore {
                 cipherOutputStream = new CipherOutputStream(
                         new FileOutputStream(encryptedDataFilePath), inCipher);
                 cipherOutputStream.write(data);
-
 
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -239,7 +234,7 @@ public class BRKeyStore {
         }
         KeyStore keyStore;
 
-        String encryptedDataFilePath = createDataPath(alias_file, context);
+        String encryptedDataFilePath = getFilePath(alias_file, context);
         byte[] result = new byte[0];
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
@@ -257,8 +252,8 @@ public class BRKeyStore {
                 return null;
             }
 
-            boolean ivExists = new File(createDataPath(alias_iv, context)).exists();
-            boolean aliasExists = new File(createDataPath(alias_file, context)).exists();
+            boolean ivExists = new File(getFilePath(alias_iv, context)).exists();
+            boolean aliasExists = new File(getFilePath(alias_file, context)).exists();
             if (!ivExists || !aliasExists) {
                 removeAliasAndFiles(alias, context);
                 //report it if one exists and not the other.
@@ -273,7 +268,7 @@ public class BRKeyStore {
                 }
             }
 
-            byte[] iv = readBytesFromFile(createDataPath(alias_iv, context));
+            byte[] iv = readBytesFromFile(getFilePath(alias_iv, context));
             Cipher outCipher;
             outCipher = Cipher.getInstance(CIPHER_ALGORITHM);
             outCipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
@@ -312,7 +307,7 @@ public class BRKeyStore {
         }
     }
 
-    public synchronized static String createDataPath(String fileName, Context context) {
+    public synchronized static String getFilePath(String fileName, Context context) {
         String filesDirectory = context.getFilesDir().getAbsolutePath();
         return filesDirectory + File.separator + fileName;
     }
@@ -635,11 +630,11 @@ public class BRKeyStore {
     public synchronized static void removeAliasAndFiles(String alias, Context context) {
         KeyStore keyStore;
         try {
-            boolean b1 = new File(createDataPath(aliasObjectMap.get(alias).datafileName, context)).delete();
-            boolean b2 = new File(createDataPath(aliasObjectMap.get(alias).ivFileName, context)).delete();
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
             keyStore.deleteEntry(alias);
+            boolean b1 = new File(getFilePath(aliasObjectMap.get(alias).datafileName, context)).delete();
+            boolean b2 = new File(getFilePath(aliasObjectMap.get(alias).ivFileName, context)).delete();
         } catch (KeyStoreException | CertificateException | NoSuchAlgorithmException | IOException e) {
             e.printStackTrace();
         }
@@ -653,6 +648,11 @@ public class BRKeyStore {
         if (context instanceof Activity) {
             Activity app = (Activity) context;
             KeyguardManager mKeyguardManager = (KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE);
+            if (mKeyguardManager == null) {
+                NullPointerException ex = new NullPointerException("KeyguardManager is null in showAuthenticationScreen");
+                BRReportsManager.reportBug(ex, true);
+                return;
+            }
             Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(context.getString(R.string.UnlockScreen_touchIdTitle_android), context.getString(R.string.UnlockScreen_touchIdPrompt_android));
 //        Assert.assertTrue(intent != null);
             if (intent != null) {

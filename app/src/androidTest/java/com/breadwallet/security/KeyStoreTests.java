@@ -337,13 +337,13 @@ public class KeyStoreTests {
     }
 
     public void assertFilesExist(String alias) {
-        Assert.assertTrue(new File(BRKeyStore.createDataPath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
-        Assert.assertTrue(new File(BRKeyStore.createDataPath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
+        Assert.assertTrue(new File(BRKeyStore.getFilePath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
+        Assert.assertTrue(new File(BRKeyStore.getFilePath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
     }
 
     public void assertFilesDontExist(String alias) {
-        Assert.assertFalse(new File(BRKeyStore.createDataPath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
-        Assert.assertFalse(new File(BRKeyStore.createDataPath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
+        Assert.assertFalse(new File(BRKeyStore.getFilePath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
+        Assert.assertFalse(new File(BRKeyStore.getFilePath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
     }
 
 }
