@@ -109,7 +109,7 @@ public class FingerprintActivity extends BRActivity {
                 ds.setUnderlineText(false);
             }
         };
-        ss.setSpan(clickableSpan, limitInfo.getText().length() - 33, limitInfo.getText().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        ss.setSpan(clickableSpan, limitInfo.getText().toString().lastIndexOf(" "), limitInfo.getText().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         limitInfo.setText(ss);
         limitInfo.setMovementMethod(LinkMovementMethod.getInstance());
