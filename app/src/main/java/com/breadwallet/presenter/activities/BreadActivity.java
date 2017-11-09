@@ -324,7 +324,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                     BRWalletManager.getInstance().initWallet(BreadActivity.this);
                 }
             });
-
         }
 
         BRWalletManager.getInstance().refreshBalance(this);
@@ -422,7 +421,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         if (getFragmentManager().getBackStackEntryCount() == 0) {
             return;
         }
-        savedFragmentTag = getFragmentManager().getBackStackEntryAt(getFragmentManager().getBackStackEntryCount() - 1).getName();
+        savedFragmentTag = getFragmentManager().getBackStackEntryAt(0).getName();
     }
 
     //returns x-pos relative to root layout
@@ -518,38 +517,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         BRWalletManager.getInstance().refreshBalance(BreadActivity.this);
     }
 
-    //    private void setWalletLoading() {
-//        loadProgressBar.setProgress(progress);
-//
-//        new Thread(new Runnable() {
-//
-//            @Override
-//            public void run() {
-//                while (loadProgressBar.getProgress() < 100) {
-//                    try {
-//                        Thread.sleep(60);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                    loadProgressBar.post(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            progress += 5;
-//                            loadProgressBar.setProgress(progress);
-//                        }
-//                    });
-//
-//                }
-//                walletProgressLayout.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        toolbarLayout.removeView(walletProgressLayout);
-//                    }
-//                });
-//            }
-//        }).start();
-//    }
-//
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -562,15 +529,12 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                     BRAnimator.openScanner(this, BRConstants.SCANNER_REQUEST);
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
-
                 } else {
-
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                 }
                 return;
             }
-
             // other 'case' lines to check for other
             // permissions this app might request
         }
@@ -606,6 +570,5 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         }
 
     }
-
 
 }
