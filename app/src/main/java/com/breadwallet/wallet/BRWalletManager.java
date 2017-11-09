@@ -517,8 +517,10 @@ public class BRWalletManager {
             }
 
             byte[] pubkeyEncoded = BRKeyStore.getMasterPublicKey(ctx);
-            if (Utils.isNullOrEmpty(pubkeyEncoded))
-                throw new NullPointerException("pubkey is null!");
+            if (Utils.isNullOrEmpty(pubkeyEncoded)) {
+                BRReportsManager.reportBug(new NullPointerException("pubkey is null!"));
+                return;
+            }
             //Save the first address for future check
             m.createWallet(transactionsCount, pubkeyEncoded);
             String firstAddress = BRWalletManager.getFirstAddress(pubkeyEncoded);
