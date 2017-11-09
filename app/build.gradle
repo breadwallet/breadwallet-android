@@ -10,8 +10,8 @@ android {
         applicationId = 'com.breadwallet'
         minSdkVersion 23
         targetSdkVersion 26
-        versionCode 143
-        versionName "143"
+        versionCode 145
+        versionName "145"
         multiDexEnabled true
 
         // Similar to other properties in the defaultConfig block,
@@ -60,7 +60,6 @@ android {
 
             externalNativeBuild {
                 cmake {
-
                     // When you specify a version of CMake, as shown below,
                     // the Android plugin searches for its binary within your
                     // PATH environmental variable.
