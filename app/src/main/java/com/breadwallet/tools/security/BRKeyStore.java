@@ -647,6 +647,7 @@ public class BRKeyStore {
     public static void showAuthenticationScreen(Context context, int requestCode) {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
+        Log.e(TAG, "showAuthenticationScreen: ");
         if (context instanceof Activity) {
             Activity app = (Activity) context;
             KeyguardManager mKeyguardManager = (KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE);

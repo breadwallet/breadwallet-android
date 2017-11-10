@@ -111,7 +111,6 @@ public class SettingsActivity extends BRActivity {
         listView.setAdapter(new SettingsListAdapter(this, R.layout.settings_list_item, items));
     }
 
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
