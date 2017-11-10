@@ -69,7 +69,7 @@ public class GeoLocationManager {
     public void getOneTimeGeoLocation(Continuation cont, Request req) {
         this.continuation = cont;
         this.baseRequest = req;
-        final Activity app = BreadApp.getBreadContext();
+        final Context app = BreadApp.getBreadContext();
         if (app == null)
             return;
         locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
@@ -77,7 +77,7 @@ public class GeoLocationManager {
             Log.e(TAG, "getOneTimeGeoLocation: locationManager is null!");
             return;
         }
-        app.runOnUiThread(new Runnable() {
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
                 if (ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION) !=
@@ -97,12 +97,12 @@ public class GeoLocationManager {
     public void startGeoSocket(Session sess) {
         session = sess;
 
-        final Activity app = BreadApp.getBreadContext();
+        final Context app = BreadApp.getBreadContext();
         if (app == null)
             return;
         final LocationManager locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
 
-        app.runOnUiThread(new Runnable() {
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
                 if (ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -113,18 +113,16 @@ public class GeoLocationManager {
                 }
                 locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 1000, 0, socketLocationListener);
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, socketLocationListener);
-
             }
         });
     }
 
     public void stopGeoSocket() {
-        final Activity app = BreadApp.getBreadContext();
+        final Context app = BreadApp.getBreadContext();
         if (app == null)
             return;
         final LocationManager locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
-
-        app.runOnUiThread(new Runnable() {
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
                 if (ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -134,7 +132,6 @@ public class GeoLocationManager {
                     throw ex;
                 }
                 locationManager.removeUpdates(socketLocationListener);
-
             }
         });
     }
@@ -218,7 +215,7 @@ public class GeoLocationManager {
                         } finally {
 
                             processing = false;
-                            Activity app = BreadApp.getBreadContext();
+                            Context app = BreadApp.getBreadContext();
                             if (app == null || ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION)
                                     != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app,
                                     Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

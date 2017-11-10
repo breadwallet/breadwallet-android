@@ -1,6 +1,7 @@
 package com.breadwallet.tools.threads;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
@@ -102,7 +103,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
 //            PostAuth.getInstance().setTmpPaymentRequest(paymentRequest);
 //            PostAuth.getInstance().onPaymentProtocolRequest(app,false);
         } catch (Exception e) {
-            Activity app = BreadApp.getBreadContext();
+            Context app = BreadApp.getBreadContext();
             if (e instanceof java.net.UnknownHostException) {
                 if (app != null) {
                     pendingErrorMessages.put(TITLE, app.getString(R.string.Alert_error));
@@ -147,7 +148,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
     }
 
     public static void handleMessage() {
-        Activity app = BreadApp.getBreadContext();
+        Context app = BreadApp.getBreadContext();
         if (app != null && message != null) {
             if (!message.isEmpty()) {
                 BRToast.

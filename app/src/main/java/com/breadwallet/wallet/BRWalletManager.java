@@ -367,24 +367,24 @@ public class BRWalletManager {
      */
     public static void publishCallback(final String message, final int error, byte[] txHash) {
         Log.e(TAG, "publishCallback: " + message + ", err:" + error + ", txHash: " + Arrays.toString(txHash));
-        final Activity app = BreadApp.getBreadContext();
-        app.runOnUiThread(new Runnable() {
+        final Context app = BreadApp.getBreadContext();
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        BRAnimator.showBreadSignal(app, error == 0 ? app.getString(R.string.Alerts_sendSuccess) : app.getString(R.string.Alert_error),
-                                error == 0 ? app.getString(R.string.Alerts_sendSuccessSubheader) : message, error == 0 ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
-                                    @Override
-                                    public void onComplete() {
-                                        if (app != null && !app.isDestroyed())
-                                            app.getFragmentManager().popBackStack();
-                                    }
-                                });
+                        if (app instanceof Activity)
+                            BRAnimator.showBreadSignal((Activity) app, error == 0 ? app.getString(R.string.Alerts_sendSuccess) : app.getString(R.string.Alert_error),
+                                    error == 0 ? app.getString(R.string.Alerts_sendSuccessSubheader) : message, error == 0 ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
+                                        @Override
+                                        public void onComplete() {
+                                            if (!((Activity) app).isDestroyed())
+                                                ((Activity) app).getFragmentManager().popBackStack();
+                                        }
+                                    });
                     }
                 }, 500);
-
             }
         });
 
@@ -392,7 +392,7 @@ public class BRWalletManager {
 
     public static void onBalanceChanged(final long balance) {
         Log.d(TAG, "onBalanceChanged:  " + balance);
-        Activity app = BreadApp.getBreadContext();
+        Context app = BreadApp.getBreadContext();
         BRWalletManager.getInstance().setBalance(app, balance);
 
     }
@@ -400,22 +400,19 @@ public class BRWalletManager {
     public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, String hash) {
         Log.d(TAG, "onTxAdded: " + String.format("tx.length: %d, blockHeight: %d, timestamp: %d, amount: %d, hash: %s", tx.length, blockHeight, timestamp, amount, hash));
 
-        final Activity ctx = BreadApp.getBreadContext();
-        if (amount > 0)
-            if (ctx != null) {
-                ctx.runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        String am = BRCurrency.getFormattedCurrencyString(ctx, "BTC", BRExchange.getBitcoinForSatoshis(ctx, new BigDecimal(amount)));
-                        String amCur = BRCurrency.getFormattedCurrencyString(ctx, BRSharedPrefs.getIso(ctx), BRExchange.getAmountFromSatoshis(ctx, BRSharedPrefs.getIso(ctx), new BigDecimal(amount)));
-                        String formatted = String.format("%s (%s)", am, amCur);
-                        String strToShow = String.format(ctx.getString(R.string.TransactionDetails_received), formatted);
-                        showToastWithMessage(ctx, strToShow);
-                    }
-
-                });
-
-            }
+        final Context ctx = BreadApp.getBreadContext();
+        if (amount > 0) {
+            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    String am = BRCurrency.getFormattedCurrencyString(ctx, "BTC", BRExchange.getBitcoinForSatoshis(ctx, new BigDecimal(amount)));
+                    String amCur = BRCurrency.getFormattedCurrencyString(ctx, BRSharedPrefs.getIso(ctx), BRExchange.getAmountFromSatoshis(ctx, BRSharedPrefs.getIso(ctx), new BigDecimal(amount)));
+                    String formatted = String.format("%s (%s)", am, amCur);
+                    String strToShow = String.format(ctx.getString(R.string.TransactionDetails_received), formatted);
+                    showToastWithMessage(ctx, strToShow);
+                }
+            });
+        }
         if (ctx != null)
             TransactionDataSource.getInstance(ctx).putTransaction(new BRTransactionEntity(tx, blockHeight, timestamp, hash));
         else
@@ -453,7 +450,7 @@ public class BRWalletManager {
 
     public static void onTxUpdated(String hash, int blockHeight, int timeStamp) {
         Log.d(TAG, "onTxUpdated: " + String.format("hash: %s, blockHeight: %d, timestamp: %d", hash, blockHeight, timeStamp));
-        Activity ctx = BreadApp.getBreadContext();
+        Context ctx = BreadApp.getBreadContext();
         if (ctx != null) {
             TransactionDataSource.getInstance(ctx).updateTxBlockHeight(hash, blockHeight, timeStamp);
 
@@ -464,7 +461,7 @@ public class BRWalletManager {
 
     public static void onTxDeleted(String hash, int notifyUser, final int recommendRescan) {
         Log.e(TAG, "onTxDeleted: " + String.format("hash: %s, notifyUser: %d, recommendRescan: %d", hash, notifyUser, recommendRescan));
-        final Activity ctx = BreadApp.getBreadContext();
+        final Context ctx = BreadApp.getBreadContext();
         if (ctx != null) {
             BRSharedPrefs.putScanRecommended(ctx, true);
         } else {
