@@ -269,6 +269,8 @@ public class BRKeyStore {
             }
 
             byte[] iv = readBytesFromFile(getFilePath(alias_iv, context));
+            if (Utils.isNullOrEmpty(iv))
+                throw new NullPointerException("iv is missing for " + alias);
             Cipher outCipher;
             outCipher = Cipher.getInstance(CIPHER_ALGORITHM);
             outCipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
