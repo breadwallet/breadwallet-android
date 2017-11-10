@@ -129,7 +129,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 return null;
             } else if (paymentRequest.error == PaymentRequestWrapper.REQUEST_TOO_LONG_ERROR) {
                 Log.e(TAG, "failed to sign tx!!!");
-                BRDialog.showCustomDialog(app, app.getString(R.string.PaymentProtocol_Errors_badPaymentRequest), "Too long" , app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                BRDialog.showCustomDialog(app, app.getString(R.string.PaymentProtocol_Errors_badPaymentRequest), "Too long", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         brDialogView.dismissWithAnimation();
@@ -265,21 +265,17 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         } else {
             if (certName == null || certName.isEmpty()) {
                 certification = "\u274C " + certName + "\n";
-                new AlertDialog.Builder(app)
-                        .setTitle("")
-                        .setMessage(R.string.PaymentProtocol_Errors_untrustedCertificate)
-                        .setNegativeButton(app.getString(R.string.JailbreakWarnings_ignore), new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                continueWithThePayment(app, certification);
-                            }
-                        }).setPositiveButton(app.getString(R.string.Button_cancel), new DialogInterface.OnClickListener() {
+                BRDialog.showCustomDialog(app, app.getString(R.string.PaymentProtocol_Errors_untrustedCertificate), "", app.getString(R.string.JailbreakWarnings_ignore), app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        dialog.dismiss();
+                    public void onClick(BRDialogView brDialogView) {
+                        continueWithThePayment(app, certification);
                     }
-                })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
+                }, new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        brDialogView.dismissWithAnimation();
+                    }
+                }, null, 0);
                 return;
             } else {
                 certification = "\uD83D\uDD12 " + certName + "\n";
@@ -347,8 +343,6 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                     return;
                 }
                 final long total = paymentRequest.amount + paymentRequest.fee;
-
-//        final PaymentItem request = new PaymentItem(paymentRequest.addresses, paymentRequest.amount, certName, false);
 
                 BigDecimal bigAm = BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(paymentRequest.amount));
                 BigDecimal bigFee = BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(paymentRequest.fee));

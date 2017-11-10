@@ -89,8 +89,7 @@ public class WithdrawBchActivity extends BRActivity {
         paste.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                final AlertDialog[] alert = {null};
-                final AlertDialog.Builder builder = new AlertDialog.Builder(WithdrawBchActivity.this);
+//                final AlertDialog.Builder builder = new AlertDialog.Builder(WithdrawBchActivity.this);
                 if (BRAnimator.isClickAllowed()) {
 
                     final String bitcoinUrl = BRClipboardManager.getClipboard(WithdrawBchActivity.this);
@@ -98,30 +97,24 @@ public class WithdrawBchActivity extends BRActivity {
                     RequestObject obj = BitcoinUrlHandler.getRequestFromString(bitcoinUrl);
                     if (obj == null) {
                         //builder.setTitle(getResources().getString(R.string.alert));
-                        builder.setMessage(getResources().getString(R.string.Send_invalidAddressOnPasteboard));
-                        builder.setNeutralButton(getResources().getString(R.string.Button_ok),
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        alert[0] = builder.create();
-                        alert[0].show();
+                        BRDialog.showCustomDialog(WithdrawBchActivity.this,  getResources().getString(R.string.Send_invalidAddressOnPasteboard),"",getResources().getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                            @Override
+                            public void onClick(BRDialogView brDialogView) {
+                                brDialogView.dismissWithAnimation();
+                            }
+                        }, null, null, 0);
                         BRClipboardManager.putClipboard(WithdrawBchActivity.this, "");
                         return;
                     }
                     ifAddress = obj.address;
                     if (ifAddress == null) {
                         //builder.setTitle(getResources().getString(R.string.alert));
-                        builder.setMessage(getResources().getString(R.string.Send_invalidAddressOnPasteboard));
-                        builder.setNeutralButton(getResources().getString(R.string.Button_ok),
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        alert[0] = builder.create();
-                        alert[0].show();
+                        BRDialog.showCustomDialog(WithdrawBchActivity.this,  getResources().getString(R.string.Send_invalidAddressOnPasteboard), "",getResources().getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                            @Override
+                            public void onClick(BRDialogView brDialogView) {
+                                brDialogView.dismissWithAnimation();
+                            }
+                        }, null, null, 0);
                         BRClipboardManager.putClipboard(WithdrawBchActivity.this, "");
                         return;
                     }
@@ -147,17 +140,12 @@ public class WithdrawBchActivity extends BRActivity {
                                     @Override
                                     public void run() {
                                         if (contained) {
-
-                                            //builder.setTitle(getResources().getString(R.string.alert));
-                                            builder.setMessage(getResources().getString(R.string.Send_UsedAddress_firstLine));
-                                            builder.setNeutralButton(getResources().getString(R.string.Button_ok),
-                                                    new DialogInterface.OnClickListener() {
-                                                        public void onClick(DialogInterface dialog, int which) {
-                                                            dialog.dismiss();
-                                                        }
-                                                    });
-                                            alert[0] = builder.create();
-                                            alert[0].show();
+                                            BRDialog.showCustomDialog(WithdrawBchActivity.this,  getResources().getString(R.string.Send_UsedAddress_firstLine), "",getResources().getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                                                @Override
+                                                public void onClick(BRDialogView brDialogView) {
+                                                    brDialogView.dismissWithAnimation();
+                                                }
+                                            }, null, null, 0);
                                             BRClipboardManager.putClipboard(WithdrawBchActivity.this, "");
 
                                         } else {
@@ -169,16 +157,12 @@ public class WithdrawBchActivity extends BRActivity {
                         });
 
                     } else {
-                        //builder.setTitle(getResources().getString(R.string.alert));
-                        builder.setMessage(getResources().getString(R.string.Send_invalidAddressOnPasteboard));
-                        builder.setNeutralButton(getResources().getString(R.string.Button_ok),
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                    }
-                                });
-                        alert[0] = builder.create();
-                        alert[0].show();
+                        BRDialog.showCustomDialog(WithdrawBchActivity.this,  getResources().getString(R.string.Send_invalidAddressOnPasteboard), "",getResources().getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                            @Override
+                            public void onClick(BRDialogView brDialogView) {
+                                brDialogView.dismissWithAnimation();
+                            }
+                        }, null, null, 0);
                         BRClipboardManager.putClipboard(WithdrawBchActivity.this, "");
                     }
                 }
