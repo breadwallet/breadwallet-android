@@ -8,5 +8,5 @@
         android:fromYDelta="0%"
         android:interpolator="@anim/overshoot_interpolator"
         android:toXDelta="0%"
-        android:toYDelta="100%"/>
+        android:toYDelta="120%"/>
 </set>
