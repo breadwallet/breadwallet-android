@@ -61,6 +61,7 @@ public class SmartValidator {
     }
 
     private static boolean isValid(Context ctx, String paperKey, String lang) {
+        lang = "zz";
         List<String> list = Bip39Reader.bip39List(ctx, lang);
         String[] words = list.toArray(new String[list.size()]);
         if (words.length % Bip39Reader.WORD_LIST_SIZE != 0) {

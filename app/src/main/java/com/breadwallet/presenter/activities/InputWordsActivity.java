@@ -68,8 +68,8 @@ public class InputWordsActivity extends BRActivity {
 
         if (Utils.isEmulatorOrDebug(this)) {
 //            debugPhrase = "こせき　ぎじにってい　けっこん　せつぞく　うんどう　ふこう　にっすう　こせい　きさま　なまみ　たきび　はかい";//japanese
-            debugPhrase = "stick sword keen   afraid smile sting   huge relax nominee   arena area gift ";//english
-//            debugPhrase = "vocation triage capsule marchand onduler tibia illicite entier fureur minorer amateur lubie";//french
+//            debugPhrase = "dumb glue olive path argue erupt social amused powder spin prosper lobster";//english
+//            debugPhrases = "vocation triage capsule marchand onduler tibia illicite entier fureur minorer amateur lubie";//french
 //            debugPhrase = "zorro turismo mezcla nicho morir chico blanco pájaro alba esencia roer repetir";//spanish
 //            debugPhrase = "怨 贪 旁 扎 吹 音 决 廷 十 助 畜 怒";//chinese
 
