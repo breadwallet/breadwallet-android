@@ -151,9 +151,9 @@ public class BRKeyStore {
             BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
             throw ex;
         }
-
+        KeyStore keyStore = null;
         try {
-            KeyStore keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
             // Create the keys if necessary
             if (!keyStore.containsAlias(alias)) {
@@ -220,6 +220,12 @@ public class BRKeyStore {
             BRErrorPipe.parseKeyStoreError(context, e, alias, true);
             e.printStackTrace();
             return false;
+        } finally {
+            if (keyStore != null) try {
+                keyStore.store(null);
+            } catch (KeyStoreException | IOException | CertificateException | NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -232,7 +238,7 @@ public class BRKeyStore {
             BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
             return null;
         }
-        KeyStore keyStore;
+        KeyStore keyStore = null;
 
         String encryptedDataFilePath = getFilePath(alias_file, context);
         byte[] result = new byte[0];
@@ -304,6 +310,12 @@ public class BRKeyStore {
             Log.e(TAG, "getData: error: " + e.getClass().getSuperclass().getName());
             BRErrorPipe.parseKeyStoreError(context, e, alias, true);
             return null;
+        } finally {
+            if (keyStore != null) try {
+                keyStore.store(null);
+            } catch (KeyStoreException | IOException | CertificateException | NoSuchAlgorithmException e) {
+                e.printStackTrace();
+            }
         }
     }
 

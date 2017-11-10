@@ -1,8 +1,6 @@
 package com.breadwallet.presenter.activities.settings;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -23,6 +21,7 @@ import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRClipboardManager;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
@@ -72,10 +71,12 @@ public class WithdrawBchActivity extends BRActivity {
         scan = (Button) findViewById(R.id.scan);
         txHash = (TextView) findViewById(R.id.tx_hash);
         addressEdit = (EditText) findViewById(R.id.address_edit);
-
-        String balance = BRCurrency.getFormattedCurrencyString(this, BRSharedPrefs.getPreferredBTC(this) ? "BTC" : BRSharedPrefs.getIso(this), new BigDecimal(BRWalletManager.getBCashBalance(BRKeyStore.getMasterPublicKey(this))));
+        byte[] pubkey = BRKeyStore.getMasterPublicKey(this);
+        if(Utils.isNullOrEmpty(pubkey)){
+            BRReportsManager.reportBug(new NullPointerException("WithdrawBchActivity: onCreate: pubkey is missing!"));
+        }
+        String balance = BRCurrency.getFormattedCurrencyString(this, BRSharedPrefs.getPreferredBTC(this) ? "BTC" : BRSharedPrefs.getIso(this), new BigDecimal(BRWalletManager.getBCashBalance(pubkey)));
         description.setText(String.format(getString(R.string.BCH_body), balance));
-
 
         txHash.setOnClickListener(new View.OnClickListener() {
             @Override
