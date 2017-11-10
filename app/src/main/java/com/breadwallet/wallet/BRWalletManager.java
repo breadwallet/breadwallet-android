@@ -148,7 +148,6 @@ public class BRWalletManager {
         String[] words;
         List<String> list;
         String languageCode = Locale.getDefault().getLanguage();
-        languageCode = "zz";
         list = Bip39Reader.bip39List(ctx, languageCode);
         words = list.toArray(new String[list.size()]);
         byte[] randomSeed = sr.generateSeed(16);
