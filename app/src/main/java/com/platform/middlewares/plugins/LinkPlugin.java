@@ -1,6 +1,7 @@
 package com.platform.middlewares.plugins;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
@@ -63,7 +64,7 @@ public class LinkPlugin implements Plugin {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             String url = request.getParameter("url");
 
-            Activity app = BreadApp.getBreadContext();
+            Context app = BreadApp.getBreadContext();
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
@@ -80,7 +81,7 @@ public class LinkPlugin implements Plugin {
             return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
         } else if (target.startsWith("/_open_maps")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            Activity app = BreadApp.getBreadContext();
+            Context app = BreadApp.getBreadContext();
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
@@ -96,7 +97,7 @@ public class LinkPlugin implements Plugin {
             app.startActivity(Intent.createChooser(intent, "Select an application"));
             return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
         } else if (target.startsWith("/_browser")) {
-            Activity app = BreadApp.getBreadContext();
+            Context app = BreadApp.getBreadContext();
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
@@ -120,7 +121,7 @@ public class LinkPlugin implements Plugin {
                     Intent getInt = new Intent(app, WebViewActivity.class);
                     getInt.putExtra("url", getUri.toString());
                     app.startActivity(getInt);
-                    app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                    ((Activity)app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
                     return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
                 case "POST":
                     // opens a browser with a customized request object
@@ -179,7 +180,7 @@ public class LinkPlugin implements Plugin {
                     postInt.putExtra("url", postUrl);
                     postInt.putExtra("json", json.toString());
                     app.startActivity(postInt);
-                    app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                    ((Activity)app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
                     return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
 
             }

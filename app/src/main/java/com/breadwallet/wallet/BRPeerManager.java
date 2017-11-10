@@ -88,7 +88,7 @@ public class BRPeerManager {
 
     public static void syncSucceeded() {
         Log.d(TAG, "syncSucceeded");
-        final Activity app = BreadApp.getBreadContext();
+        final Context app = BreadApp.getBreadContext();
         if (app == null) return;
         BRSharedPrefs.putLastSyncTime(app, System.currentTimeMillis());
         SyncManager.getInstance().updateAlarms(app);
@@ -107,7 +107,7 @@ public class BRPeerManager {
     public static void syncFailed() {
         Log.d(TAG, "syncFailed");
         SyncManager.getInstance().stopSyncingProgressThread();
-        Activity ctx = BreadApp.getBreadContext();
+        Context ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
         Log.e(TAG, "Network Not Available, showing not connected bar  ");
 
@@ -133,7 +133,7 @@ public class BRPeerManager {
     public static void saveBlocks(final BlockEntity[] blockEntities, final boolean replace) {
         Log.d(TAG, "saveBlocks: " + blockEntities.length);
 
-        final Activity ctx = BreadApp.getBreadContext();
+        final Context ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -147,7 +147,7 @@ public class BRPeerManager {
 
     public static void savePeers(final PeerEntity[] peerEntities, final boolean replace) {
         Log.d(TAG, "savePeers: " + peerEntities.length);
-        final Activity ctx = BreadApp.getBreadContext();
+        final Context ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -166,7 +166,7 @@ public class BRPeerManager {
 
     public static void deleteBlocks() {
         Log.d(TAG, "deleteBlocks");
-        final Activity ctx = BreadApp.getBreadContext();
+        final Context ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -179,7 +179,7 @@ public class BRPeerManager {
 
     public static void deletePeers() {
         Log.d(TAG, "deletePeers");
-        final Activity ctx = BreadApp.getBreadContext();
+        final Context ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -246,7 +246,7 @@ public class BRPeerManager {
     }
 
     public static void updateLastBlockHeight(int blockHeight) {
-        final Activity ctx = BreadApp.getBreadContext();
+        final Context ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
         BRSharedPrefs.putLastBlockHeight(ctx, blockHeight);
     }

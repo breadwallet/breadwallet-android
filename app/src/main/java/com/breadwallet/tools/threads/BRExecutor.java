@@ -89,7 +89,7 @@ public class BRExecutor implements RejectedExecutionHandler {
     * constructor for  BRExecutor
     */
     private BRExecutor() {
-        Activity app = BreadApp.getBreadContext();
+        Context app = BreadApp.getBreadContext();
         if (app != null && Utils.isEmulatorOrDebug(app)) {
             Runnable runnableCode = new Runnable() {
                 @Override

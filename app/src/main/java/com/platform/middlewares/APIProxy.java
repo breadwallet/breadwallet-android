@@ -1,6 +1,7 @@
 package com.platform.middlewares;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -71,7 +72,7 @@ public class APIProxy implements Middleware {
             "connection"};
 
     public APIProxy() {
-        Activity app = BreadApp.getBreadContext();
+        Context app = BreadApp.getBreadContext();
         if (app == null) {
             Log.e(TAG, "APIProxy: app is null!");
         }

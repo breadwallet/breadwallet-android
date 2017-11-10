@@ -55,7 +55,7 @@ public class SyncManager {
     private SyncManager() {
     }
 
-    private void createAlarm(Activity app, long time) {
+    private void createAlarm(Context app, long time) {
         AlarmManager alarmManager = (AlarmManager) app.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(app, SyncReceiver.class);
         intent.setAction(SyncReceiver.SYNC_RECEIVER);//my custom string action name
@@ -63,7 +63,7 @@ public class SyncManager {
         alarmManager.setWindow(AlarmManager.RTC_WAKEUP, time, time + TimeUnit.MINUTES.toMillis(1), pendingIntent);//first start will start asap
     }
 
-    public void updateAlarms(Activity app) {
+    public void updateAlarms(Context app) {
         createAlarm(app, System.currentTimeMillis() + SYNC_PERIOD);
     }
 

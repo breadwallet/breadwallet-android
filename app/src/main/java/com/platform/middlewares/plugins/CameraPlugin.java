@@ -89,7 +89,7 @@ public class CameraPlugin implements Plugin {
 
         if (target.startsWith("/_camera/take_picture")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            final Activity app = BreadApp.getBreadContext();
+            final Context app = BreadApp.getBreadContext();
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
 
@@ -119,7 +119,7 @@ public class CameraPlugin implements Plugin {
                         Manifest.permission.CAMERA)
                         != PackageManager.PERMISSION_GRANTED) {
                     // Should we show an explanation?
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(app,
+                    if (ActivityCompat.shouldShowRequestPermissionRationale( ((Activity)app),
                             Manifest.permission.CAMERA)) {
                         BRDialog.showCustomDialog(app, app.getString(R.string.Send_cameraUnavailabeTitle_android),
                                 app.getString(R.string.Send_cameraUnavailabeMessage_android),
@@ -131,15 +131,15 @@ public class CameraPlugin implements Plugin {
                                 }, null, null, 0);
                     } else {
                         // No explanation needed, we can request the permission.
-                        ActivityCompat.requestPermissions(app,
+                        ActivityCompat.requestPermissions( ((Activity)app),
                                 new String[]{Manifest.permission.CAMERA},
                                 BRConstants.CAMERA_REQUEST_ID);
                     }
                 } else {
                     // Permission is granted, open camera
                     Intent intent = new Intent(app, CameraActivity.class);
-                    app.startActivityForResult(intent, BRConstants.REQUEST_IMAGE_CAPTURE);
-                    app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
+                    ((Activity)app).startActivityForResult(intent, BRConstants.REQUEST_IMAGE_CAPTURE);
+                    ((Activity)app).overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -148,7 +148,7 @@ public class CameraPlugin implements Plugin {
             return true;
         } else if (target.startsWith("/_camera/picture/")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            final Activity app = BreadApp.getBreadContext();
+            final Context app = BreadApp.getBreadContext();
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(404, "context is null", baseRequest, response);

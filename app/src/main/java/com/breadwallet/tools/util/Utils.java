@@ -94,7 +94,7 @@ public class Utils {
         Log.e(specsTag, "");
     }
 
-    public static boolean isEmulatorOrDebug(Activity app) {
+    public static boolean isEmulatorOrDebug(Context app) {
         String fing = Build.FINGERPRINT;
         boolean isEmulator = false;
         if (fing != null) {

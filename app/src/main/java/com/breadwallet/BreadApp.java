@@ -12,6 +12,8 @@ import android.os.Handler;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.breadwallet.tools.listeners.SyncReceiver;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,9 +77,9 @@ public class BreadApp extends Application {
     }
 
 
-    public static Activity getBreadContext() {
+    public static Context getBreadContext() {
 //        Log.e(TAG, "getBreadContext: " + currentActivity.getClass().getName());
-        return currentActivity;
+        return currentActivity == null ? SyncReceiver.app : currentActivity;
     }
 
     public static void setBreadContext(Activity app) {

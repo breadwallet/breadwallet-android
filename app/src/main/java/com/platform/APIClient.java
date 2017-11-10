@@ -616,7 +616,7 @@ public class APIClient {
     }
 
     public boolean tryExtractTar() {
-        Activity app = BreadApp.getBreadContext();
+        Context app = BreadApp.getBreadContext();
         if (app == null) {
             Log.e(TAG, "tryExtractTar: failed to extract, app is null");
             return false;

@@ -132,7 +132,7 @@ public class BRErrorPipe {
                                           final DialogInterface.OnClickListener negButtonListener,
                                           final DialogInterface.OnDismissListener dismissListener) {
         Activity app = (Activity) context;
-        if (app == null) app = BreadApp.getBreadContext();
+        if (app == null) app = (Activity) BreadApp.getBreadContext();
         if (app == null) {
             Log.e(TAG, "showKeyStoreDialog: app is null");
             return;

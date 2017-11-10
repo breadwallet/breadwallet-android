@@ -279,16 +279,17 @@ public class FragmentReceive extends Fragment {
     }
 
     private void updateQr() {
-       final Activity ctx = getContext() == null? BreadApp.getBreadContext() : (Activity) getContext();
+        final Context ctx = getContext() == null ? BreadApp.getBreadContext() : (Activity) getContext();
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 boolean success = BRWalletManager.refreshAddress(ctx);
                 if (!success) {
-                    ctx.onBackPressed();
+                    if (ctx instanceof Activity)
+                        ((Activity) ctx).onBackPressed();
                     return;
                 }
-                ctx.runOnUiThread(new Runnable() {
+                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
                         receiveAddress = BRSharedPrefs.getReceiveAddress(ctx);
