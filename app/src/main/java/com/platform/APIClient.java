@@ -737,7 +737,6 @@ public class APIClient {
     }
 
     public void updatePlatform() {
-
         if (platformUpdating) {
             Log.e(TAG, "updatePlatform: platform already Updating!");
             return;
