@@ -51,9 +51,15 @@ public class Bip39Reader {
 
         String[] langs = null;
         if (lang == null)
-            langs = LANGS;
-        else
-            langs = new String[]{lang};
+            langs = LANGS; //return all the words for all langs
+        else {
+            boolean exists = false;
+            for (String s : LANGS) if (s.equalsIgnoreCase(lang)) exists = true;
+            if (exists)
+                langs = new String[]{lang};//if lang is one of the language we support for paper key creation, then use it
+            else
+                langs = new String[]{"en"};// if not than return 'en'
+        }
 
         List<String> result = new ArrayList<>();
 
