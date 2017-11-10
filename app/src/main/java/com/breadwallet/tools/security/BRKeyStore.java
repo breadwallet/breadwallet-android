@@ -220,12 +220,6 @@ public class BRKeyStore {
             BRErrorPipe.parseKeyStoreError(context, e, alias, true);
             e.printStackTrace();
             return false;
-        } finally {
-            if (keyStore != null) try {
-                keyStore.store(null);
-            } catch (KeyStoreException | IOException | CertificateException | NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
         }
     }
 
@@ -310,12 +304,6 @@ public class BRKeyStore {
             Log.e(TAG, "getData: error: " + e.getClass().getSuperclass().getName());
             BRErrorPipe.parseKeyStoreError(context, e, alias, true);
             return null;
-        } finally {
-            if (keyStore != null) try {
-                keyStore.store(null);
-            } catch (KeyStoreException | IOException | CertificateException | NoSuchAlgorithmException e) {
-                e.printStackTrace();
-            }
         }
     }
 
