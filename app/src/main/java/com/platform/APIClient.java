@@ -497,8 +497,8 @@ public class APIClient {
             } finally {
                 if (response != null) response.close();
             }
-            if (Utils.isNullOrEmpty(body)){
-                Log.e(TAG, "updateBundle: body is null, returning." );
+            if (Utils.isNullOrEmpty(body)) {
+                Log.e(TAG, "updateBundle: body is null, returning.");
                 return;
             }
 
@@ -762,6 +762,11 @@ public class APIClient {
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                try {
+                    Thread.sleep(5000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
                 Thread.currentThread().setName("updateFeatureFlag");
                 final long startTime = System.currentTimeMillis();
                 APIClient apiClient = APIClient.getInstance(ctx);
