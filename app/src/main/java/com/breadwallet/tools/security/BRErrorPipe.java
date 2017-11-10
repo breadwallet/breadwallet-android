@@ -50,10 +50,6 @@ public class BRErrorPipe {
     private static android.app.AlertDialog dialog;
 
     public static void parseKeyStoreError(final Context context, Exception e, String alias, boolean report) {
-        if (report) {
-            BRReportsManager.reportBug(e);
-        }
-
         if (e instanceof KeyPermanentlyInvalidatedException) {
             BRErrorPipe.showKeyStoreDialog(context, context.getString(R.string.Alert_keystore_title_android) + ": " + alias, context.getString(R.string.Alert_keystore_invalidated_android), context.getString(R.string.Button_ok), null,
                     new DialogInterface.OnClickListener() {
@@ -73,6 +69,7 @@ public class BRErrorPipe {
                             }
                         }
                     });
+            report = false;
         } else if (e instanceof InvalidKeyException) {
             showKeyStoreDialog(context, context.getString(R.string.Alert_keystore_title_android), "Failed to load KeyStore(" + alias + "). Please try again later or enter your phrase to recover your Bread now.", context.getString(R.string.AccessibilityLabels_close), null,
                     null, new DialogInterface.OnClickListener() {
@@ -100,6 +97,9 @@ public class BRErrorPipe {
                             ((Activity) context).finish();
                         }
                     });
+        }
+        if (report) {
+            BRReportsManager.reportBug(e);
         }
     }
 
