@@ -255,7 +255,13 @@ public class PlatformTests {
     public void testBZip2() {
         String data = "Ladies and Gentlemen of the class of '99: If I could offer you only one tip 11111111for the future, " +
                 "sunscreen would be it.";
-        byte[] compressedData = BRCompressor.bz2Compress(data.getBytes());
+        byte[] compressedData = new byte[0];
+        try {
+            compressedData = BRCompressor.bz2Compress(data.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
 
         Assert.assertNotNull(compressedData);
         Assert.assertTrue(compressedData.length > 0);
