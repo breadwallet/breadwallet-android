@@ -2,7 +2,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 xmlns:tools="http://schemas.android.com/tools"
-                android:id="@+id/main_layout"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:animateLayoutChanges="true"
@@ -250,11 +249,7 @@
             android:layout_marginTop="8dp"
             android:clipToPadding="false"
             android:padding="8dp"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_toolbar_layout1"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/syncing_layout"/>
+           />
 
     </LinearLayout>
 

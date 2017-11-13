@@ -14,7 +14,7 @@ import java.io.InputStream;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
-    /**
+/**
  * BreadWallet
  * <p/>
  * Created by Mihail Gutan on <mihail@breadwallet.com> 12/11/16.
@@ -110,35 +110,31 @@ public class BRCompressor {
         return null;
     }
 
-    public static byte[] bz2Compress(byte[] data) {
+    public static byte[] bz2Compress(byte[] data) throws IOException {
         if (data == null) return null;
         byte[] compressedData = null;
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream(data.length);
         try {
-            ByteArrayOutputStream byteStream =
-                    new ByteArrayOutputStream(data.length);
+            BZip2CompressorOutputStream bout = new BZip2CompressorOutputStream(byteStream);
             try {
-                BZip2CompressorOutputStream bout =
-                        new BZip2CompressorOutputStream(byteStream);
-                try {
-                    bout.write(data);
-                } finally {
-                    try {
-                        bout.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                bout.write(data);
+            } catch (Exception e) {
+                throw e;
             } finally {
                 try {
-                    byteStream.close();
+                    bout.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
-            compressedData = byteStream.toByteArray();
-        } catch (Exception e) {
-            BRReportsManager.reportBug(e);
+        } finally {
+            try {
+                byteStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+        compressedData = byteStream.toByteArray();
         return compressedData;
 
     }

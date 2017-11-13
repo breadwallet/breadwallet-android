@@ -3,7 +3,9 @@ package com.platform.tools;
 import android.content.Context;
 import android.util.Log;
 
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.crypto.CryptoHelper;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
@@ -15,6 +17,8 @@ import com.platform.kvstore.ReplicatedKVStore;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
 
 /**
  * BreadWallet
@@ -54,7 +58,7 @@ public class KVStoreManager {
         return instance;
     }
 
-    public  WalletInfo getWalletInfo(Context app) {
+    public WalletInfo getWalletInfo(Context app) {
         WalletInfo result = new WalletInfo();
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
@@ -94,7 +98,7 @@ public class KVStoreManager {
         return result;
     }
 
-    public  void putWalletInfo(Context app, WalletInfo info) {
+    public void putWalletInfo(Context app, WalletInfo info) {
 
         WalletInfo old = getWalletInfo(app);
         if (old == null) old = new WalletInfo(); //create new one if it's null
@@ -126,7 +130,13 @@ public class KVStoreManager {
             Log.e(TAG, "putWalletInfo: FAILED: result is empty");
             return;
         }
-        byte[] compressed = BRCompressor.bz2Compress(result);
+        byte[] compressed;
+        try {
+            compressed = BRCompressor.bz2Compress(result);
+        } catch (IOException e) {
+            BRReportsManager.reportBug(e);
+            return;
+        }
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
         long localVer = kvStore.localVersion(walletInfoKey).version;
@@ -138,11 +148,11 @@ public class KVStoreManager {
 
     }
 
-    public TxMetaData getTxMetaData(Context app, byte[] txHash){
+    public TxMetaData getTxMetaData(Context app, byte[] txHash) {
         return getTxMetaData(app, txHash, null);
     }
 
-    public  TxMetaData getTxMetaData(Context app, byte[] txHash, byte[] authKey) {
+    public TxMetaData getTxMetaData(Context app, byte[] txHash, byte[] authKey) {
         String key = txKey(txHash);
 
         TxMetaData result = new TxMetaData();
@@ -189,7 +199,7 @@ public class KVStoreManager {
         return result;
     }
 
-    public  void putTxMetaData(Context app, TxMetaData data, byte[] txHash) {
+    public void putTxMetaData(Context app, TxMetaData data, byte[] txHash) {
         String key = txKey(txHash);
         TxMetaData old = getTxMetaData(app, txHash);
 
@@ -276,7 +286,13 @@ public class KVStoreManager {
             Log.e(TAG, "putTxMetaData: FAILED: result is empty");
             return;
         }
-        byte[] compressed = BRCompressor.bz2Compress(result);
+        byte[] compressed;
+        try {
+            compressed = BRCompressor.bz2Compress(result);
+        } catch (IOException e) {
+            BRReportsManager.reportBug(e);
+            return;
+        }
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
         long localVer = kvStore.localVersion(key).version;
