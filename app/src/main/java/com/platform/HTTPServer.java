@@ -159,7 +159,7 @@ public class HTTPServer {
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        ((Activity)app).onBackPressed();
+                        ((Activity) app).onBackPressed();
                     }
                 });
                 return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
@@ -180,6 +180,8 @@ public class HTTPServer {
             email.setType("message/rfc822");
 
             app.startActivity(Intent.createChooser(email, "Choose an Email client :"));
+            return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
+        } else if (target.toLowerCase().startsWith("/didload")) {
             return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
         }
 
