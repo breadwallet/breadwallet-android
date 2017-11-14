@@ -15,7 +15,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.transition.TransitionManager;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewTreeObserver;
@@ -33,10 +32,9 @@ import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.fragments.FragmentManage;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.manager.ConnectionManager;
+import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.manager.TxManager;
-import com.breadwallet.tools.security.BRErrorPipe;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
@@ -46,7 +44,6 @@ import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
-import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
 
 import java.math.BigDecimal;
@@ -85,7 +82,7 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 
 public class BreadActivity extends BRActivity implements BRWalletManager.OnBalanceChanged,
         BRPeerManager.OnTxStatusUpdate, BRSharedPrefs.OnIsoChangedListener,
-        TransactionDataSource.OnTxAddedListener, FragmentManage.OnNameChanged, ConnectionManager.ConnectionReceiverListener {
+        TransactionDataSource.OnTxAddedListener, FragmentManage.OnNameChanged, InternetManager.ConnectionReceiverListener {
 
     private static final String TAG = BreadActivity.class.getName();
 
@@ -94,7 +91,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     private LinearLayout menuButton;
     public static final Point screenParametersPoint = new Point();
 
-    private ConnectionManager mConnectionReceiver;
+    private InternetManager mConnectionReceiver;
 
     private TextView primaryPrice;
     private TextView secondaryPrice;
@@ -171,6 +168,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                     BRSharedPrefs.putGreetingsShown(BreadActivity.this, true);
                 }
             }, 1000);
+        onConnectionChanged(InternetManager.getInstance().isConnected());
 
     }
 
@@ -335,10 +333,10 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     }
 
     private void setupNetworking() {
-        if (mConnectionReceiver == null) mConnectionReceiver = ConnectionManager.getInstance();
+        if (mConnectionReceiver == null) mConnectionReceiver = InternetManager.getInstance();
         IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
         registerReceiver(mConnectionReceiver, mNetworkStateFilter);
-        ConnectionManager.addConnectionListener(this);
+        InternetManager.addConnectionListener(this);
     }
 
 
