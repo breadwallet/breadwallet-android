@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.wallet.BRPeerManager;
@@ -38,23 +39,22 @@ import java.util.List;
  * THE SOFTWARE.
  */
 
-public class ConnectionManager extends BroadcastReceiver {
+public class InternetManager extends BroadcastReceiver {
 
-    private static final String TAG = ConnectionManager.class.getName();
+    private static final String TAG = InternetManager.class.getName();
     public static List<ConnectionReceiverListener> connectionReceiverListeners;
 
-    private static ConnectionManager instance;
+    private static InternetManager instance;
     public static final int MY_BACKGROUND_JOB = 0;
 
-    private ConnectionManager() {
+    private InternetManager() {
         connectionReceiverListeners = new ArrayList<>();
 
     }
 
-    public static ConnectionManager getInstance() {
-
+    public static InternetManager getInstance() {
         if (instance == null) {
-            instance = new ConnectionManager();
+            instance = new InternetManager();
         }
         return instance;
     }
@@ -67,7 +67,6 @@ public class ConnectionManager extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, final Intent intent) {
         boolean connected = false;
-
         if (intent.getAction().equals(ConnectivityManager.CONNECTIVITY_ACTION)) {
             NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
             if (networkInfo != null && networkInfo.getDetailedState() == NetworkInfo.DetailedState.CONNECTED) {
@@ -81,6 +80,7 @@ public class ConnectionManager extends BroadcastReceiver {
             for (ConnectionReceiverListener listener : connectionReceiverListeners) {
                 listener.onConnectionChanged(connected);
             }
+            Log.e(TAG, "onReceive: " + connected);
         }
     }
 

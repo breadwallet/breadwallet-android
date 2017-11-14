@@ -5,9 +5,9 @@
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:title">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">true</item>
         <item name="android:windowBackground">@color/white</item>
         <item name="android:statusBarColor">@android:color/darker_gray</item>
-        <item name="windowActionBar">true</item>
         <item name="android:actionBarStyle">@style/BreadActionBar</item>
         <item name="android:textViewStyle">@style/RobotoTextViewStyle</item>
         <item name="android:buttonStyle">@style/RobotoButtonStyle</item>

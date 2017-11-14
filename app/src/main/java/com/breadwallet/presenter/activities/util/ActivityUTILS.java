@@ -14,7 +14,7 @@ import com.breadwallet.presenter.activities.SetPinActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
-import com.breadwallet.tools.manager.ConnectionManager;
+import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.threads.BRExecutor;
@@ -70,7 +70,7 @@ public class ActivityUTILS {
         });
         //set status bar color
 //        ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
-        ConnectionManager.getInstance();
+        InternetManager.getInstance();
         if (!(app instanceof IntroActivity || app instanceof RecoverActivity || app instanceof WriteDownActivity))
             BRApiManager.getInstance().startTimer(app);
         //show wallet locked if it is
