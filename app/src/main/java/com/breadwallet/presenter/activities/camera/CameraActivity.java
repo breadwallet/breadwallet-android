@@ -49,8 +49,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.platform.middlewares.plugins.CameraPlugin;
 
 import java.io.File;
@@ -847,7 +849,7 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.picture: {
+            case R.id.take_picture: {
                 takePicture();
                 break;
             }
@@ -892,16 +894,19 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
             ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
             final byte[] bytes = new byte[buffer.remaining()];
             buffer.get(bytes);
-            CameraPlugin.handleCameraImageTaken(app, bytes);
-            app.runOnUiThread(new Runnable() {
+            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-//                    Intent returnIntent = new Intent();
-//                    returnIntent.putExtra("result", bytes);
-//                    app.setResult(Activity.RESULT_OK, returnIntent);
-                    app.finish();
+                    app.onBackPressed();
                 }
             });
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    CameraPlugin.handleCameraImageTaken(BreadActivity.getApp(), bytes);
+                }
+            },1000);
 
         }
 
@@ -992,8 +997,7 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera);
-        findViewById(R.id.picture).setOnClickListener(this);
-        findViewById(R.id.info).setOnClickListener(this);
+        findViewById(R.id.take_picture).setOnClickListener(this);
         mTextureView = (AutoFitTextureView) findViewById(R.id.texture);
     }
 
