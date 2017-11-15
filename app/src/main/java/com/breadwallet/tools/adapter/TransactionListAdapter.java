@@ -155,7 +155,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    Arrays.fill(tempAuthKey, (byte) 0);
+                    if (tempAuthKey != null)
+                        Arrays.fill(tempAuthKey, (byte) 0);
                     tempAuthKey = null;
                 }
             }, 10000);
