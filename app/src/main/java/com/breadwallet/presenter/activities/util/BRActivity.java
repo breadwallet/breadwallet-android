@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.BRExecutor;
@@ -48,18 +47,25 @@ public class BRActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-//        BreadApp.setBreadContext(null);
+
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        BreadApp.activityCounter.decrementAndGet();
+        BreadApp.onStop(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        BreadApp.activityCounter.incrementAndGet();
         BreadApp.setBreadContext(this);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
-
         // 123 is the qrCode result
         switch (requestCode) {
 
