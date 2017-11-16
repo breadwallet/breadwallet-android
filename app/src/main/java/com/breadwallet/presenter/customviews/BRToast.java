@@ -51,7 +51,7 @@ public class BRToast {
     public static void showCustomToast(Context app, String message, int yOffSet, int duration, int layoutDrawable) {
         if (app == null) return;
         if (toast == null) toast = new Toast(app);
-        if (!BreadApp.isAnyActivityOn()) return;
+        if (!BreadApp.isAppInBackground(app)) return;
 
         if (customToastAvailable || !oldMessage.equals(message)) {
             oldMessage = message;
@@ -65,7 +65,7 @@ public class BRToast {
             LayoutInflater inflater = ((Activity) app).getLayoutInflater();
             View layout = inflater.inflate(R.layout.toast, (ViewGroup) ((Activity) app).findViewById(R.id.toast_layout_root));
             layout.setBackgroundResource(layoutDrawable);
-            TextView text = (TextView) layout.findViewById(R.id.toast_text);
+            TextView text = layout.findViewById(R.id.toast_text);
             text.setText(message);
             toast.setGravity(Gravity.TOP, 0, yOffSet);
             toast.setDuration(duration);

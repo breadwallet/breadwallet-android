@@ -130,7 +130,7 @@ public class BRApiManager {
 
         @Override
         protected Object doInBackground(Object[] params) {
-            if (!BreadApp.isAnyActivityOn()) {
+            if (!BreadApp.isAppInBackground(context)) {
                 Log.e(TAG, "doInBackground: Stopping timer, no activity on.");
                 BRApiManager.getInstance().stopTimerTask();
             }

@@ -208,6 +208,7 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
     private static List<JSONArray> getEventsFromDisk(Context context) {
         List<JSONArray> result = new ArrayList<>();
         File dir = new File(context.getFilesDir().getAbsolutePath() + "/events/");
+        if (dir.listFiles() == null) return result;
         for (File f : dir.listFiles()) {
             if (f.isFile()) {
                 String name = f.getName();
