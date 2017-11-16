@@ -191,6 +191,14 @@ public class LoginActivity extends BRActivity {
                 }
             });
 
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (fingerPrint != null && BRSharedPrefs.getUseFingerprint(LoginActivity.this))
+                    fingerPrint.performClick();
+            }
+        }, 600);
+
     }
 
     @Override
@@ -321,7 +329,7 @@ public class LoginActivity extends BRActivity {
         GradientDrawable leftDrawable = (GradientDrawable) leftButton.getBackground().getCurrent();
         GradientDrawable rightDrawable = (GradientDrawable) rightButton.getBackground().getCurrent();
 
-        int rad = Utils.getPixelsFromDps(this, (int) getResources().getDimension(R.dimen.radius)/2);
+        int rad = Utils.getPixelsFromDps(this, (int) getResources().getDimension(R.dimen.radius) / 2);
         int stoke = 2;
 
         leftDrawable.setCornerRadii(new float[]{rad, rad, 0, 0, 0, 0, rad, rad});
