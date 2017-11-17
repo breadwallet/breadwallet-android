@@ -15,6 +15,7 @@ import android.view.WindowManager;
 
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.listeners.SyncReceiver;
+import com.breadwallet.tools.security.BRKeyStore;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +58,7 @@ public class BreadApp extends Application {
     private static List<OnAppBackgrounded> listeners;
     private static Timer isBackgroundChecker;
     public static AtomicInteger activityCounter = new AtomicInteger();
+    public static long backgroundedTime;
 
     private static Activity currentActivity;
 
@@ -81,6 +83,13 @@ public class BreadApp extends Application {
         DISPLAY_HEIGHT_PX = size.y;
         mFingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
 
+        addOnBackgroundedListener(new OnAppBackgrounded() {
+            @Override
+            public void onBackgrounded() {
+
+            }
+        });
+
     }
 
 
@@ -104,17 +113,9 @@ public class BreadApp extends Application {
 
     public static boolean isAppInBackground(final Context context) {
         return context == null || activityCounter.get() <= 0;
-//        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
-//        List<ActivityManager.RunningTaskInfo> tasks = am.getRunningTasks(1);
-//        if (!tasks.isEmpty()) {
-//            ComponentName topActivity = tasks.get(0).topActivity;
-//            if (!topActivity.getPackageName().equals(context.getPackageName())) {
-//                return true;
-//            }
-//        }
-//        return false;
     }
 
+    //call onStop on evert activity so
     public static void onStop(final BRActivity app) {
         if (isBackgroundChecker != null) isBackgroundChecker.cancel();
         isBackgroundChecker = new Timer();
@@ -122,7 +123,8 @@ public class BreadApp extends Application {
             @Override
             public void run() {
                 if (isAppInBackground(app)) {
-                    Log.e(TAG, "isAppInBackground!");
+                    backgroundedTime = System.currentTimeMillis();
+                    Log.e(TAG, "App went in background!");
                     // APP in background, do something
                     isBackgroundChecker.cancel();
                     fireListeners();
@@ -133,10 +135,6 @@ public class BreadApp extends Application {
 
         isBackgroundChecker.schedule(backgroundCheck, 500, 500);
     }
-
-//    public static void appWentIntoBackground() {
-//        fireListeners();
-//    }
 
     public interface OnAppBackgrounded {
         void onBackgrounded();
