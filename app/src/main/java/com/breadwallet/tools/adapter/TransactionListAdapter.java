@@ -127,12 +127,12 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 for (int i = 0; i < backUpFeed.size(); i++) {
                     TxItem item = backUpFeed.get(i);
                     for (KVItem kv : allKvs) {
+                        if (kv == null || kv.key == null || kv.value == null) continue;
                         if (kv.key.equalsIgnoreCase(KVStoreManager.txKey(item.getTxHash()))) {
                             item.metaData = KVStoreManager.getInstance().valueToMetaData(kv.value);
                             break;
                         }
                     }
-
                 }
                 Log.e(TAG, "updateMetadata, took:" + (System.currentTimeMillis() - start));
                 updatingMetadata = false;
