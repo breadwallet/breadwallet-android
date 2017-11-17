@@ -47,6 +47,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -87,22 +88,56 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private final int promptType = 1;
     private final int syncingType = 2;
     private byte[] tempAuthKey;
-    private List<TxMetaData> metaDatas;
+    private boolean updatingMetadata;
 
     public TransactionListAdapter(Context mContext, List<TxItem> items) {
-        itemFeed = items;
-        backUpFeed = items;
-        if (itemFeed == null) itemFeed = new ArrayList<>();
         this.txResId = R.layout.tx_item;
         this.syncingResId = R.layout.syncing_item;
         this.promptResId = R.layout.prompt_item;
         this.mContext = mContext;
+        init(items);
     }
 
     public void setItems(List<TxItem> items) {
+        init(items);
+    }
+
+    private void init(List<TxItem> items) {
         if (items == null) items = new ArrayList<>();
+        if (backUpFeed == null) backUpFeed = new ArrayList<>();
+        boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size();
         this.itemFeed = items;
         this.backUpFeed = items;
+        if (updateMetadata)
+            updateMetadata();
+    }
+
+    //update metadata ONLY when the feed is different than the new one
+    private void updateMetadata() {
+        if (updatingMetadata) return;
+        updatingMetadata = true;
+        Log.e(TAG, "updateMetadata: itemFeed: " + itemFeed.size());
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                long start = System.currentTimeMillis();
+                RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(mContext));
+                ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(mContext, remoteKVStore);
+                List<KVItem> allKvs = kvStore.getAllKVs();
+                for (int i = 0; i < backUpFeed.size(); i++) {
+                    TxItem item = backUpFeed.get(i);
+                    for (KVItem kv : allKvs) {
+                        if (kv.key.equalsIgnoreCase(KVStoreManager.txKey(item.getTxHash()))) {
+                            item.metaData = KVStoreManager.getInstance().valueToMetaData(kv.value);
+                            break;
+                        }
+                    }
+
+                }
+                Log.e(TAG, "updateMetadata, took:" + (System.currentTimeMillis() - start));
+                updatingMetadata = false;
+            }
+        });
     }
 
     public List<TxItem> getItems() {
@@ -317,28 +352,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void filterBy(String query, boolean[] switches) {
         if (!ActivityUTILS.isMainThread())
             throw new IllegalArgumentException("this should only be called in the main thread");
-        if (metaDatas == null) {
-            metaDatas = new ArrayList<>();
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    long start = System.currentTimeMillis();
-                    RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(mContext));
-                    ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(mContext, remoteKVStore);
-                    List<KVItem> allKvs = kvStore.getAllKVs();
-                    for (TxItem item : itemFeed) {
-                        for (KVItem kv : allKvs) {
-                            if (kv.key.equalsIgnoreCase(KVStoreManager.txKey(item.getTxHash()))) {
-                                metaDatas.add(item.metaData = KVStoreManager.getInstance().valueToMetaData(kv.value));
-                                break;
-                            }
-                        }
 
-                    }
-                    Log.e(TAG, "created metadata, took:" + (System.currentTimeMillis() - start));
-                }
-            });
-        }
         filter(query, switches);
     }
 

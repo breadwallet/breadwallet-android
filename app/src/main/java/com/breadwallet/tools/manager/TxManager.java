@@ -79,7 +79,7 @@ public class TxManager {
     }
 
     public void init(final BreadActivity app) {
-        txList = (RecyclerView) app.findViewById(R.id.tx_list);
+        txList = app.findViewById(R.id.tx_list);
         txList.setLayoutManager(new CustomLinearLayoutManager(app));
         txList.addOnItemTouchListener(new RecyclerItemClickListener(app,
                 txList, new RecyclerItemClickListener.OnItemClickListener() {
