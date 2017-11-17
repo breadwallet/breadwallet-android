@@ -234,6 +234,7 @@
         android:id="@+id/recycler_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingTop="8dp"
         android:layout_above="@+id/bottom_toolbar_layout1"
         android:layout_below="@+id/toolbar_layout"
         android:animateLayoutChanges="true"
