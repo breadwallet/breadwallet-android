@@ -323,19 +323,27 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 @Override
                 public void run() {
                     long start = System.currentTimeMillis();
-                    for (TxItem item : itemFeed)
-                        metaDatas.add(KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash()));
-                    Log.e(TAG, "filterBy: took: " + (System.currentTimeMillis() - start));
+                    RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(mContext));
+                    ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(mContext, remoteKVStore);
+                    List<KVItem> allKvs = kvStore.getAllKVs();
+                    for (TxItem item : itemFeed) {
+                        for (KVItem kv : allKvs) {
+                            if (kv.key.equalsIgnoreCase(KVStoreManager.txKey(item.getTxHash()))) {
+                                metaDatas.add(item.metaData = KVStoreManager.getInstance().valueToMetaData(kv.value));
+                                break;
+                            }
+                        }
+
+                    }
+                    Log.e(TAG, "created metadata, took:" + (System.currentTimeMillis() - start));
                 }
             });
-
         }
-
         filter(query, switches);
     }
 
     private void filter(final String query, final boolean[] switches) {
-//        long start = System.currentTimeMillis();
+        long start = System.currentTimeMillis();
         String lowerQuery = query.toLowerCase().trim();
 
         int switchesON = 0;
@@ -378,12 +386,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
             }
 
-
         }
         itemFeed = filteredList;
         notifyDataSetChanged();
 
-//        Log.e(TAG, "filter: " + query + " took: " + (System.currentTimeMillis() - start));
+        Log.e(TAG, "filter: " + query + " took: " + (System.currentTimeMillis() - start));
     }
 
     private class TxHolder extends RecyclerView.ViewHolder {
