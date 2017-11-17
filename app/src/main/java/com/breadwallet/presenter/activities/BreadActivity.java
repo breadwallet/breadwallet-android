@@ -252,7 +252,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 if (!BRAnimator.isClickAllowed()) return;
                 barFlipper.setDisplayedChild(1); //search bar
                 searchBar.onShow(true);
-
             }
         });
 

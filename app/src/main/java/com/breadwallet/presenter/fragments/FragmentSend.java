@@ -704,7 +704,7 @@ public class FragmentSend extends Fragment {
             regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue));
             economy.setTextColor(getContext().getColor(R.color.dark_blue));
             economy.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue_stroke));
-            feeDescription.setText(getString(R.string.FeeSelector_regularLabel));
+            feeDescription.setText(String.format(getString(R.string.FeeSelector_estimatedDeliver), getString(R.string.FeeSelector_regularTime)));
             warningText.getLayoutParams().height = 0;
         } else {
             isEconomyFee = true;
@@ -713,7 +713,7 @@ public class FragmentSend extends Fragment {
             regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue_stroke));
             economy.setTextColor(getContext().getColor(R.color.white));
             economy.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue));
-            feeDescription.setText(getString(R.string.FeeSelector_economyLabel));
+            feeDescription.setText(String.format(getString(R.string.FeeSelector_estimatedDeliver), getString(R.string.FeeSelector_economyTime)));
             warningText.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;
         }
         warningText.requestLayout();

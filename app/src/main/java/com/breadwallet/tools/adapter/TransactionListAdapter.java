@@ -26,13 +26,20 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.PromptManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
+import com.platform.APIClient;
 import com.platform.entities.TxMetaData;
+import com.platform.kvstore.RemoteKVStore;
+import com.platform.kvstore.ReplicatedKVStore;
+import com.platform.sqlite.KVItem;
 import com.platform.tools.KVStoreManager;
+
+import org.eclipse.jetty.webapp.MetaData;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -80,6 +87,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private final int promptType = 1;
     private final int syncingType = 2;
     private byte[] tempAuthKey;
+    private List<TxMetaData> metaDatas;
 
     public TransactionListAdapter(Context mContext, List<TxItem> items) {
         itemFeed = items;
@@ -309,6 +317,20 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void filterBy(String query, boolean[] switches) {
         if (!ActivityUTILS.isMainThread())
             throw new IllegalArgumentException("this should only be called in the main thread");
+        if (metaDatas == null) {
+            metaDatas = new ArrayList<>();
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    long start = System.currentTimeMillis();
+                    for (TxItem item : itemFeed)
+                        metaDatas.add(KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash()));
+                    Log.e(TAG, "filterBy: took: " + (System.currentTimeMillis() - start));
+                }
+            });
+
+        }
+
         filter(query, switches);
     }
 
