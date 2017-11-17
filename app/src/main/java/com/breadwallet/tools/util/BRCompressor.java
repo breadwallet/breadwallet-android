@@ -127,6 +127,7 @@ public class BRCompressor {
                     e.printStackTrace();
                 }
             }
+            compressedData = byteStream.toByteArray();
         } finally {
             try {
                 byteStream.close();
@@ -134,7 +135,6 @@ public class BRCompressor {
                 e.printStackTrace();
             }
         }
-        compressedData = byteStream.toByteArray();
         return compressedData;
 
     }

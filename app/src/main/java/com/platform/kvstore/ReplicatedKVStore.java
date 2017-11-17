@@ -30,13 +30,17 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Handler;
+import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.BRSQLiteHelper;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.jniwrappers.BRKey;
 import com.platform.interfaces.KVStoreAdaptor;
@@ -65,7 +69,8 @@ public class ReplicatedKVStore {
     public boolean syncImmediately = false;
     private boolean syncRunning = false;
     private KVStoreAdaptor remoteKvStore;
-    private Context context;
+    private static Context mContext;
+    private static byte[] tempAuthKey;
     // Database fields
 //    private SQLiteDatabase readDb;
 //    private SQLiteDatabase writeDb;
@@ -90,7 +95,7 @@ public class ReplicatedKVStore {
 
     private ReplicatedKVStore(Context context, KVStoreAdaptor remoteKvStore) {
 //        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
-        this.context = context;
+        mContext = context;
         this.remoteKvStore = remoteKvStore;
         dbHelper = PlatformSqliteHelper.getInstance(context);
     }
@@ -98,9 +103,10 @@ public class ReplicatedKVStore {
     public SQLiteDatabase getWritable() {
 //        if (mOpenCounter.incrementAndGet() == 1) {
         // Opening new database
+        if(ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         if (mDatabase == null || !mDatabase.isOpen())
             mDatabase = dbHelper.getWritableDatabase();
-        dbHelper.setWriteAheadLoggingEnabled(false);
+        dbHelper.setWriteAheadLoggingEnabled(BRConstants.WAL);
 //        }
 //        Log.d(TAG, "getWritable open counter: " + String.valueOf(mOpenCounter.get()));
         return mDatabase;
@@ -111,7 +117,7 @@ public class ReplicatedKVStore {
     }
 
     public void closeDB() {
-        mDatabase.close();
+//        mDatabase.close();
 //        if (mOpenCounter.decrementAndGet() == 0) {
         // Closing database
 //            mDatabase.close();
@@ -178,7 +184,7 @@ public class ReplicatedKVStore {
             return new CompletionObject(CompletionObject.RemoteKVStoreError.conflict);
         }
         newVer = curVer + 1;
-        byte[] encryptionData = encrypted ? encrypt(kv.value, context) : kv.value;
+        byte[] encryptionData = encrypted ? encrypt(kv.value, mContext) : kv.value;
         SQLiteDatabase db = getWritable();
         try {
             db.beginTransaction();
@@ -218,14 +224,10 @@ public class ReplicatedKVStore {
         }
     }
 
-    public CompletionObject get(String key, long version) {
-        return get(key, version, null);
-    }
-
     /**
      * get kv by key and version (version can be 0)
      */
-    public CompletionObject get(String key, long version, byte[] authKey) {
+    public CompletionObject get(String key, long version) {
         KVItem kv = null;
         Cursor cursor = null;
         long curVer = 0;
@@ -262,7 +264,7 @@ public class ReplicatedKVStore {
             }
             if (kv != null) {
                 byte[] val = kv.value;
-                kv.value = encrypted ? decrypt(val, context, authKey) : val;
+                kv.value = encrypted ? decrypt(val, mContext) : val;
                 if (val != null && Utils.isNullOrEmpty(kv.value)) {
                     //decrypting failed
                     Log.e(TAG, "get: Decrypting failed for key: " + key + ", deleting the kv");
@@ -476,7 +478,7 @@ public class ReplicatedKVStore {
 
         if (completionObject.err == null) {
             locVal = localKv.value;
-            localKv.value = encryptedReplication ? encrypt(locVal, context) : locVal;
+            localKv.value = encryptedReplication ? encrypt(locVal, mContext) : locVal;
         }
 
         if (err == null || err == CompletionObject.RemoteKVStoreError.notFound || err == CompletionObject.RemoteKVStoreError.tombstone) {
@@ -553,7 +555,7 @@ public class ReplicatedKVStore {
                         Log.e(TAG, "_syncKey: key: " + key + " ,from the remote, is empty");
                         return false;
                     }
-                    byte[] decryptedValue = encryptedReplication ? decrypt(val, context) : val;
+                    byte[] decryptedValue = encryptedReplication ? decrypt(val, mContext) : val;
                     if (Utils.isNullOrEmpty(decryptedValue)) {
                         Log.e(TAG, "_syncKey: failed to decrypt the value from remote for key: " + key);
                         return false;
@@ -835,12 +837,12 @@ public class ReplicatedKVStore {
             Log.e(TAG, "encrypt: app is null");
             return null;
         }
-        byte[] authKey = BRKeyStore.getAuthKey(app);
-        if (Utils.isNullOrEmpty(authKey)) {
-            Log.e(TAG, "encrypt: authKey is empty: " + (authKey == null ? null : authKey.length));
+        if (tempAuthKey == null) retrieveAuthKey(app);
+        if (Utils.isNullOrEmpty(tempAuthKey)) {
+            Log.e(TAG, "encrypt: authKey is empty: " + (tempAuthKey == null ? null : tempAuthKey.length));
             return null;
         }
-        BRKey key = new BRKey(authKey);
+        BRKey key = new BRKey(tempAuthKey);
         byte[] nonce = getNonce();
         if (Utils.isNullOrEmpty(nonce) || nonce.length != 12) {
             Log.e(TAG, "encrypt: nonce is invalid: " + (nonce == null ? null : nonce.length));
@@ -858,25 +860,46 @@ public class ReplicatedKVStore {
         return result;
     }
 
-    public static byte[] decrypt(byte[] data, Context app) {
-        return decrypt(data, app, null);
-    }
+//    public static byte[] decrypt(byte[] data, Context app) {
+//        return decrypt(data, app, null);
+//    }
 
     /**
      * decrypt some data using key
      */
-    public static byte[] decrypt(byte[] data, Context app, byte[] authKey) {
+    public static byte[] decrypt(byte[] data, Context app) {
         if (data == null || data.length <= 12) {
             Log.e(TAG, "decrypt: failed to decrypt: " + (data == null ? null : data.length));
             return null;
         }
         if (app == null) app = BreadApp.getBreadContext();
         if (app == null) return null;
-        if (authKey == null)
-            authKey = BRKeyStore.getAuthKey(app);
-        BRKey key = new BRKey(authKey);
+        if (tempAuthKey == null)
+            retrieveAuthKey(app);
+        BRKey key = new BRKey(tempAuthKey);
         //12 bytes is the nonce
         return key.decryptNative(Arrays.copyOfRange(data, 12, data.length), Arrays.copyOfRange(data, 0, 12));
+    }
+
+    //store the authKey for 10 seconds (expensive operation)
+    private static void retrieveAuthKey(Context context) {
+        if (Utils.isNullOrEmpty(tempAuthKey)) {
+            tempAuthKey = BRKeyStore.getAuthKey(context);
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        Thread.sleep(10000);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    if (tempAuthKey != null)
+                        Arrays.fill(tempAuthKey, (byte) 0);
+                    tempAuthKey = null;
+                }
+            });
+
+        }
     }
 
     /**

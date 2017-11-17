@@ -30,11 +30,14 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
 import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.tools.util.BRConstants;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
@@ -154,9 +157,10 @@ public class PeerDataSource implements BRDataSourceInterface {
     public  SQLiteDatabase openDatabase() {
 //        if (mOpenCounter.incrementAndGet() == 1) {
         // Opening new database
-        if (database == null)
+        if(ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
+        if (database == null || !database.isOpen())
             database = dbHelper.getWritableDatabase();
-        dbHelper.setWriteAheadLoggingEnabled(false);
+        dbHelper.setWriteAheadLoggingEnabled(BRConstants.WAL);
 //        }
 //        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
         return database;

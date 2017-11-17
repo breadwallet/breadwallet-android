@@ -1,5 +1,6 @@
 package com.breadwallet.tools.manager;
 
+import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -85,8 +86,10 @@ public class InternetManager extends BroadcastReceiver {
     }
 
     public boolean isConnected() {
+        Context app = BreadApp.getBreadContext();
+        if (app == null) return false;
         ConnectivityManager
-                cm = (ConnectivityManager) BreadApp.getBreadContext().getApplicationContext()
+                cm = (ConnectivityManager) app.getApplicationContext()
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null

@@ -259,12 +259,15 @@ public class KVStoreTests {
                     Assert.assertNull(obj.err);
                     Assert.assertEquals(obj.version, 1);
                     count.incrementAndGet();
+                    CompletionObject remObj = store.delete("Key" + finalI, store.localVersion("Key" + finalI).version);
+                    Assert.assertNull(remObj.err);
+                    count.decrementAndGet();
                 }
             });
         }
         try {
             Thread.sleep(10000);
-            Assert.assertEquals(count.get(), 1000);
+            Assert.assertEquals(count.get(), 0);
             Assert.assertEquals(store.getAllKVs().size(), 1000);
         } catch (InterruptedException e) {
             e.printStackTrace();

@@ -29,12 +29,15 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
 import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.tools.util.BRConstants;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
@@ -69,7 +72,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
-    public  void putCurrencies(Collection<CurrencyEntity> currencyEntities) {
+    public void putCurrencies(Collection<CurrencyEntity> currencyEntities) {
         if (currencyEntities == null) return;
 
         try {
@@ -95,7 +98,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
 
     }
 
-    public  void deleteAllCurrencies() {
+    public void deleteAllCurrencies() {
         try {
             database = openDatabase();
             database.delete(BRSQLiteHelper.CURRENCY_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID + " <> -1", null);
@@ -104,7 +107,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         }
     }
 
-    public  List<CurrencyEntity> getAllCurrencies() {
+    public List<CurrencyEntity> getAllCurrencies() {
 
         List<CurrencyEntity> currencies = new ArrayList<>();
         Cursor cursor = null;
@@ -130,7 +133,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         return currencies;
     }
 
-    public  List<String> getAllISOs() {
+    public List<String> getAllISOs() {
         List<String> ISOs = new ArrayList<>();
         Cursor cursor = null;
         try {
@@ -155,7 +158,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         return ISOs;
     }
 
-    public  CurrencyEntity getCurrencyByIso(String iso) {
+    public CurrencyEntity getCurrencyByIso(String iso) {
         Cursor cursor = null;
         try {
             database = openDatabase();
@@ -182,22 +185,22 @@ public class CurrencyDataSource implements BRDataSourceInterface {
     }
 
     @Override
-    public  SQLiteDatabase openDatabase() {
+    public SQLiteDatabase openDatabase() {
 //        if (mOpenCounter.incrementAndGet() == 1) {
         // Opening new database
-        if (database == null)
+        if (database == null || !database.isOpen())
             database = dbHelper.getWritableDatabase();
-        dbHelper.setWriteAheadLoggingEnabled(false);
+        dbHelper.setWriteAheadLoggingEnabled(BRConstants.WAL);
 //        }
 //        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
         return database;
     }
 
     @Override
-    public  void closeDatabase() {
+    public void closeDatabase() {
 //        if (mOpenCounter.decrementAndGet() == 0) {
 //            // Closing database
-//            database.close();
+//        database.close();
 //
 //        }
 //        Log.d("Database open counter: " , String.valueOf(mOpenCounter.get()));
