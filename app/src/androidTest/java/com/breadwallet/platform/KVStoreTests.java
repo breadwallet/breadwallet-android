@@ -64,7 +64,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @RunWith(AndroidJUnit4.class)
 @LargeTest
-
 public class KVStoreTests {
     public static final String TAG = KVStoreTests.class.getName();
 
@@ -137,12 +136,11 @@ public class KVStoreTests {
 
     }
 
-    @BeforeClass
-    public static void setUp() {
+    @Before
+    public void setUp() {
         Log.e(TAG, "setUp: ");
         BRConstants.PLATFORM_ON = false;
         ((MockUpAdapter) remote).remoteKVs.clear();
-        store.deleteAllKVs();
         ((MockUpAdapter) remote).putKv(new KVItem(1, 1, "hello", ReplicatedKVStore.encrypt("hello".getBytes(), mActivityRule.getActivity()), System.currentTimeMillis(), 0));
         ((MockUpAdapter) remote).putKv(new KVItem(1, 1, "removed", ReplicatedKVStore.encrypt("removed".getBytes(), mActivityRule.getActivity()), System.currentTimeMillis(), 1));
         for (int i = 0; i < 20; i++) {
@@ -150,12 +148,14 @@ public class KVStoreTests {
         }
 
         store = ReplicatedKVStore.getInstance(mActivityRule.getActivity(), remote);
+        store.deleteAllKVs();
         Assert.assertEquals(22, ((MockUpAdapter) remote).remoteKVs.size());
     }
 
     @AfterClass
     public static void tearDown() {
         mActivityRule.getActivity().deleteDatabase(PlatformSqliteHelper.DATABASE_NAME);
+        store.deleteAllKVs();
         ((MockUpAdapter) remote).remoteKVs.clear();
 
     }
@@ -239,6 +239,7 @@ public class KVStoreTests {
 
     @Test
     public void testSetLocalIncrementsVersion() {
+        store.deleteAllKVs();
         CompletionObject obj = store.set(0, 0, "Key1", "Key1".getBytes(), System.currentTimeMillis(), 0);
         Assert.assertNull(obj.err);
         List<KVItem> test = store.getAllKVs();
