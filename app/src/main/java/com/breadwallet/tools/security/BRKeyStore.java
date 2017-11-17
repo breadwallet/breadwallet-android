@@ -168,7 +168,7 @@ public class BRKeyStore {
                         .setKeySize(256)
                         .setUserAuthenticationRequired(auth_required)
                         .setUserAuthenticationValidityDurationSeconds(AUTH_DURATION_SEC)
-                        .setRandomizedEncryptionRequired(false)
+                        .setRandomizedEncryptionRequired(true)
                         .setEncryptionPaddings(PADDING)
                         .build());
                 SecretKey key = keyGenerator.generateKey();

@@ -21,11 +21,13 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRText;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.PromptManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRDateUtil;
@@ -87,7 +89,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private final int txType = 0;
     private final int promptType = 1;
     private final int syncingType = 2;
-    private byte[] tempAuthKey;
+
     private boolean updatingMetadata;
 
     public TransactionListAdapter(Context mContext, List<TxItem> items) {
@@ -105,7 +107,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private void init(List<TxItem> items) {
         if (items == null) items = new ArrayList<>();
         if (backUpFeed == null) backUpFeed = new ArrayList<>();
-        boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size();
+        boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size() && BRSharedPrefs.getAllowSpend(mContext);
         this.itemFeed = items;
         this.backUpFeed = items;
         if (updateMetadata)
@@ -121,18 +123,21 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             @Override
             public void run() {
                 long start = System.currentTimeMillis();
+
                 RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(mContext));
                 ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(mContext, remoteKVStore);
                 List<KVItem> allKvs = kvStore.getAllKVs();
                 for (int i = 0; i < backUpFeed.size(); i++) {
                     TxItem item = backUpFeed.get(i);
+                    TxMetaData metaData = new TxMetaData();
                     for (KVItem kv : allKvs) {
                         if (kv == null || kv.key == null || kv.value == null) continue;
                         if (kv.key.equalsIgnoreCase(KVStoreManager.txKey(item.getTxHash()))) {
-                            item.metaData = KVStoreManager.getInstance().valueToMetaData(kv.value);
+                            metaData = KVStoreManager.getInstance().valueToMetaData(kv.value);
                             break;
                         }
                     }
+                    item.metaData = metaData;
                 }
                 Log.e(TAG, "updateMetadata, took:" + (System.currentTimeMillis() - start));
                 updatingMetadata = false;
@@ -193,19 +198,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private void setTexts(final TxHolder convertView, int position) {
         TxItem item = itemFeed.get(TxManager.getInstance().currentPrompt == null ? position : position - 1);
-        if (Utils.isNullOrEmpty(tempAuthKey)) {
-            tempAuthKey = BRKeyStore.getAuthKey(mContext);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (tempAuthKey != null)
-                        Arrays.fill(tempAuthKey, (byte) 0);
-                    tempAuthKey = null;
-                }
-            }, 10000);
-        }
-        TxMetaData txMetaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash(), tempAuthKey);
-        String commentString = (txMetaData == null || txMetaData.comment == null) ? "" : txMetaData.comment;
+
+        String commentString = (item.metaData == null || item.metaData.comment == null) ? "" : item.metaData.comment;
         convertView.comment.setText(commentString);
         if (commentString.isEmpty()) {
             convertView.constraintLayout.removeView(convertView.comment);

@@ -270,13 +270,13 @@ public class BRWalletManager {
             public void run() {
                 BRPeerManager.getInstance().peerManagerFreeEverything();
                 walletFreeEverything();
+                TransactionDataSource.getInstance(ctx).deleteAllTransactions();
+                MerkleBlockDataSource.getInstance(ctx).deleteAllBlocks();
+                PeerDataSource.getInstance(ctx).deleteAllPeers();
+                BRSharedPrefs.clearAllPrefs(ctx);
             }
         });
 
-        TransactionDataSource.getInstance(ctx).deleteAllTransactions();
-        MerkleBlockDataSource.getInstance(ctx).deleteAllBlocks();
-        PeerDataSource.getInstance(ctx).deleteAllPeers();
-        BRSharedPrefs.clearAllPrefs(ctx);
     }
 
     public boolean confirmSweep(final Context ctx, final String privKey) {

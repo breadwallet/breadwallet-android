@@ -148,18 +148,18 @@ public class KVStoreManager {
 
     }
 
-    public TxMetaData getTxMetaData(Context app, byte[] txHash) {
-        return getTxMetaData(app, txHash, null);
-    }
+//    public TxMetaData getTxMetaData(Context app, byte[] txHash) {
+//        return getTxMetaData(app, txHash, null);
+//    }
 
-    public TxMetaData getTxMetaData(Context app, byte[] txHash, byte[] authKey) {
+    public TxMetaData getTxMetaData(Context app, byte[] txHash) {
         String key = txKey(txHash);
 
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
         long ver = kvStore.localVersion(key).version;
 
-        CompletionObject obj = kvStore.get(key, ver, authKey);
+        CompletionObject obj = kvStore.get(key, ver);
 
         if (obj.kv == null) {
 //            Log.e(TAG, "getTxMetaData: kv is null for key: " + key);
@@ -172,7 +172,7 @@ public class KVStoreManager {
     public TxMetaData valueToMetaData(byte[] value) {
         TxMetaData result = new TxMetaData();
         JSONObject json;
-        if(value == null) {
+        if (value == null) {
             Log.e(TAG, "valueToMetaData: value is null!");
             return null;
         }
@@ -184,7 +184,7 @@ public class KVStoreManager {
             }
             json = new JSONObject(new String(decompressed));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "valueToMetaData: " + new String(value) + ":", e);
             return null;
         }
 

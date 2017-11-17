@@ -9,6 +9,7 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
@@ -120,40 +121,26 @@ public class BRApiManager {
         return new LinkedHashSet<>(set);
     }
 
-    public class GetCurrenciesTask extends AsyncTask {
-        Set<CurrencyEntity> tmp;
-        private Context context;
-
-        public GetCurrenciesTask(Context ctx) {
-            this.context = ctx;
-        }
-
-        @Override
-        protected Object doInBackground(Object[] params) {
-            if (!BreadApp.isAppInBackground(context)) {
-                Log.e(TAG, "doInBackground: Stopping timer, no activity on.");
-                BRApiManager.getInstance().stopTimerTask();
-            }
-            tmp = getCurrencies((Activity) context);
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Object o) {
-            if (tmp.size() > 0) {
-                CurrencyDataSource.getInstance(context).putCurrencies(tmp);
-            }
-        }
-    }
 
     private void initializeTimerTask(final Context context) {
-
         timerTask = new TimerTask() {
             public void run() {
                 //use a handler to run a toast that shows the current timestamp
                 handler.post(new Runnable() {
                     public void run() {
-                        new GetCurrenciesTask(context).execute();
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (!BreadApp.isAppInBackground(context)) {
+                                    Log.e(TAG, "doInBackground: Stopping timer, no activity on.");
+                                    BRApiManager.getInstance().stopTimerTask();
+                                }
+                                Set<CurrencyEntity> tmp = getCurrencies((Activity) context);
+                                if (tmp.size() > 0) {
+                                    CurrencyDataSource.getInstance(context).putCurrencies(tmp);
+                                }
+                            }
+                        });
                     }
                 });
             }

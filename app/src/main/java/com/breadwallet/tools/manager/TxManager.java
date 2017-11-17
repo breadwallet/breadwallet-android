@@ -117,6 +117,8 @@ public class TxManager {
         }));
         if (adapter == null)
             adapter = new TransactionListAdapter(app, null);
+        txList.setAdapter(adapter);
+        adapter.notifyDataSetChanged();
         setupSwipe(app);
     }
 
@@ -190,9 +192,10 @@ public class TxManager {
         Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI");
         if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         final TxItem[] arr = BRWalletManager.getInstance().getTransactions();
-        updateTxMetaData(app, arr);
+//        updateTxMetaData(app, arr);
         List<TxItem> items = arr == null ? null : new LinkedList<>(Arrays.asList(arr));
-        if (adapter != null) {
+
+        if (adapter != null && items != null && adapter.getItemCount() != items.size()) {
             adapter.setItems(items);
             ((Activity) app).runOnUiThread(new Runnable() {
                 @Override

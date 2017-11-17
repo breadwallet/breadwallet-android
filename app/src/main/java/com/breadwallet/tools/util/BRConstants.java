@@ -116,6 +116,7 @@ public class BRConstants {
 
     public static boolean PLATFORM_ON = true;
     public static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_EVEN;
+    public static final boolean WAL = true;
 
     /**
      * Support Center article ids.
