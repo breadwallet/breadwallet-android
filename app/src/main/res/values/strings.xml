@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+  <!-- App name -->
+  <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
   <string name="About.blog">Blog</string>
-  <!-- Equals symbol -->
-  <string name="AccountHeader.equals">=</string>
-  <!-- Wipe wallet button -->
-  <string name="JailbreakWarnings.wipe">Wipe</string>
   <!-- About screen footer -->
   <string name="About.footer">Made by the global Bread team. Version %1$s</string>
-  <!-- Manage wallet button title -->
-  <string name="AccountHeader.manageButtonName">MANAGE</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">Privacy Policy</string>
   <!-- About screen reddit label -->
@@ -126,8 +122,8 @@
   <string name="Confirmation.amountLabel">Amount to Send:</string>
   <!-- Network Fee: ($1.00) -->
   <string name="Confirmation.feeLabel">Network Fee:</string>
-  <!-- eg. Processing time: This transaction will take 10-30 minutes to process. -->
-  <string name="Confirmation.processingTime">Processing time: This transaction will take %1$s minutes to process.</string>
+  <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
+  <string name="Confirmation.processingTime">Processing time: This transaction is predicted to complete in %1$s.</string>
   <!-- Label for "send" button on final confirmation screen -->
   <string name="Confirmation.send">Send</string>
   <!-- Confirmation Screen title -->
@@ -156,14 +152,16 @@
   <string name="ErrorMessages.touchIdFailed.android">Fingerprint not recognized. Please try again.</string>
   <!-- Economy fee -->
   <string name="FeeSelector.economy">Economy</string>
-  <!-- Fee Selector economly fee description -->
-  <string name="FeeSelector.economyLabel">Estimated Delivery: 60+ minutes</string>
+  <!-- E.g. [This transaction is predicted to complete in] 1-24 hours -->
+  <string name="FeeSelector.economyTime">1-24 hours</string>
   <!-- Warning message for economy fee -->
   <string name="FeeSelector.economyWarning">This option is not recommended for time-sensitive transactions.</string>
+  <!-- E.g. Estimated delivery: 10-60 minutes -->
+  <string name="FeeSelector.estimatedDeliver">Estimated Delivery: %1$s</string>
   <!-- Regular fee -->
   <string name="FeeSelector.regular">Regular</string>
-  <!-- Fee Selector regular fee description -->
-  <string name="FeeSelector.regularLabel">Estimated Delivery: 10-30 minutes</string>
+  <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
+  <string name="FeeSelector.regularTime">10-60 minutes</string>
   <!-- Fee Selector title -->
   <string name="FeeSelector.title">Processing Speed</string>
   <!-- Checking private key balance progress view text -->
@@ -555,7 +553,7 @@
   <!-- Touch id switch label. -->
   <string name="TouchIdSettings.switchLabel">Enable Touch ID for Bread</string>
   <!-- Enable fingerprint for this wallet called Bread -->
-  <string name="TouchIdSettings.switchLabel.android">Enable Fingerprint Authentication for Bread</string>
+  <string name="TouchIdSettings.switchLabel.android">Enable Fingerprint Authentication</string>
   <!-- Touch ID settings view title -->
   <string name="TouchIdSettings.title">Touch ID</string>
   <!-- Fingerprint authentication label -->

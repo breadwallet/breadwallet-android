@@ -18,6 +18,11 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.threads.BRExecutor;
 
+import org.eclipse.jetty.webapp.MetaData;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * BreadWallet
  * <p/>
@@ -231,5 +236,6 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
                 TxManager.getInstance().adapter.filterBy("", filterSwitches);
         }
     }
+
 
 }
