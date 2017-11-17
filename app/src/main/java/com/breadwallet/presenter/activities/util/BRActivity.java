@@ -6,6 +6,8 @@ import android.os.Handler;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.BRExecutor;
@@ -47,7 +49,6 @@ public class BRActivity extends Activity {
     @Override
     protected void onPause() {
         super.onPause();
-
     }
 
     @Override
@@ -55,6 +56,7 @@ public class BRActivity extends Activity {
         super.onStop();
         BreadApp.activityCounter.decrementAndGet();
         BreadApp.onStop(this);
+        BreadApp.backgroundedTime = System.currentTimeMillis();
     }
 
     @Override
@@ -62,6 +64,13 @@ public class BRActivity extends Activity {
         super.onResume();
         BreadApp.activityCounter.incrementAndGet();
         BreadApp.setBreadContext(this);
+        //lock wallet if 3 minutes passed
+        if (BreadApp.backgroundedTime != 0 && (System.currentTimeMillis() - BreadApp.backgroundedTime >= 180 * 1000)) {
+            if (!BRKeyStore.getPinCode(this).isEmpty()) {
+                BreadApp.backgroundedTime = System.currentTimeMillis();
+                BRAnimator.startBreadActivity(this, true);
+            }
+        }
     }
 
     @Override
@@ -151,7 +160,6 @@ public class BRActivity extends Activity {
                     finish();
                 }
                 break;
-
         }
     }
 }
