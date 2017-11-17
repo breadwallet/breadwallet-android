@@ -172,6 +172,10 @@ public class KVStoreManager {
     public TxMetaData valueToMetaData(byte[] value) {
         TxMetaData result = new TxMetaData();
         JSONObject json;
+        if(value == null) {
+            Log.e(TAG, "valueToMetaData: value is null!");
+            return null;
+        }
         try {
             byte[] decompressed = BRCompressor.bz2Extract(value);
             if (decompressed == null) {
