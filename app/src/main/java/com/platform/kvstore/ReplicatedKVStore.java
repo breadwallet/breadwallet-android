@@ -30,15 +30,12 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.Handler;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.sqlite.BRSQLiteHelper;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -103,7 +100,7 @@ public class ReplicatedKVStore {
     public SQLiteDatabase getWritable() {
 //        if (mOpenCounter.incrementAndGet() == 1) {
         // Opening new database
-        if(ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
+        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         if (mDatabase == null || !mDatabase.isOpen())
             mDatabase = dbHelper.getWritableDatabase();
         dbHelper.setWriteAheadLoggingEnabled(BRConstants.WAL);
@@ -192,6 +189,8 @@ public class ReplicatedKVStore {
             boolean success = insert(new KVItem(newVer, -1, key, encryptionData, time, kv.deleted));
             if (!success) return new CompletionObject(CompletionObject.RemoteKVStoreError.unknown);
             db.setTransactionSuccessful();
+        } catch (Exception e) {
+            Log.e(TAG, "_set: ", e);
         } finally {
             db.endTransaction();
 //            dbLock.unlock();
@@ -332,7 +331,7 @@ public class ReplicatedKVStore {
 
     }
 
-    public List<KVItem> getAllKVs() {
+    public List<KVItem> geRawKVs() {
         List<KVItem> kvs = new ArrayList<>();
         Cursor cursor = null;
         try {
@@ -604,7 +603,7 @@ public class ReplicatedKVStore {
                 syncRunning = false;
                 return false;
             }
-            List<KVItem> localKvs = getAllKVs();
+            List<KVItem> localKvs = geRawKVs();
             List<KVItem> remoteKVs = obj.kvs;
 
             List<String> remoteKeys = getKeysFromKVEntity(remoteKVs);
