@@ -186,6 +186,9 @@ public class KVStoreManager {
         } catch (JSONException e) {
             Log.e(TAG, "valueToMetaData: " + new String(value) + ":", e);
             return null;
+        } catch (Exception e){
+            Log.e(TAG, "valueToMetaData: ", e);
+            return null;
         }
 
         try {

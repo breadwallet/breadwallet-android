@@ -12,6 +12,8 @@ import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Filter;
+import android.widget.Filterable;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
@@ -106,6 +108,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private void init(List<TxItem> items) {
         if (items == null) items = new ArrayList<>();
+
         if (backUpFeed == null) backUpFeed = new ArrayList<>();
         boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size() && BRSharedPrefs.getAllowSpend(mContext);
         this.itemFeed = items;
@@ -123,21 +126,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             @Override
             public void run() {
                 long start = System.currentTimeMillis();
-
-                RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(mContext));
-                ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(mContext, remoteKVStore);
-                List<KVItem> allKvs = kvStore.getAllKVs();
                 for (int i = 0; i < backUpFeed.size(); i++) {
                     TxItem item = backUpFeed.get(i);
-                    TxMetaData metaData = new TxMetaData();
-                    for (KVItem kv : allKvs) {
-                        if (kv == null || kv.key == null || kv.value == null) continue;
-                        if (kv.key.equalsIgnoreCase(KVStoreManager.txKey(item.getTxHash()))) {
-                            metaData = KVStoreManager.getInstance().valueToMetaData(kv.value);
-                            break;
-                        }
-                    }
-                    item.metaData = metaData;
+                    item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
                 }
                 Log.e(TAG, "updateMetadata, took:" + (System.currentTimeMillis() - start));
                 updatingMetadata = false;
@@ -165,7 +156,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-
         switch (holder.getItemViewType()) {
             case txType:
                 setTexts((TxHolder) holder, position);
@@ -343,6 +333,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
+
     public void filterBy(String query, boolean[] switches) {
         if (!ActivityUTILS.isMainThread())
             throw new IllegalArgumentException("this should only be called in the main thread");
@@ -353,13 +344,15 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private void filter(final String query, final boolean[] switches) {
         long start = System.currentTimeMillis();
         String lowerQuery = query.toLowerCase().trim();
-
+        if (Utils.isNullOrEmpty(lowerQuery) && !switches[0] && !switches[1] && !switches[2] && !switches[3])
+            return;
         int switchesON = 0;
         for (boolean i : switches) if (i) switchesON++;
 
         final List<TxItem> filteredList = new LinkedList<>();
 //        TxMetaData metaData;
-        for (TxItem item : backUpFeed) {
+        for (int i = 0; i < backUpFeed.size(); i++) {
+            TxItem item = backUpFeed.get(i);
 //            metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
             if (item.getTxHashHexReversed().toLowerCase().contains(lowerQuery)
                     || item.getFrom()[0].toLowerCase().contains(lowerQuery)

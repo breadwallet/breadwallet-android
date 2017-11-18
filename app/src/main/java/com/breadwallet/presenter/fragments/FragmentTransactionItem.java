@@ -282,12 +282,12 @@ public class FragmentTransactionItem extends Fragment {
         String comment = mCommentText.getText().toString();
         final Activity app = getActivity();
         if (!comment.equals(oldComment)) {
-            TxMetaData md = new TxMetaData();
+            final TxMetaData md = new TxMetaData();
             md.comment = comment;
-            KVStoreManager.getInstance().putTxMetaData(app, md, item.getTxHash());
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
+                    KVStoreManager.getInstance().putTxMetaData(app, md, item.getTxHash());
                     try {
                         Thread.sleep(200);
                     } catch (InterruptedException e) {
