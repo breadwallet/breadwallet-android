@@ -161,7 +161,12 @@ public class FragmentTransactionItem extends Fragment {
 //        Log.e(TAG, "fillTexts hash: " + item.getHexId());
         //get the current iso
         String iso = BRSharedPrefs.getPreferredBTC(getActivity()) ? "BTC" : BRSharedPrefs.getIso(getContext());
-        TxMetaData txMetaData = KVStoreManager.getInstance().getTxMetaData(getContext(), item.getTxHash());
+//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                TxMetaData txMetaData = KVStoreManager.getInstance().getTxMetaData(getContext(), item.getTxHash());
+//            }
+//        });
 
         //get the tx amount
         BigDecimal txAmount = new BigDecimal(item.getReceived() - item.getSent()).abs();
@@ -181,7 +186,7 @@ public class FragmentTransactionItem extends Fragment {
 
         String startingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(sent ? item.getBalanceAfterTx() + txAmount.longValue() : item.getBalanceAfterTx() - txAmount.longValue())));
         String endingBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(item.getBalanceAfterTx())));
-        String commentString = txMetaData == null || txMetaData.comment == null ? "" : txMetaData.comment;
+        String commentString = item.metaData == null || item.metaData.comment == null ? "" : item.metaData.comment;
         String sb = String.format(getString(R.string.Transaction_starting), startingBalance);
         String eb = String.format(getString(R.string.Transaction_ending), endingBalance);
         String amountString = String.format("%s %s\n\n%s\n%s", amount, item.getFee() == -1 ? "" : String.format(getString(R.string.Transaction_fee), fee), sb, eb);
@@ -288,12 +293,9 @@ public class FragmentTransactionItem extends Fragment {
                 @Override
                 public void run() {
                     KVStoreManager.getInstance().putTxMetaData(app, md, item.getTxHash());
-                    try {
-                        Thread.sleep(200);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
+                    item.metaData = KVStoreManager.getInstance().getTxMetaData(app, item.getTxHash());
                     TxManager.getInstance().updateTxList(app);
+
                 }
             });
 

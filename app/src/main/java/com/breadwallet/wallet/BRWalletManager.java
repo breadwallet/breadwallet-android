@@ -15,6 +15,8 @@ import android.os.Handler;
 import android.os.NetworkOnMainThreadException;
 import android.os.SystemClock;
 import android.security.keystore.UserNotAuthenticatedException;
+import android.support.annotation.UiThread;
+import android.support.annotation.WorkerThread;
 import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
@@ -107,12 +109,7 @@ public class BRWalletManager {
             return;
         }
         BRSharedPrefs.putCatchedBalance(context, balance);
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                refreshAddress(context);
-            }
-        });
+        refreshAddress(context);
 
         for (OnBalanceChanged listener : balanceListeners) {
             if (listener != null) listener.onBalanceChanged(balance);
@@ -145,12 +142,12 @@ public class BRWalletManager {
 
     public boolean generateRandomSeed(final Context ctx) {
         SecureRandom sr = new SecureRandom();
-        String[] words;
+        final String[] words;
         List<String> list;
         String languageCode = Locale.getDefault().getLanguage();
         list = Bip39Reader.bip39List(ctx, languageCode);
         words = list.toArray(new String[list.size()]);
-        byte[] randomSeed = sr.generateSeed(16);
+        final byte[] randomSeed = sr.generateSeed(16);
         if (words.length < 2000) {
             BRReportsManager.reportBug(new IllegalArgumentException("the list is wrong, size: " + words.length), true);
         }
@@ -250,9 +247,7 @@ public class BRWalletManager {
 
     }
 
-    //BLOCKS
     public static boolean refreshAddress(Context ctx) {
-        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         String address = getReceiveAddress();
         if (Utils.isNullOrEmpty(address)) {
             Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
@@ -493,6 +488,7 @@ public class BRWalletManager {
         }
     }
 
+    @WorkerThread
     public void initWallet(final Context ctx) {
         if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         Log.d(TAG, "initWallet:" + Thread.currentThread().getName());
@@ -658,10 +654,9 @@ public class BRWalletManager {
 
     public native String decryptBip38Key(String privKey, String pass);
 
-//    public native String reverseTxHash(String txHash);
+    //    public native String reverseTxHash(String txHash);
 //
 //    public native String txHashSha256Hex(String txHash);
-
     public native long nativeBalance();
 
     public native int getTxCount();

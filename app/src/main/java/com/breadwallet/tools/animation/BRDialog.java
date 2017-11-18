@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.tools.threads.BRExecutor;
 
 /**
  * BreadWallet
@@ -48,10 +49,9 @@ public class BRDialog {
             return;
         }
 
-        ((Activity) app).runOnUiThread(new Runnable() {
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-
                 BRDialogView dialog = new BRDialogView();
                 dialog.setTitle(title);
                 dialog.setMessage(message);

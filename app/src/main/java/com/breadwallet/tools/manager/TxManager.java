@@ -7,6 +7,7 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.NetworkOnMainThreadException;
+import android.support.annotation.WorkerThread;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -188,6 +189,7 @@ public class TxManager {
         }
     }
 
+    @WorkerThread
     public synchronized void updateTxList(final Context app) {
         Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI");
         if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
@@ -195,7 +197,7 @@ public class TxManager {
 //        updateTxMetaData(app, arr);
         List<TxItem> items = arr == null ? null : new LinkedList<>(Arrays.asList(arr));
 
-        if (adapter != null && items != null && adapter.getItemCount() != items.size()) {
+        if (adapter != null && items != null) {
             adapter.setItems(items);
             ((Activity) app).runOnUiThread(new Runnable() {
                 @Override
@@ -208,40 +210,40 @@ public class TxManager {
 
     }
 
-    private void updateTxMetaData(final Context app, final TxItem[] arr) {
-        if (isMetaDataUpdating) return;
-        isMetaDataUpdating = true;
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                Thread.currentThread().setName(Thread.currentThread().getName() + ":updateTxMetaData");
-                if (arr != null) {
-                    for (TxItem item : arr) {
-                        KVStoreManager kvM = KVStoreManager.getInstance();
-                        String iso = BRSharedPrefs.getIso(app);
-                        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
-                        double rate = ent == null ? 0 : ent.rate;
-                        TxMetaData temp = kvM.getTxMetaData(app, item.getTxHash());
-                        String comment = temp == null ? "" : temp.comment;
-
-                        TxMetaData tx = new TxMetaData();
-                        tx.exchangeCurrency = iso;
-                        tx.exchangeRate = rate;
-                        tx.fee = item.getFee();
-                        tx.creationTime = (int) (item.getTimeStamp() / 1000);
-                        tx.blockHeight = item.getBlockHeight();
-                        tx.deviceId = BRSharedPrefs.getDeviceId(app);
-                        tx.txSize = item.getTxSize();
-                        tx.comment = comment == null ? "" : comment;
-//                        tx.classVersion = ...
-                        kvM.putTxMetaData(app, tx, item.getTxHash());
-                        item.metaData = tx;
-                    }
-                }
-                isMetaDataUpdating = false;
-            }
-        });
-    }
+//    private void updateTxMetaData(final Context app, final TxItem[] arr) {
+//        if (isMetaDataUpdating) return;
+//        isMetaDataUpdating = true;
+//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                Thread.currentThread().setName(Thread.currentThread().getName() + ":updateTxMetaData");
+//                if (arr != null) {
+//                    for (TxItem item : arr) {
+//                        KVStoreManager kvM = KVStoreManager.getInstance();
+//                        String iso = BRSharedPrefs.getIso(app);
+//                        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
+//                        double rate = ent == null ? 0 : ent.rate;
+//                        TxMetaData temp = kvM.getTxMetaData(app, item.getTxHash());
+//                        String comment = temp == null ? "" : temp.comment;
+//
+//                        TxMetaData tx = new TxMetaData();
+//                        tx.exchangeCurrency = iso;
+//                        tx.exchangeRate = rate;
+//                        tx.fee = item.getFee();
+//                        tx.creationTime = (int) (item.getTimeStamp() / 1000);
+//                        tx.blockHeight = item.getBlockHeight();
+//                        tx.deviceId = BRSharedPrefs.getDeviceId(app);
+//                        tx.txSize = item.getTxSize();
+//                        tx.comment = comment == null ? "" : comment;
+////                        tx.classVersion = ...
+//                        kvM.putTxMetaData(app, tx, item.getTxHash());
+//                        item.metaData = tx;
+//                    }
+//                }
+//                isMetaDataUpdating = false;
+//            }
+//        });
+//    }
 
     public void updateCard(final Context app) {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {

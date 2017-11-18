@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.NetworkOnMainThreadException;
 import android.security.keystore.UserNotAuthenticatedException;
+import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -170,7 +171,6 @@ public class PostAuth {
 
     }
 
-    //BLOCKS
     public void onPublishTxAuth(final Context app, boolean authAsked) {
         if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
 
