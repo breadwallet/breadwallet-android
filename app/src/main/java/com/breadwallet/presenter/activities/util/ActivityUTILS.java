@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Intent;
 import android.os.Looper;
+import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 
@@ -106,6 +107,10 @@ public class ActivityUTILS {
     }
 
     public static boolean isMainThread(){
-        return Looper.myLooper() == Looper.getMainLooper();
+        boolean isMain = Looper.myLooper() == Looper.getMainLooper();
+        if(isMain){
+            Log.e(TAG, "IS MAIN UI THREAD!");
+        }
+        return isMain;
     }
 }

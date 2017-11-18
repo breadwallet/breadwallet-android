@@ -280,9 +280,7 @@ public class BRSender {
 
     }
 
-    //BLOCKS
     public void confirmPay(final Context ctx, final PaymentItem request) {
-        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         if (ctx == null) {
             Log.e(TAG, "confirmPay: context is null");
             return;

@@ -130,6 +130,10 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     TxItem item = backUpFeed.get(i);
                     item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
                 }
+                for (int i = 0; i < itemFeed.size(); i++) {
+                    TxItem item = itemFeed.get(i);
+                    item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
+                }
                 Log.e(TAG, "updateMetadata, took:" + (System.currentTimeMillis() - start));
                 updatingMetadata = false;
             }
@@ -335,9 +339,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
 
     public void filterBy(String query, boolean[] switches) {
-        if (!ActivityUTILS.isMainThread())
-            throw new IllegalArgumentException("this should only be called in the main thread");
-
         filter(query, switches);
     }
 
@@ -356,8 +357,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 //            metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
             if (item.getTxHashHexReversed().toLowerCase().contains(lowerQuery)
                     || item.getFrom()[0].toLowerCase().contains(lowerQuery)
-                    || item.getTo()[0].toLowerCase().contains(lowerQuery) ||
-                    (item.metaData != null && item.metaData.comment != null && item.metaData.comment.toLowerCase().contains(lowerQuery))) {
+                    || item.getTo()[0].toLowerCase().contains(lowerQuery)
+                    || (item.metaData != null && item.metaData.comment != null
+                    && item.metaData.comment.toLowerCase().contains(lowerQuery))) {
                 if (switchesON == 0) {
                     filteredList.add(item);
                 } else {

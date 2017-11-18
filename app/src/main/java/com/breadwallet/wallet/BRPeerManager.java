@@ -2,6 +2,7 @@ package com.breadwallet.wallet;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;

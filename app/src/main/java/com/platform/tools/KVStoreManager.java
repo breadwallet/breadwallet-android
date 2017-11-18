@@ -1,8 +1,10 @@
 package com.platform.tools;
 
 import android.content.Context;
+import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRReportsManager;
@@ -99,7 +101,6 @@ public class KVStoreManager {
     }
 
     public void putWalletInfo(Context app, WalletInfo info) {
-
         WalletInfo old = getWalletInfo(app);
         if (old == null) old = new WalletInfo(); //create new one if it's null
 
@@ -153,6 +154,7 @@ public class KVStoreManager {
 //    }
 
     public TxMetaData getTxMetaData(Context app, byte[] txHash) {
+        if(ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         String key = txKey(txHash);
 
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
@@ -209,6 +211,7 @@ public class KVStoreManager {
     }
 
     public void putTxMetaData(Context app, TxMetaData data, byte[] txHash) {
+        if(ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         String key = txKey(txHash);
         TxMetaData old = getTxMetaData(app, txHash);
 
