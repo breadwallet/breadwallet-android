@@ -192,6 +192,7 @@ public class BRAnimator {
         }
         FragmentTransactionDetails fragmentTransactionDetails = (FragmentTransactionDetails) app.getFragmentManager().findFragmentByTag(FragmentTransactionDetails.class.getName());
         if (fragmentTransactionDetails != null && fragmentTransactionDetails.isAdded()) {
+            fragmentTransactionDetails.setItems(items);
             Log.e(TAG, "showTransactionPager: Already showing");
             return;
         }
