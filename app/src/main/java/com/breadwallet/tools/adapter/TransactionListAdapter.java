@@ -113,8 +113,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size() && BRSharedPrefs.getAllowSpend(mContext);
         this.itemFeed = items;
         this.backUpFeed = items;
-        if (updateMetadata)
-            updateMetadata();
+//        if (updateMetadata)
+//            updateMetadata();
     }
 
     //update metadata ONLY when the feed is different than the new one
@@ -129,17 +129,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 for (int i = 0; i < backUpFeed.size(); i++) {
                     TxItem item = backUpFeed.get(i);
                     TxMetaData md = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
-                    if (md != null) {
-                        Log.e(TAG, "run: ");
-                    }
                     item.metaData = md;
                 }
                 for (int i = 0; i < itemFeed.size(); i++) {
                     TxItem item = itemFeed.get(i);
                     TxMetaData md = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
-                    if (md != null) {
-                        Log.e(TAG, "run: ");
-                    }
                     item.metaData = md;
                 }
                 Log.e(TAG, "updateMetadata, took:" + (System.currentTimeMillis() - start));
@@ -165,7 +159,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             return new SyncingHolder(inflater.inflate(syncingResId, parent, false));
         return null;
     }
-
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
@@ -201,7 +194,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private void setTexts(final TxHolder convertView, int position) {
         TxItem item = itemFeed.get(TxManager.getInstance().currentPrompt == null ? position : position - 1);
-
+        item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
         String commentString = (item.metaData == null || item.metaData.comment == null) ? "" : item.metaData.comment;
         convertView.comment.setText(commentString);
         if (commentString.isEmpty()) {
@@ -222,6 +215,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             set.connect(R.id.status, ConstraintSet.TOP, convertView.comment.getId(), ConstraintSet.BOTTOM, px);
             // Apply the changes
             set.applyTo(convertView.constraintLayout);
+            convertView.comment.requestLayout();
         }
 
         boolean received = item.getSent() == 0;

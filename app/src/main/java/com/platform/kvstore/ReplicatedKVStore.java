@@ -100,7 +100,7 @@ public class ReplicatedKVStore {
     public SQLiteDatabase getWritable() {
 //        if (mOpenCounter.incrementAndGet() == 1) {
         // Opening new database
-        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
+//        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         if (mDatabase == null || !mDatabase.isOpen())
             mDatabase = dbHelper.getWritableDatabase();
         dbHelper.setWriteAheadLoggingEnabled(BRConstants.WAL);

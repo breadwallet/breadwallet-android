@@ -154,7 +154,7 @@ public class KVStoreManager {
 //    }
 
     public TxMetaData getTxMetaData(Context app, byte[] txHash) {
-        if(ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
+//        if(ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         String key = txKey(txHash);
 
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
@@ -211,7 +211,7 @@ public class KVStoreManager {
     }
 
     public void putTxMetaData(Context app, TxMetaData data, byte[] txHash) {
-        if(ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
+//        if(ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         String key = txKey(txHash);
         TxMetaData old = getTxMetaData(app, txHash);
 
