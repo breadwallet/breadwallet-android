@@ -196,7 +196,6 @@ public class TxManager {
         final TxItem[] arr = BRWalletManager.getInstance().getTransactions();
 //        updateTxMetaData(app, arr);
         List<TxItem> items = arr == null ? null : new LinkedList<>(Arrays.asList(arr));
-
         if (adapter != null && items != null) {
             adapter.setItems(items);
             ((Activity) app).runOnUiThread(new Runnable() {

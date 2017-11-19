@@ -18,6 +18,7 @@
         android:id="@+id/toolbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
         android:elevation="8dp"
         android:orientation="vertical">
 
@@ -147,7 +148,6 @@
                         android:background="@drawable/ic_search_black_24dp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"/>
-
 
                 </android.support.constraint.ConstraintLayout>
             </android.support.v7.widget.Toolbar>

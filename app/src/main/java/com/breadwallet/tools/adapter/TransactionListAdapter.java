@@ -107,8 +107,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void init(List<TxItem> items) {
+        Log.e(TAG, "init: ");
         if (items == null) items = new ArrayList<>();
-
         if (backUpFeed == null) backUpFeed = new ArrayList<>();
         boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size() && BRSharedPrefs.getAllowSpend(mContext);
         this.itemFeed = items;
@@ -128,14 +128,23 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 long start = System.currentTimeMillis();
                 for (int i = 0; i < backUpFeed.size(); i++) {
                     TxItem item = backUpFeed.get(i);
-                    item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
+                    TxMetaData md = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
+                    if (md != null) {
+                        Log.e(TAG, "run: ");
+                    }
+                    item.metaData = md;
                 }
                 for (int i = 0; i < itemFeed.size(); i++) {
                     TxItem item = itemFeed.get(i);
-                    item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
+                    TxMetaData md = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
+                    if (md != null) {
+                        Log.e(TAG, "run: ");
+                    }
+                    item.metaData = md;
                 }
                 Log.e(TAG, "updateMetadata, took:" + (System.currentTimeMillis() - start));
                 updatingMetadata = false;
+                TxManager.getInstance().updateTxList(mContext);
             }
         });
     }
@@ -204,6 +213,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             // Apply the changes
             set.applyTo(convertView.constraintLayout);
         } else {
+            Log.e(TAG, "setTexts: MEMO:" + commentString);
             if (convertView.constraintLayout.indexOfChild(convertView.comment) == -1)
                 convertView.constraintLayout.addView(convertView.comment);
             ConstraintSet set = new ConstraintSet();

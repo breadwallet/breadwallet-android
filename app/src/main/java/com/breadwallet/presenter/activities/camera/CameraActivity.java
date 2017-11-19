@@ -890,7 +890,6 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
 
         @Override
         public void run() {
-            Log.e(TAG, "run: ");
             ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
             final byte[] bytes = new byte[buffer.remaining()];
             buffer.get(bytes);
