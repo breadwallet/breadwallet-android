@@ -351,7 +351,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     protected void onStop() {
         super.onStop();
 
-
     }
 
     @Override
