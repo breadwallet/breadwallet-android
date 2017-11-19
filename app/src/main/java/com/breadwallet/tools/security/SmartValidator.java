@@ -42,6 +42,7 @@ import java.util.Locale;
 public class SmartValidator {
 
     private static final String TAG = SmartValidator.class.getName();
+    private static List<String> list;
 
     public static boolean isPaperKeyValid(Context ctx, String paperKey) {
         String languageCode = Locale.getDefault().getLanguage();
@@ -104,8 +105,7 @@ public class SmartValidator {
 
     public static boolean isWordValid(Context ctx, String word) {
         Log.e(TAG, "isWordValid: word:" + word + ":" + word.length());
-        List<String> list;
-        list = Bip39Reader.bip39List(ctx, null);
+        if (list == null) list = Bip39Reader.bip39List(ctx, null);
         String cleanWord = Bip39Reader.cleanWord(word);
         Log.e(TAG, "isWordValid: cleanWord:" + cleanWord + ":" + cleanWord.length());
         return list.contains(cleanWord);
