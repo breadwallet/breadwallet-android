@@ -110,7 +110,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         Log.e(TAG, "init: ");
         if (items == null) items = new ArrayList<>();
         if (backUpFeed == null) backUpFeed = new ArrayList<>();
-        boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size() && BRSharedPrefs.getAllowSpend(mContext);
+//        boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size() && BRSharedPrefs.getAllowSpend(mContext);
         this.itemFeed = items;
         this.backUpFeed = items;
 //        if (updateMetadata)
@@ -118,30 +118,30 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     //update metadata ONLY when the feed is different than the new one
-    private void updateMetadata() {
-        if (updatingMetadata) return;
-        updatingMetadata = true;
-        Log.e(TAG, "updateMetadata: itemFeed: " + itemFeed.size());
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                long start = System.currentTimeMillis();
-                for (int i = 0; i < backUpFeed.size(); i++) {
-                    TxItem item = backUpFeed.get(i);
-                    TxMetaData md = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
-                    item.metaData = md;
-                }
-                for (int i = 0; i < itemFeed.size(); i++) {
-                    TxItem item = itemFeed.get(i);
-                    TxMetaData md = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
-                    item.metaData = md;
-                }
-                Log.e(TAG, "updateMetadata, took:" + (System.currentTimeMillis() - start));
-                updatingMetadata = false;
-                TxManager.getInstance().updateTxList(mContext);
-            }
-        });
-    }
+//    private void updateMetadata() {
+//        if (updatingMetadata) return;
+//        updatingMetadata = true;
+//        Log.e(TAG, "updateMetadata: itemFeed: " + itemFeed.size());
+//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                long start = System.currentTimeMillis();
+//                for (int i = 0; i < backUpFeed.size(); i++) {
+//                    TxItem item = backUpFeed.get(i);
+//                    TxMetaData md = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
+//                    item.metaData = md;
+//                }
+//                for (int i = 0; i < itemFeed.size(); i++) {
+//                    TxItem item = itemFeed.get(i);
+//                    TxMetaData md = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
+//                    item.metaData = md;
+//                }
+//                Log.e(TAG, "updateMetadata, took:" + (System.currentTimeMillis() - start));
+//                updatingMetadata = false;
+//                TxManager.getInstance().updateTxList(mContext);
+//            }
+//        });
+//    }
 
     public List<TxItem> getItems() {
         return itemFeed;

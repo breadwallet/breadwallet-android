@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,7 +97,7 @@ public class FragmentRequestAmount extends Fragment {
     private BRLinearLayoutWithCaret shareButtonsLayout;
     private BRLinearLayoutWithCaret copiedLayout;
     private int keyboardIndex;
-//    private int currListIndex;
+    //    private int currListIndex;
     private ImageButton close;
 
     @Override
@@ -179,6 +180,7 @@ public class FragmentRequestAmount extends Fragment {
             public void onClick(View v) {
                 removeCurrencySelector();
                 showKeyboard(true);
+                showShareButtons(false);
             }
         });
 
@@ -274,7 +276,8 @@ public class FragmentRequestAmount extends Fragment {
                     selectedIso = BRSharedPrefs.getIso(getContext());
                 }
                 boolean generated = generateQrImage(receiveAddress, amountEdit.getText().toString(), selectedIso);
-                if (!generated) throw new RuntimeException("failed to generate qr image for address");
+                if (!generated)
+                    throw new RuntimeException("failed to generate qr image for address");
                 updateText();
             }
         });
@@ -418,7 +421,7 @@ public class FragmentRequestAmount extends Fragment {
         String tmpAmount = amountBuilder.toString();
         amountEdit.setText(tmpAmount);
         isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
-        isoButton.setText(String.format("%s(%s)", BRCurrency.getCurrencyName(getActivity(),selectedIso), BRCurrency.getSymbolByIso(getActivity(), selectedIso)));
+        isoButton.setText(String.format("%s(%s)", BRCurrency.getCurrencyName(getActivity(), selectedIso), BRCurrency.getSymbolByIso(getActivity(), selectedIso)));
 
     }
 
