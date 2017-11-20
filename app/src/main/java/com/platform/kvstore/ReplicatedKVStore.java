@@ -243,8 +243,7 @@ public class ReplicatedKVStore {
                 cursor = db.query(KV_STORE_TABLE_NAME,
                         allColumns, "key = ? AND version = ?", new String[]{key, String.valueOf(version)},
                         null, null, "version DESC", "1");
-                boolean success = cursor.moveToNext();
-                if (success)
+                if (cursor.moveToNext())
                     curVer = cursor.getLong(0);
                 else
                     curVer = 0;
@@ -258,8 +257,7 @@ public class ReplicatedKVStore {
             cursor = db.query(KV_STORE_TABLE_NAME,
                     allColumns, "key = ? AND version = ?", new String[]{key, String.valueOf(curVer)},
                     null, null, "version DESC", "1");
-            if (cursor.getCount() != 0) {
-                cursor.moveToNext();
+            if (cursor.moveToNext()) {
                 kv = cursorToKv(cursor);
             }
             if (kv != null) {
@@ -304,8 +302,7 @@ public class ReplicatedKVStore {
             SQLiteDatabase db = getReadable();
             String selectQuery = "SELECT " + PlatformSqliteHelper.KV_VERSION + ", " + PlatformSqliteHelper.KV_TIME + " FROM " + KV_STORE_TABLE_NAME + " WHERE key = ? ORDER BY version DESC LIMIT 1";
             cursor = db.rawQuery(selectQuery, new String[]{key});
-            cursor.moveToNext();
-            if (!cursor.isAfterLast()) {
+            if (cursor.moveToNext()) {
                 version = cursor.getLong(0);
                 time = cursor.getLong(1);
             }
@@ -374,10 +371,6 @@ public class ReplicatedKVStore {
 //            String selectQuery = "SELECT kvs.version, kvs.remote_version, kvs.key, kvs.value, kvs.thetime, kvs.deleted FROM kvStoreTable where ? like \'txn2-%\'";
 
             cursor = db.rawQuery(selectQuery, null);
-//            cursor.moveToNext();
-
-//            cursor = database.query(PlatformSqliteHelper.KV_STORE_TABLE_NAME,
-//                    allColumns, null, null, null, PlatformSqliteHelper.KV_VERSION + " DESC", "1");
             while (cursor.moveToNext()) {
                 KVItem kvItem = cursorToKv(cursor);
                 if (kvItem != null) {
@@ -686,8 +679,7 @@ public class ReplicatedKVStore {
                     SQLiteDatabase db = getReadable();
                     String selectQuery = "SELECT " + PlatformSqliteHelper.KV_REMOTE_VERSION + " FROM " + KV_STORE_TABLE_NAME + " WHERE key = ? ORDER BY version DESC LIMIT 1";
                     cursor = db.rawQuery(selectQuery, new String[]{key});
-                    cursor.moveToNext();
-                    if (!cursor.isAfterLast())
+                    if (cursor.moveToNext())
                         version = cursor.getLong(0);
                     else
                         Log.e(TAG, "remoteVersion: cursor is null for: " + selectQuery);
@@ -732,9 +724,8 @@ public class ReplicatedKVStore {
 
                 newVer = curVer + 1;
                 c = db.query(true, KV_STORE_TABLE_NAME, allColumns, PlatformSqliteHelper.KV_KEY + "=? and " + PlatformSqliteHelper.KV_VERSION + "=?", new String[]{key, String.valueOf(curVer)}, null, null, "version DESC", "1");
-                c.moveToNext();
                 KVItem tmp = null;
-                if (!c.isAfterLast()) {
+                if (c.moveToNext()) {
                     tmp = cursorToKv(c);
                 }
                 if (tmp == null)
@@ -817,8 +808,11 @@ public class ReplicatedKVStore {
                 cursor = db.query(KV_STORE_TABLE_NAME,
                         new String[]{PlatformSqliteHelper.KV_VALUE}, "key = ? AND version = ?", new String[]{key, String.valueOf(localVersion)},
                         null, null, "version DESC", "1");
-                cursor.moveToNext();
-                byte[] value = cursor.getBlob(0);
+                byte[] value = null;
+                if(cursor.moveToNext()){
+                    value = cursor.getBlob(0);
+                }
+
                 if (Utils.isNullOrEmpty(value)) throw new NullPointerException("cannot be empty");
                 KVItem kvToInsert = new KVItem(newVer, -1, key, value, time, 1);
                 insert(kvToInsert);
@@ -914,7 +908,7 @@ public class ReplicatedKVStore {
     private static void retrieveAuthKey(Context context) {
         if (Utils.isNullOrEmpty(tempAuthKey)) {
             tempAuthKey = BRKeyStore.getAuthKey(context);
-            if(tempAuthKey == null) Log.e(TAG, "retrieveAuthKey: FAILED, still null!");
+            if (tempAuthKey == null) Log.e(TAG, "retrieveAuthKey: FAILED, still null!");
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
@@ -945,19 +939,4 @@ public class ReplicatedKVStore {
         return false;
     }
 
-//    //for testing only
-//    public List<KVItem> getAllLocalKeysForTesting() {
-//        List<KVItem> list = new ArrayList<>();
-//        open();
-//        Cursor cursor = database.rawQuery("select * from " + PlatformSqliteHelper.KV_STORE_TABLE_NAME, null);
-//        Log.e(TAG, "printAllKvs: SIZE: " + cursor.getCount());
-//        cursor.moveToNext();
-//        while (!cursor.isAfterLast()) {
-//            KVItem kv = cursorToKv(cursor);
-//            list.add(kv);
-//            cursor.moveToNext();
-//        }
-//        cursor.close();
-//        return list;
-//    }
 }

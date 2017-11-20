@@ -88,6 +88,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private final int promptResId;
     private List<TxItem> backUpFeed;
     private List<TxItem> itemFeed;
+    private List<TxMetaData> mds;
     private final int txType = 0;
     private final int promptType = 1;
     private final int syncingType = 2;
@@ -100,6 +101,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.promptResId = R.layout.prompt_item;
         this.mContext = mContext;
         init(items);
+        updateMetadata();
     }
 
     public void setItems(List<TxItem> items) {
@@ -110,6 +112,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         Log.e(TAG, "init: ");
         if (items == null) items = new ArrayList<>();
         if (backUpFeed == null) backUpFeed = new ArrayList<>();
+        if (mds == null) mds = new ArrayList<>();
 //        boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size() && BRSharedPrefs.getAllowSpend(mContext);
         this.itemFeed = items;
         this.backUpFeed = items;
@@ -118,30 +121,21 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     //update metadata ONLY when the feed is different than the new one
-//    private void updateMetadata() {
-//        if (updatingMetadata) return;
-//        updatingMetadata = true;
-//        Log.e(TAG, "updateMetadata: itemFeed: " + itemFeed.size());
-//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                long start = System.currentTimeMillis();
-//                for (int i = 0; i < backUpFeed.size(); i++) {
-//                    TxItem item = backUpFeed.get(i);
-//                    TxMetaData md = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
-//                    item.metaData = md;
-//                }
-//                for (int i = 0; i < itemFeed.size(); i++) {
-//                    TxItem item = itemFeed.get(i);
-//                    TxMetaData md = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
-//                    item.metaData = md;
-//                }
-//                Log.e(TAG, "updateMetadata, took:" + (System.currentTimeMillis() - start));
-//                updatingMetadata = false;
-//                TxManager.getInstance().updateTxList(mContext);
-//            }
-//        });
-//    }
+    private void updateMetadata() {
+        if (updatingMetadata) return;
+        updatingMetadata = true;
+        Log.e(TAG, "updateMetadata: itemFeed: " + itemFeed.size());
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                long start = System.currentTimeMillis();
+                mds = KVStoreManager.getInstance().getAllTxMD(mContext);
+                Log.e(TAG, "updateMetadata, took:" + (System.currentTimeMillis() - start));
+                updatingMetadata = false;
+                TxManager.getInstance().updateTxList(mContext);
+            }
+        });
+    }
 
     public List<TxItem> getItems() {
         return itemFeed;
@@ -353,17 +347,21 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             return;
         int switchesON = 0;
         for (boolean i : switches) if (i) switchesON++;
+        for (int i = 0; i < mds.size(); i++) {
+            if (mds.get(i).comment.contains(lowerQuery)) {
+                Log.e(TAG, "filter: FOUND: " + mds.get(i).comment);
+                return;
+            }
+        }
 
-        final List<TxItem> filteredList = new LinkedList<>();
+        final List<TxItem> filteredList = new ArrayList<>();
 //        TxMetaData metaData;
         for (int i = 0; i < backUpFeed.size(); i++) {
             TxItem item = backUpFeed.get(i);
 //            metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
             if (item.getTxHashHexReversed().toLowerCase().contains(lowerQuery)
                     || item.getFrom()[0].toLowerCase().contains(lowerQuery)
-                    || item.getTo()[0].toLowerCase().contains(lowerQuery)
-                    || (item.metaData != null && item.metaData.comment != null
-                    && item.metaData.comment.toLowerCase().contains(lowerQuery))) {
+                    || item.getTo()[0].toLowerCase().contains(lowerQuery)) {
                 if (switchesON == 0) {
                     filteredList.add(item);
                 } else {
@@ -378,12 +376,12 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     }
 
                     int confirms = item.getBlockHeight() == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext) - item.getBlockHeight() + 1;
-                    //filter by pending and this is complete
+                    //complete
                     if (switches[2] && confirms >= 6) {
                         willAdd = false;
                     }
 
-                    //filter by completed and this is pending
+                    //pending
                     if (switches[3] && confirms < 6) {
                         willAdd = false;
                     }
