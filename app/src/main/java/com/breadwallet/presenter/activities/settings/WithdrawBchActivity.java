@@ -30,6 +30,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRCurrency;
+import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
@@ -73,10 +74,15 @@ public class WithdrawBchActivity extends BRActivity {
         txHash = (TextView) findViewById(R.id.tx_hash);
         addressEdit = (EditText) findViewById(R.id.address_edit);
         byte[] pubkey = BRKeyStore.getMasterPublicKey(this);
-        if(Utils.isNullOrEmpty(pubkey)){
+        if (Utils.isNullOrEmpty(pubkey)) {
             BRReportsManager.reportBug(new NullPointerException("WithdrawBchActivity: onCreate: pubkey is missing!"));
         }
-        String balance = BRCurrency.getFormattedCurrencyString(this, BRSharedPrefs.getPreferredBTC(this) ? "BTC" : BRSharedPrefs.getIso(this), new BigDecimal(BRWalletManager.getBCashBalance(pubkey)));
+        String iso = BRSharedPrefs.getPreferredBTC(this) ? "BTC" : BRSharedPrefs.getIso(this);
+        BigDecimal amount = iso.equalsIgnoreCase("BTC") ?
+                BRExchange.getBitcoinForSatoshis(this, new BigDecimal(BRWalletManager.getBCashBalance(pubkey))) :
+                BRExchange.getAmountFromSatoshis(this, iso, new BigDecimal(BRWalletManager.getBCashBalance(pubkey)));
+
+        String balance = BRCurrency.getFormattedCurrencyString(this, iso, amount);
         description.setText(String.format(getString(R.string.BCH_body), balance));
 
         txHash.setOnClickListener(new View.OnClickListener() {
@@ -99,7 +105,7 @@ public class WithdrawBchActivity extends BRActivity {
                     RequestObject obj = BitcoinUrlHandler.getRequestFromString(bitcoinUrl);
                     if (obj == null) {
                         //builder.setTitle(getResources().getString(R.string.alert));
-                        BRDialog.showCustomDialog(WithdrawBchActivity.this,  getResources().getString(R.string.Send_invalidAddressOnPasteboard),"",getResources().getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                        BRDialog.showCustomDialog(WithdrawBchActivity.this, getResources().getString(R.string.Send_invalidAddressOnPasteboard), "", getResources().getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                             @Override
                             public void onClick(BRDialogView brDialogView) {
                                 brDialogView.dismissWithAnimation();
@@ -111,7 +117,7 @@ public class WithdrawBchActivity extends BRActivity {
                     ifAddress = obj.address;
                     if (ifAddress == null) {
                         //builder.setTitle(getResources().getString(R.string.alert));
-                        BRDialog.showCustomDialog(WithdrawBchActivity.this,  getResources().getString(R.string.Send_invalidAddressOnPasteboard), "",getResources().getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                        BRDialog.showCustomDialog(WithdrawBchActivity.this, getResources().getString(R.string.Send_invalidAddressOnPasteboard), "", getResources().getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                             @Override
                             public void onClick(BRDialogView brDialogView) {
                                 brDialogView.dismissWithAnimation();
@@ -142,7 +148,7 @@ public class WithdrawBchActivity extends BRActivity {
                                     @Override
                                     public void run() {
                                         if (contained) {
-                                            BRDialog.showCustomDialog(WithdrawBchActivity.this,  getResources().getString(R.string.Send_UsedAddress_firstLine), "",getResources().getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                                            BRDialog.showCustomDialog(WithdrawBchActivity.this, getResources().getString(R.string.Send_UsedAddress_firstLine), "", getResources().getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                                                 @Override
                                                 public void onClick(BRDialogView brDialogView) {
                                                     brDialogView.dismissWithAnimation();
@@ -159,7 +165,7 @@ public class WithdrawBchActivity extends BRActivity {
                         });
 
                     } else {
-                        BRDialog.showCustomDialog(WithdrawBchActivity.this,  getResources().getString(R.string.Send_invalidAddressOnPasteboard), "",getResources().getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                        BRDialog.showCustomDialog(WithdrawBchActivity.this, getResources().getString(R.string.Send_invalidAddressOnPasteboard), "", getResources().getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                             @Override
                             public void onClick(BRDialogView brDialogView) {
                                 brDialogView.dismissWithAnimation();
