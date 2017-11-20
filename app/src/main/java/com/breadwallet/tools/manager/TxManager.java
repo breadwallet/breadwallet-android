@@ -70,7 +70,6 @@ public class TxManager {
     private RecyclerView txList;
     public TransactionListAdapter adapter;
     public PromptManager.PromptItem currentPrompt;
-    private boolean isMetaDataUpdating;
     public PromptManager.PromptInfo promptInfo;
     public TransactionListAdapter.SyncingHolder syncingHolder;
 
@@ -208,41 +207,6 @@ public class TxManager {
         }
 
     }
-
-//    private void updateTxMetaData(final Context app, final TxItem[] arr) {
-//        if (isMetaDataUpdating) return;
-//        isMetaDataUpdating = true;
-//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                Thread.currentThread().setName(Thread.currentThread().getName() + ":updateTxMetaData");
-//                if (arr != null) {
-//                    for (TxItem item : arr) {
-//                        KVStoreManager kvM = KVStoreManager.getInstance();
-//                        String iso = BRSharedPrefs.getIso(app);
-//                        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
-//                        double rate = ent == null ? 0 : ent.rate;
-//                        TxMetaData temp = kvM.getTxMetaData(app, item.getTxHash());
-//                        String comment = temp == null ? "" : temp.comment;
-//
-//                        TxMetaData tx = new TxMetaData();
-//                        tx.exchangeCurrency = iso;
-//                        tx.exchangeRate = rate;
-//                        tx.fee = item.getFee();
-//                        tx.creationTime = (int) (item.getTimeStamp() / 1000);
-//                        tx.blockHeight = item.getBlockHeight();
-//                        tx.deviceId = BRSharedPrefs.getDeviceId(app);
-//                        tx.txSize = item.getTxSize();
-//                        tx.comment = comment == null ? "" : comment;
-////                        tx.classVersion = ...
-//                        kvM.putTxMetaData(app, tx, item.getTxHash());
-//                        item.metaData = tx;
-//                    }
-//                }
-//                isMetaDataUpdating = false;
-//            }
-//        });
-//    }
 
     public void updateCard(final Context app) {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
