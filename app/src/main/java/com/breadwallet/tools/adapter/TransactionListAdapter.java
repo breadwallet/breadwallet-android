@@ -94,6 +94,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private final int txType = 0;
     private final int promptType = 1;
     private final int syncingType = 2;
+    private boolean updatingReverseTxHash;
 
 //    private boolean updatingMetadata;
 
@@ -119,6 +120,16 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 //        boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size() && BRSharedPrefs.getAllowSpend(mContext);
         this.itemFeed = items;
         this.backUpFeed = items;
+        updateTxHashes();
+
+//        if (updateMetadata)
+//            updateMetadata();
+    }
+
+    private void updateTxHashes() {
+        if (updatingReverseTxHash) return;
+        updatingReverseTxHash = true;
+
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -126,12 +137,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     itemFeed.get(i).txReversed = Utils.reverseHex(Utils.bytesToHex(itemFeed.get(i).getTxHash()));
                 for (int i = 0; i < backUpFeed.size(); i++)
                     backUpFeed.get(i).txReversed = Utils.reverseHex(Utils.bytesToHex(backUpFeed.get(i).getTxHash()));
+                updatingReverseTxHash = false;
             }
         });
-
-
-//        if (updateMetadata)
-//            updateMetadata();
     }
 
     //update metadata ONLY when the feed is different than the new one
