@@ -156,8 +156,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         if (introActivity != null) introActivity.finish();
         if (reEnterPinActivity != null) reEnterPinActivity.finish();
 
-        updateUI();
-
         TxManager.getInstance().init(this);
 
         if (!BRSharedPrefs.getGreetingsShown(BreadActivity.this))
@@ -169,6 +167,8 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 }
             }, 1000);
         onConnectionChanged(InternetManager.getInstance().isConnected());
+
+        updateUI();
 
     }
 

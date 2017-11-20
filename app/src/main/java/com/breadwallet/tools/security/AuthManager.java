@@ -85,6 +85,7 @@ public class AuthManager {
         return match;
     }
 
+    //when pin auth success
     public void authSuccess(final Context app) {
         //put the new total limit in 3 seconds, leave some time for the core to register any new tx
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
