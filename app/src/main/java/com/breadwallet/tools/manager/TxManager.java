@@ -18,21 +18,14 @@ import android.view.View;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
-import com.breadwallet.presenter.entities.BRTransactionEntity;
-import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
-import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
-import com.platform.entities.TxMetaData;
-import com.platform.tools.KVStoreManager;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -193,6 +186,9 @@ public class TxManager {
         Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI");
         if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         final TxItem[] arr = BRWalletManager.getInstance().getTransactions();
+        if (arr != null)
+            for (int i = 0; i < arr.length; i++)
+                arr[i].txReversed = Utils.reverseHex(Utils.bytesToHex(arr[i].getTxHash()));
 //        updateTxMetaData(app, arr);
         List<TxItem> items = arr == null ? null : new LinkedList<>(Arrays.asList(arr));
         if (adapter != null && items != null) {

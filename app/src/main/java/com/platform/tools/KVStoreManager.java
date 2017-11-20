@@ -20,7 +20,9 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * BreadWallet
@@ -171,14 +173,14 @@ public class KVStoreManager {
         return valueToMetaData(obj.kv.value);
     }
 
-    public List<TxMetaData> getAllTxMD(Context app) {
-        List<TxMetaData> mds = new ArrayList<>();
+    public Map<String, TxMetaData> getAllTxMD(Context app) {
+        Map<String, TxMetaData> mds = new HashMap<>();
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
         List<KVItem> list = kvStore.getAllTxMdKv();
         for (int i = 0; i < list.size(); i++) {
             TxMetaData md = valueToMetaData(list.get(i).value);
-            if (md != null) mds.add(md);
+            if (md != null) mds.put(list.get(i).key, md);
         }
 
         return mds;
