@@ -390,7 +390,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
                     if (willAdd) filteredList.add(item);
                 }
-                Log.e(TAG, "filter: item...");
 
             }
 
