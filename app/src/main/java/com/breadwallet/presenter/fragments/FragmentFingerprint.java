@@ -195,11 +195,18 @@ public class FragmentFingerprint extends Fragment
 
     @Override
     public void onAuthenticated() {
-        Activity app = getActivity();
+        final Activity app = getActivity();
         authSucceeded = true;
-        BRAnimator.killAllFragments(app);
-        BRAnimator.startBreadIfNotStarted(app);
+
         if (completion != null) completion.onComplete();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                BRAnimator.killAllFragments(app);
+                BRAnimator.startBreadIfNotStarted(app);
+            }
+        }, 1000);
+
 
         closeMe();
 

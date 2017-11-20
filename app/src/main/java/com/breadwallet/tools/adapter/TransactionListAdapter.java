@@ -104,8 +104,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.syncingResId = R.layout.syncing_item;
         this.promptResId = R.layout.prompt_item;
         this.mContext = mContext;
-        if (itemFeed == null) itemFeed = new ArrayList<>();
-        if (backUpFeed == null) backUpFeed = new ArrayList<>();
         init(items);
 //        updateMetadata();
     }
@@ -114,9 +112,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         init(items);
     }
 
-    private void init(final List<TxItem> items) {
+    private void init( List<TxItem> items) {
         Log.e(TAG, "init: ");
-        if (items == null) return;
+        if (items == null) items = new ArrayList<>();
+        if (itemFeed == null) itemFeed = new ArrayList<>();
+        if (backUpFeed == null) backUpFeed = new ArrayList<>();
 //        if (mds == null) mds = new HashMap<>();
 //        boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size() && BRSharedPrefs.getAllowSpend(mContext);
         this.itemFeed = items;
