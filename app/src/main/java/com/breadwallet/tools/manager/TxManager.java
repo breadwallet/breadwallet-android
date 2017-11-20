@@ -186,9 +186,6 @@ public class TxManager {
         Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI");
         if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         final TxItem[] arr = BRWalletManager.getInstance().getTransactions();
-        if (arr != null)
-            for (int i = 0; i < arr.length; i++)
-                arr[i].txReversed = Utils.reverseHex(Utils.bytesToHex(arr[i].getTxHash()));
 //        updateTxMetaData(app, arr);
         List<TxItem> items = arr == null ? null : new LinkedList<>(Arrays.asList(arr));
         if (adapter != null && items != null) {
