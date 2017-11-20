@@ -58,7 +58,7 @@ public class PlatformSqliteHelper extends SQLiteOpenHelper {
     public static final String KV_STORE_TABLE_NAME = "kvStoreTable";
     public static final String KV_VERSION = "version";
     public static final String KV_REMOTE_VERSION = "remote_version";
-    public static final String KV_KEY = "key";
+        public static final String KV_KEY = "key";
     public static final String KV_VALUE = "value";
     public static final String KV_TIME = "thetime";
     public static final String KV_DELETED = "deleted";

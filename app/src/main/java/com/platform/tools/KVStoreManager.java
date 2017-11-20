@@ -1,11 +1,8 @@
 package com.platform.tools;
 
 import android.content.Context;
-import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
-import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRCompressor;
@@ -16,11 +13,14 @@ import com.platform.entities.WalletInfo;
 import com.platform.kvstore.CompletionObject;
 import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
+import com.platform.sqlite.KVItem;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * BreadWallet
@@ -171,6 +171,19 @@ public class KVStoreManager {
         return valueToMetaData(obj.kv.value);
     }
 
+    public List<TxMetaData> getAllTxMD(Context app) {
+        List<TxMetaData> mds = new ArrayList<>();
+        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
+        ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
+        List<KVItem> list = kvStore.getAllTxMdKv();
+        for (int i = 0; i < list.size(); i++) {
+            TxMetaData md = valueToMetaData(list.get(i).value);
+            if (md != null) mds.add(md);
+        }
+
+        return mds;
+    }
+
     public TxMetaData valueToMetaData(byte[] value) {
         TxMetaData result = new TxMetaData();
         JSONObject json;
@@ -186,9 +199,10 @@ public class KVStoreManager {
             }
             json = new JSONObject(new String(decompressed));
         } catch (JSONException e) {
+
             Log.e(TAG, "valueToMetaData: " + new String(value) + ":", e);
             return null;
-        } catch (Exception e){
+        } catch (Exception e) {
             Log.e(TAG, "valueToMetaData: ", e);
             return null;
         }
