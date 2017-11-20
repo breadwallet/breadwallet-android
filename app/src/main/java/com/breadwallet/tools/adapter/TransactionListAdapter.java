@@ -36,6 +36,7 @@ import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
+import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 import com.platform.entities.TxMetaData;
 import com.platform.kvstore.RemoteKVStore;
@@ -133,6 +134,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                long start = System.currentTimeMillis();
+                String revHexJava = Utils.reverseHex(Utils.bytesToHex(itemFeed.get(0).getTxHash()));
+                long end = System.currentTimeMillis();
                 for (int i = 0; i < itemFeed.size(); i++)
                     itemFeed.get(i).txReversed = Utils.reverseHex(Utils.bytesToHex(itemFeed.get(i).getTxHash()));
                 for (int i = 0; i < backUpFeed.size(); i++)

@@ -974,7 +974,7 @@ JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getBCashBala
     txCount = BRWalletTransactions(_wallet, transactions, txCount);
     w = BRWalletNew(transactions, txCount, pubKey);
     jlong balance = (jlong) BRWalletBalance(w);
-    BRWalletFree(w);
+//    BRWalletFree(w);
 //
     return balance;
 }

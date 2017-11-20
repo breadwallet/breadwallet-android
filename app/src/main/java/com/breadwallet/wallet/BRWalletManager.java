@@ -654,8 +654,9 @@ public class BRWalletManager {
 
     public native String decryptBip38Key(String privKey, String pass);
 
-    //    public native String reverseTxHash(String txHash);
-//
+    public native String reverseTxHash(String txHash);
+
+    //
 //    public native String txHashSha256Hex(String txHash);
     public native long nativeBalance();
 

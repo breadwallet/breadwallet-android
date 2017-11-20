@@ -67,7 +67,7 @@ public class BreadApp extends Application {
         super.onCreate();
 
         if (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
-            HOST = "stage.breadwallet.com";
+            HOST = "stage2.breadwallet.com";
             //        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
 //                .detectAll()
 //                .penaltyLog()
