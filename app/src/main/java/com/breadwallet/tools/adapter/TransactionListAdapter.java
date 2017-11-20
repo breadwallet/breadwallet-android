@@ -90,18 +90,20 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private final int promptResId;
     private List<TxItem> backUpFeed;
     private List<TxItem> itemFeed;
-//    private Map<String, TxMetaData> mds;
+    //    private Map<String, TxMetaData> mds;
     private final int txType = 0;
     private final int promptType = 1;
     private final int syncingType = 2;
 
-    private boolean updatingMetadata;
+//    private boolean updatingMetadata;
 
     public TransactionListAdapter(Context mContext, List<TxItem> items) {
         this.txResId = R.layout.tx_item;
         this.syncingResId = R.layout.syncing_item;
         this.promptResId = R.layout.prompt_item;
         this.mContext = mContext;
+        if (itemFeed == null) itemFeed = new ArrayList<>();
+        if (backUpFeed == null) backUpFeed = new ArrayList<>();
         init(items);
 //        updateMetadata();
     }
@@ -110,14 +112,24 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         init(items);
     }
 
-    private void init(List<TxItem> items) {
+    private void init(final List<TxItem> items) {
         Log.e(TAG, "init: ");
-        if (items == null) items = new ArrayList<>();
-        if (backUpFeed == null) backUpFeed = new ArrayList<>();
+        if (items == null) return;
 //        if (mds == null) mds = new HashMap<>();
 //        boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size() && BRSharedPrefs.getAllowSpend(mContext);
         this.itemFeed = items;
         this.backUpFeed = items;
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                for (int i = 0; i < itemFeed.size(); i++)
+                    itemFeed.get(i).txReversed = Utils.reverseHex(Utils.bytesToHex(itemFeed.get(i).getTxHash()));
+                for (int i = 0; i < backUpFeed.size(); i++)
+                    backUpFeed.get(i).txReversed = Utils.reverseHex(Utils.bytesToHex(backUpFeed.get(i).getTxHash()));
+            }
+        });
+
+
 //        if (updateMetadata)
 //            updateMetadata();
     }
