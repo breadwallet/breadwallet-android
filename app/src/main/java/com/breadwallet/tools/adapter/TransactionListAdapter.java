@@ -90,7 +90,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private final int promptResId;
     private List<TxItem> backUpFeed;
     private List<TxItem> itemFeed;
-    private Map<String, TxMetaData> mds;
+//    private Map<String, TxMetaData> mds;
     private final int txType = 0;
     private final int promptType = 1;
     private final int syncingType = 2;
@@ -114,7 +114,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         Log.e(TAG, "init: ");
         if (items == null) items = new ArrayList<>();
         if (backUpFeed == null) backUpFeed = new ArrayList<>();
-        if (mds == null) mds = new HashMap<>();
+//        if (mds == null) mds = new HashMap<>();
 //        boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size() && BRSharedPrefs.getAllowSpend(mContext);
         this.itemFeed = items;
         this.backUpFeed = items;
@@ -123,21 +123,21 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     //update metadata ONLY when the feed is different than the new one
-    private void updateMetadata() {
-        if (updatingMetadata) return;
-        updatingMetadata = true;
-        Log.e(TAG, "updateMetadata: itemFeed: " + itemFeed.size());
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                long start = System.currentTimeMillis();
-                mds = KVStoreManager.getInstance().getAllTxMD(mContext);
-                Log.e(TAG, "updateMetadata, took:" + (System.currentTimeMillis() - start));
-                updatingMetadata = false;
-                TxManager.getInstance().updateTxList(mContext);
-            }
-        });
-    }
+//    private void updateMetadata() {
+//        if (updatingMetadata) return;
+//        updatingMetadata = true;
+//        Log.e(TAG, "updateMetadata: itemFeed: " + itemFeed.size());
+//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                long start = System.currentTimeMillis();
+//                mds = KVStoreManager.getInstance().getAllTxMD(mContext);
+//                Log.e(TAG, "updateMetadata, took:" + (System.currentTimeMillis() - start));
+//                updatingMetadata = false;
+//                TxManager.getInstance().updateTxList(mContext);
+//            }
+//        });
+//    }
 
     public List<TxItem> getItems() {
         return itemFeed;
@@ -349,12 +349,12 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             return;
         int switchesON = 0;
         for (boolean i : switches) if (i) switchesON++;
-        for (int i = 0; i < mds.size(); i++) {
-            if (mds.get(i).comment.contains(lowerQuery)) {
-                Log.e(TAG, "filter: FOUND: " + mds.get(i).comment);
-                return;
-            }
-        }
+//        for (int i = 0; i < mds.size(); i++) {
+//            if (mds.get(i).comment.contains(lowerQuery)) {
+//                Log.e(TAG, "filter: FOUND: " + mds.get(i).comment);
+//                return;
+//            }
+//        }
 
         final List<TxItem> filteredList = new ArrayList<>();
 //        TxMetaData metaData;
