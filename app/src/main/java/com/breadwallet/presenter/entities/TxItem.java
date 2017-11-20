@@ -39,6 +39,7 @@ public class TxItem {
     private long fee;
     private String to[];
     private String from[];
+    public String txReversed;
     private long balanceAfterTx;
     private long outAmounts[];
     private boolean isValid;
@@ -48,11 +49,12 @@ public class TxItem {
     private TxItem() {
     }
 
-    public TxItem(long timeStamp, int blockHeight, byte[] hash, long sent,
+    public TxItem(long timeStamp, int blockHeight, byte[] hash, String txReversed, long sent,
                   long received, long fee, String to[], String from[],
                   long balanceAfterTx, int txSize, long[] outAmounts, boolean isValid) {
         this.timeStamp = timeStamp;
         this.blockHeight = blockHeight;
+        this.txReversed = txReversed;
         this.txHash = hash;
         this.sent = sent;
         this.received = received;
@@ -86,7 +88,7 @@ public class TxItem {
     }
 
     public String getTxHashHexReversed() {
-        return Utils.reverseHex(Utils.bytesToHex(txHash));
+        return txReversed;
     }
 
     public long getReceived() {
