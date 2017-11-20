@@ -174,7 +174,6 @@ public class FragmentRequestAmount extends Fragment {
     }
 
     private void setListeners() {
-
         amountEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -183,7 +182,6 @@ public class FragmentRequestAmount extends Fragment {
                 showShareButtons(false);
             }
         });
-
 
         close.setOnClickListener(new View.OnClickListener() {
             @Override
