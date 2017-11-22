@@ -858,6 +858,24 @@ Java_com_breadwallet_wallet_BRWalletManager_reverseTxHash(JNIEnv *env, jobject t
 
     return (*env)->NewStringUTF(env, u256_hex_encode(reversedHash));
 }
+JNIEXPORT jstring JNICALL
+Java_com_breadwallet_wallet_BRWalletManager_txHashToHex(JNIEnv *env, jobject thiz,
+                                                        jbyteArray txHash) {
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "txHashToHex");
+
+//    int hashLen = (*env)->GetArrayLength(env, txHash);
+    jbyte *hash = (*env)->GetByteArrayElements(env, txHash, 0);
+
+    UInt256 reversedHash = UInt256Reverse((*(UInt256 *) hash));
+
+//    const char *rawString = (*env)->GetStringUTFChars(env, txHash, 0);
+//    UInt256 theHash = u256_hex_decode(rawString);
+//    UInt256 reversedHash = UInt256Reverse(theHash);
+//
+    return (*env)->NewStringUTF(env, u256_hex_encode(reversedHash));
+}
+
+
 
 JNIEXPORT jstring JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_txHashSha256Hex(JNIEnv *env, jobject thiz,

@@ -3,8 +3,10 @@ package com.breadwallet.wallet;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Utils;
 
 
+import org.junit.Assert;
 import org.junit.Test;
 
 import java.math.BigDecimal;
@@ -135,4 +137,6 @@ public class WalletTests {
 //            assertEquals("$232432.42234", result);
 //        }
     }
+
+
 }

@@ -96,6 +96,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private final int promptType = 1;
     private final int syncingType = 2;
     private boolean updatingReverseTxHash;
+    private boolean updatingData;
 
 //    private boolean updatingMetadata;
 
@@ -104,6 +105,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.syncingResId = R.layout.syncing_item;
         this.promptResId = R.layout.prompt_item;
         this.mContext = mContext;
+        items = new ArrayList<>();
         init(items);
 //        updateMetadata();
     }
@@ -112,8 +114,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         init(items);
     }
 
-    private void init( List<TxItem> items) {
-        Log.e(TAG, "init: ");
+    private void init(List<TxItem> items) {
         if (items == null) items = new ArrayList<>();
         if (itemFeed == null) itemFeed = new ArrayList<>();
         if (backUpFeed == null) backUpFeed = new ArrayList<>();
@@ -127,20 +128,43 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 //            updateMetadata();
     }
 
+    public void updateData() {
+        if (updatingData) return;
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                long s = System.currentTimeMillis();
+                List<TxItem> newItems = new ArrayList<>(itemFeed);
+                TxItem item;
+                for (int i = 0; i < newItems.size(); i++) {
+                    item = newItems.get(i);
+                    item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
+                    item.txReversed = Utils.reverseHex(Utils.bytesToHex(item.getTxHash()));
+
+                }
+                backUpFeed = newItems;
+                String log = String.format("newItems: %d, took: %d", newItems.size(), (System.currentTimeMillis() - s));
+                Log.e(TAG, "updateData: " + log);
+                updatingData = false;
+            }
+        });
+
+    }
+
     private void updateTxHashes() {
         if (updatingReverseTxHash) return;
         updatingReverseTxHash = true;
 
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                for (int i = 0; i < itemFeed.size(); i++)
-                    itemFeed.get(i).txReversed = Utils.reverseHex(Utils.bytesToHex(itemFeed.get(i).getTxHash()));
-                for (int i = 0; i < backUpFeed.size(); i++)
-                    backUpFeed.get(i).txReversed = Utils.reverseHex(Utils.bytesToHex(backUpFeed.get(i).getTxHash()));
-                updatingReverseTxHash = false;
-            }
-        });
+//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                for (int i = 0; i < itemFeed.size(); i++)
+//                    itemFeed.get(i).txReversed = Utils.reverseHex(Utils.bytesToHex(itemFeed.get(i).getTxHash()));
+//                for (int i = 0; i < backUpFeed.size(); i++)
+//                    backUpFeed.get(i).txReversed = Utils.reverseHex(Utils.bytesToHex(backUpFeed.get(i).getTxHash()));
+//                updatingReverseTxHash = false;
+//            }
+//        });
     }
 
     //update metadata ONLY when the feed is different than the new one
@@ -223,7 +247,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             // Apply the changes
             set.applyTo(convertView.constraintLayout);
         } else {
-            Log.e(TAG, "setTexts: MEMO:" + commentString);
             if (convertView.constraintLayout.indexOfChild(convertView.comment) == -1)
                 convertView.constraintLayout.addView(convertView.comment);
             ConstraintSet set = new ConstraintSet();
@@ -240,6 +263,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         convertView.mainLayout.setBackgroundResource(getResourceByPos(position));
         convertView.sentReceived.setText(received ? mContext.getString(R.string.TransactionDetails_received, "") : mContext.getString(R.string.TransactionDetails_sent, ""));
         convertView.toFrom.setText(received ? String.format(mContext.getString(R.string.TransactionDetails_from), "") : String.format(mContext.getString(R.string.TransactionDetails_to), ""));
+//        final String addr = position == 1? "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v" : "35SwXe97aPRUsoaUTH1Dr3SB7JptH39pDZ"; //testing
         final String addr = item.getTo()[0];
         convertView.account.setText(addr);
         int blockHeight = item.getBlockHeight();
@@ -370,21 +394,15 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             return;
         int switchesON = 0;
         for (boolean i : switches) if (i) switchesON++;
-//        for (int i = 0; i < mds.size(); i++) {
-//            if (mds.get(i).comment.contains(lowerQuery)) {
-//                Log.e(TAG, "filter: FOUND: " + mds.get(i).comment);
-//                return;
-//            }
-//        }
 
         final List<TxItem> filteredList = new ArrayList<>();
-//        TxMetaData metaData;
+        TxItem item;
         for (int i = 0; i < backUpFeed.size(); i++) {
-            TxItem item = backUpFeed.get(i);
-//            metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
-            if (item.getTxHashHexReversed()!= null && item.getTxHashHexReversed().contains(lowerQuery)
-                    || item.getFrom()[0].contains(lowerQuery)
-                    || item.getTo()[0].contains(lowerQuery)) {
+            item = backUpFeed.get(i);
+            boolean matchesHash = item.getTxHashHexReversed() != null && item.getTxHashHexReversed().contains(lowerQuery);
+            boolean matchesAddress = item.getFrom()[0].contains(lowerQuery) || item.getTo()[0].contains(lowerQuery);
+            boolean matchesMemo = item.metaData != null && item.metaData.comment != null && item.metaData.comment.toLowerCase().contains(lowerQuery);
+            if (matchesHash || matchesAddress || matchesMemo) {
                 if (switchesON == 0) {
                     filteredList.add(item);
                 } else {

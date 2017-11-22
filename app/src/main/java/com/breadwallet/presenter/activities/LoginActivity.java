@@ -39,6 +39,8 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.APIClient;
 
+import org.junit.Assert;
+
 import static com.breadwallet.R.color.white;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 import static com.breadwallet.tools.util.BRConstants.SCANNER_REQUEST;
@@ -206,6 +208,7 @@ public class LoginActivity extends BRActivity {
     protected void onResume() {
         super.onResume();
         updateDots();
+
         appVisible = true;
         app = this;
         inputAllowed = true;

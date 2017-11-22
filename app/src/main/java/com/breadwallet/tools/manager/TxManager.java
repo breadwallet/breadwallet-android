@@ -26,6 +26,7 @@ import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
+import com.platform.tools.KVStoreManager;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -183,11 +184,14 @@ public class TxManager {
 
     @WorkerThread
     public synchronized void updateTxList(final Context app) {
-        Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI");
+        long start = System.currentTimeMillis();
         if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         final TxItem[] arr = BRWalletManager.getInstance().getTransactions();
-//        updateTxMetaData(app, arr);
         final List<TxItem> items = arr == null ? null : new LinkedList<>(Arrays.asList(arr));
+
+        long took = (System.currentTimeMillis() - start);
+        if (took > 500)
+            Log.e(TAG, "updateTxList: took: " + took);
         if (adapter != null && items != null) {
             ((Activity) app).runOnUiThread(new Runnable() {
                 @Override
