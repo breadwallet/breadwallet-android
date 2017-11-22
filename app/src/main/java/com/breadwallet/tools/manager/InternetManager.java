@@ -85,12 +85,9 @@ public class InternetManager extends BroadcastReceiver {
         }
     }
 
-    public boolean isConnected() {
-        Context app = BreadApp.getBreadContext();
+    public boolean isConnected(Context app) {
         if (app == null) return false;
-        ConnectivityManager
-                cm = (ConnectivityManager) app.getApplicationContext()
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) app.getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null
                 && activeNetwork.isConnectedOrConnecting();
