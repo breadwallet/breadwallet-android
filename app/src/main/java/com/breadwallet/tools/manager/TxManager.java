@@ -185,7 +185,6 @@ public class TxManager {
     @WorkerThread
     public synchronized void updateTxList(final Context app) {
         long start = System.currentTimeMillis();
-        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         final TxItem[] arr = BRWalletManager.getInstance().getTransactions();
         final List<TxItem> items = arr == null ? null : new LinkedList<>(Arrays.asList(arr));
 
