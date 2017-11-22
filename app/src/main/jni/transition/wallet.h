@@ -179,6 +179,10 @@ JNIEXPORT jstring JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_reverseTxHash(JNIEnv *env, jobject thiz,
                                                           jstring txHash);
 
+JNIEXPORT jstring JNICALL
+Java_com_breadwallet_wallet_BRWalletManager_txHashToHex(JNIEnv *env, jobject thiz,
+                                                        jbyteArray txHash);
+
 JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTxCount(JNIEnv *env,
                                                                               jobject thiz);
 

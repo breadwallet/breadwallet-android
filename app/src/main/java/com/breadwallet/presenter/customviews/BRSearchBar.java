@@ -216,6 +216,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
     }
 
     public void onShow(boolean b) {
+
         final InputMethodManager keyboard = (InputMethodManager)
                 getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
         if (b) {
@@ -228,6 +229,9 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
                     keyboard.showSoftInput(searchEdit, 0);
                 }
             }, 400);
+            if (TxManager.getInstance().adapter != null)
+                TxManager.getInstance().adapter.updateData();
+
         } else {
             keyboard.hideSoftInputFromWindow(searchEdit.getWindowToken(), 0);
             clearSwitches();
