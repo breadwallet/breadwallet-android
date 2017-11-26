@@ -223,7 +223,8 @@ public class Utils {
             }
         }
         String release = Build.VERSION.RELEASE;
-        return String.format("%s/%d %s %s/%s", "Bread", versionNumber, cfnetwork, "Android", release);
+//        return String.format("%s/%d %s %s/%s", "Bread", versionNumber, cfnetwork, "Android", release);
+        return "Bread/" + String.valueOf(versionNumber) + " " + cfnetwork + " Android/" + release;
     }
 
     public static String reverseHex(String hex) {
