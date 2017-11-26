@@ -235,7 +235,7 @@ public class BRKeyStore {
         KeyStore keyStore = null;
 
         String encryptedDataFilePath = getFilePath(alias_file, context);
-        byte[] result = new byte[0];
+//        byte[] result = new byte[0];
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
@@ -262,7 +262,7 @@ public class BRKeyStore {
                     BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
                     return null;
                 } else {
-                    BRKeystoreErrorException ex = new BRKeystoreErrorException("!ivExists && !aliasExists");
+                    BRKeystoreErrorException ex = new BRKeystoreErrorException("!ivExists && !aliasExists: " + alias);
                     BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
                     return null;
                 }

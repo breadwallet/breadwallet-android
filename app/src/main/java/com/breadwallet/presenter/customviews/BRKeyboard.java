@@ -17,6 +17,7 @@ import android.widget.LinearLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -136,6 +137,20 @@ public class BRKeyboard extends LinearLayout implements View.OnClickListener {
         num8.setText(getText(8));
         num9.setText(getText(9));
 
+        if (showAlphabet) {
+            int dp8 = Utils.getPixelsFromDps(getContext(), 8);
+            num0.setPadding(0, 0, 0, dp8);
+            num1.setPadding(0, 0, 0, dp8);
+            num2.setPadding(0, 0, 0, dp8);
+            num3.setPadding(0, 0, 0, dp8);
+            num4.setPadding(0, 0, 0, dp8);
+            num5.setPadding(0, 0, 0, dp8);
+            num6.setPadding(0, 0, 0, dp8);
+            num7.setPadding(0, 0, 0, dp8);
+            num8.setPadding(0, 0, 0, dp8);
+            num9.setPadding(0, 0, 0, dp8);
+        }
+        invalidate();
     }
 
     private CharSequence getText(int index) {
