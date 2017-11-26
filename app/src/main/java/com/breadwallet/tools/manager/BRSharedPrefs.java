@@ -16,6 +16,7 @@ import java.util.Locale;
 import java.util.UUID;
 
 import static com.breadwallet.tools.util.BRConstants.GEO_PERMISSIONS_REQUESTED;
+import static com.breadwallet.tools.util.BRConstants.receive;
 
 /**
  * BreadWallet
@@ -70,7 +71,14 @@ public class BRSharedPrefs {
 
     public static String getIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
-        return settingsToGet.getString(BRConstants.CURRENT_CURRENCY, Currency.getInstance(Locale.getDefault()).getCurrencyCode());
+        String defIso;
+        try {
+            defIso = Currency.getInstance(Locale.getDefault()).getCurrencyCode();
+        } catch (IllegalArgumentException e) {
+            e.printStackTrace();
+            defIso = Currency.getInstance(Locale.US).getCurrencyCode();
+        }
+        return settingsToGet.getString(BRConstants.CURRENT_CURRENCY, defIso);
     }
 
     public static void putIso(Context context, String code) {
