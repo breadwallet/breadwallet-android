@@ -284,6 +284,7 @@ public class KeyStoreTests {
         BRKeyStore.putFailTimeStamp(1479686841, mActivityRule.getActivity());
         BRKeyStore.putSpendLimit(10000000, mActivityRule.getActivity());
         BRKeyStore.putLastPinUsedTime(1479686841, mActivityRule.getActivity());
+        BRKeyStore.putTotalLimit(1479686841, mActivityRule.getActivity());
 
         for (String a : aliasObjectMap.keySet()) {
             assertFilesExist(a);
@@ -312,16 +313,16 @@ public class KeyStoreTests {
         }
 
         Assert.assertNull(phrase);
-        Assert.assertEquals(canary, "");
-        Assert.assertArrayEquals(BRKeyStore.getMasterPublicKey(mActivityRule.getActivity()), new byte[0]);
-        Assert.assertArrayEquals(BRKeyStore.getAuthKey(mActivityRule.getActivity()), new byte[0]);
-        Assert.assertArrayEquals(BRKeyStore.getToken(mActivityRule.getActivity()), new byte[0]);
-        Assert.assertEquals(BRKeyStore.getWalletCreationTime(mActivityRule.getActivity()), 0);
-        Assert.assertEquals(BRKeyStore.getPinCode(mActivityRule.getActivity()), "");
-        Assert.assertEquals(BRKeyStore.getFailCount(mActivityRule.getActivity()), 0);
-        Assert.assertEquals(BRKeyStore.getFailTimeStamp(mActivityRule.getActivity()), 0);
-        Assert.assertEquals(BRKeyStore.getSpendLimit(mActivityRule.getActivity()), 0);
-        Assert.assertEquals(BRKeyStore.getLastPinUsedTime(mActivityRule.getActivity()), 0);
+        Assert.assertEquals(null, canary);
+        Assert.assertEquals(null, BRKeyStore.getMasterPublicKey(mActivityRule.getActivity()));
+        Assert.assertEquals(null, BRKeyStore.getAuthKey(mActivityRule.getActivity()));
+        Assert.assertEquals(null, BRKeyStore.getToken(mActivityRule.getActivity()));
+        Assert.assertEquals(0, BRKeyStore.getWalletCreationTime(mActivityRule.getActivity()));
+        Assert.assertEquals("", BRKeyStore.getPinCode(mActivityRule.getActivity()));
+        Assert.assertEquals(0, BRKeyStore.getFailCount(mActivityRule.getActivity()));
+        Assert.assertEquals(0, BRKeyStore.getFailTimeStamp(mActivityRule.getActivity()));
+        Assert.assertEquals(0, BRKeyStore.getSpendLimit(mActivityRule.getActivity()));
+        Assert.assertEquals(0, BRKeyStore.getLastPinUsedTime(mActivityRule.getActivity()));
 
     }
 
