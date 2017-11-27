@@ -4,15 +4,15 @@ import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
+import android.util.Base64;
 import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
-import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BytesUtil;
@@ -26,7 +26,6 @@ import junit.framework.Assert;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
@@ -34,14 +33,16 @@ import java.security.InvalidKeyException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
+import java.security.NoSuchProviderException;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
-import javax.crypto.CipherOutputStream;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
@@ -75,10 +76,17 @@ import javax.crypto.spec.IvParameterSpec;
 public class BRKeyStore {
     private static final String TAG = BRKeyStore.class.getName();
 
-    public static final String CIPHER_ALGORITHM = "AES/CBC/PKCS7Padding";
-    public static final String PADDING = KeyProperties.ENCRYPTION_PADDING_PKCS7;
-    public static final String BLOCK_MODE = KeyProperties.BLOCK_MODE_CBC;
+    private static final String KEY_STORE_PREFS_NAME = "keyStorePrefs";
     public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
+
+    public static final String CIPHER_ALGORITHM = "AES/CBC/PKCS7Padding";
+//    public static final String PADDING = KeyProperties.ENCRYPTION_PADDING_PKCS7;
+//    public static final String BLOCK_MODE = KeyProperties.BLOCK_MODE_CBC;
+
+    public static final String NEW_CIPHER_ALGORITHM = "AES/GCM/NoPadding";
+    public static final String NEW_PADDING = KeyProperties.ENCRYPTION_PADDING_NONE;
+    public static final String NEW_BLOCK_MODE = KeyProperties.BLOCK_MODE_GCM;
+
 
     public static Map<String, AliasObject> aliasObjectMap;
 
@@ -143,74 +151,62 @@ public class BRKeyStore {
 //        Assert.assertEquals(AUTH_DURATION_SEC, 300);
     }
 
+
     private synchronized static boolean _setData(Context context, byte[] data, String alias, String alias_file, String alias_iv,
                                                  int request_code, boolean auth_required) throws UserNotAuthenticatedException {
+        validateRequest(data, alias, alias_file, alias_iv, auth_required);
 //        Log.e(TAG, "_setData: " + alias);
-        if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) {
-            RuntimeException ex = new IllegalArgumentException("_setData:mistake in parameters");
-            BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
-            throw ex;
-        }
+//        if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) {
+//            RuntimeException ex = new IllegalArgumentException("_setData:mistake in parameters");
+//            BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
+//            throw ex;
+//        }
         KeyStore keyStore = null;
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
-            // Create the keys if necessary
+            SecretKey secret = null;
             if (!keyStore.containsAlias(alias)) {
-                KeyGenerator keyGenerator = KeyGenerator.getInstance(
-                        KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
-
-                // Set the alias of the entry in Android KeyStore where the key will appear
-                // and the constrains (purposes) in the constructor of the Builder
-                keyGenerator.init(new KeyGenParameterSpec.Builder(alias,
-                        KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
-                        .setBlockModes(BLOCK_MODE)
-                        .setKeySize(256)
-                        .setUserAuthenticationRequired(auth_required)
-                        .setUserAuthenticationValidityDurationSeconds(AUTH_DURATION_SEC)
-                        .setRandomizedEncryptionRequired(true)
-                        .setEncryptionPaddings(PADDING)
-                        .build());
-                SecretKey key = keyGenerator.generateKey();
-
+                secret = createKeys(alias, keyStore, auth_required);
             }
 
-            String encryptedDataFilePath = getFilePath(alias_file, context);
-
-            SecretKey secret = (SecretKey) keyStore.getKey(alias, null);
+//            SecretKey secret = (SecretKey) keyStore.getKey(alias, null);
             if (secret == null) {
                 BRKeystoreErrorException ex = new BRKeystoreErrorException("secret is null on _setData: " + alias);
                 BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
                 return false;
             }
-            Cipher inCipher = Cipher.getInstance(CIPHER_ALGORITHM);
+            Cipher inCipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM);
             inCipher.init(Cipher.ENCRYPT_MODE, secret);
             byte[] iv = inCipher.getIV();
-            String path = getFilePath(alias_iv, context);
-            boolean success = writeBytesToFile(path, iv);
-            if (!success) {
-                RuntimeException ex = new NullPointerException("failed to writeBytesToFile: " + alias);
-                BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
-                BRDialog.showCustomDialog(context, context.getString(R.string.Alert_keystore_title_android), "Failed to save the iv file for: " + alias, "close", null, new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-                        brDialogView.dismissWithAnimation();
-                    }
-                }, null, null, 0);
-                keyStore.deleteEntry(alias);
-                return false;
-            }
-            CipherOutputStream cipherOutputStream = null;
-            try {
-                cipherOutputStream = new CipherOutputStream(
-                        new FileOutputStream(encryptedDataFilePath), inCipher);
-                cipherOutputStream.write(data);
-
-            } catch (Exception ex) {
-                ex.printStackTrace();
-            } finally {
-                if (cipherOutputStream != null) cipherOutputStream.close();
-            }
+//            String path = getFilePath(alias_iv, context);
+            storeEncryptedData(context, iv, alias_iv);
+            byte[] encryptedData = inCipher.doFinal(data);
+            storeEncryptedData(context, encryptedData, alias);
+//            boolean success = writeBytesToFile(path, iv);
+//            if (!success) {
+//                RuntimeException ex = new NullPointerException("failed to writeBytesToFile: " + alias);
+//                BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
+//                BRDialog.showCustomDialog(context, context.getString(R.string.Alert_keystore_title_android), "Failed to save the iv file for: " + alias, "close", null, new BRDialogView.BROnClickListener() {
+//                    @Override
+//                    public void onClick(BRDialogView brDialogView) {
+//                        brDialogView.dismissWithAnimation();
+//                    }
+//                }, null, null, 0);
+//                keyStore.deleteEntry(alias);
+//                return false;
+//            }
+//            CipherOutputStream cipherOutputStream = null;
+//            try {
+//                cipherOutputStream = new CipherOutputStream(
+//                        new FileOutputStream(encryptedDataFilePath), inCipher);
+//                cipherOutputStream.write(data);
+//
+//            } catch (Exception ex) {
+//                ex.printStackTrace();
+//            } finally {
+//                if (cipherOutputStream != null) cipherOutputStream.close();
+//            }
             return true;
         } catch (UserNotAuthenticatedException e) {
             Log.d(TAG, "setData: User not Authenticated, requesting..." + alias + ", err(" + e.getMessage() + ")");
@@ -223,23 +219,66 @@ public class BRKeyStore {
         }
     }
 
+    private static boolean validateRequest(byte[] data, String alias, String alias_file, String alias_iv, boolean auth_required) throws IllegalArgumentException{
+        return ..;
+    }
+
+    private static SecretKey createKeys(String alias, KeyStore keyStore, boolean auth_required) throws InvalidAlgorithmParameterException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException {
+        // Create the keys if necessary
+
+        KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
+
+        // Set the alias of the entry in Android KeyStore where the key will appear
+        // and the constrains (purposes) in the constructor of the Builder
+        keyGenerator.init(new KeyGenParameterSpec.Builder(alias,
+                KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                .setBlockModes(NEW_BLOCK_MODE)
+                .setUserAuthenticationRequired(auth_required)
+                .setUserAuthenticationValidityDurationSeconds(AUTH_DURATION_SEC)
+                .setRandomizedEncryptionRequired(false)
+                .setEncryptionPaddings(NEW_PADDING)
+                .build());
+        return keyGenerator.generateKey();
+
+    }
+
     private synchronized static byte[] _getData(final Context context, String alias, String alias_file, String alias_iv, int request_code)
             throws UserNotAuthenticatedException {
 //        Log.e(TAG, "_getData: " + alias);
 
-        if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) {
-            RuntimeException ex = new IllegalArgumentException("_getData:mistake in parameters!");
-            BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
-            return null;
-        }
+//        if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) {
+//            RuntimeException ex = new IllegalArgumentException("_getData:mistake in parameters!");
+//            BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
+//            return null;
+//        }
         KeyStore keyStore = null;
 
-        String encryptedDataFilePath = getFilePath(alias_file, context);
 //        byte[] result = new byte[0];
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
             SecretKey secretKey = (SecretKey) keyStore.getKey(alias, null);
+
+            byte[] encryptedData = retrieveEncryptedData(context, alias);
+            //if new version of the data not present, transfer and delete the old version
+            if (encryptedData != null) {
+                byte[] iv = retrieveEncryptedData(context, alias_iv);
+                if (iv == null)
+                    throw new NullPointerException("iv is missing when data isn't: " + alias);
+                Cipher outCipher;
+                outCipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM);
+                outCipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
+                try {
+                    byte[] decryptedData = outCipher.doFinal(encryptedData);
+                    if (decryptedData != null) {
+                        return decryptedData;
+                    }
+                } catch (IllegalBlockSizeException | BadPaddingException e) {
+                    e.printStackTrace();
+                    throw new RuntimeException("failed to decrypt data: " + e.getMessage());
+                }
+            }
+            String encryptedDataFilePath = getFilePath(alias_file, context);
             if (secretKey == null) {
                 /* no such key, the key is just simply not there */
                 boolean fileExists = new File(encryptedDataFilePath).exists();
@@ -255,7 +294,7 @@ public class BRKeyStore {
             boolean ivExists = new File(getFilePath(alias_iv, context)).exists();
             boolean aliasExists = new File(getFilePath(alias_file, context)).exists();
             if (!ivExists || !aliasExists) {
-                removeAliasAndFiles(alias, context);
+                removeAliasAndFiles(keyStore, alias, context);
                 //report it if one exists and not the other.
                 if (ivExists != aliasExists) {
                     BRKeystoreErrorException ex = new BRKeystoreErrorException("alias or iv isn't on the disk: " + alias + ", aliasExists:" + aliasExists);
@@ -275,7 +314,26 @@ public class BRKeyStore {
             outCipher = Cipher.getInstance(CIPHER_ALGORITHM);
             outCipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
             CipherInputStream cipherInputStream = new CipherInputStream(new FileInputStream(encryptedDataFilePath), outCipher);
-            return BytesUtil.readBytesFromStream(cipherInputStream);
+            byte[] result = BytesUtil.readBytesFromStream(cipherInputStream);
+
+
+            SecretKey newKey = createKeys(alias, keyStore, (alias.equals("phrase") || alias.equals("canary")));
+            Cipher inCipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM);
+            inCipher.init(Cipher.ENCRYPT_MODE, secretKey);
+            iv = inCipher.getIV();
+//            String path = getFilePath(alias_iv, context);
+            storeEncryptedData(context, iv, alias_iv);
+            encryptedData = inCipher.doFinal(result);
+            storeEncryptedData(context, encryptedData, alias);
+
+            //double check the keys are there
+            if (retrieveEncryptedData(context, alias) != null && retrieveEncryptedData(context, alias_iv) != null) {
+                removeAliasAndFiles(keyStore, alias, context);
+            } else {
+                throw new RuntimeException("failed to insert new encrypted data format");
+            }
+            return result;
+
         } catch (InvalidKeyException e) {
             if (e instanceof UserNotAuthenticatedException) {
                 /** user not authenticated, ask the system for authentication */
@@ -306,7 +364,10 @@ public class BRKeyStore {
             Log.e(TAG, "getData: error: " + e.getClass().getSuperclass().getName());
             BRErrorPipe.parseKeyStoreError(context, e, alias, true);
             return null;
+        } catch (BadPaddingException | IllegalBlockSizeException | NoSuchProviderException e) {
+            e.printStackTrace();
         }
+        return null;
     }
 
     public synchronized static String getFilePath(String fileName, Context context) {
@@ -608,7 +669,7 @@ public class BRKeyStore {
             keyStore.load(null);
             int count = 0;
             while (keyStore.aliases().hasMoreElements()) {
-                removeAliasAndFiles(keyStore.aliases().nextElement(), context);
+                removeAliasAndFiles(keyStore, keyStore.aliases().nextElement(), context);
                 count++;
             }
 //            Assert.assertEquals(count, 11);
@@ -629,8 +690,7 @@ public class BRKeyStore {
         return true;
     }
 
-    public synchronized static void removeAliasAndFiles(String alias, Context context) {
-        KeyStore keyStore;
+    public synchronized static void removeAliasAndFiles(KeyStore keyStore, String alias, Context context) {
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
@@ -641,7 +701,22 @@ public class BRKeyStore {
             e.printStackTrace();
         }
 
+    }
 
+    public static void storeEncryptedData(Context ctx, byte[] data, String name) {
+        SharedPreferences pref = ctx.getSharedPreferences(KEY_STORE_PREFS_NAME, Context.MODE_PRIVATE);
+        String base64 = Base64.encodeToString(data, Base64.DEFAULT);
+        SharedPreferences.Editor edit = pref.edit();
+        edit.putString(name, base64);
+        edit.apply();
+
+    }
+
+    public static byte[] retrieveEncryptedData(Context ctx, String name) {
+        SharedPreferences pref = ctx.getSharedPreferences(KEY_STORE_PREFS_NAME, Context.MODE_PRIVATE);
+        String base64 = pref.getString(name, null);
+        if (base64 == null) return null;
+        return Base64.decode(base64, Base64.DEFAULT);
     }
 
     public static void showAuthenticationScreen(Context context, int requestCode) {
@@ -683,34 +758,34 @@ public class BRKeyStore {
         return bytes;
     }
 
-    public static boolean writeBytesToFile(String path, byte[] data) {
-
-        FileOutputStream fos = null;
-
-        try {
-            File file = new File(path);
-            fos = new FileOutputStream(file);
-            // Writes bytes from the specified byte array to this file output stream
-            fos.write(data);
-            return true;
-        } catch (FileNotFoundException e) {
-            System.out.println("File not found" + e);
-        } catch (IOException ioe) {
-            System.out.println("Exception while writing file " + ioe);
-        } finally {
-            // close the streams using close method
-            try {
-                if (fos != null) {
-                    fos.close();
-                }
-
-            } catch (IOException ioe) {
-                System.out.println("Error while closing stream: " + ioe);
-            }
-
-        }
-        return false;
-    }
+//    public static boolean writeBytesToFile(String path, byte[] data) {
+//
+//        FileOutputStream fos = null;
+//
+//        try {
+//            File file = new File(path);
+//            fos = new FileOutputStream(file);
+//            // Writes bytes from the specified byte array to this file output stream
+//            fos.write(data);
+//            return true;
+//        } catch (FileNotFoundException e) {
+//            System.out.println("File not found" + e);
+//        } catch (IOException ioe) {
+//            System.out.println("Exception while writing file " + ioe);
+//        } finally {
+//            // close the streams using close method
+//            try {
+//                if (fos != null) {
+//                    fos.close();
+//                }
+//
+//            } catch (IOException ioe) {
+//                System.out.println("Error while closing stream: " + ioe);
+//            }
+//
+//        }
+//        return false;
+//    }
 
 
     public static class AliasObject {
