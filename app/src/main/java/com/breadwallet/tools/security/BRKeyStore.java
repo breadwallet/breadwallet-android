@@ -154,13 +154,7 @@ public class BRKeyStore {
 
     private synchronized static boolean _setData(Context context, byte[] data, String alias, String alias_file, String alias_iv,
                                                  int request_code, boolean auth_required) throws UserNotAuthenticatedException {
-        validateRequest(data, alias, alias_file, alias_iv, auth_required);
-//        Log.e(TAG, "_setData: " + alias);
-//        if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) {
-//            RuntimeException ex = new IllegalArgumentException("_setData:mistake in parameters");
-//            BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
-//            throw ex;
-//        }
+        validateSet(data, alias, alias_file, alias_iv, auth_required);
         KeyStore keyStore = null;
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
@@ -170,7 +164,6 @@ public class BRKeyStore {
                 secret = createKeys(alias, keyStore, auth_required);
             }
 
-//            SecretKey secret = (SecretKey) keyStore.getKey(alias, null);
             if (secret == null) {
                 BRKeystoreErrorException ex = new BRKeystoreErrorException("secret is null on _setData: " + alias);
                 BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
@@ -183,30 +176,6 @@ public class BRKeyStore {
             storeEncryptedData(context, iv, alias_iv);
             byte[] encryptedData = inCipher.doFinal(data);
             storeEncryptedData(context, encryptedData, alias);
-//            boolean success = writeBytesToFile(path, iv);
-//            if (!success) {
-//                RuntimeException ex = new NullPointerException("failed to writeBytesToFile: " + alias);
-//                BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
-//                BRDialog.showCustomDialog(context, context.getString(R.string.Alert_keystore_title_android), "Failed to save the iv file for: " + alias, "close", null, new BRDialogView.BROnClickListener() {
-//                    @Override
-//                    public void onClick(BRDialogView brDialogView) {
-//                        brDialogView.dismissWithAnimation();
-//                    }
-//                }, null, null, 0);
-//                keyStore.deleteEntry(alias);
-//                return false;
-//            }
-//            CipherOutputStream cipherOutputStream = null;
-//            try {
-//                cipherOutputStream = new CipherOutputStream(
-//                        new FileOutputStream(encryptedDataFilePath), inCipher);
-//                cipherOutputStream.write(data);
-//
-//            } catch (Exception ex) {
-//                ex.printStackTrace();
-//            } finally {
-//                if (cipherOutputStream != null) cipherOutputStream.close();
-//            }
             return true;
         } catch (UserNotAuthenticatedException e) {
             Log.d(TAG, "setData: User not Authenticated, requesting..." + alias + ", err(" + e.getMessage() + ")");
@@ -219,8 +188,25 @@ public class BRKeyStore {
         }
     }
 
-    private static boolean validateRequest(byte[] data, String alias, String alias_file, String alias_iv, boolean auth_required) throws IllegalArgumentException{
-        return ..;
+    private static void validateGet(String alias, String alias_file, String alias_iv) throws IllegalArgumentException {
+        AliasObject obj = aliasObjectMap.get(alias);
+        if (obj.alias.equals(alias) && obj.datafileName.equals(alias_file) && obj.ivFileName.equals(alias_iv)) {
+            String err = alias + "|" + alias_file + "|" + alias_iv + ", obj: " + obj.alias + "|" + obj.datafileName + "|" + obj.ivFileName;
+            throw new IllegalArgumentException("keystore insert inconsistency in names: " + err);
+        }
+
+    }
+
+    private static void validateSet(byte[] data, String alias, String alias_file, String alias_iv, boolean auth_required) throws IllegalArgumentException {
+        if (data == null) throw new IllegalArgumentException("keystore insert data is null");
+        AliasObject obj = aliasObjectMap.get(alias);
+        if (obj.alias.equals(alias) && obj.datafileName.equals(alias_file) && obj.ivFileName.equals(alias_iv)) {
+            String err = alias + "|" + alias_file + "|" + alias_iv + ", obj: " + obj.alias + "|" + obj.datafileName + "|" + obj.ivFileName;
+            throw new IllegalArgumentException("keystore insert inconsistency in names: " + err);
+        }
+
+        if (auth_required && (!alias.equals(PHRASE_ALIAS) || !alias.equals(CANARY_ALIAS)))
+            throw new IllegalArgumentException("keystore auth_required is true but alias is: " + alias);
     }
 
     private static SecretKey createKeys(String alias, KeyStore keyStore, boolean auth_required) throws InvalidAlgorithmParameterException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException {
@@ -244,13 +230,7 @@ public class BRKeyStore {
 
     private synchronized static byte[] _getData(final Context context, String alias, String alias_file, String alias_iv, int request_code)
             throws UserNotAuthenticatedException {
-//        Log.e(TAG, "_getData: " + alias);
-
-//        if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) {
-//            RuntimeException ex = new IllegalArgumentException("_getData:mistake in parameters!");
-//            BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
-//            return null;
-//        }
+        validateGet(alias, alias_file, alias_iv);
         KeyStore keyStore = null;
 
 //        byte[] result = new byte[0];
