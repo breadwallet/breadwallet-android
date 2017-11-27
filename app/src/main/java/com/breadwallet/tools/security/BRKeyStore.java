@@ -190,7 +190,7 @@ public class BRKeyStore {
 
     private static void validateGet(String alias, String alias_file, String alias_iv) throws IllegalArgumentException {
         AliasObject obj = aliasObjectMap.get(alias);
-        if (obj.alias.equals(alias) && obj.datafileName.equals(alias_file) && obj.ivFileName.equals(alias_iv)) {
+        if (!obj.alias.equals(alias) || !obj.datafileName.equals(alias_file) || !obj.ivFileName.equals(alias_iv)) {
             String err = alias + "|" + alias_file + "|" + alias_iv + ", obj: " + obj.alias + "|" + obj.datafileName + "|" + obj.ivFileName;
             throw new IllegalArgumentException("keystore insert inconsistency in names: " + err);
         }
@@ -200,7 +200,7 @@ public class BRKeyStore {
     private static void validateSet(byte[] data, String alias, String alias_file, String alias_iv, boolean auth_required) throws IllegalArgumentException {
         if (data == null) throw new IllegalArgumentException("keystore insert data is null");
         AliasObject obj = aliasObjectMap.get(alias);
-        if (obj.alias.equals(alias) && obj.datafileName.equals(alias_file) && obj.ivFileName.equals(alias_iv)) {
+        if (!obj.alias.equals(alias) || !obj.datafileName.equals(alias_file) || !obj.ivFileName.equals(alias_iv)) {
             String err = alias + "|" + alias_file + "|" + alias_iv + ", obj: " + obj.alias + "|" + obj.datafileName + "|" + obj.ivFileName;
             throw new IllegalArgumentException("keystore insert inconsistency in names: " + err);
         }
