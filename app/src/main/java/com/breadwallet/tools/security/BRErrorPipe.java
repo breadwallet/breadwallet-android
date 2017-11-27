@@ -3,12 +3,18 @@ package com.breadwallet.tools.security;
 import android.app.Activity;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
+import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.IntroActivity;
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.camera.ScanQRActivity;
+import com.breadwallet.presenter.activities.intro.IntroActivity;
+import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.security.InvalidKeyException;
@@ -39,13 +45,13 @@ import java.security.InvalidKeyException;
  */
 public class BRErrorPipe {
 
+    private static final String TAG = BRErrorPipe.class.getName();
+
     private static android.app.AlertDialog dialog;
 
     public static void parseKeyStoreError(final Context context, Exception e, String alias, boolean report) {
-        if (report) FirebaseCrash.report(e);
-
         if (e instanceof KeyPermanentlyInvalidatedException) {
-            BRErrorPipe.showKeyStoreDialog(context, "KeyStore Error: " + alias, "Your Breadwallet encrypted data was recently invalidated because your Android lock screen was disabled.", context.getString(R.string.ok), null,
+            BRErrorPipe.showKeyStoreDialog(context, context.getString(R.string.Alert_keystore_title_android) + ": " + alias, context.getString(R.string.Alert_keystore_invalidated_android), context.getString(R.string.Button_ok), null,
                     new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             dialog.cancel();
@@ -53,23 +59,20 @@ public class BRErrorPipe {
                     }, null, new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialogInterface) {
-                            if (context instanceof IntroActivity) {
-                                if (BRAnimator.checkTheMultipressingAvailability()) {
-                                    ((IntroActivity) context).showRecoverWalletFragment();
-                                }
+                            if (context instanceof Activity) {
+                                if (!BRAnimator.isClickAllowed()) return;
+                                Intent intent = new Intent(context, RecoverActivity.class);
+                                context.startActivity(intent);
+                                ((Activity) context).overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                                BRSharedPrefs.putGreetingsShown(context, true);
+
                             }
                         }
                     });
+            report = false;
         } else if (e instanceof InvalidKeyException) {
-            showKeyStoreDialog(context, "KeyStore Error", "Failed to load KeyStore(" + alias + "). Please try again later or enter your phrase to recover your Breadwallet now.", "recover now", "try later",
-                    context instanceof IntroActivity ?
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int which) {
-                                    if (BRAnimator.checkTheMultipressingAvailability()) {
-                                        ((IntroActivity) context).showRecoverWalletFragment();
-                                    }
-                                }
-                            } : null, new DialogInterface.OnClickListener() {
+            showKeyStoreDialog(context, context.getString(R.string.Alert_keystore_title_android), "Failed to load KeyStore(" + alias + "). Please try again later or enter your phrase to recover your Bread now.", context.getString(R.string.AccessibilityLabels_close), null,
+                    null, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
                             ((Activity) context).finish();
                         }
@@ -77,9 +80,9 @@ public class BRErrorPipe {
                     null);
         } else {
             showKeyStoreDialog(context,
-                    "KeyStore Error",
+                    context.getString(R.string.Alert_keystore_title_android),
                     "Failed to load KeyStore:\n" + e.getClass().getSimpleName() + "\n" + e.getMessage(),
-                    "Close", null,
+                    context.getString(R.string.AccessibilityLabels_close), null,
                     new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -95,14 +98,17 @@ public class BRErrorPipe {
                         }
                     });
         }
+        if (report) {
+            BRReportsManager.reportBug(e);
+        }
     }
 
     public static void parseError(final Context context, String message, Exception ex, final boolean critical) {
-        FirebaseCrash.report(ex);
+        BRReportsManager.reportBug(ex);
         showKeyStoreDialog(context,
                 "Internal error:",
                 message,
-                "Close", null,
+                context.getString(R.string.AccessibilityLabels_close), null,
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -126,9 +132,9 @@ public class BRErrorPipe {
                                           final DialogInterface.OnClickListener negButtonListener,
                                           final DialogInterface.OnDismissListener dismissListener) {
         Activity app = (Activity) context;
-        if (app == null) app = MainActivity.app;
-        if (app == null) app = IntroActivity.app;
+        if (app == null) app = (Activity) BreadApp.getBreadContext();
         if (app == null) {
+            Log.e(TAG, "showKeyStoreDialog: app is null");
             return;
         }
         final Activity finalApp = app;
@@ -143,14 +149,15 @@ public class BRErrorPipe {
                             else
                                 return;
                         }
-                        dialog = new android.app.AlertDialog.Builder(finalApp).
-                                setTitle(title)
-                                .setMessage(message)
-                                .setPositiveButton(posButton, posButtonListener)
-                                .setNegativeButton(negButton, negButtonListener)
-                                .setOnDismissListener(dismissListener)
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .show();
+                        if (!finalApp.isDestroyed())
+                            dialog = new android.app.AlertDialog.Builder(finalApp).
+                                    setTitle(title)
+                                    .setMessage(message)
+                                    .setPositiveButton(posButton, posButtonListener)
+                                    .setNegativeButton(negButton, negButtonListener)
+                                    .setOnDismissListener(dismissListener)
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .show();
                     }
                 }
             });

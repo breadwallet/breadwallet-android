@@ -1,357 +1,735 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <resources>
-    <!-- no need -->
-    <string name="app_name">&#384;readwallet</string>
-    <!-- no need -->
-    <string name="lang">en</string>
-    <!-- android -->
-    <string name="bitcoin_address">Bitcoin Address</string>
-    <!-- android -->
-    <string name="fingerprint_description">confirm fingerprint</string>
-    <!-- android -->
-    <string name="fingerprint_hint">touch sensor</string>
-    <!-- android -->
-    <string name="fingerprint_not_recognized">fingerprint not recognized. Try again.</string>
-    <!-- android -->
-    <string name="fingerprint_success">fingerprint recognized</string>
-    <!-- android -->
-    <string name="fragmentdecoder_not_valid_bitcoin_address">not a valid bitcoin address</string>
-    <!-- android -->
-    <string name="fragmentdecoder_not_a_bitcoin_qr_code">not a bitcoin QR code</string>
-    <!-- android -->
-    <string name="error">error</string>
-    <!-- android -->
-    <string name="invalid_address">invalid address</string>
-    <!-- android -->
-    <string name="invalid_address_with_holder">invalid address\n%1$s</string>
-    <!-- android -->
-    <string name="fingerprint_auth">fingerprint authorization</string>
-    <!-- android -->
-    <string name="rooted_message">On a \'rooted\' device, any app can access any other app\'s keystore data (and steal your bitcoins).%s</string>
-    <!-- android -->
-    <string name="rooted_message_holder1">\nWipe this wallet immediately and restore on a secure device.</string>
-    <!-- android -->
-    <string name="auth_required">Authentication required</string>
-    <!-- android -->
-    <string name="auth_message">Please unlock your device to continue.</string>
-    <!-- android -->
-    <string name="camera_configuration_failed">camera configuration failed</string>
-    <!-- android -->
-    <string name="device_security_compromised">DEVICE SECURITY COMPROMISED</string>
-    <!-- android -->
-    <string name="confirm">confirm</string>
-    <!-- android -->
-    <string name="keystore_unavailable">The KeyStore is temporary unavailable, please try again later</string>
-    <!-- android -->
-    <string name="encryption_needed_for_wallet">A device screen lock is needed to safeguard your wallet. Go to \"Settings\" > \"Security\" > \"Screen lock\" and enable to continue.</string>
-    <!-- android -->
-    <string name="failed_to_sign_tx">Failed to sign transaction</string>
-    <!-- android -->
-    <string name="payment_request_message_too_large">PaymentRequest message is too large</string>
-    <!-- android -->
-    <string name="expired_request">Expired request</string>
-    <!-- android -->
-    <string name="invalid_request">Invalid request</string>
-    <!-- android -->
-    <string name="allow_camera_access">allow camera access in \"Settings\" > \"Apps\" > \"breadwallet\" > \"Permissions\"</string>
-    <!-- android -->
-    <string name="insecure_keyboard_message">Custom keyboards are insecure and cannot be used to enter a recovery phrase. Press continue to select a Google keyboard.</string>
-    <!-- android -->
-    <string name="choose_an_email_client">Choose an Email client</string>
-    <!-- android -->
-    <string name="phrase_error">Recovery phrase error, please contact support at breadwallet.com</string>
-    <!-- android -->
-    <string name="recover_button">recover</string>
-    <!-- android -->
-    <string name="fingerprint_spend_limit">fingerprint spend limit</string>
-    <!-- android -->
-    <string name="refresh">refresh</string>
-    <!-- android -->
-    <string name="breadwallet_v">breadwallet %1$d</string>
-    <!-- android -->
-    <string name="copyright_u00a9_2016_breadwallet_llc">copyright © 2016 breadwallet llc</string>
-    <!-- android -->
-    <string name="app_support">app support:</string>
-    <!-- android -->
-    <string name="support_website">support@breadwallet.com</string>
-    <!-- android -->
-    <string name="exchange_rate_data_provided_by">exchange rate data provided by</string>
-    <!-- android -->
-    <string name="bitpay_com_rates">bitpay.com/rates</string>
-    <!-- android -->
-    <string name="unknown_host">unknown host</string>
-    <!-- android -->
-    <string name="connection_timed_out">connection timed out</string>
-
-    <string name="bad_recovery_phrase">bad recovery phrase</string>
-    <!-- checked -->
-    <string name="settingsall_rescan_instructions">rescan blockchain if you think you may have missing transactions, or are having trouble sending (rescanning can take several minutes)</string>
-    <!-- checked -->
-    <string name="wipewallet_instructions">Enter this wallet\'s recovery phrase to wipe it and start/recover another. Your current balance remains on this phrase.</string>
-    <!-- checked -->
-    <string name="dialog_recovery_phrase_warning">if you ever lose your phone, you will need this phrase to recover your wallet</string>
-    <!-- checked -->
-    <string name="toast_qr_tip">Let others scan this QR code to get your bitcoin address. Anyone can send bitcoins to your wallet by transferring them to your address.</string>
-    <!-- checked -->
-    <string name="toast_address_tip">This is your bitcoin address. Tap to copy it or send it by email or sms. The address will change each time you receive funds, but old addresses always work.</string>
-    <string name="warning">WARNING</string>
-    <!-- checked -->
-    <string name="warning_text1">\nDO NOT let anyone see your recovery\nphrase or they can spend your bitcoins.\n</string>
-    <!-- checked -->
-    <string name="warning_text2">\nNEVER type your recovery phrase into\npassword managers or any software.</string>
-    <!-- checked -->
-    <string name="show">show</string>
-    <!-- checked -->
-    <string name="cancel">cancel</string>
-    <!-- checked -->
-    <string name="mainfragment_clipboard_invalid_data">"clipboard doesn't contain a valid bitcoin address"</string>
-    <!-- checked -->
-    <string name="ok">ok</string>
-    <!-- checked -->
-    <string name="toast_address_copied">copied</string>
-    <!-- checked -->
-    <string name="middle_view_tip_first">This is your bitcoin balance. Bitcoin is a currency. The exchange rate changes with the market.</string>
-    <!-- checked -->
-    <string name="middle_view_tip_second">%1$s is for \'bits\'. %2$s = 1 bitcoin.</string>
-    <!-- checked -->
-    <string name="done">done</string>
-    <!-- checked -->
-    <string name="remind_me_later">remind me later</string>
-    <!-- checked -->
-    <string name="enter_old_passcode">enter old passcode</string>
-    <!-- checked -->
-    <string name="choose_new_passcode">choose wallet passcode</string>
-    <!-- checked -->
-    <string name="verify_passcode">verify passcode</string>
-    <!-- checked -->
-    <string name="to">to: </string>
-    <!-- checked -->
-    <string name="middle_view_settings">settings</string>
-    <!-- checked -->
-    <string name="middle_view_transaction_details">transaction details</string>
-    <!-- checked -->
-    <string name="bad_payment_request">bad payment request</string>
-    <!-- checked -->
-    <string name="more">more...</string>
-    <!-- checked -->
-    <string name="sent">sent</string>
-    <!-- checked -->
-    <string name="sent_exclaimed">sent!</string>
-    <!-- checked -->
-    <string name="received">received</string>
-    <!-- checked -->
-    <string name="received_amount">received %1$s (%2$s)</string>
-    <!-- checked -->
-    <string name="wallet_address">wallet address</string>
-    <!-- checked -->
-    <string name="payment_address">payment address</string>
-    <!-- checked -->
-    <string name="spent_address">spent address</string>
-    <!-- checked -->
-    <string name="bitcoin_network_fee">bitcoin network fee</string>
-    <!-- checked -->
-    <string name="pay_address_from_clipboard">pay address from clipboard</string>
-    <!-- checked -->
-    <string name="could_not_transmit_payment">couldn\'t transmit payment to bitcoin network</string>
-    <!-- checked -->
-    <string name="scan_qr_code">scan QR code</string>
-    <!-- checked -->
-    <string name="request_an_amount">request an amount</string>
-    <!-- checked -->
-    <string name="send_address_as_email">send address as email</string>
-    <!-- checked -->
-    <string name="send_address_as_message">send address as message</string>
-    <!-- checked -->
-    <string name="copy_address_to_clipboard">copy address to clipboard</string>
-    <!-- checked -->
-    <string name="enter_passcode">passcode for %s</string>
-    <!-- checked -->
-    <string name="address_already_in_your_wallet">this payment address is already in your wallet</string>
-    <!-- checked -->
-    <string name="syncing">syncing...</string>
-    <!-- checked -->
-    <string name="payment_failed">couldn\'t make payment</string>
-    <!-- checked -->
-    <string name="address_already_used">\nADDRESS ALREADY USED\n\nbitcoin addresses are intended for single use only\n\nre-use reduces privacy for both you and the recipient and can result in loss if the recipient doesn\'t directly control the address</string>
-    <!-- checked -->
-    <string name="ignore">ignore</string>
-    <!-- checked -->
-    <string name="verified_waiting">verified, waiting for confirmation</string>
-    <!-- checked -->
-    <string name="you_received_bitcoin">you received bitcoin!</string>
-    <!-- checked -->
-    <string name="write_down_phrase_holder1">next, write down your recovery phrase</string>
-    <!-- checked -->
-    <string name="write_down_phrase_holder2">WRITE DOWN YOUR RECOVERY PHRASE</string>
-    <!-- checked -->
-    <string name="write_down_phrase">\n%s\n\nif you ever lose your phone, you will need it to recover your wallet</string>
-    <!-- checked -->
-    <string name="unverified">unverified</string>
-    <!-- checked -->
-    <string name="important">IMPORTANT</string>
-    <!-- checked -->
-    <string name="moved">moved</string>
-    <!-- checked -->
-    <string name="receive_money">receive money:</string>
-    <!-- checked -->
-    <string name="send_money">send money:</string>
-    <!-- checked -->
-    <string name="new_wallet">new wallet</string>
-    <!-- checked -->
-    <string name="recover_wallet">recover wallet</string>
-    <!-- checked -->
-    <string name="wipe">wipe</string>
-    <!-- checked -->
-    <string name="generate_recovery_phrase">generate recovery phrase</string>
-    <!-- checked -->
-    <string name="request">request</string>
-    <!-- checked -->
-    <string name="pay">pay</string>
-    <!-- checked -->
-    <string name="at_this_address">receive bitcoins at this address: %s</string>
-    <!-- checked -->
-    <string name="generate_phrase_text1">start a new wallet by generating a wallet recovery phrase</string>
-    <!-- checked -->
-    <string name="generate_phrase_text2">if you ever lose your phone, you will need this phrase to recover your wallet</string>
-    <!-- checked -->
-    <string name="i_wrote_it_down">I wrote it down:</string>
-    <!-- checked -->
-    <string name="no_transactions">no transactions</string>
-    <!-- checked -->
-    <string name="recovery_phrase">recovery phrase:</string>
-    <!-- checked -->
-    <string name="use_passcode">passcode</string>
-    <!-- checked -->
-    <string name="try_again">try again in %1$d %2$s</string>
-    <!-- checked -->
-    <string name="wallet_disabled">wallet disabled</string>
-    <!-- checked -->
-    <string name="minute">minute</string>
-    <!-- checked -->
-    <string name="minutes">minutes</string>
-    <!-- checked -->
-    <string name="reset">reset</string>
-    <!-- checked -->
-    <string name="recovery_phrase_label">recovery phrase</string>
-    <!-- checked -->
-    <string name="phrase_no_match">recovery phrase doesn\'t match</string>
-    <!-- checked -->
-    <string name="please_write_it_down">please write it down</string>
-    <!-- checked -->
-    <string name="settings">settings</string>
-    <!-- checked -->
-    <string name="about">about</string>
-    <!-- checked -->
-    <string name="local_currency">local currency</string>
-    <!-- checked -->
-    <string name="change_passcode">change passcode</string>
-    <!-- checked -->
-    <string name="start_recover_another_wallet">start/recover another wallet</string>
-    <!-- checked -->
-    <string name="transaction_history">transaction history</string>
-    <!-- checked -->
-    <string name="import_private_key">import private key</string>
-    <string name="buy_bitcoin">Buy Bitcoin</string>
-    <!-- checked -->
-    <string name="rescan_blockchain">rescan blockchain</string>
-    <!-- checked -->
-    <string name="confirm_">confirm:</string>
-    <!-- checked -->
-    <string name="id">id:</string>
-    <!-- checked -->
-    <string name="status">status:</string>
-    <!-- checked -->
-    <string name="amount">amount:</string>
-    <!-- checked -->
-    <string name="from">from:</string>
-    <!-- checked -->
-    <string name="copy">copy</string>
-    <string name="not_connected">not connected</string>
-    <!-- checked -->
-    <string name="password_protected_key">password protected key</string>
-    <!-- checked -->
-    <string name="bitcoin_payment_cant_be_less">bitcoin payments can\'t be less than %s</string>
-    <!-- checked -->
-    <string name="amount_too_small">amount too small</string>
-    <!-- checked -->
-    <string name="change_payment_amount">change payment amount?</string>
-    <!-- checked -->
-    <string name="nr_confirmations">%d confirmations</string>
-    <!-- checked -->
-    <string name="nr_confirmations0">0 confirmations</string>
-    <string name="nr_confirmations1">1 confirmation</string>
-    <!-- checked -->
-    <string name="confirmed_in_block_nr">confirmed in block #%d</string>
-    <!-- checked -->
-    <string name="change">change</string>
-    <!-- checked -->
-    <string name="attempts_remaining">\n%d attempts remaining\n</string>
-    <!-- checked -->
-    <string name="attempt_remaining1">\n1 attempt remaining\n</string>
-    <!-- checked -->
-    <string name="priv_key_empty">this private key is empty</string>
-    <!-- checked -->
-    <string name="could_not_sweep_the_balance">couldn\'t sweep balance</string>
-    <!-- checked -->
-    <string name="send_money_from_privkey_message">Send %1$s (%2$s) from this private key into your wallet? The bitcoin network will receive a fee of %3$s (%4$s).</string>
-    <!-- checked -->
-    <string name="blocks">block #%1$d of %2$d</string>
-    <!-- checked -->
-    <string name="insufficient_funds">insufficient funds</string>
-    <!-- checked -->
-    <string name="checking_privkey_balance">checking private key balance...</string>
-    <!-- checked -->
-    <string name="transaction_rejected">transaction rejected</string>
-    <!-- checked -->
-    <string name="wallet_out_of_sync_message">Your wallet may be out of sync.\nThis can often be fixed by rescanning the blockchain.</string>
-    <!-- checked -->
-    <string name="rescan">rescan</string>
-    <!-- checked -->
-    <string name="reduce_payment_amount_by">reduce payment amount by\n%1$s (%2$s)?</string>
-    <!-- checked -->
-    <string name="insufficient_funds_for_fee">insufficient funds for bitcoin network fee</string>
-    <!-- checked -->
-    <string name="not_connected_network">not connected to the bitcoin network</string>
-    <!-- checked -->
-    <string name="could_not_make_payment">couldn\'t make payment</string>
-    <!-- checked -->
-    <string name="payee_not_certified">payee identity isn\'t certified</string>
-    <!-- checked -->
-    <string name="scan_qr_tip">Scan someone else\'s QR code to get their bitcoin address. You can send a payment to anyone with an address.</string>
-    <!-- checked -->
-    <string name="pay_address_tip">Bitcoin addresses can also be copied to the clipboard. A bitcoin address always starts with \'1\' or \'3\'.</string>
-    <!-- checked -->
-    <string name="not_a_recovery_phrase_word">\"%s\" is not a recovery phrase word</string>
-    <!-- checked -->
-    <string name="recovery_phrase_must_have_12_words">recovery phrase must have %d words</string>
-    <!-- checked -->
-    <string name="show_phrase">show phrase</string>
-    <!-- checked -->
-    <string name="copied">copied</string>
-    <!-- android -->
-    <string name="continue_button">continue</string>
-    <!-- android -->
-    <string name="phrase_flow2">please write down your phrase.</string>
-    <!-- android -->
-    <string name="syncing_in_progress">Syncing in progress..</string>
-    <!-- android -->
-    <string name="wait_for_sync_to_finish">Please wait for syncing to finish before sending funds.</string>
-    <!-- android -->
-    <string name="skip">skip</string>
-    <string name="next">next</string>
-    <string name="step_holder">step %1$d of %2$d</string>
-    <string name="recovery_phrase_set">recovery phrase set</string>
-    <string name="write_down_your_recovery_phrase">WRITE DOWN YOUR \nRECOVERY PHRASE</string>
-    <string name="protect_your_wallet">protect your wallet and ensure you can recover it after replacing or resetting your phone, or disabling your lock screen</string>
-    <string name="word_nr2">select the <b>2nd</b> word of your recovery phrase from the list below</string>
-    <string name="word_nr3">select the <b>3rd</b> word of your recovery phrase from the list below</string>
-    <string name="word_nr4">select the <b>4th</b> word of your recovery phrase from the list below</string>
-    <string name="word_nr5">select the <b>5th</b> word of your recovery phrase from the list below</string>
-    <string name="word_nr6">select the <b>6th</b> word of your recovery phrase from the list below</string>
-    <string name="word_nr7">select the <b>7th</b> word of your recovery phrase from the list below</string>
-    <string name="word_nr8">select the <b>8th</b> word of your recovery phrase from the list below</string>
-    <string name="word_nr9">select the <b>9th</b> word of your recovery phrase from the list below</string>
-    <string name="word_nr10">select the <b>10th</b> word of your recovery phrase from the list below</string>
-    <string name="word_nr11">select the <b>11th</b> word of your recovery phrase from the list below</string>
-    <string name="early_access">early access</string>
-
+  <!-- App name -->
+  <string name="About.appName.android">Bread</string>
+  <!-- About screen blog label -->
+  <string name="About.blog">Blog</string>
+  <!-- About screen footer -->
+  <string name="About.footer">Made by the global Bread team. Version %1$s</string>
+  <!-- Privay Policy button label -->
+  <string name="About.privacy">Privacy Policy</string>
+  <!-- About screen reddit label -->
+  <string name="About.reddit">Reddit</string>
+  <!-- Terms of Use button label -->
+  <string name="About.terms">Terms of Use</string>
+  <!-- About screen title -->
+  <string name="About.title">About</string>
+  <!-- About screen twitter label -->
+  <string name="About.twitter">Twitter</string>
+  <!-- Close modal button accessibility label -->
+  <string name="AccessibilityLabels.close">Close</string>
+  <!-- Support center accessibiliy label -->
+  <string name="AccessibilityLabels.faq">Support Center</string>
+  <!-- Loading Wallet Message -->
+  <string name="Account.loadingMessage">Loading Wallet</string>
+  <!-- Default wallet name -->
+  <string name="AccountHeader.defaultWalletName">My Bread</string>
+  <!-- Third party keyboard warning -->
+  <string name="Alert.customKeyboard.android">It looks like you are using a third-party keyboard, which can record what you type and steal your Paper Key. Please switch to the default Android keyboard for extra protection.</string>
+  <!-- Error alert title -->
+  <string name="Alert.error">Error</string>
+  <!-- Keystore error -->
+  <string name="Alert.keystore.generic.android">There is a problem with your Android OS keystore, please contact support@breadwallet.com</string>
+  <!-- KeyStore error, keys are invalidated -->
+  <string name="Alert.keystore.invalidated.android">Your Bread encrypted data was recently invalidated because your Android lock screen was disabled.</string>
+  <!-- Keystore error title -->
+  <string name="Alert.keystore.title.android">Android KeyStore Error</string>
+  <!-- No internet alert message -->
+  <string name="Alert.noInternet">No internet connection found. Check your connection and try again.</string>
+  <!-- Warning alert title -->
+  <string name="Alert.warning">Warning</string>
+  <!-- 'the addresses were copied'' Alert title -->
+  <string name="Alerts.copiedAddressesHeader">Addresses Copied</string>
+  <!-- Addresses Copied Alert sub header -->
+  <string name="Alerts.copiedAddressesSubheader">All wallet addresses successfully copied.</string>
+  <!-- Alert Header Label (the paper key was set) -->
+  <string name="Alerts.paperKeySet">Paper Key Set</string>
+  <!-- Alert Subheader label (playfully positive) -->
+  <string name="Alerts.paperKeySetSubheader">Awesome!</string>
+  <!-- Alert Header label (the PIN was set) -->
+  <string name="Alerts.pinSet">PIN Set</string>
+  <!-- Send failure alert header label (the send failed to happen) -->
+  <string name="Alerts.sendFailure">Send failed</string>
+  <!-- Send success alert header label (confirmation that the send happened) -->
+  <string name="Alerts.sendSuccess">Send Confirmation</string>
+  <!-- Send success alert subheader label (e.g. the money was sent) -->
+  <string name="Alerts.sendSuccessSubheader">Money Sent!</string>
+  <!-- Fingerprint was recognized by the scanner -->
+  <string name="Alerts.touchIdSucceeded.android">Fingerprint recognized</string>
+  <!-- JSON Serialization error message -->
+  <string name="ApiClient.jsonError">JSON Serialization Error</string>
+  <!-- Wallet not ready error message -->
+  <string name="ApiClient.notReady">Wallet not ready</string>
+  <!-- API Token error message -->
+  <string name="ApiClient.tokenError">Unable to retrieve API token</string>
+  <!-- Send BCH view body. -->
+  <string name="BCH.body">Enter a destination BCH address below. All BCH in your wallet at the time of the fork (%1$s) will be sent.</string>
+  <!-- Confirm sending <$5.00> to <address>? -->
+  <string name="BCH.confirmationMessage">Confirm sending %1$s to %2$s</string>
+  <!-- Confirmation alert title -->
+  <string name="BCH.confirmationTitle">Confirmation</string>
+  <!-- Generic bch erorr message -->
+  <string name="BCH.genericError">Your account does not contain any BCH, or you received BCH after the fork.</string>
+  <!-- Transaction ID copied message -->
+  <string name="BCH.hashCopiedMessage">Transaction ID copied</string>
+  <!-- No address error message -->
+  <string name="BCH.noAddressError">Please enter an address</string>
+  <!-- Attempted to scan unsupported qr code error message. -->
+  <string name="BCH.paymentProtocolError">Payment Protocol Requests are not supported for BCH transactions</string>
+  <!-- BCH successfully sent alert message -->
+  <string name="BCH.successMessage">BCH was successfully sent.</string>
+  <!-- Widthdraw BCH view title -->
+  <string name="BCH.title">Withdraw BCH</string>
+  <!-- Tx Hash button header -->
+  <string name="BCH.txHashHeader">BCH Transaction ID</string>
+  <!-- Approve button label -->
+  <string name="BitID.approve">Approve</string>
+  <!-- <sitename> is requesting authentication using your bitcoin wallet -->
+  <string name="BitID.authenticationRequest">%1$s is requesting authentication using your bitcoin wallet</string>
+  <!-- Deny button label -->
+  <string name="BitID.deny">Deny</string>
+  <!-- BitID error alert title -->
+  <string name="BitID.error">Authentication Error</string>
+  <!-- BitID error alert messaage (The payment service you are trying to use isn't working. Please contact them, as you may need to try again) -->
+  <string name="BitID.errorMessage">Please check with the service. You may need to try again.</string>
+  <!-- BitID success alert title -->
+  <string name="BitID.success">Successfully Authenticated</string>
+  <!-- BitID Authentication Request alert view title -->
+  <string name="BitID.title">BitID Authentication Request</string>
+  <!-- Cancel button label -->
+  <string name="Button.cancel">Cancel</string>
+  <!-- Ignore button label -->
+  <string name="Button.ignore">Ignore</string>
+  <!-- menu button -->
+  <string name="Button.menu">menu</string>
+  <!-- No button -->
+  <string name="Button.no">No</string>
+  <!-- OK button label -->
+  <string name="Button.ok">OK</string>
+  <!-- receive button -->
+  <string name="Button.receive">receive</string>
+  <!-- send button -->
+  <string name="Button.send">send</string>
+  <!-- Settings button label -->
+  <string name="Button.settings">Settings</string>
+  <!-- Settings button label -->
+  <string name="Button.submit">Submit</string>
+  <!-- Yes button -->
+  <string name="Button.yes">Yes</string>
+  <!-- Camera plugin instruction -->
+  <string name="CameraPlugin.centerInstruction">Center your ID in the box</string>
+  <!-- Amount to Send: ($1.00) -->
+  <string name="Confirmation.amountLabel">Amount to Send:</string>
+  <!-- Network Fee: ($1.00) -->
+  <string name="Confirmation.feeLabel">Network Fee:</string>
+  <!-- eg. Processing time: This transaction is predicted to complete in [10-60 minutes]. -->
+  <string name="Confirmation.processingTime">Processing time: This transaction is predicted to complete in %1$s.</string>
+  <!-- Label for "send" button on final confirmation screen -->
+  <string name="Confirmation.send">Send</string>
+  <!-- Confirmation Screen title -->
+  <string name="Confirmation.title">Confirmation</string>
+  <!-- To: (address) -->
+  <string name="Confirmation.to">To</string>
+  <!-- Total Cost: ($5.00) -->
+  <string name="Confirmation.totalLabel">Total Cost:</string>
+  <!-- Confirm paper phrase view label. -->
+  <string name="ConfirmPaperPhrase.label">To make sure everything was written down correctly, please enter the following words from your paper key.</string>
+  <!-- Word label eg. Word #1, Word #2 -->
+  <string name="ConfirmPaperPhrase.word">Word #%1$s</string>
+  <!-- Bitcoin denomination picker label -->
+  <string name="DefaultCurrency.bitcoinLabel">Bitcoin Display Unit</string>
+  <!-- Exchange rate label -->
+  <string name="DefaultCurrency.rateLabel">Exchange Rate</string>
+  <!-- Email unavailable alert title -->
+  <string name="ErrorMessages.emailUnavailableMessage">This device isn\'t configured to send email with the iOS mail app.</string>
+  <!-- Email unavailable alert title -->
+  <string name="ErrorMessages.emailUnavailableTitle">Email Unavailable</string>
+  <!-- Messaging unavailable alert title -->
+  <string name="ErrorMessages.messagingUnavailableMessage">This device isn\'t configured to send messages.</string>
+  <!-- Messaging unavailable alert title -->
+  <string name="ErrorMessages.messagingUnavailableTitle">Messaging Unavailable</string>
+  <!-- Fingerprint was not recognized by the scanner, please try scanning again -->
+  <string name="ErrorMessages.touchIdFailed.android">Fingerprint not recognized. Please try again.</string>
+  <!-- Economy fee -->
+  <string name="FeeSelector.economy">Economy</string>
+  <!-- E.g. [This transaction is predicted to complete in] 1-24 hours -->
+  <string name="FeeSelector.economyTime">1-24 hours</string>
+  <!-- Warning message for economy fee -->
+  <string name="FeeSelector.economyWarning">This option is not recommended for time-sensitive transactions.</string>
+  <!-- E.g. Estimated delivery: 10-60 minutes -->
+  <string name="FeeSelector.estimatedDeliver">Estimated Delivery: %1$s</string>
+  <!-- Regular fee -->
+  <string name="FeeSelector.regular">Regular</string>
+  <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
+  <string name="FeeSelector.regularTime">10-60 minutes</string>
+  <!-- Fee Selector title -->
+  <string name="FeeSelector.title">Processing Speed</string>
+  <!-- Checking private key balance progress view text -->
+  <string name="Import.checking">Checking private key balance...</string>
+  <!-- Sweep private key confirmation message -->
+  <string name="Import.confirm">Send %1$s from this private key into your wallet? The bitcoin network will receive a fee of %2$s.</string>
+  <!-- Duplicate key error message -->
+  <string name="Import.Error.duplicate">This private key is already in your wallet.</string>
+  <!-- empty private key error message -->
+  <string name="Import.Error.empty">This private key is empty.</string>
+  <!-- High fees error message -->
+  <string name="Import.Error.highFees">Transaction fees would cost more than the funds available on this private key.</string>
+  <!-- Not a valid private key error message -->
+  <string name="Import.Error.notValid">Not a valid private key</string>
+  <!-- Import signing error message -->
+  <string name="Import.Error.signing">Error signing transaction</string>
+  <!-- Import button label -->
+  <string name="Import.importButton">Import</string>
+  <!-- Importing wallet progress view label -->
+  <string name="Import.importing">Importing Wallet</string>
+  <!-- Caption for graphics -->
+  <string name="Import.leftCaption">Wallet to be imported</string>
+  <!-- Import wallet intro screen message -->
+  <string name="Import.message">Importing a wallet transfers all the money from your other wallet into your Bread wallet using a single transaction.</string>
+  <!-- Enter password alert view title -->
+  <string name="Import.password">This private key is password protected.</string>
+  <!-- password textfield placeholder -->
+  <string name="Import.passwordPlaceholder">password</string>
+  <!-- Caption for graphics -->
+  <string name="Import.rightCaption">Your Bread Wallet</string>
+  <!-- Scan Private key button label -->
+  <string name="Import.scan">Scan Private Key</string>
+  <!-- Import wallet success alert title -->
+  <string name="Import.success">Success</string>
+  <!-- Successfully imported wallet message body -->
+  <string name="Import.SuccessBody">Successfully imported wallet.</string>
+  <!-- Import Wallet screen title -->
+  <string name="Import.title">Import Wallet</string>
+  <!-- Unlocking Private key activity view message. -->
+  <string name="Import.unlockingActivity">Unlocking Key</string>
+  <!-- Import wallet intro warning message -->
+  <string name="Import.warning">Importing a wallet does not include transaction history or other details.</string>
+  <!-- Wrong password alert message -->
+  <string name="Import.wrongPassword">Wrong password, please try again.</string>
+  <!-- Close app button -->
+  <string name="JailbreakWarnings.close">Close</string>
+  <!-- Ignore jailbreak warning button -->
+  <string name="JailbreakWarnings.ignore">Ignore</string>
+  <!-- Jailbreak warning message -->
+  <string name="JailbreakWarnings.messageWithBalance">DEVICE SECURITY COMPROMISED\n Any \'jailbreak\' app can access Bread\'s keychain data and steal your bitcoin! Wipe this wallet immediately and restore on a secure device.</string>
+  <!-- Jailbreak warning message -->
+  <string name="JailbreakWarnings.messageWithoutBalance">DEVICE SECURITY COMPROMISED\n Any \'jailbreak\' app can access Bread\'s keychain data and steal your bitcoin. Please only use Bread on a non-jailbroken device.</string>
+  <!-- Jailbreak warning title -->
+  <string name="JailbreakWarnings.title">WARNING</string>
+  <!-- Location services disabled error -->
+  <string name="LocationPlugin.disabled">Location services are disabled.</string>
+  <!-- No permissions for location services -->
+  <string name="LocationPlugin.notAuthorized">Bread does not have permission to access location services.</string>
+  <!-- Wallet creation date prefix -->
+  <string name="ManageWallet.creationDatePrefix">You created your wallet on %1$s</string>
+  <!-- Manage wallet description text -->
+  <string name="ManageWallet.description">Your wallet name only appears in your account transaction history and cannot be seen by anyone else.</string>
+  <!-- Change Wallet name textfield label -->
+  <string name="ManageWallet.textFeildLabel">Wallet Name</string>
+  <!-- Manage wallet modal title -->
+  <string name="ManageWallet.title">Manage Wallet</string>
+  <!-- Buy bitcoin title -->
+  <string name="MenuButton.buy">Buy Bitcoin</string>
+  <!-- Menu button title -->
+  <string name="MenuButton.lock">Lock Wallet</string>
+  <!-- Menu button title -->
+  <string name="MenuButton.security">Security Center</string>
+  <!-- Menu button title -->
+  <string name="MenuButton.settings">Settings</string>
+  <!-- Menu button title -->
+  <string name="MenuButton.support">Support</string>
+  <!-- button label -->
+  <string name="MenuViewController.createButton">Create New Wallet</string>
+  <!-- Menu modal title -->
+  <string name="MenuViewController.modalTitle">Menu</string>
+  <!-- button label -->
+  <string name="MenuViewController.recoverButton">Recover Wallet</string>
+  <!-- Switch to automatic mode button label -->
+  <string name="NodeSelector.automaticButton">Switch to Automatic Mode</string>
+  <!-- Node is connected label -->
+  <string name="NodeSelector.connected">Connected</string>
+  <!-- Enter node ip address view body -->
+  <string name="NodeSelector.enterBody">Enter Node IP address and port (optional)</string>
+  <!-- Enter Node ip address view title -->
+  <string name="NodeSelector.enterTitle">Enter Node</string>
+  <!-- Switch to manual mode button label -->
+  <string name="NodeSelector.manualButton">Switch to Manual Mode</string>
+  <!-- Node address label -->
+  <string name="NodeSelector.nodeLabel">Current Primary Node</string>
+  <!-- Node is not connected label -->
+  <string name="NodeSelector.notConnected">Not Connected</string>
+  <!-- Node status label -->
+  <string name="NodeSelector.statusLabel">Node Connection Status</string>
+  <!-- Node Selector view title -->
+  <string name="NodeSelector.title">Bitcoin Nodes</string>
+  <!-- Bad Payment request alert title -->
+  <string name="PaymentProtocol.Errors.badPaymentRequest">Bad Payment Request</string>
+  <!-- Error opening payment protocol file message -->
+  <string name="PaymentProtocol.Errors.corruptedDocument">Unsupported or corrupted document</string>
+  <!-- Missing certificate payment protocol error message -->
+  <string name="PaymentProtocol.Errors.missingCertificate">missing certificate</string>
+  <!-- Request expired payment protocol error message -->
+  <string name="PaymentProtocol.Errors.requestExpired">request expired</string>
+  <!-- Payment too small alert title -->
+  <string name="PaymentProtocol.Errors.smallOutputError">Couldn\'t make payment</string>
+  <!-- Amount too small error message -->
+  <string name="PaymentProtocol.Errors.smallPayment">Bitcoin payments can\'t be less than %1$s.</string>
+  <!-- Output too small error message. -->
+  <string name="PaymentProtocol.Errors.smallTransaction">Bitcoin transaction outputs can\'t be less than %1$s.</string>
+  <!-- Unsupported signature type payment protocol error message -->
+  <string name="PaymentProtocol.Errors.unsupportedSignatureType">unsupported signature type</string>
+  <!-- Untrusted certificate payment protocol error message -->
+  <string name="PaymentProtocol.Errors.untrustedCertificate">untrusted certificate</string>
+  <!-- No passcode set warning body -->
+  <string name="Prompts.NoPasscode.body">A device passcode is needed to safeguard your wallet. Go to settings and turn passcode on.</string>
+  <!-- No Passcode set warning title -->
+  <string name="Prompts.NoPasscode.title">Turn device passcode on</string>
+  <!-- Instruction how to enable device encryption -->
+  <string name="Prompts.NoScreenLock.body.android">A device screen lock is needed to safeguard your wallet. Go to \"Settings\" &gt; \"Security\" &gt; \"Screen lock\" and enable to continue.</string>
+  <!-- Device encryption prompt title -->
+  <string name="Prompts.NoScreenLock.title.android">Screen lock disabled</string>
+  <!-- Warning about paper key. -->
+  <string name="Prompts.PaperKey.body">Your Paper Key must be saved in case you ever lose or change your phone. Tap here to continue.</string>
+  <!-- An action is required (You must do this action). -->
+  <string name="Prompts.PaperKey.title">Action Required</string>
+  <!-- Transaction rejected prompt body -->
+  <string name="Prompts.RecommendRescan.body">Your wallet may be out of sync. This can often be fixed by rescanning the blockchain.</string>
+  <!-- Transaction rejected prompt title -->
+  <string name="Prompts.RecommendRescan.title">Transaction Rejected</string>
+  <!-- Share data prompt body -->
+  <string name="Prompts.ShareData.body">Help improve Bread by sharing your anonymous data with us</string>
+  <!-- Share data prompt title -->
+  <string name="Prompts.ShareData.title">Share Anonymous Data</string>
+  <!-- Enable touch ID prompt body -->
+  <string name="Prompts.TouchId.body">Tap here to enable Touch ID</string>
+  <!-- Enable Fingerprint prompt body -->
+  <string name="Prompts.TouchId.body.android">Tap here to enable fingerprint authentication</string>
+  <!-- Enable touch ID prompt title -->
+  <string name="Prompts.TouchId.title">Enable Touch ID</string>
+  <!-- Enable Fingerprint prompt title -->
+  <string name="Prompts.TouchId.title.android">Enable Fingerprint Authentication</string>
+  <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
+  <string name="Prompts.TouchId.usePin.android">PIN</string>
+  <!-- Upgrade PIN prompt body. -->
+  <string name="Prompts.UpgradePin.body">Bread has upgraded to using a 6-digit PIN. Tap here to upgrade.</string>
+  <!-- Upgrade PIN prompt title. -->
+  <string name="Prompts.UpgradePin.title">Upgrade PIN</string>
+  <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
+  <string name="PushNotifications.body">Turn on notifications to receive special messages from Bread in the future.</string>
+  <!-- Push notifications toggle switch label -->
+  <string name="PushNotifications.label">Push Notifications</string>
+  <!-- Push notifications are off label -->
+  <string name="PushNotifications.off">Off</string>
+  <!-- Push notifications are on label -->
+  <string name="PushNotifications.on">On</string>
+  <!-- Push notifications settings view title label -->
+  <string name="PushNotifications.title">Notifications</string>
+  <!-- Address copied message. -->
+  <string name="Receive.copied">Copied to clipboard.</string>
+  <!-- Share via email button label -->
+  <string name="Receive.emailButton">Email</string>
+  <!-- Request button label -->
+  <string name="Receive.request">Request an Amount</string>
+  <!-- Share button label -->
+  <string name="Receive.share">Share</string>
+  <!-- Share via text message (SMS) -->
+  <string name="Receive.textButton">Text Message</string>
+  <!-- Receive modal title -->
+  <string name="Receive.title">Receive</string>
+  <!-- Done button text -->
+  <string name="RecoverWallet.done">Done</string>
+  <!-- Recover wallet header -->
+  <string name="RecoverWallet.header">Recover Wallet</string>
+  <!-- Reset PIN with paper key: header -->
+  <string name="RecoverWallet.header_reset_pin">Reset PIN</string>
+  <!-- Enter paper key instruction -->
+  <string name="RecoverWallet.instruction">Enter Paper Key</string>
+  <!-- Recover wallet intro -->
+  <string name="RecoverWallet.intro">Recover your Bread with your paper key.</string>
+  <!-- Invalid paper key message -->
+  <string name="RecoverWallet.invalid">The paper key you entered is invalid. Please double-check each word and try again.</string>
+  <!-- Previous button accessibility label -->
+  <string name="RecoverWallet.leftArrow">Left Arrow</string>
+  <!-- Next button label -->
+  <string name="RecoverWallet.next">Next</string>
+  <!-- Reset PIN with paper key: more information button. -->
+  <string name="RecoverWallet.reset_pin_more_info">Tap here for more information.</string>
+  <!-- Next button accessibility label -->
+  <string name="RecoverWallet.rightArrow">Right Arrow</string>
+  <!-- Recover wallet sub-header -->
+  <string name="RecoverWallet.subheader">Enter the paper key for the wallet you want to recover.</string>
+  <!-- Reset PIN with paper key: sub-header -->
+  <string name="RecoverWallet.subheader_reset_pin">To reset your PIN, enter the words from your paper key into the boxes below.</string>
+  <!-- No amount entered error message. -->
+  <string name="RequestAnAmount.noAmount">Please enter an amount first.</string>
+  <!-- Request a specific amount of bitcoin -->
+  <string name="RequestAnAmount.title">Request an Amount</string>
+  <!-- Alert action button label -->
+  <string name="ReScan.alertAction">Sync</string>
+  <!-- Alert message body -->
+  <string name="ReScan.alertMessage">You will not be able to send money while syncing.</string>
+  <!-- Alert message title -->
+  <string name="ReScan.alertTitle">Sync with Blockchain?</string>
+  <!-- extimated time -->
+  <string name="ReScan.body1">20-45 minutes</string>
+  <!-- Syncing explanation -->
+  <string name="ReScan.body2">If a transaction shows as completed on the bitcoin network but not in your Bread.</string>
+  <!-- Syncing explanation -->
+  <string name="ReScan.body3">You repeatedly get an error saying your transaction was rejected.</string>
+  <!-- Start Sync button label -->
+  <string name="ReScan.buttonTitle">Start Sync</string>
+  <!-- Sync blockchain view footer -->
+  <string name="ReScan.footer">You will not be able to send money while syncing with the blockchain.</string>
+  <!-- Sync Blockchain view header -->
+  <string name="ReScan.header">Sync Blockchain</string>
+  <!-- Subheader label -->
+  <string name="ReScan.subheader1">Estimated time</string>
+  <!-- Subheader label -->
+  <string name="ReScan.subheader2">When to Sync?</string>
+  <!-- Scan bitcoin address camera flash toggle -->
+  <string name="Scanner.flashButtonLabel">Camera Flash</string>
+  <!-- Complete filter label -->
+  <string name="Search.complete">complete</string>
+  <!-- Pending filter label -->
+  <string name="Search.pending">pending</string>
+  <!-- Received filter label -->
+  <string name="Search.received">received</string>
+  <!-- Sent filter label -->
+  <string name="Search.sent">sent</string>
+  <!-- Security Center Info -->
+  <string name="SecurityCenter.info">Enable all security features for maximum protection.</string>
+  <!-- Paper Key button description -->
+  <string name="SecurityCenter.paperKeyDescription">The only way to access your bitcoin if you lose or upgrade your phone.</string>
+  <!-- Paper Key button title -->
+  <string name="SecurityCenter.paperKeyTitle">Paper Key</string>
+  <!-- PIN button description -->
+  <string name="SecurityCenter.pinDescription">Protects your Bread from unauthorized users.</string>
+  <!-- PIN button title -->
+  <string name="SecurityCenter.pinTitle">6-Digit PIN</string>
+  <!-- Security Center Title -->
+  <string name="SecurityCenter.title">Security Center</string>
+  <!-- Touch ID button description -->
+  <string name="SecurityCenter.touchIdDescription">Conveniently unlock your Bread and send money up to a set limit.</string>
+  <!-- Touch ID button title -->
+  <string name="SecurityCenter.touchIdTitle">Touch ID</string>
+  <!-- Security center fingerprint authentication button -->
+  <string name="SecurityCenter.touchIdTitle.android">Fingerprint Authentication</string>
+  <!-- Send money amount label -->
+  <string name="Send.amountLabel">Amount</string>
+  <!-- Balance: $4.00 -->
+  <string name="Send.balance">Balance: %1$s</string>
+  <!-- Instructions how to allow the camera access for the app -->
+  <string name="Send.cameraUnavailabeMessage.android">Allow camera access in \"Settings\" &gt; \"Apps\" &gt; \"Bread\" &gt; \"Permissions\"</string>
+  <!-- Permission required to access camera -->
+  <string name="Send.cameraUnavailabeTitle.android">Bread is not allowed to access the camera</string>
+  <!-- Camera not allowed message -->
+  <string name="Send.cameraunavailableMessage">Go to Settings to allow camera access.</string>
+  <!-- Camera not allowed alert title -->
+  <string name="Send.cameraUnavailableTitle">Bread is not allowed to access the camera</string>
+  <!-- Warning when sending to self. -->
+  <string name="Send.containsAddress">The destination is your own address. You cannot send to yourself.</string>
+  <!-- Could not create transaction alert title -->
+  <string name="Send.creatTransactionError">Could not create transaction.</string>
+  <!-- Description for sending money label -->
+  <string name="Send.descriptionLabel">Memo</string>
+  <!-- Emtpy pasteboard error message -->
+  <string name="Send.emptyPasteboard">Pasteboard is empty</string>
+  <!-- Network Fee: $0.01 -->
+  <string name="Send.fee">Network Fee: %1$s</string>
+  <!-- Payee identity not certified alert title. -->
+  <string name="Send.identityNotCertified">Payee identity isn\'t certified.</string>
+  <!-- Invalid address alert message -->
+  <string name="Send.invalidAddressMessage">The destination address is not a valid bitcoin address.</string>
+  <!-- Invalid address on pasteboard message -->
+  <string name="Send.invalidAddressOnPasteboard">Pasteboard does not contain a valid bitcoin address.</string>
+  <!-- Invalid address alert title -->
+  <string name="Send.invalidAddressTitle">Invalid Address</string>
+  <!-- Is rescanning error message -->
+  <string name="Send.isRescanning">Sending is disabled during a full rescan.</string>
+  <!-- We are loading the request (now) -->
+  <string name="Send.loadingRequest">Loading Request</string>
+  <!-- Empty address alert message -->
+  <string name="Send.noAddress">Please enter the recipient\'s address.</string>
+  <!-- Emtpy amount alert message -->
+  <string name="Send.noAmount">Please enter an amount to send.</string>
+  <!-- Paste button label -->
+  <string name="Send.pasteLabel">Paste</string>
+  <!-- Could not publish transaction alert title -->
+  <string name="Send.publishTransactionError">Could not publish transaction.</string>
+  <!-- Could not load remote request error message -->
+  <string name="Send.remoteRequestError">Could not load payment request</string>
+  <!-- Scan button label -->
+  <string name="Send.scanLabel">Scan</string>
+  <!-- Send button label (the action, "press here to send") -->
+  <string name="Send.sendLabel">Send</string>
+  <!-- Send screen title (as in "this is the screen for sending money") -->
+  <string name="Send.title">Send</string>
+  <!-- Send money to label -->
+  <string name="Send.toLabel">To</string>
+  <!-- Adress already used alert message - first part -->
+  <string name="Send.UsedAddress.firstLine">Bitcoin addresses are intended for single use only.</string>
+  <!-- Adress already used alert message - second part -->
+  <string name="Send.UsedAddress.secondLIne">Re-use reduces privacy for both you and the recipient and can result in loss if the recipient doesn\'t directly control the address.</string>
+  <!-- Adress already used alert title -->
+  <string name="Send.UsedAddress.title">Address Already Used</string>
+  <!-- About label -->
+  <string name="Settings.about">About</string>
+  <!-- Advanced Settings title -->
+  <string name="Settings.advancedTitle">Advanced Settings</string>
+  <!-- i.e. the currency which will be displayed -->
+  <string name="Settings.currency">Display Currency</string>
+  <!-- Join Early access label -->
+  <string name="Settings.earlyAccess">Join Early Access</string>
+  <!-- Are you enjoying bread alert message body -->
+  <string name="Settings.enjoying">Are you enjoying Bread?</string>
+  <!-- Import wallet label -->
+  <string name="Settings.importTitle">Import Wallet</string>
+  <!-- Manage settings section header -->
+  <string name="Settings.manage">Manage</string>
+  <!-- Notifications label -->
+  <string name="Settings.notifications">Notifications</string>
+  <!-- Leave review button label -->
+  <string name="Settings.review">Leave us a Review</string>
+  <!-- Share anonymous data label -->
+  <string name="Settings.shareData">Share Anonymous Data</string>
+  <!-- Sync blockchain label -->
+  <string name="Settings.sync">Sync Blockchain</string>
+  <!-- Settings title -->
+  <string name="Settings.title">Settings</string>
+  <!-- Touch ID spending limit label -->
+  <string name="Settings.touchIdLimit">Touch ID Spending Limit</string>
+  <!-- The fingerprint spending limit -->
+  <string name="Settings.touchIdLimit.android">Fingerprint Authentication Spending Limit</string>
+  <!-- Wallet Settings section header -->
+  <string name="Settings.wallet">Wallet</string>
+  <!-- Start or recover another wallet menu label. -->
+  <string name="Settings.wipe">Start/Recover Another Wallet</string>
+  <!-- Share data view body -->
+  <string name="ShareData.body">Help improve Bread by sharing your anonymous data with us. This does not include any financial information. We respect your financial privacy.</string>
+  <!-- Share data header -->
+  <string name="ShareData.header">Share Data?</string>
+  <!-- Share data switch label. -->
+  <string name="ShareData.toggleLabel">Share Anonymous Data?</string>
+  <!-- button label -->
+  <string name="StartPaperPhrase.againButtonTitle">Write Down Paper Key Again</string>
+  <!-- Paper key explanation text. -->
+  <string name="StartPaperPhrase.body">Your paper key is the only way to restore your Bread if your phone is lost, stolen, broken, or upgraded.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
+  <!-- button label -->
+  <string name="StartPaperPhrase.buttonTitle">Write Down Paper Key</string>
+  <!-- Argument is date -->
+  <string name="StartPaperPhrase.date">You last wrote down your paper key on %1$s</string>
+  <!-- Start view message -->
+  <string name="StartViewController.message">The easy and secure way to use bitcoin.</string>
+  <!-- Syncing view connectiong state header text -->
+  <string name="SyncingView.connecting">Connecting</string>
+  <!-- Syncing view header text -->
+  <string name="SyncingView.header">Syncing</string>
+  <!-- Retry button label -->
+  <string name="SyncingView.retry">Retry</string>
+  <!-- Syncing view syncing state header text -->
+  <string name="SyncingView.syncing">Syncing</string>
+  <!-- 6 d (6 days) -->
+  <string name="TimeSince.days">%1$s d</string>
+  <!-- 6 h (6 hours) -->
+  <string name="TimeSince.hours">%1$s h</string>
+  <!-- 6 m (6 minutes) -->
+  <string name="TimeSince.minutes">%1$s m</string>
+  <!-- 6 s (6 seconds) -->
+  <string name="TimeSince.seconds">%1$s s</string>
+  <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
+  <string name="TouchIdSettings.customizeText">You can customize your Touch ID spending limit from the %1$s.</string>
+  <!-- Fingerprint enabling description body -->
+  <string name="TouchIdSettings.customizeText.android">You can customize your Fingerprint Authentication Spending Limit from the Fingerprint Authorization Spending Limit screen</string>
+  <!-- Instruction for the fingerprint setup -->
+  <string name="TouchIdSettings.disabledWarning.body.android">You have not enabled fingerprint authentication on this device. Go to Settings -&gt; Security to set up fingerprint authentication.</string>
+  <!-- Fingerprint Is Not Setup -->
+  <string name="TouchIdSettings.disabledWarning.title.android">Fingerprint Authentication Not Enabled</string>
+  <!-- Touch Id screen label -->
+  <string name="TouchIdSettings.label">Use your fingerprint to unlock your Bread and send money up to a set limit.</string>
+  <!-- Link Text (see TouchIdSettings.customizeText) -->
+  <string name="TouchIdSettings.linkText">Touch ID Spending Limit Screen</string>
+  <!-- Spending Limit: b100,000 ($100) -->
+  <string name="TouchIdSettings.spendingLimit">Spending limit: %1$s (%2$s)</string>
+  <!-- Touch id switch label. -->
+  <string name="TouchIdSettings.switchLabel">Enable Touch ID for Bread</string>
+  <!-- Enable fingerprint for this wallet called Bread -->
+  <string name="TouchIdSettings.switchLabel.android">Enable Fingerprint Authentication</string>
+  <!-- Touch ID settings view title -->
+  <string name="TouchIdSettings.title">Touch ID</string>
+  <!-- Fingerprint authentication label -->
+  <string name="TouchIdSettings.title.android">Fingerprint Authentication</string>
+  <!-- Touch ID unavailable alert message -->
+  <string name="TouchIdSettings.unavailableAlertMessage">You have not set up Touch ID on this device. Go to Settings-&gt;Touch ID &amp; Passcode to set it up now.</string>
+  <!-- Touch ID unavailable alert title -->
+  <string name="TouchIdSettings.unavailableAlertTitle">Touch ID Not Set Up</string>
+  <!-- Always require passcode option -->
+  <string name="TouchIdSpendingLimit">Always require passcode</string>
+  <!-- Touch ID spending limit screen body -->
+  <string name="TouchIdSpendingLimit.body">You will be asked to enter your 6-digit PIN to send any transaction over your spending limit, and every 48 hours since the last time you entered your 6-digit PIN.</string>
+  <!-- Touch Id spending limit screen title -->
+  <string name="TouchIdSpendingLimit.title">Touch ID Spending Limit</string>
+  <!-- name of spending limit when using fingerprint authorization -->
+  <string name="TouchIdSpendingLimit.title.android">Fingerprint Authorization Spending Limit</string>
+  <!-- Availability status text -->
+  <string name="Transaction.available">Available to Spend</string>
+  <!-- Transaction complete label -->
+  <string name="Transaction.complete">Complete</string>
+  <!-- eg. Ending balance: $50.00 -->
+  <string name="Transaction.ending">Ending balance: %1$s</string>
+  <!-- Exchange rate on date header -->
+  <string name="Transaction.exchangeOnDayReceived">Exchange rate when received:</string>
+  <!-- Exchange rate on date header -->
+  <string name="Transaction.exchangeOnDaySent">Exchange rate when sent:</string>
+  <!-- (b600 fee) -->
+  <string name="Transaction.fee">(%1$s fee)</string>
+  <!-- Invalid transaction -->
+  <string name="Transaction.invalid">INVALID</string>
+  <!-- Timestamp label for event that just happened -->
+  <string name="Transaction.justNow">just now</string>
+  <!-- Receive status text: 'In progress: 20%' -->
+  <string name="Transaction.receivedStatus">In progress: %1$s</string>
+  <!-- Send status text: 'In progress: 20%' -->
+  <string name="Transaction.sendingStatus">In progress: %1$s</string>
+  <!-- eg. Starting balance: $50.00 -->
+  <string name="Transaction.starting">Starting balance: %1$s</string>
+  <!-- Waiting to be confirmed string -->
+  <string name="Transaction.waiting">Waiting to be confirmed. Some merchants require confirmation to complete a transaction. Estimated time: 1-2 hours.</string>
+  <!-- e.g. I received money from an account. -->
+  <string name="TransactionDetails.account">account</string>
+  <!-- Amount section header -->
+  <string name="TransactionDetails.amountHeader">Amount</string>
+  <!-- Block height label -->
+  <string name="TransactionDetails.blockHeightLabel">Confirmed in Block</string>
+  <!-- Memo section header -->
+  <string name="TransactionDetails.commentsHeader">Memo</string>
+  <!-- Empty transaction list message. -->
+  <string name="TransactionDetails.emptyMessage">Your transactions will appear here.</string>
+  <!-- "Received [$5] at [which of my addresses]" => This is the "at [which of my addresses]" part. -->
+  <string name="TransactionDetails.from">at %1$s</string>
+  <!-- More button title -->
+  <string name="TransactionDetails.more">More...</string>
+  <!-- Moved $5.00 (as in "I moved $5 to another location") -->
+  <string name="TransactionDetails.moved">Moved %1$s</string>
+  <!-- Moved $5.00 -->
+  <string name="TransactionDetails.movedAmountDescription">Moved <b>%1$s</b></string>
+  <!-- eg. Confirmed in Block: Not Confirmed -->
+  <string name="TransactionDetails.notConfirmedBlockHeightLabel">Not Confirmed</string>
+  <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
+  <string name="TransactionDetails.received">Received %1$s</string>
+  <!-- Received $5.00 -->
+  <string name="TransactionDetails.receivedAmountDescription">Received <b>%1$s</b></string>
+  <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
+  <string name="TransactionDetails.sent">Sent %1$s</string>
+  <!-- Sent $5.00 -->
+  <string name="TransactionDetails.sentAmountDescription">Sent <b>%1$s</b></string>
+  <!-- Status section header -->
+  <string name="TransactionDetails.statusHeader">Status</string>
+  <!-- Transaction Details Title -->
+  <string name="TransactionDetails.title">Transaction Details</string>
+  <!-- "Sent [$5] to [address]" => This is the "to [address]" part. -->
+  <string name="TransactionDetails.to">to %1$s</string>
+  <!-- Transaction ID header -->
+  <string name="TransactionDetails.txHashHeader">Bitcoin Transaction ID</string>
+  <!-- (this transaction was) Received at this address: -->
+  <string name="TransactionDirection.address">Received at this Address</string>
+  <!-- (this transaction was) Sent to this address: -->
+  <string name="TransactionDirection.to">Sent to this Address</string>
+  <!-- Disabled until date -->
+  <string name="UnlockScreen.disabled">Disabled until: %1$s</string>
+  <!-- My Address button title -->
+  <string name="UnlockScreen.myAddress">My Address</string>
+  <!-- Reset PIN with Paper Key button label. -->
+  <string name="UnlockScreen.resetPin">Reset PIN</string>
+  <!-- Scan button title -->
+  <string name="UnlockScreen.scan">Scan</string>
+  <!-- Unlock Screen sub-header -->
+  <string name="UnlockScreen.subheader">Enter PIN</string>
+  <!-- Instruction to touch the sensor for fingerprint authentication -->
+  <string name="UnlockScreen.touchIdInstructions.android">Touch Sensor</string>
+  <!-- TouchID prompt text -->
+  <string name="UnlockScreen.touchIdPrompt">Unlock your Bread.</string>
+  <!-- Device authentication body -->
+  <string name="UnlockScreen.touchIdPrompt.android">Please unlock your Android device to continue.</string>
+  <!-- Unlock with TouchID accessibility label -->
+  <string name="UnlockScreen.touchIdText">Unlock with TouchID</string>
+  <!-- Device authentication title -->
+  <string name="UnlockScreen.touchIdTitle.android">Authentication required</string>
+  <!-- Wallet unlocked message -->
+  <string name="UnlockScreen.unlocked">Wallet Unlocked</string>
+  <!-- Update PIN caption text -->
+  <string name="UpdatePin.caption">Remember this PIN. If you forget it, you won\'t be able to access your bitcoin.</string>
+  <!-- PIN creation info. -->
+  <string name="UpdatePin.createInstruction">Your PIN will be used to unlock your Bread and send money.</string>
+  <!-- Update PIN title -->
+  <string name="UpdatePin.createTitle">Set PIN</string>
+  <!-- Update PIN title -->
+  <string name="UpdatePin.createTitleConfirm">Re-Enter PIN</string>
+  <!-- Enter current PIN instruction -->
+  <string name="UpdatePin.enterCurrent">Enter your current PIN.</string>
+  <!-- Enter new PIN instruction -->
+  <string name="UpdatePin.enterNew">Enter your new PIN.</string>
+  <!-- Re-Enter new PIN instruction -->
+  <string name="UpdatePin.reEnterNew">Re-Enter your new PIN.</string>
+  <!-- Update PIN failure error message. -->
+  <string name="UpdatePin.setPinError">Sorry, could not update PIN.</string>
+  <!-- Update PIN failure alert view title -->
+  <string name="UpdatePin.setPinErrorTitle">Update PIN Error</string>
+  <!-- Update PIN title -->
+  <string name="UpdatePin.updateTitle">Update PIN</string>
+  <!-- Authorize to copy wallet addresses alert message -->
+  <string name="URLHandling.addressaddressListAlertMessage">Copy wallet addresses to clipboard?</string>
+  <!-- Authorize to copy wallet address PIN view prompt. -->
+  <string name="URLHandling.addressList">Authorize to copy wallet address to clipboard</string>
+  <!-- Authorize to copy wallet address alert title -->
+  <string name="URLHandling.addressListAlertTitle">Copy Wallet Addresses</string>
+  <!-- Copy wallet addresses alert button label -->
+  <string name="URLHandling.copy">Copy</string>
+  <!-- Verify PIN for transaction view body -->
+  <string name="VerifyPin.authorize">Please enter your PIN to authorize this transaction.</string>
+  <!-- Verify PIN view body -->
+  <string name="VerifyPin.continueBody">Please enter your PIN to continue.</string>
+  <!-- Verify PIN view title -->
+  <string name="VerifyPin.title">PIN Required</string>
+  <!-- Authorize transaction with touch id message -->
+  <string name="VerifyPin.touchIdMessage">Authorize this transaction</string>
+  <!-- 'No wallet' warning for watch app -->
+  <string name="Watch.noWalletWarning">Open the Bread iPhone app to set up your wallet.</string>
+  <!-- Dismiss button label -->
+  <string name="Webview.dismiss">Dismiss</string>
+  <!-- Webview loading error message -->
+  <string name="Webview.errorMessage">There was an error loading the content. Please try again.</string>
+  <!-- Updating webview message -->
+  <string name="Webview.updating">Updating...</string>
+  <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
+  <string name="Welcome.body">Breadwallet has changed its name to Bread, with a brand new look and some new features.\n\nIf you need help, look for the (?) in the top right of most screens.</string>
+  <!-- Top title of welcome screen -->
+  <string name="Welcome.title">Welcome to Bread!</string>
+  <!-- Wipe wallet alert message -->
+  <string name="WipeWallet.alertMessage">Are you sure you want to delete this wallet?</string>
+  <!-- Wipe wallet alert title -->
+  <string name="WipeWallet.alertTitle">Wipe Wallet?</string>
+  <!-- Failed wipe wallet alert message -->
+  <string name="WipeWallet.failedMessage">Failed to wipe wallet.</string>
+  <!-- Failed wipe wallet alert title -->
+  <string name="WipeWallet.failedTitle">Failed</string>
+  <!-- Enter phrase to wipe wallet instruction. -->
+  <string name="WipeWallet.instruction">To start a new wallet or restore an existing wallet, you must first erase the wallet that is currently installed. To continue, enter the current wallet\'s Paper Key.</string>
+  <!-- Start wipe wallet view message -->
+  <string name="WipeWallet.startMessage">Starting or recovering another wallet allows you to access and manage a different Bread wallet on this device.</string>
+  <!-- Start wipe wallet view warning -->
+  <string name="WipeWallet.startWarning">Your current wallet will be removed from this device. If you wish to restore it in the future, you will need to enter your Paper Key.</string>
+  <!-- Wipe wallet navigation item title. -->
+  <string name="WipeWallet.title">Start or Recover Another Wallet</string>
+  <!-- Wipe wallet button title -->
+  <string name="WipeWallet.wipe">Wipe</string>
+  <!-- Wiping activity message -->
+  <string name="WipeWallet.wiping">Wiping...</string>
+  <!-- Paper key instructions. -->
+  <string name="WritePaperPhrase.instruction">Write down each word in order and store it in a safe place.</string>
+  <!-- button label -->
+  <string name="WritePaperPhrase.next">Next</string>
+  <!-- button label -->
+  <string name="WritePaperPhrase.previous">Previous</string>
+  <!-- 1 of 3 -->
+  <string name="WritePaperPhrase.step">%1$d of %2$d</string>
 </resources>

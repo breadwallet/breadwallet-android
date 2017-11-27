@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_intro_set_pit"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/extra_light_blue_background"
+    tools:context="com.breadwallet.presenter.activities.SetPinActivity">
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/bread_margin"
+        android:layout_marginTop="32dp"
+        android:text="@string/ShareData.header"
+        android:textColor="@color/almost_black"
+        android:textSize="@dimen/header"
+        app:customTFont="CircularPro-Bold.otf"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/description"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="0dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginTop="24dp"
+        android:lineSpacingMultiplier="1.3"
+        android:text="@string/ShareData.body"
+        android:textColor="@color/almost_black"
+        android:textSize="@dimen/sub_header"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="@+id/title"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/title"/>
+
+    <View
+        android:id="@+id/separator"
+        android:layout_width="0dp"
+        android:layout_height="1dp"
+        android:layout_margin="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginStart="16dp"
+        android:background="@color/extra_light_gray"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textView4"/>
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/textView4"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="40dp"
+        android:text="@string/ShareData.toggleLabel"
+        android:textColor="@color/almost_black"
+        android:textSize="@dimen/sub_header"
+        app:customTFont="CircularPro-Bold.otf"
+        app:layout_constraintEnd_toStartOf="@+id/toggleButton"
+        app:layout_constraintLeft_toLeftOf="@+id/description"
+        app:layout_constraintTop_toBottomOf="@+id/description"/>
+
+    <ToggleButton
+        android:id="@+id/toggleButton"
+        android:layout_width="wrap_content"
+        android:layout_height="24dp"
+        android:background="@drawable/bread_toggle"
+        android:textColor="@color/white"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/textView4"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/textView4"/>
+
+
+</android.support.constraint.ConstraintLayout>

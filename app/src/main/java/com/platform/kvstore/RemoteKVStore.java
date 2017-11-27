@@ -4,21 +4,20 @@ import android.util.Log;
 
 import com.platform.APIClient;
 import com.platform.interfaces.KVStoreAdaptor;
-import com.platform.sqlite.KVEntity;
+import com.platform.sqlite.KVItem;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.sql.Date;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
+import static android.R.attr.required;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import static android.R.attr.key;
-import static com.platform.kvstore.CompletionObject.RemoteKVStoreError.notFound;
 import static com.platform.kvstore.CompletionObject.RemoteKVStoreError.unknown;
 
 /**
@@ -51,6 +50,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
 
     private static RemoteKVStore instance;
     private APIClient apiClient;
+    private int retryCount = 0;
 
     public static RemoteKVStore getInstance(APIClient apiClient) {
         if (instance == null)
@@ -64,24 +64,33 @@ public class RemoteKVStore implements KVStoreAdaptor {
 
     @Override
     public CompletionObject ver(String key) {
+        long v;
+        long t;
         String url = String.format("%s/kv/1/%s", APIClient.BASE_URL, key);
-        okhttp3.Request request = new okhttp3.Request.Builder()
-                .url(url)
-                .head()
-                .build();
+        okhttp3.Request request;
         Response res = null;
-        res = apiClient.sendRequest(request, true, 0);
-        if (res == null) {
-            Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
-            return new CompletionObject(0, 0, unknown);
-        }
+        try {
+            request = new okhttp3.Request.Builder()
+                    .url(url)
+                    .head()
+                    .build();
 
-        if (!res.isSuccessful()) {
-            Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.code()));
-            return new CompletionObject(0, 0, unknown);
+            res = apiClient.sendRequest(request, true, retryCount);
+            if (res == null) {
+                Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
+                return new CompletionObject(0, 0, unknown);
+            }
+
+            if (!res.isSuccessful()) {
+                Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.code()));
+                return new CompletionObject(0, 0, unknown);
+            }
+            v = extractVersion(res);
+            t = extractDate(res);
+        } finally {
+            if (res != null)
+                res.close();
         }
-        long v = extractVersion(res);
-        long t = extractDate(res);
         return new CompletionObject(v, t, extractErr(res));
     }
 
@@ -89,6 +98,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
     public CompletionObject put(String key, byte[] value, long version) {
         String url = String.format("%s/kv/1/%s", APIClient.BASE_URL, key);
         RequestBody requestBody = RequestBody.create(null, value);
+
         okhttp3.Request request = new okhttp3.Request.Builder()
                 .url(url)
                 .put(requestBody)
@@ -96,18 +106,26 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .addHeader("Content-Type", "application/octet-stream")
                 .addHeader("Content-Length", String.valueOf(value.length))
                 .build();
-        Response res = apiClient.sendRequest(request, true, 0);
-        if (res == null) {
-            Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
-            return new CompletionObject(0, 0, unknown);
-        }
+        Response res = null;
+        long v;
+        long t;
+        try {
+            res = apiClient.sendRequest(request, true, retryCount);
+            if (res == null) {
+                Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
+                return new CompletionObject(0, 0, unknown);
+            }
 
-        if (!res.isSuccessful()) {
-            Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.code()));
-            return new CompletionObject(0, 0, unknown);
+            if (!res.isSuccessful()) {
+                Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.code()));
+                return new CompletionObject(0, 0, unknown);
+            }
+            v = extractVersion(res);
+            t = extractDate(res);
+        } finally {
+            if (res != null)
+                res.close();
         }
-        long v = extractVersion(res);
-        long t = extractDate(res);
         return new CompletionObject(v, t, extractErr(res));
     }
 
@@ -120,18 +138,24 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .addHeader("If-None-Match", String.valueOf(version))
                 .build();
         Response res = null;
-        res = apiClient.sendRequest(request, true, 0);
-        if (res == null) {
-            Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
-            return new CompletionObject(0, 0, unknown);
-        }
+        long v;
+        long t;
+        try {
+            res = apiClient.sendRequest(request, true, retryCount);
+            if (res == null) {
+                Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
+                return new CompletionObject(0, 0, unknown);
+            }
 
-        if (!res.isSuccessful()) {
-            Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.code()));
-            return new CompletionObject(0, 0, unknown);
+            if (!res.isSuccessful()) {
+                Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.code()));
+                return new CompletionObject(0, 0, unknown);
+            }
+            v = extractVersion(res);
+            t = extractDate(res);
+        } finally {
+            if (res != null) res.close();
         }
-        long v = extractVersion(res);
-        long t = extractDate(res);
         return new CompletionObject(v, t, extractErr(res));
     }
 
@@ -144,23 +168,28 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .addHeader("If-None-Match", String.valueOf(version))
                 .build();
         Response res = null;
-        res = apiClient.sendRequest(request, true, 0);
-        if (res == null) {
-            Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
-            return new CompletionObject(0, 0, unknown);
-        }
-
-        if (!res.isSuccessful()) {
-            Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.code()));
-            return new CompletionObject(0, 0, unknown);
-        }
-        long v = extractVersion(res);
-        long t = extractDate(res);
-        byte[] value = new byte[0];
+        long v;
+        long t;
+        byte[] value;
         try {
+            res = apiClient.sendRequest(request, true, retryCount);
+            if (res == null) {
+                Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
+                return new CompletionObject(0, 0, unknown);
+            }
+
+            if (!res.isSuccessful()) {
+                Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.code()));
+                return new CompletionObject(0, 0, unknown);
+            }
+            v = extractVersion(res);
+            t = extractDate(res);
             value = res.body().bytes();
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
+            return new CompletionObject(unknown);
+        } finally {
+            if (res != null) res.close();
         }
         return new CompletionObject(v, t, value, extractErr(res));
     }
@@ -173,59 +202,63 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .get()
                 .build();
         Response res = null;
-        res = apiClient.sendRequest(request, true, 0);
-        if (res == null) {
-            Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
-            return new CompletionObject(0, 0, unknown);
-        }
-
-        if (!res.isSuccessful()) {
-            Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.code()));
-            return new CompletionObject(0, 0, unknown);
-        }
-        byte[] reqData = null;
+        List<KVItem> keys = new ArrayList<>();
         try {
-            reqData = res.body().bytes();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        Log.e(TAG, "kvs: reqData: " + Arrays.toString(reqData));
-
-        if (reqData == null) return new CompletionObject(0, 0, unknown);
-        ByteBuffer buffer = ByteBuffer.wrap(reqData).order(java.nio.ByteOrder.LITTLE_ENDIAN);
-
-        List<KVEntity> keys = new ArrayList<>();
-        try {
-            int count = buffer.getInt();
-
-            for (int i = 0; i < count; i++) {
-                String key = null;
-                long version = 0;
-                long time = 0;
-                byte deleted = 0;
-
-                int keyLen = buffer.getInt();
-
-                byte[] keyBytes = new byte[keyLen];
-                buffer.get(keyBytes, 0, keyLen);
-                try {
-                    key = new String(keyBytes, "UTF-8");
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
-
-                version = buffer.getLong();
-                time = buffer.getLong();
-                deleted = buffer.get();
-                if (key == null || key.isEmpty()) return new CompletionObject(0, 0, unknown);
-                keys.add(new KVEntity(0, version, key, null, time, deleted));
-
+            res = apiClient.sendRequest(request, true, retryCount);
+            if (res == null) {
+                Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
+                return new CompletionObject(0, 0, unknown);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new CompletionObject(0, 0, unknown);
+
+            if (!res.isSuccessful()) {
+                Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.code()));
+                return new CompletionObject(0, 0, unknown);
+            }
+            byte[] reqData = null;
+            try {
+                reqData = res.body().bytes();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return new CompletionObject(unknown);
+            }
+
+            if (reqData == null) return new CompletionObject(unknown);
+            ByteBuffer buffer = ByteBuffer.wrap(reqData).order(java.nio.ByteOrder.LITTLE_ENDIAN);
+
+
+            try {
+                int count = buffer.getInt();
+
+                for (int i = 0; i < count; i++) {
+                    String key = null;
+                    long version = 0;
+                    long time = 0;
+                    byte deleted = 0;
+
+                    int keyLen = buffer.getInt();
+
+                    byte[] keyBytes = new byte[keyLen];
+                    buffer.get(keyBytes, 0, keyLen);
+                    try {
+                        key = new String(keyBytes, "UTF-8");
+                    } catch (UnsupportedEncodingException e) {
+                        e.printStackTrace();
+                    }
+
+                    version = buffer.getLong();
+                    time = buffer.getLong();
+                    deleted = buffer.get();
+                    if (key == null || key.isEmpty()) return new CompletionObject(0, 0, unknown);
+                    keys.add(new KVItem(0, version, key, null, time, deleted));
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return new CompletionObject(0, 0, unknown);
+            }
+        } finally {
+            if (res != null) res.close();
         }
-        Log.e(TAG, "kvs: " + keys.size());
         return new CompletionObject(keys, null);
     }
 

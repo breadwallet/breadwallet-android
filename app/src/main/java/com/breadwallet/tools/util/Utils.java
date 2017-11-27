@@ -1,40 +1,37 @@
 package com.breadwallet.tools.util;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Typeface;
+import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
 import android.os.Build;
-import android.os.Environment;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.util.Log;
-import android.util.TypedValue;
+import android.view.View;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.breadwallet.R;
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.intro.IntroActivity;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import okhttp3.internal.Util;
+import static android.content.Context.FINGERPRINT_SERVICE;
+
 
 /**
  * BreadWallet
@@ -56,28 +53,12 @@ import okhttp3.internal.Util;
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
  * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
 
 public class Utils {
     public static final String TAG = Utils.class.getName();
-
-    public static void overrideFonts(TextView... v) {
-        if (v == null) return;
-        Typeface FONT_REGULAR = Typeface.create("sans-serif-light", Typeface.NORMAL);
-        for (TextView view : v) {
-            try {
-                if (view != null) {
-                    view.setTypeface(FONT_REGULAR);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-
-    }
 
     public static boolean isUsingCustomInputMethod(Activity context) {
         if (context == null) return false;
@@ -104,7 +85,7 @@ public class Utils {
         String specsTag = "PHONE SPECS";
         Log.e(specsTag, "");
         Log.e(specsTag, "***************************PHONE SPECS***************************");
-        Log.e(specsTag, "* screen X: " + MainActivity.screenParametersPoint.x + " , screen Y: " + MainActivity.screenParametersPoint.y);
+        Log.e(specsTag, "* screen X: " + IntroActivity.screenParametersPoint.x + " , screen Y: " + IntroActivity.screenParametersPoint.y);
         Log.e(specsTag, "* Build.CPU_ABI: " + Build.CPU_ABI);
         Runtime rt = Runtime.getRuntime();
         long maxMemory = rt.maxMemory();
@@ -113,7 +94,7 @@ public class Utils {
         Log.e(specsTag, "");
     }
 
-    public static boolean isEmulatorOrDebug(Activity app) {
+    public static boolean isEmulatorOrDebug(Context app) {
         String fing = Build.FINGERPRINT;
         boolean isEmulator = false;
         if (fing != null) {
@@ -122,9 +103,8 @@ public class Utils {
         return isEmulator || (0 != (app.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE));
     }
 
-    public static String getFormattedDateFromLong(long time) {
+    public static String getFormattedDateFromLong(Context app, long time) {
 
-        MainActivity app = MainActivity.app;
         SimpleDateFormat formatter = new SimpleDateFormat("M/d@ha", Locale.getDefault());
         boolean is24HoursFormat = false;
         if (app != null) {
@@ -138,6 +118,14 @@ public class Utils {
         String result = formatter.format(calendar.getTime()).toLowerCase().replace("am", "a").replace("pm", "p");
         if (is24HoursFormat) result += "h";
         return result;
+    }
+
+    public static String formatTimeStamp(long time, String pattern) {
+//        SimpleDateFormat formatter = new SimpleDateFormat(pattern, Locale.getDefault());
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.setTimeInMillis(time);
+        return android.text.format.DateFormat.format(
+                pattern, time).toString();
     }
 
     public static boolean isNullOrEmpty(String str) {
@@ -155,10 +143,6 @@ public class Utils {
     public static int getPixelsFromDps(Context context, int dps) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dps * scale + 0.5f);
-    }
-
-    public static int getPixelsFromSps(Context context, float sp) {
-        return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.getResources().getDisplayMetrics());
     }
 
     public static String bytesToHex(byte[] in) {
@@ -179,23 +163,50 @@ public class Utils {
         return data;
     }
 
-    public static String getLogs(Activity app) {
-        StringBuilder log = new StringBuilder();
-        try {
-            Process process = Runtime.getRuntime().exec("logcat -d");
-            BufferedReader bufferedReader = new BufferedReader(
-                    new InputStreamReader(process.getInputStream()));
+    public static String createBitcoinUrl(String address, long satoshiAmount, String label, String message, String rURL) {
 
+        Uri.Builder builder = new Uri.Builder();
+        builder = builder.scheme("bitcoin");
+        if (address != null && !address.isEmpty())
+            builder = builder.appendPath(address);
+        if (satoshiAmount != 0)
+            builder = builder.appendQueryParameter("amount", new BigDecimal(satoshiAmount).divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString());
+        if (label != null && !label.isEmpty())
+            builder = builder.appendQueryParameter("label", label);
+        if (message != null && !message.isEmpty())
+            builder = builder.appendQueryParameter("message", message);
+        if (rURL != null && !rURL.isEmpty())
+            builder = builder.appendQueryParameter("r", rURL);
 
-            String line = "";
-            while ((line = bufferedReader.readLine()) != null) {
-                log.append(line);
-                log.append("\n");
-            }
-        } catch (IOException ignored) {
-            Toast.makeText(app.getApplicationContext(), ignored.toString(), Toast.LENGTH_SHORT).show();
+        return builder.build().toString().replaceFirst("/", "");
+
+    }
+
+    public static boolean isFingerprintEnrolled(Context app) {
+        FingerprintManager fingerprintManager = (FingerprintManager) app.getSystemService(FINGERPRINT_SERVICE);
+        // Device doesn't support fingerprint authentication
+        return ActivityCompat.checkSelfPermission(app, Manifest.permission.USE_FINGERPRINT) == PackageManager.PERMISSION_GRANTED && fingerprintManager.isHardwareDetected() && fingerprintManager.hasEnrolledFingerprints();
+    }
+
+    public static boolean isFingerprintAvailable(Context app) {
+        FingerprintManager fingerprintManager = (FingerprintManager) app.getSystemService(FINGERPRINT_SERVICE);
+        // Device doesn't support fingerprint authentication
+        if (ActivityCompat.checkSelfPermission(app, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(app, "Fingerprint authentication permission not enabled", Toast.LENGTH_LONG).show();
+            return false;
         }
-        return log.toString();
+        return fingerprintManager.isHardwareDetected();
+    }
+
+    public static void hideKeyboard(Context app) {
+        if (app != null) {
+            View view = ((Activity) app).getCurrentFocus();
+            if (view != null) {
+                InputMethodManager imm = (InputMethodManager) app.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+            }
+        }
+
     }
 
     public static String getAgentString(Context app, String cfnetwork) {
@@ -206,16 +217,23 @@ public class Utils {
                 PackageInfo pInfo = null;
                 pInfo = app.getPackageManager().getPackageInfo(app.getPackageName(), 0);
                 versionNumber = pInfo.versionCode;
+
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }
         }
-        int stringId = 0;
-        if (app != null) {
-            stringId = app.getApplicationInfo().labelRes;
+        String release = Build.VERSION.RELEASE;
+//        return String.format("%s/%d %s %s/%s", "Bread", versionNumber, cfnetwork, "Android", release);
+        return "Bread/" + String.valueOf(versionNumber) + " " + cfnetwork + " Android/" + release;
+    }
+
+    public static String reverseHex(String hex) {
+        if (hex == null) return null;
+        StringBuilder result = new StringBuilder();
+        for (int i = 0; i <= hex.length() - 2; i = i + 2) {
+            result.append(new StringBuilder(hex.substring(i, i + 2)).reverse());
         }
-        String agent = System.getProperty("http.agent");
-        return String.format(Locale.getDefault(), "%s/%d %s %s", "breadwallet", versionNumber, cfnetwork, Util.toHumanReadableAscii(agent));
+        return result.reverse().toString();
     }
 
 }

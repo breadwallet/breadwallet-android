@@ -1,16 +1,18 @@
 package com.platform.middlewares.plugins;
 
-import android.content.Intent;
-import android.net.Uri;
+import android.app.Activity;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.security.RequestHandler;
-import com.breadwallet.tools.util.BRStringFormatter;
+import com.breadwallet.BreadApp;
+import com.breadwallet.tools.manager.BREventManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
+import com.platform.tools.BRBitId;
 
 import org.apache.commons.compress.utils.IOUtils;
 import org.eclipse.jetty.continuation.Continuation;
@@ -20,15 +22,14 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.math.BigDecimal;
+import java.util.Currency;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static com.breadwallet.tools.util.BRStringFormatter.getFormattedCurrencyString;
-import static com.google.firebase.analytics.FirebaseAnalytics.getInstance;
-import static org.eclipse.jetty.http.HttpMethod.POST;
 
 /**
  * BreadWallet
@@ -62,43 +63,65 @@ public class WalletPlugin implements Plugin {
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (!target.startsWith("/_wallet")) return false;
+        Activity app = (Activity) BreadApp.getBreadContext();
 
         if (target.startsWith("/_wallet/info") && request.getMethod().equalsIgnoreCase("get")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            final MainActivity app = MainActivity.app;
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
-            BRWalletManager wm = BRWalletManager.getInstance(app);
+            BRWalletManager wm = BRWalletManager.getInstance();
             JSONObject jsonResp = new JSONObject();
             try {
+                /**whether or not the users wallet is set up yet, or is currently locked*/
                 jsonResp.put("no_wallet", wm.noWalletForPlatform(app));
-                jsonResp.put("watch_only", false);
+
+                /**the current receive address*/
                 jsonResp.put("receive_address", BRWalletManager.getReceiveAddress());
-                return BRHTTPHelper.handleSuccess(200, jsonResp.toString().getBytes(), baseRequest, response, null);
+
+                /**how digits after the decimal point. 2 = bits 8 = btc 6 = mbtc*/
+                jsonResp.put("btc_denomiation_digits", BRSharedPrefs.getCurrencyUnit(app) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
+
+                /**the users native fiat currency as an ISO 4217 code. Should be uppercased */
+                jsonResp.put("local_currency_code", Currency.getInstance(Locale.getDefault()).getCurrencyCode().toUpperCase());
+                return BRHTTPHelper.handleSuccess(200, jsonResp.toString().getBytes(), baseRequest, response, "application/json");
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG, "handle: json error: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "json error", baseRequest, response);
             }
-
-        } else if (target.startsWith("/_wallet/format") && request.getMethod().equalsIgnoreCase("get")) {
+        } else if (target.startsWith("/_wallet/_event") && request.getMethod().equalsIgnoreCase("get")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            String amount = request.getParameter("amount");
-            if (Utils.isNullOrEmpty(amount)) {
-                Log.e(TAG, "handle: amount is not specified: " + target + " " + baseRequest.getMethod());
-                return BRHTTPHelper.handleError(400, null, baseRequest, response);
-            }
-            long satAmount;
+            byte[] rawData = BRHTTPHelper.getBody(request);
+            String name = target.replace("/_event/", "");
 
-            if (amount.contains(".")) {
-                // assume full bitcoins
-                satAmount = new BigDecimal(amount).multiply(new BigDecimal("100000000")).longValue();
-            } else {
-                satAmount = Long.valueOf(amount);
+            Log.e(TAG, "handle: body: " + new String(rawData != null ? rawData : "null".getBytes()));
+            JSONObject json = null;
+            if (rawData != null) {
+                try {
+                    json = new JSONObject(new String(rawData));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
             }
-            return BRHTTPHelper.handleSuccess(200, BRStringFormatter.getFormattedCurrencyString(Locale.getDefault().getISO3Language(), satAmount).getBytes(), baseRequest, response, null);
+            if (json != null) {
+                Map<String, String> attr = new HashMap<>();
+                while (json.keys().hasNext()) {
+                    String key = json.keys().next();
+                    try {
+                        attr.put(key, json.getString(key));
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, String.format("Failed to get the key: %s, from json: %s", key, json.toString()));
+                    }
+                }
+                BREventManager.getInstance().pushEvent(name, attr);
+            } else {
+                BREventManager.getInstance().pushEvent(name);
+            }
+            return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
+
         } else if (target.startsWith("/_wallet/sign_bitid") && request.getMethod().equalsIgnoreCase("post")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             /**
@@ -119,7 +142,6 @@ public class WalletPlugin implements Plugin {
              "signature": "oibwaeofbawoefb" // base64-encoded signature
              }
              */
-            final MainActivity app = MainActivity.app;
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
@@ -145,11 +167,11 @@ public class WalletPlugin implements Plugin {
                 continuation = ContinuationSupport.getContinuation(request);
                 continuation.suspend(response);
                 globalBaseRequest = baseRequest;
-                RequestHandler.tryBitIdUri(app, obj.getString("bitid_url"), obj);
+                BRBitId.signBitID(app, null, obj);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG, "handle: Failed to parse Json request body: " + target + " " + baseRequest.getMethod());
-                return true;
+                return BRHTTPHelper.handleError(400, "failed to parse json", baseRequest, response);
             }
 
             return true;
@@ -160,35 +182,55 @@ public class WalletPlugin implements Plugin {
     }
 
 
-    public static void handleBitId(final JSONObject restJson) {
-        if (restJson == null) {
-            Log.e(TAG, "handleBitId: WARNING restJson is null");
-            return;
-        }
-        new Thread(new Runnable() {
+    public static void sendBitIdResponse(final JSONObject restJson, final boolean authenticated) {
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                if (continuation == null) {
-                    Log.e(TAG, "handleBitId: WARNING continuation is null");
-                    return;
-                }
-
                 try {
+                    if (!authenticated) {
+                        try {
+                            ((HttpServletResponse) continuation.getServletResponse()).sendError(401);
+                        } catch (IOException e) {
+                            Log.e(TAG, "sendBitIdResponse: failed to send error 401: ", e);
+                            e.printStackTrace();
+                        }
+                        return;
+                    }
+                    if (restJson == null || restJson.isNull("signature")) {
+                        Log.e(TAG, "sendBitIdResponse: WARNING restJson is null: " + restJson);
+                        try {
+                            ((HttpServletResponse) continuation.getServletResponse()).sendError(500, "json malformed or null");
+                        } catch (IOException e) {
+                            Log.e(TAG, "sendBitIdResponse: failed to send error 401: ", e);
+                            e.printStackTrace();
+                        }
+                        return;
+                    }
+                    if (continuation == null) {
+                        Log.e(TAG, "sendBitIdResponse: WARNING continuation is null");
+                        return;
+                    }
+
                     try {
-                        continuation.getServletResponse().getWriter().write(restJson.toString());
-                    } catch (IOException e) {
+                        continuation.getServletResponse().setContentType("application/json");
+                        continuation.getServletResponse().setCharacterEncoding("UTF-8");
+                        continuation.getServletResponse().getWriter().print(restJson);
+                        Log.d(TAG, "sendBitIdResponse: finished with writing to the response: " + restJson);
+                    } catch (Exception e) {
                         e.printStackTrace();
+                        Log.e(TAG, "sendBitIdResponse Failed to send json: ", e);
                     }
                     ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
                 } finally {
-                    globalBaseRequest.setHandled(true);
-                    continuation.complete();
+                    if (globalBaseRequest != null)
+                        globalBaseRequest.setHandled(true);
+                    if (continuation != null)
+                        continuation.complete();
                     continuation = null;
                     globalBaseRequest = null;
                 }
             }
-        }).start();
-
+        });
 
     }
 }

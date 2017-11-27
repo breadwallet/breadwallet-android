@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.breadwallet.presenter.customviews.BRButton
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/watch_list_layout"
+    android:layout_width="wrap_content"
+    android:layout_height="50dp"
+    android:layout_centerVertical="true"
+    android:layout_marginEnd="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginTop="12dp"
+    android:textSize="@dimen/paragraph"
+    android:layout_marginBottom="12dp"
+    android:padding="8dp"
+    android:textColor="@color/light_gray"
+    app:buttonType="2"
+    app:isBreadButton="true"
+    >
+
+</com.breadwallet.presenter.customviews.BRButton>

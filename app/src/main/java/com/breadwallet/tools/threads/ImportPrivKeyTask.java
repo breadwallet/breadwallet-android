@@ -1,17 +1,17 @@
 package com.breadwallet.tools.threads;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
-import android.util.Log;
 
+import com.breadwallet.BreadApp;
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.BreadWalletApp;
+import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
-import com.breadwallet.tools.util.BRStringFormatter;
-import com.breadwallet.tools.manager.CurrencyManager;
-import com.breadwallet.tools.manager.SharedPreferencesManager;
+import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.util.BRCurrency;
+import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.wallet.BRWalletManager;
 
 import org.json.JSONArray;
@@ -52,13 +52,14 @@ import java.nio.charset.Charset;
 
 public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
     public static final String TAG = ImportPrivKeyTask.class.getName();
-    public static final String UNSPENT_URL = "https://api.breadwallet.com/q/addr/";
+    public static String UNSPENT_URL;
     private Activity app;
     private String key;
     private ImportPrivKeyEntity importPrivKeyEntity;
 
     public ImportPrivKeyTask(Activity activity) {
         app = activity;
+        UNSPENT_URL = BuildConfig.BITCOIN_TESTNET ? "https://test-insight.bitpay.com/api/addrs/" : String.format("https://%s/q/addr/", BreadApp.HOST);
     }
 
     @Override
@@ -66,15 +67,20 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         if (params.length == 0) return null;
         key = params[0];
         if (key == null || key.isEmpty() || app == null) return null;
-        String tmpAddrs = BRWalletManager.getInstance(app).getAddressFromPrivKey(key);
+        String tmpAddrs = BRWalletManager.getInstance().getAddressFromPrivKey(key);
         String url = UNSPENT_URL + tmpAddrs + "/utxo";
-        importPrivKeyEntity = createTx(app, url);
+        importPrivKeyEntity = createTx(url);
         if (importPrivKeyEntity == null) {
             app.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
-                            app.getString(R.string.priv_key_empty), app.getString(R.string.ok));
+                    BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
+                            app.getString(R.string.Import_Error_empty), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                                @Override
+                                public void onClick(BRDialogView brDialogView) {
+                                    brDialogView.dismissWithAnimation();
+                                }
+                            }, null, null, 0);
                 }
             });
         }
@@ -86,38 +92,56 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         if (importPrivKeyEntity == null) {
             return;
         }
-        String sentBits = BRStringFormatter.getFormattedCurrencyString("BTC", importPrivKeyEntity.getAmount());
-        String sentExchange = BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app),
-                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getAmount()), app);
-        String feeBits = BRStringFormatter.getFormattedCurrencyString("BTC", importPrivKeyEntity.getFee());
-        String feeExchange = BRStringFormatter.getExchangeForAmount(SharedPreferencesManager.getRate(app),
-                SharedPreferencesManager.getIso(app), new BigDecimal(importPrivKeyEntity.getFee()), app);
-        if (app == null || importPrivKeyEntity == null) return;
-        String message = String.format(app.getString(R.string.send_money_from_privkey_message), sentBits, sentExchange, feeBits, feeExchange);
-        new AlertDialog.Builder(app)
-                .setTitle("")
-                .setMessage(message)
-                .setPositiveButton(String.format("%s (%s)", sentBits, sentExchange), new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int which) {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                boolean result = BRWalletManager.getInstance(app).confirmKeySweep(importPrivKeyEntity.getTx(), key);
-                                if (!result) {
-                                    ((BreadWalletApp) app.getApplication()).showCustomDialog(app.getString(R.string.warning),
-                                            app.getString(R.string.could_not_sweep_the_balance), app.getString(R.string.ok));
-                                }
-                            }
-                        }).start();
 
+//        String iso = BRSharedPrefs.getIso(app);
+
+        String sentBits = BRCurrency.getFormattedCurrencyString(app, "BTC", BRExchange.getAmountFromSatoshis(app, "BTC", new BigDecimal(importPrivKeyEntity.getAmount())));
+//        String sentExchange = BRCurrency.getFormattedCurrencyString(app, iso, BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(importPrivKeyEntity.getAmount())));
+
+        String feeBits = BRCurrency.getFormattedCurrencyString(app, "BTC", BRExchange.getAmountFromSatoshis(app, "BTC", new BigDecimal(importPrivKeyEntity.getFee())));
+//        String feeExchange = BRCurrency.getFormattedCurrencyString(app, iso, BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(importPrivKeyEntity.getFee())));
+
+        if (app == null || importPrivKeyEntity == null) return;
+        String message = String.format(app.getString(R.string.Import_confirm), sentBits, feeBits);
+        String posButton = String.format("%s (%s)", sentBits, feeBits);
+        BRDialog.showCustomDialog(app, "", message, posButton, app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
+            @Override
+            public void onClick(BRDialogView brDialogView) {
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        boolean result = BRWalletManager.getInstance().confirmKeySweep(importPrivKeyEntity.getTx(), key);
+                        if (!result) {
+                            app.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
+                                            app.getString(R.string.Import_Error_notValid), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                                                @Override
+                                                public void onClick(BRDialogView brDialogView) {
+                                                    brDialogView.dismissWithAnimation();
+                                                }
+                                            }, null, null, 0);
+                                }
+                            });
+
+                        }
                     }
-                })
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .show();
+                });
+
+                brDialogView.dismissWithAnimation();
+
+            }
+        }, new BRDialogView.BROnClickListener() {
+            @Override
+            public void onClick(BRDialogView brDialogView) {
+                brDialogView.dismissWithAnimation();
+            }
+        }, null, 0);
         super.onPostExecute(s);
     }
 
-    public static ImportPrivKeyEntity createTx(Activity activity, String url) {
+    public static ImportPrivKeyEntity createTx(String url) {
         if (url == null || url.isEmpty()) return null;
         String jsonString = callURL(url);
         if (jsonString == null || jsonString.isEmpty()) return null;
@@ -127,20 +151,20 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             jsonArray = new JSONArray(jsonString);
             int length = jsonArray.length();
             if (length > 0)
-                BRWalletManager.getInstance(activity).createInputArray();
+                BRWalletManager.getInstance().createInputArray();
 
             for (int i = 0; i < length; i++) {
                 JSONObject obj = jsonArray.getJSONObject(i);
                 String txid = obj.getString("txid");
                 int vout = obj.getInt("vout");
                 String scriptPubKey = obj.getString("scriptPubKey");
-                long amount = obj.getLong("amount");
+                long amount = obj.getLong("satoshis");
                 byte[] txidBytes = hexStringToByteArray(txid);
                 byte[] scriptPubKeyBytes = hexStringToByteArray(scriptPubKey);
-                BRWalletManager.getInstance(activity).addInputToPrivKeyTx(txidBytes, vout, scriptPubKeyBytes, amount);
+                BRWalletManager.getInstance().addInputToPrivKeyTx(txidBytes, vout, scriptPubKeyBytes, amount);
             }
 
-            result = BRWalletManager.getInstance(activity).getPrivKeyObject();
+            result = BRWalletManager.getInstance().getPrivKeyObject();
 
         } catch (JSONException e) {
             e.printStackTrace();

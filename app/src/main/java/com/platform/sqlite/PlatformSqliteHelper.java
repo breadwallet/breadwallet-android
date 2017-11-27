@@ -30,12 +30,26 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.breadwallet.tools.util.BRConstants;
 
 public class PlatformSqliteHelper extends SQLiteOpenHelper {
     private static final String TAG = PlatformSqliteHelper.class.getName();
 
+    private static PlatformSqliteHelper instance;
+
     public static final String DATABASE_NAME = "platform.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
+
+    public static synchronized PlatformSqliteHelper getInstance(Context context) {
+
+        // Use the application context, which will ensure that you
+        // don't accidentally leak an Activity's context.
+        // See this article for more information: http://bit.ly/6LRzfx
+        if (instance == null) {
+            instance = new PlatformSqliteHelper(context.getApplicationContext());
+        }
+        return instance;
+    }
 
     /**
      * KV Store table
@@ -44,7 +58,7 @@ public class PlatformSqliteHelper extends SQLiteOpenHelper {
     public static final String KV_STORE_TABLE_NAME = "kvStoreTable";
     public static final String KV_VERSION = "version";
     public static final String KV_REMOTE_VERSION = "remote_version";
-    public static final String KV_KEY = "key";
+        public static final String KV_KEY = "key";
     public static final String KV_VALUE = "value";
     public static final String KV_TIME = "thetime";
     public static final String KV_DELETED = "deleted";
@@ -59,13 +73,14 @@ public class PlatformSqliteHelper extends SQLiteOpenHelper {
             "   PRIMARY KEY (%s, %s) " +
             ");", KV_STORE_TABLE_NAME, KV_VERSION, KV_REMOTE_VERSION, KV_KEY, KV_VALUE, KV_TIME, KV_DELETED, KV_KEY, KV_VERSION);
 
-    public PlatformSqliteHelper(Context context) {
+    private PlatformSqliteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
+        setWriteAheadLoggingEnabled(BRConstants.WAL);
     }
 
     @Override
     public void onCreate(SQLiteDatabase database) {
-        Log.e(TAG, "onCreate: " + KV_DATABASE_CREATE);
+        Log.d(TAG, "onCreate: " + KV_DATABASE_CREATE);
         database.execSQL(KV_DATABASE_CREATE);
     }
 

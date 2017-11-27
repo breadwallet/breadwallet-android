@@ -1,8 +1,14 @@
 package com.platform;
 
+import android.app.Activity;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.BreadApp;
+import com.breadwallet.tools.threads.BRExecutor;
+import com.breadwallet.tools.util.Utils;
 import com.platform.interfaces.Middleware;
 import com.platform.interfaces.Plugin;
 import com.platform.middlewares.APIProxy;
@@ -15,40 +21,21 @@ import com.platform.middlewares.plugins.KVStorePlugin;
 import com.platform.middlewares.plugins.LinkPlugin;
 import com.platform.middlewares.plugins.WalletPlugin;
 
-import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.eclipse.jetty.server.handler.ContextHandler;
-import org.eclipse.jetty.server.handler.ContextHandlerCollection;
-import org.eclipse.jetty.server.handler.DefaultHandler;
 import org.eclipse.jetty.server.handler.HandlerCollection;
-import org.eclipse.jetty.server.handler.HandlerList;
-import org.eclipse.jetty.servlet.ServletContextHandler;
-import org.eclipse.jetty.servlet.ServletHolder;
-import org.eclipse.jetty.websocket.api.Session;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketError;
-import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
-import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import org.eclipse.jetty.websocket.server.WebSocketHandler;
 import org.eclipse.jetty.websocket.servlet.WebSocketServletFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.Stack;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static com.breadwallet.R.string.request;
-import static com.platform.APIClient.server;
 
 /**
  * BreadWallet
@@ -81,7 +68,15 @@ public class HTTPServer {
     private static Server server;
     public static final int PORT = 31120;
     public static final String URL_EA = "http://localhost:" + PORT + "/ea";
-    public static final String URL_BUY_BITCOIN = "http://localhost:" + PORT + "/buy";
+    public static final String URL_BUY = "http://localhost:" + PORT + "/buy";
+    public static final String URL_SUPPORT = "http://localhost:" + PORT + "/support";
+    public static ServerMode mode;
+
+    public enum ServerMode {
+        SUPPORT,
+        BUY,
+        EA
+    }
 
     public HTTPServer() {
         init();
@@ -157,22 +152,37 @@ public class HTTPServer {
 
     private static boolean dispatch(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         Log.d(TAG, "TRYING TO HANDLE: " + target + " (" + request.getMethod() + ")");
+        final Context app = BreadApp.getBreadContext();
         boolean result = false;
         if (target.equalsIgnoreCase("/_close")) {
-            final MainActivity app = MainActivity.app;
             if (app != null) {
-                app.runOnUiThread(new Runnable() {
+                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        app.onBackPressed();
+                        ((Activity) app).onBackPressed();
                     }
                 });
-                response.setStatus(200);
-                baseRequest.setHandled(true);
-                return true;
+                return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
+            }
+            return true;
+        } else if (target.toLowerCase().startsWith("/_email")) {
+            Log.e(TAG, "dispatch: uri: " + baseRequest.getUri().toString());
+            String address = Uri.parse(baseRequest.getUri().toString()).getQueryParameter("address");
+            Log.e(TAG, "dispatch: address: " + address);
+            if (Utils.isNullOrEmpty(address)) {
+                return BRHTTPHelper.handleError(400, "no address", baseRequest, response);
             }
 
-            return false;
+            Intent email = new Intent(Intent.ACTION_SEND);
+            email.putExtra(Intent.EXTRA_EMAIL, new String[]{address});
+
+            //need this to prompts email client only
+            email.setType("message/rfc822");
+
+            app.startActivity(Intent.createChooser(email, "Choose an Email client :"));
+            return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
+        } else if (target.toLowerCase().startsWith("/didload")) {
+            return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
         }
 
         for (Middleware m : middlewares) {

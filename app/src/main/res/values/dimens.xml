@@ -9,4 +9,15 @@
     <dimen name="text_size">18sp</dimen>
     <!-- Default screen margins, per the Android Design guidelines. -->
     <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="pin_par_text_size">32sp</dimen>
+    <dimen name="big_button_height">80dp</dimen>
+    <dimen name="bread_margin">16dp</dimen>
+    <dimen name="faq_dimen">24dp</dimen>
+    <dimen name="close_dimen">24dp</dimen>
+    <dimen name="radius">4dp</dimen>
+    <dimen name="paragraph">14sp</dimen>
+    <dimen name="header">18sp</dimen>
+    <dimen name="sub_header">16sp</dimen>
+
+
 </resources>

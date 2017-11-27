@@ -1,5 +1,6 @@
 package com.breadwallet.tools.util;
 
+import java.math.RoundingMode;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -30,26 +31,10 @@ import java.util.concurrent.TimeUnit;
 public class BRConstants {
 
     /**
-     * RequestQRActivity
+     * Native library name
      */
-    public static final String INTENT_EXTRA_REQUEST_AMOUNT = "request_amount";
-    public static final String INTENT_EXTRA_REQUEST_ADDRESS = "request_address";
+    public static final String NATIVE_LIB_NAME =  "core-lib";
 
-    /**
-     * Auth modes
-     */
-    public static final int AUTH_FOR_PHRASE = 11;
-    public static final int AUTH_FOR_PAY = 12;
-    public static final int AUTH_FOR_GENERAL = 13;
-    public static final int AUTH_FOR_LIMIT = 14;
-    public static final int AUTH_FOR_PAYMENT_PROTOCOL = 15;
-    public static final int AUTH_FOR_BIT_ID = 16;
-    public static final int AUTH_FOR_BCH = 17;
-
-    /**
-     * BlockHeight prefs
-     */
-    public static final String BLOCK_HEIGHT = "blockHeight";
 
     /**
      * Permissions
@@ -69,11 +54,14 @@ public class BRConstants {
     public static final int PAYMENT_PROTOCOL_REQUEST_CODE = 116;
     public static final int REQUEST_PHRASE_BITID = 117;
     public static final int SEND_BCH_REQUEST = 118;
+    public static final int PROVE_PHRASE_REQUEST = 119;
 
     /**
      * Request codes for take picture
      */
-    public static final int REQUEST_IMAGE_CAPTURE = 111;
+    public static final int SCANNER_REQUEST = 201;
+    public static final int SCANNER_BCH_REQUEST = 202;
+    public static final int REQUEST_IMAGE_CAPTURE = 203;
 
     public static final String CANARY_STRING = "canary";
     public static final String FIRST_ADDRESS = "firstAddress";
@@ -81,23 +69,12 @@ public class BRConstants {
     public static final String PHRASE_WARNING_TIME = "phraseWarningTime";
     public static final String EXCHANGE_RATES = "exchangeRates";
     public static final String FEE_KB_PREFS = "feeKb";
+    public static final String ECONOMY_FEE_KB_PREFS = "EconomyFeeKb";
     public static final String LITTLE_CIRCLE = "\u2022";
     public static String SUPPORT_EMAIL = "support@breadwallet.com";
 
     public static final int ONE_BITCOIN = 100000000;
     public static final int HUNDRED_BITS = 10000000;
-
-
-    /**
-     * MainActivity
-     */
-    public static final int BURGER = 0;
-    public static final int CLOSE = 1;
-    public static final int BACK = 2;
-    public static final int DEBUG = 1;
-    public static final int RELEASE = 2;
-    public static final float PAGE_INDICATOR_SCALE_UP = 1.3f;
-
 
     /**
      * BRWalletManager
@@ -107,55 +84,11 @@ public class BRConstants {
     public static final long MAX_FEE_PER_KB = (100100 * 1000 + 190) / 191;
 
     /**
-     * BreadWalletApp
-     */
-    public static final int BREAD_WALLET_IMAGE = 0;
-    public static final int BREAD_WALLET_TEXT = 1;
-    public static final int LOCKER_BUTTON = 2;
-    public static final int PAY_BUTTON = 3;
-    public static final int REQUEST_BUTTON = 4;
-
-    /**
-     * FragmentDecoder
-     */
-    public static final String CAMERA_GUIDE_RED = "red";
-    public static final String CAMERA_GUIDE = "reg";
-    public static final String TEXT_EMPTY = "";
-
-    /**
-     * FragmentScanResult
-     */
-    public static final int BITCOIN_LEFT = 1;
-    public static final int BITCOIN_RIGHT = 2;
-    public static final String DOUBLE_ARROW = "\u21CB";
-
-    /**
-     * FragmentSpendLimit
-     */
-    public static final int limit1 = 10000000;
-    public static final int limit2 = 100000000;
-    public static final int limit3 = 1000000000;
-
-    /**
-     * PasswordDialogFragment
-     */
-    public static final int AUTH_MODE_CHECK_PASS = 0;
-    public static final int AUTH_MODE_NEW_PASS = 1;
-    public static final int AUTH_MODE_CONFIRM_PASS = 2;
-
-    /**
-     * AmountAdapter
-     */
-    public static final int MAX_DIGITS_AFTER_SEPARATOR_BITS = 2;
-    public static final int MAX_DIGITS_AFTER_SEPARATOR_MBITS = 5;
-    public static final int MAX_DIGITS_AFTER_SEPARATOR_BITCOINS = 8;
-    public static final int DIGITS_LIMIT = 12;
-
-    /**
-     * SharedPreferencesManager
+     * BRSharedPrefs
      */
     public static final String PREFS_NAME = "MyPrefsFile";
     public static final String RECEIVE_ADDRESS = "receive_address";
+    public static final String WALLET_NAME = "wallet_name";
     public static final String START_HEIGHT = "startHeight";
     public static final String LAST_BLOCK_HEIGHT = "lastBlockHeight";
     public static final String TIPS_SHOWN = "tipsShown";
@@ -181,7 +114,33 @@ public class BRConstants {
 
     public static final long PASS_CODE_TIME_LIMIT = TimeUnit.MILLISECONDS.convert(6, TimeUnit.DAYS);
 
-    public static final boolean PLATFORM_ON = false;
+    public static boolean PLATFORM_ON = true;
+    public static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_EVEN;
+    public static final boolean WAL = true;
+
+    /**
+     * Support Center article ids.
+     */
+    public static final String displayCurrency = "display-currency";
+    public static final String recoverWallet = "recover-wallet";
+    public static final String reScan = "re-scan";
+    public static final String securityCenter = "security-center";
+    public static final String paperKey = "paper-key";
+    public static final String enableFingerprint = "enable-fingerprint-authentication";
+    public static final String fingerprintSpendingLimit = "fingerprint-spending-limit";
+    public static final String transactionDetails = "transaction-details";
+//    public static final String manageWallet = "manage-wallet";
+    public static final String receive = "receive-bitcoin";
+//    public static final String requestAmount = "request-amount";
+    public static final String send = "send-bitcoin";
+    public static final String walletDisabled = "wallet-disabled";
+    public static final String resetPinWithPaperKey = "reset-pin-paper-key";
+    public static final String setPin = "set-pin";
+    public static final String importWallet = "import-wallet";
+    public static final String writePhrase = "write-phrase";
+//    public static final String confirmPhrase = "confirm-phrase";
+    public static final String startView = "start-view";
+    public static final String wipeWallet = "wipe-wallet";
 
     private BRConstants() {
     }

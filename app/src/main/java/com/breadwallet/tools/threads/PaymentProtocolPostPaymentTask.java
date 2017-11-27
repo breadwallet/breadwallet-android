@@ -1,16 +1,18 @@
 package com.breadwallet.tools.threads;
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.BreadWalletApp;
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
-import com.breadwallet.tools.security.PostAuthenticationProcessor;
-import com.breadwallet.tools.util.ByteReader;
-import com.breadwallet.tools.security.RequestHandler;
+import com.breadwallet.tools.security.BitcoinUrlHandler;
+import com.breadwallet.tools.util.BytesUtil;
 
 import java.io.DataOutputStream;
 import java.io.FileNotFoundException;
@@ -20,6 +22,7 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+
 
 /**
  * BreadWallet
@@ -67,7 +70,6 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
     @Override
     protected String doInBackground(String... uri) {
         InputStream in;
-        final MainActivity app = MainActivity.app;
         try {
             waiting = true;
             sent = false;
@@ -91,42 +93,44 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
                 Log.e(TAG, "The inputStream is null!");
                 return null;
             }
-            byte[] serializedBytes = ByteReader.readBytesFromStream(in);
+            byte[] serializedBytes = BytesUtil.readBytesFromStream(in);
             if (serializedBytes == null || serializedBytes.length == 0) {
                 Log.e(TAG, "serializedBytes are null!!!");
                 return null;
             }
 
-            message = RequestHandler.parsePaymentACK(serializedBytes);
-            PostAuthenticationProcessor.getInstance().setTmpPaymentRequest(paymentRequest);
-            PostAuthenticationProcessor.getInstance().onPaymentProtocolRequest(app,false);
+            message = BitcoinUrlHandler.parsePaymentACK(serializedBytes);
+//            PostAuth.getInstance().setTmpPaymentRequest(paymentRequest);
+//            PostAuth.getInstance().onPaymentProtocolRequest(app,false);
         } catch (Exception e) {
+            Context app = BreadApp.getBreadContext();
             if (e instanceof java.net.UnknownHostException) {
                 if (app != null) {
-                    pendingErrorMessages.put(TITLE, app.getString(R.string.error));
-                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.unknown_host));
+                    pendingErrorMessages.put(TITLE, app.getString(R.string.Alert_error));
+                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.Send_remoteRequestError));
                 }
-            } else if (e instanceof FileNotFoundException) {
-                if (app != null) {
-                    pendingErrorMessages.put(TITLE, app.getString(R.string.warning));
-                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.bad_payment_request));
-                }
-            } else if (e instanceof SocketTimeoutException) {
-                if (app != null) {
-                    pendingErrorMessages.put(TITLE, app.getString(R.string.warning));
-                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.connection_timed_out));
-                }
-            } else {
-                if (app != null) {
-                    pendingErrorMessages.put(TITLE, app.getString(R.string.warning));
-                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.could_not_transmit_payment));
-                    if (!((BreadWalletApp) app.getApplication()).hasInternetAccess())
-                        ((BreadWalletApp) app.getApplication()).
-                                showCustomDialog(app.getString(R.string.could_not_make_payment), app.getString(R.string.not_connected_network), app.getString(R.string.ok));
-
-                }
-
             }
+//            else if (e instanceof FileNotFoundException) {
+//                if (app != null) {
+//                    pendingErrorMessages.put(TITLE, app.getString(R.string.JailbreakWarnings_title));
+//                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.bad_payment_request));
+//                }
+//            } else if (e instanceof SocketTimeoutException) {
+//                if (app != null) {
+//                    pendingErrorMessages.put(TITLE, app.getString(R.string.JailbreakWarnings_title));
+//                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.connection_timed_out));
+//                }
+//            } else {
+//                if (app != null) {
+//                    pendingErrorMessages.put(TITLE, app.getString(R.string.JailbreakWarnings_title));
+//                    pendingErrorMessages.put(MESSAGE, app.getString(R.string.could_not_transmit_payment));
+////                    if (!((BreadApp) app.getApplication()).hasInternetAccess())
+////                        BreadDialog.
+////                                showCustomDialog(app,app.getString(R.string.could_not_make_payment), app.getString(R.string.not_connected_network), app.getString(R.string.ok));
+//
+//                }
+//
+//            }
             e.printStackTrace();
         } finally {
             if (urlConnection != null) urlConnection.disconnect();
@@ -144,15 +148,15 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
     }
 
     public static void handleMessage() {
-        final MainActivity app = MainActivity.app;
+        Context app = BreadApp.getBreadContext();
         if (app != null && message != null) {
             if (!message.isEmpty()) {
-                ((BreadWalletApp) app.getApplication()).
-                        showCustomToast(app, message, MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 1);
+                BRToast.
+                        showCustomToast(app, message, BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
             } else {
                 if (!waiting && !sent && pendingErrorMessages.get(MESSAGE) != null) {
-                    ((BreadWalletApp) app.getApplication()).
-                            showCustomDialog(pendingErrorMessages.get(TITLE), pendingErrorMessages.get(MESSAGE), app.getString(R.string.ok));
+//                    BreadDialog.
+//                            showCustomDialog(app,pendingErrorMessages.get(TITLE), pendingErrorMessages.get(MESSAGE), app.getString(R.string.ok));
                     pendingErrorMessages = null;
                 }
             }

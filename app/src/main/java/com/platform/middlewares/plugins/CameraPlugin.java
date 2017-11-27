@@ -1,28 +1,25 @@
 package com.platform.middlewares.plugins;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Environment;
-import android.provider.MediaStore;
+import android.graphics.BitmapFactory;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.FileProvider;
 import android.util.Base64;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.breadwallet.BreadWalletApp;
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.presenter.activities.camera.CameraActivity;
+import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.crypto.CryptoHelper;
-import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
-import com.jniwrappers.BRBase58;
-import com.jniwrappers.BRKey;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
 
@@ -38,18 +35,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 
-import javax.servlet.AsyncContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import static com.breadwallet.tools.util.BRConstants.REQUEST_IMAGE_CAPTURE;
 
 /**
  * BreadWallet
@@ -98,11 +89,11 @@ public class CameraPlugin implements Plugin {
 
         if (target.startsWith("/_camera/take_picture")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            final MainActivity app = MainActivity.app;
+            final Context app = BreadApp.getBreadContext();
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
 
-                return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
+                return BRHTTPHelper.handleError(404, "context is null", baseRequest, response);
             }
 
             if (globalBaseRequest != null) {
@@ -115,42 +106,52 @@ public class CameraPlugin implements Plugin {
 
             if (!pm.hasSystemFeature(PackageManager.FEATURE_CAMERA)) {
                 Log.e(TAG, "handle: no camera available: ");
-                return BRHTTPHelper.handleError(402, null, baseRequest, response);
+                return BRHTTPHelper.handleError(404, null, baseRequest, response);
             }
-            if (ContextCompat.checkSelfPermission(app,
-                    Manifest.permission.CAMERA)
-                    != PackageManager.PERMISSION_GRANTED) {
-                // Should we show an explanation?
-                if (ActivityCompat.shouldShowRequestPermissionRationale(app,
-                        Manifest.permission.CAMERA)) {
-                    Log.e(TAG, "handle: no camera access, showing instructions");
-                    ((BreadWalletApp) app.getApplication()).showCustomToast(app,
-                            app.getString(R.string.allow_camera_access),
-                            MainActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
-                } else {
-                    // No explanation needed, we can request the permission.
-                    ActivityCompat.requestPermissions(app,
-                            new String[]{Manifest.permission.CAMERA},
-                            BRConstants.CAMERA_REQUEST_GLIDERA_ID);
-                }
-            } else {
-                Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                if (takePictureIntent.resolveActivity(app.getPackageManager()) != null) {
-                    app.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE);
-                }
 
-                continuation = ContinuationSupport.getContinuation(request);
-                continuation.suspend(response);
-                globalBaseRequest = baseRequest;
+            globalBaseRequest = baseRequest;
+            continuation = ContinuationSupport.getContinuation(request);
+            continuation.suspend(response);
+
+            try {
+                // Check if the camera permission is granted
+                if (ContextCompat.checkSelfPermission(app,
+                        Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED) {
+                    // Should we show an explanation?
+                    if (ActivityCompat.shouldShowRequestPermissionRationale( ((Activity)app),
+                            Manifest.permission.CAMERA)) {
+                        BRDialog.showCustomDialog(app, app.getString(R.string.Send_cameraUnavailabeTitle_android),
+                                app.getString(R.string.Send_cameraUnavailabeMessage_android),
+                                app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                                    @Override
+                                    public void onClick(BRDialogView brDialogView) {
+                                        brDialogView.dismiss();
+                                    }
+                                }, null, null, 0);
+                    } else {
+                        // No explanation needed, we can request the permission.
+                        ActivityCompat.requestPermissions( ((Activity)app),
+                                new String[]{Manifest.permission.CAMERA},
+                                BRConstants.CAMERA_REQUEST_ID);
+                    }
+                } else {
+                    // Permission is granted, open camera
+                    Intent intent = new Intent(app, CameraActivity.class);
+                    ((Activity)app).startActivityForResult(intent, BRConstants.REQUEST_IMAGE_CAPTURE);
+                    ((Activity)app).overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
 
             return true;
         } else if (target.startsWith("/_camera/picture/")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            final MainActivity app = MainActivity.app;
+            final Context app = BreadApp.getBreadContext();
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
-                return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
+                return BRHTTPHelper.handleError(404, "context is null", baseRequest, response);
             }
             String id = target.replace("/_camera/picture/", "");
             byte[] pictureBytes = readPictureForId(app, id);
@@ -171,24 +172,27 @@ public class CameraPlugin implements Plugin {
                     return BRHTTPHelper.handleError(500, null, baseRequest, response);
                 }
             }
-            return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, contentType);
+            return BRHTTPHelper.handleSuccess(200, imgBytes, baseRequest, response, contentType);
         } else return false;
     }
 
-    public static void handleCameraImageTaken(final Context context, final Bitmap img) {
-        new Thread(new Runnable() {
+    public static void handleCameraImageTaken(final Context context, final byte[] data) {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                Bitmap img = getResizedBitmap(BitmapFactory.decodeByteArray(data, 0, data.length), 1000);
+                Log.e(TAG, "handleCameraImageTaken: w:" + img.getWidth() + "h:" + img.getHeight());
                 if (globalBaseRequest == null || continuation == null) {
+                    //shit should now happen
                     Log.e(TAG, "handleCameraImageTaken: WARNING: " + continuation + " " + globalBaseRequest);
                     return;
                 }
                 try {
                     if (img == null) {
+                        //no image
                         globalBaseRequest.setHandled(true);
                         ((HttpServletResponse) continuation.getServletResponse()).setStatus(204);
                         continuation.complete();
-                        continuation = null;
                         return;
                     }
                     String id = writeToFile(context, img);
@@ -205,16 +209,16 @@ public class CameraPlugin implements Plugin {
                                 e1.printStackTrace();
                             }
                             continuation.complete();
-                            continuation = null;
                             return;
                         }
                         Log.i(TAG, "handleCameraImageTaken: wrote image to: " + id);
                         try {
+                            continuation.getServletResponse().setContentType("application/json");
                             ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
                             continuation.getServletResponse().getWriter().write(respJson.toString());
                             globalBaseRequest.setHandled(true);
                             continuation.complete();
-                            continuation = null;
+                            Log.d(TAG, "run: Finished taking picture");
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -225,7 +229,6 @@ public class CameraPlugin implements Plugin {
                             globalBaseRequest.setHandled(true);
                             ((HttpServletResponse) continuation.getServletResponse()).sendError(500);
                             continuation.complete();
-                            continuation = null;
                         } catch (IOException e) {
                             e.printStackTrace();
                         }
@@ -236,7 +239,7 @@ public class CameraPlugin implements Plugin {
                 }
 
             }
-        }).start();
+        });
 
     }
 
@@ -244,7 +247,7 @@ public class CameraPlugin implements Plugin {
         String name = null;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         try {
-            img.compress(Bitmap.CompressFormat.JPEG, 50, out);
+            img.compress(Bitmap.CompressFormat.JPEG, 70, out);
             name = CryptoHelper.base58ofSha256(out.toByteArray());
             File storageDir = new File(context.getFilesDir().getAbsolutePath() + "/pictures/");
             File image = new File(storageDir, name + ".jpeg");
@@ -261,6 +264,21 @@ public class CameraPlugin implements Plugin {
             }
         }
         return null;
+    }
+
+    public static Bitmap getResizedBitmap(Bitmap image, int maxSize) {
+        int width = image.getWidth();
+        int height = image.getHeight();
+
+        float bitmapRatio = (float) width / (float) height;
+        if (bitmapRatio > 1) {
+            width = maxSize;
+            height = (int) (width / bitmapRatio);
+        } else {
+            height = maxSize;
+            width = (int) (height * bitmapRatio);
+        }
+        return Bitmap.createScaledBitmap(image, width, height, true);
     }
 
     public byte[] readPictureForId(Context context, String id) {

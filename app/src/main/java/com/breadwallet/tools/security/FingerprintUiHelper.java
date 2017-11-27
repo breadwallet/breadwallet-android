@@ -18,6 +18,7 @@ package com.breadwallet.tools.security;
 
 import com.breadwallet.R;
 
+import android.content.Context;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.CancellationSignal;
 import android.widget.ImageView;
@@ -36,6 +37,7 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
     private final TextView mErrorTextView;
     private final Callback mCallback;
     private CancellationSignal mCancellationSignal;
+    private Context mContext;
 
     boolean mSelfCancelled;
 
@@ -50,9 +52,9 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
             mFingerPrintManager = fingerprintManager;
         }
 
-        public FingerprintUiHelper build(ImageView icon, TextView errorTextView, Callback callback) {
+        public FingerprintUiHelper build(ImageView icon, TextView errorTextView, Callback callback, Context context) {
             return new FingerprintUiHelper(mFingerPrintManager, icon, errorTextView,
-                    callback);
+                    callback, context);
         }
     }
 
@@ -61,11 +63,12 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
      * only the {@link FingerprintUiHelperBuilder} class.
      */
     private FingerprintUiHelper(FingerprintManager fingerprintManager,
-                                ImageView icon, TextView errorTextView, Callback callback) {
+                                ImageView icon, TextView errorTextView, Callback callback, Context context) {
         mFingerprintManager = fingerprintManager;
         mIcon = icon;
         mErrorTextView = errorTextView;
         mCallback = callback;
+        this.mContext = context;
     }
     @SuppressWarnings("MissingPermission")
     public boolean isFingerprintAuthAvailable() {
@@ -113,8 +116,7 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
 
     @Override
     public void onAuthenticationFailed() {
-        showError(mIcon.getResources().getString(
-                R.string.fingerprint_not_recognized));
+        showError(mContext.getString(R.string.ErrorMessages_touchIdFailed_android));
     }
 
     @Override
@@ -123,8 +125,7 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
         mIcon.setImageResource(R.drawable.ic_fingerprint_success);
         mErrorTextView.setTextColor(
                 mErrorTextView.getResources().getColor(R.color.success_color, null));
-        mErrorTextView.setText(
-                mErrorTextView.getResources().getString(R.string.fingerprint_success));
+        mErrorTextView.setText(mContext.getString(R.string.Alerts_touchIdSucceeded_android));
         mIcon.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -147,8 +148,7 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
         public void run() {
             mErrorTextView.setTextColor(
                     mErrorTextView.getResources().getColor(R.color.hint_color, null));
-            mErrorTextView.setText(
-                    mErrorTextView.getResources().getString(R.string.fingerprint_hint));
+            mErrorTextView.setText(mContext.getString(R.string.UnlockScreen_touchIdInstructions_android));
             mIcon.setImageResource(R.drawable.ic_fp_40px);
         }
     };

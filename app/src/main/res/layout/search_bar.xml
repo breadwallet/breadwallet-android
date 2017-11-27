@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<android.support.v7.widget.Toolbar
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/search_bar"
+    android:layout_width="match_parent"
+    android:layout_height="160dp"
+    android:background="@color/extra_light_blue_background"
+    android:contentInsetLeft="0dp"
+    android:contentInsetStart="0dp"
+    android:elevation="8dp"
+    app:contentInsetLeft="0dp"
+    app:contentInsetStart="0dp"
+    tools:layout_constraintTop_creator="1">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/search_bar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.breadwallet.presenter.customviews.BREdit
+            android:id="@+id/search_edit"
+            android:layout_width="0dp"
+            android:layout_height="40dp"
+            android:layout_marginBottom="0dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginTop="8dp"
+            android:background="@drawable/search_background"
+            android:drawableStart="@drawable/ic_search_gray_24dp"
+            android:inputType="textPersonName"
+            android:maxEms="20"
+            android:maxLines="1"
+            android:padding="8dp"
+            android:selectAllOnFocus="true"
+            android:textColor="@color/dark_gray"
+            android:textColorHint="@color/light_gray"
+            android:textCursorDrawable="@null"
+            app:layout_constraintBottom_toTopOf="@+id/filter_buttons_layout"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toLeftOf="@+id/cancel_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.5"/>
+
+        <LinearLayout
+            android:id="@+id/filter_buttons_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="64dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:clipChildren="false"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent">
+
+            <com.breadwallet.presenter.customviews.BRButton
+                android:id="@+id/sent_filter"
+                android:layout_width="60dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="16dp"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:text="@string/Search.sent"
+                android:textColor="@color/light_gray"
+                android:textSize="@dimen/paragraph"
+                app:buttonType="2"
+                app:customBFont="CircularPro-Book.otf"
+                app:isBreadButton="true"/>
+
+            <com.breadwallet.presenter.customviews.BRButton
+                android:id="@+id/received_filter"
+                android:layout_width="85dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="16dp"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:text="@string/Search.received"
+                android:textColor="@color/light_gray"
+                android:textSize="@dimen/paragraph"
+                app:buttonType="2"
+                app:customBFont="CircularPro-Book.otf"
+                app:isBreadButton="true"/>
+
+            <com.breadwallet.presenter.customviews.BRButton
+                android:id="@+id/pending_filter"
+                android:layout_width="85dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="4dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="16dp"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:text="@string/Search.pending"
+                android:textColor="@color/light_gray"
+                android:textSize="@dimen/paragraph"
+                app:buttonType="2"
+                app:customBFont="CircularPro-Book.otf"
+                app:isBreadButton="true"/>
+
+            <com.breadwallet.presenter.customviews.BRButton
+                android:id="@+id/complete_filter"
+                android:layout_width="85dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="16dp"
+                android:layout_marginEnd="8dp"
+                android:layout_marginStart="4dp"
+                android:layout_marginTop="16dp"
+                android:paddingBottom="4dp"
+                android:paddingTop="4dp"
+                android:text="@string/Search.complete"
+                android:textColor="@color/light_gray"
+                android:textSize="@dimen/paragraph"
+                app:buttonType="2"
+                app:customBFont="CircularPro-Book.otf"
+                app:isBreadButton="true"/>
+
+        </LinearLayout>
+
+        <com.breadwallet.presenter.customviews.BRButton
+            android:id="@+id/cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="0dp"
+            android:background="@android:color/transparent"
+            android:paddingTop="8dp"
+            android:text="@string/Button.cancel"
+            app:isBreadButton="false"
+            app:layout_constraintBottom_toBottomOf="@+id/search_edit"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/search_edit"/>
+
+    </android.support.constraint.ConstraintLayout>
+</android.support.v7.widget.Toolbar>

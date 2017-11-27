@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:id="@+id/main_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="16dp"
+                android:elevation="4dp"
+    >
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/syncing_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        android:animateLayoutChanges="true"
+        android:elevation="8dp"
+        android:keepScreenOn="true"
+        android:visibility="visible"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1"
+        tools:layout_constraintTop_creator="1">
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/sync_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="8dp"
+            android:textSize="@dimen/paragraph"
+            app:customTFont="CircularPro-Book.otf"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@+id/syncing_label"
+            app:layout_constraintTop_toBottomOf="@+id/sync_progress"/>
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/syncing_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/SyncingView.header"
+            android:textSize="@dimen/sub_header"
+            android:textColor="@color/almost_black"
+            app:customTFont="CircularPro-Bold.otf"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ProgressBar
+            android:id="@+id/sync_progress"
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="8dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:progressDrawable="@drawable/sync_wallet_progress"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/syncing_label"/>
+
+    </android.support.constraint.ConstraintLayout>
+</RelativeLayout>

@@ -12,8 +12,9 @@ extern "C" {
 JNIEXPORT jbyteArray JNICALL Java_com_jniwrappers_BRKey_compactSign(JNIEnv *env, jobject thiz,
                                                                     jbyteArray data);
 
-JNIEXPORT void JNICALL Java_com_jniwrappers_BRKey_setPrivKey(JNIEnv *env, jobject thiz,
-                                                             jbyteArray privKey);
+JNIEXPORT jboolean JNICALL Java_com_jniwrappers_BRKey_setPrivKey(JNIEnv *env,
+                                                                 jobject thiz,
+                                                                 jbyteArray privKey);
 
 JNIEXPORT void JNICALL Java_com_jniwrappers_BRKey_setSecret(JNIEnv *env,
                                                             jobject thiz,

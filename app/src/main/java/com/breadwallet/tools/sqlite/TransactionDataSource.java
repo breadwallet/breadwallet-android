@@ -30,16 +30,23 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
+import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.tools.util.BRConstants;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class TransactionDataSource {
+public class TransactionDataSource implements BRDataSourceInterface {
     private static final String TAG = TransactionDataSource.class.getName();
+
+    private AtomicInteger mOpenCounter = new AtomicInteger();
 
     // Database fields
     private SQLiteDatabase database;
@@ -51,71 +58,102 @@ public class TransactionDataSource {
             BRSQLiteHelper.TX_TIME_STAMP
     };
 
-
-    public TransactionDataSource(Context context) {
-        dbHelper = new BRSQLiteHelper(context);
+    public interface OnTxAddedListener {
+        void onTxAdded();
     }
 
-    public BRTransactionEntity createTransaction(BRTransactionEntity transactionEntity) {
-        database = dbHelper.getWritableDatabase();
-        ContentValues values = new ContentValues();
-        values.put(BRSQLiteHelper.TX_COLUMN_ID, transactionEntity.getTxHash());
-        values.put(BRSQLiteHelper.TX_BUFF, transactionEntity.getBuff());
-        values.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, transactionEntity.getBlockheight());
-        values.put(BRSQLiteHelper.TX_TIME_STAMP, transactionEntity.getTimestamp());
+    List<OnTxAddedListener> listeners = new ArrayList<>();
 
-        database.beginTransaction();
+    public void addTxAddedListener(OnTxAddedListener listener) {
+        if (!listeners.contains(listener))
+            listeners.add(listener);
+    }
+
+    public void removeListener(OnTxAddedListener listener) {
+        listeners.remove(listener);
+
+    }
+
+    private static TransactionDataSource instance;
+
+    public static TransactionDataSource getInstance(Context context) {
+        if (instance == null) {
+            instance = new TransactionDataSource(context);
+        }
+        return instance;
+    }
+
+
+    private TransactionDataSource(Context context) {
+        dbHelper = BRSQLiteHelper.getInstance(context);
+    }
+
+    public BRTransactionEntity putTransaction(BRTransactionEntity transactionEntity) {
+        Cursor cursor = null;
         try {
+            database = openDatabase();
+            ContentValues values = new ContentValues();
+            values.put(BRSQLiteHelper.TX_COLUMN_ID, transactionEntity.getTxHash());
+            values.put(BRSQLiteHelper.TX_BUFF, transactionEntity.getBuff());
+            values.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, transactionEntity.getBlockheight());
+            values.put(BRSQLiteHelper.TX_TIME_STAMP, transactionEntity.getTimestamp());
+
+            database.beginTransaction();
             database.insert(BRSQLiteHelper.TX_TABLE_NAME, null, values);
-            Cursor cursor = database.query(BRSQLiteHelper.TX_TABLE_NAME,
+            cursor = database.query(BRSQLiteHelper.TX_TABLE_NAME,
                     allColumns, null, null, null, null, null);
             cursor.moveToFirst();
             BRTransactionEntity transactionEntity1 = cursorToTransaction(cursor);
-            cursor.close();
+
             database.setTransactionSuccessful();
+            for (OnTxAddedListener listener : listeners) {
+                if (listener != null) listener.onTxAdded();
+            }
             return transactionEntity1;
         } catch (Exception ex) {
-            FirebaseCrash.report(ex);
+            BRReportsManager.reportBug(ex);
             Log.e(TAG, "Error inserting into SQLite", ex);
             //Error in between database transaction
         } finally {
             database.endTransaction();
+            closeDatabase();
+            if (cursor != null) cursor.close();
         }
         return null;
 
 
     }
 
-    public void deleteTransaction(BRTransactionEntity transaction) {
-        database = dbHelper.getWritableDatabase();
-        String strHash = transaction.getTxHash();
-        Log.e(TAG, "transaction deleted with id: " + strHash);
-        database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID
-                + " = \'" + strHash + "\'", null);
-    }
-
-    public void deleteAllTransactions() {
-        database = dbHelper.getWritableDatabase();
-        database.delete(BRSQLiteHelper.TX_TABLE_NAME, null, null);
-    }
-
-    public List<BRTransactionEntity> getAllTransactions() {
-        database = dbHelper.getReadableDatabase();
-        List<BRTransactionEntity> transactions = new ArrayList<>();
-
-        Cursor cursor = database.query(BRSQLiteHelper.TX_TABLE_NAME,
-                allColumns, null, null, null, null, null);
-
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            BRTransactionEntity transactionEntity = cursorToTransaction(cursor);
-            transactions.add(transactionEntity);
-            cursor.moveToNext();
+    public  void deleteAllTransactions() {
+        try {
+            database = openDatabase();
+            database.delete(BRSQLiteHelper.TX_TABLE_NAME, null, null);
+        } finally {
+            closeDatabase();
         }
-        // make sure to close the cursor
+    }
 
-        Log.e(TAG, "transactions: " + transactions.size());
-        cursor.close();
+    public  List<BRTransactionEntity> getAllTransactions() {
+        List<BRTransactionEntity> transactions = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            database = openDatabase();
+
+            cursor = database.query(BRSQLiteHelper.TX_TABLE_NAME,
+                    allColumns, null, null, null, null, null);
+
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                BRTransactionEntity transactionEntity = cursorToTransaction(cursor);
+                transactions.add(transactionEntity);
+                cursor.moveToNext();
+            }
+
+        } finally {
+            closeDatabase();
+            if (cursor != null)
+                cursor.close();
+        }
         return transactions;
     }
 
@@ -123,21 +161,55 @@ public class TransactionDataSource {
         return new BRTransactionEntity(cursor.getBlob(1), cursor.getInt(2), cursor.getLong(3), cursor.getString(0));
     }
 
-    public void updateTxBlockHeight(String hash, int blockHeight, int timeStamp) {
-        database = dbHelper.getWritableDatabase();
-        Log.e(TAG, "transaction deleted with id: " + hash);
-        String strFilter = "_id=\'" + hash + "\'";
-        ContentValues args = new ContentValues();
-        args.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, blockHeight);
-        args.put(BRSQLiteHelper.TX_TIME_STAMP, timeStamp);
+    public  void updateTxBlockHeight(String hash, int blockHeight, int timeStamp) {
+        try {
+            database = openDatabase();
+            Log.e(TAG, "transaction updated with id: " + hash);
+            String strFilter = "_id=\'" + hash + "\'";
+            ContentValues args = new ContentValues();
+            args.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, blockHeight);
+            args.put(BRSQLiteHelper.TX_TIME_STAMP, timeStamp);
 
-        database.update(BRSQLiteHelper.TX_TABLE_NAME, args, strFilter, null);
+//            Log.e(TAG, "updateTxBlockHeight: size before updating: " + getAllTransactions().size());
+            database.update(BRSQLiteHelper.TX_TABLE_NAME, args, strFilter, null);
+//            Log.e(TAG, "updateTxBlockHeight: size after updating: " + getAllTransactions().size());
+        } finally {
+            closeDatabase();
+        }
+
     }
 
-    public void deleteTxByHash(String hash) {
-        database = dbHelper.getWritableDatabase();
-        Log.e(TAG, "transaction deleted with id: " + hash);
-        database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID
-                + " = \'" + hash + "\'", null);
+    public  void deleteTxByHash(String hash) {
+        try {
+            database = openDatabase();
+            Log.e(TAG, "transaction deleted with id: " + hash);
+            database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_COLUMN_ID
+                    + " = \'" + hash + "\'", null);
+        } finally {
+            closeDatabase();
+        }
+    }
+
+    @Override
+    public  SQLiteDatabase openDatabase() {
+        if(ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
+//        if (mOpenCounter.incrementAndGet() == 1) {
+        // Opening new database
+        if (database == null || !database.isOpen())
+            database = dbHelper.getWritableDatabase();
+        dbHelper.setWriteAheadLoggingEnabled(BRConstants.WAL);
+//        }
+//        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
+        return database;
+    }
+
+    @Override
+    public  void closeDatabase() {
+//        if (mOpenCounter.decrementAndGet() == 0) {
+//            // Closing database
+//            database.close();
+
+//        }
+//        Log.d("Database open counter: " , String.valueOf(mOpenCounter.get()));
     }
 }

@@ -31,14 +31,14 @@ extern "C" {
 #endif
 
 JNIEXPORT jbyteArray JNICALL
-Java_com_breadwallet_tools_security_RequestHandler_parsePaymentRequest(JNIEnv *env, jobject obj, jbyteArray payment);
+Java_com_breadwallet_tools_security_BitcoinUrlHandler_parsePaymentRequest(JNIEnv *env, jobject obj, jbyteArray payment);
 
 JNIEXPORT jbyteArray JNICALL
-Java_com_breadwallet_tools_security_RequestHandler_getCertificatesFromPaymentRequest(JNIEnv *env, jobject obj,
+Java_com_breadwallet_tools_security_BitcoinUrlHandler_getCertificatesFromPaymentRequest(JNIEnv *env, jobject obj,
                                                                                      jbyteArray payment, jint index);
 
 JNIEXPORT jstring JNICALL
-Java_com_breadwallet_tools_security_RequestHandler_parsePaymentACK(JNIEnv *env, jobject obj, jbyteArray paymentACK);
+Java_com_breadwallet_tools_security_BitcoinUrlHandler_parsePaymentACK(JNIEnv *env, jobject obj, jbyteArray paymentACK);
 
 #ifdef __cplusplus
 }

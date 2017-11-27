@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_write_down"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/extra_light_blue_background"
+    tools:context="com.breadwallet.presenter.activities.intro.WriteDownActivity">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/gradient_layout"
+        android:layout_width="0dp"
+        android:layout_height="160dp"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="0dp"
+        android:background="@drawable/write_down_gradient"
+        android:orientation="vertical"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="@dimen/bread_margin"
+            android:layout_weight="0.5"
+            android:text="@string/SecurityCenter.paperKeyTitle"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/header"
+            app:customTFont="CircularPro-Bold.otf"
+            app:layout_constraintLeft_toLeftOf="@+id/description"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="@dimen/bread_margin"
+            android:layout_marginStart="@dimen/bread_margin"
+            android:layout_marginTop="8dp"
+            android:layout_weight="0.5"
+            android:lineSpacingMultiplier="1.3"
+            android:text="@string/ConfirmPaperPhrase.label"
+            android:textAlignment="textStart"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sub_header"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="0dp"
+        android:layout_marginRight="0dp"
+        android:layout_marginTop="-10dp"
+        android:animateLayoutChanges="true"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/gradient_layout">
+
+
+        <com.breadwallet.presenter.customviews.BRButton
+            android:id="@+id/button_submit"
+            android:layout_width="0dp"
+            android:layout_height="@dimen/big_button_height"
+            android:layout_marginBottom="32dp"
+            android:layout_marginEnd="@dimen/bread_margin"
+            android:layout_marginStart="@dimen/bread_margin"
+            android:layout_marginTop="32dp"
+            android:elevation="8dp"
+            android:padding="10dp"
+            android:text="@string/Button.submit"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:buttonType="1"
+            app:isBreadButton="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/line2"/>
+
+        <ImageView
+            android:id="@+id/check_mark_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="0dp"
+            android:src="@drawable/ic_check_mark_blue"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/word_edittext_first"
+            app:layout_constraintLeft_toRightOf="@+id/word_edittext_first"
+            app:layout_constraintTop_toTopOf="@+id/word_edittext_first"/>
+
+        <ImageView
+            android:id="@+id/check_mark_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="0dp"
+            android:src="@drawable/ic_check_mark_blue"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="@+id/word_edittext_second"
+            app:layout_constraintLeft_toRightOf="@+id/word_edittext_second"
+            app:layout_constraintTop_toTopOf="@+id/word_edittext_second"/>
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/word_number_first"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/bread_margin"
+            android:layout_marginTop="@dimen/bread_margin"
+            android:lineSpacingMultiplier="1.3"
+            android:textColor="@color/light_gray"
+            android:textSize="18sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <com.breadwallet.presenter.customviews.BREdit
+            android:id="@+id/word_edittext_first"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/bread_margin"
+            android:layout_marginStart="@dimen/bread_margin"
+            android:layout_marginTop="0dp"
+            android:background="@android:color/transparent"
+            android:ems="10"
+            android:inputType="textPersonName"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/word_number_first"
+            app:layout_constraintHorizontal_bias="0.0"/>
+
+        <View
+            android:id="@+id/line1"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/extra_light_gray"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/word_edittext_first"/>
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/word_number_second"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/bread_margin"
+            android:layout_marginTop="@dimen/bread_margin"
+            android:textColor="@color/light_gray"
+            android:textSize="18sp"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/line1"/>
+
+        <com.breadwallet.presenter.customviews.BREdit
+            android:id="@+id/word_edittext_second"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/bread_margin"
+            android:layout_marginStart="@dimen/bread_margin"
+            android:layout_marginTop="0dp"
+            android:background="@android:color/transparent"
+            android:ems="10"
+            android:imeActionId="@+id/submit"
+            android:imeOptions="actionSend"
+            android:inputType="textPersonName"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/word_number_second"/>
+
+        <View
+            android:id="@+id/line2"
+            android:layout_width="0dp"
+            android:layout_height="1dp"
+            android:background="@color/extra_light_gray"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/word_edittext_second"
+            />
+
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.constraint.ConstraintLayout>

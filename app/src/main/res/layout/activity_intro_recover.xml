@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_intro_recover"
+    android:background="@color/extra_light_blue_background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.breadwallet.presenter.activities.intro.RecoverActivity">
+
+    <com.breadwallet.presenter.customviews.BRButton
+        android:id="@+id/send_button"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/big_button_height"
+        android:layout_marginBottom="32dp"
+        android:layout_marginEnd="@dimen/bread_margin"
+        android:layout_marginStart="@dimen/bread_margin"
+        app:buttonType="1"
+        android:padding="10dp"
+        android:background="@android:color/transparent"
+        app:isBreadButton="true"
+        android:text="@string/RecoverWallet.next"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/relativeLayout"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:background="@drawable/recover_gradient"
+        app:layout_constraintBaseline_toBaselineOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        tools:layout_constraintBaseline_creator="1"
+        tools:layout_constraintLeft_creator="1"
+        tools:layout_constraintRight_creator="1">
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:text="@string/RecoverWallet.header"
+            android:textColor="@color/white"
+            android:textSize="@dimen/header"
+            app:customTFont="CircularPro-Bold.otf"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_constraintTop_creator="1"/>
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/imageView4"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:elevation="4dp"
+            android:src="@drawable/ic_white_wallet"
+            app:layout_constraintBottom_toTopOf="@+id/textView3"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <ImageView
+            android:id="@+id/imageView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:elevation="4dp"
+            android:src="@drawable/ic_black_wallet"
+            app:layout_constraintBottom_toTopOf="@+id/imageView2"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"/>
+
+        <ImageView
+            android:id="@+id/imageView5"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignTop="@+id/imageView4"
+            android:layout_marginTop="8dp"
+            android:layout_toStartOf="@+id/imageView2"
+            android:elevation="4dp"
+            android:src="@drawable/ic_arrow_body"
+            app:layout_constraintEnd_toStartOf="@+id/imageView2"
+            app:layout_constraintTop_toTopOf="@+id/imageView4"/>
+
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:elevation="4dp"
+            android:text="@string/RecoverWallet.header"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:customTFont="CircularPro-Medium.otf"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            />
+
+        <ImageView
+            android:id="@+id/imageView7"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBottom="@+id/imageView5"
+            android:layout_alignStart="@+id/textView3"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_arrow_head"
+            app:layout_constraintEnd_toStartOf="@+id/imageView2"
+            app:layout_constraintTop_toTopOf="@+id/imageView2"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/textView8"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/bread_margin"
+        android:layout_marginEnd="@dimen/bread_margin"
+        android:layout_marginTop="@dimen/bread_margin"
+        android:text="@string/RecoverWallet.intro"
+        android:lineSpacingMultiplier="1.3"
+        android:textColor="@color/almost_black"
+        android:textSize="@dimen/sub_header"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout"/>
+
+    <ImageButton
+        android:id="@+id/faq_button"
+        android:layout_width="@dimen/faq_dimen"
+        android:layout_height="@dimen/faq_dimen"
+        android:layout_marginEnd="@dimen/bread_margin"
+        android:layout_marginTop="@dimen/bread_margin"
+        android:background="@drawable/faq_question_white"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+</android.support.constraint.ConstraintLayout>

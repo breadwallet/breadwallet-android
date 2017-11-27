@@ -1,29 +1,34 @@
 package com.platform.middlewares.plugins;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
-import android.location.Address;
-import android.location.Geocoder;
 import android.net.Uri;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.MainActivity;
+import com.breadwallet.BreadApp;
+import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.WebViewActivity;
+import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.tools.util.Utils;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.BRHTTPHelper;
+import com.platform.HTTPServer;
 import com.platform.interfaces.Plugin;
 
-import junit.framework.Assert;
-
 import org.eclipse.jetty.server.Request;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import static android.R.attr.handle;
-import static com.breadwallet.presenter.fragments.FragmentScanResult.address;
 
 /**
  * BreadWallet
@@ -51,6 +56,7 @@ import static com.breadwallet.presenter.fragments.FragmentScanResult.address;
  */
 public class LinkPlugin implements Plugin {
     public static final String TAG = LinkPlugin.class.getName();
+    public static boolean hasBrowser;
 
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
@@ -58,7 +64,7 @@ public class LinkPlugin implements Plugin {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             String url = request.getParameter("url");
 
-            MainActivity app = MainActivity.app;
+            Context app = BreadApp.getBreadContext();
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
@@ -69,13 +75,13 @@ public class LinkPlugin implements Plugin {
                 app.startActivity(intent);
             } else {
                 Log.e(TAG, "handle: could not handle url: " + url);
-                FirebaseCrash.report(new RuntimeException("could not handle url: " + url));
+                BRReportsManager.reportBug(new RuntimeException("could not handle url: " + url));
             }
 
-            return true;
+            return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
         } else if (target.startsWith("/_open_maps")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            MainActivity app = MainActivity.app;
+            Context app = BreadApp.getBreadContext();
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
@@ -89,8 +95,98 @@ public class LinkPlugin implements Plugin {
             String uri = "http://maps.google.com/maps?q=" + fromPoint + "&daddr=" + address + "&mode=driving";
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
             app.startActivity(Intent.createChooser(intent, "Select an application"));
-            return true;
-        } else return false;
+            return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
+        } else if (target.startsWith("/_browser")) {
+            Context app = BreadApp.getBreadContext();
+            if (app == null) {
+                Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
+            }
+            switch (request.getMethod()) {
+                case "GET":
+                    // opens the in-app browser for the provided URL
+                    Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+
+                    if (hasBrowser)
+                        return BRHTTPHelper.handleError(409, "Conflict", baseRequest, response);
+                    String getUrl = baseRequest.getParameter("url");
+                    if (Utils.isNullOrEmpty(getUrl))
+                        return BRHTTPHelper.handleError(400, "missing url param", baseRequest, response);
+
+                    Uri getUri = Uri.parse(getUrl);
+                    if (getUri == null || getUri.toString().isEmpty())
+                        return BRHTTPHelper.handleError(400, "failed to escape url", baseRequest, response);
+
+                    hasBrowser = true;
+                    Intent getInt = new Intent(app, WebViewActivity.class);
+                    getInt.putExtra("url", getUri.toString());
+                    app.startActivity(getInt);
+                    ((Activity)app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                    return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
+                case "POST":
+                    // opens a browser with a customized request object
+                    // params:
+                    //  {
+                    //    "url": "http://myirl.com",
+                    //    "method": "POST",
+                    //    "body": "stringified request body...",
+                    //    "headers": {"X-Header": "Blerb"}
+                    //    "closeOn": "http://someurl",
+                    //  }
+                    // Only the "url" parameter is required. If only the "url" parameter
+                    // is supplied the request acts exactly like the GET /_browser resource above
+                    //
+                    // When the "closeOn" parameter is provided the web view will automatically close
+                    // if the browser navigates to this exact URL. It is useful for oauth redirects
+                    // and the like
+
+                    Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
+
+                    if (hasBrowser)
+                        return BRHTTPHelper.handleError(409, "Conflict", baseRequest, response);
+
+                    byte[] body = BRHTTPHelper.getBody(request);
+
+                    if (Utils.isNullOrEmpty(body))
+                        return BRHTTPHelper.handleError(400, "missing body", baseRequest, response);
+
+                    JSONObject json;
+                    try {
+                        json = new JSONObject(new String(body)); //just check for validity
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "handle: the json is not valid:" + target + " " + baseRequest.getMethod());
+                        return BRHTTPHelper.handleError(400, "could not deserialize json object ", baseRequest, response);
+                    }
+
+                    //check all the params
+                    String postUrl;
+                    try {
+                        postUrl = json.getString("url");
+                        String method = json.getString("method");
+                        String strBody = json.getString("body");
+                        String headers = json.getString("headers");
+                        String closeOn = json.getString("closeOn");
+                        if (Utils.isNullOrEmpty(postUrl) || Utils.isNullOrEmpty(method) ||
+                                Utils.isNullOrEmpty(strBody) || Utils.isNullOrEmpty(headers) || Utils.isNullOrEmpty(closeOn))
+                            return BRHTTPHelper.handleError(400, "malformed json:" + json.toString(), baseRequest, response);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        return BRHTTPHelper.handleError(400, "malformed json:" + json.toString(), baseRequest, response);
+                    }
+
+                    hasBrowser = true;
+                    Intent postInt = new Intent(app, WebViewActivity.class);
+                    postInt.putExtra("url", postUrl);
+                    postInt.putExtra("json", json.toString());
+                    app.startActivity(postInt);
+                    ((Activity)app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                    return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
+
+            }
+        }
+        return false;
 
     }
+
 }

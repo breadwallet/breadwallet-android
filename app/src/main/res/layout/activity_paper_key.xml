@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_write_down"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    tools:context="com.breadwallet.presenter.activities.intro.WriteDownActivity">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/gradient_layout"
+        android:layout_width="match_parent"
+        android:layout_height="180dp"
+        android:background="@drawable/paper_key_gradient"
+        android:orientation="vertical">
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="@dimen/bread_margin"
+            android:layout_weight="0.5"
+            android:text="@string/SecurityCenter.paperKeyTitle"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/header"
+            app:customTFont="CircularPro-Bold.otf"
+            app:layout_constraintHorizontal_bias="0.501"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <ImageButton
+            android:id="@+id/close_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="0dp"
+            android:layout_marginStart="@dimen/bread_margin"
+            android:layout_marginTop="0dp"
+            android:layout_weight="0.5"
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_close_white_24dp"
+            app:layout_constraintBottom_toBottomOf="@+id/title"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/title"/>
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/description"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="0dp"
+            android:layout_marginEnd="32dp"
+            android:layout_marginLeft="32dp"
+            android:layout_marginRight="32dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="0dp"
+            android:layout_weight="0.5"
+            android:lineSpacingMultiplier="1.3"
+            android:text="@string/WritePaperPhrase.instruction"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sub_header"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title"
+            app:layout_constraintVertical_bias="0.506"/>
+    </android.support.constraint.ConstraintLayout>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/phrase_words_pager"
+        android:layout_width="match_parent"
+        android:layout_height="160dp"
+        android:layout_below="@+id/gradient_layout"
+        android:focusable="false"
+        android:orientation="horizontal"
+        />
+
+    <LinearLayout
+        android:id="@+id/buttons_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="32dp"
+        android:weightSum="2.0">
+
+        <com.breadwallet.presenter.customviews.BRButton
+            android:id="@+id/button_previous"
+            android:layout_width="0dp"
+            android:layout_height="72dp"
+            android:layout_marginBottom="32dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="@dimen/bread_margin"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            app:buttonType="2"
+            android:background="@android:color/transparent"
+            android:elevation="0dp"
+            android:enabled="false"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:text="@string/WritePaperPhrase.previous"
+            android:textColor="@color/extra_light_gray"
+            android:textSize="18sp"
+            app:isBreadButton="true"
+            />
+
+        <com.breadwallet.presenter.customviews.BRButton
+            android:id="@+id/send_button"
+            android:layout_width="0dp"
+            android:background="@android:color/transparent"
+            android:layout_height="72dp"
+            android:layout_marginBottom="32dp"
+            android:layout_marginEnd="@dimen/bread_margin"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_weight="1"
+            app:buttonType="2"
+            android:elevation="8dp"
+            android:paddingBottom="8dp"
+            android:paddingTop="8dp"
+            android:text="@string/RecoverWallet.next"
+            android:textColor="@color/button_secondary_text"
+            android:textSize="18sp"
+            app:isBreadButton="true"/>
+
+    </LinearLayout>
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/item_index_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/phrase_words_pager"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
+        android:text="1 of 12"
+        android:textColor="@color/light_gray"
+        app:customTFont="CircularPro-Medium.otf"/>
+
+
+</RelativeLayout>

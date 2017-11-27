@@ -4,9 +4,9 @@ import android.security.keystore.UserNotAuthenticatedException;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.breadwallet.exceptions.BRKeystoreErrorException;
-import com.breadwallet.presenter.activities.MainActivity;
-import com.breadwallet.tools.security.KeyStoreManager;
+import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.threads.BRExecutor;
 
 import org.junit.Assert;
 import org.junit.Rule;
@@ -15,7 +15,7 @@ import org.junit.runner.RunWith;
 
 import java.io.File;
 
-import static com.breadwallet.tools.security.KeyStoreManager.aliasObjectMap;
+import static com.breadwallet.tools.security.BRKeyStore.aliasObjectMap;
 
 
 /**
@@ -47,22 +47,23 @@ public class KeyStoreTests {
     public static final String TAG = KeyStoreTests.class.getName();
 
     @Rule
-    public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(MainActivity.class);
+    public ActivityTestRule<BreadActivity> mActivityRule = new ActivityTestRule<>(BreadActivity.class);
 
     @Test
     public void setGetPhrase() {
         //set get phrase
         byte[] phrase = "axis husband project any sea patch drip tip spirit tide bring belt".getBytes();
         try {
-            KeyStoreManager.putPhrase(phrase, mActivityRule.getActivity(), 0);
+            BRKeyStore.putPhrase(phrase, mActivityRule.getActivity(), 0);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
+            Assert.fail();
         }
-        assertFilesExist(KeyStoreManager.PHRASE_ALIAS);
+        assertFilesExist(BRKeyStore.PHRASE_ALIAS);
 
         byte[] freshGet = new byte[0];
         try {
-            freshGet = KeyStoreManager.getPhrase(mActivityRule.getActivity(), 0);
+            freshGet = BRKeyStore.getPhrase(mActivityRule.getActivity(), 0);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
@@ -71,15 +72,15 @@ public class KeyStoreTests {
         //set get Japaneese phrase
         byte[] japPhrase = "こせき　ぎじにってい　けっこん　せつぞく　うんどう　ふこう　にっすう　こせい　きさま　なまみ　たきび　はかい".getBytes();
         try {
-            KeyStoreManager.putPhrase(japPhrase, mActivityRule.getActivity(), 0);
+            BRKeyStore.putPhrase(japPhrase, mActivityRule.getActivity(), 0);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             Assert.fail();
         }
-        assertFilesExist(KeyStoreManager.PHRASE_ALIAS);
+        assertFilesExist(BRKeyStore.PHRASE_ALIAS);
         byte[] freshJapGet = new byte[0];
         try {
-            freshJapGet = KeyStoreManager.getPhrase(mActivityRule.getActivity(), 0);
+            freshJapGet = BRKeyStore.getPhrase(mActivityRule.getActivity(), 0);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
@@ -91,15 +92,15 @@ public class KeyStoreTests {
     public void setGetCanary() {
         String canary = "canary";
         try {
-            KeyStoreManager.putCanary(canary, mActivityRule.getActivity(), 0);
+            BRKeyStore.putCanary(canary, mActivityRule.getActivity(), 0);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             Assert.fail();
         }
-        assertFilesExist(KeyStoreManager.CANARY_ALIAS);
+        assertFilesExist(BRKeyStore.CANARY_ALIAS);
         String freshGet = "";
         try {
-            freshGet = KeyStoreManager.getCanary(mActivityRule.getActivity(), 0);
+            freshGet = BRKeyStore.getCanary(mActivityRule.getActivity(), 0);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
@@ -107,12 +108,57 @@ public class KeyStoreTests {
     }
 
     @Test
+    public void setGetMultiple() {
+        final String canary = "canary";
+        for (int i = 0; i < 100; i++) {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        boolean b = BRKeyStore.putCanary(canary, mActivityRule.getActivity(), 0);
+                        Assert.assertTrue(b);
+                    } catch (UserNotAuthenticatedException e) {
+                        e.printStackTrace();
+                        Assert.fail();
+                    }
+                }
+            });
+
+        }
+
+        assertFilesExist(BRKeyStore.CANARY_ALIAS);
+
+
+        for (int i = 0; i < 100; i++) {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    String freshGet = "";
+                    try {
+                        freshGet = BRKeyStore.getCanary(mActivityRule.getActivity(), 0);
+                    } catch (UserNotAuthenticatedException e) {
+                        e.printStackTrace();
+                    }
+                    Assert.assertEquals(freshGet, canary);
+                }
+            });
+
+        }
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    @Test
     public void setGetMasterPubKey() {
         byte[] pubKey = "26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes();
-        KeyStoreManager.putMasterPublicKey(pubKey, mActivityRule.getActivity());
-        assertFilesExist(KeyStoreManager.PUB_KEY_ALIAS);
+        BRKeyStore.putMasterPublicKey(pubKey, mActivityRule.getActivity());
+        assertFilesExist(BRKeyStore.PUB_KEY_ALIAS);
         byte[] freshGet;
-        freshGet = KeyStoreManager.getMasterPublicKey(mActivityRule.getActivity());
+        freshGet = BRKeyStore.getMasterPublicKey(mActivityRule.getActivity());
         Assert.assertArrayEquals(freshGet, freshGet);
     }
 
@@ -120,130 +166,131 @@ public class KeyStoreTests {
     @Test
     public void setGetAuthKey() {
         byte[] authKey = "26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes();
-        KeyStoreManager.putAuthKey(authKey, mActivityRule.getActivity());
-        assertFilesExist(KeyStoreManager.AUTH_KEY_ALIAS);
+        BRKeyStore.putAuthKey(authKey, mActivityRule.getActivity());
+        assertFilesExist(BRKeyStore.AUTH_KEY_ALIAS);
         byte[] freshGet;
-        freshGet = KeyStoreManager.getAuthKey(mActivityRule.getActivity());
+        freshGet = BRKeyStore.getAuthKey(mActivityRule.getActivity());
         Assert.assertArrayEquals(freshGet, freshGet);
     }
 
     @Test
     public void setGetToken() {
         byte[] token = "26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes();
-        KeyStoreManager.putToken(token, mActivityRule.getActivity());
-        assertFilesExist(KeyStoreManager.TOKEN_ALIAS);
+        BRKeyStore.putToken(token, mActivityRule.getActivity());
+        assertFilesExist(BRKeyStore.TOKEN_ALIAS);
         byte[] freshGet;
-        freshGet = KeyStoreManager.getToken(mActivityRule.getActivity());
+        freshGet = BRKeyStore.getToken(mActivityRule.getActivity());
         Assert.assertArrayEquals(freshGet, freshGet);
     }
 
     @Test
     public void setGetWalletCreationTime() {
         int time = 1479686841;
-        KeyStoreManager.putWalletCreationTime(time, mActivityRule.getActivity());
-        assertFilesExist(KeyStoreManager.WALLET_CREATION_TIME_ALIAS);
+        BRKeyStore.putWalletCreationTime(time, mActivityRule.getActivity());
+        assertFilesExist(BRKeyStore.WALLET_CREATION_TIME_ALIAS);
         int freshGet;
-        freshGet = KeyStoreManager.getWalletCreationTime(mActivityRule.getActivity());
+        freshGet = BRKeyStore.getWalletCreationTime(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
     }
 
     @Test
     public void setGetPassCode() {
         String passCode = "0124";
-        KeyStoreManager.putPassCode(passCode, mActivityRule.getActivity());
-        assertFilesExist(KeyStoreManager.PASS_CODE_ALIAS);
+        BRKeyStore.putPinCode(passCode, mActivityRule.getActivity());
+        assertFilesExist(BRKeyStore.PASS_CODE_ALIAS);
         String freshGet;
-        freshGet = KeyStoreManager.getPassCode(mActivityRule.getActivity());
+        freshGet = BRKeyStore.getPinCode(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
 
         passCode = "0000";
-        KeyStoreManager.putPassCode(passCode, mActivityRule.getActivity());
-        assertFilesExist(KeyStoreManager.PASS_CODE_ALIAS);
-        freshGet = KeyStoreManager.getPassCode(mActivityRule.getActivity());
+        BRKeyStore.putPinCode(passCode, mActivityRule.getActivity());
+        assertFilesExist(BRKeyStore.PASS_CODE_ALIAS);
+        freshGet = BRKeyStore.getPinCode(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
 
         passCode = "9999";
-        KeyStoreManager.putPassCode(passCode, mActivityRule.getActivity());
-        assertFilesExist(KeyStoreManager.PASS_CODE_ALIAS);
-        freshGet = KeyStoreManager.getPassCode(mActivityRule.getActivity());
+        BRKeyStore.putPinCode(passCode, mActivityRule.getActivity());
+        assertFilesExist(BRKeyStore.PASS_CODE_ALIAS);
+        freshGet = BRKeyStore.getPinCode(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
 
         passCode = "9876";
-        KeyStoreManager.putPassCode(passCode, mActivityRule.getActivity());
-        assertFilesExist(KeyStoreManager.PASS_CODE_ALIAS);
-        freshGet = KeyStoreManager.getPassCode(mActivityRule.getActivity());
+        BRKeyStore.putPinCode(passCode, mActivityRule.getActivity());
+        assertFilesExist(BRKeyStore.PASS_CODE_ALIAS);
+        freshGet = BRKeyStore.getPinCode(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
     }
 
     @Test
     public void setGetFailCount() {
         int failCount = 2;
-        KeyStoreManager.putFailCount(failCount, mActivityRule.getActivity());
-        assertFilesExist(KeyStoreManager.FAIL_COUNT_ALIAS);
+        BRKeyStore.putFailCount(failCount, mActivityRule.getActivity());
+        assertFilesExist(BRKeyStore.FAIL_COUNT_ALIAS);
         int freshGet;
-        freshGet = KeyStoreManager.getFailCount(mActivityRule.getActivity());
+        freshGet = BRKeyStore.getFailCount(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
     }
 
     @Test
     public void setGetSpendLimit() {
         long spendLimit = 100000;
-        KeyStoreManager.putSpendLimit(spendLimit, mActivityRule.getActivity());
-        assertFilesExist(KeyStoreManager.SPEND_LIMIT_ALIAS);
+        BRKeyStore.putSpendLimit(spendLimit, mActivityRule.getActivity());
+        assertFilesExist(BRKeyStore.SPEND_LIMIT_ALIAS);
         long freshGet;
-        freshGet = KeyStoreManager.getSpendLimit(mActivityRule.getActivity());
+        freshGet = BRKeyStore.getSpendLimit(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
     }
 
     @Test
     public void setGetSFailTimeStamp() {
         long failTime = 1479686841;
-        KeyStoreManager.putFailTimeStamp(failTime, mActivityRule.getActivity());
-        assertFilesExist(KeyStoreManager.FAIL_TIMESTAMP_ALIAS);
+        BRKeyStore.putFailTimeStamp(failTime, mActivityRule.getActivity());
+        assertFilesExist(BRKeyStore.FAIL_TIMESTAMP_ALIAS);
         long freshGet;
-        freshGet = KeyStoreManager.getFailTimeStamp(mActivityRule.getActivity());
+        freshGet = BRKeyStore.getFailTimeStamp(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
     }
 
     @Test
     public void setGetLastPasscodeUsedTime() {
         long time = 1479686841;
-        KeyStoreManager.putLastPasscodeUsedTime(time, mActivityRule.getActivity());
-        assertFilesExist(KeyStoreManager.PASS_TIME_ALIAS);
+        BRKeyStore.putLastPinUsedTime(time, mActivityRule.getActivity());
+        assertFilesExist(BRKeyStore.PASS_TIME_ALIAS);
         long freshGet;
-        freshGet = KeyStoreManager.getLastPasscodeUsedTime(mActivityRule.getActivity());
+        freshGet = BRKeyStore.getLastPinUsedTime(mActivityRule.getActivity());
         Assert.assertEquals(freshGet, freshGet);
     }
 
     @Test
     public void testClearKeyStore() {
         try {
-            KeyStoreManager.putPhrase("axis husband project any sea patch drip tip spirit tide bring belt".getBytes(), mActivityRule.getActivity(), 0);
+            BRKeyStore.putPhrase("axis husband project any sea patch drip tip spirit tide bring belt".getBytes(), mActivityRule.getActivity(), 0);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             Assert.fail();
         }
         try {
-            KeyStoreManager.putCanary("canary", mActivityRule.getActivity(), 0);
+            BRKeyStore.putCanary("canary", mActivityRule.getActivity(), 0);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             Assert.fail();
         }
-        KeyStoreManager.putMasterPublicKey("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
-        KeyStoreManager.putAuthKey("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
-        KeyStoreManager.putToken("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
-        KeyStoreManager.putWalletCreationTime(1479686841, mActivityRule.getActivity());
-        KeyStoreManager.putPassCode("0123", mActivityRule.getActivity());
-        KeyStoreManager.putFailCount(3, mActivityRule.getActivity());
-        KeyStoreManager.putFailTimeStamp(1479686841, mActivityRule.getActivity());
-        KeyStoreManager.putSpendLimit(10000000, mActivityRule.getActivity());
-        KeyStoreManager.putLastPasscodeUsedTime(1479686841, mActivityRule.getActivity());
+        BRKeyStore.putMasterPublicKey("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
+        BRKeyStore.putAuthKey("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
+        BRKeyStore.putToken("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
+        BRKeyStore.putWalletCreationTime(1479686841, mActivityRule.getActivity());
+        BRKeyStore.putPinCode("0123", mActivityRule.getActivity());
+        BRKeyStore.putFailCount(3, mActivityRule.getActivity());
+        BRKeyStore.putFailTimeStamp(1479686841, mActivityRule.getActivity());
+        BRKeyStore.putSpendLimit(10000000, mActivityRule.getActivity());
+        BRKeyStore.putLastPinUsedTime(1479686841, mActivityRule.getActivity());
+        BRKeyStore.putTotalLimit(1479686841, mActivityRule.getActivity());
 
         for (String a : aliasObjectMap.keySet()) {
             assertFilesExist(a);
         }
 
-        KeyStoreManager.resetWalletKeyStore(mActivityRule.getActivity());
+        BRKeyStore.resetWalletKeyStore(mActivityRule.getActivity());
 
         for (String a : aliasObjectMap.keySet()) {
             assertFilesDontExist(a);
@@ -252,7 +299,7 @@ public class KeyStoreTests {
 
         byte[] phrase = "some".getBytes();
         try {
-            phrase = KeyStoreManager.getPhrase(mActivityRule.getActivity(), 0);
+            phrase = BRKeyStore.getPhrase(mActivityRule.getActivity(), 0);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
@@ -260,44 +307,44 @@ public class KeyStoreTests {
         String canary = "some";
 
         try {
-            canary = KeyStoreManager.getCanary(mActivityRule.getActivity(), 0);
+            canary = BRKeyStore.getCanary(mActivityRule.getActivity(), 0);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
 
-        Assert.assertArrayEquals(phrase, new byte[0]);
-        Assert.assertEquals(canary, "");
-        Assert.assertArrayEquals(KeyStoreManager.getMasterPublicKey(mActivityRule.getActivity()), new byte[0]);
-        Assert.assertArrayEquals(KeyStoreManager.getAuthKey(mActivityRule.getActivity()), new byte[0]);
-        Assert.assertArrayEquals(KeyStoreManager.getToken(mActivityRule.getActivity()), new byte[0]);
-        Assert.assertEquals(KeyStoreManager.getWalletCreationTime(mActivityRule.getActivity()), 0);
-        Assert.assertEquals(KeyStoreManager.getPassCode(mActivityRule.getActivity()), "");
-        Assert.assertEquals(KeyStoreManager.getFailCount(mActivityRule.getActivity()), 0);
-        Assert.assertEquals(KeyStoreManager.getFailTimeStamp(mActivityRule.getActivity()), 0);
-        Assert.assertEquals(KeyStoreManager.getSpendLimit(mActivityRule.getActivity()), 0);
-        Assert.assertEquals(KeyStoreManager.getLastPasscodeUsedTime(mActivityRule.getActivity()), 0);
+        Assert.assertNull(phrase);
+        Assert.assertEquals(null, canary);
+        Assert.assertEquals(null, BRKeyStore.getMasterPublicKey(mActivityRule.getActivity()));
+        Assert.assertEquals(null, BRKeyStore.getAuthKey(mActivityRule.getActivity()));
+        Assert.assertEquals(null, BRKeyStore.getToken(mActivityRule.getActivity()));
+        Assert.assertEquals(0, BRKeyStore.getWalletCreationTime(mActivityRule.getActivity()));
+        Assert.assertEquals("", BRKeyStore.getPinCode(mActivityRule.getActivity()));
+        Assert.assertEquals(0, BRKeyStore.getFailCount(mActivityRule.getActivity()));
+        Assert.assertEquals(0, BRKeyStore.getFailTimeStamp(mActivityRule.getActivity()));
+        Assert.assertEquals(0, BRKeyStore.getSpendLimit(mActivityRule.getActivity()));
+        Assert.assertEquals(0, BRKeyStore.getLastPinUsedTime(mActivityRule.getActivity()));
 
     }
 
     @Test
     public void testKeyStoreAuthTime() {
-        Assert.assertEquals(KeyStoreManager.AUTH_DURATION_SEC, 300);
+        Assert.assertEquals(BRKeyStore.AUTH_DURATION_SEC, 300);
     }
 
     @Test
     public void testKeyStoreAliasMap() {
         Assert.assertNotNull(aliasObjectMap);
-        Assert.assertEquals(aliasObjectMap.size(), 11);
+        Assert.assertEquals(aliasObjectMap.size(), 12);
     }
 
     public void assertFilesExist(String alias) {
-        Assert.assertTrue(new File(KeyStoreManager.getEncryptedDataFilePath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
-        Assert.assertTrue(new File(KeyStoreManager.getEncryptedDataFilePath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
+        Assert.assertTrue(new File(BRKeyStore.getFilePath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
+        Assert.assertTrue(new File(BRKeyStore.getFilePath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
     }
 
     public void assertFilesDontExist(String alias) {
-        Assert.assertFalse(new File(KeyStoreManager.getEncryptedDataFilePath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
-        Assert.assertFalse(new File(KeyStoreManager.getEncryptedDataFilePath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
+        Assert.assertFalse(new File(BRKeyStore.getFilePath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
+        Assert.assertFalse(new File(BRKeyStore.getFilePath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
     }
 
 }

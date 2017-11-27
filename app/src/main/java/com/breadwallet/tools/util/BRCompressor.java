@@ -1,24 +1,18 @@
 package com.breadwallet.tools.util;
 
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.google.firebase.crash.FirebaseCrash;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;
 import org.apache.commons.compress.utils.IOUtils;
 import org.apache.commons.io.output.ByteArrayOutputStream;
-import org.eclipse.jetty.util.IO;
 
-import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.nio.charset.StandardCharsets;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
-
-import static android.R.attr.data;
 
 /**
  * BreadWallet
@@ -53,7 +47,7 @@ public class BRCompressor {
             InputStream isr = new GZIPInputStream(new ByteArrayInputStream(compressed));
             return IOUtils.toByteArray(isr);
         } catch (IOException e) {
-            FirebaseCrash.report(e);
+            BRReportsManager.reportBug(e);
             e.printStackTrace();
         }
         return null;
@@ -86,7 +80,7 @@ public class BRCompressor {
             }
             compressedData = byteStream.toByteArray();
         } catch (Exception e) {
-            FirebaseCrash.report(e);
+            BRReportsManager.reportBug(e);
             e.printStackTrace();
         }
         return compressedData;
@@ -116,36 +110,30 @@ public class BRCompressor {
         return null;
     }
 
-
-    public static byte[] bz2Compress(byte[] data) {
+    public static byte[] bz2Compress(byte[] data) throws IOException {
         if (data == null) return null;
         byte[] compressedData = null;
+        ByteArrayOutputStream byteStream = new ByteArrayOutputStream(data.length);
         try {
-            ByteArrayOutputStream byteStream =
-                    new ByteArrayOutputStream(data.length);
+            BZip2CompressorOutputStream bout = new BZip2CompressorOutputStream(byteStream);
             try {
-                BZip2CompressorOutputStream bout =
-                        new BZip2CompressorOutputStream(byteStream);
-                try {
-                    bout.write(data);
-                } finally {
-                    try {
-                        bout.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
+                bout.write(data);
+            } catch (Exception e) {
+                throw e;
             } finally {
                 try {
-                    byteStream.close();
+                    bout.close();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             }
             compressedData = byteStream.toByteArray();
-        } catch (Exception e) {
-            e.printStackTrace();
-            FirebaseCrash.report(e);
+        } finally {
+            try {
+                byteStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         return compressedData;
 

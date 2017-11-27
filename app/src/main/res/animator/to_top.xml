@@ -3,7 +3,7 @@
     android:shareInterpolator="false">
     <objectAnimator xmlns:android="http://schemas.android.com/apk/res/android"
         android:duration="@integer/slide_speed"
-        android:interpolator="@anim/bounce_interpolator"
+        android:interpolator="@anim/overshoot_interpolator"
         android:propertyName="y"
         android:valueFrom="0"
         android:valueTo="@integer/standard_screen_height_neg"

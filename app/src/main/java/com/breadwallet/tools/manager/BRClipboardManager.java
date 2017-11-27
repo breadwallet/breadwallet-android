@@ -35,7 +35,7 @@ import android.net.Uri;
 public class BRClipboardManager {
 
     @SuppressLint("NewApi")
-    public static void copyToClipboard(Context context, String text) {
+    public static void putClipboard(Context context, String text) {
         try {
             android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context
                     .getSystemService(Context.CLIPBOARD_SERVICE);
@@ -48,7 +48,7 @@ public class BRClipboardManager {
     }
 
     @SuppressLint("NewApi")
-    public static String readFromClipboard(Context context) {
+    public static String getClipboard(Context context) {
         ClipboardManager clipboard = (ClipboardManager) context
                 .getSystemService(Context.CLIPBOARD_SERVICE);
 

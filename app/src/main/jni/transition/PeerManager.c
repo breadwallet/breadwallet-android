@@ -164,19 +164,20 @@ static void saveBlocks(void *info, int replace, BRMerkleBlock *blocks[], size_t 
         uint8_t buf[BRMerkleBlockSerialize(blocks[i], NULL, 0)];
         size_t len = BRMerkleBlockSerialize(blocks[i], buf, sizeof(buf));
         jbyteArray result = (*env)->NewByteArray(env, (jsize) len);
-        jobject blockObject;
 
         (*env)->SetByteArrayRegion(env, result, 0, (jsize) len, (jbyte *) buf);
         mid = (*env)->GetMethodID(env, _blockClass, "<init>", "([BI)V");
-        blockObject = (*env)->NewObject(env, _blockClass, mid, result, blocks[i]->height);
+        jobject blockObject = (*env)->NewObject(env, _blockClass, mid, result, blocks[i]->height);
         (*env)->SetObjectArrayElement(env, blockObjectArray, (jsize) i, blockObject);
+
         (*env)->DeleteLocalRef(env, result);
         (*env)->DeleteLocalRef(env, blockObject);
     }
 
     mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "saveBlocks",
                                     "([Lcom/breadwallet/presenter/entities/BlockEntity;Z)V");
-    (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, blockObjectArray, replace ? JNI_TRUE : JNI_FALSE);
+    (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, blockObjectArray,
+                                 replace ? JNI_TRUE : JNI_FALSE);
 }
 
 static void savePeers(void *info, int replace, const BRPeer peers[], size_t count) {
@@ -200,7 +201,6 @@ static void savePeers(void *info, int replace, const BRPeer peers[], size_t coun
     for (int i = 0; i < count; i++) {
         if (!_peerManager) return;
 
-        jobject peerObject;
         jbyteArray peerAddress = (*env)->NewByteArray(env, sizeof(peers[i].address));
         jbyteArray peerPort = (*env)->NewByteArray(env, sizeof(peers[i].port));
         jbyteArray peerTimeStamp = (*env)->NewByteArray(env, sizeof(peers[i].timestamp));
@@ -212,8 +212,9 @@ static void savePeers(void *info, int replace, const BRPeer peers[], size_t coun
         (*env)->SetByteArrayRegion(env, peerTimeStamp, 0, sizeof(peers[i].timestamp),
                                    (jbyte *) &peers[i].timestamp);
         mid = (*env)->GetMethodID(env, _peerClass, "<init>", "([B[B[B)V");
-        peerObject = (*env)->NewObject(env, _peerClass, mid, peerAddress, peerPort, peerTimeStamp);
+        jobject peerObject = (*env)->NewObject(env, _peerClass, mid, peerAddress, peerPort, peerTimeStamp);
         (*env)->SetObjectArrayElement(env, peerObjectArray, i, peerObject);
+
         (*env)->DeleteLocalRef(env, peerAddress);
         (*env)->DeleteLocalRef(env, peerPort);
         (*env)->DeleteLocalRef(env, peerTimeStamp);
@@ -222,7 +223,8 @@ static void savePeers(void *info, int replace, const BRPeer peers[], size_t coun
 
     mid = (*env)->GetStaticMethodID(env, _peerManagerClass, "savePeers",
                                     "([Lcom/breadwallet/presenter/entities/PeerEntity;Z)V");
-    (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, peerObjectArray, replace ? JNI_TRUE : JNI_FALSE);
+    (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, peerObjectArray,
+                                 replace ? JNI_TRUE : JNI_FALSE);
 }
 
 static int networkIsReachable(void *info) {
@@ -399,6 +401,17 @@ JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getCurrentBlock
     return (jint) BRPeerManagerLastBlockHeight(_peerManager);
 }
 
+JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getRelayCount(JNIEnv *env,
+                                                                               jobject thiz,
+                                                                               jbyteArray txHash) {
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getCurrentBlockHeight");
+    if (!_peerManager) return 0;
+    jbyte *byteTxHash = (*env)->GetByteArrayElements(env, txHash, 0);
+//    const char *rawTxHash = (*env)->GetStringUTFChars(env, txHash, 0);
+    UInt256 theHash = *(UInt256 *) byteTxHash;
+    return (jint) BRPeerManagerRelayCount(_peerManager, theHash);
+}
+
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isCreated(JNIEnv *env,
                                                                                jobject obj) {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "peerManager isCreated %s",
@@ -414,16 +427,24 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isConnected
 
 JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getEstimatedBlockHeight(
         JNIEnv *env, jobject thiz) {
-//    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "getEstimatedBlockHeight");
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getEstimatedBlockHeight");
     if (!_peerManager || !_wallet) return 0;
     return (jint) BRPeerManagerEstimatedBlockHeight(_peerManager);
 }
+
+JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRPeerManager_getLastBlockTimestamp(
+        JNIEnv *env, jobject thiz) {
+//    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "getLastBlockTimestamp");
+    if (!_peerManager || !_wallet) return 0;
+    return (jint) BRPeerManagerLastBlockTimestamp(_peerManager);
+}
+
 JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRPeerManager_getCurrentPeerName(
         JNIEnv *env, jobject thiz) {
 //    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "getEstimatedBlockHeight");
     if (!_peerManager || !_wallet) return 0;
 
-    return  (*env)->NewStringUTF(env, BRPeerManagerDownloadPeerName(_peerManager));
+    return (*env)->NewStringUTF(env, BRPeerManagerDownloadPeerName(_peerManager));
 }
 
 JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_setFixedPeer(

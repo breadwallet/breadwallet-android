@@ -30,17 +30,24 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
+import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.tools.util.BRConstants;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
-class PeerDataSource {
+public class PeerDataSource implements BRDataSourceInterface {
     private static final String TAG = PeerDataSource.class.getName();
+
+    private AtomicInteger mOpenCounter = new AtomicInteger();
 
     // Database fields
     private SQLiteDatabase database;
@@ -52,14 +59,24 @@ class PeerDataSource {
             BRSQLiteHelper.PEER_TIMESTAMP
     };
 
-    public PeerDataSource(Context context) {
-        dbHelper = new BRSQLiteHelper(context);
+    private static PeerDataSource instance;
+
+    public static PeerDataSource getInstance(Context context) {
+        if (instance == null) {
+            instance = new PeerDataSource(context);
+        }
+        return instance;
     }
 
-    public void putPeers(PeerEntity[] peerEntities) {
-        database = dbHelper.getWritableDatabase();
-        database.beginTransaction();
+    private PeerDataSource(Context context) {
+        dbHelper = BRSQLiteHelper.getInstance(context);
+    }
+
+    public  void putPeers(PeerEntity[] peerEntities) {
+
         try {
+            database = openDatabase();
+            database.beginTransaction();
             for (PeerEntity p : peerEntities) {
 //                Log.e(TAG,"sqlite peer saved: " + Arrays.toString(p.getPeerTimeStamp()));
                 ContentValues values = new ContentValues();
@@ -71,45 +88,62 @@ class PeerDataSource {
 
             database.setTransactionSuccessful();
         } catch (Exception ex) {
-            FirebaseCrash.report(ex);
+            BRReportsManager.reportBug(ex);
             Log.e(TAG, "Error inserting into SQLite", ex);
             //Error in between database transaction
         } finally {
             database.endTransaction();
+            closeDatabase();
         }
 
     }
 
-    public void deletePeer(BRPeerEntity peerEntity) {
-        database = dbHelper.getWritableDatabase();
-        long id = peerEntity.getId();
-        Log.e(TAG, "Peer deleted with id: " + id);
-        database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID
-                + " = " + id, null);
+    public  void deletePeer(BRPeerEntity peerEntity) {
+        try {
+            database = openDatabase();
+            long id = peerEntity.getId();
+            Log.e(TAG, "Peer deleted with id: " + id);
+            database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID
+                    + " = " + id, null);
+        } finally {
+            closeDatabase();
+        }
+
     }
 
-    public void deleteAllPeers() {
-        database = dbHelper.getWritableDatabase();
-        database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID + " <> -1", null);
+    public  void deleteAllPeers() {
+        try {
+            database = dbHelper.getWritableDatabase();
+            database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID + " <> -1", null);
+        } finally {
+            closeDatabase();
+        }
     }
 
-    public List<BRPeerEntity> getAllPeers() {
-        database = dbHelper.getReadableDatabase();
+    public  List<BRPeerEntity> getAllPeers() {
         List<BRPeerEntity> peers = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            database = openDatabase();
 
-        Cursor cursor = database.query(BRSQLiteHelper.PEER_TABLE_NAME,
-                allColumns, null, null, null, null, null);
+            cursor = database.query(BRSQLiteHelper.PEER_TABLE_NAME,
+                    allColumns, null, null, null, null, null);
 
-        cursor.moveToFirst();
-        while (!cursor.isAfterLast()) {
-            BRPeerEntity peerEntity = cursorToPeer(cursor);
-            peers.add(peerEntity);
-            cursor.moveToNext();
+            cursor.moveToFirst();
+            while (!cursor.isAfterLast()) {
+                BRPeerEntity peerEntity = cursorToPeer(cursor);
+                peers.add(peerEntity);
+                cursor.moveToNext();
+            }
+            // make sure to close the cursor
+
+            Log.e(TAG, "peers: " + peers.size());
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
         }
-        // make sure to close the cursor
 
-        Log.e(TAG, "peers: " + peers.size());
-        cursor.close();
         return peers;
     }
 
@@ -117,5 +151,28 @@ class PeerDataSource {
         BRPeerEntity peerEntity = new BRPeerEntity(cursor.getBlob(1), cursor.getBlob(2), cursor.getBlob(3));
         peerEntity.setId(cursor.getInt(0));
         return peerEntity;
+    }
+
+    @Override
+    public  SQLiteDatabase openDatabase() {
+//        if (mOpenCounter.incrementAndGet() == 1) {
+        // Opening new database
+        if(ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
+        if (database == null || !database.isOpen())
+            database = dbHelper.getWritableDatabase();
+        dbHelper.setWriteAheadLoggingEnabled(BRConstants.WAL);
+//        }
+//        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
+        return database;
+    }
+
+    @Override
+    public  void closeDatabase() {
+//        if (mOpenCounter.decrementAndGet() == 0) {
+        // Closing database
+//            database.close();
+
+//        }
+//        Log.d("Database open counter: " , String.valueOf(mOpenCounter.get()));
     }
 }

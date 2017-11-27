@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_pin"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black_trans"
+    tools:context="com.breadwallet.presenter.activities.LoginActivity">
+
+    <RelativeLayout
+        android:id="@+id/pin_dialog"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:background="@drawable/pin_round_corner"
+        android:layout_marginBottom="64dp"
+        app:layout_constraintBottom_toTopOf="@+id/brkeyboard"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent">
+
+        <com.breadwallet.presenter.customviews.BRText
+            app:customTFont="CircularPro-Bold.otf"
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:textSize="22sp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:textColor="@color/almost_black"
+            android:text="@string/VerifyPin.title"/>
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/message"
+            android:textSize="@dimen/paragraph"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:lineSpacingMultiplier="1.3"
+            android:textColor="@color/almost_black"
+            android:layout_below="@+id/title"
+            android:text="@string/VerifyPin.authorize"/>
+
+        <LinearLayout
+            android:id="@+id/pinLayout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/message"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:orientation="horizontal">
+
+            <View
+                android:id="@+id/dot1"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/ic_pin_dot_gray"/>
+
+            <View
+                android:id="@+id/dot2"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/ic_pin_dot_gray"/>
+
+            <View
+                android:id="@+id/dot3"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/ic_pin_dot_gray"/>
+
+            <View
+                android:id="@+id/dot4"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/ic_pin_dot_gray"/>
+
+            <View
+                android:id="@+id/dot5"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/ic_pin_dot_gray"/>
+
+            <View
+                android:id="@+id/dot6"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:background="@drawable/ic_pin_dot_gray"/>
+        </LinearLayout>
+
+    </RelativeLayout>
+
+    <com.breadwallet.presenter.customviews.BRKeyboard
+        android:id="@+id/brkeyboard"
+        android:layout_width="0dp"
+        android:paddingTop="8dp"
+        app:showAlphabet="true"
+        android:layout_height="wrap_content"
+        android:background="@color/extra_light_blue_background"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"/>
+
+</android.support.constraint.ConstraintLayout>
