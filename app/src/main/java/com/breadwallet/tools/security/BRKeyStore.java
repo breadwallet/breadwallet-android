@@ -146,11 +146,14 @@ public class BRKeyStore {
     private synchronized static boolean _setData(Context context, byte[] data, String alias, String alias_file, String alias_iv,
                                                  int request_code, boolean auth_required) throws UserNotAuthenticatedException {
 //        Log.e(TAG, "_setData: " + alias);
-        if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) {
-            RuntimeException ex = new IllegalArgumentException("_setData:mistake in parameters");
-            BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
-            throw ex;
+        try {
+            validateSet(data, alias, alias_file, alias_iv, auth_required);
+        } catch (Exception e) {
+            Log.e(TAG, "_setData: ", e);
+            BRReportsManager.reportBug(e);
         }
+
+
         KeyStore keyStore = null;
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
@@ -226,6 +229,13 @@ public class BRKeyStore {
     private synchronized static byte[] _getData(final Context context, String alias, String alias_file, String alias_iv, int request_code)
             throws UserNotAuthenticatedException {
 //        Log.e(TAG, "_getData: " + alias);
+
+        try {
+            validateGet(alias, alias_file, alias_iv);
+        } catch (Exception e) {
+            Log.e(TAG, "_getData: ", e);
+            BRReportsManager.reportBug(e);
+        }
 
         if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) {
             RuntimeException ex = new IllegalArgumentException("_getData:mistake in parameters!");
@@ -307,6 +317,27 @@ public class BRKeyStore {
             BRErrorPipe.parseKeyStoreError(context, e, alias, true);
             return null;
         }
+    }
+
+    private static void validateGet(String alias, String alias_file, String alias_iv) throws IllegalArgumentException {
+        AliasObject obj = aliasObjectMap.get(alias);
+        if (!obj.alias.equals(alias) || !obj.datafileName.equals(alias_file) || !obj.ivFileName.equals(alias_iv)) {
+            String err = alias + "|" + alias_file + "|" + alias_iv + ", obj: " + obj.alias + "|" + obj.datafileName + "|" + obj.ivFileName;
+            throw new IllegalArgumentException("keystore insert inconsistency in names: " + err);
+        }
+
+    }
+
+    private static void validateSet(byte[] data, String alias, String alias_file, String alias_iv, boolean auth_required) throws IllegalArgumentException {
+        if (data == null) throw new IllegalArgumentException("keystore insert data is null");
+        AliasObject obj = aliasObjectMap.get(alias);
+        if (!obj.alias.equals(alias) || !obj.datafileName.equals(alias_file) || !obj.ivFileName.equals(alias_iv)) {
+            String err = alias + "|" + alias_file + "|" + alias_iv + ", obj: " + obj.alias + "|" + obj.datafileName + "|" + obj.ivFileName;
+            throw new IllegalArgumentException("keystore insert inconsistency in names: " + err);
+        }
+
+        if (auth_required && (!alias.equals(PHRASE_ALIAS) || !alias.equals(CANARY_ALIAS)))
+            throw new IllegalArgumentException("keystore auth_required is true but alias is: " + alias);
     }
 
     public synchronized static String getFilePath(String fileName, Context context) {
