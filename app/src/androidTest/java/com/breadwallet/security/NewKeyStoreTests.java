@@ -14,6 +14,8 @@ import com.breadwallet.tools.threads.BRExecutor;
 import com.jniwrappers.BRKey;
 
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -55,6 +57,11 @@ public class NewKeyStoreTests {
     @Rule
     public ActivityTestRule<TestActivity> mActivityRule = new ActivityTestRule<>(TestActivity.class);
 
+    @Before
+    public void setup(){
+        BRKeyStore.resetWalletKeyStore(mActivityRule.getActivity());
+    }
+
     @Test
     public void testBase64() {
         Activity app = mActivityRule.getActivity();
@@ -70,11 +77,12 @@ public class NewKeyStoreTests {
     }
 
     @Test
-    public void setGetPhraseFresh() {
+    public void setNewGetNew() {
         //set get phrase
         byte[] phrase = "axis husband project any sea patch drip tip spirit tide bring belt".getBytes();
         try {
-            BRKeyStore.putPhrase(phrase, mActivityRule.getActivity(), 0);
+            boolean b = BRKeyStore.putPhrase(phrase, mActivityRule.getActivity(), 0);
+            Assert.assertEquals(true, b);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             Assert.fail();
@@ -91,19 +99,89 @@ public class NewKeyStoreTests {
     }
 
     @Test
-    public void setOldGetOld() {
-        //set get phrase
+    public void setOldSetNew() {
         byte[] phrase = "axis husband project any sea patch drip tip spirit tide bring belt".getBytes();
         BRKeyStore.AliasObject obj = aliasObjectMap.get(PHRASE_ALIAS);
         try {
-           boolean s =  BRKeyStore._setOldData(mActivityRule.getActivity(), phrase, obj.alias, obj.datafileName, obj.ivFileName, 0, true);
-           Assert.assertEquals(true, s);
+            boolean b = BRKeyStore._setOldData(mActivityRule.getActivity(), phrase, obj.alias, obj.datafileName, obj.ivFileName, 0, true);
+            Assert.assertEquals(true, b);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             Assert.fail();
         }
         try {
-            byte[] getPhrase = BRKeyStore._getOldData(mActivityRule.getActivity(), obj.alias, obj.datafileName, obj.ivFileName,0);
+            byte[] getPhrase = BRKeyStore._getOldData(mActivityRule.getActivity(), obj.alias, obj.datafileName, obj.ivFileName, 0);
+            Assert.assertNotNull(getPhrase);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+
+        try {
+            boolean b = BRKeyStore.putPhrase(phrase, mActivityRule.getActivity(), 0);
+            Assert.assertEquals(true, b);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+
+        try {
+            byte[] getPhrase = BRKeyStore._getOldData(mActivityRule.getActivity(), obj.alias, obj.datafileName, obj.ivFileName, 0);
+            Assert.assertNull(getPhrase);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+
+        try {
+            byte[] getPhrase = BRKeyStore.getPhrase(mActivityRule.getActivity(), 0);
+            Assert.assertNotNull(getPhrase);
+            Assert.assertEquals(new String(getPhrase), new String(phrase));
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+
+    }
+
+    @Test
+    public void setOldGetNew() {
+
+        //set get phrase
+        byte[] phrase = "axis husband project any sea patch drip tip spirit tide bring belt".getBytes();
+        BRKeyStore.AliasObject obj = aliasObjectMap.get(PHRASE_ALIAS);
+        try {
+            boolean s = BRKeyStore._setOldData(mActivityRule.getActivity(), phrase, obj.alias, obj.datafileName, obj.ivFileName, 0, true);
+            Assert.assertEquals(true, s);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+        try {
+            byte[] getPhrase = BRKeyStore.getPhrase(mActivityRule.getActivity(), 0);
+            Assert.assertNotNull(getPhrase);
+            Assert.assertEquals(new String(getPhrase), new String(phrase));
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+        try {
+            byte[] getPhrase = BRKeyStore.getPhrase(mActivityRule.getActivity(), 0);
+            Assert.assertNotNull(getPhrase);
+            Assert.assertEquals(new String(getPhrase), new String(phrase));
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+        try {
+            byte[] getPhrase = BRKeyStore._getOldData(mActivityRule.getActivity(), obj.alias, obj.datafileName, obj.ivFileName, 0);
+            Assert.assertNull(getPhrase);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+            Assert.fail();
+        }
+        try {
+            byte[] getPhrase = BRKeyStore.getPhrase(mActivityRule.getActivity(), 0);
             Assert.assertNotNull(getPhrase);
             Assert.assertEquals(new String(getPhrase), new String(phrase));
         } catch (UserNotAuthenticatedException e) {
