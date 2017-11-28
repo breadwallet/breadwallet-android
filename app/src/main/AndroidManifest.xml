@@ -220,6 +220,11 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
+        <activity
+            android:name=".presenter.activities.settings.TestActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+        </activity>
 
         <service
             android:name=".tools.listeners.SyncReceiver"

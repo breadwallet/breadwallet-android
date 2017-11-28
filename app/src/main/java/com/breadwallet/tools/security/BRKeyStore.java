@@ -13,6 +13,8 @@ import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
+import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BytesUtil;
@@ -26,6 +28,7 @@ import junit.framework.Assert;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.security.InvalidAlgorithmParameterException;
@@ -42,10 +45,12 @@ import java.util.Map;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 
 /**
@@ -80,8 +85,8 @@ public class BRKeyStore {
     public static final String ANDROID_KEY_STORE = "AndroidKeyStore";
 
     public static final String CIPHER_ALGORITHM = "AES/CBC/PKCS7Padding";
-//    public static final String PADDING = KeyProperties.ENCRYPTION_PADDING_PKCS7;
-//    public static final String BLOCK_MODE = KeyProperties.BLOCK_MODE_CBC;
+    public static final String PADDING = KeyProperties.ENCRYPTION_PADDING_PKCS7;
+    public static final String BLOCK_MODE = KeyProperties.BLOCK_MODE_CBC;
 
     public static final String NEW_CIPHER_ALGORITHM = "AES/GCM/NoPadding";
     public static final String NEW_PADDING = KeyProperties.ENCRYPTION_PADDING_NONE;
@@ -161,7 +166,7 @@ public class BRKeyStore {
             keyStore.load(null);
             SecretKey secret = null;
             if (!keyStore.containsAlias(alias)) {
-                secret = createKeys(alias, keyStore, auth_required);
+                secret = createKeys(alias, auth_required);
             }
 
             if (secret == null) {
@@ -169,6 +174,7 @@ public class BRKeyStore {
                 BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
                 return false;
             }
+            String format =secret.getFormat();
             Cipher inCipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM);
             inCipher.init(Cipher.ENCRYPT_MODE, secret);
             byte[] iv = inCipher.getIV();
@@ -188,28 +194,7 @@ public class BRKeyStore {
         }
     }
 
-    private static void validateGet(String alias, String alias_file, String alias_iv) throws IllegalArgumentException {
-        AliasObject obj = aliasObjectMap.get(alias);
-        if (!obj.alias.equals(alias) || !obj.datafileName.equals(alias_file) || !obj.ivFileName.equals(alias_iv)) {
-            String err = alias + "|" + alias_file + "|" + alias_iv + ", obj: " + obj.alias + "|" + obj.datafileName + "|" + obj.ivFileName;
-            throw new IllegalArgumentException("keystore insert inconsistency in names: " + err);
-        }
-
-    }
-
-    private static void validateSet(byte[] data, String alias, String alias_file, String alias_iv, boolean auth_required) throws IllegalArgumentException {
-        if (data == null) throw new IllegalArgumentException("keystore insert data is null");
-        AliasObject obj = aliasObjectMap.get(alias);
-        if (!obj.alias.equals(alias) || !obj.datafileName.equals(alias_file) || !obj.ivFileName.equals(alias_iv)) {
-            String err = alias + "|" + alias_file + "|" + alias_iv + ", obj: " + obj.alias + "|" + obj.datafileName + "|" + obj.ivFileName;
-            throw new IllegalArgumentException("keystore insert inconsistency in names: " + err);
-        }
-
-        if (auth_required && (!alias.equals(PHRASE_ALIAS) || !alias.equals(CANARY_ALIAS)))
-            throw new IllegalArgumentException("keystore auth_required is true but alias is: " + alias);
-    }
-
-    private static SecretKey createKeys(String alias, KeyStore keyStore, boolean auth_required) throws InvalidAlgorithmParameterException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException {
+    private static SecretKey createKeys(String alias, boolean auth_required) throws InvalidAlgorithmParameterException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException {
         // Create the keys if necessary
 
         KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
@@ -247,7 +232,7 @@ public class BRKeyStore {
                     throw new NullPointerException("iv is missing when data isn't: " + alias);
                 Cipher outCipher;
                 outCipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM);
-                outCipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
+                outCipher.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(128, iv));
                 try {
                     byte[] decryptedData = outCipher.doFinal(encryptedData);
                     if (decryptedData != null) {
@@ -297,7 +282,7 @@ public class BRKeyStore {
             byte[] result = BytesUtil.readBytesFromStream(cipherInputStream);
 
 
-            SecretKey newKey = createKeys(alias, keyStore, (alias.equals("phrase") || alias.equals("canary")));
+            SecretKey newKey = createKeys(alias, (alias.equals("phrase") || alias.equals("canary")));
             Cipher inCipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM);
             inCipher.init(Cipher.ENCRYPT_MODE, secretKey);
             iv = inCipher.getIV();
@@ -348,6 +333,27 @@ public class BRKeyStore {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private static void validateGet(String alias, String alias_file, String alias_iv) throws IllegalArgumentException {
+        AliasObject obj = aliasObjectMap.get(alias);
+        if (!obj.alias.equals(alias) || !obj.datafileName.equals(alias_file) || !obj.ivFileName.equals(alias_iv)) {
+            String err = alias + "|" + alias_file + "|" + alias_iv + ", obj: " + obj.alias + "|" + obj.datafileName + "|" + obj.ivFileName;
+            throw new IllegalArgumentException("keystore insert inconsistency in names: " + err);
+        }
+
+    }
+
+    private static void validateSet(byte[] data, String alias, String alias_file, String alias_iv, boolean auth_required) throws IllegalArgumentException {
+        if (data == null) throw new IllegalArgumentException("keystore insert data is null");
+        AliasObject obj = aliasObjectMap.get(alias);
+        if (!obj.alias.equals(alias) || !obj.datafileName.equals(alias_file) || !obj.ivFileName.equals(alias_iv)) {
+            String err = alias + "|" + alias_file + "|" + alias_iv + ", obj: " + obj.alias + "|" + obj.datafileName + "|" + obj.ivFileName;
+            throw new IllegalArgumentException("keystore insert inconsistency in names: " + err);
+        }
+
+        if (auth_required && !alias.equals(PHRASE_ALIAS) && !alias.equals(CANARY_ALIAS))
+            throw new IllegalArgumentException("keystore auth_required is true but alias is: " + alias);
     }
 
     public synchronized static String getFilePath(String fileName, Context context) {
@@ -767,6 +773,211 @@ public class BRKeyStore {
 //        return false;
 //    }
 
+    //USE ONLY FOR TESTING
+    public synchronized static boolean _setOldData(Context context, byte[] data, String alias, String alias_file, String alias_iv,
+                                                 int request_code, boolean auth_required) throws UserNotAuthenticatedException {
+//        Log.e(TAG, "_setData: " + alias);
+        try {
+            validateSet(data, alias, alias_file, alias_iv, auth_required);
+        } catch (Exception e) {
+            Log.e(TAG, "_setData: ", e);
+            BRReportsManager.reportBug(e);
+        }
+
+
+        KeyStore keyStore = null;
+        try {
+            keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore.load(null);
+            // Create the keys if necessary
+            if (!keyStore.containsAlias(alias)) {
+                KeyGenerator keyGenerator = KeyGenerator.getInstance(
+                        KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
+
+                // Set the alias of the entry in Android KeyStore where the key will appear
+                // and the constrains (purposes) in the constructor of the Builder
+                keyGenerator.init(new KeyGenParameterSpec.Builder(alias,
+                        KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
+                        .setBlockModes(BLOCK_MODE)
+                        .setKeySize(256)
+                        .setUserAuthenticationRequired(auth_required)
+                        .setUserAuthenticationValidityDurationSeconds(AUTH_DURATION_SEC)
+                        .setRandomizedEncryptionRequired(true)
+                        .setEncryptionPaddings(PADDING)
+                        .build());
+                SecretKey key = keyGenerator.generateKey();
+
+            }
+
+            String encryptedDataFilePath = getFilePath(alias_file, context);
+
+            SecretKey secret = (SecretKey) keyStore.getKey(alias, null);
+            if (secret == null) {
+                BRKeystoreErrorException ex = new BRKeystoreErrorException("secret is null on _setData: " + alias);
+                BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
+                return false;
+            }
+            Cipher inCipher = Cipher.getInstance(CIPHER_ALGORITHM);
+            inCipher.init(Cipher.ENCRYPT_MODE, secret);
+            byte[] iv = inCipher.getIV();
+            String path = getFilePath(alias_iv, context);
+            boolean success = writeBytesToFile(path, iv);
+            if (!success) {
+                RuntimeException ex = new NullPointerException("failed to writeBytesToFile: " + alias);
+                BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
+                BRDialog.showCustomDialog(context, context.getString(R.string.Alert_keystore_title_android), "Failed to save the iv file for: " + alias, "close", null, new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        brDialogView.dismissWithAnimation();
+                    }
+                }, null, null, 0);
+                keyStore.deleteEntry(alias);
+                return false;
+            }
+            CipherOutputStream cipherOutputStream = null;
+            try {
+                cipherOutputStream = new CipherOutputStream(
+                        new FileOutputStream(encryptedDataFilePath), inCipher);
+                cipherOutputStream.write(data);
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            } finally {
+                if (cipherOutputStream != null) cipherOutputStream.close();
+            }
+            return true;
+        } catch (UserNotAuthenticatedException e) {
+            Log.d(TAG, "setData: User not Authenticated, requesting..." + alias + ", err(" + e.getMessage() + ")");
+            showAuthenticationScreen(context, request_code);
+            throw e;
+        } catch (Exception e) {
+            BRErrorPipe.parseKeyStoreError(context, e, alias, true);
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    //USE ONLY FOR TESTING
+    public synchronized static byte[] _getOldData(final Context context, String alias, String alias_file, String alias_iv, int request_code)
+            throws UserNotAuthenticatedException {
+//        Log.e(TAG, "_getData: " + alias);
+
+        try {
+            validateGet(alias, alias_file, alias_iv);
+        } catch (Exception e) {
+            Log.e(TAG, "_getData: ", e);
+            BRReportsManager.reportBug(e);
+        }
+
+        if (alias.equals(alias_file) || alias.equals(alias_iv) || alias_file.equals(alias_iv)) {
+            RuntimeException ex = new IllegalArgumentException("_getData:mistake in parameters!");
+            BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
+            return null;
+        }
+        KeyStore keyStore = null;
+
+        String encryptedDataFilePath = getFilePath(alias_file, context);
+//        byte[] result = new byte[0];
+        try {
+            keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
+            keyStore.load(null);
+            SecretKey secretKey = (SecretKey) keyStore.getKey(alias, null);
+            if (secretKey == null) {
+                /* no such key, the key is just simply not there */
+                boolean fileExists = new File(encryptedDataFilePath).exists();
+//                Log.e(TAG, "_getData: " + alias + " file exist: " + fileExists);
+                if (!fileExists) {
+                    return null;/* file also not there, fine then */
+                }
+                BRKeystoreErrorException ex = new BRKeystoreErrorException("file is present but the key is gone: " + alias);
+                BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
+                return null;
+            }
+
+            boolean ivExists = new File(getFilePath(alias_iv, context)).exists();
+            boolean aliasExists = new File(getFilePath(alias_file, context)).exists();
+            if (!ivExists || !aliasExists) {
+                removeAliasAndFiles(keyStore, alias, context);
+                //report it if one exists and not the other.
+                if (ivExists != aliasExists) {
+                    BRKeystoreErrorException ex = new BRKeystoreErrorException("alias or iv isn't on the disk: " + alias + ", aliasExists:" + aliasExists);
+                    BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
+                    return null;
+                } else {
+                    BRKeystoreErrorException ex = new BRKeystoreErrorException("!ivExists && !aliasExists: " + alias);
+                    BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
+                    return null;
+                }
+            }
+
+            byte[] iv = readBytesFromFile(getFilePath(alias_iv, context));
+            if (Utils.isNullOrEmpty(iv))
+                throw new NullPointerException("iv is missing for " + alias);
+            Cipher outCipher;
+            outCipher = Cipher.getInstance(CIPHER_ALGORITHM);
+            outCipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
+            CipherInputStream cipherInputStream = new CipherInputStream(new FileInputStream(encryptedDataFilePath), outCipher);
+            return BytesUtil.readBytesFromStream(cipherInputStream);
+        } catch (InvalidKeyException e) {
+            if (e instanceof UserNotAuthenticatedException) {
+                /** user not authenticated, ask the system for authentication */
+                showAuthenticationScreen(context, request_code);
+                throw (UserNotAuthenticatedException) e;
+            } else {
+                Log.e(TAG, "_getData: InvalidKeyException", e);
+                BRErrorPipe.parseKeyStoreError(context, e, alias, true);
+                return null;
+            }
+        } catch (IOException | CertificateException | KeyStoreException e) {
+            /** keyStore.load(null) threw the Exception, meaning the keystore is unavailable */
+            Log.e(TAG, "_getData: keyStore.load(null) threw the Exception, meaning the keystore is unavailable", e);
+            BRReportsManager.reportBug(e);
+            if (e instanceof FileNotFoundException) {
+                Log.e(TAG, "_getData: File not found exception", e);
+
+                RuntimeException ex = new RuntimeException("the key is present but the phrase on the disk no");
+                BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
+                return null;
+            } else {
+                BRErrorPipe.parseKeyStoreError(context, e, alias, true);
+                return null;
+            }
+
+        } catch (UnrecoverableKeyException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException e) {
+            /** if for any other reason the keystore fails, crash! */
+            Log.e(TAG, "getData: error: " + e.getClass().getSuperclass().getName());
+            BRErrorPipe.parseKeyStoreError(context, e, alias, true);
+            return null;
+        }
+    }
+
+
+    public static boolean writeBytesToFile(String path, byte[] data) {
+        FileOutputStream fos = null;
+        try {
+            File file = new File(path);
+            fos = new FileOutputStream(file);
+            // Writes bytes from the specified byte array to this file output stream
+            fos.write(data);
+            return true;
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found" + e);
+        } catch (IOException ioe) {
+            System.out.println("Exception while writing file " + ioe);
+        } finally {
+            // close the streams using close method
+            try {
+                if (fos != null) {
+                    fos.close();
+                }
+
+            } catch (IOException ioe) {
+                System.out.println("Error while closing stream: " + ioe);
+            }
+
+        }
+        return false;
+    }
 
     public static class AliasObject {
         public String alias;
