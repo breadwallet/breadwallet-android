@@ -2,6 +2,7 @@ package com.breadwallet.tools.threads;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Looper;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -83,7 +84,7 @@ public class BRExecutor implements RejectedExecutionHandler {
 
     }
 
-    android.os.Handler handler = new android.os.Handler();
+    android.os.Handler handler = new android.os.Handler(Looper.getMainLooper());
 
     /*
     * constructor for  BRExecutor

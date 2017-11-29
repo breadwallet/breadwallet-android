@@ -21,6 +21,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.io.File;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.breadwallet.tools.security.BRKeyStore.PHRASE_ALIAS;
 import static com.breadwallet.tools.security.BRKeyStore.aliasObjectMap;
@@ -58,7 +59,7 @@ public class NewKeyStoreTests {
     public ActivityTestRule<TestActivity> mActivityRule = new ActivityTestRule<>(TestActivity.class);
 
     @Before
-    public void setup(){
+    public void setup() {
         BRKeyStore.resetWalletKeyStore(mActivityRule.getActivity());
     }
 
@@ -187,6 +188,21 @@ public class NewKeyStoreTests {
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
             Assert.fail();
+        }
+
+    }
+
+    @Test
+    public void allMultiThreading() {
+        for (int i = 0; i < 10; i++) {
+            setup();
+            setNewGetNew();
+            setup();
+            setOldGetNew();
+            setup();
+            setOldSetNew();
+            setup();
+
         }
 
     }
