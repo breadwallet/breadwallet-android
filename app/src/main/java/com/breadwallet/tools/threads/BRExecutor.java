@@ -1,12 +1,6 @@
 package com.breadwallet.tools.threads;
 
-import android.app.Activity;
-import android.content.Context;
-import android.os.Looper;
 import android.util.Log;
-
-import com.breadwallet.BreadApp;
-import com.breadwallet.tools.util.Utils;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -14,7 +8,6 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Handler;
 
 /**
  * BreadWallet
@@ -84,37 +77,11 @@ public class BRExecutor implements RejectedExecutionHandler {
 
     }
 
-    android.os.Handler handler = new android.os.Handler(Looper.getMainLooper());
 
     /*
     * constructor for  BRExecutor
     */
     private BRExecutor() {
-        Context app = BreadApp.getBreadContext();
-        if (app != null && Utils.isEmulatorOrDebug(app)) {
-            Runnable runnableCode = new Runnable() {
-                @Override
-                public void run() {
-                    int bActive = mForBackgroundTasks.getActiveCount();
-                    int bQueue = mForBackgroundTasks.getQueue().size();
-                    int lActive = mForLightWeightBackgroundTasks.getActiveCount();
-                    int lQueue = mForLightWeightBackgroundTasks.getQueue().size();
-                    int sActive = mForSerializedTasks.getActiveCount();
-                    int sQueue = mForSerializedTasks.getQueue().size();
-                    if (bActive > 10 || bQueue > 10 || lActive > 10 || lQueue > 10 || sActive > 10 || sQueue > 10) {
-                        Log.e(TAG, "BRExecutor: Background: " + bActive + ":" + bQueue +
-                                ", lightBackground: " + lActive + ":" + lQueue +
-                                ", serialized: " + sActive + ":" + sQueue);
-                    }
-                    handler.postDelayed(this, 2000);
-//                if (count > 30) {
-//                    // Removes pending code execution
-//                    handler.removeCallbacks(this);
-//                }
-                }
-            };
-            handler.post(runnableCode);
-        }
 
         ThreadFactory backgroundPriorityThreadFactory = new
                 PriorityThreadFactory(android.os.Process.THREAD_PRIORITY_BACKGROUND);
