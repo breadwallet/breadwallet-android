@@ -5,6 +5,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.settings.TestActivity;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.BRExecutor;
 
@@ -47,7 +48,7 @@ public class KeyStoreTests {
     public static final String TAG = KeyStoreTests.class.getName();
 
     @Rule
-    public ActivityTestRule<BreadActivity> mActivityRule = new ActivityTestRule<>(BreadActivity.class);
+    public ActivityTestRule<TestActivity> mActivityRule = new ActivityTestRule<>(TestActivity.class);
 
     @Test
     public void setGetPhrase() {
@@ -117,6 +118,13 @@ public class KeyStoreTests {
                     try {
                         boolean b = BRKeyStore.putCanary(canary, mActivityRule.getActivity(), 0);
                         Assert.assertTrue(b);
+                    } catch (UserNotAuthenticatedException e) {
+                        e.printStackTrace();
+                        Assert.fail();
+                    }
+                    try {
+                        String b = BRKeyStore.getCanary(mActivityRule.getActivity(), 0);
+                        Assert.assertEquals(b, canary);
                     } catch (UserNotAuthenticatedException e) {
                         e.printStackTrace();
                         Assert.fail();
