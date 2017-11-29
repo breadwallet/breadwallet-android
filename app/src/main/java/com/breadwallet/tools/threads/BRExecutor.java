@@ -1,12 +1,6 @@
 package com.breadwallet.tools.threads;
 
-import android.app.Activity;
-import android.content.Context;
-import android.os.Looper;
 import android.util.Log;
-
-import com.breadwallet.BreadApp;
-import com.breadwallet.tools.util.Utils;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -14,7 +8,6 @@ import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Handler;
 
 /**
  * BreadWallet

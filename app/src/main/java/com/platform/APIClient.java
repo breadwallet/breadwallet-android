@@ -1,7 +1,6 @@
 package com.platform;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
@@ -19,10 +18,8 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.BRExecutor;
-import com.breadwallet.tools.util.FileHelper;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
-import com.google.firebase.crash.FirebaseCrash;
 import com.jniwrappers.BRKey;
 import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
@@ -39,7 +36,6 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -236,7 +232,8 @@ public class APIClient {
             String strUtl = BASE_URL + TOKEN;
 
             JSONObject requestMessageJSON = new JSONObject();
-            String base58PubKey = BRWalletManager.getAuthPublicKeyForAPI(BRKeyStore.getAuthKey(ctx));
+            String base58PubKey = null;
+            base58PubKey = BRWalletManager.getAuthPublicKeyForAPI(BRKeyStore.getAuthKey(ctx));
             requestMessageJSON.put("pubKey", base58PubKey);
             requestMessageJSON.put("deviceID", BRSharedPrefs.getDeviceId(ctx));
 
@@ -289,7 +286,8 @@ public class APIClient {
         byte[] doubleSha256 = CryptoHelper.doubleSha256(request.getBytes(StandardCharsets.UTF_8));
         BRKey key;
         try {
-            byte[] authKey = BRKeyStore.getAuthKey(ctx);
+            byte[] authKey;
+            authKey = BRKeyStore.getAuthKey(ctx);
             if (Utils.isNullOrEmpty(authKey)) {
                 Log.e(TAG, "signRequest: authkey is null");
                 return null;
@@ -424,7 +422,8 @@ public class APIClient {
                         + ((queryString != null && !queryString.isEmpty()) ? ("?" + queryString) : ""));
         String signedRequest = signRequest(requestString);
         if (signedRequest == null) return null;
-        byte[] tokenBytes = BRKeyStore.getToken(ctx);
+        byte[] tokenBytes = new byte[0];
+        tokenBytes = BRKeyStore.getToken(ctx);
         String token = tokenBytes == null ? "" : new String(tokenBytes);
         if (token.isEmpty()) token = getToken();
         if (token == null || token.isEmpty()) {
