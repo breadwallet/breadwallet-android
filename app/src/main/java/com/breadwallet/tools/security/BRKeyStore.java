@@ -315,8 +315,8 @@ public class BRKeyStore {
             storeEncryptedData(context, iv, alias_iv);
             encryptedData = inCipher.doFinal(result);
             //store the new data
-            storeEncryptedData(context, encryptedData, alias);
 
+            storeEncryptedData(context, encryptedData, alias);
             return result;
 
         } catch (InvalidKeyException e) {
