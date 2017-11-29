@@ -336,8 +336,9 @@ public class BRKeyStore {
             throw new IllegalArgumentException("keystore insert inconsistency in names: " + err);
         }
 
-        if (auth_required && (!alias.equals(PHRASE_ALIAS) || !alias.equals(CANARY_ALIAS)))
-            throw new IllegalArgumentException("keystore auth_required is true but alias is: " + alias);
+        if (auth_required)
+            if (!alias.equals(PHRASE_ALIAS) && !alias.equals(CANARY_ALIAS))
+                throw new IllegalArgumentException("keystore auth_required is true but alias is: " + alias);
     }
 
     public synchronized static String getFilePath(String fileName, Context context) {
