@@ -17,8 +17,11 @@ import com.breadwallet.presenter.activities.PaperKeyProveActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.WithdrawBchActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
+import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
@@ -157,7 +160,7 @@ public class PostAuth {
                     app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                     Intent intent = new Intent(app, SetPinActivity.class);
                     intent.putExtra("noPin", true);
-                    intent.setFlags( Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     app.startActivity(intent);
                     if (!app.isDestroyed()) app.finish();
                     phraseForKeyStore = null;
@@ -221,7 +224,7 @@ public class PostAuth {
         }
         if (Utils.isNullOrEmpty(phrase)) {
             RuntimeException ex = new RuntimeException("phrase is malformed: " + (phrase == null ? null : phrase.length));
-            BRErrorPipe.parseError(app, "error 006", ex, true);
+            BRReportsManager.reportBug(ex);
             return;
         }
 
@@ -230,12 +233,13 @@ public class PostAuth {
         assert (serializedTx != null);
         if (serializedTx == null) {
             Log.e(TAG, "onSendBch:serializedTx is null");
-            BRErrorPipe.showKeyStoreDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.BCH_genericError), app.getString(R.string.AccessibilityLabels_close), null,
-                    new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.cancel();
+            BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.BCH_genericError), app.getString(R.string.AccessibilityLabels_close), null,
+                    new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismissWithAnimation();
                         }
-                    }, null, null);
+                    }, null, null, 0);
         } else {
             Log.e(TAG, "onSendBch:serializedTx is:" + serializedTx.length);
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -291,12 +295,12 @@ public class PostAuth {
                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            BRErrorPipe.showKeyStoreDialog(app, finalTitle, finalMessage, app.getString(R.string.AccessibilityLabels_close), null,
-                                    new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            dialog.cancel();
-                                        }
-                                    }, null, null);
+                            BRDialog.showCustomDialog(app, finalTitle, finalMessage, app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                                @Override
+                                public void onClick(BRDialogView brDialogView) {
+                                    brDialogView.dismissWithAnimation();
+                                }
+                            }, null, null, 0);
                         }
                     });
 
@@ -304,7 +308,6 @@ public class PostAuth {
             });
 
         }
-
 
     }
 

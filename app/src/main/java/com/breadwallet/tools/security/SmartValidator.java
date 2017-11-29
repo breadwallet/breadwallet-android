@@ -84,7 +84,7 @@ public class SmartValidator {
             pubKeyFromKeyStore = BRKeyStore.getMasterPublicKey(activity);
         } catch (Exception e) {
             e.printStackTrace();
-            BRErrorPipe.parseKeyStoreError(activity, e, "", true);
+            BRReportsManager.reportBug(e);
         }
         Arrays.fill(bytePhrase, (byte) 0);
         return Arrays.equals(pubKey, pubKeyFromKeyStore);

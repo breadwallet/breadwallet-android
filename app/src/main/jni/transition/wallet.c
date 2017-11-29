@@ -356,7 +356,8 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
     jclass txClass = (*env)->FindClass(env, "com/breadwallet/presenter/entities/TxItem");
     jobjectArray txObjects = (*env)->NewObjectArray(env, (jsize) txCount, txClass, 0);
     jobjectArray globalTxs = (*env)->NewGlobalRef(env, txObjects);
-    jmethodID txObjMid = (*env)->GetMethodID(env, txClass, "<init>", "(JI[BLjava/lang/String;JJJ[Ljava/lang/String;[Ljava/lang/String;JI[JZ)V");
+    jmethodID txObjMid = (*env)->GetMethodID(env, txClass, "<init>",
+                                             "(JI[BLjava/lang/String;JJJ[Ljava/lang/String;[Ljava/lang/String;JI[JZ)V");
     jclass stringClass = (*env)->FindClass(env, "java/lang/String");
 
     for (int i = 0; i < txCount; i++) {
@@ -421,7 +422,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
         jlong JbalanceAfterTx = (jlong) BRWalletBalanceAfterTx(_wallet, tempTx);
 
         jobject txObject = (*env)->NewObject(env, txClass, txObjMid, JtimeStamp, JblockHeight,
-                                             JtxHash, NULL,Jsent,
+                                             JtxHash, NULL, Jsent,
                                              Jreceived, Jfee, JtoAddresses, JfromAddresses,
                                              JbalanceAfterTx, JtxSize,
                                              JoutAmounts, isValid);
@@ -876,7 +877,6 @@ Java_com_breadwallet_wallet_BRWalletManager_txHashToHex(JNIEnv *env, jobject thi
 }
 
 
-
 JNIEXPORT jstring JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_txHashSha256Hex(JNIEnv *env, jobject thiz,
                                                             jstring txHash) {
@@ -1009,6 +1009,7 @@ JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTxSize(
 
     return (jint) (jlong) BRTransactionSize(tmpTx);
 }
+
 JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_nativeBalance(
         JNIEnv *env,
         jobject thiz) {
@@ -1017,7 +1018,7 @@ JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_nativeBalanc
 //    int txLength = (*env)->GetArrayLength(env, serializedTransaction);
 //    jbyte *byteTx = (*env)->GetByteArrayElements(env, serializedTransaction, 0);
 //    BRTransaction *tmpTx = BRTransactionParse((uint8_t *) byteTx, (size_t) txLength);
-    if(!_wallet) return -1;
+    if (!_wallet) return -1;
     return BRWalletBalance(_wallet);
 }
 
