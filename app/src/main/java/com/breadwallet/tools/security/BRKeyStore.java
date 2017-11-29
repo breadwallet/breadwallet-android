@@ -159,38 +159,45 @@ public class BRKeyStore {
 
     private synchronized static boolean _setData(Context context, byte[] data, String alias, String alias_file, String alias_iv,
                                                  int request_code, boolean auth_required) throws UserNotAuthenticatedException {
-        validateSet(data, alias, alias_file, alias_iv, auth_required);
+        validateSet(data, alias, alias_file, alias_iv, auth_required);//validate entries
         KeyStore keyStore = null;
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
             SecretKey secretKey = (SecretKey) keyStore.getKey(alias, null);
             Cipher inCipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM);
+
             if (secretKey == null) {
                 //create key if not present
                 secretKey = createKeys(alias, auth_required);
                 inCipher.init(Cipher.ENCRYPT_MODE, secretKey);
             } else {
+                //see if the key is old format, create a new one if it is
                 try {
                     inCipher.init(Cipher.ENCRYPT_MODE, secretKey);
                 } catch (InvalidKeyException ignored) {
                     if (ignored instanceof UserNotAuthenticatedException) throw ignored;
+                    //create new key and reinitialize the cipher
                     secretKey = createKeys(alias, auth_required);
                     inCipher.init(Cipher.ENCRYPT_MODE, secretKey);
                 }
             }
 
+            //the key cannot still be null
             if (secretKey == null) {
                 BRKeystoreErrorException ex = new BRKeystoreErrorException("secret is null on _setData: " + alias);
                 BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
                 return false;
             }
 
+
             byte[] iv = inCipher.getIV();
             if (iv == null) throw new NullPointerException("iv is null!");
-//            String path = getFilePath(alias_iv, context);
+
+            //store the iv
             storeEncryptedData(context, iv, alias_iv);
             byte[] encryptedData = inCipher.doFinal(data);
+            //store the encrypted data
             storeEncryptedData(context, encryptedData, alias);
             return true;
         } catch (UserNotAuthenticatedException e) {
@@ -223,9 +230,8 @@ public class BRKeyStore {
 
     }
 
-    private synchronized static byte[] _getData(final Context context, String alias, String alias_file, String alias_iv, int request_code)
-            throws UserNotAuthenticatedException {
-        validateGet(alias, alias_file, alias_iv);
+    private synchronized static byte[] _getData(final Context context, String alias, String alias_file, String alias_iv, int request_code) throws UserNotAuthenticatedException{
+        validateGet(alias, alias_file, alias_iv);//validate entries
         KeyStore keyStore = null;
 
 //        byte[] result = new byte[0];
@@ -235,8 +241,8 @@ public class BRKeyStore {
             SecretKey secretKey = (SecretKey) keyStore.getKey(alias, null);
 
             byte[] encryptedData = retrieveEncryptedData(context, alias);
-            //if new version of the data not present, transfer and delete the old version
             if (encryptedData != null) {
+                //new format data is present, good
                 byte[] iv = retrieveEncryptedData(context, alias_iv);
                 if (iv == null)
                     throw new NullPointerException("iv is missing when data isn't: " + alias);
@@ -248,11 +254,6 @@ public class BRKeyStore {
                 } catch (InvalidKeyException ignored) {
                     if (ignored instanceof UserNotAuthenticatedException) throw ignored;
                     throw new RuntimeException("Can't happen, new data is present but old key");
-//                    BRKeyStore.AliasObject obj = aliasObjectMap.get(alias);
-//                    byte[] oldRes = _getOldData(context, obj.alias, obj.datafileName, obj.ivFileName, request_code);
-//                    if (oldRes != null) {
-//                        destroyEncryptedData(alias,);
-//                    }
                 }
                 try {
                     byte[] decryptedData = outCipher.doFinal(encryptedData);
@@ -264,7 +265,9 @@ public class BRKeyStore {
                     throw new RuntimeException("failed to decrypt data: " + e.getMessage());
                 }
             }
+            //no new format data, get the old one and migrate it to the new format
             String encryptedDataFilePath = getFilePath(alias_file, context);
+
             if (secretKey == null) {
                 /* no such key, the key is just simply not there */
                 boolean fileExists = new File(encryptedDataFilePath).exists();
@@ -279,6 +282,7 @@ public class BRKeyStore {
 
             boolean ivExists = new File(getFilePath(alias_iv, context)).exists();
             boolean aliasExists = new File(getFilePath(alias_file, context)).exists();
+            //cannot happen, they all should be present
             if (!ivExists || !aliasExists) {
                 removeAliasAndFiles(keyStore, alias, context);
                 //report it if one exists and not the other.
@@ -302,21 +306,17 @@ public class BRKeyStore {
             CipherInputStream cipherInputStream = new CipherInputStream(new FileInputStream(encryptedDataFilePath), outCipher);
             byte[] result = BytesUtil.readBytesFromStream(cipherInputStream);
 
-            SecretKey newKey = createKeys(alias, (alias.equals("phrase") || alias.equals("canary")));
+            //create the new format key
+            SecretKey newKey = createKeys(alias, (alias.equals(PHRASE_ALIAS) || alias.equals(CANARY_ALIAS)));
             Cipher inCipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM);
             inCipher.init(Cipher.ENCRYPT_MODE, newKey);
             iv = inCipher.getIV();
-//            String path = getFilePath(alias_iv, context);
+            //store the new iv
             storeEncryptedData(context, iv, alias_iv);
             encryptedData = inCipher.doFinal(result);
+            //store the new data
             storeEncryptedData(context, encryptedData, alias);
 
-//            //double check the keys are there
-//            if (retrieveEncryptedData(context, alias) != null && retrieveEncryptedData(context, alias_iv) != null) {
-//                removeAliasAndFiles(keyStore, alias, context);
-//            } else {
-//                throw new RuntimeException("failed to insert new encrypted data format");
-//            }
             return result;
 
         } catch (InvalidKeyException e) {
@@ -327,7 +327,7 @@ public class BRKeyStore {
             } else {
                 Log.e(TAG, "_getData: InvalidKeyException", e);
                 BRErrorPipe.parseKeyStoreError(context, e, alias, true);
-                return null;
+                throw new RuntimeException(e.getMessage());
             }
         } catch (IOException | CertificateException | KeyStoreException e) {
             /** keyStore.load(null) threw the Exception, meaning the keystore is unavailable */
@@ -338,21 +338,21 @@ public class BRKeyStore {
 
                 RuntimeException ex = new RuntimeException("the key is present but the phrase on the disk no");
                 BRErrorPipe.parseKeyStoreError(context, ex, alias, true);
-                return null;
+                throw new RuntimeException(e.getMessage());
             } else {
                 BRErrorPipe.parseKeyStoreError(context, e, alias, true);
-                return null;
+                throw new RuntimeException(e.getMessage());
             }
 
         } catch (UnrecoverableKeyException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidAlgorithmParameterException e) {
             /** if for any other reason the keystore fails, crash! */
             Log.e(TAG, "getData: error: " + e.getClass().getSuperclass().getName());
             BRErrorPipe.parseKeyStoreError(context, e, alias, true);
-            return null;
+            throw new RuntimeException(e.getMessage());
         } catch (BadPaddingException | IllegalBlockSizeException | NoSuchProviderException e) {
             e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
-        return null;
     }
 
     private static void validateGet(String alias, String alias_file, String alias_iv) throws IllegalArgumentException {
