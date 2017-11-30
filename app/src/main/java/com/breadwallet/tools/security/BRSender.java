@@ -199,7 +199,7 @@ public class BRSender {
             return;
         }
         if (maxAmountDouble == 0) {
-            BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), "Insufficient amount for transaction fee, send maximum amount?", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+            BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), "Insufficient amount for transaction fee", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                 @Override
                 public void onClick(BRDialogView brDialogView) {
                     brDialogView.dismissWithAnimation();
@@ -214,6 +214,12 @@ public class BRSender {
 //                    brDialogView.dismissWithAnimation();
 //                }
 //            }, null, null, 0);
+            BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), "Insufficient amount for transaction fee", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                @Override
+                public void onClick(BRDialogView brDialogView) {
+                    brDialogView.dismissWithAnimation();
+                }
+            }, null, null, 0);
             //todo fix this fee adjustment
         }
 
