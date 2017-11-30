@@ -236,8 +236,10 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
             keyboard.hideSoftInputFromWindow(searchEdit.getWindowToken(), 0);
             clearSwitches();
             updateFilterButtonsUI(filterSwitches);
-            if (TxManager.getInstance().adapter != null)
+            if (TxManager.getInstance().adapter != null) {
                 TxManager.getInstance().adapter.filterBy("", filterSwitches);
+                TxManager.getInstance().adapter.notifyDataSetChanged();
+            }
         }
     }
 
