@@ -3,9 +3,11 @@ package com.breadwallet.tools.security;
 import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.security.keystore.KeyGenParameterSpec;
+import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Base64;
@@ -208,6 +210,10 @@ public class BRKeyStore {
             Log.d(TAG, "setData: User not Authenticated, requesting..." + alias + ", err(" + e.getMessage() + ")");
             showAuthenticationScreen(context, request_code);
             throw e;
+        } catch (InvalidKeyException ex) {
+            if (ex instanceof KeyPermanentlyInvalidatedException)
+                showKeyInvalidated(context);
+            throw new UserNotAuthenticatedException(); //just to make the flow stop
         } catch (Exception e) {
             BRReportsManager.reportBug(e);
             e.printStackTrace();
@@ -258,7 +264,7 @@ public class BRKeyStore {
                     outCipher.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(128, iv));
                 } catch (InvalidKeyException ignored) {
                     if (ignored instanceof UserNotAuthenticatedException) throw ignored;
-                    throw new RuntimeException("Can't happen, new data is present but old key");
+                    throw ignored;
                 }
                 try {
                     byte[] decryptedData = outCipher.doFinal(encryptedData);
@@ -331,7 +337,9 @@ public class BRKeyStore {
             } else {
                 Log.e(TAG, "_getData: InvalidKeyException", e);
                 BRReportsManager.reportBug(e);
-                throw new RuntimeException(e.getMessage());
+                if (e instanceof KeyPermanentlyInvalidatedException)
+                    showKeyInvalidated(context);
+                throw new UserNotAuthenticatedException(); //just to not go any further
             }
         } catch (IOException | CertificateException | KeyStoreException e) {
             /** keyStore.load(null) threw the Exception, meaning the keystore is unavailable */
@@ -379,6 +387,21 @@ public class BRKeyStore {
         if (auth_required)
             if (!alias.equals(PHRASE_ALIAS) && !alias.equals(CANARY_ALIAS))
                 throw new IllegalArgumentException("keystore auth_required is true but alias is: " + alias);
+    }
+
+    private static void showKeyInvalidated(final Context app) {
+        BRDialog.showCustomDialog(app, app.getString(R.string.Alert_keystore_title_android), app.getString(R.string.Alert_keystore_invalidated_android), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+            @Override
+            public void onClick(BRDialogView brDialogView) {
+                brDialogView.dismissWithAnimation();
+            }
+        }, null, new DialogInterface.OnDismissListener() {
+            @Override
+            public void onDismiss(DialogInterface dialog) {
+                resetWalletKeyStore(app);
+                dialog.dismiss();
+            }
+        }, 0);
     }
 
     public synchronized static String getFilePath(String fileName, Context context) {

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.NetworkOnMainThreadException;
+import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
@@ -360,7 +361,6 @@ public class PostAuth {
         } catch (UserNotAuthenticatedException e) {
             return;
         }
-
         if (canary == null || !canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
             byte[] phrase;
             try {
