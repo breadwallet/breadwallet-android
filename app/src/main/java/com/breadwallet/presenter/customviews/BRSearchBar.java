@@ -237,8 +237,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
             clearSwitches();
             updateFilterButtonsUI(filterSwitches);
             if (TxManager.getInstance().adapter != null) {
-                TxManager.getInstance().adapter.filterBy("", filterSwitches);
-                TxManager.getInstance().adapter.notifyDataSetChanged();
+                TxManager.getInstance().adapter.resetFilter();
             }
         }
     }
