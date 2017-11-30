@@ -153,6 +153,9 @@ public class TxManager {
 
     public void hidePrompt(final Activity app, final PromptManager.PromptItem item) {
         crashIfNotMain();
+        if (currentPrompt == PromptManager.PromptItem.SHARE_DATA) {
+            BRSharedPrefs.putShareDataDismissed(app, true);
+        }
         currentPrompt = null;
         if (txList.getAdapter() != null)
             txList.getAdapter().notifyItemRemoved(0);
@@ -162,9 +165,7 @@ public class TxManager {
         } else {
             if (item != null)
                 BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".dismissed");
-            if (currentPrompt == PromptManager.PromptItem.SHARE_DATA) {
-                BRSharedPrefs.putShareDataDismissed(app, true);
-            }
+
         }
 
     }
