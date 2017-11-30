@@ -39,6 +39,7 @@ import com.breadwallet.presenter.fragments.FragmentSupport;
 import com.breadwallet.presenter.fragments.FragmentTransactionDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 
@@ -339,12 +340,17 @@ public class BRAnimator {
     public static boolean isClickAllowed() {
         if (clickAllowed) {
             clickAllowed = false;
-            new Handler().postDelayed(new Runnable() {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
+                    try {
+                        Thread.sleep(300);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
                     clickAllowed = true;
                 }
-            }, 300);
+            });
             return true;
         } else return false;
     }
