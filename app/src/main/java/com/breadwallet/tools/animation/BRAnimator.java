@@ -356,7 +356,7 @@ public class BRAnimator {
     }
 
     public static void killAllFragments(Activity app) {
-        if (app != null)
+        if (app != null && !app.isDestroyed())
             app.getFragmentManager().popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
     }
 
