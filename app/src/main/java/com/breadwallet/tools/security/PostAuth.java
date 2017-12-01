@@ -133,7 +133,11 @@ public class PostAuth {
     }
 
     public void onRecoverWalletAuth(Activity app, boolean authAsked) {
-        if (phraseForKeyStore == null) return;
+        if (phraseForKeyStore == null) {
+            Log.e(TAG, "onRecoverWalletAuth: phraseForKeyStore is null!");
+            BRReportsManager.reportBug(new NullPointerException("onRecoverWalletAuth: phraseForKeyStore is null"));
+            return;
+        }
         byte[] bytePhrase = new byte[0];
 
         try {
@@ -142,6 +146,7 @@ public class PostAuth {
                 success = BRKeyStore.putPhrase(phraseForKeyStore.getBytes(),
                         app, BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
             } catch (UserNotAuthenticatedException e) {
+                Log.e(TAG, "onRecoverWalletAuth: not authenticated");
                 return;
             }
 
@@ -169,6 +174,9 @@ public class PostAuth {
 
             }
 
+        } catch (Exception e) {
+            e.printStackTrace();
+            BRReportsManager.reportBug(e);
         } finally {
             Arrays.fill(bytePhrase, (byte) 0);
         }

@@ -119,6 +119,13 @@ public class BRActivity extends Activity {
                     PostAuth.getInstance().onPhraseProveAuth(this, true);
                 }
                 break;
+            case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    PostAuth.getInstance().onRecoverWalletAuth(this, true);
+                } else {
+                    finish();
+                }
+                break;
 
             case BRConstants.SCANNER_REQUEST:
                 if (resultCode == Activity.RESULT_OK) {

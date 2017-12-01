@@ -72,6 +72,7 @@ public class InputWordsActivity extends BRActivity {
 //            debugPhrases = "vocation triage capsule marchand onduler tibia illicite entier fureur minorer amateur lubie";//french
 //            debugPhrase = "zorro turismo mezcla nicho morir chico blanco pájaro alba esencia roer repetir";//spanish
 //            debugPhrase = "怨 贪 旁 扎 吹 音 决 廷 十 助 畜 怒";//chinese
+            debugPhrase = "aim lawn sniff tenant coffee smoke meat hockey glow try also angle";
 
         }
 
@@ -164,7 +165,9 @@ public class InputWordsActivity extends BRActivity {
                 if (Utils.isEmulatorOrDebug(app) && !Utils.isNullOrEmpty(debugPhrase)) {
                     phraseToCheck = debugPhrase;
                 }
-                if (phraseToCheck == null) return;
+                if (phraseToCheck == null) {
+                    return;
+                }
                 String cleanPhrase = SmartValidator.cleanPaperKey(app, phraseToCheck);
                 if (SmartValidator.isPaperKeyValid(app, cleanPhrase)) {
 
@@ -214,10 +217,10 @@ public class InputWordsActivity extends BRActivity {
                         m.wipeWalletButKeystore(app);
                         m.wipeKeyStore(app);
                         PostAuth.getInstance().setPhraseForKeyStore(cleanPhrase);
-                        PostAuth.getInstance().onRecoverWalletAuth(app, false);
                         BRSharedPrefs.putAllowSpend(app, false);
                         //if this screen is shown then we did not upgrade to the new app, we installed it
                         BRSharedPrefs.putGreetingsShown(app, true);
+                        PostAuth.getInstance().onRecoverWalletAuth(app, false);
                     }
 
                 } else {
@@ -239,6 +242,7 @@ public class InputWordsActivity extends BRActivity {
         overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         startActivity(intent);
         if (!InputWordsActivity.this.isDestroyed()) finish();
+        if (!BreadActivity.getApp().isDestroyed()) BreadActivity.getApp().finish();
     }
 
     @Override
@@ -331,21 +335,6 @@ public class InputWordsActivity extends BRActivity {
         return w1 + " " + w2 + " " + w3 + " " + w4 + " " + w5 + " " + w6 + " " + w7 + " " + w8 + " " + w9 + " " + w10 + " " + w11 + " " + w12;
     }
 
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        switch (requestCode) {
-            case BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    PostAuth.getInstance().onRecoverWalletAuth(this, true);
-                } else {
-                    finish();
-                }
-                break;
-
-        }
-
-    }
 
     private void clearWords() {
         word1.setText("");
