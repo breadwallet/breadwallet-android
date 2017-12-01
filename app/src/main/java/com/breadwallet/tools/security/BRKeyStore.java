@@ -165,7 +165,6 @@ public class BRKeyStore {
 //        Log.e(TAG, "_setData: " + alias);
         validateSet(data, alias, alias_file, alias_iv, auth_required);
 
-
         KeyStore keyStore = null;
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
@@ -182,7 +181,10 @@ public class BRKeyStore {
                 try {
                     inCipher.init(Cipher.ENCRYPT_MODE, secretKey);
                 } catch (InvalidKeyException ignored) {
-                    if (ignored instanceof UserNotAuthenticatedException) throw ignored;
+                    Log.e(TAG, "_setData: OLD KEY PRESENT");
+                    if (ignored instanceof UserNotAuthenticatedException) {
+                        throw ignored;
+                    }
                     //create new key and reinitialize the cipher
                     secretKey = createKeys(alias, auth_required);
                     inCipher.init(Cipher.ENCRYPT_MODE, secretKey);
@@ -260,12 +262,7 @@ public class BRKeyStore {
                 Cipher outCipher;
 
                 outCipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM);
-                try {
-                    outCipher.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(128, iv));
-                } catch (InvalidKeyException ignored) {
-                    if (ignored instanceof UserNotAuthenticatedException) throw ignored;
-                    throw ignored;
-                }
+                outCipher.init(Cipher.DECRYPT_MODE, secretKey, new GCMParameterSpec(128, iv));
                 try {
                     byte[] decryptedData = outCipher.doFinal(encryptedData);
                     if (decryptedData != null) {
@@ -761,10 +758,9 @@ public class BRKeyStore {
         return Base64.decode(base64, Base64.DEFAULT);
     }
 
-    public static void showAuthenticationScreen(Context context, int requestCode) {
+    public synchronized static void showAuthenticationScreen(Context context, int requestCode) {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
-        if (!BRAnimator.isClickAllowed()) return;
         Log.e(TAG, "showAuthenticationScreen: ");
         if (context instanceof Activity) {
             Activity app = (Activity) context;
@@ -777,6 +773,7 @@ public class BRKeyStore {
             Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(context.getString(R.string.UnlockScreen_touchIdTitle_android), context.getString(R.string.UnlockScreen_touchIdPrompt_android));
 //        Assert.assertTrue(intent != null);
             if (intent != null) {
+                Log.e(TAG, "showAuthenticationScreen: starting activity");
                 app.startActivityForResult(intent, requestCode);
             } else {
                 Log.e(TAG, "showAuthenticationScreen: failed to create intent for auth");
@@ -784,6 +781,7 @@ public class BRKeyStore {
                 app.finish();
             }
         } else {
+            BRReportsManager.reportBug(new RuntimeException("showAuthenticationScreen: context is not activity!"));
             Log.e(TAG, "showAuthenticationScreen: context is not activity!");
         }
     }
