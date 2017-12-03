@@ -1117,7 +1117,7 @@ merge
 merit
 merry
 mesh
-mMessage
+message
 metal
 method
 middle
@@ -1813,7 +1813,7 @@ tiny
 tip
 tired
 tissue
-mTitle
+title
 toast
 tobacco
 today
