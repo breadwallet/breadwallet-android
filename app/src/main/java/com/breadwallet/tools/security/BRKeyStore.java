@@ -815,35 +815,6 @@ public class BRKeyStore {
         return bytes;
     }
 
-//    public static boolean writeBytesToFile(String path, byte[] data) {
-//
-//        FileOutputStream fos = null;
-//
-//        try {
-//            File file = new File(path);
-//            fos = new FileOutputStream(file);
-//            // Writes bytes from the specified byte array to this file output stream
-//            fos.write(data);
-//            return true;
-//        } catch (FileNotFoundException e) {
-//            System.out.println("File not found" + e);
-//        } catch (IOException ioe) {
-//            System.out.println("Exception while writing file " + ioe);
-//        } finally {
-//            // close the streams using close method
-//            try {
-//                if (fos != null) {
-//                    fos.close();
-//                }
-//
-//            } catch (IOException ioe) {
-//                System.out.println("Error while closing stream: " + ioe);
-//            }
-//
-//        }
-//        return false;
-//    }
-
     //USE ONLY FOR TESTING
     public synchronized static boolean _setOldData(Context context, byte[] data, String alias, String alias_file, String alias_iv,
                                                    int request_code, boolean auth_required) throws UserNotAuthenticatedException {
