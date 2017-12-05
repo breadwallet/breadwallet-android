@@ -45,7 +45,7 @@ public class BRExchange {
         if (iso.equalsIgnoreCase("BTC"))
             return getBitcoinForSatoshis(context, new BigDecimal(MAX_BTC * 100000000));
         CurrencyEntity ent = CurrencyDataSource.getInstance(context).getCurrencyByIso(iso);
-        if (ent == null) throw new RuntimeException("no currency in DB for: " + iso);
+        if (ent == null) return new BigDecimal(Integer.MAX_VALUE);
         return new BigDecimal(ent.rate * MAX_BTC);
     }
 
@@ -117,13 +117,12 @@ public class BRExchange {
             CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
             if (ent == null) return new BigDecimal(0);
             BigDecimal rate = new BigDecimal(ent.rate).multiply(new BigDecimal(100));
-            result = new BigDecimal(BRWalletManager.getInstance().localAmount(amount.longValue(),rate.doubleValue()))
+            result = new BigDecimal(BRWalletManager.getInstance().localAmount(amount.longValue(), rate.doubleValue()))
                     .divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
         }
 //        Log.e(TAG, "getAmountFromSatoshis: " + iso + ":RESULT:" + result);
         return result;
     }
-
 
 
     //get satoshis from an iso amount
@@ -137,7 +136,7 @@ public class BRExchange {
             CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
             if (ent == null) return new BigDecimal(0);
             BigDecimal rate = new BigDecimal(ent.rate).multiply(new BigDecimal(100));
-            result = new BigDecimal(BRWalletManager.getInstance().bitcoinAmount(amount.multiply(new BigDecimal(100)).longValue(),rate.doubleValue()));
+            result = new BigDecimal(BRWalletManager.getInstance().bitcoinAmount(amount.multiply(new BigDecimal(100)).longValue(), rate.doubleValue()));
         }
 //        Log.e(TAG, "getSatoshisFromAmount: " + iso + ":RESULT:" + result);
         return result;

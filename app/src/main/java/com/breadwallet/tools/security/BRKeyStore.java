@@ -23,6 +23,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
+import com.google.firebase.crash.FirebaseCrash;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
@@ -210,12 +211,16 @@ public class BRKeyStore {
             return true;
         } catch (UserNotAuthenticatedException e) {
             Log.d(TAG, "setData: User not Authenticated, requesting..." + alias + ", err(" + e.getMessage() + ")");
-            showAuthenticationScreen(context, request_code);
+            showAuthenticationScreen(context, request_code, alias);
             throw e;
         } catch (InvalidKeyException ex) {
-            if (ex instanceof KeyPermanentlyInvalidatedException)
+            if (ex instanceof KeyPermanentlyInvalidatedException) {
                 showKeyInvalidated(context);
-            throw new UserNotAuthenticatedException(); //just to make the flow stop
+                throw new UserNotAuthenticatedException(); //just to make the flow stop
+            }
+
+            BRReportsManager.reportBug(ex);
+            return false;
         } catch (Exception e) {
             BRReportsManager.reportBug(e);
             e.printStackTrace();
@@ -247,7 +252,6 @@ public class BRKeyStore {
         validateGet(alias, alias_file, alias_iv);//validate entries
         KeyStore keyStore = null;
 
-//        byte[] result = new byte[0];
         try {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
@@ -329,7 +333,7 @@ public class BRKeyStore {
         } catch (InvalidKeyException e) {
             if (e instanceof UserNotAuthenticatedException) {
                 /** user not authenticated, ask the system for authentication */
-                showAuthenticationScreen(context, request_code);
+                showAuthenticationScreen(context, request_code, alias);
                 throw (UserNotAuthenticatedException) e;
             } else {
                 Log.e(TAG, "_getData: InvalidKeyException", e);
@@ -758,9 +762,12 @@ public class BRKeyStore {
         return Base64.decode(base64, Base64.DEFAULT);
     }
 
-    public synchronized static void showAuthenticationScreen(Context context, int requestCode) {
+    public synchronized static void showAuthenticationScreen(Context context, int requestCode, String alias) {
         // Create the Confirm Credentials screen. You can customize the title and description. Or
         // we will provide a generic one for you if you leave it null
+        if (!alias.equalsIgnoreCase(PHRASE_ALIAS) && !alias.equalsIgnoreCase(CANARY_ALIAS)) {
+            BRReportsManager.reportBug(new IllegalArgumentException("requesting auth for: " + alias), true);
+        }
         Log.e(TAG, "showAuthenticationScreen: ");
         if (context instanceof Activity) {
             Activity app = (Activity) context;
@@ -900,7 +907,7 @@ public class BRKeyStore {
             return true;
         } catch (UserNotAuthenticatedException e) {
             Log.d(TAG, "setData: User not Authenticated, requesting..." + alias + ", err(" + e.getMessage() + ")");
-            showAuthenticationScreen(context, request_code);
+            showAuthenticationScreen(context, request_code, alias);
             throw e;
         } catch (Exception e) {
             Log.e(TAG, "_setOldData: ", e);
@@ -963,7 +970,7 @@ public class BRKeyStore {
         } catch (InvalidKeyException e) {
             if (e instanceof UserNotAuthenticatedException) {
                 /** user not authenticated, ask the system for authentication */
-                showAuthenticationScreen(context, request_code);
+                showAuthenticationScreen(context, request_code, alias);
                 throw (UserNotAuthenticatedException) e;
             } else {
                 Log.e(TAG, "_getOldData: InvalidKeyException", e);

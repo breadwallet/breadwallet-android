@@ -169,7 +169,7 @@ public class BRApiManager {
 
 
     public static JSONArray fetchRates(Activity activity) {
-        String jsonString = urlGET(activity, String.format("https://%s/rates", BreadApp.HOST));
+        String jsonString = urlGET(activity, "https://" + BreadApp.HOST + "/rates");
         JSONArray jsonArray = null;
         if (jsonString == null) return null;
         try {
@@ -197,7 +197,7 @@ public class BRApiManager {
     }
 
     public static void updateFeePerKb(Activity activity) {
-        String jsonString = urlGET(activity, String.format("https://%s/fee-per-kb", BreadApp.HOST));
+        String jsonString = urlGET(activity, "https://" + BreadApp.HOST + "/fee-per-kb");
         if (jsonString == null || jsonString.isEmpty()) {
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
             return;
@@ -216,8 +216,9 @@ public class BRApiManager {
                 BRSharedPrefs.putEconomyFeePerKb(activity, economyFee);
             }
         } catch (JSONException e) {
+            Log.e(TAG, "updateFeePerKb: FAILED: " + jsonString, e);
             BRReportsManager.reportBug(e);
-            e.printStackTrace();
+            BRReportsManager.reportBug(new IllegalArgumentException("JSON ERR: " + jsonString));
         }
     }
 
