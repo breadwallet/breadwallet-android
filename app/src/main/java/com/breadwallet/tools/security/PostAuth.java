@@ -105,7 +105,11 @@ public class PostAuth {
     public void onPhraseCheckAuth(Activity app, boolean authAsked) {
         String cleanPhrase;
         try {
-            cleanPhrase = new String(BRKeyStore.getPhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE));
+            byte[] raw = BRKeyStore.getPhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE);
+            if (raw == null) {
+                BRReportsManager.reportBug(new NullPointerException("onPhraseCheckAuth: getPhrase = null"), true);
+            }
+            cleanPhrase = new String(raw);
         } catch (UserNotAuthenticatedException e) {
             return;
         }
