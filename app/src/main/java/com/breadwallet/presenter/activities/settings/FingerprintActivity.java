@@ -109,7 +109,10 @@ public class FingerprintActivity extends BRActivity {
                 ds.setUnderlineText(false);
             }
         };
-        ss.setSpan(clickableSpan, limitInfo.getText().toString().lastIndexOf(" "), limitInfo.getText().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        //start index of the last space (beginning of the last word)
+        int indexOfSpace = limitInfo.getText().toString().lastIndexOf(" ");
+        // make the whole text clickable if failed to select the last word
+        ss.setSpan(clickableSpan, indexOfSpace == -1 ? 0 : indexOfSpace, limitInfo.getText().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         limitInfo.setText(ss);
         limitInfo.setMovementMethod(LinkMovementMethod.getInstance());
