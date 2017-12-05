@@ -45,6 +45,7 @@ import java.security.UnrecoverableKeyException;
 import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.locks.ReentrantLock;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -139,6 +140,7 @@ public class BRKeyStore {
     private static final String PASS_TIME_FILENAME = "my_pass_time";
 
     public static final int AUTH_DURATION_SEC = 300;
+    private static final ReentrantLock lock = new ReentrantLock();
 
     static {
         aliasObjectMap = new HashMap<>();
@@ -157,6 +159,7 @@ public class BRKeyStore {
         aliasObjectMap.put(TOTAL_LIMIT_ALIAS, new AliasObject(TOTAL_LIMIT_ALIAS, TOTAL_LIMIT_FILENAME, TOTAL_LIMIT_IV));
 
         Assert.assertEquals(aliasObjectMap.size(), 12);
+
 //        Assert.assertEquals(AUTH_DURATION_SEC, 300);
     }
 
@@ -168,6 +171,7 @@ public class BRKeyStore {
 
         KeyStore keyStore = null;
         try {
+            lock.lock();
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
             SecretKey secretKey = (SecretKey) keyStore.getKey(alias, null);
@@ -225,6 +229,8 @@ public class BRKeyStore {
             BRReportsManager.reportBug(e);
             e.printStackTrace();
             return false;
+        } finally {
+            lock.unlock();
         }
     }
 
@@ -253,6 +259,7 @@ public class BRKeyStore {
         KeyStore keyStore = null;
 
         try {
+            lock.lock();
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
             SecretKey secretKey = (SecretKey) keyStore.getKey(alias, null);
@@ -365,6 +372,8 @@ public class BRKeyStore {
         } catch (BadPaddingException | IllegalBlockSizeException | NoSuchProviderException e) {
             e.printStackTrace();
             throw new RuntimeException(e.getMessage());
+        } finally {
+            lock.unlock();
         }
     }
 
