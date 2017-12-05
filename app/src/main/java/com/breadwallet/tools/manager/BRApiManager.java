@@ -182,14 +182,14 @@ public class BRApiManager {
     }
 
     public static JSONArray backupFetchRates(Activity activity) {
-        String jsonString = urlGET(activity, "https://bitpay.com/rates");
+        String jsonString = urlGET(activity, "https://api.loshan.co.uk/api/v1/ticker");
 
         JSONArray jsonArray = null;
         if (jsonString == null) return null;
         try {
             JSONObject obj = new JSONObject(jsonString);
 
-            jsonArray = obj.getJSONArray("data");
+            jsonArray = obj.getJSONArray("price");
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -216,8 +216,9 @@ public class BRApiManager {
                 BRSharedPrefs.putEconomyFeePerKb(activity, economyFee);
             }
         } catch (JSONException e) {
+            Log.e(TAG, "updateFeePerKb: FAILED: " + jsonString, e);
             BRReportsManager.reportBug(e);
-            e.printStackTrace();
+            BRReportsManager.reportBug(new IllegalArgumentException("JSON ERR: " + jsonString));
         }
     }
 
