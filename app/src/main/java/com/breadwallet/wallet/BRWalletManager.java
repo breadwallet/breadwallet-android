@@ -484,6 +484,7 @@ public class BRWalletManager {
             if (!m.noWallet(app)) {
                 BRAnimator.startBreadActivity(app, true);
             }
+            //else just sit in the intro screen
 
         }
     }
