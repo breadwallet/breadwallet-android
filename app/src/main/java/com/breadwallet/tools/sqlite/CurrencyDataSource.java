@@ -164,8 +164,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
             database = openDatabase();
 
             cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
-                    allColumns, BRSQLiteHelper.CURRENCY_CODE + "=\'" + iso + "\'", null, null, null, null);
-
+                    allColumns, BRSQLiteHelper.CURRENCY_CODE + " = ?", new String[]{iso}, null, null, null);
 
             cursor.moveToFirst();
             if (!cursor.isAfterLast()) {

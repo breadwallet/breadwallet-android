@@ -256,7 +256,7 @@ public class PostAuth {
                 public void run() {
                     String title = "Failed";
                     String message = "";
-                    String strUtl = BreadApp.HOST + "/bch/publish-transaction";
+                    String strUtl = "https://" + BreadApp.HOST + "/bch/publish-transaction";
                     Log.e(TAG, "url: " + strUtl);
                     final MediaType type
                             = MediaType.parse("application/bchdata");

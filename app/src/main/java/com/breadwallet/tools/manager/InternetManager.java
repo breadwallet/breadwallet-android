@@ -77,6 +77,7 @@ public class InternetManager extends BroadcastReceiver {
                 BRPeerManager.getInstance().networkChanged(false);
                 connected = false;
             }
+
             BREventManager.getInstance().pushEvent(connected ? "reachability.isReachble" : "reachability.isNotReachable");
             for (ConnectionReceiverListener listener : connectionReceiverListeners) {
                 listener.onConnectionChanged(connected);
