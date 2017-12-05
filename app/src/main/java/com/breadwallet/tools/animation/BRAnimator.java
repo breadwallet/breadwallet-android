@@ -366,6 +366,7 @@ public class BRAnimator {
     }
 
     public static void startBreadActivity(Activity from, boolean auth) {
+        assert (from != null);
         Class toStart = auth ? LoginActivity.class : BreadActivity.class;
         Intent intent = new Intent(from, toStart);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

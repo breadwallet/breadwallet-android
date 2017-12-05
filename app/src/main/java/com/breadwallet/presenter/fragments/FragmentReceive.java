@@ -285,8 +285,15 @@ public class FragmentReceive extends Fragment {
             public void run() {
                 boolean success = BRWalletManager.refreshAddress(ctx);
                 if (!success) {
-                    if (ctx instanceof Activity)
-                        ((Activity) ctx).onBackPressed();
+                    if (ctx instanceof Activity) {
+                        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                ((Activity) ctx).onBackPressed();
+                            }
+                        });
+
+                    }
                     return;
                 }
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
