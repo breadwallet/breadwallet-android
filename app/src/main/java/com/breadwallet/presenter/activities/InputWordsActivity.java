@@ -72,7 +72,7 @@ public class InputWordsActivity extends BRActivity {
 //            debugPhrases = "vocation triage capsule marchand onduler tibia illicite entier fureur minorer amateur lubie";//french
 //            debugPhrase = "zorro turismo mezcla nicho morir chico blanco pájaro alba esencia roer repetir";//spanish
 //            debugPhrase = "怨 贪 旁 扎 吹 音 决 廷 十 助 畜 怒";//chinese
-            debugPhrase = "aim lawn sniff tenant coffee smoke meat hockey glow try also angle";
+//            debugPhrase = "aim lawn sniff tenant coffee smoke meat hockey glow try also angle";
 
         }
 
