@@ -387,6 +387,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         filter(query, switches);
     }
 
+    public void resetFilter(){
+        itemFeed = backUpFeed;
+        notifyDataSetChanged();
+    }
+
     private void filter(final String query, final boolean[] switches) {
         long start = System.currentTimeMillis();
         String lowerQuery = query.toLowerCase().trim();

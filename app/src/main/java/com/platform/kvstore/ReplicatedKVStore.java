@@ -38,7 +38,6 @@ import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.jniwrappers.BRKey;
-import com.platform.entities.TxMetaData;
 import com.platform.interfaces.KVStoreAdaptor;
 import com.platform.sqlite.KVItem;
 import com.platform.sqlite.PlatformSqliteHelper;
@@ -809,7 +808,7 @@ public class ReplicatedKVStore {
                         new String[]{PlatformSqliteHelper.KV_VALUE}, "key = ? AND version = ?", new String[]{key, String.valueOf(localVersion)},
                         null, null, "version DESC", "1");
                 byte[] value = null;
-                if(cursor.moveToNext()){
+                if (cursor.moveToNext()) {
                     value = cursor.getBlob(0);
                 }
 
