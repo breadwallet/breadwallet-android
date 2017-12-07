@@ -12,6 +12,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
+import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.activities.SetPinActivity;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
@@ -371,6 +372,7 @@ public class PostAuth {
         try {
             canary = BRKeyStore.getCanary(app, BRConstants.CANARY_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
+            if (authAsked) BRReportsManager.reportBug(new BRKeystoreErrorException("authenticated but still failed to init the cipher!"));
             return;
         }
         if (canary == null || !canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
