@@ -371,6 +371,12 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
         UInt256 txid = tempTx->txHash;
         jbyteArray JtxHash = (*env)->NewByteArray(env, sizeof(txid));
         (*env)->SetByteArrayRegion(env, JtxHash, 0, (jsize) sizeof(txid), (jbyte *) txid.u8);
+
+        UInt256 reversedHash = UInt256Reverse(( txid));
+
+        jstring txReversed = (*env)->NewStringUTF(env, u256_hex_encode(reversedHash));
+
+
         jlong Jsent = (jlong) BRWalletAmountSentByTx(_wallet, tempTx);
         jlong Jreceived = (jlong) BRWalletAmountReceivedFromTx(_wallet, tempTx);
         jlong Jfee = (jlong) BRWalletFeeForTx(_wallet, tempTx);
@@ -422,7 +428,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
         jlong JbalanceAfterTx = (jlong) BRWalletBalanceAfterTx(_wallet, tempTx);
 
         jobject txObject = (*env)->NewObject(env, txClass, txObjMid, JtimeStamp, JblockHeight,
-                                             JtxHash, NULL, Jsent,
+                                             JtxHash, txReversed, Jsent,
                                              Jreceived, Jfee, JtoAddresses, JfromAddresses,
                                              JbalanceAfterTx, JtxSize,
                                              JoutAmounts, isValid);
