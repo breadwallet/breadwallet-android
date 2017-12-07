@@ -167,9 +167,6 @@ public class FragmentTransactionItem extends Fragment {
         //see if it was sent
         boolean sent = item.getReceived() - item.getSent() < 0;
 
-        int blockHeight = item.getBlockHeight();
-        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(getContext()) - blockHeight + 1;
-
         //calculated and formatted amount for iso
         String amountWithFee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, txAmount));
         String amount = BRCurrency.getFormattedCurrencyString(getActivity(), iso, BRExchange.getAmountFromSatoshis(getActivity(), iso, item.getFee() == -1 ? txAmount : txAmount.subtract(new BigDecimal(item.getFee()))));
@@ -184,33 +181,16 @@ public class FragmentTransactionItem extends Fragment {
         String sb = String.format(getString(R.string.Transaction_starting), startingBalance);
         String eb = String.format(getString(R.string.Transaction_ending), endingBalance);
         String amountString = String.format("%s %s\n\n%s\n%s", amount, item.getFee() == -1 ? "" : String.format(getString(R.string.Transaction_fee), fee), sb, eb);
-
+        if (sent) amountString = "-" + amountString;
         String addr = item.getTo()[0];
         String toFrom = sent ? String.format(getString(R.string.TransactionDetails_to), addr) : String.format(getString(R.string.TransactionDetails_from), addr);
 
         mTxHash.setText(item.getTxHashHexReversed());
 
-        int relayCount = BRPeerManager.getRelayCount(item.getTxHash());
 
-        int level;
+        int level = getLevel(item);
 
-        if (confirms <= 0) {
-            if (relayCount <= 0)
-                level = 0;
-            else if (relayCount == 1)
-                level = 1;
-            else
-                level = 2;
-        } else {
-            if (confirms == 1)
-                level = 3;
-            else if (confirms == 2)
-                level = 4;
-            else if (confirms == 3)
-                level = 5;
-            else
-                level = 6;
-        }
+
         boolean availableForSpend = false;
 //        String sentReceived = !sent ? "Receiving" : "Sending";
 //        sentReceived = ""; //make this empy for now
@@ -266,6 +246,31 @@ public class FragmentTransactionItem extends Fragment {
 
         mAmountText.setText(amountString);
         mAddressText.setText(addr);
+    }
+
+    private int getLevel(TxItem item) {
+        int blockHeight = item.getBlockHeight();
+        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(getContext()) - blockHeight + 1;
+        int relayCount = BRPeerManager.getRelayCount(item.getTxHash());
+        int level;
+        if (confirms <= 0) {
+            if (relayCount <= 0)
+                level = 0;
+            else if (relayCount == 1)
+                level = 1;
+            else
+                level = 2;
+        } else {
+            if (confirms == 1)
+                level = 3;
+            else if (confirms == 2)
+                level = 4;
+            else if (confirms == 3)
+                level = 5;
+            else
+                level = 6;
+        }
+        return level;
     }
 
     @Override
