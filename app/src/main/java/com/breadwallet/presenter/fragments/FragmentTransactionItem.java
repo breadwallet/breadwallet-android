@@ -161,12 +161,6 @@ public class FragmentTransactionItem extends Fragment {
 //        Log.e(TAG, "fillTexts hash: " + item.getHexId());
         //get the current iso
         String iso = BRSharedPrefs.getPreferredBTC(getActivity()) ? "BTC" : BRSharedPrefs.getIso(getContext());
-//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                TxMetaData txMetaData = KVStoreManager.getInstance().getTxMetaData(getContext(), item.getTxHash());
-//            }
-//        });
 
         //get the tx amount
         BigDecimal txAmount = new BigDecimal(item.getReceived() - item.getSent()).abs();
@@ -246,9 +240,12 @@ public class FragmentTransactionItem extends Fragment {
                 break;
         }
 
-        if (availableForSpend && !sent) {
+        boolean removeView = sent || !availableForSpend;
+        Log.e(TAG, "fillTexts: removeView : " + removeView);
+        if (!removeView) {
             mAvailableSpend.setText(getString(R.string.Transaction_available));
         } else {
+            mAvailableSpend.setText("");
             signalLayout.removeView(mAvailableSpend);
         }
 
