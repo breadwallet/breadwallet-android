@@ -113,6 +113,7 @@ public class PostAuth {
             }
             cleanPhrase = new String(raw);
         } catch (UserNotAuthenticatedException e) {
+            BRReportsManager.reportBug(new UserNotAuthenticatedException("onPhraseCheckAuth: HUH? double auth for phrase"));
             return;
         }
         Intent intent = new Intent(app, PaperKeyActivity.class);
@@ -126,6 +127,7 @@ public class PostAuth {
         try {
             cleanPhrase = new String(BRKeyStore.getPhrase(app, BRConstants.PROVE_PHRASE_REQUEST));
         } catch (UserNotAuthenticatedException e) {
+            BRReportsManager.reportBug(new UserNotAuthenticatedException("onPhraseProveAuth: HUH? double auth for phrase"));
             return;
         }
         Intent intent = new Intent(app, PaperKeyProveActivity.class);
@@ -152,7 +154,7 @@ public class PostAuth {
                 success = BRKeyStore.putPhrase(phraseForKeyStore.getBytes(),
                         app, BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
             } catch (UserNotAuthenticatedException e) {
-                Log.e(TAG, "onRecoverWalletAuth: not authenticated");
+                BRReportsManager.reportBug(new NullPointerException("onRecoverWalletAuth: HUH? double auth for phrase"));
                 return;
             }
 
@@ -373,8 +375,12 @@ public class PostAuth {
         try {
             canary = BRKeyStore.getCanary(app, BRConstants.CANARY_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
-            if (authAsked)
+            if (authAsked) {
                 BRReportsManager.reportBug(new BRKeystoreErrorException("authenticated but still failed to init the cipher!"));
+                //Clear the wallet
+                BRWalletManager.getInstance().wipeKeyStore(app);
+                BRWalletManager.getInstance().wipeWalletButKeystore(app);
+            }
             return;
         }
         if (canary == null || !canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {

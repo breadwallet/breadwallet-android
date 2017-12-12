@@ -188,7 +188,7 @@ public class FragmentFingerprint extends Fragment
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                AuthManager.getInstance().authPrompt(app, customTitle, customMessage, true, completion);
+                AuthManager.getInstance().authPrompt(app, customTitle, customMessage, true, false,completion);
             }
         }, ANIMATION_DURATION + 100);
     }
