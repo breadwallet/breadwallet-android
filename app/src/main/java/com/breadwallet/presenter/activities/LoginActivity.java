@@ -212,7 +212,6 @@ public class LoginActivity extends BRActivity {
         appVisible = true;
         app = this;
         inputAllowed = true;
-        ActivityUTILS.init(this);
         if (!BRWalletManager.getInstance().isCreated()) {
             BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                 @Override
