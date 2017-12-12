@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.fragments.FragmentFingerprint;
@@ -111,20 +112,20 @@ public class AuthManager {
 
     public boolean isWalletDisabled(Activity app) {
         int failCount = BRKeyStore.getFailCount(app);
-        long secureTime = BRSharedPrefs.getSecureTime(app);
-        long failTimestamp = BRKeyStore.getFailTimeStamp(app);
-        return failCount >= 3 && secureTime < failTimestamp + Math.pow(6, failCount - 3) * 60.0;
+        return failCount >= 3 && disabledUntil(app) > BRSharedPrefs.getSecureTime(app);
 
     }
 
-    public void setWalletDisabled(Activity app) {
+    public long disabledUntil(Activity app) {
         int failCount = BRKeyStore.getFailCount(app);
-        long now = System.currentTimeMillis() / 1000;
-        long secureTime = BRSharedPrefs.getSecureTime(app);
         long failTimestamp = BRKeyStore.getFailTimeStamp(app);
-        double waitTimeMinutes = (failTimestamp + Math.pow(6, failCount - 3) * 60.0 - secureTime) / 60.0;
+        double pow = Math.pow(6, failCount - 3) * 60;
+        return (long) ((failTimestamp + pow * 1000));
+    }
 
-        ActivityUTILS.showWalletDisabled(app, waitTimeMinutes);
+    public void setWalletDisabled(Activity app) {
+        if (!(app instanceof DisabledActivity))
+            ActivityUTILS.showWalletDisabled(app);
     }
 
     public void setPinCode(String pass, Activity context) {
@@ -270,16 +271,16 @@ public class AuthManager {
                     app.getString(R.string.AccessibilityLabels_close),
                     null,
                     new BRDialogView.BROnClickListener() {
-                @Override
-                public void onClick(BRDialogView brDialogView) {
-                    app.finish();
-                }
-            }, null, new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    app.finish();
-                }
-            }, 0);
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            app.finish();
+                        }
+                    }, null, new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            app.finish();
+                        }
+                    }, 0);
         }
 
     }

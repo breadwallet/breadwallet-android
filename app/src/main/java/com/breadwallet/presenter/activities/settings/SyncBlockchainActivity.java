@@ -86,7 +86,6 @@ public class SyncBlockchainActivity extends BRActivity {
         super.onResume();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
     }
 
     @Override

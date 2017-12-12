@@ -62,35 +62,17 @@ public class ActivityUTILS {
         window.setStatusBarColor(app.getColor(color));
     }
 
-    public static void init(Activity app) {
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                HTTPServer.startServer();
-            }
-        });
-        //set status bar color
-//        ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
-        InternetManager.getInstance();
-        if (!(app instanceof IntroActivity || app instanceof RecoverActivity || app instanceof WriteDownActivity))
-            BRApiManager.getInstance().startTimer(app);
-        //show wallet locked if it is
-        if (!isAppSafe(app))
-            if (AuthManager.getInstance().isWalletDisabled(app))
-                AuthManager.getInstance().setWalletDisabled(app);
-
-    }
 
     //return true if the app does need to show the disabled wallet screen
-    private static boolean isAppSafe(Activity app) {
+    public static boolean isAppSafe(Activity app) {
         return app instanceof SetPinActivity || app instanceof InputWordsActivity;
     }
 
-    public static void showWalletDisabled(Activity app, double waitTimeMinutes) {
+    public static void showWalletDisabled(Activity app) {
         Intent intent = new Intent(app, DisabledActivity.class);
-        intent.putExtra("waitTimeMinutes", waitTimeMinutes);
         app.startActivity(intent);
         app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
+        Log.e(TAG, "showWalletDisabled: " + app.getClass().getName());
 
     }
 

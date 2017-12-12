@@ -1,25 +1,25 @@
 package com.breadwallet.presenter.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.constraint.ConstraintLayout;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.WebViewActivity;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
+import com.jniwrappers.BRKey;
 
 import java.util.Locale;
 
@@ -28,7 +28,7 @@ public class DisabledActivity extends BRActivity {
     private static final String TAG = DisabledActivity.class.getName();
     private TextView untilLabel;
     private TextView disabled;
-//    private TextView attempts;
+    //    private TextView attempts;
     private ConstraintLayout layout;
     private Button resetButton;
     private CountDownTimer timer;
@@ -39,7 +39,6 @@ public class DisabledActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_disabled);
 
-        ActivityUTILS.init(this);
         untilLabel = (TextView) findViewById(R.id.until_label);
         layout = (ConstraintLayout) findViewById(R.id.layout);
         disabled = (TextView) findViewById(R.id.disabled);
@@ -97,9 +96,10 @@ public class DisabledActivity extends BRActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        final double waitTimeMinutes = getIntent().getDoubleExtra("waitTimeMinutes", 0);
-        if (waitTimeMinutes == 0) throw new IllegalArgumentException("can't be 0");
-        int seconds = (int) waitTimeMinutes * 60;
+        long disabledUntil = AuthManager.getInstance().disabledUntil(this);
+        Log.e(TAG, "onResume: disabledUntil: " + disabledUntil + ", diff: " + (disabledUntil - BRSharedPrefs.getSecureTime(this)));
+        long disabledTime = disabledUntil - System.currentTimeMillis();
+        int seconds = (int) disabledTime / 1000;
         timer = new CountDownTimer(seconds * 1000, 1000) {
             public void onTick(long millisUntilFinished) {
                 long durationSeconds = (millisUntilFinished / 1000);

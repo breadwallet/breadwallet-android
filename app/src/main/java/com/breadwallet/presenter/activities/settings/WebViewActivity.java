@@ -196,7 +196,6 @@ public class WebViewActivity extends BRActivity {
         super.onResume();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
     }
 
     @Override

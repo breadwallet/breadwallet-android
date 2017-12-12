@@ -83,7 +83,6 @@ public class SetPinActivity extends BRActivity {
         introSetPitActivity = this;
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
     }
 
     @Override

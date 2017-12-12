@@ -64,7 +64,6 @@ public class ImportActivity extends BRActivity {
         super.onResume();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
     }
 
     @Override

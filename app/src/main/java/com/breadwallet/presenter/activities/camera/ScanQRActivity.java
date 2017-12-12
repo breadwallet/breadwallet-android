@@ -108,7 +108,6 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
         super.onResume();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
         if (qrCodeReaderView != null) {
             qrCodeReaderView.startCamera();
         }

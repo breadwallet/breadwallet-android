@@ -148,7 +148,7 @@ public class BRWalletManager {
         list = Bip39Reader.bip39List(ctx, languageCode);
         words = list.toArray(new String[list.size()]);
         final byte[] randomSeed = sr.generateSeed(16);
-        if (words.length < 2000) {
+        if (words.length < 2048) {
             BRReportsManager.reportBug(new IllegalArgumentException("the list is wrong, size: " + words.length), true);
         }
         if (randomSeed.length == 0) throw new NullPointerException("failed to create the seed");
