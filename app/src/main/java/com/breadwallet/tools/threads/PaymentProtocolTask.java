@@ -354,7 +354,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 app.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        AuthManager.getInstance().authPrompt(app, "Confirmation", message, false, new BRAuthCompletion() {
+                        AuthManager.getInstance().authPrompt(app, "Confirmation", message, false, false,new BRAuthCompletion() {
                             @Override
                             public void onComplete() {
                                 PostAuth.getInstance().setTmpPaymentRequest(paymentRequest);

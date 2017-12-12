@@ -1,7 +1,6 @@
 package com.breadwallet.tools.util;
 
 import com.breadwallet.tools.manager.BRReportsManager;
-import com.google.firebase.crash.FirebaseCrash;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;

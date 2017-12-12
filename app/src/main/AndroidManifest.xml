@@ -19,7 +19,7 @@
     <!-- Allows unlocking your device and activating its screen so UI tests can succeed -->
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
     <!-- Allows changing locales -->
-    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION" />
+    <uses-permission android:name="android.permission.CHANGE_CONFIGURATION"/>
 
     <uses-feature
         android:name="android.hardware.location.gps"
@@ -84,6 +84,9 @@
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
+            <meta-data
+                android:name="io.fabric.ApiKey"
+                android:value="8f7c58228ac371e49f7c5e8b1a94c4c0833986a1"/>
         </activity>
         <activity
             android:name=".presenter.activities.SetPinActivity"

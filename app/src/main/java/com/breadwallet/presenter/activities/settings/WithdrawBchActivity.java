@@ -241,7 +241,7 @@ public class WithdrawBchActivity extends BRActivity {
                             }
                         }, null, null, 0);
             } else {
-                AuthManager.getInstance().authPrompt(app, app.getString(R.string.BCH_confirmationTitle), theAddress, true, new BRAuthCompletion() {
+                AuthManager.getInstance().authPrompt(app, app.getString(R.string.BCH_confirmationTitle), theAddress, true, false, new BRAuthCompletion() {
                     @Override
                     public void onComplete() {
                         PostAuth.getInstance().onSendBch(getApp(), false, address);

@@ -16,14 +16,12 @@ import android.util.Log;
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
-import com.google.firebase.crash.FirebaseCrash;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
@@ -245,6 +243,7 @@ public class BRKeyStore {
                 KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                 .setBlockModes(NEW_BLOCK_MODE)
                 .setUserAuthenticationRequired(auth_required)
+//                .setInvalidatedByBiometricEnrollment()
                 .setUserAuthenticationValidityDurationSeconds(AUTH_DURATION_SEC)
                 .setRandomizedEncryptionRequired(false)
                 .setEncryptionPaddings(NEW_PADDING)
