@@ -31,10 +31,6 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.SmartValidator;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
-import com.google.firebase.crash.FirebaseCrash;
-
-import java.io.IOException;
-import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 

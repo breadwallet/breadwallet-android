@@ -171,7 +171,7 @@ public class LoginActivity extends BRActivity {
             }
         });
 
-        boolean useFingerprint = AuthManager.isFingerPrintAvailableAndSetup(this) && BRSharedPrefs.getUseFingerprint(this);
+        final boolean useFingerprint = AuthManager.isFingerPrintAvailableAndSetup(this) && BRSharedPrefs.getUseFingerprint(this);
 //        Log.e(TAG, "onCreate: isFingerPrintAvailableAndSetup: " + useFingerprint);
         fingerPrint.setVisibility(useFingerprint ? View.VISIBLE : View.GONE);
 
@@ -179,7 +179,7 @@ public class LoginActivity extends BRActivity {
             fingerPrint.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AuthManager.getInstance().authPrompt(LoginActivity.this, "", "", false, new BRAuthCompletion() {
+                    AuthManager.getInstance().authPrompt(LoginActivity.this, "", "", false, true, new BRAuthCompletion() {
                         @Override
                         public void onComplete() {
 //                            AuthManager.getInstance().authSuccess(LoginActivity.this);
@@ -197,7 +197,7 @@ public class LoginActivity extends BRActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (fingerPrint != null && BRSharedPrefs.getUseFingerprint(LoginActivity.this))
+                if (fingerPrint != null && useFingerprint)
                     fingerPrint.performClick();
             }
         }, 500);

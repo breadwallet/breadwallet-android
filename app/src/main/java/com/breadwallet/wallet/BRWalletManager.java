@@ -58,11 +58,9 @@ import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
-import com.google.firebase.crash.FirebaseCrash;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.ArrayList;

@@ -16,7 +16,6 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
-import com.google.firebase.crash.FirebaseCrash;
 
 import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.server.Request;

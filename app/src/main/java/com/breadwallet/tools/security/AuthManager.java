@@ -203,7 +203,7 @@ public class AuthManager {
         }
     }
 
-    public void authPrompt(final Context context, String title, String message, boolean forcePin, BRAuthCompletion completion) {
+    public void authPrompt(final Context context, String title, String message, boolean forcePin, boolean forceFingerprint, BRAuthCompletion completion) {
         if (context == null || !(context instanceof Activity)) {
             Log.e(TAG, "authPrompt: context is null or not Activity: " + context);
             return;
@@ -220,6 +220,9 @@ public class AuthManager {
         if (passTime + TimeUnit.MILLISECONDS.convert(2, TimeUnit.DAYS) <= System.currentTimeMillis()) {
             useFingerPrint = false;
         }
+
+        if (forceFingerprint)
+            useFingerPrint = true;
 
         if (forcePin)
             useFingerPrint = false;
