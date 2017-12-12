@@ -109,6 +109,7 @@ public class PostAuth {
             byte[] raw = BRKeyStore.getPhrase(app, BRConstants.SHOW_PHRASE_REQUEST_CODE);
             if (raw == null) {
                 BRReportsManager.reportBug(new NullPointerException("onPhraseCheckAuth: getPhrase = null"), true);
+                return;
             }
             cleanPhrase = new String(raw);
         } catch (UserNotAuthenticatedException e) {
@@ -372,7 +373,8 @@ public class PostAuth {
         try {
             canary = BRKeyStore.getCanary(app, BRConstants.CANARY_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
-            if (authAsked) BRReportsManager.reportBug(new BRKeystoreErrorException("authenticated but still failed to init the cipher!"));
+            if (authAsked)
+                BRReportsManager.reportBug(new BRKeystoreErrorException("authenticated but still failed to init the cipher!"));
             return;
         }
         if (canary == null || !canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
