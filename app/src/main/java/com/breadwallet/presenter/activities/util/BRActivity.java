@@ -172,7 +172,6 @@ public class BRActivity extends Activity {
     }
 
     public static void init(Activity app) {
-
         //set status bar color
 //        ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
         InternetManager.getInstance();

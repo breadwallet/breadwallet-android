@@ -72,10 +72,7 @@ public class DisabledActivity extends BRActivity {
             }
         });
 
-
-//        int failCount = BRKeyStore.getFailCount(this);
         untilLabel.setText("");
-//        attempts.setText(String.format(Locale.getDefault(), getString(R.string.Disabled_remainingAttempts_Android), (8 - failCount)));
 
     }
 
@@ -97,7 +94,7 @@ public class DisabledActivity extends BRActivity {
     protected void onResume() {
         super.onResume();
         long disabledUntil = AuthManager.getInstance().disabledUntil(this);
-        Log.e(TAG, "onResume: disabledUntil: " + disabledUntil + ", diff: " + (disabledUntil - BRSharedPrefs.getSecureTime(this)));
+//        Log.e(TAG, "onResume: disabledUntil: " + disabledUntil + ", diff: " + (disabledUntil - BRSharedPrefs.getSecureTime(this)));
         long disabledTime = disabledUntil - System.currentTimeMillis();
         int seconds = (int) disabledTime / 1000;
         timer = new CountDownTimer(seconds * 1000, 1000) {
