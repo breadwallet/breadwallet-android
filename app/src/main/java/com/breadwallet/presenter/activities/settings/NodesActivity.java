@@ -218,7 +218,6 @@ public class NodesActivity extends BRActivity {
         super.onResume();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
         mHandler = new Handler();
         startRepeatingTask();
     }

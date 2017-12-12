@@ -90,7 +90,6 @@ public class SecurityCenterActivity extends BRActivity {
         updateList();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
     }
 
     @Override

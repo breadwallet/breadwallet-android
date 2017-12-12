@@ -1006,7 +1006,6 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
         super.onResume();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
         startBackgroundThread();
         imageTaken = false;
 

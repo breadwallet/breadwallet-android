@@ -101,7 +101,6 @@ public class SettingsActivity extends BRActivity {
         super.onResume();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
         if (items == null)
             items = new ArrayList<>();
         items.clear();
