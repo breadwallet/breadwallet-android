@@ -372,7 +372,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
         jbyteArray JtxHash = (*env)->NewByteArray(env, sizeof(txid));
         (*env)->SetByteArrayRegion(env, JtxHash, 0, (jsize) sizeof(txid), (jbyte *) txid.u8);
 
-        UInt256 reversedHash = UInt256Reverse(( txid));
+        UInt256 reversedHash = UInt256Reverse((txid));
 
         jstring txReversed = (*env)->NewStringUTF(env, u256_hex_encode(reversedHash));
 
@@ -865,6 +865,7 @@ Java_com_breadwallet_wallet_BRWalletManager_reverseTxHash(JNIEnv *env, jobject t
 
     return (*env)->NewStringUTF(env, u256_hex_encode(reversedHash));
 }
+
 JNIEXPORT jstring JNICALL
 Java_com_breadwallet_wallet_BRWalletManager_txHashToHex(JNIEnv *env, jobject thiz,
                                                         jbyteArray txHash) {
