@@ -156,6 +156,10 @@ public class BRWalletManager {
         if (strPhrase == null || strPhrase.length == 0) {
             BRReportsManager.reportBug(new NullPointerException("failed to encodeSeed"), true);
         }
+        String[] splitPhrase = new String(strPhrase).split(" ");
+        if (splitPhrase.length != 12) {
+            BRReportsManager.reportBug(new NullPointerException("phrase does not have 12 words:" + splitPhrase.length + ", lang: " + languageCode), true);
+        }
         boolean success = false;
         try {
             success = BRKeyStore.putPhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
