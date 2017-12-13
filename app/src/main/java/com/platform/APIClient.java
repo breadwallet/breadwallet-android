@@ -758,7 +758,7 @@ public class APIClient {
         });
 
         //update feature flags
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 try {

@@ -37,6 +37,7 @@ import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
+import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
 
 import org.junit.Assert;
