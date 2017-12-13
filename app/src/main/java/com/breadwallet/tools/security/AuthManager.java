@@ -238,8 +238,8 @@ public class AuthManager {
         }
 
         if (keyguardManager.isKeyguardSecure()) {
-            if (useFingerPrint) {
 
+            if (useFingerPrint) {
                 fingerprintFragment = new FragmentFingerprint();
                 Bundle args = new Bundle();
                 args.putString("title", title);
