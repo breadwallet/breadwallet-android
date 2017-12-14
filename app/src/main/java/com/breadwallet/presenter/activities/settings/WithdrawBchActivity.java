@@ -78,12 +78,9 @@ public class WithdrawBchActivity extends BRActivity {
             BRReportsManager.reportBug(new NullPointerException("WithdrawBchActivity: onCreate: pubkey is missing!"));
         }
         long satoshis = BRWalletManager.getBCashBalance(pubkey);
-        String iso = BRSharedPrefs.getPreferredBTC(this) ? "BTC" : BRSharedPrefs.getIso(this);
-        BigDecimal amount = iso.equalsIgnoreCase("BTC") ?
-                BRExchange.getBitcoinForSatoshis(this, new BigDecimal(satoshis)) :
-                BRExchange.getAmountFromSatoshis(this, iso, new BigDecimal(satoshis));
+        BigDecimal amount = BRExchange.getBitcoinForSatoshis(this, new BigDecimal(satoshis));
 
-        String balance = BRCurrency.getFormattedCurrencyString(this, iso, amount);
+        String balance = BRCurrency.getFormattedCurrencyString(this, "BTC", amount);
         description.setText(String.format(getString(R.string.BCH_body), balance));
 
         txHash.setOnClickListener(new View.OnClickListener() {
@@ -181,6 +178,16 @@ public class WithdrawBchActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
+                if (BRWalletManager.getBCashBalance(BRKeyStore.getMasterPublicKey(app)) == 0) {
+                    BRDialog.showCustomDialog(app, "", app.getString(R.string.BCH_genericError), app.getString(R.string.AccessibilityLabels_close), null,
+                            new BRDialogView.BROnClickListener() {
+                                @Override
+                                public void onClick(BRDialogView brDialogView) {
+                                    brDialogView.dismissWithAnimation();
+                                }
+                            }, null, null, 0);
+                    return;
+                }
                 BRAnimator.openScanner(WithdrawBchActivity.this, SCANNER_BCH_REQUEST);
             }
         });

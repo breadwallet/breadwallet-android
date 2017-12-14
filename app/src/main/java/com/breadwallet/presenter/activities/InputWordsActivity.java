@@ -242,7 +242,8 @@ public class InputWordsActivity extends BRActivity {
         overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         startActivity(intent);
         if (!InputWordsActivity.this.isDestroyed()) finish();
-        if (!BreadActivity.getApp().isDestroyed()) BreadActivity.getApp().finish();
+        Activity app = BreadActivity.getApp();
+        if (app != null && !app.isDestroyed()) app.finish();
     }
 
     @Override
