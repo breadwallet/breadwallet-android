@@ -130,6 +130,7 @@ public class BitcoinUrlHandler {
         try {
             uri = URI.create(tmp);
         } catch (IllegalArgumentException ex) {
+            Log.e(TAG, "getRequestFromString: ", ex);
             return null;
         }
 
