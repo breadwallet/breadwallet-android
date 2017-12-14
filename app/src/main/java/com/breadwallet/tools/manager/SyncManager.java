@@ -63,11 +63,11 @@ public class SyncManager {
         alarmManager.setWindow(AlarmManager.RTC_WAKEUP, time, time + TimeUnit.MINUTES.toMillis(1), pendingIntent);//first start will start asap
     }
 
-    public void updateAlarms(Context app) {
+    public synchronized void updateAlarms(Context app) {
         createAlarm(app, System.currentTimeMillis() + SYNC_PERIOD);
     }
 
-    public void startSyncingProgressThread() {
+    public synchronized void startSyncingProgressThread() {
         Log.d(TAG, "startSyncingProgressThread:" + Thread.currentThread().getName());
 
         try {
@@ -88,7 +88,7 @@ public class SyncManager {
 
     }
 
-    public void stopSyncingProgressThread() {
+    public synchronized void stopSyncingProgressThread() {
         Log.d(TAG, "stopSyncingProgressThread");
         final BreadActivity ctx = BreadActivity.getApp();
         if (ctx == null) {

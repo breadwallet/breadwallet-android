@@ -281,7 +281,7 @@ public class BRWalletManager {
 
     }
 
-    public void wipeAll(Context app){
+    public void wipeAll(Context app) {
 
         wipeKeyStore(app);
         wipeWalletButKeystore(app);
@@ -439,8 +439,11 @@ public class BRWalletManager {
                         AudioManager audioManager = (AudioManager) finalCtx.getSystemService(Context.AUDIO_SERVICE);
                         if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
                             final MediaPlayer mp = MediaPlayer.create(finalCtx, R.raw.coinflip);
-                            mp.start();
-
+                            if (mp != null) try {
+                                mp.start();
+                            } catch (IllegalArgumentException ex) {
+                                Log.e(TAG, "run: ", ex);
+                            }
                         }
 
                         if (!BreadActivity.appVisible && BRSharedPrefs.getShowNotification(finalCtx))
