@@ -50,6 +50,8 @@ public class BRToast {
 
     public static void showCustomToast(Context app, String message, int yOffSet, int duration, int layoutDrawable) {
         if (app == null) return;
+        if (!(app instanceof Activity)) app = BreadApp.getBreadContext();
+        if (app == null) return;
         if (toast == null) toast = new Toast(app);
         if (!BreadApp.isAppInBackground(app)) return;
 
