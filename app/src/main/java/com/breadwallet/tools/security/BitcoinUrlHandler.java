@@ -126,7 +126,12 @@ public class BitcoinUrlHandler {
             else
                 tmp = tmp.replace("bitcoin:", "bitcoin://");
         }
-        URI uri = URI.create(tmp);
+        URI uri;
+        try {
+            uri = URI.create(tmp);
+        } catch (IllegalArgumentException ex) {
+            return null;
+        }
 
         String host = uri.getHost();
         if (host != null) {
