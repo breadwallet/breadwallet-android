@@ -111,7 +111,7 @@ public class FragmentTransactionDetails extends Fragment {
         BRAnimator.animateSignalSlide(txViewPager, true, new BRAnimator.OnSlideAnimationEnd() {
             @Override
             public void onAnimationEnd() {
-                if (app != null)
+                if (app != null && !app.isDestroyed())
                     app.getFragmentManager().popBackStack();
                 else
                     Log.e(TAG, "onAnimationEnd: app is null");
