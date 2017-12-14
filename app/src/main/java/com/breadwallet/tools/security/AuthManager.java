@@ -238,7 +238,6 @@ public class AuthManager {
         }
 
         if (keyguardManager.isKeyguardSecure()) {
-
             if (useFingerPrint) {
                 fingerprintFragment = new FragmentFingerprint();
                 Bundle args = new Bundle();

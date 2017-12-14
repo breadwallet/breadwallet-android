@@ -193,7 +193,8 @@ Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env, jobject thiz
     int wordsCount = (*env)->GetArrayLength(env, stringArray);
     int seedLength = (*env)->GetArrayLength(env, seed);
     const char *wordList[wordsCount];
-
+    assert(seedLength == 16);
+    assert(wordsCount == 2048);
     for (int i = 0; i < wordsCount; i++) {
         jstring string = (jstring) (*env)->GetObjectArrayElement(env, stringArray, i);
         const char *rawString = (*env)->GetStringUTFChars(env, string, 0);
@@ -201,16 +202,21 @@ Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env, jobject thiz
         wordList[i] = rawString;
         (*env)->DeleteLocalRef(env, string);
     }
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "encodeSeed: %zu", sizeof(wordList));
 
     jbyte *byteSeed = (*env)->GetByteArrayElements(env, seed, 0);
-    char result[BRBIP39Encode(NULL, 0, wordList, (uint8_t *) byteSeed, (size_t) seedLength)];
+    size_t size = BRBIP39Encode(NULL, 0, wordList, (uint8_t *) byteSeed, (size_t) seedLength);
+    char result[size];
+    jbyteArray bytePhrase = NULL;
 
-    BRBIP39Encode((char *) result, sizeof(result), wordList, (const uint8_t *) byteSeed,
-                  (size_t) seedLength);
-    jbyte *phraseJbyte = (jbyte *) result;
-    int size = sizeof(result) - 1;
-    jbyteArray bytePhrase = (*env)->NewByteArray(env, size);
-    (*env)->SetByteArrayRegion(env, bytePhrase, 0, size, phraseJbyte);
+    size = BRBIP39Encode(result, sizeof(result), wordList, (const uint8_t *) byteSeed,
+                         (size_t) seedLength);
+
+    if (size > 0) {
+        bytePhrase = (*env)->NewByteArray(env, (int) size - 1);
+        (*env)->SetByteArrayRegion(env, bytePhrase, 0, (int) size - 1, (jbyte *) result);
+
+    }
 
     return bytePhrase;
 }

@@ -22,6 +22,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.BRWalletManager;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
@@ -184,10 +185,10 @@ public class BRKeyStore {
                 try {
                     inCipher.init(Cipher.ENCRYPT_MODE, secretKey);
                 } catch (InvalidKeyException ignored) {
-                    Log.e(TAG, "_setData: OLD KEY PRESENT");
                     if (ignored instanceof UserNotAuthenticatedException) {
                         throw ignored;
                     }
+                    Log.e(TAG, "_setData: OLD KEY PRESENT: " + alias);
                     //create new key and reinitialize the cipher
                     secretKey = createKeys(alias, auth_required);
                     inCipher.init(Cipher.ENCRYPT_MODE, secretKey);
@@ -243,7 +244,6 @@ public class BRKeyStore {
                 KeyProperties.PURPOSE_ENCRYPT | KeyProperties.PURPOSE_DECRYPT)
                 .setBlockModes(NEW_BLOCK_MODE)
                 .setUserAuthenticationRequired(auth_required)
-//                .setInvalidatedByBiometricEnrollment()
                 .setUserAuthenticationValidityDurationSeconds(AUTH_DURATION_SEC)
                 .setRandomizedEncryptionRequired(false)
                 .setEncryptionPaddings(NEW_PADDING)
@@ -399,7 +399,7 @@ public class BRKeyStore {
                 throw new IllegalArgumentException("keystore auth_required is true but alias is: " + alias);
     }
 
-    private static void showKeyInvalidated(final Context app) {
+    public static void showKeyInvalidated(final Context app) {
         BRDialog.showCustomDialog(app, app.getString(R.string.Alert_keystore_title_android), app.getString(R.string.Alert_keystore_invalidated_android), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {
@@ -408,7 +408,8 @@ public class BRKeyStore {
         }, null, new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                resetWalletKeyStore(app);
+                BRWalletManager.getInstance().wipeWalletButKeystore(app);
+                BRWalletManager.getInstance().wipeKeyStore(app);
                 dialog.dismiss();
             }
         }, 0);
@@ -786,7 +787,12 @@ public class BRKeyStore {
                 BRReportsManager.reportBug(ex, true);
                 return;
             }
-            Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(context.getString(R.string.UnlockScreen_touchIdTitle_android), context.getString(R.string.UnlockScreen_touchIdPrompt_android));
+            String message = context.getString(R.string.UnlockScreen_touchIdPrompt_android);
+            if (Utils.isEmulatorOrDebug(app)) {
+                message = alias;
+            }
+            Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(context.getString(R.string.UnlockScreen_touchIdTitle_android), message);
+
             if (Utils.isEmulatorOrDebug(context))
                 intent = mKeyguardManager.createConfirmDeviceCredentialIntent(alias, context.getString(R.string.UnlockScreen_touchIdPrompt_android));
             if (intent != null) {

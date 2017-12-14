@@ -138,25 +138,30 @@ public class BRWalletManager {
         return instance;
     }
 
-    public boolean generateRandomSeed(final Context ctx) {
+    public synchronized boolean generateRandomSeed(final Context ctx) {
         SecureRandom sr = new SecureRandom();
         final String[] words;
         List<String> list;
         String languageCode = Locale.getDefault().getLanguage();
+        if (languageCode == null) languageCode = "en";
         list = Bip39Reader.bip39List(ctx, languageCode);
         words = list.toArray(new String[list.size()]);
         final byte[] randomSeed = sr.generateSeed(16);
-        if (words.length < 2048) {
+        if (words.length != 2048) {
             BRReportsManager.reportBug(new IllegalArgumentException("the list is wrong, size: " + words.length), true);
+            return false;
         }
-        if (randomSeed.length == 0) throw new NullPointerException("failed to create the seed");
+        if (randomSeed.length != 16)
+            throw new NullPointerException("failed to create the seed, seed length is not 128: " + randomSeed.length);
         byte[] strPhrase = encodeSeed(randomSeed, words);
         if (strPhrase == null || strPhrase.length == 0) {
             BRReportsManager.reportBug(new NullPointerException("failed to encodeSeed"), true);
+            return false;
         }
         String[] splitPhrase = new String(strPhrase).split(" ");
         if (splitPhrase.length != 12) {
             BRReportsManager.reportBug(new NullPointerException("phrase does not have 12 words:" + splitPhrase.length + ", lang: " + languageCode), true);
+            return false;
         }
         boolean success = false;
         try {
@@ -274,6 +279,12 @@ public class BRWalletManager {
             }
         });
 
+    }
+
+    public void wipeAll(Context app){
+
+        wipeKeyStore(app);
+        wipeWalletButKeystore(app);
     }
 
     public boolean confirmSweep(final Context ctx, final String privKey) {
