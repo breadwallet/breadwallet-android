@@ -86,6 +86,7 @@ public class IntroActivity extends BRActivity implements Serializable {
         splashScreen = findViewById(R.id.splash_screen);
         setListeners();
         updateBundles();
+
 //        if (Utils.isEmulatorOrDebug(this)) BRKeyStore.putFailCount(0, this);
 //        SyncManager.getInstance().updateAlarms(this);
         faq = (ImageButton) findViewById(R.id.faq_button);

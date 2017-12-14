@@ -31,6 +31,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
+import com.jniwrappers.BRKey;
 import com.platform.APIClient;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.BRBitId;
@@ -96,7 +97,6 @@ public class PostAuth {
             Intent intent = new Intent(app, WriteDownActivity.class);
             app.startActivity(intent);
             app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-
         } else {
             Log.e(TAG, "onCreateWalletAuth: Failed to generateSeed");
 
@@ -113,7 +113,8 @@ public class PostAuth {
             }
             cleanPhrase = new String(raw);
         } catch (UserNotAuthenticatedException e) {
-            BRReportsManager.reportBug(new UserNotAuthenticatedException("onPhraseCheckAuth: HUH? double auth for phrase"));
+            BRReportsManager.reportBug(new UserNotAuthenticatedException("onPhraseCheckAuth: Double auth for phrase"));
+            BRWalletManager.getInstance().wipeAll(app);
             return;
         }
         Intent intent = new Intent(app, PaperKeyActivity.class);
@@ -127,7 +128,8 @@ public class PostAuth {
         try {
             cleanPhrase = new String(BRKeyStore.getPhrase(app, BRConstants.PROVE_PHRASE_REQUEST));
         } catch (UserNotAuthenticatedException e) {
-            BRReportsManager.reportBug(new UserNotAuthenticatedException("onPhraseProveAuth: HUH? double auth for phrase"));
+            BRReportsManager.reportBug(new UserNotAuthenticatedException("onPhraseProve: Double auth for phrase"));
+            BRWalletManager.getInstance().wipeAll(app);
             return;
         }
         Intent intent = new Intent(app, PaperKeyProveActivity.class);
@@ -154,7 +156,8 @@ public class PostAuth {
                 success = BRKeyStore.putPhrase(phraseForKeyStore.getBytes(),
                         app, BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
             } catch (UserNotAuthenticatedException e) {
-                BRReportsManager.reportBug(new NullPointerException("onRecoverWalletAuth: HUH? double auth for phrase"));
+                BRReportsManager.reportBug(new UserNotAuthenticatedException("onRecoverWalletAuth: Double auth for phrase"));
+                BRWalletManager.getInstance().wipeAll(app);
                 return;
             }
 
@@ -199,6 +202,8 @@ public class PostAuth {
         try {
             rawSeed = BRKeyStore.getPhrase(app, BRConstants.PAY_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
+            BRReportsManager.reportBug(new UserNotAuthenticatedException("onPublishTxAuth: Double auth for phrase"));
+            BRWalletManager.getInstance().wipeAll(app);
             return;
         }
         if (rawSeed.length < 10) return;
@@ -237,6 +242,8 @@ public class PostAuth {
         try {
             phrase = BRKeyStore.getPhrase(app, BRConstants.SEND_BCH_REQUEST);
         } catch (UserNotAuthenticatedException e) {
+            BRReportsManager.reportBug(new UserNotAuthenticatedException("onSendBch: Double auth for phrase"));
+            BRWalletManager.getInstance().wipeAll(app);
             return;
         }
         if (Utils.isNullOrEmpty(phrase)) {
@@ -334,6 +341,8 @@ public class PostAuth {
         try {
             rawSeed = BRKeyStore.getPhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
+            BRReportsManager.reportBug(new UserNotAuthenticatedException("onPaymentProtocolRequest: Double auth for phrase"));
+            BRWalletManager.getInstance().wipeAll(app);
             return;
         }
         if (rawSeed == null || rawSeed.length < 10 || paymentRequest.serializedTx == null) {
@@ -375,12 +384,8 @@ public class PostAuth {
         try {
             canary = BRKeyStore.getCanary(app, BRConstants.CANARY_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
-            if (authAsked) {
-                BRReportsManager.reportBug(new BRKeystoreErrorException("authenticated but still failed to init the cipher!"));
-                //Clear the wallet
-                BRWalletManager.getInstance().wipeKeyStore(app);
-                BRWalletManager.getInstance().wipeWalletButKeystore(app);
-            }
+            BRReportsManager.reportBug(new UserNotAuthenticatedException("onCanaryCheck: Double auth for canary"));
+            BRWalletManager.getInstance().wipeAll(app);
             return;
         }
         if (canary == null || !canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
