@@ -16,6 +16,8 @@ import android.view.WindowManager;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.listeners.SyncReceiver;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.util.Utils;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -65,14 +67,10 @@ public class BreadApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-
-        if (0 != (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
+        if (Utils.isEmulatorOrDebug(this)) {
+//            BRKeyStore.putFailCount(0, this);
             HOST = "stage2.breadwallet.com";
-            //        StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-//                .detectAll()
-//                .penaltyLog()
-////                .penaltyDeath()
-//                .build());
+            FirebaseCrash.setCrashCollectionEnabled(false);
         }
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
