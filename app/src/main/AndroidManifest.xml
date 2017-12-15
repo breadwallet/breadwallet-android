@@ -84,9 +84,6 @@
             <meta-data
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable"/>
-            <meta-data
-                android:name="io.fabric.ApiKey"
-                android:value="8f7c58228ac371e49f7c5e8b1a94c4c0833986a1"/>
         </activity>
         <activity
             android:name=".presenter.activities.SetPinActivity"
