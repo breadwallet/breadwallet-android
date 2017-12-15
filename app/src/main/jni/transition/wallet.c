@@ -445,6 +445,7 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
         (*env)->DeleteLocalRef(env, JtoAddresses);
         (*env)->DeleteLocalRef(env, JoutAmounts);
         (*env)->DeleteLocalRef(env, JtxHash);
+        (*env)->DeleteLocalRef(env, txReversed);
 
     }
 
