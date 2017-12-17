@@ -95,10 +95,10 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
 //        String iso = BRSharedPrefs.getIso(app);
 
-        String sentBits = BRCurrency.getFormattedCurrencyString(app, "BTC", BRExchange.getAmountFromSatoshis(app, "BTC", new BigDecimal(importPrivKeyEntity.getAmount())));
+        String sentBits = BRCurrency.getFormattedCurrencyString(app, "DGB", BRExchange.getAmountFromSatoshis(app, "DGB", new BigDecimal(importPrivKeyEntity.getAmount())));
 //        String sentExchange = BRCurrency.getFormattedCurrencyString(app, iso, BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(importPrivKeyEntity.getAmount())));
 
-        String feeBits = BRCurrency.getFormattedCurrencyString(app, "BTC", BRExchange.getAmountFromSatoshis(app, "BTC", new BigDecimal(importPrivKeyEntity.getFee())));
+        String feeBits = BRCurrency.getFormattedCurrencyString(app, "DGB", BRExchange.getAmountFromSatoshis(app, "DGB", new BigDecimal(importPrivKeyEntity.getFee())));
 //        String feeExchange = BRCurrency.getFormattedCurrencyString(app, iso, BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(importPrivKeyEntity.getFee())));
 
         if (app == null || importPrivKeyEntity == null) return;

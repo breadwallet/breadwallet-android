@@ -430,7 +430,7 @@ public class APIClient {
             Log.e(TAG, "sendRequest: failed to retrieve token");
             return null;
         }
-        String authValue = "bread " + token + ":" + signedRequest;
+        String authValue = "digibyte " + token + ":" + signedRequest;
 //            Log.e(TAG, "sendRequest: authValue: " + authValue);
         modifiedRequest = request.newBuilder();
 
@@ -704,7 +704,7 @@ public class APIClient {
 
     public boolean isBreadChallenge(Response resp) {
         String challenge = resp.header("www-authenticate");
-        return challenge != null && challenge.startsWith("bread");
+        return challenge != null && challenge.startsWith("digibyte");
     }
 
     public boolean isFeatureEnabled(String feature) {

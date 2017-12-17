@@ -70,7 +70,7 @@ import okhttp3.Response;
  */
 public class BRBitId {
     public static final String TAG = BRBitId.class.getName();
-    public static final String BITCOIN_SIGNED_MESSAGE_HEADER = "Bitcoin Signed Message:\n";
+    public static final String BITCOIN_SIGNED_MESSAGE_HEADER = "Digibyte Signed Message:\n";
 
     private static String _bitUri;
     private static String _bitIdUrl;
@@ -82,7 +82,7 @@ public class BRBitId {
     public static boolean isBitId(String uri) {
         try {
             URI bitIdUri = new URI(uri);
-            if ("bitid".equals(bitIdUri.getScheme())) {
+            if ("digiid".equals(bitIdUri.getScheme())) {
                 return true;
             }
         } catch (URISyntaxException e) {
@@ -95,14 +95,14 @@ public class BRBitId {
 
         if (uri == null && jsonBody != null) {
             try {
-                uri = jsonBody.getString("bitid_url");
+                uri = jsonBody.getString("digiid url");
             } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
         if (uri == null) {
-            Log.e(TAG, "signBitID: uri is null");
+            Log.e(TAG, "signDigiID: uri is null");
             return;
         }
         _bitUri = uri;
@@ -112,7 +112,7 @@ public class BRBitId {
             bitIdUri = new URI(_bitUri);
         } catch (URISyntaxException e) {
             e.printStackTrace();
-            Log.e(TAG, "signBitID: returning false: ", e);
+            Log.e(TAG, "signDigiID: returning false: ", e);
             return;
         }
 
@@ -122,19 +122,19 @@ public class BRBitId {
         if (jsonBody != null) {
             try {
                 _promptString = jsonBody.getString("prompt_string");
-                _bitIdUrl = jsonBody.getString("bitid_url");
-                _index = jsonBody.getInt("bitid_index");
+                _bitIdUrl = jsonBody.getString("digiid_url");
+                _index = jsonBody.getInt("digiid_index");
                 _strToSign = jsonBody.getString("string_to_sign");
             } catch (JSONException e) {
                 e.printStackTrace();
                 return;
             }
-        } else if ("bitid".equals(bitIdUri.getScheme())) {
+        } else if ("digiid".equals(bitIdUri.getScheme())) {
             if (app == null) {
-                Log.e(TAG, "signBitID: app is null, returning true still");
+                Log.e(TAG, "signDigiID: app is null, returning true still");
                 return;
             }
-            _promptString = "BitID Authentication Request";
+            _promptString = "DigiID Authentication Request";
         }
 
 //        Log.e(TAG, "signBitID: _bitUri: " + _bitUri);
@@ -183,11 +183,11 @@ public class BRBitId {
             return;
         }
         if (app == null) {
-            Log.e(TAG, "completeBitID: app is null");
+            Log.e(TAG, "completeDigiID: app is null");
             return;
         }
         if (_bitUri == null) {
-            Log.e(TAG, "completeBitID: _bitUri is null");
+            Log.e(TAG, "completeDigiID _bitUri is null");
             return;
         }
 
@@ -202,7 +202,7 @@ public class BRBitId {
         nulTermPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
         seed = BRWalletManager.getSeedFromPhrase(nulTermPhrase);
         if (Utils.isNullOrEmpty(seed)) {
-            Log.e(TAG, "completeBitID: seed is null!");
+            Log.e(TAG, "completeDigiID: seed is null!");
             return;
         }
 
@@ -239,11 +239,11 @@ public class BRBitId {
         final String biUri = uri.getHost() == null ? uri.toString() : uri.getHost();
         final byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, biUri);
         if (key == null) {
-            Log.d(TAG, "bitIdPlatform: key is null!");
+            Log.d(TAG, "DigiIDPlatform: key is null!");
             return;
         }
         if (_strToSign == null) {
-            Log.d(TAG, "bitIdPlatform: _strToSign is null!");
+            Log.d(TAG, "DigiIDPlatform: _strToSign is null!");
             return;
         }
         final String sig = BRBitId.signMessage(_strToSign, new BRKey(key));
@@ -297,13 +297,13 @@ public class BRBitId {
 
         // build a payload consisting of the signature, address and signed uri
 
-        String uriWithNonce = String.format("bitid://%s%s?x=%s", uri.getHost(), uri.getPath(), nonce);
+        String uriWithNonce = String.format("digiid://%s%s?x=%s", uri.getHost(), uri.getPath(), nonce);
 
         Log.e(TAG, "LINK: callbackUrl:" + callbackUrl);
         final byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, _bitUri);
 
         if (key == null) {
-            Log.d(TAG, "completeBitID: key is null!");
+            Log.d(TAG, "completeDigiID: key is null!");
             return;
         }
 
@@ -326,10 +326,10 @@ public class BRBitId {
                 .header("Content-Type", "application/json")
                 .build();
         Response res = APIClient.getInstance(app).sendRequest(request, true, 0);
-        Log.e(TAG, "completeBitID: res.code: " + res.code());
-        Log.e(TAG, "completeBitID: res.code: " + res.message());
+        Log.e(TAG, "completeDigiID: res.code: " + res.code());
+        Log.e(TAG, "completeDigiID: res.code: " + res.message());
         try {
-            Log.e(TAG, "completeBitID: body: " + res.body().string());
+            Log.e(TAG, "completeDigiID: body: " + res.body().string());
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
