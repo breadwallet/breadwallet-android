@@ -89,7 +89,7 @@
   <!-- Approve button label -->
   <string name="BitID.approve">Aprobar</string>
   <!-- <sitename> is requesting authentication using your bitcoin wallet -->
-  <string name="BitID.authenticationRequest">%1$s está solicitando autenticación mediante tu cartera bitcoin</string>
+  <string name="BitID.authenticationRequest">%1$s está solicitando autenticación mediante tu cartera digibyte</string>
   <!-- Deny button label -->
   <string name="BitID.deny">Denegar</string>
   <!-- BitID error alert title -->
@@ -525,7 +525,7 @@
   <!-- Argument is date -->
   <string name="StartPaperPhrase.date">La última vez que anotaste tu clave en papel fue el %1$s</string>
   <!-- Start view message -->
-  <string name="StartViewController.message">La forma más segura de usar bitcoin.</string>
+  <string name="StartViewController.message">La forma más segura de usar digibyte.</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Conectando</string>
   <!-- Syncing view header text -->

@@ -169,12 +169,12 @@ public class BRApiManager {
 
 
     public static JSONArray fetchRates(Activity activity) {
-        String jsonString = urlGET(activity, String.format("https://%s/rates", BreadApp.HOST));
+        String jsonString = urlGET(activity, "https://digibyte.io/rates");
         JSONArray jsonArray = null;
         if (jsonString == null) return null;
         try {
             JSONObject obj = new JSONObject(jsonString);
-            jsonArray = obj.getJSONArray("body");
+            jsonArray = obj.getJSONArray("");
 
         } catch (JSONException ignored) {
         }

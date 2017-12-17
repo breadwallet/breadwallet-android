@@ -525,7 +525,7 @@
   <!-- Argument is date -->
   <string name="StartPaperPhrase.date">Du hast dir deinen Offlineschlüssel zuletzt am %1$s notiert</string>
   <!-- Start view message -->
-  <string name="StartViewController.message">Die sicherste Option zur Nutzung von Bitcoin.</string>
+  <string name="StartViewController.message">Die sicherste Option zur Nutzung von DigiByte.</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Verbindet</string>
   <!-- Syncing view header text -->

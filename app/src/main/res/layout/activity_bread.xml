@@ -55,7 +55,7 @@
                         android:layout_height="64dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
-                        android:src="@drawable/ic_bread_logo_white"
+                        android:src="@drawable/digibyte_logo"
                         android:textColor="@color/white"
                         android:textSize="36sp"
                         android:textStyle="bold"

@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
-        applicationId = 'com.breadwallet'
+        applicationId = 'io.digibyte'
         minSdkVersion 23
         targetSdkVersion 26
         versionCode 165
@@ -52,9 +52,9 @@ android {
 
     productFlavors {
         bread {
-            applicationId "com.breadwallet"
+            applicationId "io.digibyte"
             dimension "mode"
-            resValue "string", "app_name", "bread"
+            resValue "string", "app_name", "digibyte"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
 
             externalNativeBuild {
@@ -138,7 +138,7 @@ gradle.projectsEvaluated {
 
 
 def gitUpdateModules() {
-    ['sh', '-c', 'git submodule foreach git pull origin master'].execute().text.trim()
+    //['sh', '-c', 'git submodule foreach git pull origin master'].execute().text.trim()
     getLogger().debug("gitUpdateModules done!")
 }
 

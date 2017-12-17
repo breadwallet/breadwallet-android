@@ -178,6 +178,8 @@ static void saveBlocks(void *info, int replace, BRMerkleBlock *blocks[], size_t 
                                     "([Lcom/breadwallet/presenter/entities/BlockEntity;Z)V");
     (*env)->CallStaticVoidMethod(env, _peerManagerClass, mid, blockObjectArray,
                                  replace ? JNI_TRUE : JNI_FALSE);
+
+    (*env)->DeleteLocalRef(env, blockObjectArray);
 }
 
 static void savePeers(void *info, int replace, const BRPeer peers[], size_t count) {

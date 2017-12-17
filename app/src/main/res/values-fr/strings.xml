@@ -525,7 +525,7 @@
   <!-- Argument is date -->
   <string name="StartPaperPhrase.date">Vous avez finalement écrit votre clé de papier sur %1$s</string>
   <!-- Start view message -->
-  <string name="StartViewController.message">La façon la plus sécurisée et sûre d\'utiliser bitcoin.</string>
+  <string name="StartViewController.message">La façon la plus sécurisée et sûre d\'utiliser digibyte.</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Connexion…</string>
   <!-- Syncing view header text -->
