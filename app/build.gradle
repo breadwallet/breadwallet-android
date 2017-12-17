@@ -69,9 +69,9 @@ android {
         }
 
         breadTestnet {
-            applicationId "com.breadtestnet"
+            applicationId "io.digibytetestnet"
             dimension "mode"
-            resValue "string", "app_name", "bread-testnet"
+            resValue "string", "app_name", "digibyte-testnet"
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"
 
             externalNativeBuild {
