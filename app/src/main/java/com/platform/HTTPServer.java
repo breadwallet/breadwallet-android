@@ -110,7 +110,7 @@ public class HTTPServer {
 
     }
 
-    public static void startServer() {
+    public synchronized static void startServer() {
         Log.d(TAG, "startServer");
         try {
             if (server != null && server.isStarted()) {

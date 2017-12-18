@@ -368,7 +368,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
         //sync the kv stores
         if (PLATFORM_ON) {
-            BRExecutor.getInstance().forSerializedTasks().execute(new Runnable() {
+            BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     APIClient.getInstance(BreadActivity.this).syncKvStore();
