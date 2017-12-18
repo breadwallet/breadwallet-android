@@ -272,7 +272,7 @@ public class BRPeerManager {
 
     public synchronized native static int getRelayCount(byte[] hash);
 
-    public native boolean setFixedPeer(String node, int port);
+    public synchronized native boolean setFixedPeer(String node, int port);
 
     public native static int getEstimatedBlockHeight();
 
