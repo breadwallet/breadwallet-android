@@ -71,6 +71,7 @@ public class BreadApp extends Application {
 //            BRKeyStore.putFailCount(0, this);
             HOST = "stage2.breadwallet.com";
             FirebaseCrash.setCrashCollectionEnabled(false);
+//            FirebaseCrash.report(new RuntimeException("test with new json file"));
         }
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
