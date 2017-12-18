@@ -282,7 +282,6 @@ public class BRWalletManager {
     }
 
     public void wipeAll(Context app) {
-
         wipeKeyStore(app);
         wipeWalletButKeystore(app);
     }

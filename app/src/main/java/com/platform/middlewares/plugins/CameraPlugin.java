@@ -37,6 +37,9 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -119,7 +122,7 @@ public class CameraPlugin implements Plugin {
                         Manifest.permission.CAMERA)
                         != PackageManager.PERMISSION_GRANTED) {
                     // Should we show an explanation?
-                    if (ActivityCompat.shouldShowRequestPermissionRationale( ((Activity)app),
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(((Activity) app),
                             Manifest.permission.CAMERA)) {
                         BRDialog.showCustomDialog(app, app.getString(R.string.Send_cameraUnavailabeTitle_android),
                                 app.getString(R.string.Send_cameraUnavailabeMessage_android),
@@ -131,15 +134,16 @@ public class CameraPlugin implements Plugin {
                                 }, null, null, 0);
                     } else {
                         // No explanation needed, we can request the permission.
-                        ActivityCompat.requestPermissions( ((Activity)app),
+                        ActivityCompat.requestPermissions(((Activity) app),
                                 new String[]{Manifest.permission.CAMERA},
                                 BRConstants.CAMERA_REQUEST_ID);
+                        globalBaseRequest = null;
                     }
                 } else {
                     // Permission is granted, open camera
                     Intent intent = new Intent(app, CameraActivity.class);
-                    ((Activity)app).startActivityForResult(intent, BRConstants.REQUEST_IMAGE_CAPTURE);
-                    ((Activity)app).overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
+                    ((Activity) app).startActivityForResult(intent, BRConstants.REQUEST_IMAGE_CAPTURE);
+                    ((Activity) app).overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -196,6 +200,7 @@ public class CameraPlugin implements Plugin {
                         return;
                     }
                     String id = writeToFile(context, img);
+                    Log.e(TAG, "handleCameraImageTaken: " + id);
                     if (id != null) {
                         JSONObject respJson = new JSONObject();
                         try {
@@ -211,17 +216,10 @@ public class CameraPlugin implements Plugin {
                             continuation.complete();
                             return;
                         }
-                        Log.i(TAG, "handleCameraImageTaken: wrote image to: " + id);
-                        try {
-                            continuation.getServletResponse().setContentType("application/json");
-                            ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
-                            continuation.getServletResponse().getWriter().write(respJson.toString());
-                            globalBaseRequest.setHandled(true);
-                            continuation.complete();
-                            Log.d(TAG, "run: Finished taking picture");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        continuation.getServletResponse().setContentType("application/json");
+                        ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
+                        BRHTTPHelper.handleSuccess(200, respJson.toString().getBytes(), globalBaseRequest, (HttpServletResponse) continuation.getServletResponse(), "application/json");
+                        continuation.complete();
 
                     } else {
                         Log.e(TAG, "handleCameraImageTaken: error writing image");
