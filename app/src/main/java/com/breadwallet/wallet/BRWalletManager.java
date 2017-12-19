@@ -566,9 +566,9 @@ public class BRWalletManager {
 
             Log.e(TAG, "initWallet: walletTime: " + walletTime);
             pm.create(walletTime, blocksCount, peersCount);
-
+            BRPeerManager.getInstance().updateFixedPeer(ctx);
         }
-        BRPeerManager.getInstance().updateFixedPeer(ctx);
+
         pm.connect();
         if (BRSharedPrefs.getStartHeight(ctx) == 0)
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
