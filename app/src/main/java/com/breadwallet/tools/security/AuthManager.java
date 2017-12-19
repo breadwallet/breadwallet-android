@@ -229,13 +229,8 @@ public class AuthManager {
 
         final Activity app = (Activity) context;
 
-        FragmentFingerprint fingerprintFragment = (FragmentFingerprint) app.getFragmentManager().findFragmentByTag(FragmentFingerprint.class.getName());
-        FragmentPin breadPin = (FragmentPin) app.getFragmentManager().findFragmentByTag(FragmentPin.class.getName());
-
-        if (fingerprintFragment != null && fingerprintFragment.isAdded() || breadPin != null && breadPin.isAdded()) {
-            Log.e(TAG, "authPrompt: auth fragment already added: F:" + fingerprintFragment + ", P:" + breadPin);
-            return;
-        }
+        FragmentFingerprint fingerprintFragment;
+        FragmentPin breadPin;
 
         if (keyguardManager.isKeyguardSecure()) {
             if (useFingerPrint) {
