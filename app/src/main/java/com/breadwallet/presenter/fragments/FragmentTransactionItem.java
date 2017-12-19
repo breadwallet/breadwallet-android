@@ -251,9 +251,9 @@ public class FragmentTransactionItem extends Fragment {
     private int getLevel(TxItem item) {
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(getContext()) - blockHeight + 1;
-        int relayCount = BRPeerManager.getRelayCount(item.getTxHash());
         int level;
         if (confirms <= 0) {
+            int relayCount = BRPeerManager.getRelayCount(item.getTxHash());
             if (relayCount <= 0)
                 level = 0;
             else if (relayCount == 1)
