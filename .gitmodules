@@ -3,4 +3,4 @@
 	url = https://github.com/bitcoin-core/secp256k1.git
 [submodule "app/src/main/jni/digibytewallet-core"]
 	path = app/src/main/jni/digibytewallet-core
-	url = https://github.com/Dajiban/digibytewallet-core.git
+	url = https://github.com/digicontributer/digibytewallet-core.git

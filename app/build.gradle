@@ -51,10 +51,10 @@ android {
     flavorDimensions "mode"
 
     productFlavors {
-        bread {
+        digibyte {
             applicationId "io.digibyte"
             dimension "mode"
-            resValue "string", "app_name", "digibyte"
+            resValue "string", "app_name", "DigiByte"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
 
             externalNativeBuild {
@@ -68,7 +68,7 @@ android {
             }
         }
 
-        breadTestnet {
+        digibyteTestnet {
             applicationId "io.digibytetestnet"
             dimension "mode"
             resValue "string", "app_name", "digibyte-testnet"
@@ -138,7 +138,7 @@ gradle.projectsEvaluated {
 
 
 def gitUpdateModules() {
-    //['sh', '-c', 'git submodule foreach git pull origin master'].execute().text.trim()
+    ['sh', '-c', 'git submodule foreach git pull origin master'].execute().text.trim()
     getLogger().debug("gitUpdateModules done!")
 }
 

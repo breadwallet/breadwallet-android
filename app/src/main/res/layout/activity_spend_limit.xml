@@ -7,9 +7,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/extra_light_blue_background"
-    tools:context="com.breadwallet.presenter.activities.SetPinActivity">
+    tools:context="io.digibyte.presenter.activities.SetPinActivity">
 
-    <com.breadwallet.presenter.customviews.BRText
+    <io.digibyte.presenter.customviews.BRText
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -24,7 +24,7 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
 
-    <com.breadwallet.presenter.customviews.BRText
+    <io.digibyte.presenter.customviews.BRText
         android:id="@+id/description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"

@@ -9,17 +9,17 @@ import android.os.Build;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
-import com.breadwallet.BuildConfig;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
-import com.breadwallet.tools.crypto.Base58;
-import com.breadwallet.tools.manager.BRReportsManager;
-import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.crypto.CryptoHelper;
-import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.threads.BRExecutor;
-import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
+import io.digibyte.DigiByte;
+import io.digibyte.BuildConfig;
+import io.digibyte.presenter.activities.util.ActivityUTILS;
+import io.digibyte.tools.crypto.Base58;
+import io.digibyte.tools.manager.BRReportsManager;
+import io.digibyte.tools.manager.BRSharedPrefs;
+import io.digibyte.tools.crypto.CryptoHelper;
+import io.digibyte.tools.security.BRKeyStore;
+import io.digibyte.tools.threads.BRExecutor;
+import io.digibyte.tools.util.Utils;
+import io.digibyte.wallet.BRWalletManager;
 import com.jniwrappers.BRKey;
 import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
@@ -61,7 +61,7 @@ import okhttp3.ResponseBody;
 import okio.Buffer;
 import okio.BufferedSink;
 
-import static com.breadwallet.tools.util.BRCompressor.gZipExtract;
+import static io.digibyte.tools.util.BRCompressor.gZipExtract;
 
 
 /**
@@ -96,9 +96,9 @@ public class APIClient {
     private static final String PROTO = "https";
 
     // convenience getter for the API endpoint
-    public static String BASE_URL = PROTO + "://" + BreadApp.HOST;
+    public static String BASE_URL = PROTO + "://" + DigiByte.HOST;
     //feePerKb url
-    private static final String FEE_PER_KB_URL = "/v1/fee-per-kb";
+    private static final String FEE_PER_KB_URL = "https://go.digibyte.co/bws/api/v2/feelevels";
     //token
     private static final String TOKEN = "/token";
     //me
@@ -170,7 +170,7 @@ public class APIClient {
         }
         Response response = null;
         try {
-            String strUtl = BASE_URL + FEE_PER_KB_URL;
+            String strUtl = FEE_PER_KB_URL;
             Request request = new Request.Builder().url(strUtl).get().build();
             String body = null;
             try {
@@ -180,15 +180,22 @@ public class APIClient {
                 e.printStackTrace();
             }
             JSONObject object = null;
-            object = new JSONObject(body);
-            return (long) object.getInt("fee_per_kb");
+            JSONArray jsonArray = new JSONArray(body);
+            long fee = 20000;
+            for(int i=0; i < jsonArray.length(); i++) {
+                JSONObject jObject = jsonArray.getJSONObject(i);
+                if (jObject.getString("economy") != null) {
+                    fee = jObject.getInt("feePerKb");
+                }
+            }
+            return fee;
         } catch (JSONException e) {
             e.printStackTrace();
 
         } finally {
             if (response != null) response.close();
         }
-        return 0;
+        return 20000;
     }
 
     //only for testing
@@ -196,7 +203,7 @@ public class APIClient {
         if (ActivityUTILS.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
-        if (ctx == null) ctx = BreadApp.getBreadContext();
+        if (ctx == null) ctx = DigiByte.getBreadContext();
         if (ctx == null) return null;
         String strUtl = BASE_URL + ME;
         Request request = new Request.Builder()
@@ -226,7 +233,7 @@ public class APIClient {
         if (ActivityUTILS.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
-        if (ctx == null) ctx = BreadApp.getBreadContext();
+        if (ctx == null) ctx = DigiByte.getBreadContext();
         if (ctx == null) return null;
         try {
             String strUtl = BASE_URL + TOKEN;
@@ -345,7 +352,7 @@ public class APIClient {
                 Uri newUri = Uri.parse(newLocation);
                 if (newUri == null) {
                     Log.e(TAG, "sendRequest: redirect uri is null");
-                } else if (!newUri.getHost().equalsIgnoreCase(BreadApp.HOST) || !newUri.getScheme().equalsIgnoreCase(PROTO)) {
+                } else if (!newUri.getHost().equalsIgnoreCase(DigiByte.HOST) || !newUri.getScheme().equalsIgnoreCase(PROTO)) {
                     Log.e(TAG, "sendRequest: WARNING: redirect is NOT safe: " + newLocation);
                 } else {
                     Log.w(TAG, "redirecting: " + request.url() + " >>> " + newLocation);
@@ -615,7 +622,7 @@ public class APIClient {
     }
 
     public boolean tryExtractTar() {
-        Context app = BreadApp.getBreadContext();
+        Context app = DigiByte.getBreadContext();
         if (app == null) {
             Log.e(TAG, "tryExtractTar: failed to extract, app is null");
             return false;

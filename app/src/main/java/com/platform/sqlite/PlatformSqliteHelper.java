@@ -30,7 +30,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import com.breadwallet.tools.util.BRConstants;
+import io.digibyte.tools.util.BRConstants;
 
 public class PlatformSqliteHelper extends SQLiteOpenHelper {
     private static final String TAG = PlatformSqliteHelper.class.getName();

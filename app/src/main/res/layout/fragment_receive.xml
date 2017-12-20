@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.breadwallet.presenter.customviews.BRText
+                <io.digibyte.presenter.customviews.BRText
                     android:id="@+id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -87,7 +87,7 @@
                 android:visibility="gone"
                 >
 
-                <com.breadwallet.presenter.customviews.BRText
+                <io.digibyte.presenter.customviews.BRText
                     android:id="@+id/iso_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -97,7 +97,7 @@
                     android:textSize="28sp"
                     />
 
-                <com.breadwallet.presenter.customviews.BREdit
+                <io.digibyte.presenter.customviews.BREdit
                     android:id="@+id/amount_edit"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -117,7 +117,7 @@
                     android:textSize="24sp"
                     />
 
-                <com.breadwallet.presenter.customviews.BRButton
+                <io.digibyte.presenter.customviews.BRButton
                     android:id="@+id/iso_button"
                     android:layout_width="70dp"
                     android:layout_height="50dp"
@@ -173,7 +173,7 @@
                 android:orientation="vertical"
                 android:visibility="gone">
 
-                <com.breadwallet.presenter.customviews.BRKeyboard
+                <io.digibyte.presenter.customviews.BRKeyboard
                     android:id="@+id/keyboard"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -198,7 +198,7 @@
                 android:src="@drawable/ic_check_mark_grey"
                 />
 
-            <com.breadwallet.presenter.customviews.BRText
+            <io.digibyte.presenter.customviews.BRText
                 android:id="@+id/address_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -213,7 +213,7 @@
                 android:textSize="16sp"
                 />
 
-            <com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret
+            <io.digibyte.presenter.customviews.BRLinearLayoutWithCaret
                 android:id="@+id/copied_layout"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
@@ -221,7 +221,7 @@
                 app:backgroundColor="@color/dark_blue"
                 app:withStroke="false">
 
-                <com.breadwallet.presenter.customviews.BRText
+                <io.digibyte.presenter.customviews.BRText
                     android:id="@+id/copied_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -232,9 +232,9 @@
                     android:textSize="@dimen/paragraph"
                     android:text="@string/Receive.copied"
                     android:textColor="@color/white"/>
-            </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
+            </io.digibyte.presenter.customviews.BRLinearLayoutWithCaret>
 
-            <com.breadwallet.presenter.customviews.BRButton
+            <io.digibyte.presenter.customviews.BRButton
                 android:id="@+id/share_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -253,7 +253,7 @@
                 app:isBreadButton="true"
                 />
 
-            <com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret
+            <io.digibyte.presenter.customviews.BRLinearLayoutWithCaret
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:id="@+id/share_buttons_layout"
                 android:layout_width="match_parent"
@@ -264,7 +264,7 @@
                 app:strokeColor="@color/extra_light_gray"
                 app:withStroke="true">
 
-                <com.breadwallet.presenter.customviews.BRButton
+                <io.digibyte.presenter.customviews.BRButton
                     android:id="@+id/share_email"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -282,7 +282,7 @@
                     app:isBreadButton="true"
                     />
 
-                <com.breadwallet.presenter.customviews.BRButton
+                <io.digibyte.presenter.customviews.BRButton
                     android:id="@+id/share_text"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -300,7 +300,7 @@
                     app:isBreadButton="true"
                     />
 
-            </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
+            </io.digibyte.presenter.customviews.BRLinearLayoutWithCaret>
 
             <View
                 android:id="@+id/separator"
@@ -308,7 +308,7 @@
                 android:layout_height="1dp"
                 android:background="@color/separator_gray"/>
 
-            <com.breadwallet.presenter.customviews.BRButton
+            <io.digibyte.presenter.customviews.BRButton
                 android:id="@+id/request_button"
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/big_button_height"

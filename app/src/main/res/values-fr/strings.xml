@@ -3,7 +3,7 @@
   <!-- App name -->
   <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
-  <string name="About.blog">Blogue</string>
+  <string name="About.blog">Website</string>
   <!-- About screen footer -->
   <string name="About.footer">Fait par l\'équipe mondiale de Bread. Version %1$s</string>
   <!-- Privay Policy button label -->

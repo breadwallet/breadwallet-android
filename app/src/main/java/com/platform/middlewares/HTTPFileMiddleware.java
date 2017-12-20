@@ -4,13 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
-import com.breadwallet.tools.crypto.CryptoHelper;
-import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.util.TypesConverter;
-import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
+import io.digibyte.DigiByte;
+import io.digibyte.tools.crypto.CryptoHelper;
+import io.digibyte.tools.manager.BRSharedPrefs;
+import io.digibyte.tools.security.BRKeyStore;
+import io.digibyte.tools.util.TypesConverter;
+import io.digibyte.tools.util.Utils;
+import io.digibyte.wallet.BRWalletManager;
 import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
 import com.platform.HTTPServer;
@@ -69,7 +69,7 @@ public class HTTPFileMiddleware implements Middleware {
         if (target.equals("/favicon.ico")) {
             return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
         }
-        Context app = BreadApp.getBreadContext();
+        Context app = DigiByte.getBreadContext();
         if (app == null) {
             Log.e(TAG, "handle: app is null!");
             return true;

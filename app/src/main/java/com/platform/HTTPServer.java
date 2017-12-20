@@ -6,9 +6,9 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
-import com.breadwallet.tools.threads.BRExecutor;
-import com.breadwallet.tools.util.Utils;
+import io.digibyte.DigiByte;
+import io.digibyte.tools.threads.BRExecutor;
+import io.digibyte.tools.util.Utils;
 import com.platform.interfaces.Middleware;
 import com.platform.interfaces.Plugin;
 import com.platform.middlewares.APIProxy;
@@ -152,7 +152,7 @@ public class HTTPServer {
 
     private static boolean dispatch(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         Log.d(TAG, "TRYING TO HANDLE: " + target + " (" + request.getMethod() + ")");
-        final Context app = BreadApp.getBreadContext();
+        final Context app = DigiByte.getBreadContext();
         boolean result = false;
         if (target.equalsIgnoreCase("/_close")) {
             if (app != null) {

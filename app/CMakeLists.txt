@@ -20,6 +20,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DANDROID_STL=gnustl_static -DANDROID_TOOLCH
 # -Wint-conversion -Wbool-conversion -Wenum-conversion -Wassign-enum -Wno-shorten-64-to-32 -Wpointer-sign -Wnewline-eof
 # -Wdeprecated-declarations -Wno-sign-conversion
 
+
 add_library( # Specifies the name of the library.
              core-lib
 
@@ -60,6 +61,41 @@ add_library( # Specifies the name of the library.
              src/main/jni/digibytewallet-core/BRTransaction.h
              src/main/jni/digibytewallet-core/BRWallet.c
              src/main/jni/digibytewallet-core/BRWallet.h
+             src/main/jni/digibytewallet-core/crypto/sha256.h
+             src/main/jni/digibytewallet-core/crypto/groestl.c
+             src/main/jni/digibytewallet-core/crypto/groestl.h
+             src/main/jni/digibytewallet-core/crypto/qubit.c
+             src/main/jni/digibytewallet-core/crypto/qubit.h
+             src/main/jni/digibytewallet-core/crypto/skein.c
+             src/main/jni/digibytewallet-core/crypto/skein.h
+             src/main/jni/digibytewallet-core/crypto/sha3/aes_helper.c
+             src/main/jni/digibytewallet-core/crypto/sha3/blake.c
+             src/main/jni/digibytewallet-core/crypto/sha3/bmw.c
+             src/main/jni/digibytewallet-core/crypto/sha3/cubehash.c
+             src/main/jni/digibytewallet-core/crypto/sha3/groestl.c
+             src/main/jni/digibytewallet-core/crypto/sha3/hashblock.h
+             src/main/jni/digibytewallet-core/crypto/sha3/keccak.c
+             src/main/jni/digibytewallet-core/crypto/sha3/skein.c
+             src/main/jni/digibytewallet-core/crypto/sha3/sph_types.h
+             src/main/jni/digibytewallet-core/crypto/sha3/sph_blake.h
+             src/main/jni/digibytewallet-core/crypto/sha3/sph_bmw.h
+             src/main/jni/digibytewallet-core/crypto/sha3/sph_cubehash.h
+             src/main/jni/digibytewallet-core/crypto/sha3/sph_groestl.h
+             src/main/jni/digibytewallet-core/crypto/sha3/sph_keccak.h
+             src/main/jni/digibytewallet-core/crypto/sha3/sph_skein.h
+             src/main/jni/digibytewallet-core/crypto/sha3/sph_luffa.c
+             src/main/jni/digibytewallet-core/crypto/sha3/sph_luffa.h
+             src/main/jni/digibytewallet-core/crypto/sha3/sph_shavite.c
+             src/main/jni/digibytewallet-core/crypto/sha3/sph_shavite.h
+             src/main/jni/digibytewallet-core/crypto/sha3/sph_simd.c
+             src/main/jni/digibytewallet-core/crypto/sha3/sph_simd.h
+             src/main/jni/digibytewallet-core/crypto/sha3/sph_echo.c
+             src/main/jni/digibytewallet-core/crypto/sha3/sph_echo.h
+
+             #include "sha3/sph_luffa.h"
+             #include "sha3/sph_shavite.h"
+             #include "sha3/sph_simd.h"
+             #include "sha3/sph_echo.h"
 
              src/main/jni/transition/core.c
              src/main/jni/transition/core.h
@@ -80,6 +116,7 @@ include_directories(src/main/secp/secp256k1/include/)
 include_directories(src/main/secp/secp256k1/src/)
 include_directories(src/main/secp/secp256k1/)
 include_directories(src/main/secp/)
+
 
 # add lib dependencies
 target_link_libraries(

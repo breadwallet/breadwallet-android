@@ -1,10 +1,10 @@
 import android.util.Log;
 
-import com.breadwallet.tools.security.SmartValidator;
-import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.Bip39Reader;
-import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
+import io.digibyte.tools.security.SmartValidator;
+import io.digibyte.tools.util.BRConstants;
+import io.digibyte.tools.util.Bip39Reader;
+import io.digibyte.tools.util.Utils;
+import io.digibyte.wallet.BRWalletManager;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
