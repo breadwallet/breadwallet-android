@@ -33,7 +33,7 @@
   <!-- Error alert title -->
   <string name="Alert.error">Fel</string>
   <!-- Keystore error -->
-  <string name="Alert.keystore.generic.android">Det har uppstått ett problem med KeyStore till Android OS. Kontakta support@breadwallet.com</string>
+  <string name="Alert.keystore.generic.android">Det har uppstått ett problem med KeyStore till Android OS. Kontakta support@digibyte.io</string>
   <!-- KeyStore error, keys are invalidated -->
   <string name="Alert.keystore.invalidated.android">Dina krypterade DigiByte-uppgifter har nyligen ogiltigförklarats på grund av att Androids skärmlås inaktiverades.</string>
   <!-- Keystore error title -->
@@ -217,7 +217,7 @@
   <!-- Jailbreak warning message -->
   <string name="JailbreakWarnings.messageWithBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till DigiBytes nyckeldata och stjäla dina bitcoin! Töm denna plånbok direkt och återupprätta den på en säker enhet.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Använd DigiByte endast på en säker enhet.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till DigiBytes nyckeldata och stjäla dina bitcoin! Använd DigiByte endast på en säker enhet.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">VARNING</string>
   <!-- Wipe wallet button -->
@@ -486,7 +486,7 @@
   <string name="Settings.currency">Visa valuta</string>
   <!-- Join Early access label -->
   <string name="Settings.earlyAccess">Använd Snabb tillgång</string>
-  <!-- Are you enjoying bread alert message body -->
+  <!-- Are you enjoying DigiByte alert message body -->
   <string name="Settings.enjoying">Gillar du DigiByte?</string>
   <!-- Import wallet label -->
   <string name="Settings.importTitle">Importera plånbok</string>
@@ -558,7 +558,7 @@
   <string name="TouchIdSettings.spendingLimit">Utnyttjandegräns: %1$s (%2$s)</string>
   <!-- Touch id switch label. -->
   <string name="TouchIdSettings.switchLabel">Aktivera Touch ID för DigiByte</string>
-  <!-- Enable fingerprint for this wallet called Bread -->
+  <!-- Enable fingerprint for this wallet called DigiByte -->
   <string name="TouchIdSettings.switchLabel.android">Aktivera fingeravtrycksautentisering</string>
   <!-- Touch ID settings view title -->
   <string name="TouchIdSettings.title">Touch ID</string>
@@ -707,7 +707,7 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">Uppdaterar...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadplånboken har bytt namn till DigiByte, med ett splitter nytt utseende och några nya funktioner.\n\nOm du behöver hjälp, leta efter (?)-tecknet i det övre högra hörnet på de flesta skärmar.</string>
+  <string name="Welcome.body">DigiByteplånboken har bytt namn till DigiByte, med ett splitter nytt utseende och några nya funktioner.\n\nOm du behöver hjälp, leta efter (?)-tecknet i det övre högra hörnet på de flesta skärmar.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Välkommen till DigiByte!</string>
   <!-- Wipe wallet alert message -->
@@ -723,7 +723,7 @@
   <!-- Start wipe wallet view message -->
   <string name="WipeWallet.startMessage">Att starta eller återställa en annan plånbok ger dig tillgång till och låter dig hantera en annan DigiByte på denna enhet.</string>
   <!-- Start wipe wallet view warning -->
-  <string name="WipeWallet.startWarning">Du kommer inte längre att kunna komma åt din aktuella Breadplånbok från denna enhet. Saldot kommer att kvarstå på frasen.</string>
+  <string name="WipeWallet.startWarning">Du kommer inte längre att kunna komma åt din aktuella DigiByteplånbok från denna enhet. Saldot kommer att kvarstå på frasen.</string>
   <!-- Wipe wallet navigation item title. -->
   <string name="WipeWallet.title">Starta eller hämta en annan plånbok</string>
   <!-- Wipe wallet button title -->

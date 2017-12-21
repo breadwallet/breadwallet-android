@@ -33,7 +33,7 @@
   <!-- Error alert title -->
   <string name="Alert.error">오류</string>
   <!-- Keystore error -->
-  <string name="Alert.keystore.generic.android">귀하의 안드로이드 OS 키스토어에 문제가 있습니다, support@breadwallet.com로 연락해 주세요</string>
+  <string name="Alert.keystore.generic.android">귀하의 안드로이드 OS 키스토어에 문제가 있습니다, support@digibyte.io로 연락해 주세요</string>
   <!-- KeyStore error, keys are invalidated -->
   <string name="Alert.keystore.invalidated.android">귀하의 안드로이드 잠금 화면이 꺼져서 귀하의 암호화 된 데이터가 최근 무효화 되었습니다.</string>
   <!-- Keystore error title -->
@@ -486,7 +486,7 @@
   <string name="Settings.currency">통화 보기</string>
   <!-- Join Early access label -->
   <string name="Settings.earlyAccess">초기 버전을 사용해 보세요</string>
-  <!-- Are you enjoying bread alert message body -->
+  <!-- Are you enjoying DigiByte alert message body -->
   <string name="Settings.enjoying">브레드를 사용하고 있으신가요?</string>
   <!-- Import wallet label -->
   <string name="Settings.importTitle">지갑 내보내기</string>
@@ -558,7 +558,7 @@
   <string name="TouchIdSettings.spendingLimit">지불 한도: %1$s (%2$s)</string>
   <!-- Touch id switch label. -->
   <string name="TouchIdSettings.switchLabel">브레드에서</string>
-  <!-- Enable fingerprint for this wallet called Bread -->
+  <!-- Enable fingerprint for this wallet called DigiByte -->
   <string name="TouchIdSettings.switchLabel.android">지문 본인확인 켜기</string>
   <!-- Touch ID settings view title -->
   <string name="TouchIdSettings.title">터치 ID</string>
@@ -707,7 +707,7 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">업데이트 중...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet이 이름을 Bread로 바꾸고 새롭게 단장하였으며 새로운 기능도 갖췄습니다.\n\n도움이 필요하시면 대부분 화면에서 우측 상단에 있는 (?)을(를) 클릭하십시오.</string>
+  <string name="Welcome.body">DigiBytewallet이 이름을 DigiByte로 바꾸고 새롭게 단장하였으며 새로운 기능도 갖췄습니다.\n\n도움이 필요하시면 대부분 화면에서 우측 상단에 있는 (?)을(를) 클릭하십시오.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">DigiByte에 환영합니다!</string>
   <!-- Wipe wallet alert message -->
