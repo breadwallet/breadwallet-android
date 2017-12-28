@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -64,6 +65,9 @@ public class Utils {
         if (context == null) return false;
         InputMethodManager imm = (InputMethodManager) context.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
+        if (imm == null) {
+            return false;
+        }
         List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
         final int N = mInputMethodProperties.size();
         for (int i = 0; i < N; i++) {
@@ -190,7 +194,7 @@ public class Utils {
 
     public static boolean isFingerprintAvailable(Context app) {
         FingerprintManager fingerprintManager = (FingerprintManager) app.getSystemService(FINGERPRINT_SERVICE);
-        if(fingerprintManager == null) return false;
+        if (fingerprintManager == null) return false;
         // Device doesn't support fingerprint authentication
         if (ActivityCompat.checkSelfPermission(app, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(app, "Fingerprint authentication permission not enabled", Toast.LENGTH_LONG).show();
@@ -204,7 +208,8 @@ public class Utils {
             View view = ((Activity) app).getCurrentFocus();
             if (view != null) {
                 InputMethodManager imm = (InputMethodManager) app.getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                if (imm != null)
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         }
 
