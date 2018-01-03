@@ -128,8 +128,7 @@ public class Utils {
 //        SimpleDateFormat formatter = new SimpleDateFormat(pattern, Locale.getDefault());
 //        Calendar calendar = Calendar.getInstance();
 //        calendar.setTimeInMillis(time);
-        return android.text.format.DateFormat.format(
-                pattern, time).toString();
+        return android.text.format.DateFormat.format(pattern, time).toString();
     }
 
     public static boolean isNullOrEmpty(String str) {

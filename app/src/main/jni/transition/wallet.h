@@ -230,6 +230,12 @@ JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTxSize(JNI
 JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_nativeBalance(JNIEnv *env,
                                                                                   jobject thiz);
 
+JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_defaultFee(JNIEnv *env,
+                                                                               jobject thiz);
+
+JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_maxFee(JNIEnv *env,
+                                                                           jobject thiz);
+
 #ifdef __cplusplus
 }
 #endif

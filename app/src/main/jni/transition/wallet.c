@@ -1035,6 +1035,20 @@ JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_nativeBalanc
     if (!_wallet) return -1;
     return BRWalletBalance(_wallet);
 }
+JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_defaultFee(
+        JNIEnv *env,
+        jobject thiz) {
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "defaultFee");
+
+    return DEFAULT_FEE_PER_KB;
+}
+JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_maxFee(
+        JNIEnv *env,
+        jobject thiz) {
+    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "maxFee");
+
+    return MAX_FEE_PER_KB;
+}
 
 //creates and signs a bcash tx, returns the serialized tx
 JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_sweepBCash(JNIEnv *env,
