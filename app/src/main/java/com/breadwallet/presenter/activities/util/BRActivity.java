@@ -187,7 +187,6 @@ public class BRActivity extends Activity {
         //lock wallet if 3 minutes passed
         if (BreadApp.backgroundedTime != 0 && (System.currentTimeMillis() - BreadApp.backgroundedTime >= 180 * 1000) && !(app instanceof DisabledActivity)) {
             if (!BRKeyStore.getPinCode(app).isEmpty()) {
-                BreadApp.backgroundedTime = System.currentTimeMillis();
                 BRAnimator.startBreadActivity(app, true);
             }
         }
@@ -197,5 +196,6 @@ public class BRActivity extends Activity {
                 HTTPServer.startServer();
             }
         });
+        BreadApp.backgroundedTime = System.currentTimeMillis();
     }
 }

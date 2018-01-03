@@ -213,7 +213,7 @@ public class BRKeyStore {
             storeEncryptedData(context, encryptedData, alias);
             return true;
         } catch (UserNotAuthenticatedException e) {
-            Log.d(TAG, "setData: User not Authenticated, requesting..." + alias + ", err(" + e.getMessage() + ")");
+            Log.e(TAG, "_setData: showAuthenticationScreen: " + alias);
             showAuthenticationScreen(context, request_code, alias);
             throw e;
         } catch (InvalidKeyException ex) {
@@ -339,7 +339,7 @@ public class BRKeyStore {
         } catch (InvalidKeyException e) {
             if (e instanceof UserNotAuthenticatedException) {
                 /** user not authenticated, ask the system for authentication */
-                Log.d(TAG, "getData: User not Authenticated, requesting..." + alias + ", err(" + e.getMessage() + ")");
+                Log.e(TAG, "_getData: showAuthenticationScreen: " + alias);
                 showAuthenticationScreen(context, request_code, alias);
                 throw (UserNotAuthenticatedException) e;
             } else {
@@ -778,7 +778,7 @@ public class BRKeyStore {
         if (!alias.equalsIgnoreCase(PHRASE_ALIAS) && !alias.equalsIgnoreCase(CANARY_ALIAS)) {
             BRReportsManager.reportBug(new IllegalArgumentException("requesting auth for: " + alias), true);
         }
-        Log.e(TAG, "showAuthenticationScreen: " + alias);
+//        Log.e(TAG, "showAuthenticationScreen: " + alias);
         if (context instanceof Activity) {
             Activity app = (Activity) context;
             KeyguardManager mKeyguardManager = (KeyguardManager) app.getSystemService(Context.KEYGUARD_SERVICE);
@@ -892,7 +892,7 @@ public class BRKeyStore {
             }
             return true;
         } catch (UserNotAuthenticatedException e) {
-            Log.d(TAG, "setData: User not Authenticated, requesting..." + alias + ", err(" + e.getMessage() + ")");
+            Log.e(TAG, "_setOldData: showAuthenticationScreen: " + alias);
             showAuthenticationScreen(context, request_code, alias);
             throw e;
         } catch (Exception e) {
@@ -956,6 +956,7 @@ public class BRKeyStore {
         } catch (InvalidKeyException e) {
             if (e instanceof UserNotAuthenticatedException) {
                 /** user not authenticated, ask the system for authentication */
+                Log.e(TAG, "_getOldData: showAuthenticationScreen: " + alias);
                 showAuthenticationScreen(context, request_code, alias);
                 throw (UserNotAuthenticatedException) e;
             } else {

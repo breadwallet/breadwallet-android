@@ -98,7 +98,9 @@ public class PostAuth {
             app.startActivity(intent);
             app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         } else {
-            Log.e(TAG, "onCreateWalletAuth: Failed to generateSeed");
+            if(authAsked){
+                Log.e(TAG, "onCreateWalletAuth: WARNING!!!! LOOP");
+            }
 
         }
     }

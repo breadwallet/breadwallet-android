@@ -536,7 +536,7 @@ public class BRWalletManager {
             BRSharedPrefs.putFirstAddress(ctx, firstAddress);
             long fee = BRSharedPrefs.getFeePerKb(ctx);
             if (fee == 0) {
-                fee = BRConstants.DEFAULT_FEE_PER_KB;
+                fee = defaultFee();
                 BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
             }
             BRWalletManager.getInstance().setFeePerKb(fee, isEconomyFee);
@@ -678,6 +678,10 @@ public class BRWalletManager {
 
     public native long nativeBalance();
 
+    public native long defaultFee();
+
+    public native long maxFee();
+
     public native int getTxCount();
 
     public native long getMinOutputAmountRequested();
@@ -695,5 +699,6 @@ public class BRWalletManager {
     public static native long getBCashBalance(byte[] pubKey);
 
     public static native int getTxSize(byte[] serializedTx);
+
 
 }
