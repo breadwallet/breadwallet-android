@@ -208,11 +208,11 @@ public class BRApiManager {
             JSONObject obj = new JSONObject(jsonString);
             fee = obj.getLong("fee_per_kb");
             economyFee = obj.getLong("fee_per_kb_economy");
-            if (fee != 0 && fee < BRConstants.MAX_FEE_PER_KB) {
+            if (fee != 0 && fee < BRWalletManager.getInstance().maxFee()) {
                 BRSharedPrefs.putFeePerKb(activity, fee);
                 BRWalletManager.getInstance().setFeePerKb(fee, isEconomyFee);
             }
-            if (economyFee != 0 && economyFee < BRConstants.MAX_FEE_PER_KB) {
+            if (economyFee != 0 && economyFee < BRWalletManager.getInstance().maxFee()) {
                 BRSharedPrefs.putEconomyFeePerKb(activity, economyFee);
             }
         } catch (JSONException e) {

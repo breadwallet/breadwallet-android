@@ -83,12 +83,12 @@ public class BreadApp extends Application {
         DISPLAY_HEIGHT_PX = size.y;
         mFingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
 
-        addOnBackgroundedListener(new OnAppBackgrounded() {
-            @Override
-            public void onBackgrounded() {
-
-            }
-        });
+//        addOnBackgroundedListener(new OnAppBackgrounded() {
+//            @Override
+//            public void onBackgrounded() {
+//
+//            }
+//        });
 
     }
 
