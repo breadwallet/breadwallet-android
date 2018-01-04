@@ -67,7 +67,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
     }
 
     public void putCurrencies(Collection<CurrencyEntity> currencyEntities) {
-        if (currencyEntities == null) return;
+        if (currencyEntities == null || currencyEntities.size() <= 0) return;
 
         try {
             database = openDatabase();

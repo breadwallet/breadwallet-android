@@ -10,6 +10,7 @@ import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.BRExecutor;
@@ -17,10 +18,11 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
 import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.wallet.BRWalletManager;
+import com.google.firebase.crash.FirebaseCrash;
 
 import java.math.BigDecimal;
 import java.util.Locale;
-
+import java.util.logging.Handler;
 
 /**
  * BreadWallet
@@ -50,6 +52,9 @@ public class BRSender {
     private static final String TAG = BRSender.class.getName();
 
     private static BRSender instance;
+    private final static long FEE_EXPIRATION_MILLIS = 72 * 60 * 60 * 1000L;
+    private boolean timedOut;
+    private boolean sending;
 
     private BRSender() {
     }
@@ -70,7 +75,38 @@ public class BRSender {
             @Override
             public void run() {
                 try {
-                    tryPay(app, request);
+                    if (sending) {
+                        FirebaseCrash.report(new NullPointerException("sendTransaction returned because already sending.."));
+                        return;
+                    }
+                    sending = true;
+                    long now = System.currentTimeMillis();
+                    //if the fee was updated more than 24 hours ago then try updating the fee
+                    if (now - BRSharedPrefs.getFeeTime(app) >= FEE_EXPIRATION_MILLIS) {
+                        new Thread(new Runnable() {
+                            @Override
+                            public void run() {
+                                try {
+                                    Thread.sleep(3000);
+                                } catch (InterruptedException e) {
+                                    e.printStackTrace();
+                                }
+
+                                if (sending) timedOut = true;
+                            }
+                        }).start();
+                        BRApiManager.updateFeePerKb(app);
+                        //if the fee is STILL out of date then fail with network problem message
+                        long time = BRSharedPrefs.getFeeTime(app);
+                        if (time <= 0 || now - time >= FEE_EXPIRATION_MILLIS) {
+                            Log.e(TAG, "sendTransaction: fee out of date even after fetching...");
+                            throw new FeeOutOfDate(BRSharedPrefs.getFeeTime(app), now);
+                        }
+                    }
+                    if (!timedOut)
+                        tryPay(app, request);
+                    else
+                        FirebaseCrash.report(new NullPointerException("did not send, timedOut!"));
                     return; //return so no error is shown
                 } catch (InsufficientFundsException ignored) {
                     errTitle[0] = app.getString(R.string.Alerts_sendFailure);
@@ -88,6 +124,24 @@ public class BRSender {
 //                    showFailed(app); //just show failed for now
                     showAdjustFee((Activity) app, request);
                     return;
+                } catch (FeeOutOfDate ex) {
+                    //Fee is out of date, show not connected error
+                    FirebaseCrash.report(ex);
+                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.NodeSelector_notConnected), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                                @Override
+                                public void onClick(BRDialogView brDialogView) {
+                                    brDialogView.dismiss();
+                                }
+                            }, null, null, 0);
+                        }
+                    });
+                    return;
+                } finally {
+                    sending = false;
+                    timedOut = false;
                 }
 
                 //show the message if we have one to show
@@ -325,7 +379,7 @@ public class BRSender {
         }
 
         //successfully created the transaction, authenticate user
-        AuthManager.getInstance().authPrompt(ctx, "", message, forcePin, false,new BRAuthCompletion() {
+        AuthManager.getInstance().authPrompt(ctx, "", message, forcePin, false, new BRAuthCompletion() {
             @Override
             public void onComplete() {
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -363,7 +417,7 @@ public class BRSender {
         if (feeForTx == 0) {
             long maxAmount = m.getMaxOutputAmount();
             if (maxAmount == -1) {
-                BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"),true);
+                BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
             }
             if (maxAmount == 0) {
                 BRDialog.showCustomDialog(ctx, "", ctx.getString(R.string.Alerts_sendFailure), ctx.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
@@ -390,8 +444,8 @@ public class BRSender {
         //formatted text
         return receiver + "\n\n"
                 + ctx.getString(R.string.Confirmation_amountLabel) + " " + formattedAmountBTC + " (" + formattedAmount + ")"
-                + "\n"  + ctx.getString(R.string.Confirmation_feeLabel) + " " + formattedFeeBTC + " (" + formattedFee + ")"
-                + "\n"  + ctx.getString(R.string.Confirmation_totalLabel) + " "  + formattedTotalBTC + " (" + formattedTotal + ")"
+                + "\n" + ctx.getString(R.string.Confirmation_feeLabel) + " " + formattedFeeBTC + " (" + formattedFee + ")"
+                + "\n" + ctx.getString(R.string.Confirmation_totalLabel) + " " + formattedTotalBTC + " (" + formattedTotal + ")"
                 + (request.comment == null ? "" : "\n\n" + request.comment);
     }
 
@@ -475,6 +529,14 @@ public class BRSender {
 
         public FeeNeedsAdjust(long amount, long balance, long fee) {
             super("Balance: " + balance + " satoshis, amount: " + amount + " satoshis, fee: " + fee + " satoshis.");
+        }
+
+    }
+
+    private class FeeOutOfDate extends Exception {
+
+        public FeeOutOfDate(long timestamp, long now) {
+            super("FeeOutOfDate: timestamp: " + timestamp + ",now: " + now);
         }
 
     }
