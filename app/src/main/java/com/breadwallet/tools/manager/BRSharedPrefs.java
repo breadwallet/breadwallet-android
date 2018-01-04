@@ -225,6 +225,17 @@ public class BRSharedPrefs {
         editor.putLong("lastSyncTime", time);
         editor.apply();
     }
+    public static long getFeeTime(Context activity) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getLong("feeTime", 0);
+    }
+
+    public static void putFeeTime(Context activity, long feeTime) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong("feeTime", feeTime);
+        editor.apply();
+    }
 
     public static List<Integer> getBitIdNonces(Context activity, String key) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);

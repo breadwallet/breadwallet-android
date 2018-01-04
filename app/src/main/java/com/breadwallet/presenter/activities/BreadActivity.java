@@ -328,7 +328,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             public void run() {
                 updateUI();
             }
-        },1000);
+        }, 1000);
 
         BRWalletManager.getInstance().refreshBalance(this);
 

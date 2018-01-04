@@ -13,6 +13,7 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.tools.crypto.Base58;
+import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.crypto.CryptoHelper;
@@ -709,7 +710,7 @@ public class APIClient {
 
     public boolean isFeatureEnabled(String feature) {
         boolean b = BRSharedPrefs.getFeatureEnabled(ctx, feature);
-        Log.e(TAG, "isFeatureEnabled: " + feature + " - " + b);
+//        Log.e(TAG, "isFeatureEnabled: " + feature + " - " + b);
         return b;
     }
 
@@ -762,7 +763,7 @@ public class APIClient {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -785,7 +786,19 @@ public class APIClient {
                 APIClient apiClient = APIClient.getInstance(ctx);
                 apiClient.syncKvStore();
                 long endTime = System.currentTimeMillis();
-                Log.d(TAG, "updatePlatform: DONE in " + (endTime - startTime) + "ms");
+                Log.d(TAG, "syncKvStore: DONE in " + (endTime - startTime) + "ms");
+                itemFinished();
+            }
+        });
+
+        //update fee
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                final long startTime = System.currentTimeMillis();
+                BRApiManager.updateFeePerKb(ctx);
+                long endTime = System.currentTimeMillis();
+                Log.d(TAG, "update fee: DONE in " + (endTime - startTime) + "ms");
                 itemFinished();
             }
         });
@@ -794,7 +807,7 @@ public class APIClient {
 
     private void itemFinished() {
         int items = itemsLeftToUpdate.incrementAndGet();
-        if (items >= 3) {
+        if (items >= 4) {
             Log.d(TAG, "PLATFORM ALL UPDATED: " + items);
             platformUpdating = false;
             itemsLeftToUpdate.set(0);

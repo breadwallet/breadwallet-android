@@ -13,6 +13,7 @@ import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
+import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
@@ -136,9 +137,7 @@ public class BRApiManager {
                                     BRApiManager.getInstance().stopTimerTask();
                                 }
                                 Set<CurrencyEntity> tmp = getCurrencies((Activity) context);
-                                if (tmp.size() > 0) {
-                                    CurrencyDataSource.getInstance(context).putCurrencies(tmp);
-                                }
+                                CurrencyDataSource.getInstance(context).putCurrencies(tmp);
                             }
                         });
                     }
@@ -196,8 +195,8 @@ public class BRApiManager {
         return jsonArray;
     }
 
-    public static void updateFeePerKb(Activity activity) {
-        String jsonString = urlGET(activity, "https://" + BreadApp.HOST + "/fee-per-kb");
+    public static void updateFeePerKb(Context app) {
+        String jsonString = urlGET(app, "https://" + BreadApp.HOST + "/fee-per-kb");
         if (jsonString == null || jsonString.isEmpty()) {
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
             return;
@@ -209,11 +208,16 @@ public class BRApiManager {
             fee = obj.getLong("fee_per_kb");
             economyFee = obj.getLong("fee_per_kb_economy");
             if (fee != 0 && fee < BRWalletManager.getInstance().maxFee()) {
-                BRSharedPrefs.putFeePerKb(activity, fee);
-                BRWalletManager.getInstance().setFeePerKb(fee, isEconomyFee);
+                BRSharedPrefs.putFeePerKb(app, fee);
+                BRWalletManager.getInstance().setFeePerKb(fee, isEconomyFee); //todo improve that logic
+                BRSharedPrefs.putFeeTime(app, System.currentTimeMillis()); //store the time of the last successful fee fetch
+            } else {
+                FirebaseCrash.report(new NullPointerException("Fee is weird:" + fee));
             }
             if (economyFee != 0 && economyFee < BRWalletManager.getInstance().maxFee()) {
-                BRSharedPrefs.putEconomyFeePerKb(activity, economyFee);
+                BRSharedPrefs.putEconomyFeePerKb(app, economyFee);
+            } else {
+                FirebaseCrash.report(new NullPointerException("Economy fee is weird:" + economyFee));
             }
         } catch (JSONException e) {
             Log.e(TAG, "updateFeePerKb: FAILED: " + jsonString, e);
@@ -240,6 +244,11 @@ public class BRApiManager {
             }
             response = resp.body().string();
             String strDate = resp.header("date");
+            if(strDate == null) {
+                Log.e(TAG, "urlGET: strDate is null!");
+                FirebaseCrash.report(new NullPointerException("strDate is null!"));
+                return null;
+            }
             SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
             Date date = formatter.parse(strDate);
             long timeStamp = date.getTime();
@@ -252,5 +261,6 @@ public class BRApiManager {
         }
         return response;
     }
+
 
 }
