@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 
 import com.google.firebase.crash.FirebaseCrash;
+import com.loafwallet.BadEnglishWordListFix;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -72,6 +73,9 @@ public class Bip39Reader {
     }
 
     public static String getLang(Context context, String incorrect) {
+        if (BadEnglishWordListFix.isBadEnglishWord(incorrect)) {
+            return "en";
+        }
 
         String[] langs = {"en", "es", "fr", "ja", "zh"};
         String lang = null;
@@ -137,13 +141,13 @@ public class Bip39Reader {
         String lang = getLang(activity, firstWord);
         if (lang == null) {
             for (String word : phraseWords) {
-                if (word.length() < 1 || word.charAt(0) < 0x3000 || allWords.contains(word))
+                if (word.length() < 1 || word.charAt(0) < 0x3000 || allWords.contains(word) || BadEnglishWordListFix.isBadEnglishWord(word))
                     continue;
                 int length = word.length();
                 for (int i = 0; i < length; i++) {
                     for (int j = (length - i > 8) ? 8 : length - i; j > 0; j--) {
                         String tmp = word.substring(i, i + j);
-                        if (!allWords.contains(tmp)) continue;
+                        if (!(allWords.contains(tmp) || BadEnglishWordListFix.isBadEnglishWord(word))) continue;
                         phrase = phrase.replace(tmp, " " + tmp + " ");
                         while (phrase.contains("  ")) {
                             phrase = phrase.replace("  ", " ");
@@ -160,6 +164,8 @@ public class Bip39Reader {
                 }
             }
         }
+
+        phrase = BadEnglishWordListFix.restoreCaseOnAnyBadWords(phrase);
         return phrase;
     }
 
