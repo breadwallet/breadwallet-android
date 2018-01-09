@@ -96,7 +96,6 @@ public class BRKeyStore {
     public static final String NEW_PADDING = KeyProperties.ENCRYPTION_PADDING_NONE;
     public static final String NEW_BLOCK_MODE = KeyProperties.BLOCK_MODE_GCM;
 
-
     public static Map<String, AliasObject> aliasObjectMap;
 
     private static final String PHRASE_IV = "ivphrase";

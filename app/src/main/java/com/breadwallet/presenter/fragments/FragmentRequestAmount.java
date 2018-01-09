@@ -144,7 +144,7 @@ public class FragmentRequestAmount extends Fragment {
                     return;
                 }
 
-                BRAnimator.showSupportFragment(app, BRConstants.receive);
+                BRAnimator.showSupportFragment(app, BRConstants.requestAmount);
             }
         });
 
