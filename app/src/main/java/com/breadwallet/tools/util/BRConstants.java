@@ -131,7 +131,7 @@ public class BRConstants {
     public static final String transactionDetails = "transaction-details";
 //    public static final String manageWallet = "manage-wallet";
     public static final String receive = "receive-bitcoin";
-//    public static final String requestAmount = "request-amount";
+    public static final String requestAmount = "request-amount";
     public static final String send = "send-bitcoin";
     public static final String walletDisabled = "wallet-disabled";
     public static final String resetPinWithPaperKey = "reset-pin-paper-key";
