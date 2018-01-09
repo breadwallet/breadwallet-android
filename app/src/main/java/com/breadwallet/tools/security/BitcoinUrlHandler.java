@@ -11,6 +11,7 @@ import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BREventManager;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -203,6 +204,8 @@ public class BitcoinUrlHandler {
             if (app != null) {
                 BRAnimator.killAllFragments(app);
                 BRSender.getInstance().sendTransaction(app, new PaymentItem(addresses, null, new BigDecimal(amount).longValue(), null, true));
+            } else {
+                BRReportsManager.reportBug(new NullPointerException("tryBitcoinURL, app is null!"));
             }
         }
 
