@@ -78,6 +78,7 @@ public class BRAnimator {
     public static int SLIDE_ANIMATION_DURATION = 300;
     public static float t1Size;
     public static float t2Size;
+    public static boolean supportIsShowing;
 
     public static void showBreadSignal(Activity activity, String title, String iconDescription, int drawableId, BROnSignalCompletion completion) {
         fragmentSignal = new FragmentSignal();
@@ -160,6 +161,8 @@ public class BRAnimator {
     }
 
     public static void showSupportFragment(Activity app, String articleId) {
+        if(supportIsShowing) return;
+        supportIsShowing = true;
         if (app == null) {
             Log.e(TAG, "showSupportFragment: app is null");
             return;
@@ -180,6 +183,7 @@ public class BRAnimator {
                     .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                     .add(android.R.id.content, fragmentSupport, FragmentSend.class.getName())
                     .addToBackStack(FragmentSend.class.getName()).commit();
+
         } finally {
 
         }

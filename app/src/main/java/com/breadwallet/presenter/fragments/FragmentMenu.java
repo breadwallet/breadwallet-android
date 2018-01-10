@@ -120,6 +120,7 @@ public class FragmentMenu extends Fragment {
         itemList.add(new BRMenuItem(getString(R.string.MenuButton_support), R.drawable.ic_question_mark, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSupportFragment(getActivity(), null);
             }
         }));
