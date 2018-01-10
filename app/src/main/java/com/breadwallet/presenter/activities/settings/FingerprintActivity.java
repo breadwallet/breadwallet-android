@@ -21,9 +21,11 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRCurrency;
@@ -97,10 +99,23 @@ public class FingerprintActivity extends BRActivity {
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(View textView) {
-                Intent intent = new Intent(FingerprintActivity.this, SpendLimitActivity.class);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                startActivity(intent);
-                finish();
+
+                AuthManager.getInstance().authPrompt(FingerprintActivity.this, null, getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
+                    @Override
+                    public void onComplete() {
+                        Intent intent = new Intent(FingerprintActivity.this, SpendLimitActivity.class);
+                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                        startActivity(intent);
+                        finish();
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+                });
+
+
             }
 
             @Override
