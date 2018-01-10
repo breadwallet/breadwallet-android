@@ -188,6 +188,7 @@ public class FragmentSupport extends Fragment {
     public void onPause() {
         super.onPause();
         Utils.hideKeyboard(getActivity());
+        BRAnimator.supportIsShowing = false;
     }
 
 }
