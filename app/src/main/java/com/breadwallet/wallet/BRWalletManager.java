@@ -100,6 +100,7 @@ public class BRWalletManager {
 
     private static BRWalletManager instance;
     public List<OnBalanceChanged> balanceListeners;
+    private boolean itInitiatingWallet;
 
     public void setBalance(final Context context, long balance) {
         if (context == null) {
@@ -507,76 +508,82 @@ public class BRWalletManager {
     @WorkerThread
     public void initWallet(final Context ctx) {
         if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
-        Log.d(TAG, "initWallet:" + Thread.currentThread().getName());
-        if (ctx == null) {
-            Log.e(TAG, "initWallet: ctx is null");
-            return;
-        }
-        BRWalletManager m = BRWalletManager.getInstance();
-        final BRPeerManager pm = BRPeerManager.getInstance();
-
-        if (!m.isCreated()) {
-            List<BRTransactionEntity> transactions = TransactionDataSource.getInstance(ctx).getAllTransactions();
-            int transactionsCount = transactions.size();
-            if (transactionsCount > 0) {
-                m.createTxArrayWithCount(transactionsCount);
-                for (BRTransactionEntity entity : transactions) {
-                    m.putTransaction(entity.getBuff(), entity.getBlockheight(), entity.getTimestamp());
-                }
-            }
-
-            byte[] pubkeyEncoded = BRKeyStore.getMasterPublicKey(ctx);
-            if (Utils.isNullOrEmpty(pubkeyEncoded)) {
-                Log.e(TAG, "initWallet: pubkey is missing");
+        if (itInitiatingWallet) return;
+        itInitiatingWallet = true;
+        try {
+            Log.d(TAG, "initWallet:" + Thread.currentThread().getName());
+            if (ctx == null) {
+                Log.e(TAG, "initWallet: ctx is null");
                 return;
             }
-            //Save the first address for future check
-            m.createWallet(transactionsCount, pubkeyEncoded);
-            String firstAddress = BRWalletManager.getFirstAddress(pubkeyEncoded);
-            BRSharedPrefs.putFirstAddress(ctx, firstAddress);
-            long fee = BRSharedPrefs.getFeePerKb(ctx);
-            if (fee == 0) {
-                fee = defaultFee();
-                BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
+            BRWalletManager m = BRWalletManager.getInstance();
+            final BRPeerManager pm = BRPeerManager.getInstance();
+
+            if (!m.isCreated()) {
+                List<BRTransactionEntity> transactions = TransactionDataSource.getInstance(ctx).getAllTransactions();
+                int transactionsCount = transactions.size();
+                if (transactionsCount > 0) {
+                    m.createTxArrayWithCount(transactionsCount);
+                    for (BRTransactionEntity entity : transactions) {
+                        m.putTransaction(entity.getBuff(), entity.getBlockheight(), entity.getTimestamp());
+                    }
+                }
+
+                byte[] pubkeyEncoded = BRKeyStore.getMasterPublicKey(ctx);
+                if (Utils.isNullOrEmpty(pubkeyEncoded)) {
+                    Log.e(TAG, "initWallet: pubkey is missing");
+                    return;
+                }
+                //Save the first address for future check
+                m.createWallet(transactionsCount, pubkeyEncoded);
+                String firstAddress = BRWalletManager.getFirstAddress(pubkeyEncoded);
+                BRSharedPrefs.putFirstAddress(ctx, firstAddress);
+                long fee = BRSharedPrefs.getFeePerKb(ctx);
+                if (fee == 0) {
+                    fee = defaultFee();
+                    BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
+                }
+                BRWalletManager.getInstance().setFeePerKb(fee, isEconomyFee);
             }
-            BRWalletManager.getInstance().setFeePerKb(fee, isEconomyFee);
+
+            if (!pm.isCreated()) {
+                List<BRMerkleBlockEntity> blocks = MerkleBlockDataSource.getInstance(ctx).getAllMerkleBlocks();
+                List<BRPeerEntity> peers = PeerDataSource.getInstance(ctx).getAllPeers();
+                final int blocksCount = blocks.size();
+                final int peersCount = peers.size();
+                if (blocksCount > 0) {
+                    pm.createBlockArrayWithCount(blocksCount);
+                    for (BRMerkleBlockEntity entity : blocks) {
+                        pm.putBlock(entity.getBuff(), entity.getBlockHeight());
+                    }
+                }
+                if (peersCount > 0) {
+                    pm.createPeerArrayWithCount(peersCount);
+                    for (BRPeerEntity entity : peers) {
+                        pm.putPeer(entity.getAddress(), entity.getPort(), entity.getTimeStamp());
+                    }
+                }
+                Log.d(TAG, "blocksCount before connecting: " + blocksCount);
+                Log.d(TAG, "peersCount before connecting: " + peersCount);
+
+                int walletTime = BRKeyStore.getWalletCreationTime(ctx);
+
+                Log.e(TAG, "initWallet: walletTime: " + walletTime);
+                pm.create(walletTime, blocksCount, peersCount);
+                BRPeerManager.getInstance().updateFixedPeer(ctx);
+            }
+
+            pm.connect();
+            if (BRSharedPrefs.getStartHeight(ctx) == 0)
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        BRSharedPrefs.putStartHeight(ctx, BRPeerManager.getCurrentBlockHeight());
+                    }
+                });
+        } finally {
+            itInitiatingWallet = false;
         }
-
-        if (!pm.isCreated()) {
-            List<BRMerkleBlockEntity> blocks = MerkleBlockDataSource.getInstance(ctx).getAllMerkleBlocks();
-            List<BRPeerEntity> peers = PeerDataSource.getInstance(ctx).getAllPeers();
-            final int blocksCount = blocks.size();
-            final int peersCount = peers.size();
-            if (blocksCount > 0) {
-                pm.createBlockArrayWithCount(blocksCount);
-                for (BRMerkleBlockEntity entity : blocks) {
-                    pm.putBlock(entity.getBuff(), entity.getBlockHeight());
-                }
-            }
-            if (peersCount > 0) {
-                pm.createPeerArrayWithCount(peersCount);
-                for (BRPeerEntity entity : peers) {
-                    pm.putPeer(entity.getAddress(), entity.getPort(), entity.getTimeStamp());
-                }
-            }
-            Log.d(TAG, "blocksCount before connecting: " + blocksCount);
-            Log.d(TAG, "peersCount before connecting: " + peersCount);
-
-            int walletTime = BRKeyStore.getWalletCreationTime(ctx);
-
-            Log.e(TAG, "initWallet: walletTime: " + walletTime);
-            pm.create(walletTime, blocksCount, peersCount);
-            BRPeerManager.getInstance().updateFixedPeer(ctx);
-        }
-
-        pm.connect();
-        if (BRSharedPrefs.getStartHeight(ctx) == 0)
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    BRSharedPrefs.putStartHeight(ctx, BRPeerManager.getCurrentBlockHeight());
-                }
-            });
     }
 
     public void addBalanceChangedListener(OnBalanceChanged listener) {
