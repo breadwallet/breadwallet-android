@@ -88,6 +88,17 @@ public class FragmentSignal extends Fragment {
             Log.e(TAG, "onCreateView: bundle is null!");
         }
 
+        return rootView;
+    }
+
+    public void setCompletion(BROnSignalCompletion completion) {
+        this.completion = completion;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -109,17 +120,6 @@ public class FragmentSignal extends Fragment {
 
             }
         }, 1500);
-
-        return rootView;
-    }
-
-    public void setCompletion(BROnSignalCompletion completion) {
-        this.completion = completion;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
     }
 
     @Override
