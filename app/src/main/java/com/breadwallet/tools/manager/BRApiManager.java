@@ -244,9 +244,8 @@ public class BRApiManager {
             }
             response = resp.body().string();
             String strDate = resp.header("date");
-            if(strDate == null) {
+            if (strDate == null) {
                 Log.e(TAG, "urlGET: strDate is null!");
-                FirebaseCrash.report(new NullPointerException("strDate is null!"));
                 return response;
             }
             SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
