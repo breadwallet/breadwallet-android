@@ -53,6 +53,7 @@ import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
 import com.google.firebase.crash.FirebaseCrash;
+import com.loafwallet.BadEnglishWordListFix;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
@@ -476,6 +477,7 @@ public class BRWalletManager {
             }
             words = list.toArray(new String[list.size()]);
             cleanWordList = Bip39Reader.cleanWordList(words);
+            BadEnglishWordListFix.restoreBadWordsToDictionaryIffPresentInPhrase(phrase, cleanWordList);
             if (cleanWordList == null) return false;
         } catch (IOException e) {
             e.printStackTrace();
