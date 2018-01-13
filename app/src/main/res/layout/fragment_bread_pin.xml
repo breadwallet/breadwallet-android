@@ -95,12 +95,11 @@
     <com.breadwallet.presenter.customviews.BRKeyboard
         android:id="@+id/brkeyboard"
         android:layout_width="0dp"
-        android:paddingTop="8dp"
-        app:showAlphabet="true"
-        android:layout_height="wrap_content"
         android:background="@color/extra_light_blue_background"
+        android:layout_height="280dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"/>
-
+        app:layout_constraintRight_toRightOf="parent"
+        app:showAlphabet="true"/>
+    
 </android.support.constraint.ConstraintLayout>
