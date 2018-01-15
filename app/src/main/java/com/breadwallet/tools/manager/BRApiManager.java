@@ -90,7 +90,7 @@ public class BRApiManager {
             updateFeePerKb(context);
             if (arr != null) {
                 int length = arr.length();
-                for (int i = 1; i < length; i++) {
+                for (int i = 0; i < length; i++) {
                     CurrencyEntity tmp = new CurrencyEntity();
                     try {
                         JSONObject tmpObj = (JSONObject) arr.get(i);
