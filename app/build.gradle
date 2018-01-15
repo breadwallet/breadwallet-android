@@ -5,7 +5,7 @@ android {
     buildToolsVersion = '26.0.3'
     defaultConfig {
         testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
-        applicationId = 'com.breadwallet'
+        applicationId = 'com.loafwallet'
         minSdkVersion 23
         targetSdkVersion 26
         versionCode 165
@@ -45,10 +45,10 @@ android {
     // Specifies two flavor dimensions.
     flavorDimensions "mode"
     productFlavors {
-        bread {
-            applicationId "com.breadwallet"
+        loaf {
+            applicationId "com.loafwallet"
             dimension "mode"
-            resValue "string", "app_name", "bread"
+            resValue "string", "app_name", "loaf"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
 
             externalNativeBuild {
@@ -62,10 +62,10 @@ android {
             }
         }
 
-        breadTestnet {
-            applicationId "com.breadtestnet"
+        loafTestnet {
+            applicationId "com.loafwallet.testnet"
             dimension "mode"
-            resValue "string", "app_name", "bread-testnet"
+            resValue "string", "app_name", "loaf-testnet"
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"
 
             externalNativeBuild {
