@@ -3,7 +3,6 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion = 26
     buildToolsVersion = '26.0.3'
-
     defaultConfig {
         testInstrumentationRunner = 'android.support.test.runner.AndroidJUnitRunner'
         applicationId = 'com.breadwallet'
@@ -28,15 +27,12 @@ android {
         }
 
     }
-
     testOptions {
         unitTests.returnDefaultValues = true
     }
-
     packagingOptions {
         pickFirst 'protobuf.meta'
     }
-
     externalNativeBuild {
         cmake {
             // When you specify a version of CMake, as shown below,
@@ -46,10 +42,8 @@ android {
 
         }
     }
-
     // Specifies two flavor dimensions.
     flavorDimensions "mode"
-
     productFlavors {
         bread {
             applicationId "com.breadwallet"
@@ -87,7 +81,6 @@ android {
         }
 
     }
-
     lintOptions {
         // set to true to turn off analysis progress reporting by lint
         quiet false
@@ -101,7 +94,6 @@ android {
 
         disable 'MissingTranslation'
     }
-
     buildTypes {
         gitUpdateModules()
 //        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -125,6 +117,7 @@ android {
         }
 
     }
+    compileSdkVersion 26
 }
 
 task copyResDirectoryToClasses(type: Copy){

@@ -27,39 +27,39 @@ add_library( # Specifies the name of the library.
              SHARED
 
              # Provides a relative path to your source file(s).
-             src/main/jni/breadwallet-core/BRAddress.c
-             src/main/jni/breadwallet-core/BRAddress.h
-             src/main/jni/breadwallet-core/BRArray.h
-             src/main/jni/breadwallet-core/BRBase58.c
-             src/main/jni/breadwallet-core/BRBase58.h
-             src/main/jni/breadwallet-core/BRBIP32Sequence.c
-             src/main/jni/breadwallet-core/BRBIP32Sequence.h
-             src/main/jni/breadwallet-core/BRBIP38Key.c
-             src/main/jni/breadwallet-core/BRBIP38Key.h
-             src/main/jni/breadwallet-core/BRBIP39Mnemonic.c
-             src/main/jni/breadwallet-core/BRBIP39Mnemonic.h
-             src/main/jni/breadwallet-core/BRBIP39WordsEn.h
-             src/main/jni/breadwallet-core/BRBloomFilter.c
-             src/main/jni/breadwallet-core/BRBloomFilter.h
-             src/main/jni/breadwallet-core/BRCrypto.c
-             src/main/jni/breadwallet-core/BRCrypto.h
-             src/main/jni/breadwallet-core/BRInt.h
-             src/main/jni/breadwallet-core/BRKey.c
-             src/main/jni/breadwallet-core/BRKey.h
-             src/main/jni/breadwallet-core/BRMerkleBlock.c
-             src/main/jni/breadwallet-core/BRMerkleBlock.h
-             src/main/jni/breadwallet-core/BRPaymentProtocol.c
-             src/main/jni/breadwallet-core/BRPaymentProtocol.h
-             src/main/jni/breadwallet-core/BRPeer.c
-             src/main/jni/breadwallet-core/BRPeer.h
-             src/main/jni/breadwallet-core/BRPeerManager.c
-             src/main/jni/breadwallet-core/BRPeerManager.h
-             src/main/jni/breadwallet-core/BRSet.c
-             src/main/jni/breadwallet-core/BRSet.h
-             src/main/jni/breadwallet-core/BRTransaction.c
-             src/main/jni/breadwallet-core/BRTransaction.h
-             src/main/jni/breadwallet-core/BRWallet.c
-             src/main/jni/breadwallet-core/BRWallet.h
+             src/main/jni/loafwallet-core/BRAddress.c
+             src/main/jni/loafwallet-core/BRAddress.h
+             src/main/jni/loafwallet-core/BRArray.h
+             src/main/jni/loafwallet-core/BRBase58.c
+             src/main/jni/loafwallet-core/BRBase58.h
+             src/main/jni/loafwallet-core/BRBIP32Sequence.c
+             src/main/jni/loafwallet-core/BRBIP32Sequence.h
+             src/main/jni/loafwallet-core/BRBIP38Key.c
+             src/main/jni/loafwallet-core/BRBIP38Key.h
+             src/main/jni/loafwallet-core/BRBIP39Mnemonic.c
+             src/main/jni/loafwallet-core/BRBIP39Mnemonic.h
+             src/main/jni/loafwallet-core/BRBIP39WordsEn.h
+             src/main/jni/loafwallet-core/BRBloomFilter.c
+             src/main/jni/loafwallet-core/BRBloomFilter.h
+             src/main/jni/loafwallet-core/BRCrypto.c
+             src/main/jni/loafwallet-core/BRCrypto.h
+             src/main/jni/loafwallet-core/BRInt.h
+             src/main/jni/loafwallet-core/BRKey.c
+             src/main/jni/loafwallet-core/BRKey.h
+             src/main/jni/loafwallet-core/BRMerkleBlock.c
+             src/main/jni/loafwallet-core/BRMerkleBlock.h
+             src/main/jni/loafwallet-core/BRPaymentProtocol.c
+             src/main/jni/loafwallet-core/BRPaymentProtocol.h
+             src/main/jni/loafwallet-core/BRPeer.c
+             src/main/jni/loafwallet-core/BRPeer.h
+             src/main/jni/loafwallet-core/BRPeerManager.c
+             src/main/jni/loafwallet-core/BRPeerManager.h
+             src/main/jni/loafwallet-core/BRSet.c
+             src/main/jni/loafwallet-core/BRSet.h
+             src/main/jni/loafwallet-core/BRTransaction.c
+             src/main/jni/loafwallet-core/BRTransaction.h
+             src/main/jni/loafwallet-core/BRWallet.c
+             src/main/jni/loafwallet-core/BRWallet.h
 
              src/main/jni/transition/core.c
              src/main/jni/transition/core.h
@@ -75,7 +75,7 @@ add_library( # Specifies the name of the library.
              src/main/jni/transition/wallet.h)
 
 
-include_directories(src/main/jni/breadwallet-core/)
+include_directories(src/main/jni/loafwallet-core/)
 include_directories(src/main/secp/secp256k1/include/)
 include_directories(src/main/secp/secp256k1/src/)
 include_directories(src/main/secp/secp256k1/)
