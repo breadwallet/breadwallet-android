@@ -138,7 +138,7 @@ gradle.projectsEvaluated {
 
 
 def gitUpdateModules() {
-    ['sh', '-c', 'git submodule foreach git pull origin master'].execute().text.trim()
+    //['sh', '-c', 'git submodule foreach git pull origin master'].execute().text.trim()
     getLogger().debug("gitUpdateModules done!")
 }
 
