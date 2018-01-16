@@ -8,7 +8,12 @@ import android.os.NetworkOnMainThreadException;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.WorkerThread;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.style.ClickableSpan;
 import android.util.Log;
+import android.view.View;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
@@ -22,6 +27,7 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -76,6 +82,7 @@ public class PostAuth {
     private String phraseForKeyStore;
     public PaymentItem paymentItem;
     private PaymentRequestWrapper paymentRequest;
+    public static boolean isStuckWithAuthLoop;
 
     private static PostAuth instance;
 
@@ -98,10 +105,11 @@ public class PostAuth {
             app.startActivity(intent);
             app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         } else {
-            if(authAsked){
-                Log.e(TAG, "onCreateWalletAuth: WARNING!!!! LOOP");
+            if (authAsked) {
+                Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                isStuckWithAuthLoop = true;
             }
-
+            return;
         }
     }
 
@@ -115,6 +123,10 @@ public class PostAuth {
             }
             cleanPhrase = new String(raw);
         } catch (UserNotAuthenticatedException e) {
+            if (authAsked) {
+                Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                isStuckWithAuthLoop = true;
+            }
             return;
         }
         Intent intent = new Intent(app, PaperKeyActivity.class);
@@ -128,6 +140,10 @@ public class PostAuth {
         try {
             cleanPhrase = new String(BRKeyStore.getPhrase(app, BRConstants.PROVE_PHRASE_REQUEST));
         } catch (UserNotAuthenticatedException e) {
+            if (authAsked) {
+                Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                isStuckWithAuthLoop = true;
+            }
             return;
         }
         Intent intent = new Intent(app, PaperKeyProveActivity.class);
@@ -154,6 +170,11 @@ public class PostAuth {
                 success = BRKeyStore.putPhrase(phraseForKeyStore.getBytes(),
                         app, BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
             } catch (UserNotAuthenticatedException e) {
+                if (authAsked) {
+                    Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                    isStuckWithAuthLoop = true;
+
+                }
                 return;
             }
 
@@ -198,6 +219,10 @@ public class PostAuth {
         try {
             rawSeed = BRKeyStore.getPhrase(app, BRConstants.PAY_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
+            if (authAsked) {
+                Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                isStuckWithAuthLoop = true;
+            }
             return;
         }
         if (rawSeed.length < 10) return;
@@ -236,6 +261,10 @@ public class PostAuth {
         try {
             phrase = BRKeyStore.getPhrase(app, BRConstants.SEND_BCH_REQUEST);
         } catch (UserNotAuthenticatedException e) {
+            if (authAsked) {
+                Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                isStuckWithAuthLoop = true;
+            }
             return;
         }
         if (Utils.isNullOrEmpty(phrase)) {
@@ -333,6 +362,10 @@ public class PostAuth {
         try {
             rawSeed = BRKeyStore.getPhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
+            if (authAsked) {
+                Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                isStuckWithAuthLoop = true;
+            }
             return;
         }
         if (rawSeed == null || rawSeed.length < 10 || paymentRequest.serializedTx == null) {
@@ -374,6 +407,10 @@ public class PostAuth {
         try {
             canary = BRKeyStore.getCanary(app, BRConstants.CANARY_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
+            if (authAsked) {
+                Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                isStuckWithAuthLoop = true;
+            }
             return;
         }
         if (canary == null || !canary.equalsIgnoreCase(BRConstants.CANARY_STRING)) {
@@ -381,6 +418,10 @@ public class PostAuth {
             try {
                 phrase = BRKeyStore.getPhrase(app, BRConstants.CANARY_REQUEST_CODE);
             } catch (UserNotAuthenticatedException e) {
+                if (authAsked) {
+                    Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                    isStuckWithAuthLoop = true;
+                }
                 return;
             }
 
@@ -394,11 +435,16 @@ public class PostAuth {
                 try {
                     BRKeyStore.putCanary(BRConstants.CANARY_STRING, app, 0);
                 } catch (UserNotAuthenticatedException e) {
+                    if (authAsked) {
+                        Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                        isStuckWithAuthLoop = true;
+                    }
                     return;
                 }
             }
         }
         BRWalletManager.getInstance().startTheWalletIfExists(app);
     }
+
 
 }
