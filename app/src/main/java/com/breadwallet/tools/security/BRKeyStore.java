@@ -10,15 +10,23 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
+import android.text.SpannableString;
+import android.text.Spanned;
+import android.text.TextPaint;
+import android.text.style.ClickableSpan;
 import android.util.Base64;
 import android.util.Log;
+import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
@@ -45,6 +53,7 @@ import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.logging.Handler;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
@@ -136,6 +145,7 @@ public class BRKeyStore {
     private static final String AUTH_KEY_FILENAME = "my_auth_key";
     private static final String TOKEN_FILENAME = "my_token";
     private static final String PASS_TIME_FILENAME = "my_pass_time";
+    private static boolean bugMessageShowing;
 
     public static final int AUTH_DURATION_SEC = 300;
     private static final ReentrantLock lock = new ReentrantLock();
@@ -420,16 +430,28 @@ public class BRKeyStore {
     }
 
     public synchronized static boolean putPhrase(byte[] strToStore, Context context, int requestCode) throws UserNotAuthenticatedException {
+        if (PostAuth.isStuckWithAuthLoop) {
+            showLoopBugMessage(context);
+            throw new UserNotAuthenticatedException();
+        }
         AliasObject obj = aliasObjectMap.get(PHRASE_ALIAS);
         return !(strToStore == null || strToStore.length == 0) && _setData(context, strToStore, obj.alias, obj.datafileName, obj.ivFileName, requestCode, true);
     }
 
     public synchronized static byte[] getPhrase(final Context context, int requestCode) throws UserNotAuthenticatedException {
+        if (PostAuth.isStuckWithAuthLoop) {
+            showLoopBugMessage(context);
+            throw new UserNotAuthenticatedException();
+        }
         AliasObject obj = aliasObjectMap.get(PHRASE_ALIAS);
         return _getData(context, obj.alias, obj.datafileName, obj.ivFileName, requestCode);
     }
 
     public synchronized static boolean putCanary(String strToStore, Context context, int requestCode) throws UserNotAuthenticatedException {
+        if (PostAuth.isStuckWithAuthLoop) {
+            showLoopBugMessage(context);
+            throw new UserNotAuthenticatedException();
+        }
         if (strToStore == null || strToStore.isEmpty()) return false;
         AliasObject obj = aliasObjectMap.get(CANARY_ALIAS);
         byte[] strBytes = new byte[0];
@@ -442,6 +464,10 @@ public class BRKeyStore {
     }
 
     public synchronized static String getCanary(final Context context, int requestCode) throws UserNotAuthenticatedException {
+        if (PostAuth.isStuckWithAuthLoop) {
+            showLoopBugMessage(context);
+            throw new UserNotAuthenticatedException();
+        }
         AliasObject obj = aliasObjectMap.get(CANARY_ALIAS);
         byte[] data;
         data = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, requestCode);
@@ -972,6 +998,49 @@ public class BRKeyStore {
             Log.e(TAG, "getData: error: " + e.getClass().getSuperclass().getName());
             return null;
         }
+    }
+
+    private static void showLoopBugMessage(final Context app) {
+        if (bugMessageShowing) return;
+        bugMessageShowing = true;
+        Log.e(TAG, "showLoopBugMessage: ");
+        String mess = app.getString(R.string.ErrorMessages_loopingLockScreen_android);
+
+        SpannableString ss = new SpannableString(mess.replace("[", "").replace("]", ""));
+        ClickableSpan clickableSpan = new ClickableSpan() {
+            @Override
+            public void onClick(View textView) {
+                Log.e(TAG, "onClick: clicked on span!");
+                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        BRDialog.hideDialog();
+                        BRAnimator.showSupportFragment((Activity) app, BRConstants.loopBug);
+                    }
+                });
+
+            }
+
+            @Override
+            public void updateDrawState(TextPaint ds) {
+                super.updateDrawState(ds);
+                ds.setUnderlineText(false);
+            }
+        };
+        ss.setSpan(clickableSpan, mess.indexOf("[") - 1, mess.indexOf("]") - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), ss, app.getString(R.string.AccessibilityLabels_close), null,
+                new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        if (app instanceof Activity) ((Activity) app).finish();
+                    }
+                }, null, new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        bugMessageShowing = false;
+                    }
+                }, 0);
+
     }
 
 

@@ -141,6 +141,7 @@ public class BRConstants {
 //    public static final String confirmPhrase = "confirm-phrase";
     public static final String startView = "start-view";
     public static final String wipeWallet = "wipe-wallet";
+    public static final String loopBug = "android-loop-bug";
 
     private BRConstants() {
     }
