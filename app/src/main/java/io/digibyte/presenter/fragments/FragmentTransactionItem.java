@@ -109,7 +109,7 @@ public class FragmentTransactionItem extends Fragment {
         mTxHash = (TextView) rootView.findViewById(R.id.tx_hash);
         close = (ImageButton) rootView.findViewById(R.id.close_button);
 
-        ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
+        /* ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,7 +122,7 @@ public class FragmentTransactionItem extends Fragment {
                 }
                 BRAnimator.showSupportFragment(app, BRConstants.transactionDetails);
             }
-        });
+        }); */
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
 

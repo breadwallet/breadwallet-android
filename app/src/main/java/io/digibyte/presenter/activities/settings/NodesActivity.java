@@ -68,8 +68,8 @@ public class NodesActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nodes);
 
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
-        faq.setVisibility(View.GONE);
+        /* ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        faq.setVisibility(View.GONE); */
 
         nodeStatus = (TextView) findViewById(R.id.node_status);
         trustNode = (TextView) findViewById(R.id.node_text);

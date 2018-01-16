@@ -92,7 +92,7 @@ public class IntroActivity extends BRActivity implements Serializable {
         updateBundles();
 
 //        SyncManager.getInstance().updateAlarms(this);
-        faq = (ImageButton) findViewById(R.id.faq_button);
+        /* faq = (ImageButton) findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -100,7 +100,7 @@ public class IntroActivity extends BRActivity implements Serializable {
                 if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSupportFragment(app, BRConstants.startView);
             }
-        });
+        }); */
 
         if (!BuildConfig.DEBUG && BRKeyStore.AUTH_DURATION_SEC != 300) {
             Log.e(TAG, "onCreate: BRKeyStore.AUTH_DURATION_SEC != 300");

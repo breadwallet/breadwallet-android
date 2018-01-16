@@ -118,7 +118,7 @@ public class FragmentReceive extends Fragment {
             }
         });
 
-        ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
+        /* ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,7 +132,7 @@ public class FragmentReceive extends Fragment {
 
                 BRAnimator.showSupportFragment(app, BRConstants.receive);
             }
-        });
+        }); */
 
         signalLayout.removeView(shareButtonsLayout);
         signalLayout.removeView(copiedLayout);

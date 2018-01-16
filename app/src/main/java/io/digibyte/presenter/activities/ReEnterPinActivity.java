@@ -54,7 +54,7 @@ public class ReEnterPinActivity extends BRActivity {
         keyboard = (BRKeyboard) findViewById(R.id.brkeyboard);
         pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
 
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        /* ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -62,7 +62,7 @@ public class ReEnterPinActivity extends BRActivity {
                 if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSupportFragment(app, BRConstants.setPin);
             }
-        });
+        }); */
 
         title = (TextView) findViewById(R.id.title);
         title.setText(getString(R.string.UpdatePin_createTitleConfirm));

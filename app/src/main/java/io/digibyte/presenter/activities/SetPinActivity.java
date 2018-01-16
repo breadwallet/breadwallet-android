@@ -48,7 +48,7 @@ public class SetPinActivity extends BRActivity {
 
         keyboard = (BRKeyboard) findViewById(R.id.brkeyboard);
         title = (TextView) findViewById(R.id.title);
-        faq = (ImageButton) findViewById(R.id.faq_button);
+        /* faq = (ImageButton) findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -56,7 +56,7 @@ public class SetPinActivity extends BRActivity {
                 if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSupportFragment(app, BRConstants.setPin);
             }
-        });
+        }); */
 
         dot1 = findViewById(R.id.dot1);
         dot2 = findViewById(R.id.dot2);

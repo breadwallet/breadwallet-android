@@ -38,7 +38,7 @@ public class SyncBlockchainActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sync_blockchain);
 
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        /* ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -46,7 +46,7 @@ public class SyncBlockchainActivity extends BRActivity {
                 if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSupportFragment(app, BRConstants.reScan);
             }
-        });
+        }); */
 
         scanButton = (Button) findViewById(R.id.button_scan);
         scanButton.setOnClickListener(new View.OnClickListener() {

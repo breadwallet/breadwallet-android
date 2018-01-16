@@ -72,7 +72,7 @@ public class SecurityCenterActivity extends BRActivity {
 
         updateList();
 
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        /* ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -80,7 +80,7 @@ public class SecurityCenterActivity extends BRActivity {
                 if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSupportFragment(app, BRConstants.securityCenter);
             }
-        });
+        }); */
 
     }
 

@@ -60,7 +60,7 @@ public class FingerprintActivity extends BRActivity {
         limitExchange = (TextView) findViewById(R.id.limit_exchange);
         limitInfo = (TextView) findViewById(R.id.limit_info);
 
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        /* ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,7 +68,7 @@ public class FingerprintActivity extends BRActivity {
                 if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSupportFragment(app, BRConstants.enableFingerprint);
             }
-        });
+        }); */
 
         toggleButton.setChecked(BRSharedPrefs.getUseFingerprint(this));
 

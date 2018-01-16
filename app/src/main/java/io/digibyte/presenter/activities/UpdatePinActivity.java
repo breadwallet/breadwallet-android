@@ -67,7 +67,7 @@ public class UpdatePinActivity extends BRActivity {
         dot5 = findViewById(R.id.dot5);
         dot6 = findViewById(R.id.dot6);
 
-        faq = (ImageButton) findViewById(R.id.faq_button);
+        /* faq = (ImageButton) findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +75,7 @@ public class UpdatePinActivity extends BRActivity {
                 if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSupportFragment(app, BRConstants.setPin);
             }
-        });
+        }); */
 
 
         keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {

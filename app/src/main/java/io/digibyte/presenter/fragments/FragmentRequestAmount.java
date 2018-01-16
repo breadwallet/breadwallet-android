@@ -132,7 +132,7 @@ public class FragmentRequestAmount extends Fragment {
         close = (ImageButton) rootView.findViewById(R.id.close_button);
         keyboardIndex = signalLayout.indexOfChild(keyboardLayout);
 
-        ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
+        /* ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -146,7 +146,7 @@ public class FragmentRequestAmount extends Fragment {
 
                 BRAnimator.showSupportFragment(app, BRConstants.receive);
             }
-        });
+        }); */
 
         mTitle.setText(getString(R.string.Receive_request));
         setListeners();

@@ -32,7 +32,7 @@ public class WipeActivity extends BRActivity {
         nextButton = (Button) findViewById(R.id.send_button);
         close = (ImageButton) findViewById(R.id.close_button);
 
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        /* ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -40,7 +40,7 @@ public class WipeActivity extends BRActivity {
                 if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSupportFragment(app, BRConstants.wipeWallet);
             }
-        });
+        }); */
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override

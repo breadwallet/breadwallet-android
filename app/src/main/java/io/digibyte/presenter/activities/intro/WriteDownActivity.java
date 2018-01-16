@@ -39,14 +39,14 @@ public class WriteDownActivity extends BRActivity {
                 close();
             }
         });
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        /* ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSupportFragment(app, BRConstants.paperKey);
             }
-        });
+        }); */
         writeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

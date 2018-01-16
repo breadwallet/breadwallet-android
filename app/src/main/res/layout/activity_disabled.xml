@@ -69,13 +69,4 @@
         app:layout_constraintRight_toRightOf="@+id/disabled"
         app:layout_constraintTop_toBottomOf="@+id/until_label"/>
 
-    <ImageButton
-        android:id="@+id/faq_button"
-        android:layout_width="@dimen/faq_dimen"
-        android:layout_height="@dimen/faq_dimen"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/faq_question_black"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
 </android.support.constraint.ConstraintLayout>

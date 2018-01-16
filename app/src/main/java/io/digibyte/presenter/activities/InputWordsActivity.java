@@ -95,7 +95,7 @@ public class InputWordsActivity extends BRActivity {
                     }, null, 0);
         }
 
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        /* ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -103,7 +103,7 @@ public class InputWordsActivity extends BRActivity {
                 if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSupportFragment(app, BRConstants.paperKey);
             }
-        });
+        }); */
 
         title = (TextView) findViewById(R.id.title);
         description = (TextView) findViewById(R.id.description);

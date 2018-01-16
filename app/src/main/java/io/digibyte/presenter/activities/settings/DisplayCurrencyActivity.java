@@ -56,7 +56,7 @@ public class DisplayCurrencyActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_display_currency);
 
-        ImageButton faq = findViewById(R.id.faq_button);
+        /* ImageButton faq = findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -64,7 +64,7 @@ public class DisplayCurrencyActivity extends BRActivity {
                 if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSupportFragment(app, BRConstants.displayCurrency);
             }
-        });
+        }); */
 
         exchangeText = findViewById(R.id.exchange_text);
         listView = findViewById(R.id.currency_list_view);

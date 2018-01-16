@@ -181,7 +181,7 @@ public class FragmentSend extends Fragment {
         });
         keyboardIndex = signalLayout.indexOfChild(keyboardLayout);
 
-        ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
+        /* ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,7 +194,7 @@ public class FragmentSend extends Fragment {
                 }
                 BRAnimator.showSupportFragment(app, BRConstants.send);
             }
-        });
+        }); */
 
         showKeyboard(false);
         setButton(true);

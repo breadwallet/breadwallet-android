@@ -40,7 +40,7 @@ public class ImportActivity extends BRActivity {
             }
         });
 
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        /* ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -48,7 +48,7 @@ public class ImportActivity extends BRActivity {
                 if (!BRAnimator.isClickAllowed()) return;
                 BRAnimator.showSupportFragment(app, BRConstants.importWallet);
             }
-        });
+        }); */
 
         scan.setOnClickListener(new View.OnClickListener() {
             @Override
