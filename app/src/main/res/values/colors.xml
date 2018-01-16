@@ -36,14 +36,14 @@
     <item name="recover_gradient_start" type="color">#e5affc</item>
     <item name="recover_gradient_end" type="color">#d17df5</item>
 
-    <item name="restore_gradient_start" type="color">#fabe7a</item>
-    <item name="restore_gradient_end" type="color">#F8A445</item>
+    <item name="restore_gradient_start" type="color">#012351</item>
+    <item name="restore_gradient_end" type="color">#0066cc</item>
 
     <item name="import_gradient_start" type="color">#76b0fd</item>
     <item name="import_gradient_end" type="color">#4C98FD</item>
 
-    <item name="write_phrase_gradient_start" type="color">#D9FD5394</item>
-    <item name="write_phrase_gradient_end" type="color">#FD5394</item>
+    <item name="write_phrase_gradient_start" type="color">#012351</item>
+    <item name="write_phrase_gradient_end" type="color">#0066cc</item>
 
     <item name="pin_pad_text" type="color">#A3A8AE</item>
     <item name="extra_light_blue_background" type="color">#F5F8FA</item>

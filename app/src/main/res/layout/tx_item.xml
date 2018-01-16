@@ -16,7 +16,7 @@
                                                  android:filterTouchesWhenObscured="true">
 
 
-        <com.breadwallet.presenter.customviews.BRText
+        <io.digibyte.presenter.customviews.BRText
             android:id="@+id/sent_received"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -28,7 +28,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <com.breadwallet.presenter.customviews.BRText
+        <io.digibyte.presenter.customviews.BRText
             android:id="@+id/amount"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
             app:layout_constraintLeft_toRightOf="@+id/sent_received"
             app:layout_constraintTop_toTopOf="@+id/sent_received"/>
 
-        <com.breadwallet.presenter.customviews.BRText
+        <io.digibyte.presenter.customviews.BRText
             android:id="@+id/to_from"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
             app:layout_constraintLeft_toLeftOf="@+id/sent_received"
             app:layout_constraintTop_toBottomOf="@+id/sent_received"/>
 
-        <com.breadwallet.presenter.customviews.BRText
+        <io.digibyte.presenter.customviews.BRText
             android:id="@+id/account"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -75,7 +75,7 @@
             app:layout_constraintVertical_bias="0.0"/>
 
 
-        <com.breadwallet.presenter.customviews.BRText
+        <io.digibyte.presenter.customviews.BRText
             android:id="@+id/status"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -88,7 +88,7 @@
             app:layout_constraintTop_toBottomOf="@+id/comment"
             />
 
-        <com.breadwallet.presenter.customviews.BRText
+        <io.digibyte.presenter.customviews.BRText
             android:id="@+id/status_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -103,7 +103,7 @@
             app:layout_constraintTop_toBottomOf="@+id/status"
             app:layout_constraintVertical_bias="0.0"/>
 
-        <com.breadwallet.presenter.customviews.BRText
+        <io.digibyte.presenter.customviews.BRText
             android:id="@+id/timestamp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -115,7 +115,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
 
-        <com.breadwallet.presenter.customviews.BRText
+        <io.digibyte.presenter.customviews.BRText
             android:id="@+id/comment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -8,7 +8,7 @@
                 android:orientation="horizontal"
     >
 
-    <com.breadwallet.presenter.customviews.BRText
+    <io.digibyte.presenter.customviews.BRText
         app:customTFont="CircularPro-Bold.otf"
         android:id="@+id/item_title"
         android:layout_width="wrap_content"

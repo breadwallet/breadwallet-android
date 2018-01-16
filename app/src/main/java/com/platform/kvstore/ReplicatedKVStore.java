@@ -32,11 +32,11 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
-import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.threads.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.Utils;
+import io.digibyte.DigiByte;
+import io.digibyte.tools.security.BRKeyStore;
+import io.digibyte.tools.threads.BRExecutor;
+import io.digibyte.tools.util.BRConstants;
+import io.digibyte.tools.util.Utils;
 import com.jniwrappers.BRKey;
 import com.platform.interfaces.KVStoreAdaptor;
 import com.platform.sqlite.KVItem;
@@ -854,7 +854,7 @@ public class ReplicatedKVStore {
             Log.e(TAG, "encrypt: data is null");
             return null;
         }
-        if (app == null) app = BreadApp.getBreadContext();
+        if (app == null) app = DigiByte.getBreadContext();
         if (app == null) {
             Log.e(TAG, "encrypt: app is null");
             return null;
@@ -894,7 +894,7 @@ public class ReplicatedKVStore {
             Log.e(TAG, "decrypt: failed to decrypt: " + (data == null ? null : data.length));
             return null;
         }
-        if (app == null) app = BreadApp.getBreadContext();
+        if (app == null) app = DigiByte.getBreadContext();
         if (app == null) return null;
         if (tempAuthKey == null)
             retrieveAuthKey(app);

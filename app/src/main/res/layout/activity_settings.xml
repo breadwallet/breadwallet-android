@@ -7,9 +7,9 @@
     android:layout_width="match_parent"
     android:background="@color/extra_light_blue_background"
     android:layout_height="match_parent"
-    tools:context="com.breadwallet.presenter.activities.SetPinActivity">
+    tools:context="io.digibyte.presenter.activities.SetPinActivity">
 
-    <com.breadwallet.presenter.customviews.BRText
+    <io.digibyte.presenter.customviews.BRText
         app:customTFont="CircularPro-Bold.otf"
         android:id="@+id/title"
         android:layout_width="wrap_content"

@@ -1,4 +1,4 @@
-<com.breadwallet.presenter.customviews.BRRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<io.digibyte.presenter.customviews.BRRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                                         xmlns:app="http://schemas.android.com/apk/res-auto"
                                                         xmlns:tools="http://schemas.android.com/tools"
                                                         android:id="@+id/layout"
@@ -45,7 +45,7 @@
                 android:layout_marginStart="16dp"
                 app:layout_constraintLeft_toLeftOf="parent"/>
 
-            <com.breadwallet.presenter.customviews.BRText
+            <io.digibyte.presenter.customviews.BRText
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -94,4 +94,4 @@
 
     </android.support.constraint.ConstraintLayout>
 
-</com.breadwallet.presenter.customviews.BRRelativeLayout>
+</io.digibyte.presenter.customviews.BRRelativeLayout>
