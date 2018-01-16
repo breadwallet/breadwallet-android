@@ -107,7 +107,7 @@ public class BRCurrency {
         decimalFormatSymbols.setCurrencySymbol(symbol);
 //        currencyFormat.setMaximumFractionDigits(decimalPoints);
         currencyFormat.setGroupingUsed(true);
-        currencyFormat.setMaximumFractionDigits(BRSharedPrefs.getCurrencyUnit(app) == BRConstants.CURRENT_UNIT_LITECOINS ? 8 : 2);
+        currencyFormat.setMaximumFractionDigits(getMaxDecimalPlaces(isoCurrencyCode));
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
         currencyFormat.setNegativeSuffix("");
@@ -174,6 +174,8 @@ public class BRCurrency {
 
         if (iso.equalsIgnoreCase("LTC")) {
             return 8;
+        } else if (iso.equalsIgnoreCase("lites")) {
+            return 5;
         } else {
             Currency currency = Currency.getInstance(iso);
             return currency.getDefaultFractionDigits();
