@@ -161,7 +161,7 @@ public class BRAnimator {
     }
 
     public static void showSupportFragment(Activity app, String articleId) {
-        if(supportIsShowing) return;
+        if (supportIsShowing) return;
         supportIsShowing = true;
         if (app == null) {
             Log.e(TAG, "showSupportFragment: app is null");
@@ -388,8 +388,8 @@ public class BRAnimator {
     }
 
     public static void startBreadActivity(Activity from, boolean auth) {
+        if (from == null) return;
         Log.e(TAG, "startBreadActivity: " + from.getClass().getName());
-        assert (from != null);
         Class toStart = auth ? LoginActivity.class : BreadActivity.class;
         Intent intent = new Intent(from, toStart);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
