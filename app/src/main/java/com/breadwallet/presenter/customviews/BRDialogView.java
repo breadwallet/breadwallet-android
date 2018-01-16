@@ -7,6 +7,8 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.text.SpannableString;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -16,6 +18,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.Utils;
 
 /**
@@ -57,6 +60,9 @@ public class BRDialogView extends DialogFragment {
     private Button negativeButton;
     private LinearLayout buttonsLayout;
 
+    //provide the way to have clickable span in the message
+    private SpannableString spanMessage;
+
     private ConstraintLayout mainLayout;
 
     @Override
@@ -75,12 +81,17 @@ public class BRDialogView extends DialogFragment {
 
         titleText.setText(title);
         messageText.setText(message);
+        if (spanMessage != null) {
+            messageText.setText(spanMessage);
+            messageText.setMovementMethod(LinkMovementMethod.getInstance());
+        }
         positiveButton.setText(posButton);
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                posListener.onClick(BRDialogView.this);
+                if (posListener != null)
+                    posListener.onClick(BRDialogView.this);
             }
         });
         if (Utils.isNullOrEmpty(negButton)) {
@@ -93,7 +104,8 @@ public class BRDialogView extends DialogFragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                negListener.onClick(BRDialogView.this);
+                if (negListener != null)
+                    negListener.onClick(BRDialogView.this);
             }
         });
 //        if (iconRes != 0)
@@ -124,6 +136,14 @@ public class BRDialogView extends DialogFragment {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public void setSpan(SpannableString message) {
+        if (message == null) {
+            BRReportsManager.reportBug(new NullPointerException("setSpan with null message"));
+            return;
+        }
+        this.spanMessage = message;
     }
 
     public void setPosButton(@NonNull String posButton) {
@@ -158,5 +178,10 @@ public class BRDialogView extends DialogFragment {
         BRDialogView.this.dismiss();
 
     }
+
+//    public interface SpanClickListener {
+//        void onClick();
+//
+//    }
 
 }

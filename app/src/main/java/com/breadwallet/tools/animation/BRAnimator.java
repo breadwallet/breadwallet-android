@@ -190,6 +190,24 @@ public class BRAnimator {
 
     }
 
+    public static void popBackStackTillEntry(Activity app, int entryIndex) {
+
+        if (app.getFragmentManager() == null) {
+            return;
+        }
+        if (app.getFragmentManager().getBackStackEntryCount() <= entryIndex) {
+            return;
+        }
+        FragmentManager.BackStackEntry entry = app.getFragmentManager().getBackStackEntryAt(
+                entryIndex);
+        if (entry != null) {
+            app.getFragmentManager().popBackStackImmediate(entry.getId(),
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+
+
+    }
+
     public static void showTransactionPager(Activity app, List<TxItem> items, int position) {
         if (app == null) {
             Log.e(TAG, "showSendFragment: app is null");
