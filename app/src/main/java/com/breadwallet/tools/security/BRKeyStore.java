@@ -243,8 +243,6 @@ public class BRKeyStore {
     }
 
     private static SecretKey createKeys(String alias, boolean auth_required) throws InvalidAlgorithmParameterException, KeyStoreException, NoSuchProviderException, NoSuchAlgorithmException {
-        // Create the keys if necessary
-
         KeyGenerator keyGenerator = KeyGenerator.getInstance(KeyProperties.KEY_ALGORITHM_AES, ANDROID_KEY_STORE);
 
         // Set the alias of the entry in Android KeyStore where the key will appear
@@ -326,20 +324,25 @@ public class BRKeyStore {
 
             byte[] iv = readBytesFromFile(getFilePath(alias_iv, context));
             if (Utils.isNullOrEmpty(iv))
-                throw new NullPointerException("iv is missing for " + alias);
-            Cipher outCipher;
-            outCipher = Cipher.getInstance(CIPHER_ALGORITHM);
+                throw new RuntimeException("iv is missing for " + alias);
+            Cipher outCipher = Cipher.getInstance(CIPHER_ALGORITHM);
             outCipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
             CipherInputStream cipherInputStream = new CipherInputStream(new FileInputStream(encryptedDataFilePath), outCipher);
             byte[] result = BytesUtil.readBytesFromStream(cipherInputStream);
+            if (result == null)
+                throw new RuntimeException("Failed to read bytes from CipherInputStream for alias " + alias);
 
             //create the new format key
             SecretKey newKey = createKeys(alias, (alias.equals(PHRASE_ALIAS) || alias.equals(CANARY_ALIAS)));
+            if (newKey == null)
+                throw new RuntimeException("Failed to create new key for alias " + alias);
             Cipher inCipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM);
+            //init the cipher
             inCipher.init(Cipher.ENCRYPT_MODE, newKey);
             iv = inCipher.getIV();
             //store the new iv
             storeEncryptedData(context, iv, alias_iv);
+            //encrypt the data
             encryptedData = inCipher.doFinal(result);
             //store the new data
             storeEncryptedData(context, encryptedData, alias);
