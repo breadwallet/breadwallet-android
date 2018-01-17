@@ -17,6 +17,7 @@
         <attr name="isBreadButton" format="boolean"/>
         <attr name="buttonType" format="integer"/>
         <attr name="customBFont" format="string"/>
+        <attr name="hasShadow" format="boolean"/>
     </declare-styleable>
 
     <declare-styleable name="BRKeyboard">

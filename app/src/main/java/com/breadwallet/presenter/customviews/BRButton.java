@@ -68,6 +68,7 @@ public class BRButton extends Button {
     private float shadowOffSet = SHADOW_UNPRESSED;
     private static final int ROUND_PIXELS = 16;
     private boolean isBreadButton; //meaning is has the special animation and shadow
+    private boolean hasShadow; // allows us to add/remove the drop shadow from the button without affecting the animation
 
     public BRButton(Context context) {
         super(context);
@@ -110,6 +111,7 @@ public class BRButton extends Button {
         int paddingTop = arr.hasValue(1) ? arr.getDimensionPixelOffset(1, -1) : 0;
         int paddingRight = arr.hasValue(2) ? arr.getDimensionPixelOffset(2, -1) : (int) px16;
         int paddingBottom = arr.hasValue(3) ? arr.getDimensionPixelOffset(3, -1) + (isBreadButton ? (int) px16 : 0) : (isBreadButton ? (int) px16 : 0);
+        hasShadow = a.getBoolean(R.styleable.BRButton_hasShadow, true);
 
         int type = a.getInteger(R.styleable.BRButton_buttonType, 0);
         setType(type);
@@ -201,7 +203,9 @@ public class BRButton extends Button {
     @Override
     protected void onDraw(Canvas canvas) {
         if (isBreadButton) {
-            shadowRect.set(5, height / 4, width - 5, (int) (height * shadowOffSet));
+            if(hasShadow) {
+                shadowRect.set(5, height / 4, width - 5, (int) (height * shadowOffSet));
+            }
             modifiedWidth = width - 10;
             modifiedHeight = height - height / 4 - 5;
             bRect.set(5, 5, modifiedWidth, modifiedHeight + 5);
@@ -234,6 +238,13 @@ public class BRButton extends Button {
             bPaintStroke.setStrokeWidth(Utils.getPixelsFromDps(getContext(), 1));
             setTextColor(getContext().getColor(R.color.button_primary_normal));
             bPaint.setColor(getContext().getColor(R.color.button_secondary));
+            bPaint.setStyle(Paint.Style.FILL);
+        } else if (type == 4) {
+            bPaintStroke.setColor(getContext().getColor(R.color.currency_buttons_color));
+            bPaintStroke.setStyle(Paint.Style.STROKE);
+            bPaintStroke.setStrokeWidth(Utils.getPixelsFromDps(getContext(), 1));
+            setTextColor(getContext().getColor(R.color.white));
+            bPaint.setColor(getContext().getColor(R.color.currency_buttons_color));
             bPaint.setStyle(Paint.Style.FILL);
         }
         invalidate();
