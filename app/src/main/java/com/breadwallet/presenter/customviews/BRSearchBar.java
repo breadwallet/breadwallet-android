@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.customviews;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.CurrencyActivity;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.threads.BRExecutor;
@@ -77,6 +79,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         init();
     }
 
+
     private void init() {
         inflate(getContext(), R.layout.search_bar, this);
         breadActivity = (BreadActivity) getContext();
@@ -88,8 +91,8 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         cancelButton = (BRButton) findViewById(R.id.cancel_button);
 
         clearSwitches();
-
         setListeners();
+
 
         searchEdit.requestFocus();
         searchEdit.postDelayed(new Runnable() {
