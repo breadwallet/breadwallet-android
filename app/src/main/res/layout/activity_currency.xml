@@ -58,8 +58,8 @@
 
                 <ImageButton
                     android:id="@+id/back_icon"
-                    android:layout_width="32dp"
-                    android:layout_height="32dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginLeft="@dimen/activity_horizontal_margin"
                     android:layout_marginTop="28dp"
                     android:background="@drawable/ic_chevron_left_white_24dp" />
@@ -157,20 +157,22 @@
         android:weightSum="3"
         android:orientation="horizontal">
 
+
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/send_button"
             android:layout_width="0dp"
-            android:layout_height="39dp"
+            android:layout_height="50dp"
             android:layout_gravity="center_vertical"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:layout_weight="1"
             android:background="@color/currency_buttons_color"
             android:text="@string/CurrencySend"
             android:textColor="@color/white"
             android:textSize="16sp"
+            app:hasShadow="false"
             app:buttonType="4"
             app:customTFont="CircularPro-Bold.otf"
             app:isBreadButton="true" />
@@ -179,38 +181,37 @@
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/receive_button"
             android:layout_width="0dp"
-            android:layout_height="39dp"
+            android:layout_height="50dp"
             android:layout_gravity="center_vertical"
             android:layout_marginBottom="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:background="@color/currency_buttons_color"
             android:text="@string/CurrencyReceive"
             android:textColor="@color/white"
             android:textSize="16sp"
             app:buttonType="4"
             android:layout_weight="1"
-
+            app:hasShadow="false"
             app:customTFont="CircularPro-Bold.otf"
             app:isBreadButton="true" />
 
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/buy_button"
             android:layout_width="0dp"
-            android:layout_height="39dp"
+            android:layout_height="50dp"
             android:layout_gravity="center_vertical"
             android:layout_marginBottom="16dp"
-            android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="20dp"
             android:background="@color/currency_buttons_color"
             android:text="@string/CurrencyBuy"
             android:textColor="@color/white"
             android:textSize="16sp"
             app:buttonType="4"
+            android:paddingTop="3dp"
             android:layout_weight="1"
-
+            app:hasShadow="false"
             app:customTFont="CircularPro-Bold.otf"
             app:isBreadButton="true" />
 
