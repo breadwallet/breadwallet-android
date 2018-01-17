@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ImageButton;
@@ -12,6 +13,7 @@ import android.widget.LinearLayout;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRText;
+import com.breadwallet.tools.animation.BRAnimator;
 
 import static com.breadwallet.presenter.activities.TestHomeActivity.EXTRA_CURRENCY;
 
@@ -22,7 +24,7 @@ import static com.breadwallet.presenter.activities.TestHomeActivity.EXTRA_CURREN
  * This activity will display pricing and transaction information for any currency the user has access to
  */
 
-public class CurrencyActivity extends Activity {
+public class CurrencyActivity extends FragmentActivity {
 
     BRText mCurrencyTitle;
     BRText mCurrencyPriceUsd;
@@ -52,11 +54,28 @@ public class CurrencyActivity extends Activity {
         mReceiveButton = findViewById(R.id.receive_button);
         mBuyButton = findViewById(R.id.buy_button);
 
+        mSendButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BRAnimator.showSendFragment(CurrencyActivity.this, null);
+
+            }
+        });
+
+        mReceiveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BRAnimator.showReceiveFragment(CurrencyActivity.this, false);
+
+            }
+        });
+
 
         if (getIntent() != null) {
             String currency = getIntent().getStringExtra(EXTRA_CURRENCY);
             if (currency.equals("btc")) {
                 // Do nothing, BTC display is the default display
+
             } else if (currency.equals("bch")) {
                 mCurrencyTitle.setText("BitcoinCash");
                 mCurrencyPriceUsd.setText("$2,665.41 per BCH");
