@@ -55,11 +55,11 @@
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
-            <intent-filter android:autoVerify="true">
+         <!--   <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
-            </intent-filter>
+            </intent-filter>-->
         </activity>
         <activity
             android:name=".presenter.activities.BreadActivity"
@@ -227,6 +227,17 @@
             android:name=".presenter.activities.settings.TestActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name=".presenter.activities.CurrencyActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.MAIN"/>
+
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
         </activity>
 
         <service
