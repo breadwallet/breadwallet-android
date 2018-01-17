@@ -734,4 +734,13 @@
   <string name="WritePaperPhrase.previous">Previous</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d of %2$d</string>
+  <!-- Currency labels -->
+  <string name="CurrencyBitcoin">Bitcoin</string>
+  <string name="CurrencyBitcoinCash">BitcoinCash</string>
+  <string name="CurrencyBalance">Balance</string>
+  <string name="CurrencyBuy">Buy</string>
+  <string name="CurrencySend">Send</string>
+  <string name="CurrencyReceive">Receive</string>
+
+
 </resources>

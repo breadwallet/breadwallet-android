@@ -62,5 +62,10 @@
     <color name="viewfinder_laser">#ffcc0000</color>
     <color name="viewfinder_border">#ffafed44</color>
 
+    //Currency screen
+    <color name="currency_header_background">#f29500</color>
+    <color name="currency_subheading_color">#F0E5D7</color>
+    <color name="currency_buttons_color">#ffac26</color>
+
 
 </resources>
