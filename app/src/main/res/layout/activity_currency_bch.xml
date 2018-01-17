@@ -26,7 +26,7 @@
             android:id="@+id/bread_bar"
             android:layout_width="match_parent"
             android:layout_height="160dp"
-            android:background="@color/currency_header_background"
+            android:background="@color/bitcoin_cash_row_color"
             android:clipChildren="false"
             android:clipToPadding="false"
             android:contentInsetLeft="0dp"
@@ -166,14 +166,14 @@
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="20dp"
-            android:layout_weight="1"
-            android:background="@color/currency_buttons_color"
+            android:layout_weight="1.5"
+            android:background="@color/bitcoin_cash_row_color"
             android:text="@string/CurrencySend"
             android:textColor="@color/white"
             android:textSize="16sp"
-            app:hasShadow="false"
             app:buttonType="4"
             app:customTFont="CircularPro-Bold.otf"
+            app:hasShadow="false"
             app:isBreadButton="true" />
 
 
@@ -185,34 +185,16 @@
             android:layout_marginBottom="16dp"
             android:layout_marginRight="16dp"
             android:layout_marginTop="20dp"
-            android:background="@color/currency_buttons_color"
+            android:background="@color/bitcoin_cash_row_color"
             android:text="@string/CurrencyReceive"
             android:textColor="@color/white"
             android:textSize="16sp"
             app:buttonType="4"
-            android:layout_weight="1"
+            android:layout_weight="1.5"
             app:hasShadow="false"
             app:customTFont="CircularPro-Bold.otf"
             app:isBreadButton="true" />
 
-        <com.breadwallet.presenter.customviews.BRButton
-            android:id="@+id/buy_button"
-            android:layout_width="0dp"
-            android:layout_height="50dp"
-            android:layout_gravity="center_vertical"
-            android:layout_marginBottom="16dp"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="20dp"
-            android:background="@color/currency_buttons_color"
-            android:text="@string/CurrencyBuy"
-            android:textColor="@color/white"
-            android:textSize="16sp"
-            app:buttonType="4"
-            android:paddingTop="3dp"
-            android:layout_weight="1"
-            app:hasShadow="false"
-            app:customTFont="CircularPro-Bold.otf"
-            app:isBreadButton="true" />
 
     </LinearLayout>
 

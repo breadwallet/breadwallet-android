@@ -218,6 +218,13 @@ public class BRButton extends Button {
 
     }
 
+    public void setColor(int color){
+        bPaint.setColor(getContext().getColor(R.color.bitcoin_cash_row_color));
+
+        invalidate();
+
+    }
+
     public void setType(int type) {
         if (type == 3) press(1);
         this.type = type;
