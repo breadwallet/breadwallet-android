@@ -7,14 +7,22 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRButton;
+import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.InternetManager;
+import com.breadwallet.tools.manager.SyncManager;
+import com.breadwallet.tools.threads.BRExecutor;
+import com.breadwallet.wallet.BRPeerManager;
 import com.platform.HTTPServer;
 
 import static com.breadwallet.presenter.activities.TestHomeActivity.EXTRA_CURRENCY;
@@ -26,7 +34,7 @@ import static com.breadwallet.presenter.activities.TestHomeActivity.EXTRA_CURREN
  * This activity will display pricing and transaction information for any currency the user has access to
  */
 
-public class CurrencyActivity extends FragmentActivity {
+public class CurrencyActivity extends BreadActivity implements InternetManager.ConnectionReceiverListener {
 
     BRText mCurrencyTitle;
     BRText mCurrencyPriceUsd;
@@ -37,6 +45,10 @@ public class CurrencyActivity extends FragmentActivity {
     BRButton mSendButton;
     BRButton mReceiveButton;
     BRButton mBuyButton;
+
+    public ViewFlipper barFlipper;
+    private BRSearchBar searchBar;
+    private ImageButton mSearchIcon;
 
 
     @Override
@@ -55,6 +67,13 @@ public class CurrencyActivity extends FragmentActivity {
         mSendButton = findViewById(R.id.send_button);
         mReceiveButton = findViewById(R.id.receive_button);
         mBuyButton = findViewById(R.id.buy_button);
+        barFlipper = findViewById(R.id.tool_bar_flipper);
+        searchBar = findViewById(R.id.search_bar);
+        mSearchIcon = findViewById(R.id.search_icon);
+
+
+        setUpBarFlipper();
+
 
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,7 +138,44 @@ public class CurrencyActivity extends FragmentActivity {
                 finish();
             }
         });
+
+        mSearchIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!BRAnimator.isClickAllowed()) return;
+                barFlipper.setDisplayedChild(1); //search bar
+                searchBar.onShow(true);
+            }
+        });
     }
 
+    private void setUpBarFlipper() {
+        barFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.flipper_enter));
+        barFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.flipper_exit));
+    }
 
+    @Override
+    public void onConnectionChanged(boolean isConnected) {
+        if (isConnected) {
+            if (barFlipper != null) {
+                if (barFlipper.getDisplayedChild() == 2)
+                    barFlipper.setDisplayedChild(0);
+            }
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(CurrencyActivity.this));
+//                    Log.e(TAG, "run: " + progress);
+                    if (progress < 1 && progress > 0) {
+                        SyncManager.getInstance().startSyncingProgressThread();
+                    }
+                }
+            });
+
+        } else {
+            if (barFlipper != null)
+                barFlipper.setDisplayedChild(2);
+            SyncManager.getInstance().stopSyncingProgressThread();
+        }
+    }
 }
