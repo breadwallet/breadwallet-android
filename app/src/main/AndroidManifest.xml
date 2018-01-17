@@ -230,6 +230,13 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
 
+        </activity>
+
+        <activity
+            android:name=".presenter.activities.TestHomeActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait">
+
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.MAIN"/>
 
