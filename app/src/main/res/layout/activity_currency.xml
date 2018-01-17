@@ -21,6 +21,12 @@
         android:layout_height="wrap_content"
         android:orientation="vertical">
 
+        <ViewFlipper
+            android:id="@+id/tool_bar_flipper"
+            tools:context="com.breadwallet.presenter.activities.CurrencyActivity"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
 
         <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
             android:id="@+id/bread_bar"
@@ -142,6 +148,33 @@
 
 
         </android.support.v7.widget.Toolbar>
+
+            <com.breadwallet.presenter.customviews.BRSearchBar
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/search_bar"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:background="@drawable/bread_gradient"
+                android:contentInsetLeft="0dp"
+                android:contentInsetStart="0dp"
+                app:contentInsetLeft="0dp"
+                app:contentInsetStart="0dp">
+            </com.breadwallet.presenter.customviews.BRSearchBar>
+
+            <com.breadwallet.presenter.customviews.BRNotificationBar
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/notification_bar"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:background="@drawable/bread_gradient"
+                android:contentInsetLeft="0dp"
+                android:contentInsetStart="0dp"
+                app:breadText="No internet connection found.\nCheck your connection and try again."
+                app:contentInsetLeft="0dp"
+                app:contentInsetStart="0dp">
+            </com.breadwallet.presenter.customviews.BRNotificationBar>
+
+        </ViewFlipper>
     </LinearLayout>
 
 
