@@ -11,9 +11,11 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.platform.HTTPServer;
 
 import static com.breadwallet.presenter.activities.TestHomeActivity.EXTRA_CURRENCY;
 
@@ -75,6 +77,18 @@ public class CurrencyActivity extends FragmentActivity {
             String currency = getIntent().getStringExtra(EXTRA_CURRENCY);
             if (currency.equals("btc")) {
                 // Do nothing, BTC display is the default display
+
+                mBuyButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        Intent intent = new Intent(CurrencyActivity.this, WebViewActivity.class);
+                        intent.putExtra("url", HTTPServer.URL_BUY);
+                        Activity app = CurrencyActivity.this;
+                        app.startActivity(intent);
+                        app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                    }
+                });
 
             } else if (currency.equals("bch")) {
                 mCurrencyTitle.setText("BitcoinCash");
