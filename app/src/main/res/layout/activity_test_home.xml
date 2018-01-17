@@ -45,7 +45,7 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@id/total_assets_usd"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="0dp"
         android:text="@string/Portfolio"
         android:textColor="#788f9e" />
 
@@ -181,8 +181,8 @@
         android:layout_marginTop="16dp"
         android:text="@string/Admin"
         android:textColor="#788f9e" />
-    
-    
+
+
     <RelativeLayout
         android:id="@+id/settings_row"
         android:layout_width="match_parent"
@@ -219,11 +219,12 @@
     </RelativeLayout>
 
     <RelativeLayout
+        android:id="@+id/security_row"
         android:layout_width="match_parent"
         android:layout_below="@id/settings_row"
         android:layout_marginRight="16dp"
         android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/admin_card_shape"
         android:layout_height="54dp">
 
@@ -244,6 +245,41 @@
 
         <ImageButton
             android:id="@+id/security_arrow_right"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="16dp"
+            android:layout_centerVertical="true"
+            android:background="@drawable/ic_chevron_right"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/support_row"
+        android:layout_width="match_parent"
+        android:layout_below="@id/security_row"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/admin_card_shape"
+        android:layout_height="54dp">
+
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/support_label"
+            android:layout_marginLeft="22dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/MenuButton.support"
+            app:customTFont="CircularPro-Book.otf"
+            android:drawableLeft="@drawable/ic_question_mark_shape"
+            android:layout_gravity="center"
+            android:drawablePadding="8dp"
+            android:paddingBottom="4dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <ImageButton
+            android:id="@+id/support_arrow_right"
             android:layout_alignParentRight="true"
             android:layout_marginRight="16dp"
             android:layout_centerVertical="true"
