@@ -192,7 +192,7 @@ public class TxManager {
         long took = (System.currentTimeMillis() - start);
         if (took > 500)
             Log.e(TAG, "updateTxList: took: " + took);
-        if (adapter != null && items != null) {
+        if (adapter != null ) {
             ((Activity) app).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
