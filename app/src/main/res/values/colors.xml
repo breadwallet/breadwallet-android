@@ -67,5 +67,11 @@
     <color name="currency_subheading_color">#F0E5D7</color>
     <color name="currency_buttons_color">#ffac26</color>
 
+    //Home screen
+    <color name="total_assets_label_color">#788f9e</color>
+    <color name="total_assets_usd_color">#546875</color>
+    <color name="bitcoin_cash_row_color">#478559</color>
+    <color name="admin_row_color">#e0e5e8</color>
+
 
 </resources>

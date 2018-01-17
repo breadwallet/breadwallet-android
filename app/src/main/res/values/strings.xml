@@ -743,6 +743,11 @@
   <string name="CurrencyBuy">Buy</string>
   <string name="CurrencySend">Send</string>
   <string name="CurrencyReceive">Receive</string>
+  <string name="TotalAssets">total assets</string>
+  <string name="Portfolio">Portfolio</string>
+  <string name="Admin">Admin</string>
+
+
 
 
 </resources>
