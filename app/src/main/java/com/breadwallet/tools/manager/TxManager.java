@@ -199,7 +199,6 @@ public class TxManager {
                     adapter.setItems(items);
                     txList.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
-                    Log.e(TAG, "updateTxList: " + currentPrompt);
                 }
             });
         }
