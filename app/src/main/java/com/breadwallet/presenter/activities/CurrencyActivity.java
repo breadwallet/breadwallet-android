@@ -1,9 +1,14 @@
 package com.breadwallet.presenter.activities;
 
+import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
+import android.support.transition.TransitionManager;
 import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
@@ -22,10 +27,13 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.threads.BRExecutor;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.platform.HTTPServer;
 
 import static com.breadwallet.presenter.activities.TestHomeActivity.EXTRA_CURRENCY;
+import static com.breadwallet.tools.animation.BRAnimator.t1Size;
+import static com.breadwallet.tools.animation.BRAnimator.t2Size;
 
 /**
  * Created by byfieldj on 1/16/18.
@@ -51,6 +59,9 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
     public ViewFlipper barFlipper;
     private BRSearchBar searchBar;
     private ImageButton mSearchIcon;
+    private ImageButton mSwap;
+    private ConstraintLayout toolBarConstraintLayout;
+
 
 
     @Override
@@ -72,6 +83,8 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
         barFlipper = findViewById(R.id.tool_bar_flipper);
         searchBar = findViewById(R.id.search_bar);
         mSearchIcon = findViewById(R.id.search_icon);
+        toolBarConstraintLayout = findViewById(R.id.bread_toolbar);
+        mSwap = findViewById(R.id.swap);
 
 
         setUpBarFlipper();
@@ -149,7 +162,56 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
                 searchBar.onShow(true);
             }
         });
+
+        mBalanceAmountUsd.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                swap();
+            }
+        });
+        mBalanceAmountCurrency.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                swap();
+            }
+        });
     }
+
+    private void swap() {
+        if (!BRAnimator.isClickAllowed()) return;
+        boolean b = !BRSharedPrefs.getPreferredBTC(this);
+        setPriceTags(b, true);
+        BRSharedPrefs.putPreferredBTC(this, b);
+    }
+
+    private void setPriceTags(boolean btcPreferred, boolean animate) {
+        //secondaryPrice.setTextSize(!btcPreferred ? t1Size : t2Size);
+        //primaryPrice.setTextSize(!btcPreferred ? t2Size : t1Size);
+        ConstraintSet set = new ConstraintSet();
+        set.clone(toolBarConstraintLayout);
+        if (animate)
+            TransitionManager.beginDelayedTransition(toolBarConstraintLayout);
+        int px4 = Utils.getPixelsFromDps(this, 4);
+        int px16 = Utils.getPixelsFromDps(this, 16);
+        //align to parent left
+        set.connect(!btcPreferred ? R.id.secondary_price : R.id.primary_price, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.END, px16);
+        //align equals after the first item
+        set.connect(R.id.equals, ConstraintSet.START, !btcPreferred ? mBalanceAmountCurrency.getId() : mBalanceAmountUsd.getId(), ConstraintSet.END, px4);
+        //align second item after equals
+        set.connect(!btcPreferred ? R.id.primary_price : R.id.secondary_price, ConstraintSet.START, mSwap.getId(), ConstraintSet.END, px4);
+//        align the second item to the baseline of the first
+//        set.connect(!btcPreferred ? R.id.primary_price : R.id.secondary_price, ConstraintSet.BASELINE, btcPreferred ? R.id.primary_price : R.id.secondary_price, ConstraintSet.BASELINE, 0);
+        // Apply the changes
+        set.applyTo(toolBarConstraintLayout);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                updateUI();
+            }
+        }, toolBarConstraintLayout.getLayoutTransition().getDuration(LayoutTransition.CHANGING));
+    }
+
 
     private void setUpBarFlipper() {
         barFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.flipper_enter));
