@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
@@ -140,7 +141,7 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
             @Override
             public void onClick(View v) {
                 searchEdit.setText("");
-                breadActivity.barFlipper.setDisplayedChild(0);
+                breadActivity.resetFlipper();
                 clearSwitches();
                 onShow(false);
             }
