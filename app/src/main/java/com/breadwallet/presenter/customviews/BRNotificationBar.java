@@ -80,7 +80,7 @@ public class BRNotificationBar extends android.support.v7.widget.Toolbar {
         close.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                breadActivity.barFlipper.setDisplayedChild(0);
+                breadActivity.resetFlipper();
             }
         });
 

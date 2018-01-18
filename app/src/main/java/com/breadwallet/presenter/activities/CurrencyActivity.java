@@ -32,6 +32,8 @@ import static com.breadwallet.presenter.activities.TestHomeActivity.EXTRA_CURREN
  * <p>
  * <p>
  * This activity will display pricing and transaction information for any currency the user has access to
+ * (BTC, BCH, ETH)
+ *
  */
 
 public class CurrencyActivity extends BreadActivity implements InternetManager.ConnectionReceiverListener {
@@ -152,6 +154,10 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
     private void setUpBarFlipper() {
         barFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.flipper_enter));
         barFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.flipper_exit));
+    }
+
+    public void resetFlipper(){
+        barFlipper.setDisplayedChild(0);
     }
 
     @Override
