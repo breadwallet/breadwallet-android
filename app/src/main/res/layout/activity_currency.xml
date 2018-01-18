@@ -40,7 +40,7 @@
             app:contentInsetLeft="0dp"
             app:contentInsetStart="0dp">
 
-            <RelativeLayout
+            <android.support.constraint.ConstraintLayout
                 android:id="@+id/bread_toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -53,98 +53,98 @@
                     android:id="@+id/currency_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_marginTop="16dp"
                     android:text="@string/CurrencyBitcoin"
                     android:textColor="@color/white"
-                    android:textSize="@dimen/header"
 
-                    />
+                    android:textSize="@dimen/header"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <ImageButton
                     android:id="@+id/back_icon"
-                    android:layout_width="48dp"
-                    android:layout_height="48dp"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
                     android:layout_marginTop="28dp"
-                    android:background="@drawable/ic_chevron_left_white_24dp" />
+                    android:background="@drawable/ic_chevron_left_white_24dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <com.breadwallet.presenter.customviews.BRText
                     android:id="@+id/currency_usd_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/currency_label"
-                    android:layout_centerHorizontal="true"
                     android:text="$16,904.34 per BTC"
                     android:textColor="@color/currency_subheading_color"
                     android:textSize="@dimen/sub_header"
-                    app:customTFont="CircularPro-Book.otf" />
+                    app:customTFont="CircularPro-Book.otf"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/currency_label" />
 
 
                 <com.breadwallet.presenter.customviews.BRText
                     android:id="@+id/balance_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentLeft="true"
-                    android:layout_below="@id/currency_usd_price"
-                    android:layout_marginLeft="16dp"
-                    android:layout_marginTop="32dp"
+                    android:layout_marginBottom="1dp"
                     android:text="@string/CurrencyBalance"
                     android:textColor="@color/currency_subheading_color"
                     android:textSize="@dimen/paragraph"
-                    app:customTFont="CircularPro-Book.otf" />
+                    app:customTFont="CircularPro-Book.otf"
+                    app:layout_constraintBottom_toTopOf="@+id/balance_display"
+                    app:layout_constraintStart_toStartOf="@+id/balance_display" />
 
 
-                <LinearLayout
-                    android:id="@+id/balance_container"
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/balance_display"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@id/balance_label"
-                    android:layout_marginLeft="@dimen/activity_horizontal_margin"
-                    android:orientation="horizontal">
+                    android:layout_marginBottom="1dp"
+                    android:layout_marginStart="16dp"
+                    android:text="$26,495.69"
+                    android:textColor="@color/white"
+                    android:textSize="28sp"
+                    app:customTFont="CircularPro-Bold.otf"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
 
 
-                    <com.breadwallet.presenter.customviews.BRText
-                        android:id="@+id/balance_display"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="$26,495.69"
-                        android:textColor="@color/white"
-                        android:textSize="28sp"
-                        app:customTFont="CircularPro-Bold.otf" />
+                <ImageButton
+                    android:id="@+id/swap"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="1dp"
+                    android:background="@drawable/ic_sync_white_24dp"
+                    app:layout_constraintBottom_toBottomOf="@+id/balance_count"
+                    app:layout_constraintEnd_toStartOf="@+id/balance_count" />
 
-
-                    <ImageButton
-                        android:id="@+id/sync"
-                        android:layout_width="18dp"
-                        android:layout_height="18dp"
-                        android:layout_marginLeft="8dp"
-                        android:layout_marginTop="18dp"
-                        android:background="@drawable/ic_sync_white_24dp" />
-
-                    <com.breadwallet.presenter.customviews.BRText
-                        android:id="@+id/balance_count"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="4dp"
-                        android:text="1.56739 BTC"
-                        android:textColor="@color/currency_subheading_color" />
-
-                </LinearLayout>
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/balance_count"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:layout_marginStart="26dp"
+                    android:text="1.56739 BTC"
+                    android:textColor="@color/currency_subheading_color"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/balance_display" />
 
 
                 <ImageButton
                     android:id="@+id/search_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentRight="true"
-                    android:layout_below="@id/balance_label"
-                    android:layout_marginRight="16dp"
-                    android:layout_marginTop="6dp"
-                    android:background="@drawable/ic_search_white_24dp" />
+                    android:layout_marginBottom="12dp"
+                    android:layout_marginEnd="16dp"
+                    android:background="@drawable/ic_search_white_24dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent" />
 
 
-            </RelativeLayout>
+            </android.support.constraint.ConstraintLayout>
 
 
         </android.support.v7.widget.Toolbar>
