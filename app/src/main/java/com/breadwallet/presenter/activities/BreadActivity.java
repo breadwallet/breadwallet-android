@@ -300,6 +300,10 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         barFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.flipper_exit));
     }
 
+    public void resetFlipper(){
+        barFlipper.setDisplayedChild(0);
+    }
+
     @Override
     protected void onRestart() {
         super.onRestart();
