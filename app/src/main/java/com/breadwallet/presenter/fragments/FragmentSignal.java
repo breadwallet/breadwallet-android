@@ -49,7 +49,7 @@ public class FragmentSignal extends Fragment {
     public static final String ICON_DESCRIPTION = "iconDescription";
     public static final String RES_ID = "resId";
     public TextView mTitle;
-//    public TextView mDescription;
+    public TextView mDescription;
     public ImageView mIcon;
     private BROnSignalCompletion completion;
     private LinearLayout signalLayout;
@@ -61,7 +61,7 @@ public class FragmentSignal extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_signal, container, false);
         mTitle = (TextView) rootView.findViewById(R.id.title);
-//        mDescription = (TextView) rootView.findViewById(R.id.description);
+        mDescription = (TextView) rootView.findViewById(R.id.description);
         mIcon = (ImageView) rootView.findViewById(R.id.qr_image);
         signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
         signalLayout.setOnClickListener(new View.OnClickListener() {
@@ -82,7 +82,7 @@ public class FragmentSignal extends Fragment {
             Assert.assertNotSame(resId, 0);
 
             mTitle.setText(title);
-//            mDescription.setText(description);
+            mDescription.setText(description);
             mIcon.setImageResource(resId);
         } else {
             Log.e(TAG, "onCreateView: bundle is null!");

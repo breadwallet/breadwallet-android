@@ -76,7 +76,7 @@ public class BRSender {
             public void run() {
                 try {
                     if (sending) {
-                        FirebaseCrash.report(new NullPointerException("sendTransaction returned because already sending.."));
+                        Log.e(TAG, "sendTransaction: already sending..");
                         return;
                     }
                     sending = true;
@@ -110,9 +110,9 @@ public class BRSender {
                     return; //return so no error is shown
                 } catch (InsufficientFundsException ignored) {
                     errTitle[0] = app.getString(R.string.Alerts_sendFailure);
-//                    errMessage[0] = app.getString(R.string.insufficient_funds);
+                    errMessage[0] = "Insufficient Funds";
                 } catch (AmountSmallerThanMinException e) {
-                    long minAmount = BRWalletManager.getInstance().getMinOutputAmountRequested();
+                    long minAmount = BRWalletManager.getInstance().getMinOutputAmount();
                     errTitle[0] = app.getString(R.string.Alerts_sendFailure);
                     errMessage[0] = String.format(Locale.getDefault(), app.getString(R.string.PaymentProtocol_Errors_smallPayment),
                             BRConstants.bitcoinLowercase + new BigDecimal(minAmount).divide(new BigDecimal(100), BRConstants.ROUNDING_MODE));
@@ -131,6 +131,21 @@ public class BRSender {
                         @Override
                         public void run() {
                             BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.NodeSelector_notConnected), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                                @Override
+                                public void onClick(BRDialogView brDialogView) {
+                                    brDialogView.dismiss();
+                                }
+                            }, null, null, 0);
+                        }
+                    });
+                    return;
+                } catch (SomethingWentWrong somethingWentWrong) {
+                    somethingWentWrong.printStackTrace();
+                    FirebaseCrash.report(somethingWentWrong);
+                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), "Something went wrong", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                                 @Override
                                 public void onClick(BRDialogView brDialogView) {
                                     brDialogView.dismiss();
@@ -168,11 +183,12 @@ public class BRSender {
      * BLOCKS
      */
     public void tryPay(final Context app, final PaymentItem paymentRequest) throws InsufficientFundsException,
-            AmountSmallerThanMinException, SpendingNotAllowed, FeeNeedsAdjust {
+            AmountSmallerThanMinException, SpendingNotAllowed, FeeNeedsAdjust, SomethingWentWrong {
         if (paymentRequest == null || paymentRequest.addresses == null) {
-            Log.e(TAG, "handlePay: WRONG PARAMS");
+            Log.e(TAG, "tryPay: ERROR: paymentRequest: " + paymentRequest);
             String message = paymentRequest == null ? "paymentRequest is null" : "addresses is null";
             BRReportsManager.reportBug(new RuntimeException("paymentRequest is malformed: " + message), true);
+            throw new SomethingWentWrong("wrong parameters: paymentRequest");
         }
         long amount = paymentRequest.amount;
         long balance = BRWalletManager.getInstance().getBalance(app);
@@ -187,7 +203,7 @@ public class BRSender {
 
         //check if amount isn't smaller than the min amount
         if (isSmallerThanMin(app, paymentRequest)) {
-            throw new AmountSmallerThanMinException(amount, balance);
+            throw new AmountSmallerThanMinException(amount, minOutputAmount);
         }
 
         //amount is larger than balance
@@ -202,7 +218,7 @@ public class BRSender {
                 BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
             }
             // max you can spend is smaller than the min you can spend
-            if (maxOutputAmount < minOutputAmount) {
+            if (maxOutputAmount == 0 || maxOutputAmount < minOutputAmount) {
                 throw new InsufficientFundsException(amount, balance);
             }
 
@@ -468,7 +484,7 @@ public class BRSender {
     }
 
     public boolean isSmallerThanMin(Context app, PaymentItem paymentRequest) {
-        long minAmount = BRWalletManager.getInstance().getMinOutputAmountRequested();
+        long minAmount = BRWalletManager.getInstance().getMinOutputAmount();
         return paymentRequest.amount < minAmount;
     }
 
@@ -480,7 +496,8 @@ public class BRSender {
         BRWalletManager m = BRWalletManager.getInstance();
         long feeForTx = m.feeForTransaction(paymentRequest.addresses[0], paymentRequest.amount);
         if (feeForTx == 0) {
-            feeForTx = m.feeForTransaction(paymentRequest.addresses[0], m.getMaxOutputAmount());
+            long maxOutput = m.getMaxOutputAmount();
+            feeForTx = m.feeForTransaction(paymentRequest.addresses[0], maxOutput);
             return feeForTx != 0;
         }
         return false;
@@ -511,8 +528,8 @@ public class BRSender {
 
     private class AmountSmallerThanMinException extends Exception {
 
-        public AmountSmallerThanMinException(long amount, long balance) {
-            super("Balance: " + balance + " satoshis, amount: " + amount + " satoshis.");
+        public AmountSmallerThanMinException(long amount, long min) {
+            super("Min: " + min + " satoshis, amount: " + amount + " satoshis.");
         }
 
     }
@@ -537,6 +554,14 @@ public class BRSender {
 
         public FeeOutOfDate(long timestamp, long now) {
             super("FeeOutOfDate: timestamp: " + timestamp + ",now: " + now);
+        }
+
+    }
+
+    private class SomethingWentWrong extends Exception {
+
+        public SomethingWentWrong(String mess) {
+            super(mess);
         }
 
     }
