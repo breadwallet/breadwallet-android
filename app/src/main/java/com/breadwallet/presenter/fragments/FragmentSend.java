@@ -408,13 +408,20 @@ public class FragmentSend extends Fragment {
 
                 if (address.isEmpty() || !BRWalletManager.validateAddress(address)) {
                     allFilled = false;
-                    SpringAnimator.failShakeAnimation(getActivity(), addressEdit);
+                    Activity app = getActivity();
+                    BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_noAddress), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismissWithAnimation();
+                        }
+                    }, null, null, 0);
                 }
-                if (amountStr.isEmpty()) {
+                if (satoshiAmount.doubleValue() < 1) {
                     allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), amountEdit);
                 }
                 if (satoshiAmount.longValue() > BRWalletManager.getInstance().getBalance(getActivity())) {
+                    allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), balanceText);
                     SpringAnimator.failShakeAnimation(getActivity(), feeText);
                 }
@@ -627,27 +634,25 @@ public class FragmentSend extends Fragment {
         long satoshis = (Utils.isNullOrEmpty(tmpAmount) || tmpAmount.equalsIgnoreCase(".")) ? 0 :
                 (selectedIso.equalsIgnoreCase("btc") ? BRExchange.getSatoshisForBitcoin(getActivity(), new BigDecimal(tmpAmount)).longValue() : BRExchange.getSatoshisFromAmount(getActivity(), selectedIso, new BigDecimal(tmpAmount)).longValue());
         BigDecimal balanceForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance));
-        Log.e(TAG, "updateText: balanceForISO: " + balanceForISO);
 
         //formattedBalance
         String formattedBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, balanceForISO);
         //Balance depending on ISO
-        long fee;
+        long fee = 0;
         if (satoshis == 0) {
             fee = 0;
         } else {
-            fee = BRWalletManager.getInstance().feeForTransactionAmount(satoshis);
-            if (fee == 0) {
-                Log.e(TAG, "updateText: fee is 0, trying the estimate");
+            String address = addressEdit.getText().toString();
+            if (!address.isEmpty() && BRWalletManager.validateAddress(address))
                 fee = BRWalletManager.getInstance().feeForTransaction(addressEdit.getText().toString(), satoshis);
+            if (fee == 0) {
+                fee = BRWalletManager.getInstance().feeForTransactionAmount(satoshis);
             }
         }
 
-        BigDecimal feeForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance == 0 ? 0 : fee));
-        Log.e(TAG, "updateText: feeForISO: " + feeForISO);
+        BigDecimal feeForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(fee));
         //formattedBalance
         String aproxFee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, feeForISO);
-        Log.e(TAG, "updateText: aproxFee: " + aproxFee);
         if (new BigDecimal((tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".")) ? "0" : tmpAmount).doubleValue() > balanceForISO.doubleValue()) {
             balanceText.setTextColor(getContext().getColor(R.color.warning_color));
             feeText.setTextColor(getContext().getColor(R.color.warning_color));
