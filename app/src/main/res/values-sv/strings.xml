@@ -155,7 +155,7 @@
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Kontrollerar privat nyckelsaldo...</string>
   <!-- Sweep private key confirmation message -->
-  <string name="Import.confirm">Skicka %1$s från denna privata nyckel till din plånbok? Litecoins nätverk tar en avgift på %2$s.</string>
+  <string name="Import.confirm">Skicka %1$s (%2$s) från denna privata nyckel till din plånbok? Litecoins nätverk tar en avgift på %3$s (%4$s).</string>
   <!-- Duplicate key error message -->
   <string name="Import.Error.duplicate">Denna privata nyckel finns redan i din plånbok.</string>
   <!-- empty private key error message -->

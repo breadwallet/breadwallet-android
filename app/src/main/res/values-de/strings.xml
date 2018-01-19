@@ -155,7 +155,7 @@
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Das Privatschlüsselguthaben wird überprüft …</string>
   <!-- Sweep private key confirmation message -->
-  <string name="Import.confirm">%1$s von diesem privaten Schlüssel in Ihr Wallet senden? Das Litecoin-Netzwerk erhält eine Gebühr von %2$s.</string>
+  <string name="Import.confirm">%1$s (%2$s) von diesem privaten Schlüssel in Ihr Wallet senden? Das Litecoin-Netzwerk erhält eine Gebühr von %3$s (%4$s).</string>
   <!-- Duplicate key error message -->
   <string name="Import.Error.duplicate">Dieser private Schlüssel befindet sich bereits in deinem Wallet.</string>
   <!-- empty private key error message -->
