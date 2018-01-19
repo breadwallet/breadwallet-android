@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -24,6 +25,7 @@ import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.manager.TxManager;
@@ -46,7 +48,6 @@ import static com.breadwallet.tools.animation.BRAnimator.t2Size;
  * <p>
  * This activity will display pricing and transaction information for any currency the user has access to
  * (BTC, BCH, ETH)
- *
  */
 
 public class CurrencyActivity extends BreadActivity implements InternetManager.ConnectionReceiverListener {
@@ -68,6 +69,8 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
     private ImageButton mSwap;
     private ConstraintLayout toolBarConstraintLayout;
 
+    private String mDefaultTextPrimary;
+    private String mDefaultTextSecondary;
 
 
     @Override
@@ -187,6 +190,12 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
                 swap();
             }
         });
+
+        t1Size = 28;
+        t2Size = 14;
+
+        mDefaultTextPrimary = mBalancePrimary.getText().toString();
+        mDefaultTextSecondary = mBalanceSecondary.getText().toString();
     }
 
     private void swap() {
@@ -197,38 +206,51 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
     }
 
     private void setPriceTags(boolean btcPreferred, boolean animate) {
-        //mBalanceSecondary.setTextSize(!btcPreferred ? t1Size : t2Size);
-        //mBalancePrimary.setTextSize(!btcPreferred ? t2Size : t1Size);
+        mBalanceSecondary.setTextSize(!btcPreferred ? t1Size : t2Size);
+        mBalancePrimary.setTextSize(!btcPreferred ? t2Size : t1Size);
         ConstraintSet set = new ConstraintSet();
         set.clone(toolBarConstraintLayout);
         if (animate)
             TransitionManager.beginDelayedTransition(toolBarConstraintLayout);
-        int px4 = Utils.getPixelsFromDps(this, 4);
-        int px16 = Utils.getPixelsFromDps(this, 16);
+        int px8 = Utils.getPixelsFromDps(this, 8);
+        int px16 = Utils.getPixelsFromDps(this, 14);
         //align to parent left
         set.connect(!btcPreferred ? R.id.balance_secondary : R.id.balance_primary, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.END, px16);
         //align swap symbol after the first item
-        set.connect(R.id.swap, ConstraintSet.START, !btcPreferred ? mBalanceSecondary.getId() : mBalancePrimary.getId(), ConstraintSet.END, px4);
+        set.connect(R.id.swap, ConstraintSet.START, !btcPreferred ? mBalanceSecondary.getId() : mBalancePrimary.getId(), ConstraintSet.END, px8);
         //align second item after swap symbol
-        set.connect(!btcPreferred ? R.id.balance_primary : R.id.balance_secondary, ConstraintSet.START, mSwap.getId(), ConstraintSet.END, px4);
+        set.connect(!btcPreferred ? R.id.balance_primary : R.id.balance_secondary, ConstraintSet.START, mSwap.getId(), ConstraintSet.END, px8);
 
-//      align the "Balance" text to remain at the top of the USD balance
-        //set.connect(R.id.balance_display , ConstraintSet.TOP, R.id.balance_label, ConstraintSet.BOTTOM, px16);
 
+        if (!btcPreferred) {
+            mBalanceSecondary.setTextColor(getResources().getColor(R.color.white, null));
+            mBalancePrimary.setTextColor(getResources().getColor(R.color.currency_subheading_color, null));
+            mBalanceSecondary.setTypeface(FontManager.get(this, "CircularPro-Bold.otf"));
+
+        } else {
+            mBalanceSecondary.setTextColor(getResources().getColor(R.color.currency_subheading_color, null));
+            mBalancePrimary.setTextColor(getResources().getColor(R.color.white, null));
+            mBalanceSecondary.setTypeface(FontManager.get(this, "CircularPro-Book.otf"));
+
+
+        }
 
 
         // Apply the changes
         set.applyTo(toolBarConstraintLayout);
 
+
         new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                updateUI();
-            }
-        }, toolBarConstraintLayout.getLayoutTransition().getDuration(LayoutTransition.CHANGING));
+                                      @Override
+                                      public void run() {
+                                          updateUI();
+                                      }
+                                  },
+
+                toolBarConstraintLayout.getLayoutTransition().getDuration(LayoutTransition.CHANGE_APPEARING));
     }
 
-    /*public void updateUI() {
+    public void updateUI() {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -249,23 +271,37 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mBalancePrimary.setText(formattedBTCAmount);
-                        mBalanceSecondary.setText(String.format("%s", formattedCurAmount));
+                        mBalancePrimary.setText(mDefaultTextPrimary);
+                        mBalanceSecondary.setText(mDefaultTextSecondary);
+                        //mBalancePrimary.setTextColor(getResources().getColor(R.color.white_trans, null));
+                        //mBalanceSecondary.setTextColor(getResources().getColor(R.color.white, null));
+
 
                     }
                 });
                 TxManager.getInstance().updateTxList(CurrencyActivity.this);
             }
         });
-    }*/
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                updateUI();
+            }
+        }, 1000);
+    }
 
     private void setUpBarFlipper() {
         barFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.flipper_enter));
         barFlipper.setOutAnimation(AnimationUtils.loadAnimation(this, R.anim.flipper_exit));
     }
 
-    public void resetFlipper(){
+    public void resetFlipper() {
         barFlipper.setDisplayedChild(0);
     }
 

@@ -274,8 +274,8 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         set.clone(toolBarConstraintLayout);
         if (animate)
             TransitionManager.beginDelayedTransition(toolBarConstraintLayout);
-        int px4 = Utils.getPixelsFromDps(this, 20);
-        int px16 = Utils.getPixelsFromDps(this, 20);
+        int px4 = Utils.getPixelsFromDps(this, 4);
+        int px16 = Utils.getPixelsFromDps(this, 16);
         //align to parent left
         set.connect(!btcPreferred ? R.id.secondary_price : R.id.primary_price, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.END, px16);
         //align equals after the first item
