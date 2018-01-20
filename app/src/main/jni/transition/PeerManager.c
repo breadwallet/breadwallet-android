@@ -214,7 +214,8 @@ static void savePeers(void *info, int replace, const BRPeer peers[], size_t coun
         (*env)->SetByteArrayRegion(env, peerTimeStamp, 0, sizeof(peers[i].timestamp),
                                    (jbyte *) &peers[i].timestamp);
         mid = (*env)->GetMethodID(env, _peerClass, "<init>", "([B[B[B)V");
-        jobject peerObject = (*env)->NewObject(env, _peerClass, mid, peerAddress, peerPort, peerTimeStamp);
+        jobject peerObject = (*env)->NewObject(env, _peerClass, mid, peerAddress, peerPort,
+                                               peerTimeStamp);
         (*env)->SetObjectArrayElement(env, peerObjectArray, i, peerObject);
 
         (*env)->DeleteLocalRef(env, peerAddress);
@@ -293,7 +294,8 @@ Java_com_breadwallet_wallet_BRPeerManager_create(JNIEnv *env, jobject thiz,
         if (earliestKeyTime < BIP39_CREATION_TIME) earliestKeyTime = BIP39_CREATION_TIME;
         __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "earliestKeyTime: %d",
                             earliestKeyTime);
-        _peerManager = BRPeerManagerNew(&BR_CHAIN_PARAMS,_wallet, (uint32_t) earliestKeyTime, _blocks,
+        _peerManager = BRPeerManagerNew(&BR_CHAIN_PARAMS, _wallet, (uint32_t) earliestKeyTime,
+                                        _blocks,
                                         (size_t) blocksCount,
                                         _peers, (size_t) peersCount);
         BRPeerManagerSetCallbacks(_peerManager, NULL, syncStarted, syncStopped,
@@ -421,10 +423,17 @@ JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isCreated(J
     return (jboolean) ((_peerManager) ? JNI_TRUE : JNI_FALSE);
 }
 
-JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isConnected(JNIEnv *env,
-                                                                                 jobject obj) {
+//0 = disconnected, 1 = connecting, 2 = connected, -1 = _peerManager is null, -2 = something went wrong.
+JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_connectionStatus(JNIEnv *env,
+                                                                                  jobject obj) {
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "isConnected");
-    return (jboolean) (_peerManager && BRPeerManagerIsConnected(_peerManager));
+    if (!_peerManager) return -1;
+    BRPeerStatus status = BRPeerManagerConnectStatus(_peerManager);
+    if (status == BRPeerStatusDisconnected) return 0;
+    if (status == BRPeerStatusConnecting) return 1;
+    if (status == BRPeerStatusConnected) return 2;
+    //Otherwise return an invalid value and let android know something is wrong.
+    return -2;
 }
 
 JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getEstimatedBlockHeight(

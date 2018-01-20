@@ -93,7 +93,7 @@ JNIEXPORT void JNICALL Java_com_breadwallet_wallet_BRPeerManager_peerManagerFree
 JNIEXPORT void JNICALL Java_com_breadwallet_presenter_activities_IntroActivity_testCore(JNIEnv *env,
                                                                                         jobject instance);
 
-JNIEXPORT jboolean JNICALL Java_com_breadwallet_wallet_BRPeerManager_isConnected(JNIEnv *env,
+JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_connectionStatus(JNIEnv *env,
                                                                                  jobject obj);
 
 JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRPeerManager_getRelayCount(JNIEnv *env,

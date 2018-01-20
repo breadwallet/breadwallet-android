@@ -110,7 +110,6 @@ public class BRPeerManager {
         SyncManager.getInstance().stopSyncingProgressThread();
         Context ctx = BreadApp.getBreadContext();
         if (ctx == null) return;
-        Log.e(TAG, "Network Not Available, showing not connected bar  ");
 
         SyncManager.getInstance().stopSyncingProgressThread();
         if (onSyncFinished != null) onSyncFinished.onFinished();
@@ -278,7 +277,8 @@ public class BRPeerManager {
 
     public native boolean isCreated();
 
-    public native boolean isConnected();
+    //0 = disconnected, 1 = connecting, 2 = connected, -1 = _peerManager is null, -2 = something went wrong.
+    public native int connectionStatus();
 
     public native void peerManagerFreeEverything();
 
