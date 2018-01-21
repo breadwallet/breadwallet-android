@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -45,8 +46,11 @@ public class BRDialogView extends DialogFragment {
     private String message = "";
     private String posButton = "";
     private String negButton = "";
+    @Nullable
     private BRDialogView.BROnClickListener posListener;
+    @Nullable
     private BRDialogView.BROnClickListener negListener;
+    @Nullable
     private DialogInterface.OnDismissListener dismissListener;
     private int iconRes = 0;
 
@@ -74,7 +78,8 @@ public class BRDialogView extends DialogFragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                posListener.onClick(BRDialogView.this);
+                if (posListener != null)
+                    posListener.onClick(BRDialogView.this);
             }
         });
         negativeButton.setText(negButton);
@@ -82,7 +87,8 @@ public class BRDialogView extends DialogFragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                negListener.onClick(BRDialogView.this);
+                if (negListener != null)
+                    negListener.onClick(BRDialogView.this);
             }
         });
         if (iconRes != 0)
