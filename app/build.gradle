@@ -10,8 +10,8 @@ model {
             applicationId = 'com.loafwallet'
             minSdkVersion.apiLevel = 23
             targetSdkVersion.apiLevel = 25
-            versionCode = 48
-            versionName = "48"
+            versionCode = 49
+            versionName = "49"
         }
 
         productFlavors.with {
