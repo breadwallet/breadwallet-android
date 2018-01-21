@@ -155,7 +155,7 @@
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Averiguando el saldo de la clave privada...</string>
   <!-- Sweep private key confirmation message -->
-  <string name="Import.confirm">¿Quieres enviar %1$s desde esta clave privada a tu monedero? La red bitcoin recibirá una comisión de  %2$s.</string>
+  <string name="Import.confirm">¿Quieres enviar %1$s (%2$s) desde esta clave privada a tu monedero? La red litecoin recibirá una comisión de %3$s (%4$s).</string>
   <!-- Duplicate key error message -->
   <string name="Import.Error.duplicate">Esta clave privada ya está en tu cartera.</string>
   <!-- empty private key error message -->

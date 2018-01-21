@@ -155,7 +155,7 @@
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">正在查看私人密钥余额...</string>
   <!-- Sweep private key confirmation message -->
-  <string name="Import.confirm">从这个私人密钥中发送 %1$s 到您的钱包吗？莱特币网络将收到 %2$s 费用。</string>
+  <string name="Import.confirm">从这个私人密钥中发送 %1$s (%2$s) 到您的钱包吗？莱特币网络将收到 %3$s (%4$s) 费用。</string>
   <!-- Duplicate key error message -->
   <string name="Import.Error.duplicate">本私钥已在您的钱包里。</string>
   <!-- empty private key error message -->

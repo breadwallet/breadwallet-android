@@ -155,7 +155,7 @@
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Проверяем баланс по персональному ключу...</string>
   <!-- Sweep private key confirmation message -->
-  <string name="Import.confirm">Отправить %1$s с этого персонального ключа на ваш кошелек? Биткойн-сети будет начислена плата в размере %2$s.</string>
+  <string name="Import.confirm">Отправить %1$s (%2$s) с этого персонального ключа на ваш кошелек? Биткойн-сети будет начислена плата в размере %3$s (%4$s).</string>
   <!-- Duplicate key error message -->
   <string name="Import.Error.duplicate">Этот персональный ключ уже находится в вашем кошельке.</string>
   <!-- empty private key error message -->

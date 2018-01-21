@@ -155,7 +155,7 @@
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">正在檢查私密金鑰餘額…</string>
   <!-- Sweep private key confirmation message -->
-  <string name="Import.confirm">要從這個私密金鑰寄出 %1$s 到您的電子錢包嗎？比特幣網路會收到 %2$s 的費用。</string>
+  <string name="Import.confirm">要從這個私密金鑰寄出 %1$s (%2$s) 到您的電子錢包嗎？比特幣網路會收到 %3$s (%4$s) 的費用。</string>
   <!-- Duplicate key error message -->
   <string name="Import.Error.duplicate">此私密金鑰已經在您的電子錢包了。</string>
   <!-- empty private key error message -->

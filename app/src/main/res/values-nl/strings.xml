@@ -155,7 +155,7 @@
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Persoonlijke sleutel balans checken...</string>
   <!-- Sweep private key confirmation message -->
-  <string name="Import.confirm">%1$s van deze persoonlijke sleutel naar je portemonnee sturen? Het Litecoin netwerk zal een heffing ontvangen van %2$s.</string>
+  <string name="Import.confirm">%1$s (%2$s) van deze persoonlijke sleutel naar je portemonnee sturen? Het Litecoin netwerk zal een heffing ontvangen van %3$s (%4$s).</string>
   <!-- Duplicate key error message -->
   <string name="Import.Error.duplicate">Deze persoonlijke sleutel zit al in je portemonnee.</string>
   <!-- empty private key error message -->

@@ -155,7 +155,7 @@
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">개인 열쇠 잔고 확인 중...</string>
   <!-- Sweep private key confirmation message -->
-  <string name="Import.confirm">이 개인 열쇠로부터 귀하의 지갑으로 %1$s 를 보낼까요? 라이트코인 네트워크가 %2$s의 수수료를 받게 됩니다.</string>
+  <string name="Import.confirm">이 개인 열쇠로부터 귀하의 지갑으로 %1$s (%2$s) 를 보낼까요? 라이트코인 네트워크가 %3$s (%4$s) 의 수수료를 받게 됩니다.</string>
   <!-- Duplicate key error message -->
   <string name="Import.Error.duplicate">이 개인 열쇠가 이미 귀하의 지갑에 있습니다.</string>
   <!-- empty private key error message -->

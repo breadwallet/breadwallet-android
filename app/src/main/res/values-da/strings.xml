@@ -155,7 +155,7 @@
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Tjekker beløb på privat nøgle...</string>
   <!-- Sweep private key confirmation message -->
-  <string name="Import.confirm">Send %1$s fra denne private nøgle til din pung? Litecoin netværket vil modtage et gebyr på %2$s.</string>
+  <string name="Import.confirm">Send %1$s (%2$s) fra denne private nøgle til din pung? Litecoin netværket vil modtage et gebyr på %3$s (%4$s).</string>
   <!-- Duplicate key error message -->
   <string name="Import.Error.duplicate">Denne private nøgle findes allerede i din pung.</string>
   <!-- empty private key error message -->
