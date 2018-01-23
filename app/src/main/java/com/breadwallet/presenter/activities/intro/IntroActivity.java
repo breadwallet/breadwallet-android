@@ -149,10 +149,10 @@ public class IntroActivity extends BRActivity implements Serializable {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BreadActivity bApp = BreadActivity.getApp();
-                if (bApp != null) bApp.finish();
                 Intent intent = new Intent(IntroActivity.this, SetPinActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                if (bApp != null) bApp.finish();
             }
         });
 
@@ -161,10 +161,10 @@ public class IntroActivity extends BRActivity implements Serializable {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BreadActivity bApp = BreadActivity.getApp();
-                if (bApp != null) bApp.finish();
                 Intent intent = new Intent(IntroActivity.this, RecoverActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                if (bApp != null) bApp.finish();
             }
         });
     }
