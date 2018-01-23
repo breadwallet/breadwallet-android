@@ -1,23 +1,17 @@
 package com.breadwallet.wallet;
 
-import android.app.Activity;
 import android.content.Context;
-import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.manager.PromptManager;
 import com.breadwallet.tools.manager.SyncManager;
-import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.TrustedNode;
-import com.breadwallet.tools.util.Utils;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -53,7 +53,6 @@ import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.logging.Handler;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;

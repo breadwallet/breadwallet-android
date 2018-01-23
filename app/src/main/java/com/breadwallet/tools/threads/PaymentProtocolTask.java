@@ -1,8 +1,6 @@
 package com.breadwallet.tools.threads;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -18,8 +16,8 @@ import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.BRCurrency;
-import com.breadwallet.tools.util.BRExchange;
+import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.security.X509CertificateValidator;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.CustomLogger;
@@ -344,12 +342,12 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 }
                 final long total = paymentRequest.amount + paymentRequest.fee;
 
-                BigDecimal bigAm = BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(paymentRequest.amount));
-                BigDecimal bigFee = BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(paymentRequest.fee));
-                BigDecimal bigTotal = BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(total));
-                final String message = certification + memo + finalAllAddresses.toString() + "\n\n" + "amount: " + BRCurrency.getFormattedCurrencyString(app, iso, bigAm)
-                        + "\nnetwork fee: +" + BRCurrency.getFormattedCurrencyString(app, iso, bigFee)
-                        + "\ntotal: " + BRCurrency.getFormattedCurrencyString(app, iso, bigTotal);
+                BigDecimal bigAm = ExchangeUtils.getAmountFromSatoshis(app, iso, new BigDecimal(paymentRequest.amount));
+                BigDecimal bigFee = ExchangeUtils.getAmountFromSatoshis(app, iso, new BigDecimal(paymentRequest.fee));
+                BigDecimal bigTotal = ExchangeUtils.getAmountFromSatoshis(app, iso, new BigDecimal(total));
+                final String message = certification + memo + finalAllAddresses.toString() + "\n\n" + "amount: " + CurrencyUtils.getFormattedCurrencyString(app, iso, bigAm)
+                        + "\nnetwork fee: +" + CurrencyUtils.getFormattedCurrencyString(app, iso, bigFee)
+                        + "\ntotal: " + CurrencyUtils.getFormattedCurrencyString(app, iso, bigTotal);
 
                 app.runOnUiThread(new Runnable() {
                     @Override

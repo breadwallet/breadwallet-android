@@ -38,8 +38,8 @@ import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.BRCurrency;
-import com.breadwallet.tools.util.BRExchange;
+import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
@@ -492,12 +492,12 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 final BigDecimal amount = new BigDecimal(BRSharedPrefs.getCatchedBalance(BreadActivity.this));
 
                 //amount in BTC units
-                BigDecimal btcAmount = BRExchange.getBitcoinForSatoshis(BreadActivity.this, amount);
-                final String formattedBTCAmount = BRCurrency.getFormattedCurrencyString(BreadActivity.this, "BTC", btcAmount);
+                BigDecimal btcAmount = ExchangeUtils.getBitcoinForSatoshis(BreadActivity.this, amount);
+                final String formattedBTCAmount = CurrencyUtils.getFormattedCurrencyString(BreadActivity.this, "BTC", btcAmount);
 
                 //amount in currency units
-                BigDecimal curAmount = BRExchange.getAmountFromSatoshis(BreadActivity.this, iso, amount);
-                final String formattedCurAmount = BRCurrency.getFormattedCurrencyString(BreadActivity.this, iso, curAmount);
+                BigDecimal curAmount = ExchangeUtils.getAmountFromSatoshis(BreadActivity.this, iso, amount);
+                final String formattedCurAmount = CurrencyUtils.getFormattedCurrencyString(BreadActivity.this, iso, curAmount);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {

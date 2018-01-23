@@ -1,20 +1,13 @@
 import android.util.Log;
 
-import com.breadwallet.tools.security.SmartValidator;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;

@@ -18,7 +18,6 @@ import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
@@ -28,8 +27,8 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.BRCurrency;
-import com.breadwallet.tools.util.BRExchange;
+import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.util.Utils;
 
 import java.math.BigDecimal;
@@ -140,11 +139,11 @@ public class FingerprintActivity extends BRActivity {
         //amount in satoshis
         BigDecimal satoshis = new BigDecimal(BRKeyStore.getSpendLimit(this));
         //amount in BTC, mBTC or bits
-        BigDecimal amount = BRExchange.getAmountFromSatoshis(this, "BTC", satoshis);
+        BigDecimal amount = ExchangeUtils.getAmountFromSatoshis(this, "BTC", satoshis);
         //amount in user preferred ISO (e.g. USD)
-        BigDecimal curAmount = BRExchange.getAmountFromSatoshis(this, iso, satoshis);
+        BigDecimal curAmount = ExchangeUtils.getAmountFromSatoshis(this, iso, satoshis);
         //formatted string for the label
-        return String.format(getString(R.string.TouchIdSettings_spendingLimit), BRCurrency.getFormattedCurrencyString(this, "BTC", amount), BRCurrency.getFormattedCurrencyString(this, iso, curAmount));
+        return String.format(getString(R.string.TouchIdSettings_spendingLimit), CurrencyUtils.getFormattedCurrencyString(this, "BTC", amount), CurrencyUtils.getFormattedCurrencyString(this, iso, curAmount));
     }
 
     @Override

@@ -1,6 +1,5 @@
 package com.breadwallet.tools.manager;
 
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +7,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.wallet.BRPeerManager;
 
 import java.util.ArrayList;
