@@ -6,12 +6,10 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRButton;
-import com.breadwallet.tools.util.BRCurrency;
-import com.breadwallet.tools.util.BRExchange;
+import com.breadwallet.tools.util.CurrencyUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -92,7 +90,7 @@ public class CurAdapter extends RecyclerView.Adapter<CurAdapter.CustomViewHolder
     private void setTexts(CustomViewHolder convertView, int position) {
 
         String item = itemFeed.get(position);
-        convertView.button.setText(String.format("%s(%s)", item, BRCurrency.getSymbolByIso(mContext, item)));
+        convertView.button.setText(String.format("%s(%s)", item, CurrencyUtils.getSymbolByIso(mContext, item)));
 
     }
 

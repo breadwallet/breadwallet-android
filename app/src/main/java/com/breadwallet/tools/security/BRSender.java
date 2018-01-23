@@ -15,14 +15,13 @@ import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.BRCurrency;
-import com.breadwallet.tools.util.BRExchange;
+import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.wallet.BRWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.math.BigDecimal;
 import java.util.Locale;
-import java.util.logging.Handler;
 
 /**
  * BreadWallet
@@ -300,10 +299,10 @@ public class BRSender {
 //        final BRWalletManager m = BRWalletManager.getInstance();
 //        final long amountToReduce = request.amount - maxOutputAmount;
 //        String iso = BRSharedPrefs.getIso(app);
-//        final String reduceBits = BRCurrency.getFormattedCurrencyString(app, "BTC", BRExchange.getAmountFromSatoshis(app, "BTC", new BigDecimal(amountToReduce)));
-//        final String reduceCurrency = BRCurrency.getFormattedCurrencyString(app, iso, BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(amountToReduce)));
-//        final String reduceBitsMinus = BRCurrency.getFormattedCurrencyString(app, "BTC", BRExchange.getAmountFromSatoshis(app, "BTC", new BigDecimal(amountToReduce).negate()));
-//        final String reduceCurrencyMinus = BRCurrency.getFormattedCurrencyString(app, iso, BRExchange.getAmountFromSatoshis(app, iso, new BigDecimal(amountToReduce).negate()));
+//        final String reduceBits = CurrencyUtils.getFormattedCurrencyString(app, "BTC", ExchangeUtils.getAmountFromSatoshis(app, "BTC", new BigDecimal(amountToReduce)));
+//        final String reduceCurrency = CurrencyUtils.getFormattedCurrencyString(app, iso, ExchangeUtils.getAmountFromSatoshis(app, iso, new BigDecimal(amountToReduce)));
+//        final String reduceBitsMinus = CurrencyUtils.getFormattedCurrencyString(app, "BTC", ExchangeUtils.getAmountFromSatoshis(app, "BTC", new BigDecimal(amountToReduce).negate()));
+//        final String reduceCurrencyMinus = CurrencyUtils.getFormattedCurrencyString(app, iso, ExchangeUtils.getAmountFromSatoshis(app, iso, new BigDecimal(amountToReduce).negate()));
 //
 //        ((Activity) app).runOnUiThread(new Runnable() {
 //            @Override
@@ -449,13 +448,13 @@ public class BRSender {
             feeForTx += (BRWalletManager.getInstance().getBalance(ctx) - request.amount) % 100;
         }
         final long total = request.amount + feeForTx;
-        String formattedAmountBTC = BRCurrency.getFormattedCurrencyString(ctx, "BTC", BRExchange.getBitcoinForSatoshis(ctx, new BigDecimal(request.amount)));
-        String formattedFeeBTC = BRCurrency.getFormattedCurrencyString(ctx, "BTC", BRExchange.getBitcoinForSatoshis(ctx, new BigDecimal(feeForTx)));
-        String formattedTotalBTC = BRCurrency.getFormattedCurrencyString(ctx, "BTC", BRExchange.getBitcoinForSatoshis(ctx, new BigDecimal(total)));
+        String formattedAmountBTC = CurrencyUtils.getFormattedCurrencyString(ctx, "BTC", ExchangeUtils.getBitcoinForSatoshis(ctx, new BigDecimal(request.amount)));
+        String formattedFeeBTC = CurrencyUtils.getFormattedCurrencyString(ctx, "BTC", ExchangeUtils.getBitcoinForSatoshis(ctx, new BigDecimal(feeForTx)));
+        String formattedTotalBTC = CurrencyUtils.getFormattedCurrencyString(ctx, "BTC", ExchangeUtils.getBitcoinForSatoshis(ctx, new BigDecimal(total)));
 
-        String formattedAmount = BRCurrency.getFormattedCurrencyString(ctx, iso, BRExchange.getAmountFromSatoshis(ctx, iso, new BigDecimal(request.amount)));
-        String formattedFee = BRCurrency.getFormattedCurrencyString(ctx, iso, BRExchange.getAmountFromSatoshis(ctx, iso, new BigDecimal(feeForTx)));
-        String formattedTotal = BRCurrency.getFormattedCurrencyString(ctx, iso, BRExchange.getAmountFromSatoshis(ctx, iso, new BigDecimal(total)));
+        String formattedAmount = CurrencyUtils.getFormattedCurrencyString(ctx, iso, ExchangeUtils.getAmountFromSatoshis(ctx, iso, new BigDecimal(request.amount)));
+        String formattedFee = CurrencyUtils.getFormattedCurrencyString(ctx, iso, ExchangeUtils.getAmountFromSatoshis(ctx, iso, new BigDecimal(feeForTx)));
+        String formattedTotal = CurrencyUtils.getFormattedCurrencyString(ctx, iso, ExchangeUtils.getAmountFromSatoshis(ctx, iso, new BigDecimal(total)));
 
         //formatted text
         return receiver + "\n\n"

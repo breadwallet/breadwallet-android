@@ -2,7 +2,6 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.Activity;
 import android.app.Fragment;
-import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -12,8 +11,6 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.transition.AutoTransition;
 import android.support.transition.TransitionManager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -29,10 +26,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
@@ -50,8 +45,8 @@ import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.BRSender;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.BRExchange;
-import com.breadwallet.tools.util.BRCurrency;
+import com.breadwallet.tools.util.ExchangeUtils;
+import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRWalletManager;
 
@@ -217,7 +212,7 @@ public class FragmentSend extends Fragment {
                     feeText.setVisibility(View.VISIBLE);
                     edit.setVisibility(View.VISIBLE);
                     isoText.setTextColor(getContext().getColor(R.color.almost_black));
-                    isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
+                    isoText.setText(CurrencyUtils.getSymbolByIso(getActivity(), selectedIso));
                     isoText.setTextSize(28);
                     final float scaleX = amountEdit.getScaleX();
                     amountEdit.setScaleX(0);
@@ -404,7 +399,7 @@ public class FragmentSend extends Fragment {
 
                 //get amount in satoshis from any isos
                 BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) ? "0" : amountStr);
-                BigDecimal satoshiAmount = BRExchange.getSatoshisFromAmount(getActivity(), iso, bigAmount);
+                BigDecimal satoshiAmount = ExchangeUtils.getSatoshisFromAmount(getActivity(), iso, bigAmount);
 
                 if (address.isEmpty() || !BRWalletManager.validateAddress(address)) {
                     allFilled = false;
@@ -427,7 +422,7 @@ public class FragmentSend extends Fragment {
                 }
 
                 if (allFilled)
-                    BRSender.getInstance().sendTransaction(getContext(), new PaymentItem(new String[]{address}, null, satoshiAmount.longValue(), null, false, comment));
+                    BRSender.getInstance().sendTransaction(getContext(), new PaymentItem(address, null, satoshiAmount.longValue(), null, false, comment));
             }
         });
 
@@ -593,10 +588,10 @@ public class FragmentSend extends Fragment {
         String currAmount = amountBuilder.toString();
         String iso = selectedIso;
         if (new BigDecimal(currAmount.concat(String.valueOf(dig))).doubleValue()
-                <= BRExchange.getMaxAmount(getActivity(), iso).doubleValue()) {
+                <= ExchangeUtils.getMaxAmount(getActivity(), iso).doubleValue()) {
             //do not insert 0 if the balance is 0 now
             if (currAmount.equalsIgnoreCase("0")) amountBuilder = new StringBuilder("");
-            if ((currAmount.contains(".") && (currAmount.length() - currAmount.indexOf(".") > BRCurrency.getMaxDecimalPlaces(iso))))
+            if ((currAmount.contains(".") && (currAmount.length() - currAmount.indexOf(".") > CurrencyUtils.getMaxDecimalPlaces(iso))))
                 return;
             amountBuilder.append(dig);
             updateText();
@@ -605,7 +600,7 @@ public class FragmentSend extends Fragment {
 
     private void handleSeparatorClick() {
         String currAmount = amountBuilder.toString();
-        if (currAmount.contains(".") || BRCurrency.getMaxDecimalPlaces(selectedIso) == 0)
+        if (currAmount.contains(".") || CurrencyUtils.getMaxDecimalPlaces(selectedIso) == 0)
             return;
         amountBuilder.append(".");
         updateText();
@@ -628,15 +623,15 @@ public class FragmentSend extends Fragment {
         String iso = selectedIso;
         curBalance = BRWalletManager.getInstance().getBalance(getActivity());
         if (!amountLabelOn)
-            isoText.setText(BRCurrency.getSymbolByIso(getActivity(), selectedIso));
-        isoButton.setText(String.format("%s(%s)", BRCurrency.getCurrencyName(getActivity(), selectedIso), BRCurrency.getSymbolByIso(getActivity(), selectedIso)));
+            isoText.setText(CurrencyUtils.getSymbolByIso(getActivity(), selectedIso));
+        isoButton.setText(String.format("%s(%s)", CurrencyUtils.getCurrencyName(getActivity(), selectedIso), CurrencyUtils.getSymbolByIso(getActivity(), selectedIso)));
         //Balance depending on ISO
         long satoshis = (Utils.isNullOrEmpty(tmpAmount) || tmpAmount.equalsIgnoreCase(".")) ? 0 :
-                (selectedIso.equalsIgnoreCase("btc") ? BRExchange.getSatoshisForBitcoin(getActivity(), new BigDecimal(tmpAmount)).longValue() : BRExchange.getSatoshisFromAmount(getActivity(), selectedIso, new BigDecimal(tmpAmount)).longValue());
-        BigDecimal balanceForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance));
+                (selectedIso.equalsIgnoreCase("btc") ? ExchangeUtils.getSatoshisForBitcoin(getActivity(), new BigDecimal(tmpAmount)).longValue() : ExchangeUtils.getSatoshisFromAmount(getActivity(), selectedIso, new BigDecimal(tmpAmount)).longValue());
+        BigDecimal balanceForISO = ExchangeUtils.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance));
 
         //formattedBalance
-        String formattedBalance = BRCurrency.getFormattedCurrencyString(getActivity(), iso, balanceForISO);
+        String formattedBalance = CurrencyUtils.getFormattedCurrencyString(getActivity(), iso, balanceForISO);
         //Balance depending on ISO
         long fee = 0;
         if (satoshis == 0) {
@@ -650,9 +645,9 @@ public class FragmentSend extends Fragment {
             }
         }
 
-        BigDecimal feeForISO = BRExchange.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(fee));
+        BigDecimal feeForISO = ExchangeUtils.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(fee));
         //formattedBalance
-        String aproxFee = BRCurrency.getFormattedCurrencyString(getActivity(), iso, feeForISO);
+        String aproxFee = CurrencyUtils.getFormattedCurrencyString(getActivity(), iso, feeForISO);
         if (new BigDecimal((tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".")) ? "0" : tmpAmount).doubleValue() > balanceForISO.doubleValue()) {
             balanceText.setTextColor(getContext().getColor(R.color.warning_color));
             feeText.setTextColor(getContext().getColor(R.color.warning_color));
@@ -684,7 +679,7 @@ public class FragmentSend extends Fragment {
         if (obj.amount != null) {
             String iso = selectedIso;
             BigDecimal satoshiAmount = new BigDecimal(obj.amount).multiply(new BigDecimal(100000000));
-            amountBuilder = new StringBuilder(BRExchange.getAmountFromSatoshis(getActivity(), iso, satoshiAmount).toPlainString());
+            amountBuilder = new StringBuilder(ExchangeUtils.getAmountFromSatoshis(getActivity(), iso, satoshiAmount).toPlainString());
             updateText();
 
         }

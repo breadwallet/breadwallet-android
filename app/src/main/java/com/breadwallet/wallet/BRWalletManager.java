@@ -5,8 +5,6 @@ import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
@@ -15,15 +13,11 @@ import android.os.Handler;
 import android.os.NetworkOnMainThreadException;
 import android.os.SystemClock;
 import android.security.keystore.UserNotAuthenticatedException;
-import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
@@ -44,7 +38,6 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
@@ -53,11 +46,14 @@ import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.manager.BRNotificationManager;
-import com.breadwallet.tools.util.BRCurrency;
-import com.breadwallet.tools.util.BRExchange;
+import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
+import com.breadwallet.wallet.interfaces.BaseWallet;
+import com.breadwallet.wallet.wallets.WalletBitcoin;
+import com.breadwallet.wallet.wallets.WalletBitcoinCash;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
@@ -143,6 +139,14 @@ public class BRWalletManager {
             instance = new BRWalletManager();
         }
         return instance;
+    }
+
+    //return the needed wallet for the iso
+    public BaseWallet getWalletByIso(String iso) {
+        if (Utils.isNullOrEmpty(iso)) return null;
+        if (iso.equalsIgnoreCase("BTC")) return WalletBitcoin.getInstance();
+        if (iso.equalsIgnoreCase("BCH")) return WalletBitcoinCash.getInstance();
+        return null;
     }
 
     public synchronized boolean generateRandomSeed(final Context ctx) {
@@ -413,8 +417,8 @@ public class BRWalletManager {
             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    String am = BRCurrency.getFormattedCurrencyString(ctx, "BTC", BRExchange.getBitcoinForSatoshis(ctx, new BigDecimal(amount)));
-                    String amCur = BRCurrency.getFormattedCurrencyString(ctx, BRSharedPrefs.getIso(ctx), BRExchange.getAmountFromSatoshis(ctx, BRSharedPrefs.getIso(ctx), new BigDecimal(amount)));
+                    String am = CurrencyUtils.getFormattedCurrencyString(ctx, "BTC", ExchangeUtils.getBitcoinForSatoshis(ctx, new BigDecimal(amount)));
+                    String amCur = CurrencyUtils.getFormattedCurrencyString(ctx, BRSharedPrefs.getIso(ctx), ExchangeUtils.getAmountFromSatoshis(ctx, BRSharedPrefs.getIso(ctx), new BigDecimal(amount)));
                     String formatted = String.format("%s (%s)", am, amCur);
                     String strToShow = String.format(ctx.getString(R.string.TransactionDetails_received), formatted);
                     showToastWithMessage(ctx, strToShow);

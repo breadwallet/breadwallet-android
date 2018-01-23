@@ -13,11 +13,9 @@ import android.widget.Toast;
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRToast;
-import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
@@ -25,12 +23,11 @@ import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.BRExecutor;
-import com.breadwallet.tools.util.BRCurrency;
-import com.breadwallet.tools.util.BRExchange;
+import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
@@ -78,9 +75,9 @@ public class WithdrawBchActivity extends BRActivity {
             BRReportsManager.reportBug(new NullPointerException("WithdrawBchActivity: onCreate: pubkey is missing!"));
         }
         long satoshis = BRWalletManager.getBCashBalance(pubkey);
-        BigDecimal amount = BRExchange.getBitcoinForSatoshis(this, new BigDecimal(satoshis));
+        BigDecimal amount = ExchangeUtils.getBitcoinForSatoshis(this, new BigDecimal(satoshis));
 
-        String balance = BRCurrency.getFormattedCurrencyString(this, "BTC", amount);
+        String balance = CurrencyUtils.getFormattedCurrencyString(this, "BTC", amount);
         description.setText(String.format(getString(R.string.BCH_body), balance));
 
         txHash.setOnClickListener(new View.OnClickListener() {

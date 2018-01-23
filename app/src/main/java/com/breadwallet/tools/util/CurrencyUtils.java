@@ -3,6 +3,9 @@ package com.breadwallet.tools.util;
 import android.content.Context;
 
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.interfaces.BaseWallet;
+import com.breadwallet.wallet.wallets.WalletBitcoin;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -38,8 +41,8 @@ import static com.breadwallet.tools.util.BRConstants.CURRENT_UNIT_BITS;
  * THE SOFTWARE.
  */
 
-public class BRCurrency {
-    public static final String TAG = BRCurrency.class.getName();
+public class CurrencyUtils {
+    public static final String TAG = CurrencyUtils.class.getName();
 
 
     // amount is in currency or BTC (bits, mBTC or BTC)
@@ -57,7 +60,7 @@ public class BRCurrency {
         decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
 //        int decimalPoints = 0;
         if (Objects.equals(isoCurrencyCode, "BTC")) {
-            symbol = BRExchange.getBitcoinSymbol(app);
+            symbol = WalletBitcoin.getInstance().getSymbol(app);
         } else {
             try {
                 currency = Currency.getInstance(isoCurrencyCode);
@@ -79,23 +82,9 @@ public class BRCurrency {
 
     public static String getSymbolByIso(Context app, String iso) {
         String symbol;
-        if (Objects.equals(iso, "BTC")) {
-            String currencySymbolString = BRConstants.bitcoinLowercase;
-            if (app != null) {
-                int unit = BRSharedPrefs.getCurrencyUnit(app);
-                switch (unit) {
-                    case CURRENT_UNIT_BITS:
-                        currencySymbolString = BRConstants.bitcoinLowercase;
-                        break;
-                    case BRConstants.CURRENT_UNIT_MBITS:
-                        currencySymbolString = "m" + BRConstants.bitcoinUppercase;
-                        break;
-                    case BRConstants.CURRENT_UNIT_BITCOINS:
-                        currencySymbolString = BRConstants.bitcoinUppercase;
-                        break;
-                }
-            }
-            symbol = currencySymbolString;
+        BaseWallet wallet = BRWalletManager.getInstance().getWalletByIso(iso);
+        if (wallet != null) {
+            symbol = wallet.getSymbol(app);
         } else {
             Currency currency;
             try {
@@ -110,33 +99,20 @@ public class BRCurrency {
 
     //for now only use for BTC and Bits
     public static String getCurrencyName(Context app, String iso) {
-        if (Objects.equals(iso, "BTC")) {
-            if (app != null) {
-                int unit = BRSharedPrefs.getCurrencyUnit(app);
-                switch (unit) {
-                    case CURRENT_UNIT_BITS:
-                        return "Bits";
-                    case BRConstants.CURRENT_UNIT_MBITS:
-                        return "MBits";
-                    case BRConstants.CURRENT_UNIT_BITCOINS:
-                        return "BTC";
-                }
-            }
-        }
-        return iso;
+        BaseWallet wallet = BRWalletManager.getInstance().getWalletByIso(iso);
+        if (wallet == null) return iso;
+        return wallet.getName(app);
     }
 
-    public static int getMaxDecimalPlaces(String iso) {
-        if (Utils.isNullOrEmpty(iso)) return 8;
-
-        if (iso.equalsIgnoreCase("BTC")) {
-            return 8;
-        } else {
+    public static int getMaxDecimalPlaces(Context app, String iso) {
+        BaseWallet wallet = BRWalletManager.getInstance().getWalletByIso(iso);
+        if (wallet == null) {
             Currency currency = Currency.getInstance(iso);
             return currency.getDefaultFractionDigits();
+        } else {
+            return wallet.getMaxDecimalPlaces(app);
         }
 
     }
-
 
 }

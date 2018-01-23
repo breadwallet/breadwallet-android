@@ -1,10 +1,17 @@
-package com.breadwallet.presenter.entities;
+package com.breadwallet.wallet.interfaces;
+
+import android.app.Activity;
+import android.content.Context;
+
+import com.breadwallet.presenter.entities.PaymentItem;
+
+import java.math.BigDecimal;
 
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan <mihail@breadwallet.com> on 11/19/15.
- * Copyright (c) 2016 breadwallet LLC
+ * Created by Mihail Gutan on <mihail@breadwallet.com> 1/22/18.
+ * Copyright (c) 2018 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,32 +31,27 @@ package com.breadwallet.presenter.entities;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+public interface BaseWallet {
 
-public class PaymentItem {
-    public static final String TAG = PaymentItem.class.getName();
+    //try sending a transaction
+    boolean sendTransaction(Context app, PaymentItem item);
 
-    public byte[] serializedTx;
-    public String address;
-    public long amount;
-    public String cn;
-    public boolean isAmountRequested;
-    public String comment;
+    //generate the wallet if needed
+    boolean generateWallet(Context app);
 
-    public PaymentItem(String address, byte[] tx, long theAmount, String theCn, boolean isAmountRequested) {
-        this.isAmountRequested = isAmountRequested;
-        this.serializedTx = tx;
-        this.address = address;
-        this.amount = theAmount;
-        this.cn = theCn;
-    }
+    //init the current wallet
+    boolean initWallet(Context app);
 
-    public PaymentItem(String address, byte[] tx,long theAmount, String theCn, boolean isAmountRequested, String comment) {
-        this.isAmountRequested = isAmountRequested;
-        this.serializedTx = tx;
-        this.address = address;
-        this.amount = theAmount;
-        this.cn = theCn;
-        this.comment = comment;
-    }
+    //get the currency symbol e.g. BTC
+    String getSymbol(Context app);
+
+    //get the currency name e.g. Bitcoin
+    String getName(Context app);
+
+    //get the number of decimal places to use for this currency
+    int getMaxDecimalPlaces(Context app);
+
+    //return the maximum amount for this currency
+    BigDecimal maxAmount(Context app);
 
 }
