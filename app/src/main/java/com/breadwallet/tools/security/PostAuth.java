@@ -106,7 +106,8 @@ public class PostAuth {
             app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         } else {
             if (authAsked) {
-                Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                Log.e(TAG, new Object() {
+                }.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
                 isStuckWithAuthLoop = true;
             }
             return;
@@ -124,7 +125,8 @@ public class PostAuth {
             cleanPhrase = new String(raw);
         } catch (UserNotAuthenticatedException e) {
             if (authAsked) {
-                Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                Log.e(TAG, new Object() {
+                }.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
                 isStuckWithAuthLoop = true;
             }
             return;
@@ -141,7 +143,8 @@ public class PostAuth {
             cleanPhrase = new String(BRKeyStore.getPhrase(app, BRConstants.PROVE_PHRASE_REQUEST));
         } catch (UserNotAuthenticatedException e) {
             if (authAsked) {
-                Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                Log.e(TAG, new Object() {
+                }.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
                 isStuckWithAuthLoop = true;
             }
             return;
@@ -157,9 +160,9 @@ public class PostAuth {
     }
 
     public void onRecoverWalletAuth(Activity app, boolean authAsked) {
-        if (phraseForKeyStore == null) {
-            Log.e(TAG, "onRecoverWalletAuth: phraseForKeyStore is null!");
-            BRReportsManager.reportBug(new NullPointerException("onRecoverWalletAuth: phraseForKeyStore is null"));
+        if (Utils.isNullOrEmpty(phraseForKeyStore)) {
+            Log.e(TAG, "onRecoverWalletAuth: phraseForKeyStore is null or empty");
+            BRReportsManager.reportBug(new NullPointerException("onRecoverWalletAuth: phraseForKeyStore is or empty"));
             return;
         }
         byte[] bytePhrase = new byte[0];
@@ -171,7 +174,8 @@ public class PostAuth {
                         app, BRConstants.PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE);
             } catch (UserNotAuthenticatedException e) {
                 if (authAsked) {
-                    Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                    Log.e(TAG, new Object() {
+                    }.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
                     isStuckWithAuthLoop = true;
 
                 }
@@ -180,25 +184,23 @@ public class PostAuth {
 
             if (!success) {
                 if (authAsked) {
-                    Log.e(TAG, "onRecoverWalletAuth,!success && authAsked");
+                    Log.e(TAG, "onRecoverWalletAuth, !success && authAsked");
                 }
             } else {
-                if (phraseForKeyStore.length() != 0) {
-                    BRSharedPrefs.putPhraseWroteDown(app, true);
-                    bytePhrase = TypesConverter.getNullTerminatedPhrase(phraseForKeyStore.getBytes());
-                    byte[] seed = BRWalletManager.getSeedFromPhrase(bytePhrase);
-                    byte[] authKey = BRWalletManager.getAuthPrivKeyForAPI(seed);
-                    BRKeyStore.putAuthKey(authKey, app);
-                    byte[] pubKey = BRWalletManager.getInstance().getMasterPubKey(bytePhrase);
-                    BRKeyStore.putMasterPublicKey(pubKey, app);
-                    app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                    Intent intent = new Intent(app, SetPinActivity.class);
-                    intent.putExtra("noPin", true);
-                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    app.startActivity(intent);
-                    if (!app.isDestroyed()) app.finish();
-                    phraseForKeyStore = null;
-                }
+                BRSharedPrefs.putPhraseWroteDown(app, true);
+                bytePhrase = TypesConverter.getNullTerminatedPhrase(phraseForKeyStore.getBytes());
+                byte[] seed = BRWalletManager.getSeedFromPhrase(bytePhrase);
+                byte[] authKey = BRWalletManager.getAuthPrivKeyForAPI(seed);
+                BRKeyStore.putAuthKey(authKey, app);
+                byte[] pubKey = BRWalletManager.getInstance().getMasterPubKey(bytePhrase);
+                BRKeyStore.putMasterPublicKey(pubKey, app);
+                app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                Intent intent = new Intent(app, SetPinActivity.class);
+                intent.putExtra("noPin", true);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                app.startActivity(intent);
+                if (!app.isDestroyed()) app.finish();
+                phraseForKeyStore = null;
 
             }
 
@@ -220,7 +222,8 @@ public class PostAuth {
             rawSeed = BRKeyStore.getPhrase(app, BRConstants.PAY_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
             if (authAsked) {
-                Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                Log.e(TAG, new Object() {
+                }.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
                 isStuckWithAuthLoop = true;
             }
             return;
@@ -262,7 +265,8 @@ public class PostAuth {
             phrase = BRKeyStore.getPhrase(app, BRConstants.SEND_BCH_REQUEST);
         } catch (UserNotAuthenticatedException e) {
             if (authAsked) {
-                Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                Log.e(TAG, new Object() {
+                }.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
                 isStuckWithAuthLoop = true;
             }
             return;
@@ -363,7 +367,8 @@ public class PostAuth {
             rawSeed = BRKeyStore.getPhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
             if (authAsked) {
-                Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                Log.e(TAG, new Object() {
+                }.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
                 isStuckWithAuthLoop = true;
             }
             return;
@@ -408,7 +413,8 @@ public class PostAuth {
             canary = BRKeyStore.getCanary(app, BRConstants.CANARY_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
             if (authAsked) {
-                Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                Log.e(TAG, new Object() {
+                }.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
                 isStuckWithAuthLoop = true;
             }
             return;
@@ -419,7 +425,8 @@ public class PostAuth {
                 phrase = BRKeyStore.getPhrase(app, BRConstants.CANARY_REQUEST_CODE);
             } catch (UserNotAuthenticatedException e) {
                 if (authAsked) {
-                    Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                    Log.e(TAG, new Object() {
+                    }.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
                     isStuckWithAuthLoop = true;
                 }
                 return;
@@ -436,7 +443,8 @@ public class PostAuth {
                     BRKeyStore.putCanary(BRConstants.CANARY_STRING, app, 0);
                 } catch (UserNotAuthenticatedException e) {
                     if (authAsked) {
-                        Log.e(TAG, new Object(){}.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                        Log.e(TAG, new Object() {
+                        }.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
                         isStuckWithAuthLoop = true;
                     }
                     return;

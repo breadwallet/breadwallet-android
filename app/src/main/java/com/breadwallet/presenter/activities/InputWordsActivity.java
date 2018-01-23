@@ -169,6 +169,9 @@ public class InputWordsActivity extends BRActivity {
                     return;
                 }
                 String cleanPhrase = SmartValidator.cleanPaperKey(app, phraseToCheck);
+                if(cleanPhrase == null){
+
+                }
                 if (SmartValidator.isPaperKeyValid(app, cleanPhrase)) {
 
                     if (restore || resetPin) {
