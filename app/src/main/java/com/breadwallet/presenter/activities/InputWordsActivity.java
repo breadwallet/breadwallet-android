@@ -21,6 +21,7 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.PostAuth;
@@ -169,8 +170,9 @@ public class InputWordsActivity extends BRActivity {
                     return;
                 }
                 String cleanPhrase = SmartValidator.cleanPaperKey(app, phraseToCheck);
-                if(cleanPhrase == null){
-
+                if (Utils.isNullOrEmpty(cleanPhrase)) {
+                    BRReportsManager.reportBug(new NullPointerException("cleanPhrase is null or empty!"));
+                    return;
                 }
                 if (SmartValidator.isPaperKeyValid(app, cleanPhrase)) {
 
