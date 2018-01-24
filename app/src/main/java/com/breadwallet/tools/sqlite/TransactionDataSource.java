@@ -56,9 +56,6 @@ public class TransactionDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.TX_TIME_STAMP
     };
 
-    public interface OnTxAddedListener {
-        void onTxAdded();
-    }
 
     List<OnTxAddedListener> listeners = new ArrayList<>();
 

@@ -43,6 +43,8 @@ import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.interfaces.OnBalanceChanged;
+import com.breadwallet.wallet.interfaces.OnTxAdded;
 import com.platform.APIClient;
 
 import java.math.BigDecimal;
@@ -79,9 +81,9 @@ import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
  * THE SOFTWARE.
  */
 
-public class BreadActivity extends BRActivity implements BRWalletManager.OnBalanceChanged,
+public class BreadActivity extends BRActivity implements OnBalanceChanged,
         BRPeerManager.OnTxStatusUpdate, BRSharedPrefs.OnIsoChangedListener,
-        TransactionDataSource.OnTxAddedListener, FragmentManage.OnNameChanged, InternetManager.ConnectionReceiverListener {
+        OnTxAdded, FragmentManage.OnNameChanged, InternetManager.ConnectionReceiverListener {
 
     private static final String TAG = BreadActivity.class.getName();
 
@@ -333,7 +335,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
             public void run() {
                 updateUI();
             }
-        }, 1000);
+        }, 100);
 
         BRWalletManager.getInstance().refreshBalance(this);
 
@@ -470,7 +472,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     }
 
     @Override
-    public void onBalanceChanged(final long balance) {
+    public void onBalanceChanged(String iso, final long balance) {
         updateUI();
 
     }
@@ -528,7 +530,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
     }
 
     @Override
-    public void onTxAdded() {
+    public void onTxAdded(String iso) {
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
