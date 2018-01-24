@@ -13,7 +13,7 @@ import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.security.BitcoinUrlHandler;
+import com.breadwallet.tools.security.BRUrlParser;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
@@ -92,7 +92,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 return null;
             }
 
-            paymentRequest = BitcoinUrlHandler.parsePaymentRequest(serializedBytes);
+            paymentRequest = BRUrlParser.parsePaymentRequest(serializedBytes);
 
             if (paymentRequest == null || paymentRequest.error == PaymentRequestWrapper.INVALID_REQUEST_ERROR) {
                 Log.e(TAG, "paymentRequest is null!!!");

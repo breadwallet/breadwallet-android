@@ -97,7 +97,7 @@ public class WithdrawBchActivity extends BRActivity {
 
                     final String bitcoinUrl = BRClipboardManager.getClipboard(WithdrawBchActivity.this);
 //                    String ifAddress = null;
-//                    RequestObject obj = BitcoinUrlHandler.getRequestFromString(bitcoinUrl);
+//                    RequestObject obj = BRUrlParser.getRequestFromString(bitcoinUrl);
 //                    if (obj == null) {
 //                        //builder.setTitle(getResources().getString(R.string.alert));
 //                        BRDialog.showCustomDialog(WithdrawBchActivity.this, getResources().getString(R.string.Send_invalidAddressOnPasteboard), "", getResources().getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
