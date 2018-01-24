@@ -314,6 +314,17 @@ public class BRSharedPrefs {
         editor.putBoolean(feature, enabled);
         editor.apply();
     }
+    public static String getCurrentWalletIso(Context activity) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("currentWalletIso", "");
+    }
+
+    public static void putCurrentWalletIso(Context activity,  String iso) {
+        SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("currentWalletIso", iso);
+        editor.apply();
+    }
 
     public static boolean getGeoPermissionsRequested(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
