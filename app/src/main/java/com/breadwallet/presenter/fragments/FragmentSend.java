@@ -41,7 +41,7 @@ import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.security.BitcoinUrlHandler;
+import com.breadwallet.tools.security.BRUrlParser;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.ExchangeUtils;
@@ -51,7 +51,7 @@ import com.breadwallet.wallet.WalletsMaster;
 
 import java.math.BigDecimal;
 
-import static com.breadwallet.tools.security.BitcoinUrlHandler.getRequestFromString;
+import static com.breadwallet.tools.security.BRUrlParser.getRequestFromString;
 import static com.platform.HTTPServer.URL_SUPPORT;
 
 
@@ -667,7 +667,7 @@ public class FragmentSend extends Fragment {
     }
 
     public void setUrl(String url) {
-        RequestObject obj = BitcoinUrlHandler.getRequestFromString(url);
+        RequestObject obj = BRUrlParser.getRequestFromString(url);
         if (obj == null) return;
         if (obj.address != null && addressEdit != null) {
             addressEdit.setText(obj.address.trim());

@@ -50,8 +50,8 @@ import java.util.Map;
  * THE SOFTWARE.
  */
 
-public class BitcoinUrlHandler {
-    private static final String TAG = BitcoinUrlHandler.class.getName();
+public class BRUrlParser {
+    private static final String TAG = BRUrlParser.class.getName();
     private static final Object lockObject = new Object();
 
     public static synchronized boolean processRequest(Activity app, String url) {

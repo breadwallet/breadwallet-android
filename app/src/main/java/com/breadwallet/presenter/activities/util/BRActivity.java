@@ -16,7 +16,7 @@ import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.security.BitcoinUrlHandler;
+import com.breadwallet.tools.security.BRUrlParser;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
@@ -171,8 +171,8 @@ public class BRActivity extends Activity {
                                 e.printStackTrace();
                             }
                             String result = data.getStringExtra("result");
-                            if (BitcoinUrlHandler.isBitcoinUrl(result))
-                                BitcoinUrlHandler.processRequest(BRActivity.this, result);
+                            if (BRUrlParser.isBitcoinUrl(result))
+                                BRUrlParser.processRequest(BRActivity.this, result);
                             else if (BRBitId.isBitId(result))
                                 BRBitId.signBitID(BRActivity.this, result, null);
                             else
