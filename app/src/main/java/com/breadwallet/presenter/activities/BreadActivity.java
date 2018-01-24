@@ -130,15 +130,8 @@ public class BreadActivity extends BRActivity implements OnBalanceChanged,
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bread);
-        BRWalletManager.getInstance().addBalanceChangedListener(this);
-        BRPeerManager.getInstance().addStatusUpdateListener(this);
-        BRPeerManager.setOnSyncFinished(new BRPeerManager.OnSyncSucceeded() {
-            @Override
-            public void onFinished() {
-                //put some here
-            }
-        });
-        BRSharedPrefs.addIsoChangedListener(this);
+        setupObservers();
+
 
         app = this;
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
@@ -170,11 +163,22 @@ public class BreadActivity extends BRActivity implements OnBalanceChanged,
                 }
             }, 1000);
 
-
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
 
         updateUI();
 
+    }
+
+    private void setupObservers() {
+        BRWalletManager.getInstance().setBalanceChangedListener(this);
+        BRPeerManager.getInstance().addStatusUpdateListener(this);
+        BRPeerManager.setOnSyncFinished(new BRPeerManager.OnSyncSucceeded() {
+            @Override
+            public void onFinished() {
+                //put some here
+            }
+        });
+        BRSharedPrefs.addIsoChangedListener(this);
     }
 
     @Override
