@@ -24,7 +24,6 @@ package com.breadwallet.wallet.interfaces;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public interface OnBalanceChanged {
-    void onBalanceChanged(String iso, long balance);
-
+public interface OnTxAdded {
+    void onTxAdded(String iso);
 }

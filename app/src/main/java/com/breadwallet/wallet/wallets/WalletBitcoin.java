@@ -105,15 +105,16 @@ public class WalletBitcoin implements BaseWallet {
             return;
         }
         BRSharedPrefs.putCatchedBalance(context, balance);
-        refreshAddress(context);
+        BRWalletManager.refreshAddress(context);
 
         for (OnBalanceChanged listener : balanceListeners) {
             if (listener != null) listener.onBalanceChanged(balance);
+
         }
     }
 
     public void refreshBalance(Activity app) {
-        long natBal = nativeBalance();
+        long natBal = BRWalletManager.getInstance().nativeBalance();
         if (natBal != -1) {
             setBalance(app, natBal);
         } else {
@@ -277,7 +278,7 @@ public class WalletBitcoin implements BaseWallet {
                 BRSharedPrefs.putFirstAddress(ctx, firstAddress);
                 long fee = BRSharedPrefs.getFeePerKb(ctx);
                 if (fee == 0) {
-                    fee = defaultFee();
+                    fee = BRWalletManager.getInstance().defaultFee();
                     BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
                 }
                 BRWalletManager.getInstance().setFeePerKb(fee, isEconomyFee);
@@ -422,7 +423,7 @@ public class WalletBitcoin implements BaseWallet {
     public static void onBalanceChanged(final long balance) {
         Log.d(TAG, "onBalanceChanged:  " + balance);
         Context app = BreadApp.getBreadContext();
-        BRWalletManager.getInstance().setBalance(app, balance);
+        getInstance().setBalance(app, balance);
 
     }
 
