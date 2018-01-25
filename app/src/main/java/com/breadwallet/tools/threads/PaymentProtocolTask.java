@@ -1,6 +1,7 @@
 package com.breadwallet.tools.threads;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -60,12 +61,12 @@ import java.util.Locale;
  */
 
 public class PaymentProtocolTask extends AsyncTask<String, String, String> {
-    public static final String TAG = PaymentProtocolTask.class.getName();
-    HttpURLConnection urlConnection;
-    String certName = null;
-    PaymentRequestWrapper paymentRequest = null;
-    int certified = 0;
-    Activity app;
+    private static final String TAG = PaymentProtocolTask.class.getName();
+    private HttpURLConnection urlConnection;
+    private String certName = null;
+    private PaymentRequestWrapper paymentRequest = null;
+    private int certified = 0;
+    private Activity app;
 
     //params[0] = uri, params[1] = label
     @Override
