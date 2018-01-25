@@ -169,7 +169,7 @@ public class BreadActivity extends BRActivity implements OnBalanceChanged,
     }
 
     private void setupObservers() {
-        WalletsMaster.getInstance().setBalanceChangedListener(this);
+        WalletsMaster.getInstance().addBalanceChangedListener(this);
         BRPeerManager.getInstance().addStatusUpdateListener(this);
         BRPeerManager.setOnSyncFinished(new BRPeerManager.OnSyncSucceeded() {
             @Override

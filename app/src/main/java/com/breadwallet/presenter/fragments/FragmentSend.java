@@ -422,7 +422,7 @@ public class FragmentSend extends Fragment {
                     SpringAnimator.failShakeAnimation(getActivity(), feeText);
                 }
                 //get the current wallet used
-                BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(BRSharedPrefs.getIso(getActivity()));
+                BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(BRSharedPrefs.getCurrentWalletIso(getActivity()));
                 if (wallet == null) {
                     BRReportsManager.reportBug(new NullPointerException("Wallet is null and it can't happen."), true);
                 }
@@ -597,7 +597,7 @@ public class FragmentSend extends Fragment {
                 <= ExchangeUtils.getMaxAmount(getActivity(), iso).doubleValue()) {
             //do not insert 0 if the balance is 0 now
             if (currAmount.equalsIgnoreCase("0")) amountBuilder = new StringBuilder("");
-            if ((currAmount.contains(".") && (currAmount.length() - currAmount.indexOf(".") > CurrencyUtils.getMaxDecimalPlaces(iso))))
+            if ((currAmount.contains(".") && (currAmount.length() - currAmount.indexOf(".") > CurrencyUtils.getMaxDecimalPlaces(getActivity(),iso))))
                 return;
             amountBuilder.append(dig);
             updateText();
@@ -606,7 +606,7 @@ public class FragmentSend extends Fragment {
 
     private void handleSeparatorClick() {
         String currAmount = amountBuilder.toString();
-        if (currAmount.contains(".") || CurrencyUtils.getMaxDecimalPlaces(selectedIso) == 0)
+        if (currAmount.contains(".") || CurrencyUtils.getMaxDecimalPlaces(getActivity(), selectedIso) == 0)
             return;
         amountBuilder.append(".");
         updateText();
