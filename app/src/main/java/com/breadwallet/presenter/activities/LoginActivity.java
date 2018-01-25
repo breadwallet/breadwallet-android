@@ -214,7 +214,7 @@ public class LoginActivity extends BRActivity {
             BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    WalletsMaster.getInstance().initWallet(LoginActivity.this);
+                    WalletsMaster.getInstance().initLastWallet(LoginActivity.this);
                 }
             });
         }

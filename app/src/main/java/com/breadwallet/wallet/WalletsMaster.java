@@ -333,7 +333,7 @@ public class WalletsMaster {
         }
     }
 
-    public void setBalanceChangedListener(OnBalanceChanged listener) {
+    public void addBalanceChangedListener(OnBalanceChanged listener) {
         for (BaseWallet wallet : mWallets) {
             //todo add listeners to all wallets
         }
@@ -349,6 +349,11 @@ public class WalletsMaster {
         for (BaseWallet wallet : mWallets) {
             //todo init all wallets
         }
+    }
+
+    public void initLastWallet(Context app) {
+        BaseWallet wallet = getWalletByIso(BRSharedPrefs.getCurrentWalletIso(app));
+        wallet.initWallet(app);
     }
 
 
