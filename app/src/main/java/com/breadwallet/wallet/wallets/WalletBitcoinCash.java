@@ -3,7 +3,6 @@ package com.breadwallet.wallet.wallets;
 import android.content.Context;
 
 import com.breadwallet.presenter.entities.PaymentItem;
-import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.wallet.interfaces.BaseWallet;
 
 import java.math.BigDecimal;
@@ -45,7 +44,6 @@ public class WalletBitcoinCash implements BaseWallet {
 
     private WalletBitcoinCash() {
     }
-
 
     @Override
     public boolean sendTransaction(Context app, PaymentItem item) {

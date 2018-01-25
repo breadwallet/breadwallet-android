@@ -1,6 +1,5 @@
 package com.breadwallet.wallet.interfaces;
 
-import android.app.Activity;
 import android.content.Context;
 
 import com.breadwallet.presenter.entities.PaymentItem;
@@ -54,7 +53,7 @@ public interface BaseWallet {
     //return the maximum amount for this currency
     BigDecimal maxAmount(Context app);
 
-    //try parsing the URI and return true if it's a current wallet request
+    //try parsing the URI and return true if it's a current wallet's request
     boolean tryUri(Context app, String uriStr);
 
 }

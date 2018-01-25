@@ -40,6 +40,7 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.uri.BitcoinUriParser;
 import com.breadwallet.tools.threads.BRExecutor;
@@ -48,6 +49,7 @@ import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.interfaces.BaseWallet;
 
 import java.math.BigDecimal;
 
@@ -419,9 +421,14 @@ public class FragmentSend extends Fragment {
                     SpringAnimator.failShakeAnimation(getActivity(), balanceText);
                     SpringAnimator.failShakeAnimation(getActivity(), feeText);
                 }
-
+                //get the current wallet used
+                BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(BRSharedPrefs.getIso(getActivity()));
+                if (wallet == null) {
+                    BRReportsManager.reportBug(new NullPointerException("Wallet is null and it can't happen."), true);
+                }
+                assert (wallet != null);
                 if (allFilled)
-                    BRSender.getInstance().sendTransaction(getContext(), new PaymentItem(address, null, satoshiAmount.longValue(), null, false, comment));
+                    wallet.sendTransaction(getActivity(), new PaymentItem(address, null, satoshiAmount.longValue(), null, false, comment));
             }
         });
 
