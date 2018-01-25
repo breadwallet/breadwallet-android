@@ -269,7 +269,7 @@ public class WalletsMaster {
 
                     final EditText editText = (EditText) input.findViewById(R.id.bip38password_edittext);
 
-                    (new Handler()).postDelayed(new Runnable() {
+                    new Handler().postDelayed(new Runnable() {
                         public void run() {
                             editText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
                             editText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));

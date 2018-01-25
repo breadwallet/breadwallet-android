@@ -47,4 +47,43 @@ public class WalletBitcoinCash implements BaseWallet {
     }
 
 
+    @Override
+    public boolean sendTransaction(Context app, PaymentItem item) {
+        return false;
+    }
+
+    @Override
+    public boolean generateWallet(Context app) {
+        return false;
+    }
+
+    @Override
+    public boolean initWallet(Context app) {
+        return false;
+    }
+
+    @Override
+    public String getSymbol(Context app) {
+        return null;
+    }
+
+    @Override
+    public String getName(Context app) {
+        return null;
+    }
+
+    @Override
+    public int getMaxDecimalPlaces(Context app) {
+        return 0;
+    }
+
+    @Override
+    public BigDecimal maxAmount(Context app) {
+        return null;
+    }
+
+    @Override
+    public boolean tryUri(Context app, String uriStr) {
+        return false;
+    }
 }
