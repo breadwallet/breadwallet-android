@@ -622,22 +622,27 @@ public class FragmentSend extends Fragment {
     }
 
     private void updateText() {
-        if (getActivity() == null) return;
+        Activity app = getActivity();
+        if (app == null) return;
         String tmpAmount = amountBuilder.toString();
         setAmount();
+
         String balanceString;
+        if (selectedIso == null)
+            selectedIso = WalletsMaster.getInstance().getCurrentWallet(app).getIso(app);
         String iso = selectedIso;
-        curBalance = WalletsMaster.getInstance().getCurrentWallet(getActivity()).getCachedBalance(getActivity());
+        curBalance = WalletsMaster.getInstance().getCurrentWallet(app).getCachedBalance(app);
         if (!amountLabelOn)
-            isoText.setText(CurrencyUtils.getSymbolByIso(getActivity(), selectedIso));
-        isoButton.setText(String.format("%s(%s)", CurrencyUtils.getCurrencyName(getActivity(), selectedIso), CurrencyUtils.getSymbolByIso(getActivity(), selectedIso)));
+            isoText.setText(CurrencyUtils.getSymbolByIso(app, selectedIso));
+        isoButton.setText(String.format("%s(%s)", CurrencyUtils.getCurrencyIso(app, selectedIso), CurrencyUtils.getSymbolByIso(app, selectedIso)));
         //Balance depending on ISO
         long satoshis = (Utils.isNullOrEmpty(tmpAmount) || tmpAmount.equalsIgnoreCase(".")) ? 0 :
-                (selectedIso.equalsIgnoreCase("btc") ? ExchangeUtils.getSatoshisForBitcoin(getActivity(), new BigDecimal(tmpAmount)).longValue() : ExchangeUtils.getSatoshisFromAmount(getActivity(), selectedIso, new BigDecimal(tmpAmount)).longValue());
-        BigDecimal balanceForISO = ExchangeUtils.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(curBalance));
+                (selectedIso.equalsIgnoreCase("btc") ? ExchangeUtils.getSatoshisForBitcoin(app, new BigDecimal(tmpAmount)).longValue()
+                        : ExchangeUtils.getSatoshisFromAmount(app, selectedIso, new BigDecimal(tmpAmount)).longValue());
+        BigDecimal balanceForISO = ExchangeUtils.getAmountFromSatoshis(app, iso, new BigDecimal(curBalance));
 
         //formattedBalance
-        String formattedBalance = CurrencyUtils.getFormattedCurrencyString(getActivity(), iso, balanceForISO);
+        String formattedBalance = CurrencyUtils.getFormattedCurrencyString(app, iso, balanceForISO);
         //Balance depending on ISO
         long fee = 0;
         if (satoshis == 0) {
@@ -651,9 +656,9 @@ public class FragmentSend extends Fragment {
             }
         }
 
-        BigDecimal feeForISO = ExchangeUtils.getAmountFromSatoshis(getActivity(), iso, new BigDecimal(fee));
+        BigDecimal feeForISO = ExchangeUtils.getAmountFromSatoshis(app, iso, new BigDecimal(fee));
         //formattedBalance
-        String aproxFee = CurrencyUtils.getFormattedCurrencyString(getActivity(), iso, feeForISO);
+        String aproxFee = CurrencyUtils.getFormattedCurrencyString(app, iso, feeForISO);
         if (new BigDecimal((tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".")) ? "0" : tmpAmount).doubleValue() > balanceForISO.doubleValue()) {
             balanceText.setTextColor(getContext().getColor(R.color.warning_color));
             feeText.setTextColor(getContext().getColor(R.color.warning_color));

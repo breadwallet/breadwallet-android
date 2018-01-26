@@ -413,7 +413,7 @@ public class FragmentRequestAmount extends Fragment {
         String tmpAmount = amountBuilder.toString();
         amountEdit.setText(tmpAmount);
         isoText.setText(CurrencyUtils.getSymbolByIso(getActivity(), selectedIso));
-        isoButton.setText(String.format("%s(%s)", CurrencyUtils.getCurrencyName(getActivity(), selectedIso), CurrencyUtils.getSymbolByIso(getActivity(), selectedIso)));
+        isoButton.setText(String.format("%s(%s)", CurrencyUtils.getCurrencyIso(getActivity(), selectedIso), CurrencyUtils.getSymbolByIso(getActivity(), selectedIso)));
 
     }
 

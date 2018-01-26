@@ -71,7 +71,7 @@ public class CurrencyUtils {
         decimalFormatSymbols.setCurrencySymbol(symbol);
 //        currencyFormat.setMaximumFractionDigits(decimalPoints);
         currencyFormat.setGroupingUsed(true);
-        currencyFormat.setMaximumFractionDigits(BRSharedPrefs.getFiatCurrencyIso(app) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
+        currencyFormat.setMaximumFractionDigits(BRSharedPrefs.getBitcoinUnit(app) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
         currencyFormat.setNegativeSuffix("");
@@ -95,11 +95,11 @@ public class CurrencyUtils {
         return Utils.isNullOrEmpty(symbol) ? iso : symbol;
     }
 
-    //for now only use for BTC and Bits
-    public static String getCurrencyName(Context app, String iso) {
+    //get currency denomination (iso) BTC, ETH etc.
+    public static String getCurrencyIso(Context app, String iso) {
         BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(iso);
         if (wallet == null) return iso;
-        return wallet.getName(app);
+        return wallet.getIso(app);
     }
 
     public static int getMaxDecimalPlaces(Context app, String iso) {

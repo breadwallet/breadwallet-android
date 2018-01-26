@@ -3,7 +3,10 @@ package com.breadwallet.wallet.wallets;
 import android.content.Context;
 
 import com.breadwallet.presenter.entities.PaymentItem;
+import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.interfaces.BaseWallet;
+import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
 
 import java.math.BigDecimal;
 
@@ -36,6 +39,7 @@ public class WalletBitcoinCash implements BaseWallet {
     public final long MAX_BTC = 21000000;
 
     private static WalletBitcoinCash instance;
+    private WalletUiConfiguration uiConfig;
 
     public static WalletBitcoinCash getInstance() {
         if (instance == null) instance = new WalletBitcoinCash();
@@ -43,60 +47,103 @@ public class WalletBitcoinCash implements BaseWallet {
     }
 
     private WalletBitcoinCash() {
+        uiConfig = new WalletUiConfiguration("#478559", true, true, false);
     }
 
     @Override
     public boolean sendTransaction(Context app, PaymentItem item) {
+        //todo implement
         return false;
     }
 
     @Override
     public boolean generateWallet(Context app) {
+        //No need, we generate one private key for all wallets
         return false;
     }
 
     @Override
     public boolean initWallet(Context app) {
+        //todo implement
         return false;
     }
 
     @Override
     public String getSymbol(Context app) {
-        return null;
+
+        String currencySymbolString = BRConstants.bitcoinLowercase;
+        if (app != null) {
+            int unit = BRSharedPrefs.getBitcoinUnit(app);
+            switch (unit) {
+                case BRConstants.CURRENT_UNIT_BITS:
+                    currencySymbolString = BRConstants.bitcoinLowercase;
+                    break;
+                case BRConstants.CURRENT_UNIT_MBITS:
+                    currencySymbolString = "m" + BRConstants.bitcoinUppercase;
+                    break;
+                case BRConstants.CURRENT_UNIT_BITCOINS:
+                    currencySymbolString = BRConstants.bitcoinUppercase;
+                    break;
+            }
+        }
+        return currencySymbolString;
     }
 
     @Override
     public String getIso(Context app) {
-        return null;
+        if (app == null) return null;
+        int unit = BRSharedPrefs.getBitcoinUnit(app);
+        switch (unit) {
+            case BRConstants.CURRENT_UNIT_BITS:
+                return "Bits";
+            case BRConstants.CURRENT_UNIT_MBITS:
+                return "MBits";
+            default:
+                return "BTC";
+        }
     }
 
     @Override
     public String getName(Context app) {
-        return null;
+        return "BitcoinCash";
     }
 
     @Override
     public int getMaxDecimalPlaces(Context app) {
-        return 0;
+        int unit = BRSharedPrefs.getBitcoinUnit(app);
+        switch (unit) {
+            case BRConstants.CURRENT_UNIT_BITS:
+                return 2;
+            case BRConstants.CURRENT_UNIT_MBITS:
+                return 5;
+            default:
+                return 8;
+        }
     }
 
     @Override
     public long getCachedBalance(Context app) {
-        return 0;
+        return BRSharedPrefs.getCachedBalance(app, "BCH");
     }
 
     @Override
-    public long setCashedBalance(Context app) {
-        return 0;
+    public void setCashedBalance(Context app, long balance) {
+        BRSharedPrefs.putCachedBalance(app, "BCH", balance);
     }
 
     @Override
     public BigDecimal maxAmount(Context app) {
-        return null;
+        //return max bitcoin
+        return new BigDecimal(MAX_BTC);
     }
 
     @Override
     public boolean tryUri(Context app, String uriStr) {
         return false;
+    }
+
+    @Override
+    public WalletUiConfiguration getUiConfiguration() {
+        return uiConfig;
     }
 }

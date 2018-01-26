@@ -3,6 +3,7 @@ package com.breadwallet.wallet.interfaces;
 import android.content.Context;
 
 import com.breadwallet.presenter.entities.PaymentItem;
+import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
 
 import java.math.BigDecimal;
 
@@ -57,12 +58,15 @@ public interface BaseWallet {
     long getCachedBalance(Context app);
 
     //set the cached balance in the smallest unit: cents, satoshis.
-    long setCashedBalance(Context app);
+    void setCashedBalance(Context app, long balance);
 
     //return the maximum amount for this currency
     BigDecimal maxAmount(Context app);
 
     //try parsing the URI and return true if it's a current wallet's request
     boolean tryUri(Context app, String uriStr);
+
+    //return the wallet's Ui configuration
+    WalletUiConfiguration getUiConfiguration();
 
 }

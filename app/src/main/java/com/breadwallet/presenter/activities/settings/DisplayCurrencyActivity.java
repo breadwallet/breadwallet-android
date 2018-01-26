@@ -85,7 +85,7 @@ public class DisplayCurrencyActivity extends BRActivity {
             }
         });
 
-        int unit = BRSharedPrefs.getFiatCurrencyIso(this);
+        int unit = BRSharedPrefs.getBitcoinUnit(this);
         if (unit == BRConstants.CURRENT_UNIT_BITS) {
             setButton(true);
         } else {
@@ -118,7 +118,7 @@ public class DisplayCurrencyActivity extends BRActivity {
         CurrencyEntity entity = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso);
         if (entity != null) {
             String finalExchangeRate = CurrencyUtils.getFormattedCurrencyString(DisplayCurrencyActivity.this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(entity.rate));
-            boolean bits = BRSharedPrefs.getFiatCurrencyIso(this) == BRConstants.CURRENT_UNIT_BITS;
+            boolean bits = BRSharedPrefs.getBitcoinUnit(this) == BRConstants.CURRENT_UNIT_BITS;
             exchangeText.setText(CurrencyUtils.getFormattedCurrencyString(this, "BTC", new BigDecimal(bits ? 1000000 : 1)) + " = " + finalExchangeRate);
         }
         adapter.notifyDataSetChanged();
@@ -126,13 +126,13 @@ public class DisplayCurrencyActivity extends BRActivity {
 
     private void setButton(boolean left) {
         if (left) {
-            BRSharedPrefs.putFiatCurrencyIso(this, BRConstants.CURRENT_UNIT_BITS);
+            BRSharedPrefs.putBitcoinUnit(this, BRConstants.CURRENT_UNIT_BITS);
             leftButton.setTextColor(getColor(R.color.white));
             leftButton.setBackground(getDrawable(R.drawable.b_half_left_blue));
             rightButton.setTextColor(getColor(R.color.dark_blue));
             rightButton.setBackground(getDrawable(R.drawable.b_half_right_blue_stroke));
         } else {
-            BRSharedPrefs.putFiatCurrencyIso(this, BRConstants.CURRENT_UNIT_BITCOINS);
+            BRSharedPrefs.putBitcoinUnit(this, BRConstants.CURRENT_UNIT_BITCOINS);
             leftButton.setTextColor(getColor(R.color.dark_blue));
             leftButton.setBackground(getDrawable(R.drawable.b_half_left_blue_stroke));
             rightButton.setTextColor(getColor(R.color.white));
