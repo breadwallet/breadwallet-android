@@ -81,7 +81,7 @@ public class WalletPlugin implements Plugin {
                 jsonResp.put("receive_address", WalletsMaster.getReceiveAddress());
 
                 /**how digits after the decimal point. 2 = bits 8 = btc 6 = mbtc*/
-                jsonResp.put("btc_denomiation_digits", BRSharedPrefs.getFiatCurrencyIso(app) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
+                jsonResp.put("btc_denomiation_digits", BRSharedPrefs.getBitcoinUnit(app) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
 
                 /**the users native fiat currency as an ISO 4217 code. Should be uppercased */
                 jsonResp.put("local_currency_code", Currency.getInstance(Locale.getDefault()).getCurrencyCode().toUpperCase());

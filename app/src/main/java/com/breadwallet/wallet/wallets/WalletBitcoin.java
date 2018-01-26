@@ -45,6 +45,7 @@ import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.interfaces.BaseWallet;
 import com.breadwallet.wallet.interfaces.OnBalanceChanged;
+import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.math.BigDecimal;
@@ -91,6 +92,7 @@ public class WalletBitcoin implements BaseWallet {
     private static WalletBitcoin instance;
     private boolean timedOut;
     private boolean sending;
+    private WalletUiConfiguration uiConfig;
 
     public static WalletBitcoin getInstance() {
         if (instance == null) instance = new WalletBitcoin();
@@ -99,6 +101,7 @@ public class WalletBitcoin implements BaseWallet {
 
     private WalletBitcoin() {
         balanceListeners = new ArrayList<>();
+        uiConfig = new WalletUiConfiguration("#f29500", true, true, true);
     }
 
     public void setBalance(final Context context, long balance) {
@@ -334,7 +337,7 @@ public class WalletBitcoin implements BaseWallet {
 
         String currencySymbolString = BRConstants.bitcoinLowercase;
         if (app != null) {
-            int unit = BRSharedPrefs.getFiatCurrencyIso(app);
+            int unit = BRSharedPrefs.getBitcoinUnit(app);
             switch (unit) {
                 case BRConstants.CURRENT_UNIT_BITS:
                     currencySymbolString = BRConstants.bitcoinLowercase;
@@ -352,13 +355,8 @@ public class WalletBitcoin implements BaseWallet {
 
     @Override
     public String getIso(Context app) {
-        return null;
-    }
-
-    @Override
-    public String getName(Context app) {
         if (app == null) return null;
-        int unit = BRSharedPrefs.getFiatCurrencyIso(app);
+        int unit = BRSharedPrefs.getBitcoinUnit(app);
         switch (unit) {
             case BRConstants.CURRENT_UNIT_BITS:
                 return "Bits";
@@ -367,13 +365,17 @@ public class WalletBitcoin implements BaseWallet {
             default:
                 return "BTC";
         }
+    }
 
+    @Override
+    public String getName(Context app) {
+        return "Bitcoin";
     }
 
 
     @Override
     public int getMaxDecimalPlaces(Context app) {
-        int unit = BRSharedPrefs.getFiatCurrencyIso(app);
+        int unit = BRSharedPrefs.getBitcoinUnit(app);
         switch (unit) {
             case BRConstants.CURRENT_UNIT_BITS:
                 return 2;
@@ -386,12 +388,12 @@ public class WalletBitcoin implements BaseWallet {
 
     @Override
     public long getCachedBalance(Context app) {
-        return 0;
+        return BRSharedPrefs.getCachedBalance(app, "BTC");
     }
 
     @Override
-    public long setCashedBalance(Context app) {
-        return 0;
+    public void setCashedBalance(Context app, long balance) {
+        BRSharedPrefs.putCachedBalance(app, "BTC", balance);
     }
 
     @Override
@@ -403,6 +405,11 @@ public class WalletBitcoin implements BaseWallet {
     @Override
     public boolean tryUri(Context app, String uriStr) {
         return BitcoinUriParser.processRequest(app, uriStr);
+    }
+
+    @Override
+    public WalletUiConfiguration getUiConfiguration() {
+        return uiConfig;
     }
 
     public void addBalanceChangedListener(OnBalanceChanged listener) {

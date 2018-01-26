@@ -367,12 +367,14 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static int getFiatCurrencyIso(Context context) {
+    // BTC, mBTC, Bits
+    public static int getBitcoinUnit(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         return settingsToGet.getInt(BRConstants.CURRENT_UNIT, BRConstants.CURRENT_UNIT_BITS);
     }
 
-    public static void putFiatCurrencyIso(Context context, int unit) {
+    // BTC, mBTC, Bits
+    public static void putBitcoinUnit(Context context, int unit) {
         if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
