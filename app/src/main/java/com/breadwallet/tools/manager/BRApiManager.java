@@ -103,12 +103,12 @@ public class BRApiManager {
                         tmp.name = tmpObj.getString("name");
                         tmp.code = tmpObj.getString("code");
                         tmp.rate = (float) tmpObj.getDouble("rate");
-                        String selectedISO = BRSharedPrefs.getIso(context);
+                        String selectedISO = BRSharedPrefs.getPreferredFiatIso(context);
 //                        Log.e(TAG,"selectedISO: " + selectedISO);
                         if (tmp.code.equalsIgnoreCase(selectedISO)) {
 //                            Log.e(TAG, "theIso : " + theIso);
 //                                Log.e(TAG, "Putting the shit in the shared preffs");
-                            BRSharedPrefs.putIso(context, tmp.code);
+                            BRSharedPrefs.putPreferredFiatIso(context, tmp.code);
                             BRSharedPrefs.putCurrencyListPosition(context, i - 1);
                         }
                     } catch (JSONException e) {
@@ -215,7 +215,7 @@ public class BRApiManager {
             if (fee != 0 && fee < WalletsMaster.getInstance().maxFee()) {
                 BRSharedPrefs.putFeePerKb(app, fee);
                 WalletsMaster.getInstance().setFeePerKb(fee, isEconomyFee); //todo improve that logic
-                BRSharedPrefs.putFeeTime(app, System.currentTimeMillis()); //store the time of the last successful fee fetch
+                BRSharedPrefs.putFeeTime(app, BRSharedPrefs.getCurrentWalletIso(app), System.currentTimeMillis()); //store the time of the last successful fee fetch
             } else {
                 FirebaseCrash.report(new NullPointerException("Fee is weird:" + fee));
             }

@@ -135,7 +135,7 @@ public class FingerprintActivity extends BRActivity {
     }
 
     private String getLimitText() {
-        String iso = BRSharedPrefs.getIso(this);
+        String iso = BRSharedPrefs.getPreferredFiatIso(this);
         //amount in satoshis
         BigDecimal satoshis = new BigDecimal(BRKeyStore.getSpendLimit(this));
         //amount in BTC, mBTC or bits

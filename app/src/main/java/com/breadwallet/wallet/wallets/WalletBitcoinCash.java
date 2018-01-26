@@ -66,12 +66,27 @@ public class WalletBitcoinCash implements BaseWallet {
     }
 
     @Override
+    public String getIso(Context app) {
+        return null;
+    }
+
+    @Override
     public String getName(Context app) {
         return null;
     }
 
     @Override
     public int getMaxDecimalPlaces(Context app) {
+        return 0;
+    }
+
+    @Override
+    public long getCachedBalance(Context app) {
+        return 0;
+    }
+
+    @Override
+    public long setCashedBalance(Context app) {
         return 0;
     }
 

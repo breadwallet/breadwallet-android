@@ -85,7 +85,7 @@ public class DisplayCurrencyActivity extends BRActivity {
             }
         });
 
-        int unit = BRSharedPrefs.getCurrencyUnit(this);
+        int unit = BRSharedPrefs.getFiatCurrencyIso(this);
         if (unit == BRConstants.CURRENT_UNIT_BITS) {
             setButton(true);
         } else {
@@ -99,7 +99,7 @@ public class DisplayCurrencyActivity extends BRActivity {
                 TextView currencyItemText = (TextView) view.findViewById(R.id.currency_item_text);
                 final String selectedCurrency = currencyItemText.getText().toString();
                 String iso = selectedCurrency.substring(0, 3);
-                BRSharedPrefs.putIso(DisplayCurrencyActivity.this, iso);
+                BRSharedPrefs.putPreferredFiatIso(DisplayCurrencyActivity.this, iso);
                 BRSharedPrefs.putCurrencyListPosition(DisplayCurrencyActivity.this, position);
 
                 updateExchangeRate();
@@ -114,11 +114,11 @@ public class DisplayCurrencyActivity extends BRActivity {
 
     private void updateExchangeRate() {
         //set the rate from the last saved
-        String iso = BRSharedPrefs.getIso(this);
+        String iso = BRSharedPrefs.getPreferredFiatIso(this);
         CurrencyEntity entity = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso);
         if (entity != null) {
-            String finalExchangeRate = CurrencyUtils.getFormattedCurrencyString(DisplayCurrencyActivity.this, BRSharedPrefs.getIso(this), new BigDecimal(entity.rate));
-            boolean bits = BRSharedPrefs.getCurrencyUnit(this) == BRConstants.CURRENT_UNIT_BITS;
+            String finalExchangeRate = CurrencyUtils.getFormattedCurrencyString(DisplayCurrencyActivity.this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(entity.rate));
+            boolean bits = BRSharedPrefs.getFiatCurrencyIso(this) == BRConstants.CURRENT_UNIT_BITS;
             exchangeText.setText(CurrencyUtils.getFormattedCurrencyString(this, "BTC", new BigDecimal(bits ? 1000000 : 1)) + " = " + finalExchangeRate);
         }
         adapter.notifyDataSetChanged();
@@ -126,13 +126,13 @@ public class DisplayCurrencyActivity extends BRActivity {
 
     private void setButton(boolean left) {
         if (left) {
-            BRSharedPrefs.putCurrencyUnit(this, BRConstants.CURRENT_UNIT_BITS);
+            BRSharedPrefs.putFiatCurrencyIso(this, BRConstants.CURRENT_UNIT_BITS);
             leftButton.setTextColor(getColor(R.color.white));
             leftButton.setBackground(getDrawable(R.drawable.b_half_left_blue));
             rightButton.setTextColor(getColor(R.color.dark_blue));
             rightButton.setBackground(getDrawable(R.drawable.b_half_right_blue_stroke));
         } else {
-            BRSharedPrefs.putCurrencyUnit(this, BRConstants.CURRENT_UNIT_BITCOINS);
+            BRSharedPrefs.putFiatCurrencyIso(this, BRConstants.CURRENT_UNIT_BITCOINS);
             leftButton.setTextColor(getColor(R.color.dark_blue));
             leftButton.setBackground(getDrawable(R.drawable.b_half_left_blue_stroke));
             rightButton.setTextColor(getColor(R.color.white));

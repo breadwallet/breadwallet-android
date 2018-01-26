@@ -1,7 +1,6 @@
 package com.breadwallet.tools.threads;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -318,7 +317,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         final String memo = (!paymentRequest.memo.isEmpty() ? "\n" : "") + paymentRequest.memo;
         allAddresses = new StringBuilder();
 
-        final String iso = BRSharedPrefs.getIso(app);
+        final String iso = BRSharedPrefs.getPreferredFiatIso(app);
         final StringBuilder finalAllAddresses = allAddresses;
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override

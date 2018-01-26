@@ -219,7 +219,7 @@ public class InputWordsActivity extends BRActivity {
                         m.wipeWalletButKeystore(app);
                         m.wipeKeyStore(app);
                         PostAuth.getInstance().setPhraseForKeyStore(cleanPhrase);
-                        BRSharedPrefs.putAllowSpend(app, false);
+                        BRSharedPrefs.putAllowSpend(app, BRSharedPrefs.getCurrentWalletIso(app), false);
                         //if this screen is shown then we did not upgrade to the new app, we installed it
                         BRSharedPrefs.putGreetingsShown(app, true);
                         PostAuth.getInstance().onRecoverWalletAuth(app, false);

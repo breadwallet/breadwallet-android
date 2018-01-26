@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.SyncBlockchainActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRSearchBar;
@@ -193,9 +194,9 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
 
     private void swap() {
         if (!BRAnimator.isClickAllowed()) return;
-        boolean b = !BRSharedPrefs.getPreferredBTC(this);
+        boolean b = !BRSharedPrefs.isCryptoPreferred(this);
         setPriceTags(b, true);
-        BRSharedPrefs.putPreferredBTC(this, b);
+        BRSharedPrefs.setIsCryptoPreferred(this, b);
     }
 
     private void setPriceTags(boolean btcPreferred, boolean animate) {
@@ -249,7 +250,7 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
             public void run() {
                 Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI");
                 //sleep a little in order to make sure all the commits are finished (like SharePreferences commits)
-                String iso = BRSharedPrefs.getIso(CurrencyActivity.this);
+                String iso = BRSharedPrefs.getPreferredFiatIso(CurrencyActivity.this);
 
                 //current amount in satoshis
                 final BigDecimal amount = new BigDecimal(BRSharedPrefs.getCatchedBalance(CurrencyActivity.this));
@@ -308,7 +309,8 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(CurrencyActivity.this));
+                    final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(CurrencyActivity.this,
+                            BRSharedPrefs.getCurrentWalletIso(CurrencyActivity.this)));
 //                    Log.e(TAG, "run: " + progress);
                     if (progress < 1 && progress > 0) {
                         SyncManager.getInstance().startSyncingProgressThread();

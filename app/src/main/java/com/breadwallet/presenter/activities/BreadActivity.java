@@ -267,9 +267,9 @@ public class BreadActivity extends BRActivity implements OnBalanceChanged,
 
     private void swap() {
         if (!BRAnimator.isClickAllowed()) return;
-        boolean b = !BRSharedPrefs.getPreferredBTC(this);
+        boolean b = !BRSharedPrefs.isCryptoPreferred(this);
         setPriceTags(b, true);
-        BRSharedPrefs.putPreferredBTC(this, b);
+        BRSharedPrefs.setIsCryptoPreferred(this, b);
     }
 
     private void setPriceTags(boolean btcPreferred, boolean animate) {
@@ -425,7 +425,7 @@ public class BreadActivity extends BRActivity implements OnBalanceChanged,
                     observer.removeOnGlobalLayoutListener(this);
                 if (uiIsDone) return;
                 uiIsDone = true;
-                setPriceTags(BRSharedPrefs.getPreferredBTC(BreadActivity.this), false);
+                setPriceTags(BRSharedPrefs.isCryptoPreferred(BreadActivity.this), false);
             }
         });
 
@@ -491,10 +491,10 @@ public class BreadActivity extends BRActivity implements OnBalanceChanged,
             public void run() {
                 Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI");
                 //sleep a little in order to make sure all the commits are finished (like SharePreferences commits)
-                String iso = BRSharedPrefs.getIso(BreadActivity.this);
+                String iso = BRSharedPrefs.getPreferredFiatIso(BreadActivity.this);
 
                 //current amount in satoshis
-                final BigDecimal amount = new BigDecimal(BRSharedPrefs.getCatchedBalance(BreadActivity.this));
+                final BigDecimal amount = new BigDecimal(BRSharedPrefs.getCachedBalance(BreadActivity.this, BRSharedPrefs.getCurrentWalletIso(BreadActivity.this)));
 
                 //amount in BTC units
                 BigDecimal btcAmount = ExchangeUtils.getBitcoinForSatoshis(BreadActivity.this, amount);
@@ -581,7 +581,7 @@ public class BreadActivity extends BRActivity implements OnBalanceChanged,
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(BreadActivity.this));
+                    final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(BreadActivity.this, BRSharedPrefs.getCurrentWalletIso(BreadActivity.this)));
 //                    Log.e(TAG, "run: " + progress);
                     if (progress < 1 && progress > 0) {
                         SyncManager.getInstance().startSyncingProgressThread();

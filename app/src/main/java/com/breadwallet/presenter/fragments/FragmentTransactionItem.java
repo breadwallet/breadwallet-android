@@ -153,7 +153,8 @@ public class FragmentTransactionItem extends Fragment {
 //        Log.e(TAG, "fillTexts fee: " + item.getFee());
 //        Log.e(TAG, "fillTexts hash: " + item.getHexId());
         //get the current iso
-        String iso = BRSharedPrefs.getPreferredBTC(getActivity()) ? "BTC" : BRSharedPrefs.getIso(getContext());
+        String currentIso = BRSharedPrefs.getCurrentWalletIso(getActivity());
+        String iso = BRSharedPrefs.isCryptoPreferred(getActivity()) ? currentIso : BRSharedPrefs.getPreferredFiatIso(getContext());
 
         //get the tx amount
         BigDecimal txAmount = new BigDecimal(item.getReceived() - item.getSent()).abs();
