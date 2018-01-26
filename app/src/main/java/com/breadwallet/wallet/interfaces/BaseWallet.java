@@ -41,14 +41,23 @@ public interface BaseWallet {
     //init the current wallet
     boolean initWallet(Context app);
 
-    //get the currency symbol e.g. BTC
+    //get the currency symbol e.g. Bitcoin - ₿, Ether - Ξ
     String getSymbol(Context app);
+
+    //get the currency denomination e.g. Bitcoin - BTC, Ether - ETH
+    String getIso(Context app);
 
     //get the currency name e.g. Bitcoin
     String getName(Context app);
 
     //get the number of decimal places to use for this currency
     int getMaxDecimalPlaces(Context app);
+
+    //get the cached balance in the smallest unit: cents, satoshis.
+    long getCachedBalance(Context app);
+
+    //set the cached balance in the smallest unit: cents, satoshis.
+    long setCashedBalance(Context app);
 
     //return the maximum amount for this currency
     BigDecimal maxAmount(Context app);

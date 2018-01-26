@@ -148,7 +148,9 @@ public class FragmentRequestAmount extends Fragment {
         signalLayout.removeView(request);
 
         showCurrencyList(false);
-        selectedIso = BRSharedPrefs.getPreferredBTC(getContext()) ? "BTC" : BRSharedPrefs.getIso(getContext());
+
+        String currentIso = BRSharedPrefs.getCurrentWalletIso(getActivity());
+        selectedIso = BRSharedPrefs.isCryptoPreferred(getActivity()) ? currentIso : BRSharedPrefs.getPreferredFiatIso(getContext());
 
         signalLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -260,10 +262,10 @@ public class FragmentRequestAmount extends Fragment {
         isoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (selectedIso.equalsIgnoreCase(BRSharedPrefs.getIso(getContext()))) {
+                if (selectedIso.equalsIgnoreCase(BRSharedPrefs.getPreferredFiatIso(getContext()))) {
                     selectedIso = "BTC";
                 } else {
-                    selectedIso = BRSharedPrefs.getIso(getContext());
+                    selectedIso = BRSharedPrefs.getPreferredFiatIso(getContext());
                 }
                 boolean generated = generateQrImage(receiveAddress, amountEdit.getText().toString(), selectedIso);
                 if (!generated)

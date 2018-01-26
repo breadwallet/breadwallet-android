@@ -89,7 +89,7 @@ public class BRConstants {
     public static final String PREFS_NAME = "MyPrefsFile";
     public static final String RECEIVE_ADDRESS = "receive_address";
     public static final String WALLET_NAME = "wallet_name";
-    public static final String START_HEIGHT = "startHeight";
+//    public static final String START_HEIGHT = "startHeight";
     public static final String LAST_BLOCK_HEIGHT = "lastBlockHeight";
     public static final String TIPS_SHOWN = "tipsShown";
     public static final String CURRENT_UNIT = "currencyUnit";
@@ -98,7 +98,7 @@ public class BRConstants {
     public static final String RATE = "rate";
     public static final String PHRASE_WRITTEN = "phraseWritten";
     public static final String LIMIT_PREFS = "fingerprintLimit";
-    public static final String ALLOW_SPEND = "allowSpend";
+//    public static final String ALLOW_SPEND = "allowSpend";
     public static final String USER_ID = "userId";
     public static final String GEO_PERMISSIONS_REQUESTED = "geoPermissionsRequested";
 

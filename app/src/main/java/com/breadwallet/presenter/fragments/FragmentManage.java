@@ -69,25 +69,25 @@ public class FragmentManage extends Fragment {
 
         layout.clearFocus();
 
-        walletNameText.setText(BRSharedPrefs.getWalletName(getContext()));
-
-        walletNameText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (onNameChanged != null) onNameChanged.onNameChanged(s.toString());
-                BRSharedPrefs.putWalletName(getActivity(), s.toString());
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-
-            }
-        });
+//        walletNameText.setText(BRSharedPrefs.getWalletName(getContext()));
+//
+//        walletNameText.addTextChangedListener(new TextWatcher() {
+//            @Override
+//            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+//
+//            }
+//
+//            @Override
+//            public void onTextChanged(CharSequence s, int start, int before, int count) {
+//                if (onNameChanged != null) onNameChanged.onNameChanged(s.toString());
+//                BRSharedPrefs.putWalletName(getActivity(), s.toString());
+//            }
+//
+//            @Override
+//            public void afterTextChanged(Editable s) {
+//
+//            }
+//        });
 
         long time = (long) BRKeyStore.getWalletCreationTime(getContext()) * 1000;
         // multiply by 1000, make it millis, since the Wallet creation time is seconds.
@@ -145,7 +145,7 @@ public class FragmentManage extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        BRSharedPrefs.putWalletName(getActivity(), walletNameText.getText().toString());
+//        BRSharedPrefs.putWalletName(getActivity(), walletNameText.getText().toString());
         Utils.hideKeyboard(getActivity());
 
     }

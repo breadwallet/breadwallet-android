@@ -76,13 +76,13 @@ public class NodesActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-
-                if (BRSharedPrefs.getTrustNode(NodesActivity.this).isEmpty()) {
+                String currentIso = BRSharedPrefs.getCurrentWalletIso(NodesActivity.this);
+                if (BRSharedPrefs.getTrustNode(NodesActivity.this, currentIso).isEmpty()) {
                     createDialog();
                 } else {
                     if (!updatingNode) {
                         updatingNode = true;
-                        BRSharedPrefs.putTrustNode(NodesActivity.this, "");
+                        BRSharedPrefs.putTrustNode(NodesActivity.this, currentIso, "");
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
@@ -109,7 +109,7 @@ public class NodesActivity extends BRActivity {
     }
 
     private void updateButtonText() {
-        if (BRSharedPrefs.getTrustNode(this).isEmpty()) {
+        if (BRSharedPrefs.getTrustNode(this, BRSharedPrefs.getCurrentWalletIso(NodesActivity.this)).isEmpty()) {
             switchButton.setText(getString(R.string.NodeSelector_manualButton));
         } else {
             switchButton.setText(getString(R.string.NodeSelector_automaticButton));
@@ -168,7 +168,7 @@ public class NodesActivity extends BRActivity {
                 String str = input.getText().toString();
                 if (TrustedNode.isValid(str)) {
                     mDialog.setMessage("");
-                    BRSharedPrefs.putTrustNode(app, str);
+                    BRSharedPrefs.putTrustNode(app, BRSharedPrefs.getCurrentWalletIso(NodesActivity.this),str);
                     if (!updatingNode) {
                         updatingNode = true;
                         customTitle.setText(getString(R.string.Webview_updating));

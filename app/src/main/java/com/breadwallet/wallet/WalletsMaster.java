@@ -78,10 +78,6 @@ public class WalletsMaster {
 
     private static WalletsMaster instance;
 
-    public long getBalance(Context context) {
-        return BRSharedPrefs.getCatchedBalance(context);
-    }
-
     private List<BaseWallet> mWallets = new ArrayList<>();
 
     private WalletsMaster() {
@@ -102,6 +98,10 @@ public class WalletsMaster {
         if (iso.equalsIgnoreCase("BTC")) return WalletBitcoin.getInstance();
         if (iso.equalsIgnoreCase("BCH")) return WalletBitcoinCash.getInstance();
         return null;
+    }
+
+    public BaseWallet getCurrentWallet(Context app) {
+        return getWalletByIso(BRSharedPrefs.getCurrentWalletIso(app));
     }
 
     public synchronized boolean generateRandomSeed(final Context ctx) {

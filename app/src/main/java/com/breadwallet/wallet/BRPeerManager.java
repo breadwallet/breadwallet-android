@@ -75,26 +75,29 @@ public class BRPeerManager {
         Log.d(TAG, "syncStarted: " + Thread.currentThread().getName());
 //        BRPeerManager.getInstance().refreshConnection();
         Context ctx = BreadApp.getBreadContext();
-        int startHeight = BRSharedPrefs.getStartHeight(ctx);
+        String currentIso = BRSharedPrefs.getCurrentWalletIso(ctx);
+        int startHeight = BRSharedPrefs.getStartHeight(ctx, currentIso);
         int lastHeight = BRSharedPrefs.getLastBlockHeight(ctx);
-        if (startHeight > lastHeight) BRSharedPrefs.putStartHeight(ctx, lastHeight);
+        if (startHeight > lastHeight) BRSharedPrefs.putStartHeight(ctx, currentIso, lastHeight);
         SyncManager.getInstance().startSyncingProgressThread();
     }
 
     public static void syncSucceeded() {
         Log.d(TAG, "syncSucceeded");
         final Context app = BreadApp.getBreadContext();
-        if (app == null) return;
-        BRSharedPrefs.putLastSyncTime(app, System.currentTimeMillis());
-        SyncManager.getInstance().updateAlarms(app);
-        BRSharedPrefs.putAllowSpend(app, true);
-        SyncManager.getInstance().stopSyncingProgressThread();
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                BRSharedPrefs.putStartHeight(app, getCurrentBlockHeight());
-            }
-        });
+        if (app != null) {
+            final String currentIso = BRSharedPrefs.getCurrentWalletIso(app);
+            BRSharedPrefs.putLastSyncTime(app, currentIso, System.currentTimeMillis());
+            SyncManager.getInstance().updateAlarms(app);
+            BRSharedPrefs.putAllowSpend(app, currentIso, true);
+            SyncManager.getInstance().stopSyncingProgressThread();
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    BRSharedPrefs.putStartHeight(app, currentIso, getCurrentBlockHeight());
+                }
+            });
+        }
         if (onSyncFinished != null) onSyncFinished.onFinished();
 
     }
@@ -186,7 +189,8 @@ public class BRPeerManager {
 
 
     public void updateFixedPeer(Context ctx) {
-        String node = BRSharedPrefs.getTrustNode(ctx);
+        final String currentIso = BRSharedPrefs.getCurrentWalletIso(ctx);
+        String node = BRSharedPrefs.getTrustNode(ctx, currentIso);
         String host = TrustedNode.getNodeHost(node);
         int port = TrustedNode.getNodePort(node);
 //        Log.e(TAG, "trust onClick: host:" + host);
@@ -263,9 +267,9 @@ public class BRPeerManager {
 
     public native static int getCurrentBlockHeight();
 
-    public  native static int getRelayCount(byte[] hash);
+    public native static int getRelayCount(byte[] hash);
 
-    public  native boolean setFixedPeer(String node, int port);
+    public native boolean setFixedPeer(String node, int port);
 
     public native static int getEstimatedBlockHeight();
 

@@ -119,7 +119,8 @@ public class TxManager {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(app));
+                String currentIso = BRSharedPrefs.getCurrentWalletIso(app);
+                final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(app, currentIso));
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -187,7 +188,7 @@ public class TxManager {
         long took = (System.currentTimeMillis() - start);
         if (took > 500)
             Log.e(TAG, "updateTxList: took: " + took);
-        if (adapter != null ) {
+        if (adapter != null) {
             ((Activity) app).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

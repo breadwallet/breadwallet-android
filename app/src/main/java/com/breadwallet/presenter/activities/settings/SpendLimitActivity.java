@@ -187,7 +187,7 @@ public class SpendLimitActivity extends BRActivity {
             textViewItem = convertView.findViewById(R.id.currency_item_text);
             FontManager.overrideFonts(textViewItem);
             Integer item = getItem(position);
-            BigDecimal curAmount = ExchangeUtils.getAmountFromSatoshis(app, BRSharedPrefs.getIso(app), new BigDecimal(item));
+            BigDecimal curAmount = ExchangeUtils.getAmountFromSatoshis(app, BRSharedPrefs.getPreferredFiatIso(app), new BigDecimal(item));
             BigDecimal btcAmount = ExchangeUtils.getBitcoinForSatoshis(app, new BigDecimal(item));
             String text = String.format(item == 0 ? app.getString(R.string.TouchIdSpendingLimit) : "%s (%s)", curAmount, btcAmount);
             textViewItem.setText(text);

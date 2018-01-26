@@ -67,7 +67,7 @@ public class BRSharedPrefs {
     }
 
 
-    public static String getIso(Context context) {
+    public static String getPreferredFiatIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         String defIso;
         try {
@@ -79,7 +79,7 @@ public class BRSharedPrefs {
         return settingsToGet.getString(BRConstants.CURRENT_CURRENCY, defIso);
     }
 
-    public static void putIso(Context context, String code) {
+    public static void putPreferredFiatIso(Context context, String code) {
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString(BRConstants.CURRENT_CURRENCY, code.equalsIgnoreCase(Locale.getDefault().getISO3Language()) ? null : code);
@@ -201,26 +201,27 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static long getLastSyncTime(Context activity) {
+    public static long getLastSyncTime(Context activity, String iso) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getLong("lastSyncTime", 0);
+        return prefs.getLong("lastSyncTime_" + iso, 0);
     }
 
-    public static void putLastSyncTime(Context activity, long time) {
+    public static void putLastSyncTime(Context activity, String iso, long time) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong("lastSyncTime", time);
+        editor.putLong("lastSyncTime_" + iso, time);
         editor.apply();
     }
-    public static long getFeeTime(Context activity) {
+
+    public static long getFeeTime(Context activity, String iso) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getLong("feeTime", 0);
+        return prefs.getLong("feeTime_" + iso, 0);
     }
 
-    public static void putFeeTime(Context activity, long feeTime) {
+    public static void putFeeTime(Context activity, String iso, long feeTime) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong("feeTime", feeTime);
+        editor.putLong("feeTime_" + iso, feeTime);
         editor.apply();
     }
 
@@ -251,30 +252,29 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static boolean getAllowSpend(Context activity) {
+    public static boolean getAllowSpend(Context activity, String iso) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getBoolean(BRConstants.ALLOW_SPEND, true);
+        return prefs.getBoolean("allowSpend_" + iso, true);
     }
 
-    public static void putAllowSpend(Context activity, boolean allow) {
+    public static void putAllowSpend(Context activity, String iso, boolean allow) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean(BRConstants.ALLOW_SPEND, allow);
+        editor.putBoolean("allowSpend_" + iso, allow);
         editor.apply();
     }
 
-    //if the user prefers all in bitcoin units, not other currencies
-    public static boolean getPreferredBTC(Context activity) {
+    //if the user prefers all in crypto units, not fiat currencies
+    public static boolean isCryptoPreferred(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getBoolean("priceSetToBitcoin", false);
+        return prefs.getBoolean("priceInCrypto", false);
     }
 
-    //if the user prefers all in bitcoin units, not other currencies
-    public static void putPreferredBTC(Context activity, boolean b) {
-        Log.e(TAG, "putPreferredBTC: " + b);
+    //if the user prefers all in crypto units, not fiat currencies
+    public static void setIsCryptoPreferred(Context activity, boolean b) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("priceSetToBitcoin", b);
+        editor.putBoolean("priceInCrypto", b);
         editor.apply();
     }
 
@@ -303,12 +303,13 @@ public class BRSharedPrefs {
         editor.putBoolean(feature, enabled);
         editor.apply();
     }
+
     public static String getCurrentWalletIso(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString("currentWalletIso", "");
     }
 
-    public static void putCurrentWalletIso(Context activity,  String iso) {
+    public static void putCurrentWalletIso(Context activity, String iso) {
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("currentWalletIso", iso);
@@ -327,16 +328,16 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static int getStartHeight(Context context) {
+    public static int getStartHeight(Context context, String iso) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
-        return settingsToGet.getInt(BRConstants.START_HEIGHT, 0);
+        return settingsToGet.getInt("startHeight_" + iso, 0);
     }
 
-    public static void putStartHeight(Context context, int startHeight) {
+    public static void putStartHeight(Context context, String iso, int startHeight) {
         if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putInt(BRConstants.START_HEIGHT, startHeight);
+        editor.putInt("startHeight_" + iso, startHeight);
         editor.apply();
     }
 
@@ -353,25 +354,25 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static boolean getScanRecommended(Context context) {
+    public static boolean getScanRecommended(Context context, String iso) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
-        return settingsToGet.getBoolean("scanRecommended", false);
+        return settingsToGet.getBoolean("scanRecommended_" + iso, false);
     }
 
-    public static void putScanRecommended(Context context, boolean recommended) {
+    public static void putScanRecommended(Context context, String iso, boolean recommended) {
         if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean("scanRecommended", recommended);
+        editor.putBoolean("scanRecommended_" + iso, recommended);
         editor.apply();
     }
 
-    public static int getCurrencyUnit(Context context) {
+    public static int getFiatCurrencyIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         return settingsToGet.getInt(BRConstants.CURRENT_UNIT, BRConstants.CURRENT_UNIT_BITS);
     }
 
-    public static void putCurrencyUnit(Context context, int unit) {
+    public static void putFiatCurrencyIso(Context context, int unit) {
         if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
@@ -451,15 +452,15 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static String getTrustNode(Context context) {
+    public static String getTrustNode(Context context, String iso) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getString("trustNode", "");
+        return prefs.getString("trustNode_" + iso, "");
     }
 
-    public static void putTrustNode(Context context, String trustNode) {
+    public static void putTrustNode(Context context, String iso, String trustNode) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("trustNode", trustNode);
+        editor.putString("trustNode_" + iso, trustNode);
         editor.apply();
     }
 }

@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 
 /**
  * Created by byfieldj on 1/17/18.
@@ -31,10 +32,10 @@ public class TestHomeActivity extends Activity {
         mBitcoinCard = findViewById(R.id.bitcoin_card);
         mBchCard = findViewById(R.id.bitcoin_cash_card);
 
-
         mBitcoinCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                BRSharedPrefs.putCurrentWalletIso(TestHomeActivity.this, "BTC");
                 startCurrencyActivity(CURRENCY_BTC);
             }
         });
@@ -42,9 +43,16 @@ public class TestHomeActivity extends Activity {
         mBchCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                BRSharedPrefs.putCurrentWalletIso(TestHomeActivity.this, "BCH");
                 startCurrencyActivity(CURRENCY_BCH);
             }
         });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        BRSharedPrefs.putCurrentWalletIso(TestHomeActivity.this, "");
     }
 
     private void startCurrencyActivity(String currency) {

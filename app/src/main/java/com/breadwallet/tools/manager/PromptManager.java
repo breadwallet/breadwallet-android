@@ -14,6 +14,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
+import com.breadwallet.wallet.WalletsMaster;
 
 import static com.breadwallet.tools.manager.PromptManager.PromptItem.FINGER_PRINT;
 import static com.breadwallet.tools.manager.PromptManager.PromptItem.PAPER_KEY;
@@ -92,7 +93,7 @@ public class PromptManager {
             case UPGRADE_PIN:
                 return BRKeyStore.getPinCode(app).length() != 6;
             case RECOMMEND_RESCAN:
-                return BRSharedPrefs.getScanRecommended(app);
+                return BRSharedPrefs.getScanRecommended(app, WalletsMaster.getInstance().getCurrentWallet(app).getIso(app));
             case SHARE_DATA:
                 return !BRSharedPrefs.getShareData(app) && !BRSharedPrefs.getShareDataDismissed(app);
 
@@ -145,9 +146,9 @@ public class PromptManager {
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
-                                BRSharedPrefs.putStartHeight(app, 0);
+                                BRSharedPrefs.putStartHeight(app, BRSharedPrefs.getCurrentWalletIso(app), 0);
                                 BRPeerManager.getInstance().rescan();
-                                BRSharedPrefs.putScanRecommended(app, false);
+                                BRSharedPrefs.putScanRecommended(app, BRSharedPrefs.getCurrentWalletIso(app), false);
                             }
                         });
                     }

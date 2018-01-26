@@ -149,7 +149,7 @@ public class FragmentSend extends Fragment {
         regular = (BRButton) rootView.findViewById(R.id.left_button);
         economy = (BRButton) rootView.findViewById(R.id.right_button);
         close = (ImageButton) rootView.findViewById(R.id.close_button);
-        selectedIso = BRSharedPrefs.getPreferredBTC(getContext()) ? "BTC" : BRSharedPrefs.getIso(getContext());
+        selectedIso = BRSharedPrefs.isCryptoPreferred(getActivity()) ? WalletsMaster.getInstance().getCurrentWallet(getActivity()).getIso(getActivity()) : BRSharedPrefs.getPreferredFiatIso(getContext());
 
         amountBuilder = new StringBuilder(0);
         setListeners();
@@ -365,10 +365,10 @@ public class FragmentSend extends Fragment {
         isoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (selectedIso.equalsIgnoreCase(BRSharedPrefs.getIso(getContext()))) {
+                if (selectedIso.equalsIgnoreCase(BRSharedPrefs.getPreferredFiatIso(getContext()))) {
                     selectedIso = "BTC";
                 } else {
-                    selectedIso = BRSharedPrefs.getIso(getContext());
+                    selectedIso = BRSharedPrefs.getPreferredFiatIso(getContext());
                 }
                 updateText();
 
@@ -416,13 +416,13 @@ public class FragmentSend extends Fragment {
                     allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), amountEdit);
                 }
-                if (satoshiAmount.longValue() > WalletsMaster.getInstance().getBalance(getActivity())) {
+                if (satoshiAmount.longValue() > WalletsMaster.getInstance().getCurrentWallet(getActivity()).getCachedBalance(getActivity())) {
                     allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), balanceText);
                     SpringAnimator.failShakeAnimation(getActivity(), feeText);
                 }
                 //get the current wallet used
-                BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(BRSharedPrefs.getCurrentWalletIso(getActivity()));
+                BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(getActivity());
                 if (wallet == null) {
                     BRReportsManager.reportBug(new NullPointerException("Wallet is null and it can't happen."), true);
                 }
@@ -597,7 +597,7 @@ public class FragmentSend extends Fragment {
                 <= ExchangeUtils.getMaxAmount(getActivity(), iso).doubleValue()) {
             //do not insert 0 if the balance is 0 now
             if (currAmount.equalsIgnoreCase("0")) amountBuilder = new StringBuilder("");
-            if ((currAmount.contains(".") && (currAmount.length() - currAmount.indexOf(".") > CurrencyUtils.getMaxDecimalPlaces(getActivity(),iso))))
+            if ((currAmount.contains(".") && (currAmount.length() - currAmount.indexOf(".") > CurrencyUtils.getMaxDecimalPlaces(getActivity(), iso))))
                 return;
             amountBuilder.append(dig);
             updateText();
@@ -627,7 +627,7 @@ public class FragmentSend extends Fragment {
         setAmount();
         String balanceString;
         String iso = selectedIso;
-        curBalance = WalletsMaster.getInstance().getBalance(getActivity());
+        curBalance = WalletsMaster.getInstance().getCurrentWallet(getActivity()).getCachedBalance(getActivity());
         if (!amountLabelOn)
             isoText.setText(CurrencyUtils.getSymbolByIso(getActivity(), selectedIso));
         isoButton.setText(String.format("%s(%s)", CurrencyUtils.getCurrencyName(getActivity(), selectedIso), CurrencyUtils.getSymbolByIso(getActivity(), selectedIso)));

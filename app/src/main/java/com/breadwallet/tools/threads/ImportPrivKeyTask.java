@@ -92,7 +92,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             return;
         }
 
-//        String iso = BRSharedPrefs.getIso(app);
+//        String iso = BRSharedPrefs.getPreferredFiatIso(app);
 
         String sentBits = CurrencyUtils.getFormattedCurrencyString(app, "BTC", ExchangeUtils.getAmountFromSatoshis(app, "BTC", new BigDecimal(importPrivKeyEntity.getAmount())));
 //        String sentExchange = CurrencyUtils.getFormattedCurrencyString(app, iso, ExchangeUtils.getAmountFromSatoshis(app, iso, new BigDecimal(importPrivKeyEntity.getAmount())));
