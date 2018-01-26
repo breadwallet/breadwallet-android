@@ -99,7 +99,7 @@ public class WalletBitcoinCash implements BaseWallet {
             case BRConstants.CURRENT_UNIT_MBITS:
                 return "MBits";
             default:
-                return "BTC";
+                return "BCH";
         }
     }
 
