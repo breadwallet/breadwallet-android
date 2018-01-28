@@ -132,7 +132,7 @@ public class WalletBitcoinCash implements BaseWallet {
     }
 
     @Override
-    public BigDecimal maxAmount(Context app) {
+    public BigDecimal getMaxAmount(Context app) {
         //return max bitcoin
         return new BigDecimal(MAX_BTC);
     }
