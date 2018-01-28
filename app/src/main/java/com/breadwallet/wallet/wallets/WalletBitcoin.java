@@ -395,7 +395,7 @@ public class WalletBitcoin implements BaseWallet {
     }
 
     @Override
-    public BigDecimal maxAmount(Context app) {
+    public BigDecimal getMaxAmount(Context app) {
         //return max bitcoin
         return new BigDecimal(MAX_BTC);
     }
@@ -408,6 +408,22 @@ public class WalletBitcoin implements BaseWallet {
     @Override
     public WalletUiConfiguration getUiConfiguration() {
         return uiConfig;
+    }
+
+    @Override
+    public long getFiatBalance(Context app) {
+        return getFiatForCrypto(app, new BigDecimal(getCachedBalance(app))).longValue();
+    }
+
+    @Override
+    public BigDecimal getFiatForCrypto(Context app, BigDecimal amount) {
+
+        return null;
+    }
+
+    @Override
+    public BigDecimal getCryptoForFiat(Context app, BigDecimal amount) {
+        return null;
     }
 
     public void addBalanceChangedListener(OnBalanceChanged listener) {

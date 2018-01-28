@@ -33,6 +33,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.interfaces.BaseWallet;
 
 import java.math.BigDecimal;
 
@@ -91,6 +92,7 @@ public class FragmentRequestAmount extends Fragment {
     private int keyboardIndex;
     //    private int currListIndex;
     private ImageButton close;
+    private BaseWallet mWallet;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -351,6 +353,7 @@ public class FragmentRequestAmount extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
+        mWallet = WalletsMaster.getInstance().getCurrentWallet(getActivity());
     }
 
     @Override
@@ -381,7 +384,7 @@ public class FragmentRequestAmount extends Fragment {
         String currAmount = amountBuilder.toString();
         String iso = selectedIso;
         if (new BigDecimal(currAmount.concat(String.valueOf(dig))).doubleValue()
-                <= ExchangeUtils.getMaxAmount(getActivity(), iso).doubleValue()) {
+                <= mWallet.getMaxAmount(getActivity()).doubleValue()) {
             //do not insert 0 if the balance is 0 now
             if (currAmount.equalsIgnoreCase("0")) amountBuilder = new StringBuilder("");
             if ((currAmount.contains(".") && (currAmount.length() - currAmount.indexOf(".") > CurrencyUtils.getMaxDecimalPlaces(getActivity(), iso))))

@@ -6,12 +6,9 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.interfaces.BaseWallet;
-import com.breadwallet.wallet.wallets.WalletBitcoin;
 
 import java.math.BigDecimal;
 
-import static com.breadwallet.tools.util.BRConstants.CURRENT_UNIT_BITS;
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
 /**
@@ -40,89 +37,87 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  */
 public class ExchangeUtils {
 
-
     private static final String TAG = ExchangeUtils.class.getName();
 
-    public static BigDecimal getMaxAmount(Context context, String iso) {
-        BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(iso);
-        if (wallet == null) {
-            CurrencyEntity ent = CurrencyDataSource.getInstance(context).getCurrencyByIso(iso);
-            if (ent == null) return new BigDecimal(Integer.MAX_VALUE);
-            return new BigDecimal(ent.rate * WalletBitcoin.MAX_BTC);
-        }
-
-        return wallet.maxAmount(context);
-    }
+//    public static BigDecimal getMaxAmount(Context context, String iso) {
+//        BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(iso);
+//        if (wallet == null) {
+//            CurrencyEntity ent = CurrencyDataSource.getInstance(context).getCurrencyByIso(iso);
+//            if (ent == null) return new BigDecimal(Integer.MAX_VALUE);
+//            return new BigDecimal(ent.rate * WalletBitcoin.MAX_BTC);
+//        }
+//
+//        return wallet.getMaxAmount(context);
+//    }
 
     // amount in satoshis
-    public static BigDecimal getBitcoinForSatoshis(Context app, BigDecimal amount) {
-        BigDecimal result = new BigDecimal(0);
-        int unit = BRSharedPrefs.getBitcoinUnit(app);
-        switch (unit) {
-            case CURRENT_UNIT_BITS:
-                result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100"), 2, ROUNDING_MODE);
-                break;
-            case BRConstants.CURRENT_UNIT_MBITS:
-                result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000"), 5, ROUNDING_MODE);
-                break;
-            case BRConstants.CURRENT_UNIT_BITCOINS:
-                result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000000"), 8, ROUNDING_MODE);
-                break;
-        }
-        return result;
-    }
-
-    public static BigDecimal getSatoshisForBitcoin(Context app, BigDecimal amount) {
-        BigDecimal result = new BigDecimal(0);
-        int unit = BRSharedPrefs.getBitcoinUnit(app);
-        switch (unit) {
-            case CURRENT_UNIT_BITS:
-                result = new BigDecimal(String.valueOf(amount)).multiply(new BigDecimal("100"));
-                break;
-            case BRConstants.CURRENT_UNIT_MBITS:
-                result = new BigDecimal(String.valueOf(amount)).multiply(new BigDecimal("100000"));
-                break;
-            case BRConstants.CURRENT_UNIT_BITCOINS:
-                result = new BigDecimal(String.valueOf(amount)).multiply(new BigDecimal("100000000"));
-                break;
-        }
-        return result;
-    }
-
-
-    //get an iso amount from  satoshis
-    public static BigDecimal getAmountFromSatoshis(Context app, String iso, BigDecimal amount) {
-//        Log.e(TAG, "getAmountFromSatoshis: " + iso + ":" + amount);
-        BigDecimal result;
-        if (iso.equalsIgnoreCase("BTC")) {
-            result = getBitcoinForSatoshis(app, amount);
-        } else {
-            //multiply by 100 because core function localAmount accepts the smallest amount e.g. cents
-            CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
-            if (ent == null) return new BigDecimal(0);
-            BigDecimal rate = new BigDecimal(ent.rate).multiply(new BigDecimal(100));
-            result = new BigDecimal(WalletsMaster.getInstance().localAmount(amount.longValue(), rate.doubleValue()))
-                    .divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
-        }
-//        Log.e(TAG, "getAmountFromSatoshis: " + iso + ":RESULT:" + result);
-        return result;
-    }
-
-
-    //get satoshis from an iso amount
-    public static BigDecimal getSatoshisFromAmount(Context app, String iso, BigDecimal amount) {
-//        Log.e(TAG, "getSatoshisFromAmount: " + iso + ":" + amount);
-        BigDecimal result;
-        if (iso.equalsIgnoreCase("BTC")) {
-            result = ExchangeUtils.getSatoshisForBitcoin(app, amount);
-        } else {
-            //multiply by 100 because core function localAmount accepts the smallest amount e.g. cents
-            CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
-            if (ent == null) return new BigDecimal(0);
-            BigDecimal rate = new BigDecimal(ent.rate).multiply(new BigDecimal(100));
-            result = new BigDecimal(WalletsMaster.getInstance().bitcoinAmount(amount.multiply(new BigDecimal(100)).longValue(), rate.doubleValue()));
-        }
-//        Log.e(TAG, "getSatoshisFromAmount: " + iso + ":RESULT:" + result);
-        return result;
-    }
+//    public static BigDecimal getBitcoinForSatoshis(Context app, BigDecimal amount) {
+//        BigDecimal result = new BigDecimal(0);
+//        int unit = BRSharedPrefs.getBitcoinUnit(app);
+//        switch (unit) {
+//            case BRConstants.CURRENT_UNIT_BITS:
+//                result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100"), 2, ROUNDING_MODE);
+//                break;
+//            case BRConstants.CURRENT_UNIT_MBITS:
+//                result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000"), 5, ROUNDING_MODE);
+//                break;
+//            case BRConstants.CURRENT_UNIT_BITCOINS:
+//                result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100000000"), 8, ROUNDING_MODE);
+//                break;
+//        }
+//        return result;
+//    }
+//
+//    public static BigDecimal getSatoshisForBitcoin(Context app, BigDecimal amount) {
+//        BigDecimal result = new BigDecimal(0);
+//        int unit = BRSharedPrefs.getBitcoinUnit(app);
+//        switch (unit) {
+//            case BRConstants.CURRENT_UNIT_BITS:
+//                result = new BigDecimal(String.valueOf(amount)).multiply(new BigDecimal("100"));
+//                break;
+//            case BRConstants.CURRENT_UNIT_MBITS:
+//                result = new BigDecimal(String.valueOf(amount)).multiply(new BigDecimal("100000"));
+//                break;
+//            case BRConstants.CURRENT_UNIT_BITCOINS:
+//                result = new BigDecimal(String.valueOf(amount)).multiply(new BigDecimal("100000000"));
+//                break;
+//        }
+//        return result;
+//    }
+//
+//
+//    //get an iso amount from  satoshis
+//    public static BigDecimal getAmountFromSatoshis(Context app, String iso, BigDecimal amount) {
+////        Log.e(TAG, "getAmountFromSatoshis: " + iso + ":" + amount);
+//        BigDecimal result;
+//        if (iso.equalsIgnoreCase("BTC")) {
+//            result = getBitcoinForSatoshis(app, amount);
+//        } else {
+//            //multiply by 100 because core function localAmount accepts the smallest amount e.g. cents
+//            CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
+//            if (ent == null) return new BigDecimal(0);
+//            BigDecimal rate = new BigDecimal(ent.rate).multiply(new BigDecimal(100));
+//            result = new BigDecimal(WalletsMaster.getInstance().localAmount(amount.longValue(), rate.doubleValue()))
+//                    .divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
+//        }
+////        Log.e(TAG, "getAmountFromSatoshis: " + iso + ":RESULT:" + result);
+//        return result;
+//    }
+//
+//    //get satoshis from an iso amount
+//    public static BigDecimal getSatoshisFromAmount(Context app, String iso, BigDecimal amount) {
+////        Log.e(TAG, "getSatoshisFromAmount: " + iso + ":" + amount);
+//        BigDecimal result;
+//        if (iso.equalsIgnoreCase("BTC")) {
+//            result = ExchangeUtils.getSatoshisForBitcoin(app, amount);
+//        } else {
+//            //multiply by 100 because core function localAmount accepts the smallest amount e.g. cents
+//            CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
+//            if (ent == null) return new BigDecimal(0);
+//            BigDecimal rate = new BigDecimal(ent.rate).multiply(new BigDecimal(100));
+//            result = new BigDecimal(WalletsMaster.getInstance().bitcoinAmount(amount.multiply(new BigDecimal(100)).longValue(), rate.doubleValue()));
+//        }
+////        Log.e(TAG, "getSatoshisFromAmount: " + iso + ":RESULT:" + result);
+//        return result;
+//    }
 }

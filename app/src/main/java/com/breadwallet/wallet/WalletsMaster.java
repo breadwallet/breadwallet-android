@@ -46,6 +46,7 @@ import com.breadwallet.wallet.wallets.WalletBitcoinCash;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
+import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
@@ -105,6 +106,15 @@ public class WalletsMaster {
 
     public BaseWallet getCurrentWallet(Context app) {
         return getWalletByIso(BRSharedPrefs.getCurrentWalletIso(app));
+    }
+
+    //get the total fiat balance held in all the wallets in the smallest unit (e.g. cents)
+    public BigDecimal getAgregatedFiatBalance(Context app) {
+        double totalBalance = 0;
+        for (BaseWallet wallet : mWallets) {
+            totalBalance += wallet.getFiatBalance(app).doubleValue();
+        }
+        return new BigDecimal(totalBalance);
     }
 
     public synchronized boolean generateRandomSeed(final Context ctx) {

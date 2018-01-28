@@ -61,12 +61,40 @@ public interface BaseWallet {
     void setCashedBalance(Context app, long balance);
 
     //return the maximum amount for this currency
-    BigDecimal maxAmount(Context app);
+    BigDecimal getMaxAmount(Context app);
 
-    //try parsing the URI and return true if it's a current wallet's request
+    /**
+     * @return - true if the uri is compatible with the  and can be processed (proceed with processing the uri)
+     */
     boolean tryUri(Context app, String uriStr);
 
-    //return the wallet's Ui configuration
+    /**
+     * @return - the wallet's Ui configuration
+     */
     WalletUiConfiguration getUiConfiguration();
+
+    /**
+     * @return - the total balance in the smallest denomination amount in the user's favorite fiat currency (e.g. cents)
+     */
+    long getFiatBalance(Context app);
+
+    /**
+     * @param amount - the smallest denomination amount in current wallet's crypto (e.g. Satoshis)
+     * @return - the fiat value of the amount in crypto in the smallest denomination (e.g. cents)
+     */
+    BigDecimal getFiatForCrypto(Context app, BigDecimal amount);
+
+    /**
+     * @param amount - the smallest denomination amount in the user's favorite fiat currency (e.g. cents)
+     * @return - the crypto value of the amount in the current favorite denomination (e.g. BTC, mBTC, Bits..)
+     */
+    BigDecimal getCryptoForFiat(Context app, BigDecimal amount);
+
+    /**
+     * @param amount - the fiat amount in the smallest denomination (e.g. cents)
+     * @return - the crypto value of the amount in the smallest denomination (e.g. satothis)
+     */
+    BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount);
+
 
 }
