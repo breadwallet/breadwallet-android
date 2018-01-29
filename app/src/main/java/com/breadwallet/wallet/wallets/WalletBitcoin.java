@@ -489,7 +489,7 @@ public class WalletBitcoin implements BaseWallet {
                 result = amount.multiply(new BigDecimal("100000000"));
                 break;
         }
-        return null;
+        return result;
     }
 
     @Override
