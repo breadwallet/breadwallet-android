@@ -18,6 +18,7 @@ import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
@@ -30,6 +31,7 @@ import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.uri.BitcoinUriParser;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
@@ -38,7 +40,6 @@ import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.WalletsMaster;
@@ -54,6 +55,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.breadwallet.presenter.fragments.FragmentSend.isEconomyFee;
+import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
 /**
  * BreadWallet
@@ -417,12 +419,59 @@ public class WalletBitcoin implements BaseWallet {
 
     @Override
     public BigDecimal getFiatForCrypto(Context app, BigDecimal amount) {
-
-        return null;
+        String iso = BRSharedPrefs.getPreferredFiatIso(app);
+        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
+        if (ent == null) return null;
+        double rate = ent.rate;
+        BigDecimal cryptoAmount = getCryptoForSmallestCrypto(app, amount);
+        return amount.divide(cryptoAmount, BRConstants.ROUNDING_MODE).multiply(new BigDecimal(rate)).multiply(new BigDecimal(100));
     }
 
     @Override
     public BigDecimal getCryptoForFiat(Context app, BigDecimal amount) {
+        String iso = BRSharedPrefs.getPreferredFiatIso(app);
+        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
+        if (ent == null) return null;
+        double rate = ent.rate;
+        //convert c to $.
+        BigDecimal fiatAmount = amount.divide(new BigDecimal(100), ROUNDING_MODE);
+        int unit = BRSharedPrefs.getBitcoinUnit(app);
+        BigDecimal result = new BigDecimal(0);
+        switch (unit) {
+            case BRConstants.CURRENT_UNIT_BITS:
+                result = fiatAmount.multiply(new BigDecimal(rate)).divide(new BigDecimal("100"), ROUNDING_MODE);
+                break;
+            case BRConstants.CURRENT_UNIT_MBITS:
+                result = fiatAmount.multiply(new BigDecimal(rate)).divide(new BigDecimal("100000"), 5, ROUNDING_MODE);
+                break;
+            case BRConstants.CURRENT_UNIT_BITCOINS:
+                result = fiatAmount.multiply(new BigDecimal(rate)).divide(new BigDecimal("100000000"), 8, ROUNDING_MODE);
+                break;
+        }
+        return result;
+
+    }
+
+    @Override
+    public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
+        BigDecimal result = new BigDecimal(0);
+        int unit = BRSharedPrefs.getBitcoinUnit(app);
+        switch (unit) {
+            case BRConstants.CURRENT_UNIT_BITS:
+                result = amount.divide(new BigDecimal("100"), 2, ROUNDING_MODE);
+                break;
+            case BRConstants.CURRENT_UNIT_MBITS:
+                result = amount.divide(new BigDecimal("100000"), 5, ROUNDING_MODE);
+                break;
+            case BRConstants.CURRENT_UNIT_BITCOINS:
+                result = amount.divide(new BigDecimal("100000000"), 8, ROUNDING_MODE);
+                break;
+        }
+        return result;
+    }
+
+    @Override
+    public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
         return null;
     }
 
@@ -479,8 +528,9 @@ public class WalletBitcoin implements BaseWallet {
             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    String am = CurrencyUtils.getFormattedCurrencyString(ctx, "BTC", ExchangeUtils.getBitcoinForSatoshis(ctx, new BigDecimal(amount)));
-                    String amCur = CurrencyUtils.getFormattedCurrencyString(ctx, BRSharedPrefs.getPreferredFiatIso(ctx), ExchangeUtils.getAmountFromSatoshis(ctx, BRSharedPrefs.getPreferredFiatIso(ctx), new BigDecimal(amount)));
+                    WalletsMaster master = WalletsMaster.getInstance();
+                    String am = CurrencyUtils.getFormattedCurrencyString(ctx, "BTC", master.getCurrentWallet(ctx).getCryptoForSmallestCrypto(ctx, new BigDecimal(amount)));
+                    String amCur = CurrencyUtils.getFormattedCurrencyString(ctx, BRSharedPrefs.getPreferredFiatIso(ctx), master.getCurrentWallet(ctx).getFiatForCrypto(ctx, new BigDecimal(amount)));
                     String formatted = String.format("%s (%s)", am, amCur);
                     final String strToShow = String.format(ctx.getString(R.string.TransactionDetails_received), formatted);
 
@@ -729,7 +779,6 @@ public class WalletBitcoin implements BaseWallet {
 
         String iso = BRSharedPrefs.getPreferredFiatIso(ctx);
 
-
         WalletsMaster m = WalletsMaster.getInstance();
         BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(BRSharedPrefs.getCurrentWalletIso(ctx));
         long feeForTx = m.feeForTransaction(request.address, request.amount);
@@ -752,13 +801,13 @@ public class WalletBitcoin implements BaseWallet {
             feeForTx += (wallet.getCachedBalance(ctx) - request.amount) % 100;
         }
         final long total = request.amount + feeForTx;
-        String formattedAmountBTC = CurrencyUtils.getFormattedCurrencyString(ctx, wallet.getIso(ctx), ExchangeUtils.getBitcoinForSatoshis(ctx, new BigDecimal(request.amount)));
-        String formattedFeeBTC = CurrencyUtils.getFormattedCurrencyString(ctx, wallet.getIso(ctx), ExchangeUtils.getBitcoinForSatoshis(ctx, new BigDecimal(feeForTx)));
-        String formattedTotalBTC = CurrencyUtils.getFormattedCurrencyString(ctx, wallet.getIso(ctx), ExchangeUtils.getBitcoinForSatoshis(ctx, new BigDecimal(total)));
+        String formattedAmountBTC = CurrencyUtils.getFormattedCurrencyString(ctx, wallet.getIso(ctx), m.getCurrentWallet(ctx).getCryptoForSmallestCrypto(ctx, new BigDecimal(request.amount)));
+        String formattedFeeBTC = CurrencyUtils.getFormattedCurrencyString(ctx, wallet.getIso(ctx), m.getCurrentWallet(ctx).getCryptoForSmallestCrypto(ctx, new BigDecimal(feeForTx)));
+        String formattedTotalBTC = CurrencyUtils.getFormattedCurrencyString(ctx, wallet.getIso(ctx), m.getCurrentWallet(ctx).getCryptoForSmallestCrypto(ctx, new BigDecimal(total)));
 
-        String formattedAmount = CurrencyUtils.getFormattedCurrencyString(ctx, iso, ExchangeUtils.getAmountFromSatoshis(ctx, iso, new BigDecimal(request.amount)));
-        String formattedFee = CurrencyUtils.getFormattedCurrencyString(ctx, iso, ExchangeUtils.getAmountFromSatoshis(ctx, iso, new BigDecimal(feeForTx)));
-        String formattedTotal = CurrencyUtils.getFormattedCurrencyString(ctx, iso, ExchangeUtils.getAmountFromSatoshis(ctx, iso, new BigDecimal(total)));
+        String formattedAmount = CurrencyUtils.getFormattedCurrencyString(ctx, iso, m.getCurrentWallet(ctx).getFiatForCrypto(ctx, new BigDecimal(request.amount)));
+        String formattedFee = CurrencyUtils.getFormattedCurrencyString(ctx, iso, m.getCurrentWallet(ctx).getFiatForCrypto(ctx, new BigDecimal(feeForTx)));
+        String formattedTotal = CurrencyUtils.getFormattedCurrencyString(ctx, iso, m.getCurrentWallet(ctx).getFiatForCrypto(ctx, new BigDecimal(total)));
 
         //formatted text
         return receiver + "\n\n"

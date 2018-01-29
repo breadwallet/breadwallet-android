@@ -110,9 +110,9 @@ public class WalletsMaster {
 
     //get the total fiat balance held in all the wallets in the smallest unit (e.g. cents)
     public BigDecimal getAgregatedFiatBalance(Context app) {
-        double totalBalance = 0;
+        long totalBalance = 0;
         for (BaseWallet wallet : mWallets) {
-            totalBalance += wallet.getFiatBalance(app).doubleValue();
+            totalBalance += wallet.getFiatBalance(app);
         }
         return new BigDecimal(totalBalance);
     }
