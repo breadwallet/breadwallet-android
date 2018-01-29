@@ -368,7 +368,7 @@ public class BRSharedPrefs {
     }
 
     // BTC, mBTC, Bits
-    public static int getBitcoinUnit(Context context) {
+    public static int getBitcoinDenomination(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         return settingsToGet.getInt(BRConstants.CURRENT_UNIT, BRConstants.CURRENT_UNIT_BITS);
     }

@@ -53,7 +53,7 @@
 //    // amount in satoshis
 //    public static BigDecimal getBitcoinForSatoshis(Context app, BigDecimal amount) {
 //        BigDecimal result = new BigDecimal(0);
-//        int unit = BRSharedPrefs.getBitcoinUnit(app);
+//        int unit = BRSharedPrefs.getBitcoinDenomination(app);
 //        switch (unit) {
 //            case BRConstants.CURRENT_UNIT_BITS:
 //                result = new BigDecimal(String.valueOf(amount)).divide(new BigDecimal("100"), 2, ROUNDING_MODE);
@@ -70,7 +70,7 @@
 //
 //    public static BigDecimal getSatoshisForBitcoin(Context app, BigDecimal amount) {
 //        BigDecimal result = new BigDecimal(0);
-//        int unit = BRSharedPrefs.getBitcoinUnit(app);
+//        int unit = BRSharedPrefs.getBitcoinDenomination(app);
 //        switch (unit) {
 //            case BRConstants.CURRENT_UNIT_BITS:
 //                result = new BigDecimal(String.valueOf(amount)).multiply(new BigDecimal("100"));

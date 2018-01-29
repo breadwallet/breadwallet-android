@@ -338,7 +338,7 @@ public class WalletBitcoin implements BaseWallet {
 
         String currencySymbolString = BRConstants.bitcoinLowercase;
         if (app != null) {
-            int unit = BRSharedPrefs.getBitcoinUnit(app);
+            int unit = BRSharedPrefs.getBitcoinDenomination(app);
             switch (unit) {
                 case BRConstants.CURRENT_UNIT_BITS:
                     currencySymbolString = BRConstants.bitcoinLowercase;
@@ -362,7 +362,7 @@ public class WalletBitcoin implements BaseWallet {
     @Override
     public String getName(Context app) {
         if (app == null) return null;
-        int unit = BRSharedPrefs.getBitcoinUnit(app);
+        int unit = BRSharedPrefs.getBitcoinDenomination(app);
         switch (unit) {
             case BRConstants.CURRENT_UNIT_BITS:
                 return "Bits";
@@ -375,7 +375,7 @@ public class WalletBitcoin implements BaseWallet {
 
     @Override
     public int getMaxDecimalPlaces(Context app) {
-        int unit = BRSharedPrefs.getBitcoinUnit(app);
+        int unit = BRSharedPrefs.getBitcoinDenomination(app);
         switch (unit) {
             case BRConstants.CURRENT_UNIT_BITS:
                 return 2;
@@ -437,7 +437,7 @@ public class WalletBitcoin implements BaseWallet {
         double rate = ent.rate;
         //convert c to $.
         BigDecimal fiatAmount = amount.divide(new BigDecimal(100), ROUNDING_MODE);
-        int unit = BRSharedPrefs.getBitcoinUnit(app);
+        int unit = BRSharedPrefs.getBitcoinDenomination(app);
         BigDecimal result = new BigDecimal(0);
         switch (unit) {
             case BRConstants.CURRENT_UNIT_BITS:
@@ -458,7 +458,7 @@ public class WalletBitcoin implements BaseWallet {
     public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
         if (amount.doubleValue() == 0) return null;
         BigDecimal result = new BigDecimal(0);
-        int unit = BRSharedPrefs.getBitcoinUnit(app);
+        int unit = BRSharedPrefs.getBitcoinDenomination(app);
         switch (unit) {
             case BRConstants.CURRENT_UNIT_BITS:
                 result = amount.divide(new BigDecimal("100"), 2, ROUNDING_MODE);
@@ -476,6 +476,19 @@ public class WalletBitcoin implements BaseWallet {
     @Override
     public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
         if (amount.doubleValue() == 0) return null;
+        BigDecimal result = new BigDecimal(0);
+        int unit = BRSharedPrefs.getBitcoinDenomination(app);
+        switch (unit) {
+            case BRConstants.CURRENT_UNIT_BITS:
+                result = amount.multiply(new BigDecimal("100"));
+                break;
+            case BRConstants.CURRENT_UNIT_MBITS:
+                result = amount.multiply(new BigDecimal("100000"));
+                break;
+            case BRConstants.CURRENT_UNIT_BITCOINS:
+                result = amount.multiply(new BigDecimal("100000000"));
+                break;
+        }
         return null;
     }
 

@@ -85,7 +85,7 @@ public class DisplayCurrencyActivity extends BRActivity {
             }
         });
 
-        int unit = BRSharedPrefs.getBitcoinUnit(this);
+        int unit = BRSharedPrefs.getBitcoinDenomination(this);
         if (unit == BRConstants.CURRENT_UNIT_BITS) {
             setButton(true);
         } else {
@@ -118,7 +118,7 @@ public class DisplayCurrencyActivity extends BRActivity {
         CurrencyEntity entity = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso);
         if (entity != null) {
             String finalExchangeRate = CurrencyUtils.getFormattedCurrencyString(DisplayCurrencyActivity.this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(entity.rate));
-            boolean bits = BRSharedPrefs.getBitcoinUnit(this) == BRConstants.CURRENT_UNIT_BITS;
+            boolean bits = BRSharedPrefs.getBitcoinDenomination(this) == BRConstants.CURRENT_UNIT_BITS;
             exchangeText.setText(CurrencyUtils.getFormattedCurrencyString(this, "BTC", new BigDecimal(bits ? 1000000 : 1)) + " = " + finalExchangeRate);
         }
         adapter.notifyDataSetChanged();

@@ -73,7 +73,7 @@ public class WalletBitcoinCash implements BaseWallet {
 
         String currencySymbolString = BRConstants.bitcoinLowercase;
         if (app != null) {
-            int unit = BRSharedPrefs.getBitcoinUnit(app);
+            int unit = BRSharedPrefs.getBitcoinDenomination(app);
             switch (unit) {
                 case BRConstants.CURRENT_UNIT_BITS:
                     currencySymbolString = BRConstants.bitcoinLowercase;
@@ -92,7 +92,7 @@ public class WalletBitcoinCash implements BaseWallet {
     @Override
     public String getIso(Context app) {
         if (app == null) return null;
-        int unit = BRSharedPrefs.getBitcoinUnit(app);
+        int unit = BRSharedPrefs.getBitcoinDenomination(app);
         switch (unit) {
             case BRConstants.CURRENT_UNIT_BITS:
                 return "Bits";
@@ -110,7 +110,7 @@ public class WalletBitcoinCash implements BaseWallet {
 
     @Override
     public int getMaxDecimalPlaces(Context app) {
-        int unit = BRSharedPrefs.getBitcoinUnit(app);
+        int unit = BRSharedPrefs.getBitcoinDenomination(app);
         switch (unit) {
             case BRConstants.CURRENT_UNIT_BITS:
                 return 2;
