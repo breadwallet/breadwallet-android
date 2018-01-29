@@ -101,6 +101,12 @@ public interface BaseWallet {
     BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount);
 
     /**
+     * @param amount - the crypto value of the amount in the current favorite denomination (e.g. BTC, mBTC, Bits..)
+     * @return - the smallest denomination amount in crypto (e.g. satoshis)
+     */
+    BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount);
+
+    /**
      * @param amount - the fiat amount in the smallest denomination (e.g. cents)
      * @return - the crypto value of the amount in the smallest denomination (e.g. satothis)
      * or null if there is no fiat exchange data from the API yet

@@ -10,7 +10,6 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.wallet.WalletsMaster;
 
 import org.json.JSONArray;
@@ -93,11 +92,11 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         }
 
 //        String iso = BRSharedPrefs.getPreferredFiatIso(app);
-
-        String sentBits = CurrencyUtils.getFormattedCurrencyString(app, "BTC", ExchangeUtils.getAmountFromSatoshis(app, "BTC", new BigDecimal(importPrivKeyEntity.getAmount())));
+        WalletsMaster master = WalletsMaster.getInstance();
+        String sentBits = CurrencyUtils.getFormattedCurrencyString(app, "BTC", master.getCurrentWallet(app).getFiatForCrypto(app, new BigDecimal(importPrivKeyEntity.getAmount())));
 //        String sentExchange = CurrencyUtils.getFormattedCurrencyString(app, iso, ExchangeUtils.getAmountFromSatoshis(app, iso, new BigDecimal(importPrivKeyEntity.getAmount())));
 
-        String feeBits = CurrencyUtils.getFormattedCurrencyString(app, "BTC", ExchangeUtils.getAmountFromSatoshis(app, "BTC", new BigDecimal(importPrivKeyEntity.getFee())));
+        String feeBits = CurrencyUtils.getFormattedCurrencyString(app, "BTC", master.getCurrentWallet(app).getFiatForCrypto(app, new BigDecimal(importPrivKeyEntity.getFee())));
 //        String feeExchange = CurrencyUtils.getFormattedCurrencyString(app, iso, ExchangeUtils.getAmountFromSatoshis(app, iso, new BigDecimal(importPrivKeyEntity.getFee())));
 
         if (app == null || importPrivKeyEntity == null) return;

@@ -419,6 +419,7 @@ public class WalletBitcoin implements BaseWallet {
 
     @Override
     public BigDecimal getFiatForCrypto(Context app, BigDecimal amount) {
+        if (amount.doubleValue() == 0) return null;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
         if (ent == null) return null;
@@ -429,6 +430,7 @@ public class WalletBitcoin implements BaseWallet {
 
     @Override
     public BigDecimal getCryptoForFiat(Context app, BigDecimal amount) {
+        if (amount.doubleValue() == 0) return null;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
         if (ent == null) return null;
@@ -454,6 +456,7 @@ public class WalletBitcoin implements BaseWallet {
 
     @Override
     public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
+        if (amount.doubleValue() == 0) return null;
         BigDecimal result = new BigDecimal(0);
         int unit = BRSharedPrefs.getBitcoinUnit(app);
         switch (unit) {
@@ -471,7 +474,14 @@ public class WalletBitcoin implements BaseWallet {
     }
 
     @Override
+    public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
+        if (amount.doubleValue() == 0) return null;
+        return null;
+    }
+
+    @Override
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
+        if (amount.doubleValue() == 0) return null;
         return null;
     }
 

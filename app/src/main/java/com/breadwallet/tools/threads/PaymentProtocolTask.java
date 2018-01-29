@@ -17,7 +17,6 @@ import com.breadwallet.tools.uri.BitcoinUriParser;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.security.X509CertificateValidator;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.CustomLogger;
@@ -340,11 +339,12 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 
                     return;
                 }
+                WalletsMaster master = WalletsMaster.getInstance();
                 final long total = paymentRequest.amount + paymentRequest.fee;
 
-                BigDecimal bigAm = ExchangeUtils.getAmountFromSatoshis(app, iso, new BigDecimal(paymentRequest.amount));
-                BigDecimal bigFee = ExchangeUtils.getAmountFromSatoshis(app, iso, new BigDecimal(paymentRequest.fee));
-                BigDecimal bigTotal = ExchangeUtils.getAmountFromSatoshis(app, iso, new BigDecimal(total));
+                BigDecimal bigAm = master.getCurrentWallet(app).getFiatForCrypto(app, new BigDecimal(paymentRequest.amount));
+                BigDecimal bigFee = master.getCurrentWallet(app).getFiatForCrypto(app, new BigDecimal(paymentRequest.fee));
+                BigDecimal bigTotal = master.getCurrentWallet(app).getFiatForCrypto(app, new BigDecimal(total));
                 final String message = certification + memo + finalAllAddresses.toString() + "\n\n" + "amount: " + CurrencyUtils.getFormattedCurrencyString(app, iso, bigAm)
                         + "\nnetwork fee: +" + CurrencyUtils.getFormattedCurrencyString(app, iso, bigFee)
                         + "\ntotal: " + CurrencyUtils.getFormattedCurrencyString(app, iso, bigTotal);
@@ -352,7 +352,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 app.runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        AuthManager.getInstance().authPrompt(app, "Confirmation", message, false, false,new BRAuthCompletion() {
+                        AuthManager.getInstance().authPrompt(app, "Confirmation", message, false, false, new BRAuthCompletion() {
                             @Override
                             public void onComplete() {
                                 PostAuth.getInstance().setTmpPaymentRequest(paymentRequest);
