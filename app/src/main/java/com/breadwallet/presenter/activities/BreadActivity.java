@@ -38,10 +38,10 @@ import com.breadwallet.tools.uri.BitcoinUriParser;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.interfaces.BaseWallet;
 import com.breadwallet.wallet.interfaces.OnBalanceChanged;
 import com.breadwallet.wallet.interfaces.OnTxAdded;
 import com.platform.APIClient;
@@ -489,6 +489,7 @@ public class BreadActivity extends BRActivity implements OnBalanceChanged,
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                WalletsMaster master = WalletsMaster.getInstance();
                 Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI");
                 //sleep a little in order to make sure all the commits are finished (like SharePreferences commits)
                 String iso = BRSharedPrefs.getPreferredFiatIso(BreadActivity.this);
@@ -497,11 +498,11 @@ public class BreadActivity extends BRActivity implements OnBalanceChanged,
                 final BigDecimal amount = new BigDecimal(BRSharedPrefs.getCachedBalance(BreadActivity.this, BRSharedPrefs.getCurrentWalletIso(BreadActivity.this)));
 
                 //amount in BTC units
-                BigDecimal btcAmount = ExchangeUtils.getBitcoinForSatoshis(BreadActivity.this, amount);
+                BigDecimal btcAmount = master.getCurrentWallet(BreadActivity.this).getCryptoForSmallestCrypto(BreadActivity.this, amount);
                 final String formattedBTCAmount = CurrencyUtils.getFormattedCurrencyString(BreadActivity.this, "BTC", btcAmount);
 
                 //amount in currency units
-                BigDecimal curAmount = ExchangeUtils.getAmountFromSatoshis(BreadActivity.this, iso, amount);
+                BigDecimal curAmount = master.getCurrentWallet(BreadActivity.this).getFiatForCrypto(BreadActivity.this, amount);
                 final String formattedCurAmount = CurrencyUtils.getFormattedCurrencyString(BreadActivity.this, iso, curAmount);
                 runOnUiThread(new Runnable() {
                     @Override

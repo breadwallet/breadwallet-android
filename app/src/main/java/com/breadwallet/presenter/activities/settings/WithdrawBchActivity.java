@@ -27,7 +27,6 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.WalletsMaster;
@@ -35,6 +34,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import java.math.BigDecimal;
 
 import static com.breadwallet.tools.util.BRConstants.SCANNER_BCH_REQUEST;
+import static com.breadwallet.tools.util.BRConstants.WAL;
 
 public class WithdrawBchActivity extends BRActivity {
     private static final String TAG = WithdrawBchActivity.class.getName();
@@ -74,8 +74,9 @@ public class WithdrawBchActivity extends BRActivity {
         if (Utils.isNullOrEmpty(pubkey)) {
             BRReportsManager.reportBug(new NullPointerException("WithdrawBchActivity: onCreate: pubkey is missing!"));
         }
+        WalletsMaster master = WalletsMaster.getInstance();
         long satoshis = WalletsMaster.getBCashBalance(pubkey);
-        BigDecimal amount = ExchangeUtils.getBitcoinForSatoshis(this, new BigDecimal(satoshis));
+        BigDecimal amount = master.getCurrentWallet(this).getCryptoForSmallestCrypto(this, new BigDecimal(satoshis));
 
         String balance = CurrencyUtils.getFormattedCurrencyString(this, "BTC", amount);
         description.setText(String.format(getString(R.string.BCH_body), balance));

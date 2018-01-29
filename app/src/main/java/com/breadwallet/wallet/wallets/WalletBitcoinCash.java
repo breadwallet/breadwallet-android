@@ -146,4 +146,34 @@ public class WalletBitcoinCash implements BaseWallet {
     public WalletUiConfiguration getUiConfiguration() {
         return uiConfig;
     }
+
+    @Override
+    public long getFiatBalance(Context app) {
+        return 0;
+    }
+
+    @Override
+    public BigDecimal getFiatForCrypto(Context app, BigDecimal amount) {
+        return null;
+    }
+
+    @Override
+    public BigDecimal getCryptoForFiat(Context app, BigDecimal amount) {
+        return null;
+    }
+
+    @Override
+    public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
+        return null;
+    }
+
+    @Override
+    public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
+        return null;
+    }
+
+    @Override
+    public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
+        return null;
+    }
 }

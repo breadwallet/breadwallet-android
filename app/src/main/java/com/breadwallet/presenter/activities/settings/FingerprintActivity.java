@@ -28,8 +28,8 @@ import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
 
 import java.math.BigDecimal;
 
@@ -138,10 +138,11 @@ public class FingerprintActivity extends BRActivity {
         String iso = BRSharedPrefs.getPreferredFiatIso(this);
         //amount in satoshis
         BigDecimal satoshis = new BigDecimal(BRKeyStore.getSpendLimit(this));
+        WalletsMaster master = WalletsMaster.getInstance();
         //amount in BTC, mBTC or bits
-        BigDecimal amount = ExchangeUtils.getAmountFromSatoshis(this, "BTC", satoshis);
+        BigDecimal amount = master.getCurrentWallet(this).getFiatForCrypto(this, satoshis);
         //amount in user preferred ISO (e.g. USD)
-        BigDecimal curAmount = ExchangeUtils.getAmountFromSatoshis(this, iso, satoshis);
+        BigDecimal curAmount = master.getCurrentWallet(this).getFiatForCrypto(this, satoshis);
         //formatted string for the label
         return String.format(getString(R.string.TouchIdSettings_spendingLimit), CurrencyUtils.getFormattedCurrencyString(this, "BTC", amount), CurrencyUtils.getFormattedCurrencyString(this, iso, curAmount));
     }

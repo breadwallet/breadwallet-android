@@ -25,9 +25,9 @@ import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.BRDateUtil;
-import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
+import com.breadwallet.wallet.WalletsMaster;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
@@ -319,7 +319,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         boolean isBTCPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
         String iso = isBTCPreferred ? "BTC" : BRSharedPrefs.getPreferredFiatIso(mContext);
-        convertView.amount.setText(CurrencyUtils.getFormattedCurrencyString(mContext, iso, ExchangeUtils.getAmountFromSatoshis(mContext, iso, new BigDecimal(satoshisAmount))));
+        convertView.amount.setText(CurrencyUtils.getFormattedCurrencyString(mContext, iso, WalletsMaster.getInstance().getCurrentWallet(mContext).getFiatForCrypto(mContext, new BigDecimal(satoshisAmount))));
 
         //if it's 0 we use the current time.
         long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * 1000;
@@ -366,7 +366,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         filter(query, switches);
     }
 
-    public void resetFilter(){
+    public void resetFilter() {
         itemFeed = backUpFeed;
         notifyDataSetChanged();
     }

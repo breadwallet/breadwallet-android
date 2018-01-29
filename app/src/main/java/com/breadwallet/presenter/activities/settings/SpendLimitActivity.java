@@ -23,7 +23,6 @@ import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.wallet.WalletsMaster;
 
 import java.math.BigDecimal;
@@ -32,6 +31,7 @@ import java.util.List;
 
 
 import static com.breadwallet.tools.util.BRConstants.ONE_BITCOIN;
+import static com.breadwallet.tools.util.BRConstants.WAL;
 
 
 public class SpendLimitActivity extends BRActivity {
@@ -187,8 +187,9 @@ public class SpendLimitActivity extends BRActivity {
             textViewItem = convertView.findViewById(R.id.currency_item_text);
             FontManager.overrideFonts(textViewItem);
             Integer item = getItem(position);
-            BigDecimal curAmount = ExchangeUtils.getAmountFromSatoshis(app, BRSharedPrefs.getPreferredFiatIso(app), new BigDecimal(item));
-            BigDecimal btcAmount = ExchangeUtils.getBitcoinForSatoshis(app, new BigDecimal(item));
+            WalletsMaster master = WalletsMaster.getInstance();
+            BigDecimal curAmount = master.getCurrentWallet(app).getFiatForCrypto(app, new BigDecimal(item));
+            BigDecimal btcAmount = master.getCurrentWallet(app).getCryptoForSmallestCrypto(app, new BigDecimal(item));
             String text = String.format(item == 0 ? app.getString(R.string.TouchIdSpendingLimit) : "%s (%s)", curAmount, btcAmount);
             textViewItem.setText(text);
             ImageView checkMark = convertView.findViewById(R.id.currency_checkmark);

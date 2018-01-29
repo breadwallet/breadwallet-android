@@ -28,7 +28,6 @@ import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.threads.BRExecutor;
-import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
@@ -212,9 +211,10 @@ public class FragmentRequestAmount extends Fragment {
                 if (!BRAnimator.isClickAllowed()) return;
                 showKeyboard(false);
                 String iso = selectedIso;
+                WalletsMaster master = WalletsMaster.getInstance();
                 String strAmount = amountEdit.getText().toString();
                 BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
-                long amount = ExchangeUtils.getSatoshisFromAmount(getActivity(), iso, bigAmount).longValue();
+                long amount = master.getCurrentWallet(getActivity()).getSmallestCryptoForFiat(getActivity(), bigAmount).longValue();
                 String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, amount, null, null, null);
                 QRUtils.share("mailto:", getActivity(), bitcoinUri);
 
@@ -226,10 +226,11 @@ public class FragmentRequestAmount extends Fragment {
                 removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
                 showKeyboard(false);
+                WalletsMaster master = WalletsMaster.getInstance();
                 String iso = selectedIso;
                 String strAmount = amountEdit.getText().toString();
                 BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
-                long amount = ExchangeUtils.getSatoshisFromAmount(getActivity(), iso, bigAmount).longValue();
+                long amount = master.getCurrentWallet(getActivity()).getSmallestCryptoForFiat(getActivity(), bigAmount).longValue();
                 String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, amount, null, null, null);
                 QRUtils.share("sms:", getActivity(), bitcoinUri);
             }
@@ -444,8 +445,9 @@ public class FragmentRequestAmount extends Fragment {
     private boolean generateQrImage(String address, String strAmount, String iso) {
         String amountArg = "";
         if (strAmount != null && !strAmount.isEmpty()) {
+            WalletsMaster master = WalletsMaster.getInstance();
             BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
-            long amount = ExchangeUtils.getSatoshisFromAmount(getActivity(), iso, bigAmount).longValue();
+            long amount = master.getCurrentWallet(getActivity()).getSmallestCryptoForFiat(getActivity(), bigAmount).longValue();
             String am = new BigDecimal(amount).divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString();
             amountArg = "?amount=" + am;
         }
