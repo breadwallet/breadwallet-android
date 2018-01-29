@@ -1,56 +1,56 @@
-package com.breadwallet.tools.util;
-
-import android.content.Context;
-
-import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.wallet.WalletsMaster;
-
-import java.math.BigDecimal;
-
-import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
-
-/**
- * BreadWallet
- * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 3/23/17.
- * Copyright (c) 2017 breadwallet LLC
- * <p/>
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- * <p/>
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- * <p/>
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- * THE SOFTWARE.
- */
-public class ExchangeUtils {
-
-    private static final String TAG = ExchangeUtils.class.getName();
-
-//    public static BigDecimal getMaxAmount(Context context, String iso) {
-//        BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(iso);
-//        if (wallet == null) {
-//            CurrencyEntity ent = CurrencyDataSource.getInstance(context).getCurrencyByIso(iso);
-//            if (ent == null) return new BigDecimal(Integer.MAX_VALUE);
-//            return new BigDecimal(ent.rate * WalletBitcoin.MAX_BTC);
-//        }
+//package com.breadwallet.tools.util;
 //
-//        return wallet.getMaxAmount(context);
-//    }
-
-    // amount in satoshis
+//import android.content.Context;
+//
+//import com.breadwallet.presenter.entities.CurrencyEntity;
+//import com.breadwallet.tools.manager.BRSharedPrefs;
+//import com.breadwallet.tools.sqlite.CurrencyDataSource;
+//import com.breadwallet.wallet.WalletsMaster;
+//
+//import java.math.BigDecimal;
+//
+//import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
+//
+///**
+// * BreadWallet
+// * <p/>
+// * Created by Mihail Gutan on <mihail@breadwallet.com> 3/23/17.
+// * Copyright (c) 2017 breadwallet LLC
+// * <p/>
+// * Permission is hereby granted, free of charge, to any person obtaining a copy
+// * of this software and associated documentation files (the "Software"), to deal
+// * in the Software without restriction, including without limitation the rights
+// * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// * copies of the Software, and to permit persons to whom the Software is
+// * furnished to do so, subject to the following conditions:
+// * <p/>
+// * The above copyright notice and this permission notice shall be included in
+// * all copies or substantial portions of the Software.
+// * <p/>
+// * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// * THE SOFTWARE.
+// */
+//public class ExchangeUtils {
+//
+//    private static final String TAG = ExchangeUtils.class.getName();
+//
+////    public static BigDecimal getMaxAmount(Context context, String iso) {
+////        BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(iso);
+////        if (wallet == null) {
+////            CurrencyEntity ent = CurrencyDataSource.getInstance(context).getCurrencyByIso(iso);
+////            if (ent == null) return new BigDecimal(Integer.MAX_VALUE);
+////            return new BigDecimal(ent.rate * WalletBitcoin.MAX_BTC);
+////        }
+////
+////        return wallet.getMaxAmount(context);
+////    }
+//
+//    // amount in satoshis
 //    public static BigDecimal getBitcoinForSatoshis(Context app, BigDecimal amount) {
 //        BigDecimal result = new BigDecimal(0);
 //        int unit = BRSharedPrefs.getBitcoinUnit(app);
@@ -120,4 +120,4 @@ public class ExchangeUtils {
 ////        Log.e(TAG, "getSatoshisFromAmount: " + iso + ":RESULT:" + result);
 //        return result;
 //    }
-}
+//}
