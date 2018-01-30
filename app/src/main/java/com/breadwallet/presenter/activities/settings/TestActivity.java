@@ -1,11 +1,12 @@
 package com.breadwallet.presenter.activities.settings;
 
+import android.app.Activity;
 import android.os.Bundle;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 
-public class TestActivity extends BRActivity {
+public class TestActivity extends Activity {
     private static final String TAG = TestActivity.class.getName();
 
 
