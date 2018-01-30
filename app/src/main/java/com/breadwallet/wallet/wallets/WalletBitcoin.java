@@ -42,6 +42,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.interfaces.BaseTx;
 import com.breadwallet.wallet.interfaces.BaseWallet;
 import com.breadwallet.wallet.interfaces.OnBalanceChanged;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
@@ -240,6 +241,11 @@ public class WalletBitcoin implements BaseWallet {
             }
         });
         return true;
+    }
+
+    @Override
+    public List<BaseTx> getTransactions() {
+        return null;
     }
 
     @Override

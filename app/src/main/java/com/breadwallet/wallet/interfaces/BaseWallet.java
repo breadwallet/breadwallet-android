@@ -6,6 +6,7 @@ import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * BreadWallet
@@ -35,6 +36,9 @@ public interface BaseWallet {
 
     //try sending a transaction
     boolean sendTransaction(Context app, PaymentItem item);
+
+    //get a list of all the transactions sorted by timestamp
+    List<BaseTx> getTransactions();
 
     //generate the wallet if needed
     boolean generateWallet(Context app);
