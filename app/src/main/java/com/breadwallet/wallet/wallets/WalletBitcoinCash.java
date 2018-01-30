@@ -360,13 +360,13 @@ public class WalletBitcoinCash implements BaseWallet {
             int unit = BRSharedPrefs.getBitcoinDenomination(app);
             switch (unit) {
                 case BRConstants.CURRENT_UNIT_BITS:
-                    currencySymbolString = BRConstants.symbolBits;
+                    currencySymbolString = BRConstants.symbolBits + "c";
                     break;
                 case BRConstants.CURRENT_UNIT_MBITS:
-                    currencySymbolString = "m" + BRConstants.symbolBitcoin;
+                    currencySymbolString = "m" + BRConstants.symbolBitcoin + "C";
                     break;
                 case BRConstants.CURRENT_UNIT_BITCOINS:
-                    currencySymbolString = BRConstants.symbolBitcoin;
+                    currencySymbolString = BRConstants.symbolBitcoin + "C";
                     break;
             }
         }
