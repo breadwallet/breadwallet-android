@@ -55,6 +55,12 @@ public interface BaseWallet {
     //get the currency name e.g. Bitcoin
     String getName(Context app);
 
+    //get the currency denomination e.g. BCH, mBCH, Bits
+    String getDenomination(Context app);
+
+    //get the wallet's receive address
+    String getReceiveAddress(Context app);
+
     //get the number of decimal places to use for this currency
     int getMaxDecimalPlaces(Context app);
 

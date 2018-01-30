@@ -324,7 +324,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 double minOutput = WalletsMaster.getInstance().getMinOutputAmount();
                 if (paymentRequest.amount < minOutput) {
                     final String bitcoinMinMessage = String.format(Locale.getDefault(), app.getString(R.string.PaymentProtocol_Errors_smallTransaction),
-                            BRConstants.bitcoinLowercase + new BigDecimal(minOutput).divide(new BigDecimal("100")));
+                            BRConstants.symbolBits + new BigDecimal(minOutput).divide(new BigDecimal("100")));
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
