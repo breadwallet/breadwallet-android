@@ -5,10 +5,12 @@ import android.content.Context;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.wallet.interfaces.BaseTx;
 import com.breadwallet.wallet.interfaces.BaseWallet;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 /**
  * BreadWallet
@@ -54,6 +56,11 @@ public class WalletBitcoinCash implements BaseWallet {
     public boolean sendTransaction(Context app, PaymentItem item) {
         //todo implement
         return false;
+    }
+
+    @Override
+    public List<BaseTx> getTransactions() {
+        return null;
     }
 
     @Override
