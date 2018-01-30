@@ -28,6 +28,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.SyncManager;
+import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.CurrencyUtils;
@@ -100,6 +101,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mBalanceLabel = findViewById(R.id.balance_label);
 
         setUpBarFlipper();
+
+        TxManager.getInstance().init(this);
 
         BRAnimator.init(this);
         mBalancePrimary.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);//make it the size it should be after animation to get the X
