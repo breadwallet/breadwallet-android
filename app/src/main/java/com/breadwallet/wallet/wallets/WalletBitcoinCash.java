@@ -153,7 +153,7 @@ public class WalletBitcoinCash implements BaseWallet {
     }
 
     @Override
-    public BigDecimal getFiatForCrypto(Context app, BigDecimal amount) {
+    public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount) {
         return null;
     }
 

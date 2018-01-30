@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -31,7 +30,6 @@ import java.util.List;
 
 
 import static com.breadwallet.tools.util.BRConstants.ONE_BITCOIN;
-import static com.breadwallet.tools.util.BRConstants.WAL;
 
 
 public class SpendLimitActivity extends BRActivity {
@@ -188,7 +186,7 @@ public class SpendLimitActivity extends BRActivity {
             FontManager.overrideFonts(textViewItem);
             Integer item = getItem(position);
             WalletsMaster master = WalletsMaster.getInstance();
-            BigDecimal curAmount = master.getCurrentWallet(app).getFiatForCrypto(app, new BigDecimal(item));
+            BigDecimal curAmount = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(item));
             BigDecimal btcAmount = master.getCurrentWallet(app).getCryptoForSmallestCrypto(app, new BigDecimal(item));
             String text = String.format(item == 0 ? app.getString(R.string.TouchIdSpendingLimit) : "%s (%s)", curAmount, btcAmount);
             textViewItem.setText(text);

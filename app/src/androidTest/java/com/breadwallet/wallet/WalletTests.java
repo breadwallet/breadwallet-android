@@ -172,6 +172,7 @@ public class WalletTests {
         tmp.add(new CurrencyEntity("USD", "Dollar", usdRate));
         CurrencyDataSource.getInstance(app).putCurrencies(tmp);
 
+
         BRSharedPrefs.putBitcoinDenomination(app, BRConstants.CURRENT_UNIT_BITCOINS);
 
         //getCryptoForSmallestCrypto(..)
@@ -184,9 +185,9 @@ public class WalletTests {
         res = wallet.getSmallestCryptoForCrypto(app, val);
         Assert.assertEquals(res.longValue(), 50000000, 0);
 
-        //getFiatForCrypto(..)
+        //getFiatForSmallestCrypto(..)
         val = wallet.getSmallestCryptoForCrypto(app, new BigDecimal(0.5));
-        res = wallet.getFiatForCrypto(app, val);
+        res = wallet.getFiatForSmallestCrypto(app, val);
         Assert.assertEquals(res.doubleValue(), usdRate / 2 * 100, 0); //cents, not dollars
 
         //getSmallestCryptoForFiat(..)
@@ -200,7 +201,32 @@ public class WalletTests {
         Assert.assertEquals(res.doubleValue(), 0.5, 0); //dollars
 
 
+        BRSharedPrefs.putBitcoinDenomination(app, BRConstants.CURRENT_UNIT_BITS);
 
+        //getCryptoForSmallestCrypto(..)
+        val = new BigDecimal(20000);
+        res = wallet.getCryptoForSmallestCrypto(app, val);
+        Assert.assertEquals(res.doubleValue(), new BigDecimal(200).doubleValue(), 0.000000001);
+
+        //getSmallestCryptoForCrypto(..)
+        val = new BigDecimal(200);
+        res = wallet.getSmallestCryptoForCrypto(app, val);
+        Assert.assertEquals(res.longValue(), 20000, 0);
+
+        //getFiatForSmallestCrypto(..)
+        val = new BigDecimal(50000000);
+        res = wallet.getFiatForSmallestCrypto(app, val);
+        Assert.assertEquals(res.doubleValue(), usdRate / 2 * 100, 0); //cents, not dollars
+
+        //getSmallestCryptoForFiat(..)
+        val = new BigDecimal(600000);//$6000.00 = c600000
+        res = wallet.getSmallestCryptoForFiat(app, val);
+        Assert.assertEquals(res.doubleValue(), 50000000, 0); //cents, not dollars
+
+        //getCryptoForFiat(..)
+        val = new BigDecimal(600000);//$6000.00 = c600000
+        res = wallet.getCryptoForFiat(app, val);
+        Assert.assertEquals(res.doubleValue(), 500000, 0); //dollars
 
     }
 

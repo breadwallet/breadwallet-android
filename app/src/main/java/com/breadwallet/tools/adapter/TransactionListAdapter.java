@@ -319,7 +319,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         boolean isBTCPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
         String iso = isBTCPreferred ? "BTC" : BRSharedPrefs.getPreferredFiatIso(mContext);
-        convertView.amount.setText(CurrencyUtils.getFormattedCurrencyString(mContext, iso, WalletsMaster.getInstance().getCurrentWallet(mContext).getFiatForCrypto(mContext, new BigDecimal(satoshisAmount))));
+        convertView.amount.setText(CurrencyUtils.getFormattedCurrencyString(mContext, iso, WalletsMaster.getInstance().getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
 
         //if it's 0 we use the current time.
         long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * 1000;

@@ -639,7 +639,7 @@ public class FragmentSend extends Fragment {
         long satoshis = (Utils.isNullOrEmpty(tmpAmount) || tmpAmount.equalsIgnoreCase(".")) ? 0 :
                 (selectedIso.equalsIgnoreCase("btc") ? master.getCurrentWallet(getActivity()).getSmallestCryptoForCrypto(app, new BigDecimal(tmpAmount)).longValue()
                         : master.getCurrentWallet(getActivity()).getCryptoForFiat(app, new BigDecimal(tmpAmount)).longValue());
-        BigDecimal balanceForISO = master.getCurrentWallet(getActivity()).getFiatForCrypto(app, new BigDecimal(curBalance));
+        BigDecimal balanceForISO = master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(app, new BigDecimal(curBalance));
 
         //formattedBalance
         String formattedBalance = CurrencyUtils.getFormattedCurrencyString(app, iso, balanceForISO);
@@ -656,7 +656,7 @@ public class FragmentSend extends Fragment {
             }
         }
 
-        BigDecimal feeForISO = master.getCurrentWallet(app).getFiatForCrypto(app, new BigDecimal(fee));
+        BigDecimal feeForISO = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(fee));
         //formattedBalance
         String aproxFee = CurrencyUtils.getFormattedCurrencyString(app, iso, feeForISO);
         if (new BigDecimal((tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".")) ? "0" : tmpAmount).doubleValue() > balanceForISO.doubleValue()) {
@@ -691,7 +691,7 @@ public class FragmentSend extends Fragment {
         if (obj.amount != null) {
             String iso = selectedIso;
             BigDecimal satoshiAmount = new BigDecimal(obj.amount).multiply(new BigDecimal(100000000));
-            amountBuilder = new StringBuilder(master.getCurrentWallet(getActivity()).getFiatForCrypto(getActivity(), satoshiAmount).toPlainString());
+            amountBuilder = new StringBuilder(master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), satoshiAmount).toPlainString());
             updateText();
 
         }

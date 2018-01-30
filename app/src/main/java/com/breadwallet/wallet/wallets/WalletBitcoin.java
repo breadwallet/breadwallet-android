@@ -414,11 +414,11 @@ public class WalletBitcoin implements BaseWallet {
 
     @Override
     public long getFiatBalance(Context app) {
-        return getFiatForCrypto(app, new BigDecimal(getCachedBalance(app))).longValue();
+        return getFiatForSmallestCrypto(app, new BigDecimal(getCachedBalance(app))).longValue();
     }
 
     @Override
-    public BigDecimal getFiatForCrypto(Context app, BigDecimal amount) {
+    public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount) {
         if (amount.doubleValue() == 0) return null;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
@@ -560,7 +560,7 @@ public class WalletBitcoin implements BaseWallet {
                 public void run() {
                     WalletsMaster master = WalletsMaster.getInstance();
                     String am = CurrencyUtils.getFormattedCurrencyString(ctx, "BTC", master.getCurrentWallet(ctx).getCryptoForSmallestCrypto(ctx, new BigDecimal(amount)));
-                    String amCur = CurrencyUtils.getFormattedCurrencyString(ctx, BRSharedPrefs.getPreferredFiatIso(ctx), master.getCurrentWallet(ctx).getFiatForCrypto(ctx, new BigDecimal(amount)));
+                    String amCur = CurrencyUtils.getFormattedCurrencyString(ctx, BRSharedPrefs.getPreferredFiatIso(ctx), master.getCurrentWallet(ctx).getFiatForSmallestCrypto(ctx, new BigDecimal(amount)));
                     String formatted = String.format("%s (%s)", am, amCur);
                     final String strToShow = String.format(ctx.getString(R.string.TransactionDetails_received), formatted);
 
@@ -835,9 +835,9 @@ public class WalletBitcoin implements BaseWallet {
         String formattedFeeBTC = CurrencyUtils.getFormattedCurrencyString(ctx, wallet.getIso(ctx), m.getCurrentWallet(ctx).getCryptoForSmallestCrypto(ctx, new BigDecimal(feeForTx)));
         String formattedTotalBTC = CurrencyUtils.getFormattedCurrencyString(ctx, wallet.getIso(ctx), m.getCurrentWallet(ctx).getCryptoForSmallestCrypto(ctx, new BigDecimal(total)));
 
-        String formattedAmount = CurrencyUtils.getFormattedCurrencyString(ctx, iso, m.getCurrentWallet(ctx).getFiatForCrypto(ctx, new BigDecimal(request.amount)));
-        String formattedFee = CurrencyUtils.getFormattedCurrencyString(ctx, iso, m.getCurrentWallet(ctx).getFiatForCrypto(ctx, new BigDecimal(feeForTx)));
-        String formattedTotal = CurrencyUtils.getFormattedCurrencyString(ctx, iso, m.getCurrentWallet(ctx).getFiatForCrypto(ctx, new BigDecimal(total)));
+        String formattedAmount = CurrencyUtils.getFormattedCurrencyString(ctx, iso, m.getCurrentWallet(ctx).getFiatForSmallestCrypto(ctx, new BigDecimal(request.amount)));
+        String formattedFee = CurrencyUtils.getFormattedCurrencyString(ctx, iso, m.getCurrentWallet(ctx).getFiatForSmallestCrypto(ctx, new BigDecimal(feeForTx)));
+        String formattedTotal = CurrencyUtils.getFormattedCurrencyString(ctx, iso, m.getCurrentWallet(ctx).getFiatForSmallestCrypto(ctx, new BigDecimal(total)));
 
         //formatted text
         return receiver + "\n\n"
