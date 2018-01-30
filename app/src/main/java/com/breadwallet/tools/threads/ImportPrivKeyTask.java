@@ -93,10 +93,10 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
 //        String iso = BRSharedPrefs.getPreferredFiatIso(app);
         WalletsMaster master = WalletsMaster.getInstance();
-        String sentBits = CurrencyUtils.getFormattedCurrencyString(app, "BTC", master.getCurrentWallet(app).getFiatForCrypto(app, new BigDecimal(importPrivKeyEntity.getAmount())));
+        String sentBits = CurrencyUtils.getFormattedCurrencyString(app, "BTC", master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(importPrivKeyEntity.getAmount())));
 //        String sentExchange = CurrencyUtils.getFormattedCurrencyString(app, iso, ExchangeUtils.getAmountFromSatoshis(app, iso, new BigDecimal(importPrivKeyEntity.getAmount())));
 
-        String feeBits = CurrencyUtils.getFormattedCurrencyString(app, "BTC", master.getCurrentWallet(app).getFiatForCrypto(app, new BigDecimal(importPrivKeyEntity.getFee())));
+        String feeBits = CurrencyUtils.getFormattedCurrencyString(app, "BTC", master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(importPrivKeyEntity.getFee())));
 //        String feeExchange = CurrencyUtils.getFormattedCurrencyString(app, iso, ExchangeUtils.getAmountFromSatoshis(app, iso, new BigDecimal(importPrivKeyEntity.getFee())));
 
         if (app == null || importPrivKeyEntity == null) return;

@@ -85,7 +85,7 @@ public interface BaseWallet {
      * @return - the fiat value of the amount in crypto in the smallest denomination (e.g. cents)
      * or null if there is no fiat exchange data from the API yet
      */
-    BigDecimal getFiatForCrypto(Context app, BigDecimal amount);
+    BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount);
 
     /**
      * @param amount - the smallest denomination amount in the user's favorite fiat currency (e.g. cents)

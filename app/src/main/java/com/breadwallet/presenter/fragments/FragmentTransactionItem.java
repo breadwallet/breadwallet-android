@@ -162,15 +162,15 @@ public class FragmentTransactionItem extends Fragment {
         boolean sent = item.getReceived() - item.getSent() < 0;
         WalletsMaster master = WalletsMaster.getInstance();
         //calculated and formatted amount for iso
-        String amountWithFee = CurrencyUtils.getFormattedCurrencyString(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForCrypto(getActivity(), txAmount));
-        String amount = CurrencyUtils.getFormattedCurrencyString(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForCrypto(getActivity(), item.getFee() == -1 ? txAmount : txAmount.subtract(new BigDecimal(item.getFee()))));
+        String amountWithFee = CurrencyUtils.getFormattedCurrencyString(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), txAmount));
+        String amount = CurrencyUtils.getFormattedCurrencyString(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), item.getFee() == -1 ? txAmount : txAmount.subtract(new BigDecimal(item.getFee()))));
         //calculated and formatted fee for iso
-        String fee = CurrencyUtils.getFormattedCurrencyString(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForCrypto(getActivity(), new BigDecimal(item.getFee())));
+        String fee = CurrencyUtils.getFormattedCurrencyString(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(item.getFee())));
         //description (Sent $24.32 ....)
         Spannable descriptionString = sent ? new SpannableString(String.format(getString(R.string.TransactionDetails_sent), amountWithFee)) : new SpannableString(String.format(getString(R.string.TransactionDetails_received), amount));
 
-        String startingBalance = CurrencyUtils.getFormattedCurrencyString(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForCrypto(getActivity(), new BigDecimal(sent ? item.getBalanceAfterTx() + txAmount.longValue() : item.getBalanceAfterTx() - txAmount.longValue())));
-        String endingBalance = CurrencyUtils.getFormattedCurrencyString(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForCrypto(getActivity(), new BigDecimal(item.getBalanceAfterTx())));
+        String startingBalance = CurrencyUtils.getFormattedCurrencyString(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(sent ? item.getBalanceAfterTx() + txAmount.longValue() : item.getBalanceAfterTx() - txAmount.longValue())));
+        String endingBalance = CurrencyUtils.getFormattedCurrencyString(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(item.getBalanceAfterTx())));
         String commentString = item.metaData == null || item.metaData.comment == null ? "" : item.metaData.comment;
         String sb = String.format(getString(R.string.Transaction_starting), startingBalance);
         String eb = String.format(getString(R.string.Transaction_ending), endingBalance);

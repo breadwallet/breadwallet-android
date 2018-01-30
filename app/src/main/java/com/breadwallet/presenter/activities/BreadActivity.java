@@ -41,7 +41,6 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.interfaces.BaseWallet;
 import com.breadwallet.wallet.interfaces.OnBalanceChanged;
 import com.breadwallet.wallet.interfaces.OnTxAdded;
 import com.platform.APIClient;
@@ -502,7 +501,7 @@ public class BreadActivity extends BRActivity implements OnBalanceChanged,
                 final String formattedBTCAmount = CurrencyUtils.getFormattedCurrencyString(BreadActivity.this, "BTC", btcAmount);
 
                 //amount in currency units
-                BigDecimal curAmount = master.getCurrentWallet(BreadActivity.this).getFiatForCrypto(BreadActivity.this, amount);
+                BigDecimal curAmount = master.getCurrentWallet(BreadActivity.this).getFiatForSmallestCrypto(BreadActivity.this, amount);
                 final String formattedCurAmount = CurrencyUtils.getFormattedCurrencyString(BreadActivity.this, iso, curAmount);
                 runOnUiThread(new Runnable() {
                     @Override
