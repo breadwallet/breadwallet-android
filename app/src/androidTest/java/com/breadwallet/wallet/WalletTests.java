@@ -1,14 +1,32 @@
 package com.breadwallet.wallet;
 
+import android.app.Activity;
+import android.support.test.filters.LargeTest;
+import android.support.test.rule.ActivityTestRule;
+import android.support.test.runner.AndroidJUnit4;
+import android.util.Log;
+
+import com.breadwallet.presenter.activities.settings.TestActivity;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.RequestObject;
+import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.uri.BitcoinUriParser;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.wallet.wallets.WalletBitcoin;
 
 
+import org.junit.After;
+import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.math.BigDecimal;
 import java.security.InvalidAlgorithmParameterException;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.Assert.assertEquals;
 
@@ -37,8 +55,23 @@ import static org.junit.Assert.assertEquals;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
+
+@RunWith(AndroidJUnit4.class)
+@LargeTest
 public class WalletTests {
     public static final String TAG = WalletTests.class.getName();
+
+    @Rule
+    public ActivityTestRule<TestActivity> mActivityRule = new ActivityTestRule<>(TestActivity.class);
+
+    @Before
+    public void setUp() {
+        Log.e(TAG, "setUp: ");
+    }
+
+    @After
+    public void tearDown() {
+    }
 
     static {
         System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
@@ -124,17 +157,51 @@ public class WalletTests {
     @Test
     public void currencyManagerTests() {
 
-//        String amount;
-//        String result;
-
-//        MainActivity app = MainActivity.app;
-//        if (app != null) {
-//
-//            amount = "232432.42234";
-//            result = CurrencyManager.getInstance(app).getFormattedCurrencyString("USD", amount);
-//            assertEquals("$232432.42234", result);
-//        }
     }
 
+    @Test
+    public void walletBitcoinTests() {
+        Activity app = mActivityRule.getActivity();
+        WalletBitcoin wallet = WalletBitcoin.getInstance();
+
+        BRSharedPrefs.putPreferredFiatIso(app, "USD");
+
+        int usdRate = 12000;
+
+        Set<CurrencyEntity> tmp = new HashSet<>();
+        tmp.add(new CurrencyEntity("USD", "Dollar", usdRate));
+        CurrencyDataSource.getInstance(app).putCurrencies(tmp);
+
+        BRSharedPrefs.putBitcoinDenomination(app, BRConstants.CURRENT_UNIT_BITCOINS);
+
+        //getCryptoForSmallestCrypto(..)
+        BigDecimal val = new BigDecimal(20000);
+        BigDecimal res = wallet.getCryptoForSmallestCrypto(app, val);
+        Assert.assertEquals(res.doubleValue(), new BigDecimal(0.0002).doubleValue(), 0.000000001);
+
+        //getSmallestCryptoForCrypto(..)
+        val = new BigDecimal(0.5);
+        res = wallet.getSmallestCryptoForCrypto(app, val);
+        Assert.assertEquals(res.longValue(), 50000000, 0);
+
+        //getFiatForCrypto(..)
+        val = wallet.getSmallestCryptoForCrypto(app, new BigDecimal(0.5));
+        res = wallet.getFiatForCrypto(app, val);
+        Assert.assertEquals(res.doubleValue(), usdRate / 2 * 100, 0); //cents, not dollars
+
+        //getSmallestCryptoForFiat(..)
+        val = new BigDecimal(600000);//$6000.00 = c600000
+        res = wallet.getSmallestCryptoForFiat(app, val);
+        Assert.assertEquals(res.doubleValue(), 50000000, 0); //cents, not dollars
+
+        //getCryptoForFiat(..)
+        val = new BigDecimal(600000);//$6000.00 = c600000
+        res = wallet.getCryptoForFiat(app, val);
+        Assert.assertEquals(res.doubleValue(), 0.5, 0); //dollars
+
+
+
+
+    }
 
 }

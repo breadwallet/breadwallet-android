@@ -126,13 +126,13 @@ public class DisplayCurrencyActivity extends BRActivity {
 
     private void setButton(boolean left) {
         if (left) {
-            BRSharedPrefs.putBitcoinUnit(this, BRConstants.CURRENT_UNIT_BITS);
+            BRSharedPrefs.putBitcoinDenomination(this, BRConstants.CURRENT_UNIT_BITS);
             leftButton.setTextColor(getColor(R.color.white));
             leftButton.setBackground(getDrawable(R.drawable.b_half_left_blue));
             rightButton.setTextColor(getColor(R.color.dark_blue));
             rightButton.setBackground(getDrawable(R.drawable.b_half_right_blue_stroke));
         } else {
-            BRSharedPrefs.putBitcoinUnit(this, BRConstants.CURRENT_UNIT_BITCOINS);
+            BRSharedPrefs.putBitcoinDenomination(this, BRConstants.CURRENT_UNIT_BITCOINS);
             leftButton.setTextColor(getColor(R.color.dark_blue));
             leftButton.setBackground(getDrawable(R.drawable.b_half_left_blue_stroke));
             rightButton.setTextColor(getColor(R.color.white));

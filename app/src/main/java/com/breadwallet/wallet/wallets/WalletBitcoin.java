@@ -424,8 +424,9 @@ public class WalletBitcoin implements BaseWallet {
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
         if (ent == null) return null;
         double rate = ent.rate;
-        BigDecimal cryptoAmount = getCryptoForSmallestCrypto(app, amount);
-        return amount.divide(cryptoAmount, BRConstants.ROUNDING_MODE).multiply(new BigDecimal(rate)).multiply(new BigDecimal(100));
+        //get crypto amount
+        BigDecimal cryptoAmount = amount.divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE);
+        return cryptoAmount.multiply(new BigDecimal(rate)).multiply(new BigDecimal(100));
     }
 
     @Override
@@ -441,13 +442,13 @@ public class WalletBitcoin implements BaseWallet {
         BigDecimal result = new BigDecimal(0);
         switch (unit) {
             case BRConstants.CURRENT_UNIT_BITS:
-                result = fiatAmount.multiply(new BigDecimal(rate)).divide(new BigDecimal("100"), ROUNDING_MODE);
+                result = fiatAmount.divide(new BigDecimal(rate), 2, ROUNDING_MODE).multiply(new BigDecimal("1000000"));
                 break;
             case BRConstants.CURRENT_UNIT_MBITS:
-                result = fiatAmount.multiply(new BigDecimal(rate)).divide(new BigDecimal("100000"), 5, ROUNDING_MODE);
+                result = fiatAmount.divide(new BigDecimal(rate), 5, ROUNDING_MODE).multiply(new BigDecimal("1000"));
                 break;
             case BRConstants.CURRENT_UNIT_BITCOINS:
-                result = fiatAmount.multiply(new BigDecimal(rate)).divide(new BigDecimal("100000000"), 8, ROUNDING_MODE);
+                result = fiatAmount.divide(new BigDecimal(rate), 8, ROUNDING_MODE);
                 break;
         }
         return result;
@@ -495,7 +496,13 @@ public class WalletBitcoin implements BaseWallet {
     @Override
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
         if (amount.doubleValue() == 0) return null;
-        return null;
+        String iso = BRSharedPrefs.getPreferredFiatIso(app);
+        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
+        if (ent == null) return null;
+        double rate = ent.rate;
+        //convert c to $.
+        BigDecimal fiatAmount = amount.divide(new BigDecimal(100), ROUNDING_MODE);
+        return fiatAmount.divide(new BigDecimal(rate), 8, ROUNDING_MODE).multiply(new BigDecimal("100000000"));
     }
 
     public void addBalanceChangedListener(OnBalanceChanged listener) {

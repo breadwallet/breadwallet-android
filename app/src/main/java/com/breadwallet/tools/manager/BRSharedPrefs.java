@@ -374,7 +374,7 @@ public class BRSharedPrefs {
     }
 
     // BTC, mBTC, Bits
-    public static void putBitcoinUnit(Context context, int unit) {
+    public static void putBitcoinDenomination(Context context, int unit) {
         if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
