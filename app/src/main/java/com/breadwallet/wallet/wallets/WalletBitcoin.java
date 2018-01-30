@@ -46,6 +46,12 @@ import com.breadwallet.wallet.interfaces.BaseTx;
 import com.breadwallet.wallet.interfaces.BaseWallet;
 import com.breadwallet.wallet.interfaces.OnBalanceChanged;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
+import com.breadwallet.wallet.wallets.exceptions.AmountSmallerThanMinException;
+import com.breadwallet.wallet.wallets.exceptions.FeeNeedsAdjust;
+import com.breadwallet.wallet.wallets.exceptions.FeeOutOfDate;
+import com.breadwallet.wallet.wallets.exceptions.InsufficientFundsException;
+import com.breadwallet.wallet.wallets.exceptions.SomethingWentWrong;
+import com.breadwallet.wallet.wallets.exceptions.SpendingNotAllowed;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.math.BigDecimal;
@@ -110,7 +116,7 @@ public class WalletBitcoin implements BaseWallet {
             Log.e(TAG, "setBalance: FAILED TO SET THE BALANCE");
             return;
         }
-        BRSharedPrefs.putCachedBalance(context, BRSharedPrefs.getCurrentWalletIso(context), balance);
+        BRSharedPrefs.putCachedBalance(context, "BTC", balance);
         WalletsMaster.refreshAddress(context);
 
         for (OnBalanceChanged listener : balanceListeners) {
@@ -899,55 +905,6 @@ public class WalletBitcoin implements BaseWallet {
                 }, null, null, 0);
             }
         });
-    }
-
-
-    private class InsufficientFundsException extends Exception {
-
-        public InsufficientFundsException(long amount, long balance) {
-            super("Balance: " + balance + " satoshis, amount: " + amount + " satoshis.");
-        }
-
-    }
-
-    private class AmountSmallerThanMinException extends Exception {
-
-        public AmountSmallerThanMinException(long amount, long min) {
-            super("Min: " + min + " satoshis, amount: " + amount + " satoshis.");
-        }
-
-    }
-
-    private class SpendingNotAllowed extends Exception {
-
-        public SpendingNotAllowed() {
-            super("spending is not allowed at the moment");
-        }
-
-    }
-
-    private class FeeNeedsAdjust extends Exception {
-
-        public FeeNeedsAdjust(long amount, long balance, long fee) {
-            super("Balance: " + balance + " satoshis, amount: " + amount + " satoshis, fee: " + fee + " satoshis.");
-        }
-
-    }
-
-    private class FeeOutOfDate extends Exception {
-
-        public FeeOutOfDate(long timestamp, long now) {
-            super("FeeOutOfDate: timestamp: " + timestamp + ",now: " + now);
-        }
-
-    }
-
-    private class SomethingWentWrong extends Exception {
-
-        public SomethingWentWrong(String mess) {
-            super(mess);
-        }
-
     }
 
 }
