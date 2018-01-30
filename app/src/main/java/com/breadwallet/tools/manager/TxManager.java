@@ -154,7 +154,7 @@ public class TxManager {
             BRSharedPrefs.putShareDataDismissed(app, true);
         }
         currentPrompt = null;
-        if (txList.getAdapter() != null)
+        if (txList != null && txList.getAdapter() != null)
             txList.getAdapter().notifyItemRemoved(0);
         if (item == PromptManager.PromptItem.SYNCING) {
             showNextPrompt(app);
