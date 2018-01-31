@@ -391,15 +391,22 @@ public class FragmentSend extends Fragment {
                     return;
                 }
                 WalletsMaster master = WalletsMaster.getInstance();
+                BaseWallet wallet = master.getCurrentWallet(getActivity());
+                //get the current wallet used
+                if (wallet == null) {
+                    BRReportsManager.reportBug(new NullPointerException("Wallet is null and it can't happen."), true);
+                }
+                assert (wallet != null);
                 boolean allFilled = true;
                 String address = addressEdit.getText().toString();
                 String amountStr = amountBuilder.toString();
-                String iso = selectedIso;
                 String comment = commentEdit.getText().toString();
 
                 //get amount in satoshis from any isos
                 BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) ? "0" : amountStr);
-                BigDecimal satoshiAmount = master.getCurrentWallet(getActivity()).getCryptoForFiat(getActivity(), bigAmount);
+                //is the chosen ISO a crypto or a fiat
+                boolean isIsoCrypto = master.isIsoCrypto(getActivity(), selectedIso);
+                BigDecimal satoshiAmount = isIsoCrypto ? wallet.getSmallestCryptoForCrypto(getActivity(), bigAmount) : wallet.getSmallestCryptoForFiat(getActivity(), bigAmount);
 
                 if (address.isEmpty() || !WalletsMaster.validateAddress(address)) {
                     allFilled = false;
@@ -420,12 +427,7 @@ public class FragmentSend extends Fragment {
                     SpringAnimator.failShakeAnimation(getActivity(), balanceText);
                     SpringAnimator.failShakeAnimation(getActivity(), feeText);
                 }
-                //get the current wallet used
-                BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(getActivity());
-                if (wallet == null) {
-                    BRReportsManager.reportBug(new NullPointerException("Wallet is null and it can't happen."), true);
-                }
-                assert (wallet != null);
+
                 if (allFilled)
                     wallet.sendTransaction(getActivity(), new PaymentItem(address, null, satoshiAmount.longValue(), null, false, comment));
             }
@@ -630,7 +632,7 @@ public class FragmentSend extends Fragment {
         String balanceString;
         if (selectedIso == null)
             selectedIso = WalletsMaster.getInstance().getCurrentWallet(app).getIso(app);
-        String iso = selectedIso;
+//        String iso = selectedIso;
         curBalance = WalletsMaster.getInstance().getCurrentWallet(app).getCachedBalance(app);
         if (!amountLabelOn)
             isoText.setText(CurrencyUtils.getSymbolByIso(app, selectedIso));
@@ -642,7 +644,7 @@ public class FragmentSend extends Fragment {
         BigDecimal balanceForISO = master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(app, new BigDecimal(curBalance));
 
         //formattedBalance
-        String formattedBalance = CurrencyUtils.getFormattedCurrencyString(app, iso, balanceForISO);
+        String formattedBalance = CurrencyUtils.getFormattedCurrencyString(app, selectedIso, balanceForISO);
         //Balance depending on ISO
         long fee = 0;
         if (satoshis == 0) {
@@ -659,8 +661,8 @@ public class FragmentSend extends Fragment {
         BigDecimal feeForISO = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(fee));
         //formattedBalance
         if (balanceForISO == null) balanceForISO = new BigDecimal(0);
-        String aproxFee = CurrencyUtils.getFormattedCurrencyString(app, iso, feeForISO);
-        boolean isOverTheBalance = new BigDecimal((tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".")) ? "0" : tmpAmount).doubleValue() <= balanceForISO.doubleValue();
+        String aproxFee = CurrencyUtils.getFormattedCurrencyString(app, selectedIso, feeForISO);
+        boolean isOverTheBalance = new BigDecimal((tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".")) ? "0" : tmpAmount).doubleValue() > balanceForISO.doubleValue();
         if (isOverTheBalance) {
             balanceText.setTextColor(getContext().getColor(R.color.warning_color));
             feeText.setTextColor(getContext().getColor(R.color.warning_color));
