@@ -658,8 +658,10 @@ public class FragmentSend extends Fragment {
 
         BigDecimal feeForISO = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(fee));
         //formattedBalance
+        if (balanceForISO == null) balanceForISO = new BigDecimal(0);
         String aproxFee = CurrencyUtils.getFormattedCurrencyString(app, iso, feeForISO);
-        if (new BigDecimal((tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".")) ? "0" : tmpAmount).doubleValue() > balanceForISO.doubleValue()) {
+        boolean isOverTheBalance = new BigDecimal((tmpAmount.isEmpty() || tmpAmount.equalsIgnoreCase(".")) ? "0" : tmpAmount).doubleValue() <= balanceForISO.doubleValue();
+        if (isOverTheBalance) {
             balanceText.setTextColor(getContext().getColor(R.color.warning_color));
             feeText.setTextColor(getContext().getColor(R.color.warning_color));
             amountEdit.setTextColor(getContext().getColor(R.color.warning_color));

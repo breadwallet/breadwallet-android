@@ -322,8 +322,9 @@ public class FragmentReceive extends Fragment {
         animateSignalSlide(signalLayout, true, new BRAnimator.OnSlideAnimationEnd() {
             @Override
             public void onAnimationEnd() {
-                if (getActivity() != null)
-                    getActivity().getFragmentManager().popBackStack();
+                Activity app = getActivity();
+                if (app != null && !app.isDestroyed())
+                    app.getFragmentManager().popBackStack();
             }
         });
     }

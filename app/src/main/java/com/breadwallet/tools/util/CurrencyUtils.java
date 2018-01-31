@@ -45,6 +45,7 @@ public class CurrencyUtils {
 
     // amount is in currency or BTC (bits, mBTC or BTC)
     public static String getFormattedCurrencyString(Context app, String isoCurrencyCode, BigDecimal amount) {
+        if(amount == null) return "---";
 //        Log.e(TAG, "amount: " + amount);
         DecimalFormat currencyFormat;
 
