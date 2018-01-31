@@ -1,5 +1,6 @@
 package com.breadwallet;
 
+import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
@@ -8,6 +9,7 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
+import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
@@ -20,10 +22,14 @@ import com.breadwallet.tools.util.Utils;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static com.platform.APIClient.BREAD_POINT;
 
 
 /**
@@ -63,6 +69,11 @@ public class BreadApp extends Application {
     public static long backgroundedTime;
     public static boolean appInBackground;
 
+    public static final boolean IS_ALPHA = true;
+
+    public static final Map<String, String> mHeaders = new HashMap<>();
+
+
     private static Activity currentActivity;
 
     @Override
@@ -74,6 +85,15 @@ public class BreadApp extends Application {
             FirebaseCrash.setCrashCollectionEnabled(false);
 //            FirebaseCrash.report(new RuntimeException("test with new json file"));
         }
+
+        boolean isTestVersion = BREAD_POINT.contains("staging") || BREAD_POINT.contains("stage");
+        boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
+        String lang = getCurrentLocale(this);
+
+        mHeaders.put("X-Is-Internal", IS_ALPHA ? "true" : "false");
+        mHeaders.put("X-Testflight", isTestVersion ? "true" : "false");
+        mHeaders.put("X-Bitcoin-Testnet", isTestNet ? "true" : "false");
+        mHeaders.put("Accept-Language", lang);
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -92,6 +112,19 @@ public class BreadApp extends Application {
 
     }
 
+    @TargetApi(Build.VERSION_CODES.N)
+    public String getCurrentLocale(Context ctx) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            return ctx.getResources().getConfiguration().getLocales().get(0).getLanguage();
+        } else {
+            //noinspection deprecation
+            return ctx.getResources().getConfiguration().locale.getLanguage();
+        }
+    }
+
+    public static Map<String, String> getBreadHeaders() {
+        return mHeaders;
+    }
 
     public static Context getBreadContext() {
         return currentActivity == null ? SyncReceiver.app : currentActivity;
