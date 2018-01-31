@@ -69,7 +69,7 @@ public class BreadApp extends Application {
     public static long backgroundedTime;
     public static boolean appInBackground;
 
-    public static final boolean IS_ALPHA = true;
+    public static final boolean IS_ALPHA = false;
 
     public static final Map<String, String> mHeaders = new HashMap<>();
 
@@ -85,6 +85,9 @@ public class BreadApp extends Application {
             FirebaseCrash.setCrashCollectionEnabled(false);
 //            FirebaseCrash.report(new RuntimeException("test with new json file"));
         }
+
+        if (!Utils.isEmulatorOrDebug(this) && IS_ALPHA)
+            throw new RuntimeException("can't be alpha for release");
 
         boolean isTestVersion = BREAD_POINT.contains("staging") || BREAD_POINT.contains("stage");
         boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
