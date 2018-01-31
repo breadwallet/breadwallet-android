@@ -184,6 +184,13 @@ public class WalletsMaster {
 
     }
 
+    public boolean isIsoCrypto(Context app, String iso) {
+        for (BaseWallet w : mWallets) {
+            if (w.getIso(app).equalsIgnoreCase(iso)) return true;
+        }
+        return false;
+    }
+
     public boolean wipeKeyStore(Context context) {
         Log.d(TAG, "wipeKeyStore");
         return BRKeyStore.resetWalletKeyStore(context);
