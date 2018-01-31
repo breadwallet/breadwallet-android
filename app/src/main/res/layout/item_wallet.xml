@@ -1,0 +1,56 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/wallet_card"
+    android:layout_width="match_parent"
+    android:layout_height="84dp"
+    android:layout_below="@id/portfolio_label"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/btc_card_shape">
+
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/wallet_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="16sp"
+        android:layout_marginTop="16sp"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:customTFont="CircularPro-Book.otf" />
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/wallet_trade_price"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/wallet_name"
+        android:layout_marginLeft="16sp"
+        android:textColor="@color/currency_subheading_color"
+        android:textSize="18sp"
+        app:customTFont="CircularPro-Book.otf" />
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/wallet_balance_usd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_marginLeft="16sp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="16sp"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:customTFont="CircularPro-Book.otf" />
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/wallet_balance_currency"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/wallet_balance_usd"
+        android:layout_marginRight="16sp"
+        android:textColor="@color/currency_subheading_color"
+        android:textSize="18sp"
+        app:customTFont="CircularPro-Book.otf" />
+
+
+</RelativeLayout>
