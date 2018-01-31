@@ -26,9 +26,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -228,12 +230,22 @@ public class BRApiManager {
 
     private static String urlGET(Context app, String myURL) {
 //        System.out.println("Requested URL_EA:" + myURL);
-        Request request = new Request.Builder()
+        Map<String, String> headers = BreadApp.getBreadHeaders();
+
+        Request.Builder builder = new Request.Builder()
                 .url(myURL)
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
                 .header("User-agent", Utils.getAgentString(app, "android/HttpURLConnection"))
-                .get().build();
+                .get();
+        Iterator it = headers.entrySet().iterator();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            Log.e(TAG, "urlGET: adding extra Bread headers: " + pair.getKey() + " : " + pair.getValue());
+            builder.header((String) pair.getKey(), (String) pair.getValue());
+        }
+
+        Request request = builder.build();
         String response = null;
         Response resp = APIClient.getInstance(app).sendRequest(request, false, 0);
 

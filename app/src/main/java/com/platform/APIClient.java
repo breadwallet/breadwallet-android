@@ -8,6 +8,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
+import android.widget.RelativeLayout;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
@@ -44,7 +45,9 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.Locale;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -313,10 +316,19 @@ public class APIClient {
         if (ActivityUTILS.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
-        boolean isTestVersion = BREAD_POINT.contains("staging");
-        boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
-        String lang = getCurrentLocale(ctx);
-        Request request = locRequest.newBuilder().header("X-Testflight", isTestVersion ? "true" : "false").header("X-Bitcoin-Testnet", isTestNet ? "true" : "false").header("Accept-Language", lang).build();
+
+        Map<String, String> headers = BreadApp.getBreadHeaders();
+
+        Iterator it = headers.entrySet().iterator();
+
+        Request.Builder newBuilder = locRequest.newBuilder();
+        while (it.hasNext()) {
+            Map.Entry pair = (Map.Entry) it.next();
+            Log.e(TAG, "urlGET: adding extra Bread headers: " + pair.getKey() + " : " + pair.getValue());
+            newBuilder.header((String) pair.getKey(), (String) pair.getValue());
+        }
+
+        Request request = newBuilder.build();
         if (needsAuth) {
             request = authenticateRequest(request);
             if (request == null) return null;
@@ -866,15 +878,5 @@ public class APIClient {
         }
     }
 
-
-    @TargetApi(Build.VERSION_CODES.N)
-    public String getCurrentLocale(Context ctx) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return ctx.getResources().getConfiguration().getLocales().get(0).getLanguage();
-        } else {
-            //noinspection deprecation
-            return ctx.getResources().getConfiguration().locale.getLanguage();
-        }
-    }
 
 }
