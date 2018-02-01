@@ -34,6 +34,7 @@ import android.util.Log;
 
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
+import com.breadwallet.presenter.entities.BaseWallet;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
 
@@ -41,10 +42,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class TransactionDataSource implements BRDataSourceInterface {
-    private static final String TAG = TransactionDataSource.class.getName();
+public class BtcBchTransactionDataStore implements BRDataSourceInterface {
+    private static final String TAG = BtcBchTransactionDataStore.class.getName();
 
     private AtomicInteger mOpenCounter = new AtomicInteger();
+    private BaseWallet mWallet;
 
     // Database fields
     private SQLiteDatabase database;
@@ -72,21 +74,24 @@ public class TransactionDataSource implements BRDataSourceInterface {
 
     }
 
-    private static TransactionDataSource instance;
+    private static BtcBchTransactionDataStore instance;
 
-    public static TransactionDataSource getInstance(Context context) {
+    public static BtcBchTransactionDataStore getInstance(Context context, BaseWallet wallet) {
         if (instance == null) {
-            instance = new TransactionDataSource(context);
+            instance = new BtcBchTransactionDataStore(context, wallet);
         }
         return instance;
     }
 
 
-    private TransactionDataSource(Context context) {
+    private BtcBchTransactionDataStore(Context context, BaseWallet wallet) {
         dbHelper = BRSQLiteHelper.getInstance(context);
+        this.mWallet = wallet;
+
     }
 
     public BRTransactionEntity putTransaction(BRTransactionEntity transactionEntity) {
+
         Cursor cursor = null;
         try {
             database = openDatabase();
@@ -94,6 +99,7 @@ public class TransactionDataSource implements BRDataSourceInterface {
             values.put(BRSQLiteHelper.TX_COLUMN_ID, transactionEntity.getTxHash());
             values.put(BRSQLiteHelper.TX_BUFF, transactionEntity.getBuff());
             values.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, transactionEntity.getBlockheight());
+            values.put(BRSQLiteHelper.TX_ISO, mWallet.getWalletType());
             values.put(BRSQLiteHelper.TX_TIME_STAMP, transactionEntity.getTimestamp());
 
             database.beginTransaction();
@@ -122,7 +128,8 @@ public class TransactionDataSource implements BRDataSourceInterface {
 
     }
 
-    public  void deleteAllTransactions() {
+
+    public void deleteAllTransactions() {
         try {
             database = openDatabase();
             database.delete(BRSQLiteHelper.TX_TABLE_NAME, null, null);
@@ -131,7 +138,7 @@ public class TransactionDataSource implements BRDataSourceInterface {
         }
     }
 
-    public  List<BRTransactionEntity> getAllTransactions() {
+    public List<BRTransactionEntity> getAllTransactions() {
         List<BRTransactionEntity> transactions = new ArrayList<>();
         Cursor cursor = null;
         try {
@@ -156,10 +163,10 @@ public class TransactionDataSource implements BRDataSourceInterface {
     }
 
     private BRTransactionEntity cursorToTransaction(Cursor cursor) {
-        return new BRTransactionEntity(cursor.getBlob(1), cursor.getInt(2), cursor.getLong(3), cursor.getString(0));
+        return new BRTransactionEntity(cursor.getBlob(1), cursor.getInt(2), cursor.getLong(3), cursor.getString(0), "btc");
     }
 
-    public  void updateTxBlockHeight(String hash, int blockHeight, int timeStamp) {
+    public void updateTxBlockHeight(String hash, int blockHeight, int timeStamp) {
         try {
             database = openDatabase();
             Log.e(TAG, "transaction updated with id: " + hash);
@@ -177,7 +184,7 @@ public class TransactionDataSource implements BRDataSourceInterface {
 
     }
 
-    public  void deleteTxByHash(String hash) {
+    public void deleteTxByHash(String hash) {
         try {
             database = openDatabase();
             Log.e(TAG, "transaction deleted with id: " + hash);
@@ -189,8 +196,8 @@ public class TransactionDataSource implements BRDataSourceInterface {
     }
 
     @Override
-    public  SQLiteDatabase openDatabase() {
-        if(ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
+    public SQLiteDatabase openDatabase() {
+        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
 //        if (mOpenCounter.incrementAndGet() == 1) {
         // Opening new database
         if (database == null || !database.isOpen())
@@ -202,7 +209,7 @@ public class TransactionDataSource implements BRDataSourceInterface {
     }
 
     @Override
-    public  void closeDatabase() {
+    public void closeDatabase() {
 //        if (mOpenCounter.decrementAndGet() == 0) {
 //            // Closing database
 //            database.close();

@@ -5,8 +5,6 @@ import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
@@ -15,15 +13,11 @@ import android.os.Handler;
 import android.os.NetworkOnMainThreadException;
 import android.os.SystemClock;
 import android.security.keystore.UserNotAuthenticatedException;
-import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
@@ -35,6 +29,7 @@ import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
+import com.breadwallet.presenter.entities.BaseWallet;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
@@ -44,11 +39,10 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
-import com.breadwallet.tools.sqlite.TransactionDataSource;
+import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.util.BRConstants;
@@ -273,7 +267,7 @@ public class BRWalletManager {
             public void run() {
                 BRPeerManager.getInstance().peerManagerFreeEverything();
                 walletFreeEverything();
-                TransactionDataSource.getInstance(ctx).deleteAllTransactions();
+                BtcBchTransactionDataStore.getInstance(ctx, new BaseWallet()).deleteAllTransactions();
                 MerkleBlockDataSource.getInstance(ctx).deleteAllBlocks();
                 PeerDataSource.getInstance(ctx).deleteAllPeers();
                 BRSharedPrefs.clearAllPrefs(ctx);
@@ -421,7 +415,7 @@ public class BRWalletManager {
             });
         }
         if (ctx != null)
-            TransactionDataSource.getInstance(ctx).putTransaction(new BRTransactionEntity(tx, blockHeight, timestamp, hash));
+            BtcBchTransactionDataStore.getInstance(ctx, new BaseWallet()).putTransaction(new BRTransactionEntity(tx, blockHeight, timestamp, hash, "btc"));
         else
             Log.e(TAG, "onTxAdded: ctx is null!");
     }
@@ -462,7 +456,7 @@ public class BRWalletManager {
         Log.d(TAG, "onTxUpdated: " + String.format("hash: %s, blockHeight: %d, timestamp: %d", hash, blockHeight, timeStamp));
         Context ctx = BreadApp.getBreadContext();
         if (ctx != null) {
-            TransactionDataSource.getInstance(ctx).updateTxBlockHeight(hash, blockHeight, timeStamp);
+            BtcBchTransactionDataStore.getInstance(ctx, new BaseWallet()).updateTxBlockHeight(hash, blockHeight, timeStamp);
 
         } else {
             Log.e(TAG, "onTxUpdated: Failed, ctx is null");
@@ -520,7 +514,7 @@ public class BRWalletManager {
             final BRPeerManager pm = BRPeerManager.getInstance();
 
             if (!m.isCreated()) {
-                List<BRTransactionEntity> transactions = TransactionDataSource.getInstance(ctx).getAllTransactions();
+                List<BRTransactionEntity> transactions = BtcBchTransactionDataStore.getInstance(ctx, new BaseWallet()).getAllTransactions();
                 int transactionsCount = transactions.size();
                 if (transactionsCount > 0) {
                     m.createTxArrayWithCount(transactionsCount);
