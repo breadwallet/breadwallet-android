@@ -70,14 +70,7 @@ public class WebViewActivity extends BRActivity {
             }
         });
 
-        theUrl = getIntent().getStringExtra("url");
-        String json = getIntent().getStringExtra("json");
-        if (!setupServerMode(theUrl)) {
-            webView.loadUrl(theUrl);
-            return;
-        }
         String articleId = getIntent().getStringExtra("articleId");
-        if (Utils.isNullOrEmpty(theUrl)) throw new IllegalArgumentException("No url extra!");
 
         WebSettings webSettings = webView.getSettings();
 
@@ -87,18 +80,27 @@ public class WebViewActivity extends BRActivity {
         webSettings.setDomStorageEnabled(true);
         webSettings.setJavaScriptEnabled(true);
 
-        if (articleId != null && !articleId.isEmpty())
-            theUrl = theUrl + "/" + articleId;
+        theUrl = getIntent().getStringExtra("url");
+        String json = getIntent().getStringExtra("json");
+        if (json == null) {
+            if (!setupServerMode(theUrl)) {
+                webView.loadUrl(theUrl);
+                return;
+            }
 
-        Log.d(TAG, "onCreate: theUrl: " + theUrl + ", articleId: " + articleId);
-        if (json != null) {
-            request(webView, json);
-        } else {
+
+            if (articleId != null && !articleId.isEmpty())
+                theUrl = theUrl + "/" + articleId;
+
+            Log.d(TAG, "onCreate: theUrl: " + theUrl + ", articleId: " + articleId);
             webView.loadUrl(theUrl);
+            if (articleId != null && !articleId.isEmpty())
+                navigate(articleId);
+        } else {
+            request(webView, json);
         }
 
-        if (articleId != null && !articleId.isEmpty())
-            navigate(articleId);
+
     }
 
     private void request(WebView webView, String jsonString) {
@@ -118,17 +120,19 @@ public class WebViewActivity extends BRActivity {
             onCloseUrl = closeOn;
 
             Map<String, String> httpHeaders = new HashMap<>();
-            JSONObject jsonHeaders = new JSONObject(headers);
-            while (jsonHeaders.keys().hasNext()) {
-                String key = jsonHeaders.keys().next();
-                jsonHeaders.put(key, jsonHeaders.getString(key));
-            }
+//            JSONObject jsonHeaders = new JSONObject(headers);
+//            while (jsonHeaders.keys().hasNext()) {
+//                String key = jsonHeaders.keys().next();
+//                jsonHeaders.put(key, jsonHeaders.getString(key));
+//            }
             byte[] body = strBody.getBytes();
 
             if (method.equalsIgnoreCase("get")) {
                 webView.loadUrl(url, httpHeaders);
             } else if (method.equalsIgnoreCase("post")) {
+                Log.e(TAG, "request: POST:" + body.length);
                 webView.postUrl(url, body);//todo find a way to add the headers to the post request too
+
             } else {
                 throw new NullPointerException("unexpected method: " + method);
             }

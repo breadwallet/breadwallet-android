@@ -152,6 +152,7 @@ public class LinkPlugin implements Plugin {
 
                     //check all the params
                     String postUrl;
+
                     try {
                         postUrl = json.getString("url");
                         String method = json.getString("method");
@@ -168,7 +169,6 @@ public class LinkPlugin implements Plugin {
 
                     hasBrowser = true;
                     Intent postInt = new Intent(app, WebViewActivity.class);
-                    postInt.putExtra("url", postUrl);
                     postInt.putExtra("json", json.toString());
                     app.startActivity(postInt);
                     ((Activity)app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
