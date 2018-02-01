@@ -31,6 +31,7 @@ public class BRTransactionEntity {
     private int blockheight;
     private long timestamp;
     private String txHash;
+    private String txISO;
 
     public long getBlockheight() {
         return blockheight;
@@ -56,15 +57,24 @@ public class BRTransactionEntity {
         this.txHash = txHash;
     }
 
-    public BRTransactionEntity(byte[] txBuff, int blockheight, long timestamp, String txHash) {
+    public BRTransactionEntity(byte[] txBuff, int blockheight, long timestamp, String txHash, String iso) {
         this.blockheight = blockheight;
         this.timestamp = timestamp;
         this.buff = txBuff;
         this.txHash = txHash;
+        this.txISO = iso;
     }
 
     public byte[] getBuff() {
         return buff;
+    }
+
+    public String getTxISO(){
+        return txISO;
+    }
+
+    public void setTxISO(String iso){
+        this.txISO = iso;
     }
 
 }

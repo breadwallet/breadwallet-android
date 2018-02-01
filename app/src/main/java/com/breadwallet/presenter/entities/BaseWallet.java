@@ -13,6 +13,13 @@ public class BaseWallet implements Serializable {
     private String mWalletBalanceCurrency;
     private String mWalletCurrency;
     private String mTradeValue;
+    private String mWalletType;
+
+    public static class WalletType{
+
+      public static final String BTC_WALLET = "btc";
+      public static final String BCH_WALLET = "bch";
+    }
 
     public String getWalletBalanceCurrency() {
         return mWalletBalanceCurrency;
@@ -56,6 +63,14 @@ public class BaseWallet implements Serializable {
 
     public String getWalletBalanceUSD() {
         return this.mWalletBalanceUSD;
+    }
+
+    public void setWalletType(String type){
+        this.mWalletType = type;
+    }
+
+    public String getWalletType(){
+        return this.mWalletType;
     }
 
 
