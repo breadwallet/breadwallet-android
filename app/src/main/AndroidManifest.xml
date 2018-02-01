@@ -185,9 +185,10 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
+        <!--Use launchMode="standard for WebViewActivity in order to be able to have multiple instances"-->
         <activity
             android:name=".presenter.activities.settings.WebViewActivity"
-            android:launchMode="singleTask"
+            android:launchMode="standard"
             android:screenOrientation="portrait">
         </activity>
         <activity
