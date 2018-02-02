@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities.settings;
 import android.annotation.SuppressLint;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.webkit.ConsoleMessage;
@@ -19,7 +20,6 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.Utils;
-import com.platform.BRHTTPHelper;
 import com.platform.HTTPServer;
 import com.platform.middlewares.plugins.LinkPlugin;
 
@@ -47,26 +47,23 @@ public class WebViewActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web_view);
 
-        webView = (WebView) findViewById(R.id.web_view);
+        webView = findViewById(R.id.web_view);
         webView.setBackgroundColor(0);
-        webView.setWebChromeClient(new BRWebChromeClient());
+//        webView.setWebChromeClient(new BRWebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
-            @Override
-            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl());
-//                Log.d(TAG, "shouldOverrideUrlLoading: " + request.getMethod());
-                if ((onCloseUrl != null && request.getUrl().toString().equalsIgnoreCase(onCloseUrl)) || request.getUrl().toString().contains("_close")) {
-                    onBackPressed();
-                    onCloseUrl = null;
-                    return true;
-                }
-                return false;
-            }
 
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
-//                Log.d(TAG, "onPageStarted: " + url);
                 super.onPageStarted(view, url, favicon);
+                Log.e(TAG, "onPageStarted: " + url);
+                String trimmedUrl = rTrim(url, '/');
+                Uri toUri = Uri.parse(trimmedUrl);
+                if (closeOnMatch(toUri) || toUri.toString().contains("_close")) {
+                    Log.e(TAG, "onPageStarted: close Uri found: " + toUri);
+                    onBackPressed();
+                    onCloseUrl = null;
+                }
+
             }
         });
 
@@ -167,23 +164,59 @@ public class WebViewActivity extends BRActivity {
         return true;
     }
 
+    private boolean closeOnMatch(Uri toUri) {
+        if (onCloseUrl == null) {
+            Log.e(TAG, "closeOnMatch: onCloseUrl is null");
+            return false;
+        }
+        Uri savedCloseUri = Uri.parse(onCloseUrl);
+        Log.e(TAG, "closeOnMatch: toUrl:" + toUri + ", savedCloseUri: " + savedCloseUri);
+        return toUri.getScheme().equalsIgnoreCase(savedCloseUri.getScheme()) && toUri.getHost().equalsIgnoreCase(savedCloseUri.getHost())
+                && toUri.toString().toLowerCase().contains(savedCloseUri.toString().toLowerCase());
+
+    }
+
     @Override
     protected void onSaveInstanceState(Bundle outState) {
     }
 
-    private class BRWebChromeClient extends WebChromeClient {
-        @Override
-        public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-            Log.e(TAG, "onConsoleMessage: consoleMessage: " + consoleMessage.message());
-            return super.onConsoleMessage(consoleMessage);
-        }
-
-        @Override
-        public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
-            Log.e(TAG, "onJsAlert: " + message + ", url: " + url);
-            return super.onJsAlert(view, url, message, result);
-        }
-    }
+//    private class BRWebChromeClient extends WebChromeClient {
+//        @Override
+//        public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+//            Log.e(TAG, "onConsoleMessage: consoleMessage: " + consoleMessage.message());
+//            return super.onConsoleMessage(consoleMessage);
+//        }
+//
+//        @Override
+//        public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+//            Log.e(TAG, "onJsAlert: " + message + ", url: " + url);
+//            return super.onJsAlert(view, url, message, result);
+//        }
+//
+//        @Override
+//        public void onCloseWindow(WebView window) {
+//            super.onCloseWindow(window);
+//            Log.e(TAG, "onCloseWindow: ");
+//        }
+//
+//        @Override
+//        public void onReceivedTitle(WebView view, String title) {
+//            super.onReceivedTitle(view, title);
+//            Log.e(TAG, "onReceivedTitle: view.getUrl:" + view.getUrl());
+//            String trimmedUrl = rTrim(view.getUrl(), '/');
+//            Log.e(TAG, "onReceivedTitle: trimmedUrl:" + trimmedUrl);
+//            Uri toUri = Uri.parse(trimmedUrl);
+//
+////                Log.d(TAG, "onReceivedTitle: " + request.getMethod());
+//            if (closeOnMatch(toUri) || toUri.toString().toLowerCase().contains("_close")) {
+//                Log.e(TAG, "onReceivedTitle: close Uri found: " + toUri);
+//                onBackPressed();
+//                onCloseUrl = null;
+//            }
+//        }
+//
+//        on
+//    }
 
     @Override
     public void onBackPressed() {
@@ -200,6 +233,14 @@ public class WebViewActivity extends BRActivity {
         super.onResume();
         appVisible = true;
         app = this;
+    }
+
+    private String rTrim(String s, char c) {
+        if (s == null) return null;
+        String result = s;
+        while (result.length() > 0 && s.charAt(s.length() - 1) == c)
+            result = s.substring(s.length() - 1);
+        return result;
     }
 
     @Override
