@@ -477,23 +477,35 @@
   <!-- About label -->
   <string name="Settings.about">About</string>
   <!-- Advanced Settings title -->
-  <string name="Settings.advancedTitle">Advanced Settings</string>
+  <string name="Settings.advancedTitle">Advanced</string>
   <!-- i.e. the currency which will be displayed -->
   <string name="Settings.currency">Display Currency</string>
+  <string name="Settings.currencySettings">Currency Settings</string>
+  <string name="Settings.bitcoin">Bitcoin</string>
+  <string name="Settings.bitcoinCash">BitcoinCash</string>
+  <string name="Settings.other">Other</string>
+  <string name="Settings.aboutBread">About Bread</string>
+
+
+
+
+
   <!-- Join Early access label -->
   <string name="Settings.earlyAccess">Join Early Access</string>
   <!-- Are you enjoying bread alert message body -->
   <string name="Settings.enjoying">Are you enjoying Bread?</string>
   <!-- Import wallet label -->
   <string name="Settings.importTitle">Import Wallet</string>
-  <!-- Manage settings section header -->
-  <string name="Settings.manage">Manage</string>
+  <!-- Preferences settings section header -->
+  <string name="Settings.preferences">Preferences</string>
+  <!-- Preferences "Update Pin" section -->
+  <string name="Settings.updatePin">Update Pin</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">Notifications</string>
   <!-- Leave review button label -->
-  <string name="Settings.review">Leave us a Review</string>
+  <string name="Settings.review">Leave a review</string>
   <!-- Share anonymous data label -->
-  <string name="Settings.shareData">Share Anonymous Data</string>
+  <string name="Settings.shareData">Share anonymous usage data</string>
   <!-- Sync blockchain label -->
   <string name="Settings.sync">Sync Blockchain</string>
   <!-- Settings title -->
