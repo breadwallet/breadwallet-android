@@ -72,6 +72,7 @@
     <color name="total_assets_usd_color">#546875</color>
     <color name="bitcoin_cash_row_color">#478559</color>
     <color name="admin_row_color">#e0e5e8</color>
+    <color name="settings_chevron_right">#b3c0c8</color>
 
 
 </resources>
