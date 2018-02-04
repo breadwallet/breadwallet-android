@@ -505,7 +505,7 @@
   <!-- Wallet Settings section header -->
   <string name="Settings.wallet">Wallet</string>
   <!-- Start or recover another wallet menu label. -->
-  <string name="Settings.wipe">Start/Recover Another Wallet</string>
+  <string name="Settings.wipe">Unlink from this device</string>
   <!-- Share data view body -->
   <string name="ShareData.body">Help improve Bread by sharing your anonymous data with us. This does not include any financial information. We respect your financial privacy.</string>
   <!-- Share data header -->
