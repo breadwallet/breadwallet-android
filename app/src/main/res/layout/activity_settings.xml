@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -9,16 +9,51 @@
     android:layout_height="match_parent"
     tools:context="com.breadwallet.presenter.activities.SetPinActivity">
 
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/back_button"
+                android:background="@drawable/ic_chevron_left"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+            <com.breadwallet.presenter.customviews.BRText
+                android:id="@+id/nav_label"
+                android:text="Home"
+                app:customTFont="CircularPro-Bold.otf"
+                android:textSize="16sp"
+                android:layout_marginLeft="20dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+
+        </LinearLayout>
+
+
+
+    </android.support.v7.widget.Toolbar>
+
     <com.breadwallet.presenter.customviews.BRText
         app:customTFont="CircularPro-Bold.otf"
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Settings"
-        android:textColor="@color/almost_black"
-        android:textSize="@dimen/header"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_below="@id/toolbar"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/total_assets_usd_color"
+        android:textSize="28sp"
         android:layout_margin="@dimen/bread_margin"/>
 
     <ListView
@@ -26,14 +61,11 @@
         android:footerDividersEnabled="false"
         android:headerDividersEnabled="false"
         android:background="@color/extra_light_blue_background"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="32dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_below="@id/title"
+
         />
 
-</android.support.constraint.ConstraintLayout>
+</RelativeLayout>

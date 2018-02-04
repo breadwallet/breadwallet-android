@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.entities.BaseWallet;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
@@ -32,6 +33,7 @@ public class TestHomeActivity extends Activity {
 
     private RecyclerView mWalletRecycler;
     private WalletListAdapter mAdapter;
+    private RelativeLayout mSettingsRow;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -58,6 +60,7 @@ public class TestHomeActivity extends Activity {
        walletList.add(bchWallet);
 
        mWalletRecycler = findViewById(R.id.rv_wallet_list);
+       mSettingsRow = findViewById(R.id.settings_row);
        mAdapter = new WalletListAdapter(this, walletList);
 
 
@@ -86,6 +89,14 @@ public class TestHomeActivity extends Activity {
 
            }
        }));
+
+       mSettingsRow.setOnClickListener(new View.OnClickListener() {
+           @Override
+           public void onClick(View view) {
+               Intent intent = new Intent(TestHomeActivity.this, SettingsActivity.class);
+               startActivity(intent);
+           }
+       });
     }
 
     private void startCurrencyActivity(String currency) {
