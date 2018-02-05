@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
@@ -87,6 +89,9 @@ public class BRApiManager {
     }
 
     private Set<CurrencyEntity> getCurrencies(Activity context) {
+        if (ActivityUTILS.isMainThread()) {
+            throw new NetworkOnMainThreadException();
+        }
         Set<CurrencyEntity> set = new LinkedHashSet<>();
         try {
             JSONArray arr = fetchRates(context);
@@ -230,6 +235,10 @@ public class BRApiManager {
 
     private static String urlGET(Context app, String myURL) {
 //        System.out.println("Requested URL_EA:" + myURL);
+        if (ActivityUTILS.isMainThread()) {
+            Log.e(TAG, "urlGET: network on main thread");
+            throw new RuntimeException("network on main thread");
+        }
         Map<String, String> headers = BreadApp.getBreadHeaders();
 
         Request.Builder builder = new Request.Builder()
@@ -272,6 +281,5 @@ public class BRApiManager {
         }
         return response;
     }
-
 
 }

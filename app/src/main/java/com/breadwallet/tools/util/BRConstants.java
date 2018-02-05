@@ -54,6 +54,7 @@ public class BRConstants {
     public static final int REQUEST_PHRASE_BITID = 117;
     public static final int SEND_BCH_REQUEST = 118;
     public static final int PROVE_PHRASE_REQUEST = 119;
+    public static final int UPLOAD_FILE_REQUEST = 120;
 
     /**
      * Request codes for take picture

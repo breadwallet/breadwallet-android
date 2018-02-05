@@ -115,13 +115,19 @@ public class BRWalletManager {
         }
     }
 
-    public void refreshBalance(Activity app) {
-        long nativeBalance = nativeBalance();
-        if (nativeBalance != -1) {
-            setBalance(app, nativeBalance);
-        } else {
-            Log.e(TAG, "UpdateUI, nativeBalance is -1 meaning _wallet was null!");
-        }
+    public void refreshBalance(final Activity app) {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                long nativeBalance = nativeBalance();
+                if (nativeBalance != -1) {
+                    setBalance(app, nativeBalance);
+                } else {
+                    Log.e(TAG, "UpdateUI, nativeBalance is -1 meaning _wallet was null!");
+                }
+            }
+        });
+
     }
 
     public long getBalance(Context context) {
@@ -570,12 +576,7 @@ public class BRWalletManager {
 
             pm.connect();
             if (BRSharedPrefs.getStartHeight(ctx) == 0)
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        BRSharedPrefs.putStartHeight(ctx, BRPeerManager.getCurrentBlockHeight());
-                    }
-                });
+                BRSharedPrefs.putStartHeight(ctx, BRPeerManager.getCurrentBlockHeight());
         } finally {
             itInitiatingWallet = false;
         }
@@ -684,7 +685,7 @@ public class BRWalletManager {
 
     public native long maxFee();
 
-    public native int getTxCount();
+//    public native int getTxCount();
 
     public native long getMinOutputAmountRequested();
 
