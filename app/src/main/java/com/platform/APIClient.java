@@ -314,7 +314,8 @@ public class APIClient {
         if (retryCount > 1)
             throw new RuntimeException("sendRequest: Warning retryCount is: " + retryCount);
         if (ActivityUTILS.isMainThread()) {
-            throw new NetworkOnMainThreadException();
+            Log.e(TAG, "urlGET: network on main thread");
+            throw new RuntimeException("network on main thread");
         }
 
         Map<String, String> headers = BreadApp.getBreadHeaders();

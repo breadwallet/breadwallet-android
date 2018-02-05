@@ -106,8 +106,7 @@ public class PostAuth {
             app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         } else {
             if (authAsked) {
-                Log.e(TAG, new Object() {
-                }.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+                Log.e(TAG, getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
                 isStuckWithAuthLoop = true;
             }
             return;

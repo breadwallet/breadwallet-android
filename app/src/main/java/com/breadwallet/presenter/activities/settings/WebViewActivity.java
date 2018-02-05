@@ -1,6 +1,8 @@
 package com.breadwallet.presenter.activities.settings;
 
 import android.annotation.SuppressLint;
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -14,11 +16,13 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.HTTPServer;
 import com.platform.middlewares.plugins.LinkPlugin;
@@ -36,6 +40,7 @@ public class WebViewActivity extends BRActivity {
     public static boolean appVisible = false;
     private static WebViewActivity app;
     private String onCloseUrl;
+    private ValueCallback<Uri[]> uploadMessage;
 
     public static WebViewActivity getApp() {
         return app;
@@ -49,7 +54,7 @@ public class WebViewActivity extends BRActivity {
 
         webView = findViewById(R.id.web_view);
         webView.setBackgroundColor(0);
-//        webView.setWebChromeClient(new BRWebChromeClient());
+        webView.setWebChromeClient(new BRWebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
 
             @Override
@@ -65,6 +70,8 @@ public class WebViewActivity extends BRActivity {
                 }
 
             }
+
+
         });
 
         String articleId = getIntent().getStringExtra("articleId");
@@ -128,7 +135,7 @@ public class WebViewActivity extends BRActivity {
                 webView.loadUrl(url, httpHeaders);
             } else if (method.equalsIgnoreCase("post")) {
                 Log.e(TAG, "request: POST:" + body.length);
-                webView.postUrl(url, body);//todo find a way to add the headers to the post request too
+                webView.postUrl(url, body);
 
             } else {
                 throw new NullPointerException("unexpected method: " + method);
@@ -180,43 +187,63 @@ public class WebViewActivity extends BRActivity {
     protected void onSaveInstanceState(Bundle outState) {
     }
 
-//    private class BRWebChromeClient extends WebChromeClient {
-//        @Override
-//        public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
-//            Log.e(TAG, "onConsoleMessage: consoleMessage: " + consoleMessage.message());
-//            return super.onConsoleMessage(consoleMessage);
-//        }
-//
-//        @Override
-//        public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
-//            Log.e(TAG, "onJsAlert: " + message + ", url: " + url);
-//            return super.onJsAlert(view, url, message, result);
-//        }
-//
-//        @Override
-//        public void onCloseWindow(WebView window) {
-//            super.onCloseWindow(window);
-//            Log.e(TAG, "onCloseWindow: ");
-//        }
-//
-//        @Override
-//        public void onReceivedTitle(WebView view, String title) {
-//            super.onReceivedTitle(view, title);
-//            Log.e(TAG, "onReceivedTitle: view.getUrl:" + view.getUrl());
-//            String trimmedUrl = rTrim(view.getUrl(), '/');
-//            Log.e(TAG, "onReceivedTitle: trimmedUrl:" + trimmedUrl);
-//            Uri toUri = Uri.parse(trimmedUrl);
-//
-////                Log.d(TAG, "onReceivedTitle: " + request.getMethod());
-//            if (closeOnMatch(toUri) || toUri.toString().toLowerCase().contains("_close")) {
-//                Log.e(TAG, "onReceivedTitle: close Uri found: " + toUri);
-//                onBackPressed();
-//                onCloseUrl = null;
-//            }
-//        }
-//
-//        on
-//    }
+    private class BRWebChromeClient extends WebChromeClient {
+        @Override
+        public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+            Log.e(TAG, "onConsoleMessage: consoleMessage: " + consoleMessage.message());
+            return super.onConsoleMessage(consoleMessage);
+        }
+
+        @Override
+        public boolean onJsAlert(WebView view, String url, String message, JsResult result) {
+            Log.e(TAG, "onJsAlert: " + message + ", url: " + url);
+            return super.onJsAlert(view, url, message, result);
+        }
+
+        @Override
+        public void onCloseWindow(WebView window) {
+            super.onCloseWindow(window);
+            Log.e(TAG, "onCloseWindow: ");
+        }
+
+        @Override
+        public void onReceivedTitle(WebView view, String title) {
+            super.onReceivedTitle(view, title);
+            Log.e(TAG, "onReceivedTitle: view.getUrl:" + view.getUrl());
+            String trimmedUrl = rTrim(view.getUrl(), '/');
+            Log.e(TAG, "onReceivedTitle: trimmedUrl:" + trimmedUrl);
+            Uri toUri = Uri.parse(trimmedUrl);
+
+//                Log.d(TAG, "onReceivedTitle: " + request.getMethod());
+            if (closeOnMatch(toUri) || toUri.toString().toLowerCase().contains("_close")) {
+                Log.e(TAG, "onReceivedTitle: close Uri found: " + toUri);
+                onBackPressed();
+                onCloseUrl = null;
+            }
+        }
+
+        public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
+            // make sure there is no existing message
+            Log.e(TAG, "onShowFileChooser: " + filePathCallback);
+            if (uploadMessage != null) {
+                uploadMessage.onReceiveValue(null);
+                uploadMessage = null;
+            }
+
+            uploadMessage = filePathCallback;
+
+            Intent intent = fileChooserParams.createIntent();
+            try {
+                startActivityForResult(intent, BRConstants.UPLOAD_FILE_REQUEST);
+            } catch (ActivityNotFoundException e) {
+                uploadMessage = null;
+                Toast.makeText(WebViewActivity.this, "Cannot open file chooser", Toast.LENGTH_LONG).show();
+                return false;
+            }
+
+            return true;
+        }
+    }
 
     @Override
     public void onBackPressed() {
@@ -226,6 +253,14 @@ public class WebViewActivity extends BRActivity {
             super.onBackPressed();
         }
         overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
+    }
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == BRConstants.UPLOAD_FILE_REQUEST) {
+            if (uploadMessage == null) return;
+            uploadMessage.onReceiveValue(WebChromeClient.FileChooserParams.parseResult(resultCode, data));
+            uploadMessage = null;
+        }
     }
 
     @Override
