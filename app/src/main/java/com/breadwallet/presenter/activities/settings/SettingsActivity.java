@@ -259,7 +259,7 @@ public class SettingsActivity extends BRActivity {
                 }
             }, false));
         }
-        
+
 
     }
 
