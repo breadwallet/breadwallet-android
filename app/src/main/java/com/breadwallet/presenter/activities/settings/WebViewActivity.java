@@ -5,7 +5,6 @@ import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -97,7 +96,6 @@ public class WebViewActivity extends BRActivity {
             }
 
 
-
         });
 
         topToolbar = findViewById(R.id.toolbar);
@@ -135,7 +133,7 @@ public class WebViewActivity extends BRActivity {
                 theUrl = theUrl + "/" + articleId;
 
             Log.d(TAG, "onCreate: theUrl: " + theUrl + ", articleId: " + articleId);
-            if(!theUrl.contains("checkout")){
+            if (!theUrl.contains("checkout")) {
                 bottomToolbar.setVisibility(View.INVISIBLE);
             }
             webView.loadUrl(theUrl);
@@ -162,17 +160,12 @@ public class WebViewActivity extends BRActivity {
                 onHideKeyboard();
                 Log.d(TAG, "Hiding keyboard");
 
-                //Intent intent = new Intent("KeyboardWillHide");
-                //broadcastManager.sendBroadcast(intent);
             } else {
                 int keyboardHeight = heightDiff - contentViewTop;
                 onShowKeyboard(keyboardHeight);
                 Log.d(TAG, "Showing keyboard");
 
 
-                //Intent intent = new Intent("KeyboardWillShow");
-                //intent.putExtra("KeyboardHeight", keyboardHeight);
-                //broadcastManager.sendBroadcast(intent);
             }
         }
     };
