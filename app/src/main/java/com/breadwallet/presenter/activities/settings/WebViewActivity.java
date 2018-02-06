@@ -14,17 +14,21 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.webkit.ConsoleMessage;
 import android.webkit.JsResult;
+import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.Toast;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
+import android.widget.Toolbar;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -60,6 +64,13 @@ public class WebViewActivity extends BRActivity {
         return app;
     }
 
+    private Toolbar topToolbar;
+    private Toolbar bottomToolbar;
+    private BRText mCloseButton;
+    private ImageButton mReloadButton;
+    private ImageButton mBackButton;
+    private ImageButton mForwardButton;
+
     @SuppressLint("SetJavaScriptEnabled")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,6 +99,14 @@ public class WebViewActivity extends BRActivity {
 
         });
 
+        topToolbar = findViewById(R.id.toolbar);
+        bottomToolbar = findViewById(R.id.toolbar_bottom);
+        mCloseButton = findViewById(R.id.close);
+        mReloadButton = findViewById(R.id.reload);
+        mForwardButton = findViewById(R.id.webview_forward_arrow);
+        mBackButton = findViewById(R.id.webview_back_arrow);
+
+
         String articleId = getIntent().getStringExtra("articleId");
 
         WebSettings webSettings = webView.getSettings();
@@ -100,9 +119,12 @@ public class WebViewActivity extends BRActivity {
 
         theUrl = getIntent().getStringExtra("url");
         String json = getIntent().getStringExtra("json");
+
+
         if (json == null) {
             if (!setupServerMode(theUrl)) {
                 webView.loadUrl(theUrl);
+
                 return;
             }
 
@@ -116,16 +138,69 @@ public class WebViewActivity extends BRActivity {
                 navigate(articleId);
         } else {
             request(webView, json);
+
         }
 
 
     }
 
-    private void request(WebView webView, String jsonString) {
+    private void request(final WebView webView, final String jsonString) {
         try {
             JSONObject json = new JSONObject(jsonString);
 
             String url = json.getString("url");
+            if (url != null && url.contains("simplex")) {
+
+                // Make the top and bottom toolbars visible for Simplex flow
+                topToolbar.setVisibility(View.VISIBLE);
+                bottomToolbar.setVisibility(View.VISIBLE);
+
+                // Position the webview below the top toolbar
+                RelativeLayout.LayoutParams webviewParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                webviewParams.addRule(RelativeLayout.BELOW, R.id.toolbar);
+                webView.setLayoutParams(webviewParams);
+
+
+                // Make the reload/refresh button functional
+                mReloadButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        request(webView, jsonString);
+
+                    }
+                });
+
+
+                // Make the close button functional
+                mCloseButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        onBackPressed();
+                    }
+                });
+
+                // Make the back button functional
+                mBackButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+
+                        if (webView.canGoBack()) {
+                            webView.goBack();
+                        }
+                    }
+                });
+
+
+                // Make the forward button functional
+                mForwardButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        if (webView.canGoForward()) {
+                            webView.goForward();
+                        }
+                    }
+                });
+            }
             String method = json.getString("method");
             String strBody = json.getString("body");
             String headers = json.getString("headers");
