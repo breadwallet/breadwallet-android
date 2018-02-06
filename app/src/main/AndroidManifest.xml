@@ -189,6 +189,8 @@
         <activity
             android:name=".presenter.activities.settings.WebViewActivity"
             android:launchMode="standard"
+            android:windowSoftInputMode="adjustResize"
+            android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait">
         </activity>
         <activity

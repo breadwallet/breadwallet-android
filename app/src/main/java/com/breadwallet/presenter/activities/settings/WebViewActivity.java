@@ -16,6 +16,8 @@ import android.webkit.ConsoleMessage;
 import android.webkit.JsResult;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.Window;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -70,6 +72,10 @@ public class WebViewActivity extends BRActivity {
     private ImageButton mReloadButton;
     private ImageButton mBackButton;
     private ImageButton mForwardButton;
+    private RelativeLayout mRootView;
+
+    private boolean keyboardListenersAttached = false;
+
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -94,6 +100,20 @@ public class WebViewActivity extends BRActivity {
                     onCloseUrl = null;
                 }
 
+                if (view.canGoBack()) {
+                    mBackButton.setBackground(getDrawable(R.drawable.ic_webview_left));
+                } else {
+                    mBackButton.setBackground(getDrawable(R.drawable.ic_webview_left_inactive));
+
+                }
+                if (view.canGoForward()) {
+                    mForwardButton.setBackground(getDrawable(R.drawable.ic_webview_right));
+
+                } else {
+                    mForwardButton.setBackground(getDrawable(R.drawable.ic_webview_right_inactive));
+
+                }
+
             }
 
 
@@ -105,6 +125,7 @@ public class WebViewActivity extends BRActivity {
         mReloadButton = findViewById(R.id.reload);
         mForwardButton = findViewById(R.id.webview_forward_arrow);
         mBackButton = findViewById(R.id.webview_back_arrow);
+        mRootView = findViewById(R.id.webview_parent);
 
 
         String articleId = getIntent().getStringExtra("articleId");
@@ -133,6 +154,9 @@ public class WebViewActivity extends BRActivity {
                 theUrl = theUrl + "/" + articleId;
 
             Log.d(TAG, "onCreate: theUrl: " + theUrl + ", articleId: " + articleId);
+            if (!theUrl.contains("checkout")) {
+                bottomToolbar.setVisibility(View.INVISIBLE);
+            }
             webView.loadUrl(theUrl);
             if (articleId != null && !articleId.isEmpty())
                 navigate(articleId);
@@ -141,15 +165,61 @@ public class WebViewActivity extends BRActivity {
 
         }
 
+        //attachKeyboardListeners();
+
 
     }
 
+    private ViewTreeObserver.OnGlobalLayoutListener keyboardLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
+        @Override
+        public void onGlobalLayout() {
+            int heightDiff = mRootView.getRootView().getHeight() - mRootView.getHeight();
+            int contentViewTop = getWindow().findViewById(Window.ID_ANDROID_CONTENT).getHeight();
+
+
+            if (heightDiff <= contentViewTop) {
+                onHideKeyboard();
+                Log.d(TAG, "Hiding keyboard");
+
+            } else {
+                int keyboardHeight = heightDiff - contentViewTop;
+                onShowKeyboard(keyboardHeight);
+                Log.d(TAG, "Showing keyboard");
+
+
+            }
+        }
+    };
+
+    protected void onShowKeyboard(int keyboardHeight) {
+        bottomToolbar.setVisibility(View.INVISIBLE);
+    }
+
+    protected void onHideKeyboard() {
+        bottomToolbar.setVisibility(View.VISIBLE);
+
+    }
+
+    protected void attachKeyboardListeners() {
+        if (keyboardListenersAttached) {
+            return;
+        }
+
+        mRootView.getViewTreeObserver().addOnGlobalLayoutListener(keyboardLayoutListener);
+
+        keyboardListenersAttached = true;
+    }
+
+
     private void request(final WebView webView, final String jsonString) {
+
         try {
             JSONObject json = new JSONObject(jsonString);
 
             String url = json.getString("url");
-            if (url != null && url.contains("simplex")) {
+            Log.d(TAG, "Loading -> " + url);
+            if (url != null && url.contains("checkout")) {
+                attachKeyboardListeners();
 
                 // Make the top and bottom toolbars visible for Simplex flow
                 topToolbar.setVisibility(View.VISIBLE);
@@ -448,6 +518,15 @@ public class WebViewActivity extends BRActivity {
         super.onPause();
         appVisible = false;
         LinkPlugin.hasBrowser = false;
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (keyboardListenersAttached) {
+            mRootView.getViewTreeObserver().removeGlobalOnLayoutListener(keyboardLayoutListener);
+        }
     }
 
 }
