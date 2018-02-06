@@ -31,7 +31,7 @@ import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.interfaces.OnBalanceChanged;
+import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 
 import static com.breadwallet.tools.animation.BRAnimator.animateBackgroundDim;
 import static com.breadwallet.tools.animation.BRAnimator.animateSignalSlide;
@@ -110,9 +110,10 @@ public class FragmentReceive extends Fragment {
         separator2 = rootView.findViewById(R.id.separator2);
         separator2.setVisibility(View.GONE);
         setListeners();
-        WalletsMaster.getInstance().addBalanceChangedListener(new OnBalanceChanged() {
+
+        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(new OnBalanceChangedListener() {
             @Override
-            public void onBalanceChanged(String iso, long balance) {
+            public void onBalanceChanged(String iso, long newBalance) {
                 updateQr();
             }
         });

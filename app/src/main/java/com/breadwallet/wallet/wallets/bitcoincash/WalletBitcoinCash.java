@@ -36,13 +36,14 @@ import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
+import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.wallets.bitcoin.BitcoinUriParser;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWallet;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoin;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.exceptions.AmountSmallerThanMinException;
 import com.breadwallet.wallet.wallets.exceptions.FeeNeedsAdjust;
@@ -86,7 +87,7 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  */
 public class WalletBitcoinCash implements BaseWallet {
 
-    private static final String TAG = WalletBitcoin.class.getName();
+    private static final String TAG = WalletBitcoinManager.class.getName();
 
     private static String BCH = "BCH";
     private static String mBCH = "mBCH";
@@ -100,7 +101,7 @@ public class WalletBitcoinCash implements BaseWallet {
     private final static long FEE_EXPIRATION_MILLIS = 72 * 60 * 60 * 1000L;
 
     private boolean itInitiatingWallet;
-    public List<OnBalanceChanged> balanceListeners;
+    public List<OnBalanceChangedListener> balanceListeners;
     private boolean timedOut;
     private boolean sending;
 

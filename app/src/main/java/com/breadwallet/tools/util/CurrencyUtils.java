@@ -5,7 +5,7 @@ import android.content.Context;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWallet;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoin;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -59,7 +59,7 @@ public class CurrencyUtils {
         decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
 //        int decimalPoints = 0;
         if (Objects.equals(isoCurrencyCode, "BTC")) {
-            symbol = WalletBitcoin.getInstance().getSymbol(app);
+            symbol = WalletBitcoinManager.getInstance().getSymbol(app);
         } else {
             try {
                 currency = Currency.getInstance(isoCurrencyCode);

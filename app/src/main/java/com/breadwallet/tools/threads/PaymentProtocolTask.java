@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
+import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.exceptions.CertificateChainNotFound;
@@ -92,7 +93,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 return null;
             }
 
-            paymentRequest = BitcoinUriParser.parsePaymentRequest(serializedBytes);
+//            paymentRequest = BitcoinUriParser.parsePaymentRequest(serializedBytes);//todo implement that
 
             if (paymentRequest == null || paymentRequest.error == PaymentRequestWrapper.INVALID_REQUEST_ERROR) {
                 Log.e(TAG, "paymentRequest is null!!!");
@@ -151,7 +152,8 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             StringBuilder allAddresses = new StringBuilder();
             for (String s : paymentRequest.addresses) {
                 allAddresses.append(s).append(", ");
-                if (!WalletsMaster.validateAddress(s)) {
+                BRCoreAddress addr = new BRCoreAddress(s);
+                if (!addr.isValid()) {
                     if (app != null)
                         BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_invalidAddressTitle) + ": " + s, app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                             @Override
@@ -322,7 +324,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(app);
+                BaseWallet wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
 
                 double minOutput = wallet.getWallet().getMinOutputAmount();
                 if (paymentRequest.amount < minOutput) {
@@ -342,7 +344,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 
                     return;
                 }
-                WalletsMaster master = WalletsMaster.getInstance();
+                WalletsMaster master = WalletsMaster.getInstance(app);
                 final long total = paymentRequest.amount + paymentRequest.fee;
 
                 BigDecimal bigAm = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(paymentRequest.amount));

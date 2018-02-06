@@ -17,7 +17,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -27,7 +26,6 @@ import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWallet;
 import com.platform.tools.KVStoreManager;
@@ -215,7 +213,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void setTexts(final TxHolder convertView, int position) {
-        BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(mContext);
+        BaseWallet wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
         TxUiHolder item = itemFeed.get(TxManager.getInstance().currentPrompt == null ? position : position - 1);
         item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
         String commentString = (item.metaData == null || item.metaData.comment == null) ? "" : item.metaData.comment;
@@ -322,7 +320,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         boolean isBTCPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
         String iso = isBTCPreferred ? "BTC" : BRSharedPrefs.getPreferredFiatIso(mContext);
-        convertView.amount.setText(CurrencyUtils.getFormattedCurrencyString(mContext, iso, WalletsMaster.getInstance().getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
+        convertView.amount.setText(CurrencyUtils.getFormattedCurrencyString(mContext, iso, WalletsMaster.getInstance(mContext).getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
 
         //if it's 0 we use the current time.
         long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * 1000;
