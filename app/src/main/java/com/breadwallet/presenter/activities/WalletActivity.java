@@ -165,7 +165,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     private void updateUi() {
-        BaseWallet currentWallet = WalletsMaster.getInstance().getCurrentWallet(this);
+        BaseWallet currentWallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
         Log.e(TAG, "updateUi: " + currentWallet.getIso(this));
 
         if (currentWallet.getUiConfiguration().buyVisible) {

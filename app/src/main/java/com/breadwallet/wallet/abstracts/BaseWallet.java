@@ -52,6 +52,8 @@ public interface BaseWallet {
     //get the core wallet
     BRCoreWallet getWallet();
 
+    void addBalanceChangedListener(OnBalanceChangedListener list);
+
     //get the core peerManager
     BRCorePeerManager getPeerManager();
 

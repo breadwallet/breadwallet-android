@@ -21,7 +21,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.wallet.abstracts.BaseWallet;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoin;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.bitcoincash.WalletBitcoinCash;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
@@ -64,8 +64,9 @@ public class WalletsMaster {
 
     private List<BaseWallet> mWallets = new ArrayList<>();
 
+
     private WalletsMaster(Context app) {
-        mWallets.add(WalletBitcoin.getInstance(app));
+        mWallets.add(WalletBitcoinManager.getInstance(app));
         mWallets.add(WalletBitcoinCash.getInstance(app));
     }
 
@@ -83,7 +84,7 @@ public class WalletsMaster {
     //return the needed wallet for the iso
     public BaseWallet getWalletByIso(Context app, String iso) {
         if (Utils.isNullOrEmpty(iso)) return null;
-        if (iso.equalsIgnoreCase("BTC")) return WalletBitcoin.getInstance(app);
+        if (iso.equalsIgnoreCase("BTC")) return WalletBitcoinManager.getInstance(app);
         if (iso.equalsIgnoreCase("BCH")) return WalletBitcoinCash.getInstance(app);
         return null;
     }
@@ -144,7 +145,7 @@ public class WalletsMaster {
             throw new RuntimeException("nulTermPhrase is null");
         byte[] seed = BRCoreKey.getSeedFromPhrase(phrase);
         if (seed == null || seed.length == 0) throw new RuntimeException("seed is null");
-        byte[] authKey = getAuthPrivKeyForAPI(seed);
+        byte[] authKey = BRCoreKey.getAuthPrivKeyForAPI(seed);
         if (authKey == null || authKey.length == 0) {
             BRReportsManager.reportBug(new IllegalArgumentException("authKey is invalid"), true);
         }
@@ -222,16 +223,7 @@ public class WalletsMaster {
 
     }
 
-    public static boolean refreshAddress(Context app) {
-        String address = getInstance(app).getCurrentWallet(app).getReceiveAddress(app);
-        if (Utils.isNullOrEmpty(address)) {
-            Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
-            return false;
-        }
-        BRSharedPrefs.putReceiveAddress(app, address);
-        return true;
 
-    }
 
     public void wipeWalletButKeystore(final Context ctx) {
         Log.d(TAG, "wipeWalletButKeystore");
@@ -299,5 +291,6 @@ public class WalletsMaster {
 
         }
     }
+
 
 }

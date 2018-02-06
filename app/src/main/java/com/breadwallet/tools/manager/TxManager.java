@@ -122,7 +122,7 @@ public class TxManager {
             @Override
             public void run() {
                 String currentIso = BRSharedPrefs.getCurrentWalletIso(app);
-                BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(app);
+                BaseWallet wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
                 final double progress = wallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(app, currentIso));
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
@@ -185,7 +185,7 @@ public class TxManager {
     @WorkerThread
     public synchronized void updateTxList(final Context app) {
         long start = System.currentTimeMillis();
-        BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(app);
+        BaseWallet wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
 
         final List<TxUiHolder> items = wallet.getTxUiHolders();
 

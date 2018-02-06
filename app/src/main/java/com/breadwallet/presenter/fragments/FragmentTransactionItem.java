@@ -161,7 +161,7 @@ public class FragmentTransactionItem extends Fragment {
         BigDecimal txAmount = new BigDecimal(item.getReceived() - item.getSent()).abs();
         //see if it was sent
         boolean sent = item.getReceived() - item.getSent() < 0;
-        WalletsMaster master = WalletsMaster.getInstance();
+        WalletsMaster master = WalletsMaster.getInstance(getActivity());
         //calculated and formatted amount for iso
         String amountWithFee = CurrencyUtils.getFormattedCurrencyString(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), txAmount));
         String amount = CurrencyUtils.getFormattedCurrencyString(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), item.getFee() == -1 ? txAmount : txAmount.subtract(new BigDecimal(item.getFee()))));
@@ -244,7 +244,7 @@ public class FragmentTransactionItem extends Fragment {
     }
 
     private int getLevel(TxUiHolder item) {
-        BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(getActivity());
+        BaseWallet wallet = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(getContext()) - blockHeight + 1;
         int level;

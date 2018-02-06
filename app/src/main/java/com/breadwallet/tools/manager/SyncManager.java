@@ -120,7 +120,7 @@ public class SyncManager {
             if (running) return;
             try {
                 app = BreadApp.getBreadContext();
-                mWallet = WalletsMaster.getInstance().getCurrentWallet(app);
+                mWallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
                 progressStatus = 0;
                 running = true;
                 Log.d(TAG, "run: starting: " + progressStatus);

@@ -23,7 +23,7 @@ import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoin;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.BRBitId;
 import com.platform.tools.KVStoreManager;
@@ -168,7 +168,7 @@ public class PostAuth {
             } else {
                 if (phraseForKeyStore.length() != 0) {
                     BRSharedPrefs.putPhraseWroteDown(app, true);
-                    WalletBitcoin bitcoin = WalletBitcoin.getInstance(app);
+                    WalletBitcoinManager bitcoin = WalletBitcoinManager.getInstance(app);
                     byte[] seed = BRCoreKey.getSeedFromPhrase(phraseForKeyStore.getBytes());
                     byte[] authKey = bitcoin.getAuthPrivKeyForAPI(seed);
                     BRKeyStore.putAuthKey(authKey, app);

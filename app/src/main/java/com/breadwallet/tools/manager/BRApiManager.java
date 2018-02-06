@@ -201,7 +201,7 @@ public class BRApiManager {
     }
 
     public static void updateFeePerKb(Context app) {
-        WalletsMaster wm = WalletsMaster.getInstance();
+        WalletsMaster wm = WalletsMaster.getInstance(app);
         for(BaseWallet wallet : wm.getAllWallets()){
             wallet.updateFee(app);
         }

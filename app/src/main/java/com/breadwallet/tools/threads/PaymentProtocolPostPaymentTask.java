@@ -96,7 +96,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
                 return null;
             }
 
-            message = BitcoinUriParser.parsePaymentACK(serializedBytes);
+//            message = BitcoinUriParser.parsePaymentACK(serializedBytes);//todo implement that
 //            PostAuth.getInstance().setTmpPaymentRequest(paymentRequest);
 //            PostAuth.getInstance().onPaymentProtocolRequest(app,false);
         } catch (Exception e) {

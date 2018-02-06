@@ -217,7 +217,7 @@ public class BitcoinUriParser {
         } else {
             BRAnimator.killAllFragments(app);
             BRCoreTransaction tx =  wallet.getWallet().createTransaction(new BigDecimal(amount).longValue(), new BRCoreAddress(requestObject.address));
-            WalletBitcoin.getInstance(app).sendTransaction(app, new PaymentItem(tx, null, false, null));
+            WalletBitcoinManager.getInstance(app).sendTransaction(app, new PaymentItem(tx, null, false, null));
         }
 
         return true;

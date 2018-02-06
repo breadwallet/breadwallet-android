@@ -36,7 +36,6 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.wallet.interfaces.OnTxAdded;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,17 +57,17 @@ public class TransactionDataSource implements BRDataSourceInterface {
     };
 
 
-    List<OnTxAdded> listeners = new ArrayList<>();
-
-    public void addTxAddedListener(OnTxAdded listener) {
-        if (!listeners.contains(listener))
-            listeners.add(listener);
-    }
-
-    public void removeListener(OnTxAdded listener) {
-        listeners.remove(listener);
-
-    }
+//    List<OnTxAdded> listeners = new ArrayList<>();
+//
+//    public void addTxAddedListener(OnTxAdded listener) {
+//        if (!listeners.contains(listener))
+//            listeners.add(listener);
+//    }
+//
+//    public void removeListener(OnTxAdded listener) {
+//        listeners.remove(listener);
+//
+//    }
 
     private static TransactionDataSource instance;
 
@@ -102,9 +101,9 @@ public class TransactionDataSource implements BRDataSourceInterface {
             BRTransactionEntity transactionEntity1 = cursorToTransaction(cursor);
 
             database.setTransactionSuccessful();
-            for (OnTxAdded listener : listeners) {
-                if (listener != null) listener.onTxAdded("BTC");
-            }
+//            for (OnTxAdded listener : listeners) {
+//                if (listener != null) listener.onTxAdded("BTC");
+//            }
             return transactionEntity1;
         } catch (Exception ex) {
             BRReportsManager.reportBug(ex);

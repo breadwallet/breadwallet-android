@@ -211,7 +211,7 @@ public class FragmentRequestAmount extends Fragment {
                 if (!BRAnimator.isClickAllowed()) return;
                 showKeyboard(false);
                 String iso = selectedIso;
-                WalletsMaster master = WalletsMaster.getInstance();
+                WalletsMaster master = WalletsMaster.getInstance(getActivity());
                 String strAmount = amountEdit.getText().toString();
                 BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
                 long amount = master.getCurrentWallet(getActivity()).getSmallestCryptoForFiat(getActivity(), bigAmount).longValue();
@@ -226,7 +226,7 @@ public class FragmentRequestAmount extends Fragment {
                 removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
                 showKeyboard(false);
-                WalletsMaster master = WalletsMaster.getInstance();
+                WalletsMaster master = WalletsMaster.getInstance(getActivity());
                 String iso = selectedIso;
                 String strAmount = amountEdit.getText().toString();
                 BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
@@ -354,7 +354,7 @@ public class FragmentRequestAmount extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        mWallet = WalletsMaster.getInstance().getCurrentWallet(getActivity());
+        mWallet = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
     }
 
     @Override
@@ -445,7 +445,7 @@ public class FragmentRequestAmount extends Fragment {
     private boolean generateQrImage(String address, String strAmount, String iso) {
         String amountArg = "";
         if (strAmount != null && !strAmount.isEmpty()) {
-            WalletsMaster master = WalletsMaster.getInstance();
+            WalletsMaster master = WalletsMaster.getInstance(getActivity());
             BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
             long amount = master.getCurrentWallet(getActivity()).getSmallestCryptoForFiat(getActivity(), bigAmount).longValue();
             String am = new BigDecimal(amount).divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString();

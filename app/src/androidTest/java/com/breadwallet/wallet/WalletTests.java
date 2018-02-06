@@ -13,7 +13,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.wallet.wallets.bitcoin.BitcoinUriParser;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoin;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 
 import org.junit.After;
@@ -162,7 +162,7 @@ public class WalletTests {
     @Test
     public void walletBitcoinTests() {
         Activity app = mActivityRule.getActivity();
-        WalletBitcoin wallet = WalletBitcoin.getInstance();
+        WalletBitcoinManager wallet = WalletBitcoinManager.getInstance();
 
         BRSharedPrefs.putPreferredFiatIso(app, "USD");
 
