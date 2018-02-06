@@ -27,7 +27,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:text="Home"
+                android:text="Settings"
                 android:textSize="16sp"
                 app:customTFont="CircularPro-Bold.otf" />
 
@@ -52,7 +52,7 @@
 
     <RelativeLayout
         android:id="@+id/redeem_private_key_row"
-        android:background="@color/white"
+        android:background="@drawable/settings_row_shape"
         android:layout_below="@id/title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
@@ -83,6 +83,41 @@
 
 
     </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rescan_row"
+        android:background="@drawable/settings_row_shape"
+        android:layout_below="@id/redeem_private_key_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/rescan"
+            android:text="Rescan Blockchain"
+            android:textSize="16sp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:textColor="@color/total_assets_usd_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <ImageButton
+            android:id="@+id/rescan_chevron_right"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/ic_rescan"
+            android:layout_marginRight="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+
+    </RelativeLayout>
+
 
 
 </RelativeLayout>

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -15,27 +15,60 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="@dimen/bread_margin"
         android:layout_marginStart="@dimen/bread_margin"
-        android:layout_marginTop="@dimen/bread_margin"
+        android:layout_marginTop="50dp"
         android:text="@string/Settings.advancedTitle"
-        android:textColor="@color/almost_black"
-        android:textSize="@dimen/header"
-        app:customTFont="CircularPro-Bold.otf"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        android:textColor="@color/total_assets_usd_color"
+        android:layout_alignParentRight="true"
+        android:textSize="28sp"
+        app:customTFont="CircularPro-Bold.otf" />
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_chevron_left" />
+
+
+            <com.breadwallet.presenter.customviews.BRText
+                android:id="@+id/nav_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="Settings"
+                android:textSize="16sp"
+                app:customTFont="CircularPro-Bold.otf" />
+
+
+        </LinearLayout>
+
+
+    </android.support.v7.widget.Toolbar>
+
 
     <ListView
         android:id="@+id/settings_list"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginTop="0dp"
-        android:background="@color/extra_light_blue_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:footerDividersEnabled="false"
         android:headerDividersEnabled="false"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title"
-        app:layout_constraintVertical_bias="0.0"/>
+        android:layout_below="@id/title"/>
 
-</android.support.constraint.ConstraintLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:layout_below="@id/settings_list"
+        android:background="@color/pin_pad_text"/>
+
+</RelativeLayout>

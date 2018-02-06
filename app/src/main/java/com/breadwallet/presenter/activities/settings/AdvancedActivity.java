@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageButton;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -35,6 +36,7 @@ public class AdvancedActivity extends BRActivity {
     public static AdvancedActivity getApp() {
         return app;
     }
+    private ImageButton mBackButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,14 @@ public class AdvancedActivity extends BRActivity {
         setContentView(R.layout.activity_advanced);
 
         listView = (ListView) findViewById(R.id.settings_list);
+        mBackButton = findViewById(R.id.back_button);
+
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
     }
 
@@ -125,14 +135,16 @@ public class AdvancedActivity extends BRActivity {
 
             }
         }, false));
-        items.add(new BRSettingsItem(getString(R.string.BCH_title), "", new View.OnClickListener() {
+
+
+        /*items.add(new BRSettingsItem(getString(R.string.BCH_title), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(AdvancedActivity.this, WithdrawBchActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.empty_300);
             }
-        }, false));
+        }, false));*/
 
 
     }

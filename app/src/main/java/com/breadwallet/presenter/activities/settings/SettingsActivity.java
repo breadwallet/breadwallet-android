@@ -17,15 +17,13 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.CurrencySettingsActivity;
 import com.breadwallet.presenter.activities.UpdatePinActivity;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
-import com.platform.APIClient;
-import com.platform.HTTPServer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -176,7 +174,8 @@ public class SettingsActivity extends BRActivity {
         items.add(new BRSettingsItem(getString(R.string.Settings_bitcoin), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, DisplayCurrencyActivity.class);
+                Intent intent = new Intent(SettingsActivity.this, CurrencySettingsActivity.class);
+                intent.putExtra(CurrencySettingsActivity.EXTRA_CURRENCY, "btc");
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
@@ -185,7 +184,8 @@ public class SettingsActivity extends BRActivity {
         items.add(new BRSettingsItem(getString(R.string.Settings_bitcoinCash), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, DisplayCurrencyActivity.class);
+                Intent intent = new Intent(SettingsActivity.this, CurrencySettingsActivity.class);
+                intent.putExtra(CurrencySettingsActivity.EXTRA_CURRENCY, "bch");
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
@@ -221,7 +221,7 @@ public class SettingsActivity extends BRActivity {
         items.add(new BRSettingsItem(getString(R.string.Settings_aboutBread), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, DisplayCurrencyActivity.class);
+                Intent intent = new Intent(SettingsActivity.this, AboutActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
