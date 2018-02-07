@@ -161,6 +161,7 @@ public class WalletsMaster {
         });
 
         byte[] pubKey = new BRCoreMasterPubKey(strPhrase, true).getPubKey();
+        Log.e(TAG, "generateRandomSeed: pubKey: " + pubKey);
         BRKeyStore.putMasterPublicKey(pubKey, ctx);
 
         return true;

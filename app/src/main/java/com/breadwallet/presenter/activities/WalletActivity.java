@@ -173,8 +173,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                if (currentWallet.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Disconnected)
+                if (currentWallet.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Disconnected) {
                     currentWallet.getPeerManager().connect();
+                    Log.e(TAG, "run: core connecting");
+                }
             }
         });
 
