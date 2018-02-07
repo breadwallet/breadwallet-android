@@ -484,7 +484,7 @@ public class WebViewActivity extends BRActivity {
             allIntents.add(intent);
         }
 
-        // collect all gallery intents
+        // Collect all gallery intents
         Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
         galleryIntent.setType("image/*");
         List<ResolveInfo> listGallery = packageManager.queryIntentActivities(galleryIntent, 0);
@@ -495,7 +495,7 @@ public class WebViewActivity extends BRActivity {
             allIntents.add(intent);
         }
 
-        // the main intent is the last in the list (fucking android) so pickup the useless one
+        // The main intent is the last in the list so pickup the last one
         Intent mainIntent = allIntents.get(allIntents.size() - 1);
         for (Intent intent : allIntents) {
             if (intent.getComponent().getClassName().equals("com.android.documentsui.DocumentsActivity")) {
@@ -592,13 +592,7 @@ public class WebViewActivity extends BRActivity {
                         new String[]{Manifest.permission.CAMERA},
                         REQUEST_CAMERA_PERMISSION);
             }
-        } else {
-            // Permission is granted, open camera
-            /*Log.d(TAG, "Camera permission GRANTED");
-            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-            app.startActivityForResult(intent, REQUEST_CAMERA_PERMISSION);
-            app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);*/
-        }
+        } 
 
     }
 
