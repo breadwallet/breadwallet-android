@@ -422,6 +422,8 @@
   <string name="Send.balance">Balance: %1$s</string>
   <!-- Instructions how to allow the camera access for the app -->
   <string name="Send.cameraUnavailabeMessage.android">Allow camera access in \"Settings\" &gt; \"Apps\" &gt; \"Bread\" &gt; \"Permissions\"</string>
+  <string name="Simplex.allowFileSystemAccess">Please allow Storage permission in \"Settings\" &gt; \"Apps\" &gt; \"Bread\" &gt; \"Permissions\"</string>
+
   <!-- Permission required to access camera -->
   <string name="Send.cameraUnavailabeTitle.android">Bread is not allowed to access the camera</string>
   <!-- Camera not allowed message -->
