@@ -20,6 +20,7 @@ import android.view.ViewTreeObserver;
 import android.view.Window;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -506,9 +507,9 @@ public class WebViewActivity extends BRActivity {
     }
 
     private String rTrim(String s, char c) {
-        if (s == null) return null;
+//        if (s == null) return null;
         String result = s;
-        while (result.length() > 0 && s.charAt(s.length() - 1) == c)
+        if (result.length() > 0 && s.charAt(s.length() - 1) == c)
             result = s.substring(s.length() - 1);
         return result;
     }
