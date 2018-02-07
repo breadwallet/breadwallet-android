@@ -554,7 +554,7 @@ public class WebViewActivity extends BRActivity {
                 results = new Uri[]{Uri.parse(data.getDataString())};
 
 
-            } else if (mCameraPhotoPath != null){
+            } else if (mCameraPhotoPath != null) {
                 results = new Uri[]{Uri.parse(mCameraPhotoPath)};
                 Toast.makeText(WebViewActivity.this, "Error getting selected image!", Toast.LENGTH_SHORT).show();
             }
