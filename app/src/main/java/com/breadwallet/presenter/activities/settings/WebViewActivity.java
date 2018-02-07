@@ -185,7 +185,6 @@ public class WebViewActivity extends BRActivity {
             int heightDiff = mRootView.getRootView().getHeight() - mRootView.getHeight();
             int contentViewTop = getWindow().findViewById(Window.ID_ANDROID_CONTENT).getHeight();
 
-
             if (heightDiff <= contentViewTop) {
                 onHideKeyboard();
                 Log.d(TAG, "Hiding keyboard");
@@ -390,7 +389,6 @@ public class WebViewActivity extends BRActivity {
             }
         }
 
-
         public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePath, FileChooserParams fileChooserParams) {
 
             Log.d(TAG, "onShowFileChooser");
@@ -400,8 +398,11 @@ public class WebViewActivity extends BRActivity {
             }
             mFilePathCallback = filePath;
 
+            //request the permissions beforehand
             Log.d(TAG, "Request permission for Storage");
             requestImageFilePermission();
+            Log.d(TAG, "Request permission for Camera");
+            requestCameraPermission();
 
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -444,7 +445,6 @@ public class WebViewActivity extends BRActivity {
     }
 
     // Get URI to image received from capture by camera.
-
     private Uri getCaptureImageOutputUri() {
         Uri outputFileUri = null;
         File getImage = Environment.getExternalStoragePublicDirectory(
@@ -524,7 +524,6 @@ public class WebViewActivity extends BRActivity {
         Log.d(TAG, "requestCode -> " + requestCode);
         Log.d(TAG, "resultCode -> " + resultCode);
 
-
         //if (requestCode == BRConstants.UPLOAD_FILE_REQUEST) {
 
         if (requestCode != REQUEST_CHOOSE_IMAGE || mFilePathCallback == null) {
@@ -532,8 +531,7 @@ public class WebViewActivity extends BRActivity {
             return;
         } else if (requestCode == REQUEST_CHOOSE_IMAGE) {
 
-            Log.d(TAG, "Request permission for Camera");
-            requestCameraPermission();
+
         }
 
 
@@ -560,7 +558,6 @@ public class WebViewActivity extends BRActivity {
         }
 
     }
-
 
     private void requestCameraPermission() {
         // Check if the camera permission is granted
@@ -623,8 +620,7 @@ public class WebViewActivity extends BRActivity {
     private File createImageFile() throws IOException {
 
         ActivityCompat.requestPermissions(WebViewActivity.this,
-                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                1);
+                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
 
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
