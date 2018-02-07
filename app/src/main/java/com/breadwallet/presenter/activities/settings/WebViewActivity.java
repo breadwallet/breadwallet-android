@@ -105,7 +105,7 @@ public class WebViewActivity extends BRActivity {
             @Override
             public void onPageStarted(WebView view, String url, Bitmap favicon) {
                 super.onPageStarted(view, url, favicon);
-                Log.e(TAG, "onPageStarted: " + url);
+                Log.e(TAG, "onPageStarted: url:" + url);
                 String trimmedUrl = rTrim(url, '/');
                 Uri toUri = Uri.parse(trimmedUrl);
                 if (closeOnMatch(toUri) || toUri.toString().contains("_close")) {
@@ -343,9 +343,9 @@ public class WebViewActivity extends BRActivity {
             Log.e(TAG, "closeOnMatch: onCloseUrl is null");
             return false;
         }
-        Uri savedCloseUri = Uri.parse(onCloseUrl);
+        Uri savedCloseUri = Uri.parse(rTrim(onCloseUrl, '/'));
         Log.e(TAG, "closeOnMatch: toUrl:" + toUri + ", savedCloseUri: " + savedCloseUri);
-        return toUri.getScheme().equalsIgnoreCase(savedCloseUri.getScheme()) && toUri.getHost().equalsIgnoreCase(savedCloseUri.getHost())
+        return toUri.getScheme() != null && toUri.getHost() != null && toUri.getScheme().equalsIgnoreCase(savedCloseUri.getScheme()) && toUri.getHost().equalsIgnoreCase(savedCloseUri.getHost())
                 && toUri.toString().toLowerCase().contains(savedCloseUri.toString().toLowerCase());
 
     }
@@ -695,7 +695,7 @@ public class WebViewActivity extends BRActivity {
 //        if (s == null) return null;
         String result = s;
         if (result.length() > 0 && s.charAt(s.length() - 1) == c)
-            result = s.substring(s.length() - 1);
+            result = s.substring(0, s.length() - 1);
         return result;
     }
 
