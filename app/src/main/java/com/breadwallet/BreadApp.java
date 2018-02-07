@@ -63,7 +63,7 @@ public class BreadApp extends Application {
     public static long backgroundedTime;
     public static boolean appInBackground;
 
-    public static final boolean IS_ALPHA = true;
+    public static final boolean IS_ALPHA = false;
 
     public static final Map<String, String> mHeaders = new HashMap<>();
 
