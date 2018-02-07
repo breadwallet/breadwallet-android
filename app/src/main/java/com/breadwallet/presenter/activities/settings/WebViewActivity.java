@@ -141,7 +141,6 @@ public class WebViewActivity extends BRActivity {
         mBackButton = findViewById(R.id.webview_back_arrow);
         mRootView = findViewById(R.id.webview_parent);
 
-
         String articleId = getIntent().getStringExtra("articleId");
 
         WebSettings webSettings = webView.getSettings();
@@ -154,16 +153,14 @@ public class WebViewActivity extends BRActivity {
 
         theUrl = getIntent().getStringExtra("url");
         String json = getIntent().getStringExtra("json");
-        webView.loadUrl("https://upload.photobox.com/en/");
+//        webView.loadUrl("https://upload.photobox.com/en/");
 
-
-        /*if (json == null) {
+        if (json == null) {
             if (!setupServerMode(theUrl)) {
                 webView.loadUrl(theUrl);
 
                 return;
             }
-
 
             if (articleId != null && !articleId.isEmpty())
                 theUrl = theUrl + "/" + articleId;
@@ -178,13 +175,7 @@ public class WebViewActivity extends BRActivity {
         } else {
             request(webView, json);
 
-        }*/
-
-
-        Log.d(TAG, "Request permission for Storage");
-        // TODO: Move this to the photo upload page in the Simplex flow
-        requestImageFilePermission();
-
+        }
 
     }
 
@@ -409,6 +400,9 @@ public class WebViewActivity extends BRActivity {
             }
             mFilePathCallback = filePath;
 
+            Log.d(TAG, "Request permission for Storage");
+            requestImageFilePermission();
+
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
                 Log.d(TAG, "Image Capture Activity FOUND");
@@ -565,10 +559,6 @@ public class WebViewActivity extends BRActivity {
 
         }
 
-
-        //}
-
-
     }
 
 
@@ -592,7 +582,7 @@ public class WebViewActivity extends BRActivity {
                         new String[]{Manifest.permission.CAMERA},
                         REQUEST_CAMERA_PERMISSION);
             }
-        } 
+        }
 
     }
 
