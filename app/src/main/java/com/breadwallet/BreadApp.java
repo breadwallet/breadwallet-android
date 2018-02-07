@@ -2,22 +2,17 @@ package com.breadwallet;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.Application;
-import android.content.ComponentName;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
-import android.os.Handler;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.listeners.SyncReceiver;
-import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.Utils;
 import com.google.firebase.crash.FirebaseCrash;
 
@@ -30,7 +25,6 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.platform.APIClient.BREAD_POINT;
-
 
 /**
  * BreadWallet
@@ -72,7 +66,6 @@ public class BreadApp extends Application {
     public static final boolean IS_ALPHA = true;
 
     public static final Map<String, String> mHeaders = new HashMap<>();
-
 
     private static Activity currentActivity;
 
