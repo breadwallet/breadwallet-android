@@ -741,11 +741,16 @@ public class BRKeyStore {
             keyStore = KeyStore.getInstance(ANDROID_KEY_STORE);
             keyStore.load(null);
             int count = 0;
-            while (keyStore.aliases().hasMoreElements()) {
-                String alias = keyStore.aliases().nextElement();
-                removeAliasAndFiles(keyStore, alias, context);
-                destroyEncryptedData(context, alias);
-                count++;
+            if (keyStore.aliases() != null) {
+                while (keyStore.aliases().hasMoreElements()) {
+                    String alias = keyStore.aliases().nextElement();
+                    removeAliasAndFiles(keyStore, alias, context);
+                    destroyEncryptedData(context, alias);
+                    count++;
+                }
+            } else {
+                BRReportsManager.reportBug(new NullPointerException("keyStore.aliases() is null"));
+                return false;
             }
             Log.e(TAG, "resetWalletKeyStore: removed:" + count);
 //            Assert.assertEquals(count, 11);
