@@ -36,7 +36,7 @@ public class BRReportsManager {
     public static void reportBug(RuntimeException er, boolean crash) {
         Log.e(TAG, "reportBug: ", er);
         try {
-            FirebaseCrash.report(er); //todo fix this crashing Firebase...
+            FirebaseCrash.report(er);
         } catch (Exception e) {
             Log.e(TAG, "reportBug: failed to report to FireBase: ", e);
         }

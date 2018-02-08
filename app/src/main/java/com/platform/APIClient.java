@@ -325,7 +325,7 @@ public class APIClient {
         Request.Builder newBuilder = locRequest.newBuilder();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-            Log.e(TAG, "urlGET: adding extra Bread headers: " + pair.getKey() + " : " + pair.getValue());
+//            Log.e(TAG, "urlGET: adding extra Bread headers: " + pair.getKey() + " : " + pair.getValue());
             newBuilder.header((String) pair.getKey(), (String) pair.getValue());
         }
 
