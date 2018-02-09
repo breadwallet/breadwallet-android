@@ -1053,10 +1053,23 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public void txPublished(int error) {
+    public void txPublished(final String error) {
         super.txPublished(error);
-        BRToast.showCustomToast(BreadApp.getBreadContext(), "Published: " + String.valueOf(error), BRActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
-
+        final Context app = BreadApp.getBreadContext();
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (app instanceof Activity)
+                    BRAnimator.showBreadSignal((Activity) app, Utils.isNullOrEmpty(error) ? app.getString(R.string.Alerts_sendSuccess) : app.getString(R.string.Alert_error),
+                            Utils.isNullOrEmpty(error) ? app.getString(R.string.Alerts_sendSuccessSubheader) : "Error: " + error, Utils.isNullOrEmpty(error) ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
+                                @Override
+                                public void onComplete() {
+                                    if (!((Activity) app).isDestroyed())
+                                        ((Activity) app).getFragmentManager().popBackStack();
+                                }
+                            });
+            }
+        });
     }
 
 }
