@@ -287,8 +287,7 @@ public class APIClient {
         byte[] doubleSha256 = CryptoHelper.doubleSha256(request.getBytes(StandardCharsets.UTF_8));
         BRCoreKey key;
         try {
-            byte[] authKey;
-            authKey = BRKeyStore.getAuthKey(ctx);
+            byte[] authKey = BRKeyStore.getAuthKey(ctx);
             if (Utils.isNullOrEmpty(authKey)) {
                 Log.e(TAG, "signRequest: authkey is null");
                 return null;

@@ -558,15 +558,15 @@ public class WalletBitcoinCash extends BRCoreWalletManager implements BaseWallet
     }
 
     @Override
-    public void txPublished(final int error) {
+    public void txPublished(final String error) {
         super.txPublished(error);
         final Context app = BreadApp.getBreadContext();
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
                 if (app instanceof Activity)
-                    BRAnimator.showBreadSignal((Activity) app, error == 0 ? app.getString(R.string.Alerts_sendSuccess) : app.getString(R.string.Alert_error),
-                            error == 0 ? app.getString(R.string.Alerts_sendSuccessSubheader) : "Error: " + error, error == 0 ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
+                    BRAnimator.showBreadSignal((Activity) app, Utils.isNullOrEmpty(error) ? app.getString(R.string.Alerts_sendSuccess) : app.getString(R.string.Alert_error),
+                            Utils.isNullOrEmpty(error) ? app.getString(R.string.Alerts_sendSuccessSubheader) : "Error: " + error, Utils.isNullOrEmpty(error) ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
                                 @Override
                                 public void onComplete() {
                                     if (!((Activity) app).isDestroyed())
