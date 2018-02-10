@@ -51,10 +51,10 @@ android {
     flavorDimensions "mode"
 
     productFlavors {
-        bread {
+        brd {
             applicationId "com.breadwallet"
             dimension "mode"
-            resValue "string", "app_name", "bread"
+            resValue "string", "app_name", "BRD"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
 
             externalNativeBuild {
@@ -68,10 +68,10 @@ android {
             }
         }
 
-        breadTestnet {
+        brdTestnet {
             applicationId "com.breadtestnet"
             dimension "mode"
-            resValue "string", "app_name", "bread-testnet"
+            resValue "string", "app_name", "BRD-testnet"
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"
 
             externalNativeBuild {

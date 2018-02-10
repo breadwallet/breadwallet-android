@@ -12,8 +12,7 @@
         android:layout_width="128dp"
         android:layout_height="64dp"
         android:layout_marginTop="96dp"
-        android:src="@drawable/ic_bread_logo_white"
-
+        android:src="@drawable/brd_logo_white"
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginRight="8dp"
         app:layout_constraintRight_toRightOf="parent"
