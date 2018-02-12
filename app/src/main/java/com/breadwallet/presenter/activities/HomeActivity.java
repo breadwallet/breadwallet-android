@@ -9,6 +9,8 @@ import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.BRExecutor;
+import com.breadwallet.wallet.WalletsMaster;
 
 /**
  * Created by byfieldj on 1/17/18.
@@ -36,6 +38,13 @@ public class HomeActivity extends Activity {
         mBitcoinCard = findViewById(R.id.bitcoin_card);
         mBchCard = findViewById(R.id.bitcoin_cash_card);
 
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                WalletsMaster.getInstance(HomeActivity.this).initWallets(HomeActivity.this);
+            }
+        });
+
         mBitcoinCard.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -53,6 +62,7 @@ public class HomeActivity extends Activity {
                 startActivity(newIntent);
             }
         });
+
     }
 
     @Override

@@ -175,10 +175,6 @@ public class WalletBitcoinCash extends BRCoreWalletManager implements BaseWallet
 //        }
 //    }
 
-    @Override
-    public BRCoreWallet getWallet() {
-        return getWallet();
-    }
 
     @Override
     public void addBalanceChangedListener(OnBalanceChangedListener list) {
@@ -186,10 +182,6 @@ public class WalletBitcoinCash extends BRCoreWalletManager implements BaseWallet
             balanceListeners.add(list);
     }
 
-    @Override
-    public BRCorePeerManager getPeerManager() {
-        return getPeerManager();
-    }
 
     /**
      * Create tx from the PaymentItem object and try to send it

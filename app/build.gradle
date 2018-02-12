@@ -63,7 +63,7 @@ android {
                     // the Android plugin searches for its binary within your
                     // PATH environmental variable.
                     cFlags "-DBITCOIN_TESTNET=0"
-                    targets "core-lib"
+                    targets "core"
                 }
             }
         }
@@ -80,7 +80,7 @@ android {
                     // the Android plugin searches for its binary within your
                     // PATH environmental variable.
                     cFlags "-DBITCOIN_TESTNET=1"
-                    targets "core-lib"
+                    targets "core"
                 }
             }
 

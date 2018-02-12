@@ -21,7 +21,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -DANDROID_STL=gnustl_static -DANDROID_TOOLCH
 # -Wdeprecated-declarations -Wno-sign-conversion
 
 add_library( # The name of the library.
-             core-lib
+             core
 
              # Shared library.
              SHARED
