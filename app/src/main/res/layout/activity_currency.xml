@@ -56,7 +56,6 @@
                     android:layout_marginTop="16dp"
                     android:text="@string/CurrencyBitcoin"
                     android:textColor="@color/white"
-
                     android:textSize="@dimen/header"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -89,26 +88,26 @@
                     android:id="@+id/balance_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="1dp"
+                    android:layout_marginLeft="16dp"
                     android:text="@string/CurrencyBalance"
                     android:textColor="@color/currency_subheading_color"
-                    android:textSize="@dimen/paragraph"
+                    android:textSize="14sp"
                     app:customTFont="CircularPro-Book.otf"
-                    app:layout_constraintBottom_toTopOf="@+id/balance_display"
-                    app:layout_constraintStart_toStartOf="@+id/balance_display" />
+                    app:layout_constraintBottom_toTopOf="@id/balance_primary"
+                    app:layout_constraintLeft_toLeftOf="parent" />
 
 
                 <com.breadwallet.presenter.customviews.BRText
-                    android:id="@+id/balance_display"
+                    android:id="@+id/balance_primary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="1dp"
                     android:layout_marginStart="16dp"
                     android:text="$26,495.69"
                     android:textColor="@color/white"
                     android:textSize="28sp"
                     app:customTFont="CircularPro-Bold.otf"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toLeftOf="parent"
                     app:layout_constraintStart_toStartOf="parent" />
 
 
@@ -116,21 +115,27 @@
                     android:id="@+id/swap"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="1dp"
+                    android:layout_marginEnd="4dp"
+                    android:layout_marginBottom="4dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="30dp"
                     android:background="@drawable/ic_sync_white_24dp"
-                    app:layout_constraintBottom_toBottomOf="@+id/balance_count"
-                    app:layout_constraintEnd_toStartOf="@+id/balance_count" />
+                    app:layout_constraintVertical_bias="0.492"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@+id/balance_primary" />
 
                 <com.breadwallet.presenter.customviews.BRText
-                    android:id="@+id/balance_count"
+                    android:id="@+id/balance_secondary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="5dp"
-                    android:layout_marginStart="26dp"
+                    android:layout_marginStart="28dp"
+                    android:layout_marginBottom="2dp"
                     android:text="1.56739 BTC"
+                    app:layout_constraintBottom_toBottomOf="@id/swap"
                     android:textColor="@color/currency_subheading_color"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/balance_display" />
+                    app:layout_constraintLeft_toRightOf="@+id/swap"
+                    app:layout_constraintStart_toEndOf="@+id/balance_primary" />
 
 
                 <ImageButton
