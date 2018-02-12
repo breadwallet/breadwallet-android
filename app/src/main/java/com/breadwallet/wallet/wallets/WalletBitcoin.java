@@ -99,11 +99,33 @@ public class WalletBitcoin implements BaseWallet {
         balanceListeners = new ArrayList<>();
     }
 
+    public void setBalance(final Context context, long balance) {
+        if (context == null) {
+            Log.e(TAG, "setBalance: FAILED TO SET THE BALANCE");
+            return;
+        }
+        BRSharedPrefs.putCatchedBalance(context, balance);
+        refreshAddress(context);
+
+        for (OnBalanceChanged listener : balanceListeners) {
+            if (listener != null) listener.onBalanceChanged(balance);
+        }
+    }
+
+    public void refreshBalance(Activity app) {
+        long natBal = nativeBalance();
+        if (natBal != -1) {
+            setBalance(app, natBal);
+        } else {
+            Log.e(TAG, "UpdateUI, nativeBalance is -1 meaning _wallet was null!");
+        }
+    }
+
     /**
      * Create tx from the PaymentItem object and try to send it
      */
     @Override
-    public boolean sendTransaction(Context app, PaymentItem item) {
+    public boolean sendTransaction(final Context app, final PaymentItem payment) {
         //array in order to be able to modify the first element from an inner block (can't be final)
         final String[] errTitle = {null};
         final String[] errMessage = {null};
@@ -140,7 +162,7 @@ public class WalletBitcoin implements BaseWallet {
                         }
                     }
                     if (!timedOut)
-                        tryPay(app, request);
+                        tryPay(app, payment);
                     else
                         FirebaseCrash.report(new NullPointerException("did not send, timedOut!"));
                     return; //return so no error is shown
@@ -158,7 +180,7 @@ public class WalletBitcoin implements BaseWallet {
                 } catch (FeeNeedsAdjust feeNeedsAdjust) {
                     //offer to change amount, so it would be enough for fee
 //                    showFailed(app); //just show failed for now
-                    showAdjustFee((Activity) app, request);
+                    showAdjustFee((Activity) app, payment);
                     return;
                 } catch (FeeOutOfDate ex) {
                     //Fee is out of date, show not connected error
@@ -211,6 +233,7 @@ public class WalletBitcoin implements BaseWallet {
 
             }
         });
+        return true;
     }
 
     @Override
@@ -477,7 +500,7 @@ public class WalletBitcoin implements BaseWallet {
      */
     private void tryPay(final Context app, final PaymentItem paymentRequest) throws InsufficientFundsException,
             AmountSmallerThanMinException, SpendingNotAllowed, FeeNeedsAdjust, SomethingWentWrong {
-        if (paymentRequest == null || paymentRequest.addresses == null) {
+        if (paymentRequest == null || paymentRequest.address == null) {
             Log.e(TAG, "tryPay: ERROR: paymentRequest: " + paymentRequest);
             String message = paymentRequest == null ? "paymentRequest is null" : "addresses is null";
             BRReportsManager.reportBug(new RuntimeException("paymentRequest is malformed: " + message), true);
@@ -515,14 +538,14 @@ public class WalletBitcoin implements BaseWallet {
                 throw new InsufficientFundsException(amount, balance);
             }
 
-            long feeForTx = m.feeForTransaction(paymentRequest.addresses[0], paymentRequest.amount);
+            long feeForTx = m.feeForTransaction(paymentRequest.address, paymentRequest.amount);
             throw new FeeNeedsAdjust(amount, balance, feeForTx);
         }
         // payment successful
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                byte[] tmpTx = m.tryTransaction(paymentRequest.addresses[0], paymentRequest.amount);
+                byte[] tmpTx = m.tryTransaction(paymentRequest.address, paymentRequest.amount);
                 if (tmpTx == null) {
                     //something went wrong, failed to create tx
                     ((Activity) app).runOnUiThread(new Runnable() {
@@ -581,66 +604,6 @@ public class WalletBitcoin implements BaseWallet {
 
     }
 
-    private void showFailed(final Context app) {
-        BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), "",
-                app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-                        brDialogView.dismissWithAnimation();
-                    }
-                }, null, null, 0);
-//        final long maxOutputAmount = BRWalletManager.getInstance().getMaxOutputAmount();
-//        final BRWalletManager m = BRWalletManager.getInstance();
-//        final long amountToReduce = request.amount - maxOutputAmount;
-//        String iso = BRSharedPrefs.getIso(app);
-//        final String reduceBits = CurrencyUtils.getFormattedCurrencyString(app, "BTC", ExchangeUtils.getAmountFromSatoshis(app, "BTC", new BigDecimal(amountToReduce)));
-//        final String reduceCurrency = CurrencyUtils.getFormattedCurrencyString(app, iso, ExchangeUtils.getAmountFromSatoshis(app, iso, new BigDecimal(amountToReduce)));
-//        final String reduceBitsMinus = CurrencyUtils.getFormattedCurrencyString(app, "BTC", ExchangeUtils.getAmountFromSatoshis(app, "BTC", new BigDecimal(amountToReduce).negate()));
-//        final String reduceCurrencyMinus = CurrencyUtils.getFormattedCurrencyString(app, iso, ExchangeUtils.getAmountFromSatoshis(app, iso, new BigDecimal(amountToReduce).negate()));
-//
-//        ((Activity) app).runOnUiThread(new Runnable() {
-//            @Override
-//            public void run() {
-//                BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), String.format(app.getString(R.string.reduce_payment_amount_by),
-//                        reduceBits, reduceCurrency), String.format("%s (%s)", reduceBitsMinus, reduceCurrencyMinus), "Cancel", new BRDialogView.BROnClickListener() {
-//                    @Override
-//                    public void onClick(BRDialogView brDialogView) {
-//
-//                        new Thread(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                final long newAmount = request.amount - amountToReduce;
-//                                final byte[] tmpTx2 = m.tryTransaction(request.addresses[0], newAmount);
-//
-//                                if (tmpTx2 != null) {
-//                                    request.serializedTx = tmpTx2;
-//                                    PostAuth.getInstance().setPaymentItem(request);
-//                                    request.amount = newAmount;
-//                                    confirmPay(app, request);
-//                                } else {
-//                                    ((Activity) app).runOnUiThread(new Runnable() {
-//                                        @Override
-//                                        public void run() {
-//                                            Log.e(TAG, "tmpTxObject2 is null!");
-//                                            BRToast.showCustomToast(app, app.getString(R.string.Alerts_sendFailure),
-//                                                    BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
-//                                        }
-//                                    });
-//                                }
-//                            }
-//                        }).start();
-//                        brDialogView.dismiss();
-//                    }
-//                }, new BRDialogView.BROnClickListener() {
-//                    @Override
-//                    public void onClick(BRDialogView brDialogView) {
-//                        brDialogView.dismiss();
-//                    }
-//                }, null, 0);
-//            }
-//        });
-
-    }
 
     private void confirmPay(final Context ctx, final PaymentItem request) {
         if (ctx == null) {
@@ -722,7 +685,7 @@ public class WalletBitcoin implements BaseWallet {
         String iso = BRSharedPrefs.getIso(ctx);
 
         BRWalletManager m = BRWalletManager.getInstance();
-        long feeForTx = m.feeForTransaction(request.addresses[0], request.amount);
+        long feeForTx = m.feeForTransaction(request.address, request.amount);
         if (feeForTx == 0) {
             long maxAmount = m.getMaxOutputAmount();
             if (maxAmount == -1) {
@@ -738,7 +701,7 @@ public class WalletBitcoin implements BaseWallet {
 
                 return null;
             }
-            feeForTx = m.feeForTransaction(request.addresses[0], maxAmount);
+            feeForTx = m.feeForTransaction(request.address, maxAmount);
             feeForTx += (BRWalletManager.getInstance().getBalance(ctx) - request.amount) % 100;
         }
         final long total = request.amount + feeForTx;
@@ -764,12 +727,7 @@ public class WalletBitcoin implements BaseWallet {
         if (item.cn != null && item.cn.length() != 0) {
             certified = true;
         }
-        StringBuilder allAddresses = new StringBuilder();
-        for (String s : item.addresses) {
-            allAddresses.append(s + ", ");
-        }
-        receiver = allAddresses.toString();
-        allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
+        receiver = item.address;
         if (certified) {
             receiver = "certified: " + item.cn + "\n";
         }
@@ -787,10 +745,10 @@ public class WalletBitcoin implements BaseWallet {
 
     private boolean notEnoughForFee(Context app, PaymentItem paymentRequest) {
         BRWalletManager m = BRWalletManager.getInstance();
-        long feeForTx = m.feeForTransaction(paymentRequest.addresses[0], paymentRequest.amount);
+        long feeForTx = m.feeForTransaction(paymentRequest.address, paymentRequest.amount);
         if (feeForTx == 0) {
             long maxOutput = m.getMaxOutputAmount();
-            feeForTx = m.feeForTransaction(paymentRequest.addresses[0], maxOutput);
+            feeForTx = m.feeForTransaction(paymentRequest.address, maxOutput);
             return feeForTx != 0;
         }
         return false;
