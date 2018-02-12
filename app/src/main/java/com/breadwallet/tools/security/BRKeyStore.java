@@ -30,7 +30,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
@@ -419,8 +419,8 @@ public class BRKeyStore {
         }, null, new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                BRWalletManager.getInstance().wipeWalletButKeystore(app);
-                BRWalletManager.getInstance().wipeKeyStore(app);
+                WalletsMaster.getInstance().wipeWalletButKeystore(app);
+                WalletsMaster.getInstance().wipeKeyStore(app);
                 dialog.dismiss();
             }
         }, 0);

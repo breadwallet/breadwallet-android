@@ -26,7 +26,7 @@ import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 import com.platform.APIClient;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.BRBitId;
@@ -88,7 +88,7 @@ public class PostAuth {
     public void onCreateWalletAuth(Activity app, boolean authAsked) {
 //        Log.e(TAG, "onCreateWalletAuth: " + authAsked + ", " + app.getClass().getName());
         long start = System.currentTimeMillis();
-        boolean success = BRWalletManager.getInstance().generateRandomSeed(app);
+        boolean success = WalletsMaster.getInstance().generateRandomSeed(app);
         if (success) {
             Intent intent = new Intent(app, WriteDownActivity.class);
             app.startActivity(intent);
@@ -175,6 +175,7 @@ public class PostAuth {
                     Log.e(TAG, "onRecoverWalletAuth, !success && authAsked");
                 }
             } else {
+<<<<<<< HEAD
                 BRSharedPrefs.putPhraseWroteDown(app, true);
                 bytePhrase = TypesConverter.getNullTerminatedPhrase(phraseForKeyStore.getBytes());
                 byte[] seed = BRWalletManager.getSeedFromPhrase(bytePhrase);
@@ -189,6 +190,24 @@ public class PostAuth {
                 app.startActivity(intent);
                 if (!app.isDestroyed()) app.finish();
                 phraseForKeyStore = null;
+=======
+                if (phraseForKeyStore.length() != 0) {
+                    BRSharedPrefs.putPhraseWroteDown(app, true);
+                    bytePhrase = TypesConverter.getNullTerminatedPhrase(phraseForKeyStore.getBytes());
+                    byte[] seed = WalletsMaster.getSeedFromPhrase(bytePhrase);
+                    byte[] authKey = WalletsMaster.getAuthPrivKeyForAPI(seed);
+                    BRKeyStore.putAuthKey(authKey, app);
+                    byte[] pubKey = WalletsMaster.getInstance().getMasterPubKey(bytePhrase);
+                    BRKeyStore.putMasterPublicKey(pubKey, app);
+                    app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                    Intent intent = new Intent(app, SetPinActivity.class);
+                    intent.putExtra("noPin", true);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    app.startActivity(intent);
+                    if (!app.isDestroyed()) app.finish();
+                    phraseForKeyStore = null;
+                }
+>>>>>>> create WalletsMaster that will handle multiple wallets in a scalable manner
 
             }
 
@@ -204,7 +223,7 @@ public class PostAuth {
     public void onPublishTxAuth(final Context app, boolean authAsked) {
         if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
 
-        final BRWalletManager walletManager = BRWalletManager.getInstance();
+        final WalletsMaster walletManager = WalletsMaster.getInstance();
         byte[] rawSeed;
         try {
             rawSeed = BRKeyStore.getPhrase(app, BRConstants.PAY_REQUEST_CODE);
@@ -226,7 +245,7 @@ public class PostAuth {
                     if (Utils.isNullOrEmpty(txHash)) {
                         Log.e(TAG, "onPublishTxAuth: publishSerializedTransaction returned FALSE");
                         //todo fix this
-//                        BRWalletManager.getInstance().offerToChangeTheAmount(app, new PaymentItem(paymentRequest.addresses, paymentItem.serializedTx, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
+//                        WalletsMaster.getInstance().offerToChangeTheAmount(app, new PaymentItem(paymentRequest.addresses, paymentItem.serializedTx, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
                     } else {
                         TxMetaData txMetaData = new TxMetaData();
                         txMetaData.comment = paymentItem.comment;
@@ -266,7 +285,7 @@ public class PostAuth {
         }
 
         byte[] nullTerminatedPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
-        final byte[] serializedTx = BRWalletManager.sweepBCash(BRKeyStore.getMasterPublicKey(app), bchAddress, nullTerminatedPhrase);
+        final byte[] serializedTx = WalletsMaster.sweepBCash(BRKeyStore.getMasterPublicKey(app), bchAddress, nullTerminatedPhrase);
         assert (serializedTx != null);
         if (serializedTx == null) {
             Log.e(TAG, "onSendBch:serializedTx is null");
@@ -372,7 +391,7 @@ public class PostAuth {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                byte[] txHash = BRWalletManager.getInstance().publishSerializedTransaction(paymentRequest.serializedTx, seed);
+                byte[] txHash = WalletsMaster.getInstance().publishSerializedTransaction(paymentRequest.serializedTx, seed);
                 if (Utils.isNullOrEmpty(txHash)) throw new NullPointerException("txHash is null!");
                 PaymentProtocolPostPaymentTask.sent = true;
                 Arrays.fill(seed, (byte) 0);
@@ -422,7 +441,7 @@ public class PostAuth {
 
             String strPhrase = new String((phrase == null) ? new byte[0] : phrase);
             if (strPhrase.isEmpty()) {
-                BRWalletManager m = BRWalletManager.getInstance();
+                WalletsMaster m = WalletsMaster.getInstance();
                 m.wipeKeyStore(app);
                 m.wipeWalletButKeystore(app);
             } else {
@@ -439,7 +458,7 @@ public class PostAuth {
                 }
             }
         }
-        BRWalletManager.getInstance().startTheWalletIfExists(app);
+        WalletsMaster.getInstance().startTheWalletIfExists(app);
     }
 
 

@@ -1,7 +1,7 @@
 import android.util.Log;
 
 import com.breadwallet.tools.util.Bip39Reader;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
@@ -106,7 +106,7 @@ public class PaperKeyTests {
 
     private boolean isValid(String phrase, List<String> words) {
 
-        return BRWalletManager.getInstance().validateRecoveryPhrase((String[]) words.toArray(), phrase);
+        return WalletsMaster.getInstance().validateRecoveryPhrase((String[]) words.toArray(), phrase);
     }
 
 }

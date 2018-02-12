@@ -26,7 +26,7 @@ import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.security.SmartValidator;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 
 public class InputWordsActivity extends BRActivity {
     private static final String TAG = InputWordsActivity.class.getName();
@@ -183,7 +183,7 @@ public class InputWordsActivity extends BRActivity {
                                     @Override
                                     public void onClick(BRDialogView brDialogView) {
                                         brDialogView.dismissWithAnimation();
-                                        BRWalletManager m = BRWalletManager.getInstance();
+                                        WalletsMaster m = WalletsMaster.getInstance();
                                         m.wipeWalletButKeystore(app);
                                         m.wipeKeyStore(app);
                                         Intent intent = new Intent(app, IntroActivity.class);
@@ -215,7 +215,7 @@ public class InputWordsActivity extends BRActivity {
 
                     } else {
                         Utils.hideKeyboard(app);
-                        BRWalletManager m = BRWalletManager.getInstance();
+                        WalletsMaster m = WalletsMaster.getInstance();
                         m.wipeWalletButKeystore(app);
                         m.wipeKeyStore(app);
                         PostAuth.getInstance().setPhraseForKeyStore(cleanPhrase);

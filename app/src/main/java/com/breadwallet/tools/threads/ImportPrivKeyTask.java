@@ -11,7 +11,7 @@ import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.ExchangeUtils;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -66,7 +66,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         if (params.length == 0) return null;
         key = params[0];
         if (key == null || key.isEmpty() || app == null) return null;
-        String tmpAddrs = BRWalletManager.getInstance().getAddressFromPrivKey(key);
+        String tmpAddrs = WalletsMaster.getInstance().getAddressFromPrivKey(key);
         String url = UNSPENT_URL + tmpAddrs + "/utxo";
         importPrivKeyEntity = createTx(url);
         if (importPrivKeyEntity == null) {
@@ -109,7 +109,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        boolean result = BRWalletManager.getInstance().confirmKeySweep(importPrivKeyEntity.getTx(), key);
+                        boolean result = WalletsMaster.getInstance().confirmKeySweep(importPrivKeyEntity.getTx(), key);
                         if (!result) {
                             app.runOnUiThread(new Runnable() {
                                 @Override
@@ -150,7 +150,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             jsonArray = new JSONArray(jsonString);
             int length = jsonArray.length();
             if (length > 0)
-                BRWalletManager.getInstance().createInputArray();
+                WalletsMaster.getInstance().createInputArray();
 
             for (int i = 0; i < length; i++) {
                 JSONObject obj = jsonArray.getJSONObject(i);
@@ -160,10 +160,10 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                 long amount = obj.getLong("satoshis");
                 byte[] txidBytes = hexStringToByteArray(txid);
                 byte[] scriptPubKeyBytes = hexStringToByteArray(scriptPubKey);
-                BRWalletManager.getInstance().addInputToPrivKeyTx(txidBytes, vout, scriptPubKeyBytes, amount);
+                WalletsMaster.getInstance().addInputToPrivKeyTx(txidBytes, vout, scriptPubKeyBytes, amount);
             }
 
-            result = BRWalletManager.getInstance().getPrivKeyObject();
+            result = WalletsMaster.getInstance().getPrivKeyObject();
 
         } catch (JSONException e) {
             e.printStackTrace();

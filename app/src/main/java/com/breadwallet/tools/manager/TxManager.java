@@ -21,7 +21,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.wallet.BRPeerManager;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -181,7 +181,7 @@ public class TxManager {
     @WorkerThread
     public synchronized void updateTxList(final Context app) {
         long start = System.currentTimeMillis();
-        final TxItem[] arr = BRWalletManager.getInstance().getTransactions();
+        final TxItem[] arr = WalletsMaster.getInstance().getTransactions();
         final List<TxItem> items = arr == null ? null : new LinkedList<>(Arrays.asList(arr));
 
         long took = (System.currentTimeMillis() - start);

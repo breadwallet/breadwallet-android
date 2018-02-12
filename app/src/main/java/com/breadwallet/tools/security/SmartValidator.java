@@ -8,7 +8,7 @@ import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.TypesConverter;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 
 import java.text.Normalizer;
 import java.util.Arrays;
@@ -68,14 +68,14 @@ public class SmartValidator {
             Log.e(TAG, "isPaperKeyValid: " + "The list size should divide by " + Bip39Reader.WORD_LIST_SIZE);
             BRReportsManager.reportBug(new IllegalArgumentException("words.length is not dividable by " + Bip39Reader.WORD_LIST_SIZE), true);
         }
-        return BRWalletManager.getInstance().validateRecoveryPhrase(words, paperKey);
+        return WalletsMaster.getInstance().validateRecoveryPhrase(words, paperKey);
     }
 
     public static boolean isPaperKeyCorrect(String insertedPhrase, Context activity) {
         String normalizedPhrase = Normalizer.normalize(insertedPhrase.trim(), Normalizer.Form.NFKD);
         if (!SmartValidator.isPaperKeyValid(activity, normalizedPhrase))
             return false;
-        BRWalletManager m = BRWalletManager.getInstance();
+        WalletsMaster m = WalletsMaster.getInstance();
         byte[] rawPhrase = normalizedPhrase.getBytes();
         byte[] bytePhrase = TypesConverter.getNullTerminatedPhrase(rawPhrase);
         byte[] pubKey = m.getMasterPubKey(bytePhrase);
@@ -92,7 +92,7 @@ public class SmartValidator {
 
     public static boolean checkFirstAddress(Activity app, byte[] mpk) {
         String addressFromPrefs = BRSharedPrefs.getFirstAddress(app);
-        String generatedAddress = BRWalletManager.getFirstAddress(mpk);
+        String generatedAddress = WalletsMaster.getFirstAddress(mpk);
         if (!addressFromPrefs.equalsIgnoreCase(generatedAddress) && addressFromPrefs.length() != 0 && generatedAddress.length() != 0) {
             Log.e(TAG, "checkFirstAddress: WARNING, addresses don't match: Prefs:" + addressFromPrefs + ", gen:" + generatedAddress);
         }

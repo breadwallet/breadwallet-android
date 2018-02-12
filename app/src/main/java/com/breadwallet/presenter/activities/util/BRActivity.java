@@ -20,7 +20,7 @@ import com.breadwallet.tools.security.BitcoinUrlHandler;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 import com.platform.HTTPServer;
 import com.platform.tools.BRBitId;
 
@@ -211,7 +211,7 @@ public class BRActivity extends Activity {
 
                 } else {
                     Log.e(TAG, "WARNING: resultCode != RESULT_OK");
-                    BRWalletManager m = BRWalletManager.getInstance();
+                    WalletsMaster m = WalletsMaster.getInstance();
                     m.wipeWalletButKeystore(this);
                     finish();
                 }

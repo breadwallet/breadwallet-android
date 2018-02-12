@@ -1,13 +1,11 @@
 package com.breadwallet.tools.util;
 
 import android.content.Context;
-import android.util.Log;
 
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.interfaces.BaseWallet;
 import com.breadwallet.wallet.wallets.WalletBitcoin;
 
@@ -46,7 +44,7 @@ public class ExchangeUtils {
     private static final String TAG = ExchangeUtils.class.getName();
 
     public static BigDecimal getMaxAmount(Context context, String iso) {
-        BaseWallet wallet = BRWalletManager.getInstance().getWalletByIso(iso);
+        BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(iso);
         if (wallet == null) {
             CurrencyEntity ent = CurrencyDataSource.getInstance(context).getCurrencyByIso(iso);
             if (ent == null) return new BigDecimal(Integer.MAX_VALUE);
@@ -103,7 +101,7 @@ public class ExchangeUtils {
             CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
             if (ent == null) return new BigDecimal(0);
             BigDecimal rate = new BigDecimal(ent.rate).multiply(new BigDecimal(100));
-            result = new BigDecimal(BRWalletManager.getInstance().localAmount(amount.longValue(), rate.doubleValue()))
+            result = new BigDecimal(WalletsMaster.getInstance().localAmount(amount.longValue(), rate.doubleValue()))
                     .divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
         }
 //        Log.e(TAG, "getAmountFromSatoshis: " + iso + ":RESULT:" + result);
@@ -122,7 +120,7 @@ public class ExchangeUtils {
             CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
             if (ent == null) return new BigDecimal(0);
             BigDecimal rate = new BigDecimal(ent.rate).multiply(new BigDecimal(100));
-            result = new BigDecimal(BRWalletManager.getInstance().bitcoinAmount(amount.multiply(new BigDecimal(100)).longValue(), rate.doubleValue()));
+            result = new BigDecimal(WalletsMaster.getInstance().bitcoinAmount(amount.multiply(new BigDecimal(100)).longValue(), rate.doubleValue()));
         }
 //        Log.e(TAG, "getSatoshisFromAmount: " + iso + ":RESULT:" + result);
         return result;

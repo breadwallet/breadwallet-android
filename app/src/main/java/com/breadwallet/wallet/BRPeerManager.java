@@ -155,7 +155,7 @@ public class BRPeerManager {
 
     public static boolean networkIsReachable() {
         Log.d(TAG, "networkIsReachable");
-        return BRWalletManager.getInstance().isNetworkAvailable(BreadApp.getBreadContext());
+        return WalletsMaster.getInstance().isNetworkAvailable(BreadApp.getBreadContext());
     }
 
     public static void deleteBlocks() {

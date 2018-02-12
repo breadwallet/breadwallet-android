@@ -40,7 +40,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.interfaces.BaseWallet;
 import com.breadwallet.wallet.interfaces.OnBalanceChanged;
 import com.google.firebase.crash.FirebaseCrash;
@@ -105,7 +105,7 @@ public class WalletBitcoin implements BaseWallet {
             return;
         }
         BRSharedPrefs.putCatchedBalance(context, balance);
-        BRWalletManager.refreshAddress(context);
+        WalletsMaster.refreshAddress(context);
 
         for (OnBalanceChanged listener : balanceListeners) {
             if (listener != null) listener.onBalanceChanged(balance);
@@ -114,7 +114,7 @@ public class WalletBitcoin implements BaseWallet {
     }
 
     public void refreshBalance(Activity app) {
-        long natBal = BRWalletManager.getInstance().nativeBalance();
+        long natBal = WalletsMaster.getInstance().nativeBalance();
         if (natBal != -1) {
             setBalance(app, natBal);
         } else {
@@ -171,7 +171,7 @@ public class WalletBitcoin implements BaseWallet {
                     errTitle[0] = app.getString(R.string.Alerts_sendFailure);
                     errMessage[0] = "Insufficient Funds";
                 } catch (AmountSmallerThanMinException e) {
-                    long minAmount = BRWalletManager.getInstance().getMinOutputAmount();
+                    long minAmount = WalletsMaster.getInstance().getMinOutputAmount();
                     errTitle[0] = app.getString(R.string.Alerts_sendFailure);
                     errMessage[0] = String.format(Locale.getDefault(), app.getString(R.string.PaymentProtocol_Errors_smallPayment),
                             BRConstants.bitcoinLowercase + new BigDecimal(minAmount).divide(new BigDecimal(100), BRConstants.ROUNDING_MODE));
@@ -254,7 +254,7 @@ public class WalletBitcoin implements BaseWallet {
                 Log.e(TAG, "initWallet: ctx is null");
                 return false;
             }
-            BRWalletManager m = BRWalletManager.getInstance();
+            WalletsMaster m = WalletsMaster.getInstance();
             final BRPeerManager pm = BRPeerManager.getInstance();
 
             if (!m.isCreated()) {
@@ -274,14 +274,14 @@ public class WalletBitcoin implements BaseWallet {
                 }
                 //Save the first address for future check
                 m.createWallet(transactionsCount, pubkeyEncoded);
-                String firstAddress = BRWalletManager.getFirstAddress(pubkeyEncoded);
+                String firstAddress = WalletsMaster.getFirstAddress(pubkeyEncoded);
                 BRSharedPrefs.putFirstAddress(ctx, firstAddress);
                 long fee = BRSharedPrefs.getFeePerKb(ctx);
                 if (fee == 0) {
-                    fee = BRWalletManager.getInstance().defaultFee();
+                    fee = WalletsMaster.getInstance().defaultFee();
                     BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
                 }
-                BRWalletManager.getInstance().setFeePerKb(fee, isEconomyFee);
+                WalletsMaster.getInstance().setFeePerKb(fee, isEconomyFee);
             }
 
             if (!pm.isCreated()) {
@@ -508,10 +508,10 @@ public class WalletBitcoin implements BaseWallet {
             throw new SomethingWentWrong("wrong parameters: paymentRequest");
         }
         long amount = paymentRequest.amount;
-        long balance = BRWalletManager.getInstance().getBalance(app);
-        final BRWalletManager m = BRWalletManager.getInstance();
-        long minOutputAmount = BRWalletManager.getInstance().getMinOutputAmount();
-        final long maxOutputAmount = BRWalletManager.getInstance().getMaxOutputAmount();
+        long balance = WalletsMaster.getInstance().getBalance(app);
+        final WalletsMaster m = WalletsMaster.getInstance();
+        long minOutputAmount = WalletsMaster.getInstance().getMinOutputAmount();
+        final long maxOutputAmount = WalletsMaster.getInstance().getMaxOutputAmount();
 
         // check if spending is allowed
         if (!BRSharedPrefs.getAllowSpend(app)) {
@@ -530,7 +530,7 @@ public class WalletBitcoin implements BaseWallet {
 
         //not enough for fee
         if (notEnoughForFee(app, paymentRequest)) {
-            //weird bug when the core BRWalletManager is NULL
+            //weird bug when the core WalletsMaster is NULL
             if (maxOutputAmount == -1) {
                 BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
             }
@@ -572,7 +572,7 @@ public class WalletBitcoin implements BaseWallet {
     }
 
     private void showAdjustFee(final Activity app, PaymentItem item) {
-        BRWalletManager m = BRWalletManager.getInstance();
+        WalletsMaster m = WalletsMaster.getInstance();
         long maxAmountDouble = m.getMaxOutputAmount();
         if (maxAmountDouble == -1) {
             BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"));
@@ -616,9 +616,9 @@ public class WalletBitcoin implements BaseWallet {
 
         double minOutput;
         if (request.isAmountRequested) {
-            minOutput = BRWalletManager.getInstance().getMinOutputAmountRequested();
+            minOutput = WalletsMaster.getInstance().getMinOutputAmountRequested();
         } else {
-            minOutput = BRWalletManager.getInstance().getMinOutputAmount();
+            minOutput = WalletsMaster.getInstance().getMinOutputAmount();
         }
 
         //amount can't be less than the min
@@ -642,12 +642,12 @@ public class WalletBitcoin implements BaseWallet {
         }
         boolean forcePin = false;
 
-        Log.e(TAG, "confirmPay: totalSent: " + BRWalletManager.getInstance().getTotalSent());
+        Log.e(TAG, "confirmPay: totalSent: " + WalletsMaster.getInstance().getTotalSent());
         Log.e(TAG, "confirmPay: request.amount: " + request.amount);
         Log.e(TAG, "confirmPay: total limit: " + AuthManager.getInstance().getTotalLimit(ctx));
         Log.e(TAG, "confirmPay: limit: " + BRKeyStore.getSpendLimit(ctx));
 
-        if (BRWalletManager.getInstance().getTotalSent() + request.amount > AuthManager.getInstance().getTotalLimit(ctx)) {
+        if (WalletsMaster.getInstance().getTotalSent() + request.amount > AuthManager.getInstance().getTotalLimit(ctx)) {
             forcePin = true;
         }
 
@@ -685,7 +685,7 @@ public class WalletBitcoin implements BaseWallet {
 
         String iso = BRSharedPrefs.getIso(ctx);
 
-        BRWalletManager m = BRWalletManager.getInstance();
+        WalletsMaster m = WalletsMaster.getInstance();
         long feeForTx = m.feeForTransaction(request.address, request.amount);
         if (feeForTx == 0) {
             long maxAmount = m.getMaxOutputAmount();
@@ -703,7 +703,7 @@ public class WalletBitcoin implements BaseWallet {
                 return null;
             }
             feeForTx = m.feeForTransaction(request.address, maxAmount);
-            feeForTx += (BRWalletManager.getInstance().getBalance(ctx) - request.amount) % 100;
+            feeForTx += (WalletsMaster.getInstance().getBalance(ctx) - request.amount) % 100;
         }
         final long total = request.amount + feeForTx;
         String formattedAmountBTC = CurrencyUtils.getFormattedCurrencyString(ctx, "BTC", ExchangeUtils.getBitcoinForSatoshis(ctx, new BigDecimal(request.amount)));
@@ -736,16 +736,16 @@ public class WalletBitcoin implements BaseWallet {
     }
 
     private boolean isSmallerThanMin(Context app, PaymentItem paymentRequest) {
-        long minAmount = BRWalletManager.getInstance().getMinOutputAmount();
+        long minAmount = WalletsMaster.getInstance().getMinOutputAmount();
         return paymentRequest.amount < minAmount;
     }
 
     private boolean isLargerThanBalance(Context app, PaymentItem paymentRequest) {
-        return paymentRequest.amount > BRWalletManager.getInstance().getBalance(app) && paymentRequest.amount > 0;
+        return paymentRequest.amount > WalletsMaster.getInstance().getBalance(app) && paymentRequest.amount > 0;
     }
 
     private boolean notEnoughForFee(Context app, PaymentItem paymentRequest) {
-        BRWalletManager m = BRWalletManager.getInstance();
+        WalletsMaster m = WalletsMaster.getInstance();
         long feeForTx = m.feeForTransaction(paymentRequest.address, paymentRequest.amount);
         if (feeForTx == 0) {
             long maxOutput = m.getMaxOutputAmount();

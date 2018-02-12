@@ -23,7 +23,7 @@ import com.breadwallet.tools.security.SmartValidator;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 import com.platform.APIClient;
 
 import java.io.Serializable;
@@ -112,7 +112,7 @@ public class IntroActivity extends BRActivity implements Serializable {
             isFirstAddressCorrect = SmartValidator.checkFirstAddress(this, masterPubKey);
         }
         if (!isFirstAddressCorrect) {
-            BRWalletManager.getInstance().wipeWalletButKeystore(this);
+            WalletsMaster.getInstance().wipeWalletButKeystore(this);
         }
 
         PostAuth.getInstance().onCanaryCheck(this, false);

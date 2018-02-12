@@ -3,7 +3,7 @@ package com.breadwallet.tools.util;
 import android.content.Context;
 
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.interfaces.BaseWallet;
 import com.breadwallet.wallet.wallets.WalletBitcoin;
 
@@ -13,8 +13,6 @@ import java.text.DecimalFormatSymbols;
 import java.util.Currency;
 import java.util.Locale;
 import java.util.Objects;
-
-import static com.breadwallet.tools.util.BRConstants.CURRENT_UNIT_BITS;
 
 /**
  * BreadWallet
@@ -82,7 +80,7 @@ public class CurrencyUtils {
 
     public static String getSymbolByIso(Context app, String iso) {
         String symbol;
-        BaseWallet wallet = BRWalletManager.getInstance().getWalletByIso(iso);
+        BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(iso);
         if (wallet != null) {
             symbol = wallet.getSymbol(app);
         } else {
@@ -99,13 +97,13 @@ public class CurrencyUtils {
 
     //for now only use for BTC and Bits
     public static String getCurrencyName(Context app, String iso) {
-        BaseWallet wallet = BRWalletManager.getInstance().getWalletByIso(iso);
+        BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(iso);
         if (wallet == null) return iso;
         return wallet.getName(app);
     }
 
     public static int getMaxDecimalPlaces(Context app, String iso) {
-        BaseWallet wallet = BRWalletManager.getInstance().getWalletByIso(iso);
+        BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(iso);
         if (wallet == null) {
             Currency currency = Currency.getInstance(iso);
             return currency.getDefaultFractionDigits();

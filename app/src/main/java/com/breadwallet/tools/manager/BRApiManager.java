@@ -12,7 +12,7 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
 
@@ -212,14 +212,14 @@ public class BRApiManager {
             JSONObject obj = new JSONObject(jsonString);
             fee = obj.getLong("fee_per_kb");
             economyFee = obj.getLong("fee_per_kb_economy");
-            if (fee != 0 && fee < BRWalletManager.getInstance().maxFee()) {
+            if (fee != 0 && fee < WalletsMaster.getInstance().maxFee()) {
                 BRSharedPrefs.putFeePerKb(app, fee);
-                BRWalletManager.getInstance().setFeePerKb(fee, isEconomyFee); //todo improve that logic
+                WalletsMaster.getInstance().setFeePerKb(fee, isEconomyFee); //todo improve that logic
                 BRSharedPrefs.putFeeTime(app, System.currentTimeMillis()); //store the time of the last successful fee fetch
             } else {
                 FirebaseCrash.report(new NullPointerException("Fee is weird:" + fee));
             }
-            if (economyFee != 0 && economyFee < BRWalletManager.getInstance().maxFee()) {
+            if (economyFee != 0 && economyFee < WalletsMaster.getInstance().maxFee()) {
                 BRSharedPrefs.putEconomyFeePerKb(app, economyFee);
             } else {
                 FirebaseCrash.report(new NullPointerException("Economy fee is weird:" + economyFee));
