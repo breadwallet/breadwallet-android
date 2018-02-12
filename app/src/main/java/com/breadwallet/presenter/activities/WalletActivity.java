@@ -3,7 +3,6 @@ package com.breadwallet.presenter.activities;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -151,6 +150,9 @@ public class WalletActivity extends BreadActivity implements InternetManager.Con
 
         mDefaultTextPrimary = mBalancePrimary.getText().toString();
         mDefaultTextSecondary = mBalanceSecondary.getText().toString();
+
+        TxManager.getInstance().init(this);
+
     }
 
     private void updateUi() {
@@ -211,9 +213,9 @@ public class WalletActivity extends BreadActivity implements InternetManager.Con
         BRSharedPrefs.setIsCryptoPreferred(this, b);
     }
 
-    private void setPriceTags(boolean btcPreferred, boolean animate) {
-        mBalanceSecondary.setTextSize(!btcPreferred ? t1Size : t2Size);
-        mBalancePrimary.setTextSize(!btcPreferred ? t2Size : t1Size);
+    private void setPriceTags(final boolean btcPreferred, boolean animate) {
+        //mBalanceSecondary.setTextSize(!btcPreferred ? t1Size : t2Size);
+        //mBalancePrimary.setTextSize(!btcPreferred ? t2Size : t1Size);
         ConstraintSet set = new ConstraintSet();
         set.clone(toolBarConstraintLayout);
         if (animate)
@@ -226,6 +228,10 @@ public class WalletActivity extends BreadActivity implements InternetManager.Con
         set.connect(R.id.swap, ConstraintSet.START, !btcPreferred ? mBalanceSecondary.getId() : mBalancePrimary.getId(), ConstraintSet.END, px8);
         //align second item after swap symbol
         set.connect(!btcPreferred ? R.id.balance_primary : R.id.balance_secondary, ConstraintSet.START, mSwap.getId(), ConstraintSet.END, px8);
+
+        set.connect(R.id.balance_secondary, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px8);
+        set.connect(R.id.balance_primary, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px8);
+
 
 
         if (!btcPreferred) {
@@ -249,6 +255,10 @@ public class WalletActivity extends BreadActivity implements InternetManager.Con
                                       @Override
                                       public void run() {
                                           updateUI();
+
+                                          mBalanceSecondary.setTextSize(!btcPreferred ? t1Size : t2Size);
+                                          mBalancePrimary.setTextSize(!btcPreferred ? t2Size : t1Size);
+
                                       }
                                   },
 
@@ -287,18 +297,47 @@ public class WalletActivity extends BreadActivity implements InternetManager.Con
                 TxManager.getInstance().updateTxList(WalletActivity.this);
             }
         });
+
+        TxManager.getInstance().updateTxList(CurrencyActivity.this);
+
+    }
+
+    @Override
+    public void onStatusUpdate() {
+        super.onStatusUpdate();
+
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                TxManager.getInstance().updateTxList(CurrencyActivity.this);
+            }
+        });
+    }
+
+    @Override
+    public void onTxAdded() {
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                TxManager.getInstance().updateTxList(CurrencyActivity.this);
+            }
+        });
+        BRWalletManager.getInstance().refreshBalance(CurrencyActivity.this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        new Handler().postDelayed(new Runnable() {
+        /*new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
                 updateUI();
             }
-        }, 1000);
+        }, 1000);*/
+
+        TxManager.getInstance().onResume(CurrencyActivity.this);
+
     }
 
     private void setUpBarFlipper() {
