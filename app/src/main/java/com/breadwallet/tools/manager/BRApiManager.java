@@ -248,7 +248,6 @@ public class BRApiManager {
         Iterator it = headers.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
-//            Log.e(TAG, "urlGET: adding extra Bread headers: " + pair.getKey() + " : " + pair.getValue());
             builder.header((String) pair.getKey(), (String) pair.getValue());
         }
 
