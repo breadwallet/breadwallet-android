@@ -15,7 +15,7 @@ import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 import com.jniwrappers.BRBIP32Sequence;
 import com.jniwrappers.BRKey;
 import com.platform.APIClient;
@@ -200,7 +200,7 @@ public class BRBitId {
         }
         if (Utils.isNullOrEmpty(phrase)) throw new NullPointerException("cant happen");
         nulTermPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
-        seed = BRWalletManager.getSeedFromPhrase(nulTermPhrase);
+        seed = WalletsMaster.getSeedFromPhrase(nulTermPhrase);
         if (Utils.isNullOrEmpty(seed)) {
             Log.e(TAG, "completeBitID: seed is null!");
             return;

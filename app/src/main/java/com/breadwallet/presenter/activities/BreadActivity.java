@@ -35,14 +35,13 @@ import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.security.BitcoinUrlHandler;
-import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.interfaces.OnBalanceChanged;
 import com.breadwallet.wallet.interfaces.OnTxAdded;
 import com.platform.APIClient;
@@ -170,7 +169,7 @@ public class BreadActivity extends BRActivity implements OnBalanceChanged,
     }
 
     private void setupObservers() {
-        BRWalletManager.getInstance().setBalanceChangedListener(this);
+        WalletsMaster.getInstance().setBalanceChangedListener(this);
         BRPeerManager.getInstance().addStatusUpdateListener(this);
         BRPeerManager.setOnSyncFinished(new BRPeerManager.OnSyncSucceeded() {
             @Override
@@ -326,11 +325,11 @@ public class BreadActivity extends BRActivity implements OnBalanceChanged,
 
         setupNetworking();
 
-        if (!BRWalletManager.getInstance().isCreated()) {
+        if (!WalletsMaster.getInstance().isCreated()) {
             BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    BRWalletManager.getInstance().initWallet(BreadActivity.this);
+                    WalletsMaster.getInstance().initWallets(BreadActivity.this);
                 }
             });
         }
@@ -341,7 +340,7 @@ public class BreadActivity extends BRActivity implements OnBalanceChanged,
             }
         }, 100);
 
-        BRWalletManager.getInstance().refreshBalance(this);
+        WalletsMaster.getInstance().refreshBalances(this);
 
         BRAnimator.showFragmentByTag(this, savedFragmentTag);
         savedFragmentTag = null;
@@ -541,7 +540,7 @@ public class BreadActivity extends BRActivity implements OnBalanceChanged,
                 TxManager.getInstance().updateTxList(BreadActivity.this);
             }
         });
-        BRWalletManager.getInstance().refreshBalance(BreadActivity.this);
+        WalletsMaster.getInstance().refreshBalances(BreadActivity.this);
     }
 
     @Override

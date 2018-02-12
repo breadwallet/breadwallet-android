@@ -115,7 +115,7 @@ public class FragmentFingerprint extends Fragment
                 if (!BRAnimator.isClickAllowed()) return;
 //                if (!BRAnimator.scanResultFragmentOn && mode == BRConstants.AUTH_FOR_PAY && request.isAmountRequested) {
 ////                    FragmentScanResult.address = request.address[0];
-//                    BRWalletManager.getInstance().offerToChangeTheAmount(getActivity(), "");
+//                    WalletsMaster.getInstance().offerToChangeTheAmount(getActivity(), "");
 //                }
 //                dismiss();
                 closeMe();

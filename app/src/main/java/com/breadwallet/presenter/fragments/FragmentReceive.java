@@ -30,7 +30,7 @@ import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 
 import static com.breadwallet.tools.animation.BRAnimator.animateBackgroundDim;
 import static com.breadwallet.tools.animation.BRAnimator.animateSignalSlide;
@@ -109,7 +109,7 @@ public class FragmentReceive extends Fragment {
         separator2 = rootView.findViewById(R.id.separator2);
         separator2.setVisibility(View.GONE);
         setListeners();
-        BRWalletManager.getInstance().addBalanceChangedListener(new BRWalletManager.OnBalanceChanged() {
+        WalletsMaster.getInstance().addBalanceChangedListener(new WalletsMaster.OnBalanceChanged() {
             @Override
             public void onBalanceChanged(long balance) {
                 updateQr();
@@ -281,7 +281,7 @@ public class FragmentReceive extends Fragment {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                boolean success = BRWalletManager.refreshAddress(ctx);
+                boolean success = WalletsMaster.refreshAddress(ctx);
                 if (!success) {
                     if (ctx instanceof Activity) {
                         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {

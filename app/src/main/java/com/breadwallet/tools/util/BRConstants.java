@@ -77,7 +77,7 @@ public class BRConstants {
     public static final int HUNDRED_BITS = 10000000;
 
 //    /**
-//     * BRWalletManager
+//     * WalletsMaster
 //     */
 //    public static final long TX_FEE_PER_KB = 5000;
 //    public static final long DEFAULT_FEE_PER_KB = (TX_FEE_PER_KB * 1000 + 190) / 191;

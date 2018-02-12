@@ -30,7 +30,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 
 import java.math.BigDecimal;
 
@@ -74,7 +74,7 @@ public class WithdrawBchActivity extends BRActivity {
         if (Utils.isNullOrEmpty(pubkey)) {
             BRReportsManager.reportBug(new NullPointerException("WithdrawBchActivity: onCreate: pubkey is missing!"));
         }
-        long satoshis = BRWalletManager.getBCashBalance(pubkey);
+        long satoshis = WalletsMaster.getBCashBalance(pubkey);
         BigDecimal amount = ExchangeUtils.getBitcoinForSatoshis(this, new BigDecimal(satoshis));
 
         String balance = CurrencyUtils.getFormattedCurrencyString(this, "BTC", amount);
@@ -122,15 +122,15 @@ public class WithdrawBchActivity extends BRActivity {
                         return;
                     }
 //                    final String finalAddress = tempAddress;
-                    BRWalletManager wm = BRWalletManager.getInstance();
+                    WalletsMaster wm = WalletsMaster.getInstance();
 
                     if (wm.isValidBitcoinPrivateKey(bitcoinUrl) || wm.isValidBitcoinBIP38Key(bitcoinUrl)) {
-                        BRWalletManager.getInstance().confirmSweep(WithdrawBchActivity.this, bitcoinUrl);
+                        WalletsMaster.getInstance().trySweepWallet(WithdrawBchActivity.this, bitcoinUrl);
                         return;
                     }
 
-//                    if (BRWalletManager.validateAddress(bitcoinUrl.trim())) {
-                    final BRWalletManager m = BRWalletManager.getInstance();
+//                    if (WalletsMaster.validateAddress(bitcoinUrl.trim())) {
+                    final WalletsMaster m = WalletsMaster.getInstance();
                     BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
@@ -175,7 +175,7 @@ public class WithdrawBchActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                if (BRWalletManager.getBCashBalance(BRKeyStore.getMasterPublicKey(app)) == 0) {
+                if (WalletsMaster.getBCashBalance(BRKeyStore.getMasterPublicKey(app)) == 0) {
                     BRDialog.showCustomDialog(app, "", app.getString(R.string.BCH_genericError), app.getString(R.string.AccessibilityLabels_close), null,
                             new BRDialogView.BROnClickListener() {
                                 @Override
@@ -236,7 +236,7 @@ public class WithdrawBchActivity extends BRActivity {
                     }, null, null, 0);
         } else {
             address = theAddress;
-            if (BRWalletManager.getBCashBalance(BRKeyStore.getMasterPublicKey(app)) == 0) {
+            if (WalletsMaster.getBCashBalance(BRKeyStore.getMasterPublicKey(app)) == 0) {
                 BRDialog.showCustomDialog(app, "", app.getString(R.string.BCH_genericError), app.getString(R.string.AccessibilityLabels_close), null,
                         new BRDialogView.BROnClickListener() {
                             @Override

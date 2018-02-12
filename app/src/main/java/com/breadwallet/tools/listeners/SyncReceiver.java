@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 
 /**
  * BreadWallet
@@ -51,8 +51,7 @@ public class SyncReceiver extends IntentService {
             if (SYNC_RECEIVER.equals(workIntent.getAction())) {
                 app = getApplication();
 //                BRToast.showCustomToast(getApplication(), "Starting background syncing...", BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
-
-                BRWalletManager.getInstance().initWallet(app);
+                WalletsMaster.getInstance().initWallet(app);
             }
     }
 }

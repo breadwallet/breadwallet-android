@@ -32,7 +32,7 @@ import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 
 import java.math.BigDecimal;
 
@@ -309,7 +309,7 @@ public class FragmentRequestAmount extends Fragment {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                boolean success = BRWalletManager.refreshAddress(getActivity());
+                boolean success = WalletsMaster.refreshAddress(getActivity());
                 if (!success) throw new RuntimeException("failed to retrieve address");
 
                 receiveAddress = BRSharedPrefs.getReceiveAddress(getActivity());

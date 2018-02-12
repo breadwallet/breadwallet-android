@@ -5,37 +5,25 @@ import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
-import android.os.NetworkOnMainThreadException;
 import android.os.SystemClock;
 import android.security.keystore.UserNotAuthenticatedException;
-import android.support.annotation.WorkerThread;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRToast;
-import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
-import com.breadwallet.presenter.entities.BRPeerEntity;
-import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
 import com.breadwallet.presenter.entities.TxItem;
-import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
-import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -45,9 +33,6 @@ import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.manager.BRNotificationManager;
-import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
@@ -58,14 +43,10 @@ import com.breadwallet.wallet.wallets.WalletBitcoinCash;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
-import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-
-import static com.breadwallet.presenter.fragments.FragmentSend.isEconomyFee;
 
 /**
  * BreadWallet
@@ -92,38 +73,25 @@ import static com.breadwallet.presenter.fragments.FragmentSend.isEconomyFee;
  * THE SOFTWARE.
  */
 
-public class BRWalletManager {
-    private static final String TAG = BRWalletManager.class.getName();
+public class WalletsMaster {
+    private static final String TAG = WalletsMaster.class.getName();
 
-    private static BRWalletManager instance;
-
-
-    public void refreshBalance(final Activity app) {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                long nativeBalance = nativeBalance();
-                if (nativeBalance != -1) {
-                    setBalance(app, nativeBalance);
-                } else {
-                    Log.e(TAG, "UpdateUI, nativeBalance is -1 meaning _wallet was null!");
-                }
-            }
-        });
-
-    }
+    private static WalletsMaster instance;
 
     public long getBalance(Context context) {
         return BRSharedPrefs.getCatchedBalance(context);
     }
 
-    private BRWalletManager() {
+    private List<BaseWallet> mWallets = new ArrayList<>();
 
+    private WalletsMaster() {
+        mWallets.add(WalletBitcoin.getInstance());
+        mWallets.add(WalletBitcoinCash.getInstance());
     }
 
-    public static BRWalletManager getInstance() {
+    public static WalletsMaster getInstance() {
         if (instance == null) {
-            instance = new BRWalletManager();
+            instance = new WalletsMaster();
         }
         return instance;
     }
@@ -197,7 +165,7 @@ public class BRWalletManager {
         });
 
         byte[] strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
-        byte[] pubKey = BRWalletManager.getInstance().getMasterPubKey(strBytes);
+        byte[] pubKey = WalletsMaster.getInstance().getMasterPubKey(strBytes);
         BRKeyStore.putMasterPublicKey(pubKey, ctx);
 
         return true;
@@ -284,7 +252,7 @@ public class BRWalletManager {
         wipeWalletButKeystore(app);
     }
 
-    public boolean confirmSweep(final Context ctx, final String privKey) {
+    public boolean trySweepWallet(final Context ctx, final String privKey) {
         if (ctx == null) return false;
         if (isValidBitcoinBIP38Key(privKey)) {
             Log.d(TAG, "isValidBitcoinBIP38Key true");
@@ -335,9 +303,9 @@ public class BRWalletManager {
 
                                     if (decryptedKey.equals("")) {
                                         SpringAnimator.springView(input);
-                                        confirmSweep(ctx, privKey);
+                                        trySweepWallet(ctx, privKey);
                                     } else {
-                                        confirmSweep(ctx, decryptedKey);
+                                        trySweepWallet(ctx, decryptedKey);
                                     }
                                 }
                             });
@@ -360,14 +328,32 @@ public class BRWalletManager {
             new ImportPrivKeyTask(((Activity) ctx)).execute(privKey);
             return true;
         } else {
-            Log.e(TAG, "confirmSweep: !isValidBitcoinPrivateKey && !isValidBitcoinBIP38Key");
+            Log.e(TAG, "trySweepWallet: !isValidBitcoinPrivateKey && !isValidBitcoinBIP38Key");
             return false;
+        }
+    }
+
+    public void setBalanceChangedListener(OnBalanceChanged listener) {
+        for (BaseWallet wallet : mWallets) {
+            //todo add listeners to all wallets
+        }
+    }
+
+    public void refreshBalances(Context app) {
+        for (BaseWallet wallet : mWallets) {
+            //todo add listeners to all wallets
+        }
+    }
+
+    public void initWallets(Context app) {
+        for (BaseWallet wallet : mWallets) {
+            //todo init all wallets
         }
     }
 
 
     public void startTheWalletIfExists(final Activity app) {
-        final BRWalletManager m = BRWalletManager.getInstance();
+        final WalletsMaster m = WalletsMaster.getInstance();
         if (!m.isPasscodeEnabled(app)) {
             //Device passcode/password should be enabled for the app to work
             BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), app.getString(R.string.Prompts_NoScreenLock_body_android),

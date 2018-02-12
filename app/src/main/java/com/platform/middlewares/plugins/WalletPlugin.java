@@ -9,7 +9,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
 import com.platform.tools.BRBitId;
@@ -71,14 +71,14 @@ public class WalletPlugin implements Plugin {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
-            BRWalletManager wm = BRWalletManager.getInstance();
+            WalletsMaster wm = WalletsMaster.getInstance();
             JSONObject jsonResp = new JSONObject();
             try {
                 /**whether or not the users wallet is set up yet, or is currently locked*/
                 jsonResp.put("no_wallet", wm.noWalletForPlatform(app));
 
                 /**the current receive address*/
-                jsonResp.put("receive_address", BRWalletManager.getReceiveAddress());
+                jsonResp.put("receive_address", WalletsMaster.getReceiveAddress());
 
                 /**how digits after the decimal point. 2 = bits 8 = btc 6 = mbtc*/
                 jsonResp.put("btc_denomiation_digits", BRSharedPrefs.getCurrencyUnit(app) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);

@@ -21,7 +21,7 @@ import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.security.X509CertificateValidator;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.CustomLogger;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -151,7 +151,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             StringBuilder allAddresses = new StringBuilder();
             for (String s : paymentRequest.addresses) {
                 allAddresses.append(s).append(", ");
-                if (!BRWalletManager.validateAddress(s)) {
+                if (!WalletsMaster.validateAddress(s)) {
                     if (app != null)
                         BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_invalidAddressTitle) + ": " + s, app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                             @Override
@@ -322,7 +322,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                double minOutput = BRWalletManager.getInstance().getMinOutputAmount();
+                double minOutput = WalletsMaster.getInstance().getMinOutputAmount();
                 if (paymentRequest.amount < minOutput) {
                     final String bitcoinMinMessage = String.format(Locale.getDefault(), app.getString(R.string.PaymentProtocol_Errors_smallTransaction),
                             BRConstants.bitcoinLowercase + new BigDecimal(minOutput).divide(new BigDecimal("100")));

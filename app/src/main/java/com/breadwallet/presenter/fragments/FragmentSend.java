@@ -47,7 +47,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.ExchangeUtils;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 
 import java.math.BigDecimal;
 
@@ -296,9 +296,9 @@ public class FragmentSend extends Fragment {
                     return;
                 }
                 address = obj.address;
-                final BRWalletManager wm = BRWalletManager.getInstance();
+                final WalletsMaster wm = WalletsMaster.getInstance();
 
-                if (BRWalletManager.validateAddress(address)) {
+                if (WalletsMaster.validateAddress(address)) {
                     final String finalAddress = address;
                     final Activity app = getActivity();
                     if (app == null) {
@@ -400,7 +400,7 @@ public class FragmentSend extends Fragment {
                 BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) ? "0" : amountStr);
                 BigDecimal satoshiAmount = ExchangeUtils.getSatoshisFromAmount(getActivity(), iso, bigAmount);
 
-                if (address.isEmpty() || !BRWalletManager.validateAddress(address)) {
+                if (address.isEmpty() || !WalletsMaster.validateAddress(address)) {
                     allFilled = false;
                     Activity app = getActivity();
                     BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_noAddress), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
@@ -414,7 +414,7 @@ public class FragmentSend extends Fragment {
                     allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), amountEdit);
                 }
-                if (satoshiAmount.longValue() > BRWalletManager.getInstance().getBalance(getActivity())) {
+                if (satoshiAmount.longValue() > WalletsMaster.getInstance().getBalance(getActivity())) {
                     allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), balanceText);
                     SpringAnimator.failShakeAnimation(getActivity(), feeText);
@@ -620,7 +620,7 @@ public class FragmentSend extends Fragment {
         setAmount();
         String balanceString;
         String iso = selectedIso;
-        curBalance = BRWalletManager.getInstance().getBalance(getActivity());
+        curBalance = WalletsMaster.getInstance().getBalance(getActivity());
         if (!amountLabelOn)
             isoText.setText(CurrencyUtils.getSymbolByIso(getActivity(), selectedIso));
         isoButton.setText(String.format("%s(%s)", CurrencyUtils.getCurrencyName(getActivity(), selectedIso), CurrencyUtils.getSymbolByIso(getActivity(), selectedIso)));
@@ -637,10 +637,10 @@ public class FragmentSend extends Fragment {
             fee = 0;
         } else {
             String address = addressEdit.getText().toString();
-            if (!address.isEmpty() && BRWalletManager.validateAddress(address))
-                fee = BRWalletManager.getInstance().feeForTransaction(addressEdit.getText().toString(), satoshis);
+            if (!address.isEmpty() && WalletsMaster.validateAddress(address))
+                fee = WalletsMaster.getInstance().feeForTransaction(addressEdit.getText().toString(), satoshis);
             if (fee == 0) {
-                fee = BRWalletManager.getInstance().feeForTransactionAmount(satoshis);
+                fee = WalletsMaster.getInstance().feeForTransactionAmount(satoshis);
             }
         }
 
@@ -712,7 +712,7 @@ public class FragmentSend extends Fragment {
     private void setButton(boolean isRegular) {
         if (isRegular) {
             isEconomyFee = false;
-            BRWalletManager.getInstance().setFeePerKb(BRSharedPrefs.getFeePerKb(getContext()), false);
+            WalletsMaster.getInstance().setFeePerKb(BRSharedPrefs.getFeePerKb(getContext()), false);
             regular.setTextColor(getContext().getColor(R.color.white));
             regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue));
             economy.setTextColor(getContext().getColor(R.color.dark_blue));
@@ -721,7 +721,7 @@ public class FragmentSend extends Fragment {
             warningText.getLayoutParams().height = 0;
         } else {
             isEconomyFee = true;
-            BRWalletManager.getInstance().setFeePerKb(BRSharedPrefs.getEconomyFeePerKb(getContext()), false);
+            WalletsMaster.getInstance().setFeePerKb(BRSharedPrefs.getEconomyFeePerKb(getContext()), false);
             regular.setTextColor(getContext().getColor(R.color.dark_blue));
             regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue_stroke));
             economy.setTextColor(getContext().getColor(R.color.white));

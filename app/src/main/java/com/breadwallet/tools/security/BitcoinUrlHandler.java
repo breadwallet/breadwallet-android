@@ -13,7 +13,8 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.wallets.WalletBitcoin;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -72,7 +73,7 @@ public class BitcoinUrlHandler {
         BREventManager.getInstance().pushEvent("send.handleURL", attr);
 
         RequestObject requestObject = getRequestFromString(url);
-        if (BRWalletManager.getInstance().confirmSweep(app, url)) {
+        if (WalletsMaster.getInstance().trySweepWallet(app, url)) {
             return true;
         }
         if (requestObject == null) {
@@ -110,8 +111,8 @@ public class BitcoinUrlHandler {
         // return true if the request is valid url and has param: r or param: address
         // return true if it is a valid bitcoinPrivKey
         return (requestObject != null && (requestObject.r != null || requestObject.address != null)
-                || BRWalletManager.getInstance().isValidBitcoinBIP38Key(url)
-                || BRWalletManager.getInstance().isValidBitcoinPrivateKey(url));
+                || WalletsMaster.getInstance().isValidBitcoinBIP38Key(url)
+                || WalletsMaster.getInstance().isValidBitcoinPrivateKey(url));
     }
 
 
@@ -138,7 +139,7 @@ public class BitcoinUrlHandler {
         String host = uri.getHost();
         if (host != null) {
             String addrs = host.trim();
-            if (BRWalletManager.validateAddress(addrs)) {
+            if (WalletsMaster.validateAddress(addrs)) {
                 obj.address = addrs;
             }
         }
@@ -188,8 +189,6 @@ public class BitcoinUrlHandler {
         RequestObject requestObject = getRequestFromString(url);
         if (requestObject == null || requestObject.address == null || requestObject.address.isEmpty())
             return false;
-        final String[] addresses = new String[1];
-        addresses[0] = requestObject.address;
 
         String amount = requestObject.amount;
 
@@ -203,7 +202,7 @@ public class BitcoinUrlHandler {
         } else {
             if (app != null) {
                 BRAnimator.killAllFragments(app);
-                BRSender.getInstance().sendTransaction(app, new PaymentItem(addresses, null, new BigDecimal(amount).longValue(), null, true));
+                WalletBitcoin.getInstance().sendTransaction(app, new PaymentItem(requestObject.address, null, new BigDecimal(amount).longValue(), null, true));
             } else {
                 BRReportsManager.reportBug(new NullPointerException("tryBitcoinURL, app is null!"));
             }

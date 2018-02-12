@@ -35,7 +35,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRWalletManager;
+import com.breadwallet.wallet.WalletsMaster;
 import com.platform.APIClient;
 
 
@@ -210,11 +210,11 @@ public class LoginActivity extends BRActivity {
         appVisible = true;
         app = this;
         inputAllowed = true;
-        if (!BRWalletManager.getInstance().isCreated()) {
+        if (!WalletsMaster.getInstance().isCreated()) {
             BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    BRWalletManager.getInstance().initWallet(LoginActivity.this);
+                    WalletsMaster.getInstance().initWallet(LoginActivity.this);
                 }
             });
         }
