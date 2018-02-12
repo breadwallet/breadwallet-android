@@ -3,7 +3,7 @@ package com.breadwallet.presenter.activities;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.Typeface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -11,6 +11,7 @@ import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.transition.TransitionManager;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AnimationUtils;
@@ -18,8 +19,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ViewFlipper;
 
-import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.SyncBlockchainActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRSearchBar;
@@ -29,12 +28,13 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.SyncManager;
+import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.interfaces.BaseWallet;
 import com.platform.HTTPServer;
-
-import static com.breadwallet.presenter.activities.TestHomeActivity.EXTRA_CURRENCY;
 
 /**
  * Created by byfieldj on 1/16/18.
@@ -45,7 +45,7 @@ import static com.breadwallet.presenter.activities.TestHomeActivity.EXTRA_CURREN
  */
 
 public class CurrencyActivity extends BreadActivity implements InternetManager.ConnectionReceiverListener {
-
+    private static final String TAG = CurrencyActivity.class.getName();
     BRText mCurrencyTitle;
     BRText mCurrencyPriceUsd;
     BRText mBalancePrimary;
@@ -65,6 +65,7 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
 
     private String mDefaultTextPrimary;
     private String mDefaultTextSecondary;
+    private BaseWallet currentWallet;
 
 
     @Override
@@ -72,7 +73,6 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_currency);
-
 
         mCurrencyTitle = findViewById(R.id.currency_label);
         mCurrencyPriceUsd = findViewById(R.id.currency_usd_price);
@@ -90,9 +90,7 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
         mSwap = findViewById(R.id.swap);
         mBalanceLabel = findViewById(R.id.balance_label);
 
-
         setUpBarFlipper();
-
 
         BRAnimator.init(this);
         mBalancePrimary.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);//make it the size it should be after animation to get the X
@@ -115,46 +113,6 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
             }
         });
 
-
-        if (getIntent() != null) {
-            String currency = getIntent().getStringExtra(EXTRA_CURRENCY);
-            if (currency.equals("btc")) {
-                // Do nothing, BTC display is the default display
-
-                mBuyButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-
-                        Intent intent = new Intent(CurrencyActivity.this, WebViewActivity.class);
-                        intent.putExtra("url", HTTPServer.URL_BUY);
-                        Activity app = CurrencyActivity.this;
-                        app.startActivity(intent);
-                        app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
-                    }
-                });
-
-            } else if (currency.equals("bch")) {
-                mCurrencyTitle.setText("BitcoinCash");
-                mCurrencyPriceUsd.setText("$2,665.41 per BCH");
-                mBalancePrimary.setText("$4,177.74");
-                mBalanceSecondary.setText("1.56739 BCH");
-                mToolbar.setBackgroundColor(getResources().getColor(R.color.bitcoin_cash_row_color, null));
-                mSendButton.setColor(R.color.bitcoin_cash_row_color);
-                mReceiveButton.setColor(R.color.bitcoin_cash_row_color);
-                mBuyButton.setVisibility(View.GONE);
-
-                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        LinearLayout.LayoutParams.WRAP_CONTENT,
-                        1.5f
-                );
-                mSendButton.setLayoutParams(param);
-                mReceiveButton.setLayoutParams(param);
-
-
-            }
-
-        }
 
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -190,6 +148,53 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
 
         mDefaultTextPrimary = mBalancePrimary.getText().toString();
         mDefaultTextSecondary = mBalanceSecondary.getText().toString();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        currentWallet = WalletsMaster.getInstance().getCurrentWallet(this);
+
+//        if (currency.equals("btc")) {
+        // Do nothing, BTC display is the default display
+        if (currentWallet.getUiConfiguration().buyVisible) {
+            mBuyButton.setVisibility(View.VISIBLE);
+            mBuyButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(CurrencyActivity.this, WebViewActivity.class);
+                    intent.putExtra("url", HTTPServer.URL_BUY);
+                    Activity app = CurrencyActivity.this;
+                    app.startActivity(intent);
+                    app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                }
+            });
+
+        } else {
+            mBuyButton.setVisibility(View.GONE);
+            LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    LinearLayout.LayoutParams.WRAP_CONTENT,
+                    1.5f
+            );
+            mSendButton.setLayoutParams(param);
+            mReceiveButton.setLayoutParams(param);
+            mBuyButton.setLayoutParams(param);
+        }
+
+        mCurrencyTitle.setText(currentWallet.getName(this));
+        mCurrencyPriceUsd.setText("$2,665.41 per BCH");
+        mBalancePrimary.setText("$4,177.74");
+        mBalanceSecondary.setText("1.56739 BCH");
+        String color = currentWallet.getUiConfiguration().colorHex;
+        Log.e(TAG, "onResume: " + currentWallet.getName(this));
+        Log.e(TAG, "onResume: color:" + color);
+        mToolbar.setBackgroundColor(Color.parseColor(color));
+        mSendButton.setColor(Color.parseColor(color));
+        mReceiveButton.setColor(Color.parseColor(color));
+        mBuyButton.setColor(Color.parseColor(color));
+
+
     }
 
     private void swap() {
@@ -228,7 +233,6 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
 
 
         }
-
 
         // Apply the changes
         set.applyTo(toolBarConstraintLayout);
