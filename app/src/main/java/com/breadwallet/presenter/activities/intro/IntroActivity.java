@@ -2,7 +2,6 @@
 package com.breadwallet.presenter.activities.intro;
 
 import android.content.Intent;
-import android.graphics.Point;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -10,10 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
-import com.breadwallet.BuildConfig;
-import com.breadwallet.R;
+import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.SetPinActivity;
-import com.breadwallet.presenter.activities.TestHomeActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRReportsManager;
@@ -67,7 +64,6 @@ public class IntroActivity extends BRActivity implements Serializable {
     public static IntroActivity getApp() {
         return app;
     }
-
 
 
     @Override
@@ -145,12 +141,7 @@ public class IntroActivity extends BRActivity implements Serializable {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-<<<<<<< HEAD
-                BreadActivity bApp = BreadActivity.getApp();
-=======
-                TestHomeActivity bApp = TestHomeActivity.getApp();
-                if (bApp != null) bApp.finish();
->>>>>>> refactor the code to match the new design
+                HomeActivity bApp = HomeActivity.getApp();
                 Intent intent = new Intent(IntroActivity.this, SetPinActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -162,12 +153,8 @@ public class IntroActivity extends BRActivity implements Serializable {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-<<<<<<< HEAD
-                BreadActivity bApp = BreadActivity.getApp();
-=======
-                TestHomeActivity bApp = TestHomeActivity.getApp();
+                HomeActivity bApp = HomeActivity.getApp();
                 if (bApp != null) bApp.finish();
->>>>>>> refactor the code to match the new design
                 Intent intent = new Intent(IntroActivity.this, RecoverActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);

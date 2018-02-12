@@ -208,7 +208,7 @@
         </activity>
 
         <activity
-            android:name=".presenter.activities.TestHomeActivity"
+            android:name=".presenter.activities.HomeActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
 

@@ -12,7 +12,7 @@
     android:fitsSystemWindows="true"
     android:focusableInTouchMode="true"
     android:orientation="vertical"
-    tools:context="com.breadwallet.presenter.activities.TestHomeActivity">
+    tools:context="com.breadwallet.presenter.activities.HomeActivity">
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/total_assets_label"
