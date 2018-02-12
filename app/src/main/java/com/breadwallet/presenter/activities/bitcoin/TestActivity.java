@@ -1,4 +1,4 @@
-package com.breadwallet.presenter.activities.settings;
+package com.breadwallet.presenter.activities.bitcoin;
 
 import android.app.Activity;
 import android.os.Bundle;

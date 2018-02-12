@@ -183,7 +183,7 @@ public class InputWordsActivity extends BRActivity {
                                     @Override
                                     public void onClick(BRDialogView brDialogView) {
                                         brDialogView.dismissWithAnimation();
-                                        WalletsMaster m = WalletsMaster.getInstance();
+                                        WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
                                         m.wipeWalletButKeystore(app);
                                         m.wipeKeyStore(app);
                                         Intent intent = new Intent(app, IntroActivity.class);
@@ -215,7 +215,7 @@ public class InputWordsActivity extends BRActivity {
 
                     } else {
                         Utils.hideKeyboard(app);
-                        WalletsMaster m = WalletsMaster.getInstance();
+                        WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
                         m.wipeWalletButKeystore(app);
                         m.wipeKeyStore(app);
                         PostAuth.getInstance().setPhraseForKeyStore(cleanPhrase);

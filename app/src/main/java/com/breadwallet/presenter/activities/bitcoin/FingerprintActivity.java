@@ -1,4 +1,4 @@
-package com.breadwallet.presenter.activities.settings;
+package com.breadwallet.presenter.activities.bitcoin;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -138,7 +138,7 @@ public class FingerprintActivity extends BRActivity {
         String iso = BRSharedPrefs.getPreferredFiatIso(this);
         //amount in satoshis
         BigDecimal satoshis = new BigDecimal(BRKeyStore.getSpendLimit(this));
-        WalletsMaster master = WalletsMaster.getInstance();
+        WalletsMaster master = WalletsMaster.getInstance(this);
         //amount in BTC, mBTC or bits
         BigDecimal amount = master.getCurrentWallet(this).getFiatForSmallestCrypto(this, satoshis);
         //amount in user preferred ISO (e.g. USD)

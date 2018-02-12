@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.activities;
 
-import android.content.Intent;
 import android.os.Handler;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,8 +9,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.WebViewActivity;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
@@ -21,7 +18,6 @@ import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.platform.HTTPServer;
 
 public class ReEnterPinActivity extends BRActivity {
     private static final String TAG = ReEnterPinActivity.class.getName();

@@ -179,29 +179,12 @@ public class BRActivity extends Activity {
                                 e.printStackTrace();
                             }
                             String result = data.getStringExtra("result");
-                            if (BitcoinUriParser.isBitcoinUrl(result))
+                            if (BitcoinUriParser.isBitcoinUrl(BRActivity.this, result))
                                 BitcoinUriParser.processRequest(BRActivity.this, result);
                             else if (BRBitId.isBitId(result))
                                 BRBitId.signBitID(BRActivity.this, result, null);
                             else
                                 Log.e(TAG, "onActivityResult: not bitcoin address NOR bitID");
-                        }
-                    });
-
-                }
-                break;
-            case BRConstants.SCANNER_BCH_REQUEST:
-                if (resultCode == Activity.RESULT_OK) {
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                Thread.sleep(500);
-                            } catch (InterruptedException e) {
-                                e.printStackTrace();
-                            }
-                            String result = data.getStringExtra("result");
-                            PostAuth.getInstance().onSendBch(BRActivity.this, true, result);
                         }
                     });
 
@@ -219,7 +202,7 @@ public class BRActivity extends Activity {
 
                 } else {
                     Log.e(TAG, "WARNING: resultCode != RESULT_OK");
-                    WalletsMaster m = WalletsMaster.getInstance();
+                    WalletsMaster m = WalletsMaster.getInstance(BRActivity.this);
                     m.wipeWalletButKeystore(this);
                     finish();
                 }
