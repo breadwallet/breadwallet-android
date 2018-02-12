@@ -141,6 +141,7 @@ public class BitcoinUriParser {
         String host = uri.getHost();
         if (host != null) {
             String addrs = host.trim();
+
             if (WalletsMaster.validateAddress(addrs)) {
                 obj.address = addrs;
             }

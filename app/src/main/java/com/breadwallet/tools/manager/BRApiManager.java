@@ -13,6 +13,7 @@ import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWallet;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
 
@@ -35,7 +36,6 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import static com.breadwallet.presenter.fragments.FragmentSend.isEconomyFee;
 import okhttp3.Request;
 import okhttp3.Response;
 
@@ -201,37 +201,13 @@ public class BRApiManager {
     }
 
     public static void updateFeePerKb(Context app) {
-        String jsonString = urlGET(app, "https://" + BreadApp.HOST + "/fee-per-kb");
-        if (jsonString == null || jsonString.isEmpty()) {
-            Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
-            return;
-        }
-        long fee;
-        long economyFee;
-        try {
-            JSONObject obj = new JSONObject(jsonString);
-            fee = obj.getLong("fee_per_kb");
-            economyFee = obj.getLong("fee_per_kb_economy");
-            if (fee != 0 && fee < WalletsMaster.getInstance().maxFee()) {
-                BRSharedPrefs.putFeePerKb(app, fee);
-                WalletsMaster.getInstance().setFeePerKb(fee, isEconomyFee); //todo improve that logic
-                BRSharedPrefs.putFeeTime(app, BRSharedPrefs.getCurrentWalletIso(app), System.currentTimeMillis()); //store the time of the last successful fee fetch
-            } else {
-                FirebaseCrash.report(new NullPointerException("Fee is weird:" + fee));
-            }
-            if (economyFee != 0 && economyFee < WalletsMaster.getInstance().maxFee()) {
-                BRSharedPrefs.putEconomyFeePerKb(app, economyFee);
-            } else {
-                FirebaseCrash.report(new NullPointerException("Economy fee is weird:" + economyFee));
-            }
-        } catch (JSONException e) {
-            Log.e(TAG, "updateFeePerKb: FAILED: " + jsonString, e);
-            BRReportsManager.reportBug(e);
-            BRReportsManager.reportBug(new IllegalArgumentException("JSON ERR: " + jsonString));
+        WalletsMaster wm = WalletsMaster.getInstance();
+        for(BaseWallet wallet : wm.getAllWallets()){
+            wallet.updateFee(app);
         }
     }
 
-    private static String urlGET(Context app, String myURL) {
+    public static String urlGET(Context app, String myURL) {
 //        System.out.println("Requested URL_EA:" + myURL);
         if (ActivityUTILS.isMainThread()) {
             Log.e(TAG, "urlGET: network on main thread");

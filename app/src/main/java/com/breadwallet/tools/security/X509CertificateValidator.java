@@ -2,6 +2,7 @@ package com.breadwallet.tools.security;
 
 import android.util.Log;
 
+import com.breadwallet.core.BRCorePaymentProtocolRequest;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.exceptions.CertificateChainNotFound;
 import com.breadwallet.tools.uri.BitcoinUriParser;

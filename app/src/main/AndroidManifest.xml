@@ -61,7 +61,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".presenter.activities.BreadActivity"
+            android:name=".presenter.activities.WalletActivity"
             android:label="@string/app_name"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
@@ -185,27 +185,17 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".presenter.activities.settings.WithdrawBchActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"></activity>
-        <activity
             android:name=".presenter.activities.settings.NodesActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"></activity>
         <activity
             android:name=".presenter.activities.camera.CameraActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".presenter.activities.settings.TestActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"></activity>
-        <activity
-            android:name=".presenter.activities.WalletActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait">
-
-        </activity>
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name=".presenter.activities.HomeActivity"

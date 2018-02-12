@@ -1,4 +1,4 @@
-package com.breadwallet.wallet.interfaces;
+package com.breadwallet.wallet.abstracts;
 
 /**
  * BreadWallet
@@ -24,13 +24,13 @@ package com.breadwallet.wallet.interfaces;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public interface BaseTx {
+public abstract class BaseTx {
 
-    String getTxHash();
+    public abstract String getTxHash();
 
-    long getSent();
+    public abstract long getSent();
 
-    long getReceived();
+    public abstract long getReceived();
 
 
 }

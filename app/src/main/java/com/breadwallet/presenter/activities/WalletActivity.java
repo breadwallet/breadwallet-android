@@ -35,7 +35,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.interfaces.BaseWallet;
+import com.breadwallet.wallet.abstracts.BaseWallet;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
@@ -166,7 +166,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     private void updateUi() {
-        currentWallet = WalletsMaster.getInstance().getCurrentWallet(this);
+        BaseWallet currentWallet = WalletsMaster.getInstance().getCurrentWallet(this);
         Log.e(TAG, "updateUi: " + currentWallet.getIso(this));
 
         if (currentWallet.getUiConfiguration().buyVisible) {
@@ -358,6 +358,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     @Override
     public void onConnectionChanged(boolean isConnected) {
+        final BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(this);
         if (isConnected) {
             if (barFlipper != null) {
                 if (barFlipper.getDisplayedChild() == 2)
@@ -366,7 +367,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(WalletActivity.this,
+                    final double progress = wallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(WalletActivity.this,
                             BRSharedPrefs.getCurrentWalletIso(WalletActivity.this)));
 //                    Log.e(TAG, "run: " + progress);
                     if (progress < 1 && progress > 0) {

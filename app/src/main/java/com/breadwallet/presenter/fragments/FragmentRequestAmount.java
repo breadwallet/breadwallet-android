@@ -32,7 +32,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.interfaces.BaseWallet;
+import com.breadwallet.wallet.abstracts.BaseWallet;
 
 import java.math.BigDecimal;
 

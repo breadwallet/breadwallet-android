@@ -210,14 +210,12 @@ public class LoginActivity extends BRActivity {
         appVisible = true;
         app = this;
         inputAllowed = true;
-        if (!WalletsMaster.getInstance().isCreated()) {
-            BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    WalletsMaster.getInstance().initLastWallet(LoginActivity.this);
-                }
-            });
-        }
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                WalletsMaster.getInstance().initLastWallet(LoginActivity.this);
+            }
+        });
         if (PLATFORM_ON)
             APIClient.getInstance(this).updatePlatform();
     }

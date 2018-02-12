@@ -17,7 +17,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.entities.TxItem;
+import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -28,6 +28,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWallet;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
 
@@ -77,7 +78,7 @@ public class FragmentTransactionItem extends Fragment {
     private TextView mDateText;
     private TextView mToFromBottom;
     private TextView mTxHash;
-    private TxItem item;
+    private TxUiHolder item;
     private LinearLayout signalLayout;
     private ImageButton close;
     private String oldComment;
@@ -242,12 +243,14 @@ public class FragmentTransactionItem extends Fragment {
         mAddressText.setText(addr);
     }
 
-    private int getLevel(TxItem item) {
+    private int getLevel(TxUiHolder item) {
+        BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(getActivity());
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(getContext()) - blockHeight + 1;
         int level;
         if (confirms <= 0) {
-            int relayCount = BRPeerManager.getRelayCount(item.getTxHash());
+            long relayCount = wallet.getPeerManager().getRelayCount(item.getTxHash());
+
             if (relayCount <= 0)
                 level = 0;
             else if (relayCount == 1)
@@ -300,14 +303,14 @@ public class FragmentTransactionItem extends Fragment {
         super.onPause();
     }
 
-    public static FragmentTransactionItem newInstance(TxItem item) {
+    public static FragmentTransactionItem newInstance(TxUiHolder item) {
         FragmentTransactionItem f = new FragmentTransactionItem();
         f.setItem(item);
 
         return f;
     }
 
-    public void setItem(TxItem item) {
+    public void setItem(TxUiHolder item) {
         this.item = item;
 
     }

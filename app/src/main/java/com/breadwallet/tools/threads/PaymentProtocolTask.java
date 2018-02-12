@@ -21,6 +21,7 @@ import com.breadwallet.tools.security.X509CertificateValidator;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.CustomLogger;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWallet;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -321,7 +322,9 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                double minOutput = WalletsMaster.getInstance().getMinOutputAmount();
+                BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(app);
+
+                double minOutput = wallet.getWallet().getMinOutputAmount();
                 if (paymentRequest.amount < minOutput) {
                     final String bitcoinMinMessage = String.format(Locale.getDefault(), app.getString(R.string.PaymentProtocol_Errors_smallTransaction),
                             BRConstants.symbolBits + new BigDecimal(minOutput).divide(new BigDecimal("100")));

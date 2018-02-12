@@ -15,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -22,6 +23,8 @@ import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWallet;
 
 
 public class NodesActivity extends BRActivity {
@@ -109,14 +112,15 @@ public class NodesActivity extends BRActivity {
     }
 
     private void updateButtonText() {
+        BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(this);
         if (BRSharedPrefs.getTrustNode(this, BRSharedPrefs.getCurrentWalletIso(NodesActivity.this)).isEmpty()) {
             switchButton.setText(getString(R.string.NodeSelector_manualButton));
         } else {
             switchButton.setText(getString(R.string.NodeSelector_automaticButton));
         }
-        nodeStatus.setText(BRPeerManager.getInstance().connectionStatus() == 2 ? getString(R.string.NodeSelector_connected) : getString(R.string.NodeSelector_notConnected));
+        nodeStatus.setText(wallet.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Connected ? getString(R.string.NodeSelector_connected) : getString(R.string.NodeSelector_notConnected));
         if (trustNode != null)
-            trustNode.setText(BRPeerManager.getInstance().getCurrentPeerName());
+            trustNode.setText(wallet.getPeerManager().getDownloadPeerName());
     }
 
     private void createDialog() {

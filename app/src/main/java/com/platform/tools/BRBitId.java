@@ -6,6 +6,8 @@ import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Base64;
 import android.util.Log;
 
+import com.breadwallet.core.BRCoreKey;
+import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
@@ -16,8 +18,6 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.jniwrappers.BRBIP32Sequence;
-import com.jniwrappers.BRKey;
 import com.platform.APIClient;
 import com.platform.middlewares.plugins.WalletPlugin;
 
@@ -199,8 +199,7 @@ public class BRBitId {
             return;
         }
         if (Utils.isNullOrEmpty(phrase)) throw new NullPointerException("cant happen");
-        nulTermPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
-        seed = WalletsMaster.getSeedFromPhrase(nulTermPhrase);
+        seed = WalletsMaster.getSeedFromPhrase(phrase);
         if (Utils.isNullOrEmpty(seed)) {
             Log.e(TAG, "completeBitID: seed is null!");
             return;
@@ -226,7 +225,6 @@ public class BRBitId {
                     _promptString = null;
                     _index = 0;
                     Arrays.fill(phrase, (byte) 0);
-                    if (nulTermPhrase != null) Arrays.fill(nulTermPhrase, (byte) 0);
                     Arrays.fill(seed, (byte) 0);
                 }
             }
@@ -237,6 +235,7 @@ public class BRBitId {
     private static void bitIdPlatform(Activity app, Uri uri, byte[] seed) {
 
         final String biUri = uri.getHost() == null ? uri.toString() : uri.getHost();
+        BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey()
         final byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, biUri);
         if (key == null) {
             Log.d(TAG, "bitIdPlatform: key is null!");
@@ -246,8 +245,8 @@ public class BRBitId {
             Log.d(TAG, "bitIdPlatform: _strToSign is null!");
             return;
         }
-        final String sig = BRBitId.signMessage(_strToSign, new BRKey(key));
-        final String address = new BRKey(key).address();
+        final String sig = BRBitId.signMessage(_strToSign, new BRCoreKey(key));
+        final String address = new BRCoreKey(key).address();
 
         JSONObject postJson = new JSONObject();
         Log.e(TAG, "GLIDERA: address:" + address);
@@ -307,8 +306,8 @@ public class BRBitId {
             return;
         }
 
-        final String sig = BRBitId.signMessage(uriWithNonce, new BRKey(key));
-        final String address = new BRKey(key).address();
+        final String sig = BRBitId.signMessage(uriWithNonce, new BRCoreKey(key));
+        final String address = new BRCoreKey(key).address();
         Log.e(TAG, "LINK: address: " + address);
         JSONObject postJson = new JSONObject();
         try {
@@ -352,7 +351,7 @@ public class BRBitId {
         return nonce;
     }
 
-    public static String signMessage(String message, BRKey key) {
+    public static String signMessage(String message, BRCoreKey key) {
         byte[] signingData = formatMessageForBitcoinSigning(message);
 
         MessageDigest digest = null;

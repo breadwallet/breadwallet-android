@@ -4,7 +4,7 @@ import android.content.Context;
 
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.interfaces.BaseWallet;
+import com.breadwallet.wallet.abstracts.BaseWallet;
 import com.breadwallet.wallet.wallets.WalletBitcoin;
 
 import java.math.BigDecimal;

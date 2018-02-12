@@ -78,7 +78,7 @@ public class WalletPlugin implements Plugin {
                 jsonResp.put("no_wallet", wm.noWalletForPlatform(app));
 
                 /**the current receive address*/
-                jsonResp.put("receive_address", WalletsMaster.getReceiveAddress());
+                jsonResp.put("receive_address", WalletsMaster.getInstance().getCurrentWallet(app).getReceiveAddress(app));
 
                 /**how digits after the decimal point. 2 = bits 8 = btc 6 = mbtc*/
                 jsonResp.put("btc_denomiation_digits", BRSharedPrefs.getBitcoinDenomination(app) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
