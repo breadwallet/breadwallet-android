@@ -25,8 +25,8 @@ add_library( # Specifies the name of the library.
 
              # Sets the library as a shared library.
              SHARED
-
              # Provides a relative path to your source file(s).
+<<<<<<< HEAD
              src/jni/breadwallet-core/BRAddress.c
              src/jni/breadwallet-core/BRAddress.h
              src/jni/breadwallet-core/BRArray.h
@@ -102,9 +102,46 @@ add_library( # Specifies the name of the library.
                                         src/jni/breadwallet-core/Java/com_breadwallet_core_BRCorePaymentProtocol.h
                                         src/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreWallet.c
                                         src/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreWallet.h
+=======
+             src/main/jni/BRAddress.c
+             src/main/jni/BRAddress.h
+             src/main/jni/BRArray.h
+             src/main/jni/BRBase58.c
+             src/main/jni/BRBase58.h
+             src/main/jni/BRBIP32Sequence.c
+             src/main/jni/BRBIP32Sequence.h
+             src/main/jni/BRBIP38Key.c
+             src/main/jni/BRBIP38Key.h
+             src/main/jni/BRBIP39Mnemonic.c
+             src/main/jni/BRBIP39Mnemonic.h
+             src/main/jni/BRBIP39WordsEn.h
+             src/main/jni/BRBloomFilter.c
+             src/main/jni/BRBloomFilter.h
+             src/main/jni/BRCrypto.c
+             src/main/jni/BRCrypto.h
+             src/main/jni/BRInt.h
+             src/main/jni/BRKey.c
+             src/main/jni/BRKey.h
+             src/main/jni/BRMerkleBlock.c
+             src/main/jni/BRMerkleBlock.h
+             src/main/jni/BRPaymentProtocol.c
+             src/main/jni/BRPaymentProtocol.h
+             src/main/jni/BRPeer.c
+             src/main/jni/BRPeer.h
+             src/main/jni/BRPeerManager.c
+             src/main/jni/BRPeerManager.h
+             src/main/jni/BRSet.c
+             src/main/jni/BRSet.h
+             src/main/jni/BRTransaction.c
+             src/main/jni/BRTransaction.h
+             src/main/jni/BRWallet.c
+             src/main/jni/BRWallet.h
+             )
+>>>>>>> new JNI in progress
 
              )
 
+<<<<<<< HEAD
 
 include_directories(src/jni/breadwallet-core/Java)
 include_directories(src/jni/breadwallet-core/)
@@ -116,6 +153,13 @@ include_directories(src/jni/breadwallet-core/secp256k1)
 #include_directories(src/main/secp/secp256k1/src/)
 #include_directories(src/main/secp/secp256k1/)
 #include_directories(src/main/secp/)
+=======
+include_directories(src/main/jni/)
+include_directories(src/main/jni//secp256k1/include/)
+include_directories(src/main/jni//secp256k1/src/)
+include_directories(src/main/jni//secp256k1/)
+include_directories(src/main/jni//test/)
+>>>>>>> new JNI in progress
 
 # add lib dependencies
 target_link_libraries(
