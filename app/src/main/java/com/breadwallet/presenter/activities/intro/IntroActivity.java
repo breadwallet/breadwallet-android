@@ -9,6 +9,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 
+import com.breadwallet.BuildConfig;
+import com.breadwallet.R;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.SetPinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
