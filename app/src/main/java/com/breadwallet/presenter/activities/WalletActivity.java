@@ -239,8 +239,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         //align second item after swap symbol
         set.connect(!btcPreferred ? R.id.balance_primary : R.id.balance_secondary, ConstraintSet.START, mSwap.getId(), ConstraintSet.END, px8);
 
-        set.connect(R.id.balance_secondary, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px8);
-        set.connect(R.id.balance_primary, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px8);
+        //set.connect(R.id.balance_secondary, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px8);
+        //set.connect(R.id.balance_primary, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px8);
 
 
         if (!btcPreferred) {

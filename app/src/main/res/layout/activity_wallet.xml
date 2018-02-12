@@ -21,7 +21,6 @@
         android:layout_height="fill_parent"
         tools:context="com.breadwallet.presenter.activities.WalletActivity">
 
-
         <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
                                            android:id="@+id/bread_bar"
                                            android:layout_width="match_parent"
@@ -108,9 +107,9 @@
 
                 <ImageButton
                     android:id="@+id/swap"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/ic_sync_white_24dp"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:background="@drawable/ic_swap_horizontal"
                     android:layout_marginBottom="10dp"
                     android:layout_marginStart="8dp"
                     app:layout_constraintVertical_bias="0.492"
@@ -178,9 +177,8 @@
     <LinearLayout
         android:id="@+id/recycler_layout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/bottom_toolbar_layout1"
-        android:layout_below="@+id/toolbar_layout"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/tool_bar_flipper"
         android:animateLayoutChanges="true"
         android:orientation="vertical">
 
