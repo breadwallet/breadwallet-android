@@ -18,7 +18,7 @@ import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.uri.BitcoinUriParser;
+import com.breadwallet.wallet.wallets.bitcoin.BitcoinUriParser;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;

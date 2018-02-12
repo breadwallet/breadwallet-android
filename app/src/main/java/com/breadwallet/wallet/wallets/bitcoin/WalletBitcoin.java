@@ -1,4 +1,4 @@
-package com.breadwallet.wallet.wallets;
+package com.breadwallet.wallet.wallets.bitcoin;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,13 +10,17 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.core.BRCoreWalletManager;
+import com.breadwallet.core.BRCoreChainParams;
+import com.breadwallet.core.BRCoreMasterPubKey;
+import com.breadwallet.core.BRCoreMerkleBlock;
+import com.breadwallet.core.BRCorePeer;
+import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRToast;
-import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
-import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.PaymentItem;
@@ -33,7 +37,6 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.tools.uri.BitcoinUriParser;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
@@ -41,12 +44,8 @@ import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseTx;
 import com.breadwallet.wallet.abstracts.BaseWallet;
-import com.breadwallet.wallet.interfaces.OnBalanceChanged;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.exceptions.AmountSmallerThanMinException;
 import com.breadwallet.wallet.wallets.exceptions.FeeNeedsAdjust;
@@ -60,12 +59,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import static com.breadwallet.presenter.fragments.FragmentSend.isEconomyFee;
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
 /**
@@ -92,7 +89,7 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletBitcoin extends BaseWallet  {
+public class WalletBitcoin extends BaseWallet {
 
     private static final String TAG = WalletBitcoin.class.getName();
 
@@ -103,22 +100,49 @@ public class WalletBitcoin extends BaseWallet  {
     public static final long MAX_BTC = 21000000;
     private final static long FEE_EXPIRATION_MILLIS = 72 * 60 * 60 * 1000L;
 
-    private boolean itInitiatingWallet;
-    public List<OnBalanceChanged> balanceListeners;
+    private boolean isInitiatingWallet;
+    //    public List<OnBalanceChanged> balanceListeners;
     private static WalletBitcoin instance;
     private boolean timedOut;
     private boolean sending;
     private WalletUiConfiguration uiConfig;
 
-    public static WalletBitcoin getInstance() {
-        if (instance == null) instance = new WalletBitcoin();
+    public static WalletBitcoin getInstance(Context app) {
+        if (instance == null) {
+            byte[] rawPubKey = BRKeyStore.getMasterPublicKey(app);
+            BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
+            long time = BRKeyStore.getWalletCreationTime(app);
+
+            instance = new WalletBitcoin(app, pubKey, BuildConfig.BITCOIN_TESTNET ? BRCoreChainParams.testnetChainParams : BRCoreChainParams.mainnetChainParams, time);
+        }
         return instance;
     }
 
-    private WalletBitcoin() {
-        balanceListeners = new ArrayList<>();
+    private WalletBitcoin(final Context app, BRCoreMasterPubKey masterPubKey,
+                          BRCoreChainParams chainParams,
+                          double earliestPeerTime) {
+        super(masterPubKey, chainParams, earliestPeerTime);
+        String firstAddress = masterPubKey.getPubKeyAsCoreKey().address();
+        BRSharedPrefs.putFirstAddress(app, firstAddress);
+        long fee = BRSharedPrefs.getFeePerKb(app);
+        long economyFee = BRSharedPrefs.getEconomyFeePerKb(app);
+        if (fee == 0) {
+            fee = getWallet().getDefaultFeePerKb();
+            BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
+        }
+        getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app) ? fee : economyFee);
+        if (BRSharedPrefs.getStartHeight(app, BTC) == 0)
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    BRSharedPrefs.putStartHeight(app, BTC, getPeerManager().getLastBlockHeight());
+                }
+            });
+
+//            BRPeerManager.getInstance().updateFixedPeer(ctx);//todo reimplement the fixed peer
+//        balanceListeners = new ArrayList<>();
+
         uiConfig = new WalletUiConfiguration("#f29500", true, true, true);
-        super();
     }
 
     public void setBalance(final Context context, long balance) {
@@ -129,14 +153,14 @@ public class WalletBitcoin extends BaseWallet  {
         BRSharedPrefs.putCachedBalance(context, BTC, balance);
         WalletsMaster.refreshAddress(context);
 
-        for (OnBalanceChanged listener : balanceListeners) {
-            if (listener != null) listener.onBalanceChanged(BTC, balance);
-
-        }
+//        for (OnBalanceChanged listener : balanceListeners) {
+//            if (listener != null) listener.onBalanceChanged(BTC, balance);
+//
+//        }
     }
 
     public void refreshBalance(Activity app) {
-        long natBal = nativeBalance();
+        long natBal = getWallet().getBalance();
         if (natBal != -1) {
             setBalance(app, natBal);
         } else {
@@ -260,8 +284,8 @@ public class WalletBitcoin extends BaseWallet  {
     }
 
     @Override
-    public List<BaseTx> getTransactions() {
-        return null;
+    public BRCoreTransaction[] getTransactions() {
+        return getWallet().getTransactions();
     }
 
     @Override
@@ -277,16 +301,16 @@ public class WalletBitcoin extends BaseWallet  {
             JSONObject obj = new JSONObject(jsonString);
             fee = obj.getLong("fee_per_kb");
             economyFee = obj.getLong("fee_per_kb_economy");
-            BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(BTC);
+            BaseWallet wallet = WalletsMaster.getInstance(app).getWalletByIso(app, BTC);
 
-            if (fee != 0 && fee < wallet.getWallet().maxFee()) {
+            if (fee != 0 && fee < wallet.getWallet().getMaxFeePerKb()) {
                 BRSharedPrefs.putFeePerKb(app, fee);
                 wallet.getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app) ? fee : economyFee);
                 BRSharedPrefs.putFeeTime(app, BRSharedPrefs.getCurrentWalletIso(app), System.currentTimeMillis()); //store the time of the last successful fee fetch
             } else {
                 FirebaseCrash.report(new NullPointerException("Fee is weird:" + fee));
             }
-            if (economyFee != 0 && economyFee < wallet.getWallet().maxFee()) {
+            if (economyFee != 0 && economyFee < wallet.getWallet().getMaxFeePerKb()) {
                 BRSharedPrefs.putEconomyFeePerKb(app, economyFee);
             } else {
                 FirebaseCrash.report(new NullPointerException("Economy fee is weird:" + economyFee));
@@ -305,91 +329,26 @@ public class WalletBitcoin extends BaseWallet  {
 
     @Override
     public boolean generateWallet(Context app) {
-        //todo implement
+        //no need, one key for all wallets so far
         return false;
     }
 
     @Override
-    public boolean initWallet(final Context ctx) {
+    public boolean initWallet(final Context app) {
 
         if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
-        if (itInitiatingWallet) return false;
-        itInitiatingWallet = true;
+        if (isInitiatingWallet) return false;
+        isInitiatingWallet = true;
         try {
             Log.d(TAG, "initWallet:" + Thread.currentThread().getName());
-            if (ctx == null) {
-                Log.e(TAG, "initWallet: ctx is null");
+            if (app == null) {
+                Log.e(TAG, "initWallet: app is null");
                 return false;
             }
-            WalletsMaster m = WalletsMaster.getInstance();
-            final BRPeerManager pm = BRPeerManager.getInstance();
+            getPeerManager().connect();
 
-
-
-            if (!m.isCreated()) {
-                List<BRTransactionEntity> transactions = TransactionDataSource.getInstance(ctx).getAllTransactions();
-                int transactionsCount = transactions.size();
-                if (transactionsCount > 0) {
-                    m.createTxArrayWithCount(transactionsCount);
-                    for (BRTransactionEntity entity : transactions) {
-                        m.putTransaction(entity.getBuff(), entity.getBlockheight(), entity.getTimestamp());
-                    }
-                }
-
-                byte[] pubkeyEncoded = BRKeyStore.getMasterPublicKey(ctx);
-                if (Utils.isNullOrEmpty(pubkeyEncoded)) {
-                    Log.e(TAG, "initWallet: pubkey is missing");
-                    return false;
-                }
-                //Save the first address for future check
-                m.createWallet(transactionsCount, pubkeyEncoded);
-                String firstAddress = WalletsMaster.getFirstAddress(pubkeyEncoded);
-                BRSharedPrefs.putFirstAddress(ctx, firstAddress);
-                long fee = BRSharedPrefs.getFeePerKb(ctx);
-                if (fee == 0) {
-                    fee = WalletsMaster.getInstance().defaultFee();
-                    BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
-                }
-                WalletsMaster.getInstance().setFeePerKb(fee, isEconomyFee);
-            }
-
-            if (!pm.isCreated()) {
-                List<BRMerkleBlockEntity> blocks = MerkleBlockDataSource.getInstance(ctx).getAllMerkleBlocks();
-                List<BRPeerEntity> peers = PeerDataSource.getInstance(ctx).getAllPeers();
-                final int blocksCount = blocks.size();
-                final int peersCount = peers.size();
-                if (blocksCount > 0) {
-                    pm.createBlockArrayWithCount(blocksCount);
-                    for (BRMerkleBlockEntity entity : blocks) {
-                        pm.putBlock(entity.getBuff(), entity.getBlockHeight());
-                    }
-                }
-                if (peersCount > 0) {
-                    pm.createPeerArrayWithCount(peersCount);
-                    for (BRPeerEntity entity : peers) {
-                        pm.putPeer(entity.getAddress(), entity.getPort(), entity.getTimeStamp());
-                    }
-                }
-                Log.d(TAG, "blocksCount before connecting: " + blocksCount);
-                Log.d(TAG, "peersCount before connecting: " + peersCount);
-
-                int walletTime = BRKeyStore.getWalletCreationTime(ctx);
-
-                Log.e(TAG, "initWallet: walletTime: " + walletTime);
-                pm.create(walletTime, blocksCount, peersCount);
-                BRPeerManager.getInstance().updateFixedPeer(ctx);
-            }
-
-            pm.connect();
-            if (BRSharedPrefs.getStartHeight(ctx, BTC) == 0)
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        BRSharedPrefs.putStartHeight(ctx, BTC, BRPeerManager.getCurrentBlockHeight());
-                    }
-                });
         } finally {
-            itInitiatingWallet = false;
+            isInitiatingWallet = false;
         }
 
         return true;
@@ -466,6 +425,115 @@ public class WalletBitcoin extends BaseWallet  {
     @Override
     public long getTotalSent(Context app) {
         return 0;
+    }
+
+    @Override
+    public void wipeData(Context app) {
+        TransactionDataSource.getInstance(app).deleteAllTransactions();
+        MerkleBlockDataSource.getInstance(app).deleteAllBlocks();
+        PeerDataSource.getInstance(app).deleteAllPeers();
+        BRSharedPrefs.clearAllPrefs(app);
+    }
+
+    @Override
+    public boolean trySweepWallet(final Context ctx, final String privKey) {
+        if (ctx == null) return false;
+        return false;
+//        if (BRCoreKey.isValidBitcoinBIP38Key(privKey)) {
+//            Log.d(TAG, "isValidBitcoinBIP38Key true");
+//            ((Activity) ctx).runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//
+//                    final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+////                    builder.setTitle("password protected key");
+//
+//                    final View input = ((Activity) ctx).getLayoutInflater().inflate(R.layout.view_bip38password_dialog, null);
+//                    // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+//                    builder.setView(input);
+//
+//                    final EditText editText = (EditText) input.findViewById(R.id.bip38password_edittext);
+//
+//                    new Handler().postDelayed(new Runnable() {
+//                        public void run() {
+//                            editText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+//                            editText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+//
+//                        }
+//                    }, 100);
+//
+//                    // Set up the buttons
+//                    builder.setPositiveButton(ctx.getString(R.string.Button_ok), new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            if (ctx != null)
+//                                ((Activity) ctx).runOnUiThread(new Runnable() {
+//                                    @Override
+//                                    public void run() {
+//                                        BRToast.showCustomToast(ctx, ctx.getString(R.string.Import_checking), 500, Toast.LENGTH_LONG, R.drawable.toast_layout_blue);
+//                                    }
+//                                });
+//                            if (editText == null) {
+//                                Log.e(TAG, "onClick: edit text is null!");
+//                                return;
+//                            }
+//
+//                            final String pass = editText.getText().toString();
+//                            Log.e(TAG, "onClick: before");
+//                            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    String decryptedKey = decryptBip38Key(privKey, pass);
+//                                    Log.e(TAG, "onClick: after");
+//
+//                                    if (decryptedKey.equals("")) {
+//                                        SpringAnimator.springView(input);
+//                                        trySweepWallet(ctx, privKey);
+//                                    } else {
+//                                        trySweepWallet(ctx, decryptedKey);
+//                                    }
+//                                }
+//                            });
+//
+//                        }
+//                    });
+//                    builder.setNegativeButton(ctx.getString(R.string.Button_cancel), new DialogInterface.OnClickListener() {
+//                        @Override
+//                        public void onClick(DialogInterface dialog, int which) {
+//                            dialog.cancel();
+//                        }
+//                    });
+//
+//                    builder.show();
+//                }
+//            });
+//            return true;
+//        } else if (BRCoreKey.isValidBitcoinPrivateKey(privKey)) {
+//            Log.d(TAG, "isValidBitcoinPrivateKey true");
+//            new ImportPrivKeyTask(((Activity) ctx)).execute(privKey);
+//            return true;
+//        } else {
+//            Log.e(TAG, "trySweepWallet: !isValidBitcoinPrivateKey && !isValidBitcoinBIP38Key");
+//            return false;
+//        }
+    }
+
+    @Override
+    protected BRCoreTransaction[] loadTransactions() {
+        //todo implement
+        return new BRCoreTransaction[0];
+    }
+
+    @Override
+    protected BRCoreMerkleBlock[] loadBlocks() {
+        //todo implement
+        return new BRCoreMerkleBlock[0];
+    }
+
+    @Override
+    protected BRCorePeer[] loadPeers() {
+        //todo implement
+        return new BRCorePeer[0];
     }
 
     @Override
@@ -582,21 +650,6 @@ public class WalletBitcoin extends BaseWallet  {
         return fiatAmount.divide(new BigDecimal(rate), 8, ROUNDING_MODE).multiply(new BigDecimal("100000000"));
     }
 
-    public void addBalanceChangedListener(OnBalanceChanged listener) {
-        if (balanceListeners == null) balanceListeners = new ArrayList<>();
-        if (!balanceListeners.contains(listener))
-            balanceListeners.add(listener);
-    }
-
-    public void removeListener(OnBalanceChanged listener) {
-        if (balanceListeners == null) {
-            return;
-        }
-        if (balanceListeners.contains(listener))
-            balanceListeners.remove(listener);
-
-    }
-
     /**
      * Wallet callbacks
      */
@@ -623,7 +676,7 @@ public class WalletBitcoin extends BaseWallet  {
     public static void onBalanceChanged(final long balance) {
         Log.d(TAG, "onBalanceChanged:  " + balance);
         Context app = BreadApp.getBreadContext();
-        getInstance().setBalance(app, balance);
+        getInstance(app).setBalance(app, balance);
 
     }
 
@@ -702,18 +755,23 @@ public class WalletBitcoin extends BaseWallet  {
      */
     private void tryPay(final Context app, final PaymentItem paymentRequest) throws InsufficientFundsException,
             AmountSmallerThanMinException, SpendingNotAllowed, FeeNeedsAdjust, SomethingWentWrong {
-        if (paymentRequest == null || paymentRequest.address == null) {
+        if (paymentRequest == null || paymentRequest.tx == null) {
             Log.e(TAG, "tryPay: ERROR: paymentRequest: " + paymentRequest);
-            String message = paymentRequest == null ? "paymentRequest is null" : "addresses is null";
+            String message = paymentRequest == null ? "paymentRequest is null" : "tx is null";
             BRReportsManager.reportBug(new RuntimeException("paymentRequest is malformed: " + message), true);
             throw new SomethingWentWrong("wrong parameters: paymentRequest");
         }
-        long amount = paymentRequest.amount;
+//        long amount = paymentRequest.amount;
         long balance = getCachedBalance(app);
-        final WalletsMaster m = WalletsMaster.getInstance();
-        long minOutputAmount = WalletsMaster.getInstance().getMinOutputAmount();
-        final long maxOutputAmount = WalletsMaster.getInstance().getMaxOutputAmount();
+        final WalletsMaster m = WalletsMaster.getInstance(app);
+        long minOutputAmount = getWallet().getMinOutputAmount();
+        final long maxOutputAmount = getWallet().getMaxOutputAmount();
 
+        final BRCoreTransaction tx = paymentRequest.tx;
+
+        if (tx == null) {
+            throw new SomethingWentWrong("transaction is null");
+        }
         // check if spending is allowed
         if (!BRSharedPrefs.getAllowSpend(app, BTC)) {
             throw new SpendingNotAllowed();
@@ -721,12 +779,12 @@ public class WalletBitcoin extends BaseWallet  {
 
         //check if amount isn't smaller than the min amount
         if (isSmallerThanMin(app, paymentRequest)) {
-            throw new AmountSmallerThanMinException(amount, minOutputAmount);
+            throw new AmountSmallerThanMinException(getWallet().transactionAmount(paymentRequest.tx), minOutputAmount);
         }
 
         //amount is larger than balance
         if (isLargerThanBalance(app, paymentRequest)) {
-            throw new InsufficientFundsException(amount, balance);
+            throw new InsufficientFundsException(getWallet().transactionAmount(paymentRequest.tx), balance);
         }
 
         //not enough for fee
@@ -737,34 +795,34 @@ public class WalletBitcoin extends BaseWallet  {
             }
             // max you can spend is smaller than the min you can spend
             if (maxOutputAmount == 0 || maxOutputAmount < minOutputAmount) {
-                throw new InsufficientFundsException(amount, balance);
+                throw new InsufficientFundsException(getWallet().transactionAmount(paymentRequest.tx), balance);
             }
 
-            long feeForTx = m.feeForTransaction(paymentRequest.address, paymentRequest.amount);
-            throw new FeeNeedsAdjust(amount, balance, feeForTx);
+            long feeForTx = getWallet().getTransactionFee(tx);
+            throw new FeeNeedsAdjust(getWallet().transactionAmount(paymentRequest.tx), balance, feeForTx);
         }
         // payment successful
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                byte[] tmpTx = m.tryTransaction(paymentRequest.address, paymentRequest.amount);
-                if (tmpTx == null) {
-                    //something went wrong, failed to create tx
-                    ((Activity) app).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            BRDialog.showCustomDialog(app, "", app.getString(R.string.Alerts_sendFailure), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                                @Override
-                                public void onClick(BRDialogView brDialogView) {
-                                    brDialogView.dismiss();
-                                }
-                            }, null, null, 0);
-
-                        }
-                    });
-                    return;
-                }
-                paymentRequest.serializedTx = tmpTx;
+//                byte[] tmpTx = m.tryTransaction(paymentRequest.address, paymentRequest.amount);
+//                if (tmpTx == null) {
+//                    //something went wrong, failed to create tx
+//                    ((Activity) app).runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            BRDialog.showCustomDialog(app, "", app.getString(R.string.Alerts_sendFailure), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+//                                @Override
+//                                public void onClick(BRDialogView brDialogView) {
+//                                    brDialogView.dismiss();
+//                                }
+//                            }, null, null, 0);
+//
+//                        }
+//                    });
+//                    return;
+//                }
+                paymentRequest.tx = tx;
                 PostAuth.getInstance().setPaymentItem(paymentRequest);
                 confirmPay(app, paymentRequest);
             }
@@ -774,7 +832,7 @@ public class WalletBitcoin extends BaseWallet  {
 
     private void showAdjustFee(final Activity app, PaymentItem item) {
         WalletsMaster m = WalletsMaster.getInstance();
-        long maxAmountDouble = m.getMaxOutputAmount();
+        long maxAmountDouble = getWallet().getMaxOutputAmount();
         if (maxAmountDouble == -1) {
             BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"));
             return;
@@ -817,9 +875,9 @@ public class WalletBitcoin extends BaseWallet  {
 
         double minOutput;
         if (request.isAmountRequested) {
-            minOutput = WalletsMaster.getInstance().getMinOutputAmountRequested();
+            minOutput = getWallet().getMinOutputAmountRequested();
         } else {
-            minOutput = WalletsMaster.getInstance().getMinOutputAmount();
+            minOutput = getWallet().getMinOutputAmount();
         }
 
         //amount can't be less than the min
@@ -843,12 +901,12 @@ public class WalletBitcoin extends BaseWallet  {
         }
         boolean forcePin = false;
 
-        Log.e(TAG, "confirmPay: totalSent: " + WalletsMaster.getInstance().getTotalSent());
+        Log.e(TAG, "confirmPay: totalSent: " + getWallet().getTotalSent());
         Log.e(TAG, "confirmPay: request.amount: " + request.amount);
         Log.e(TAG, "confirmPay: total limit: " + AuthManager.getInstance().getTotalLimit(ctx));
         Log.e(TAG, "confirmPay: limit: " + BRKeyStore.getSpendLimit(ctx));
 
-        if (WalletsMaster.getInstance().getTotalSent() + request.amount > AuthManager.getInstance().getTotalLimit(ctx)) {
+        if (getWallet().getTotalSent() + request.amount > AuthManager.getInstance().getTotalLimit(ctx)) {
             forcePin = true;
         }
 
@@ -885,11 +943,10 @@ public class WalletBitcoin extends BaseWallet  {
         String receiver = getReceiver(request);
 
         String iso = BRSharedPrefs.getPreferredFiatIso(ctx);
-
-        WalletsMaster m = WalletsMaster.getInstance();
-        long feeForTx = m.feeForTransaction(request.address, request.amount);
+        BaseWallet wallet = WalletsMaster.getInstance(ctx).getCurrentWallet(ctx);
+        long feeForTx = getWallet().getTransactionFee(request.tx);
         if (feeForTx == 0) {
-            long maxAmount = m.getMaxOutputAmount();
+            long maxAmount = getWallet().getMaxOutputAmount();
             if (maxAmount == -1) {
                 BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
             }
@@ -903,17 +960,19 @@ public class WalletBitcoin extends BaseWallet  {
 
                 return null;
             }
-            feeForTx = m.feeForTransaction(request.address, maxAmount);
-            feeForTx += (getCachedBalance(ctx) - request.amount) % 100;
+            request.tx = getWallet().createTransaction(maxAmount, request.tx.getAddress());
+            feeForTx = getWallet().getTransactionFee(request.tx);
+            feeForTx += (getCachedBalance(ctx) - getWallet().transactionAmount(request.tx)) % 100;
         }
-        final long total = request.amount + feeForTx;
-        String formattedAmountBTC = CurrencyUtils.getFormattedCurrencyString(ctx, getIso(ctx), m.getCurrentWallet(ctx).getCryptoForSmallestCrypto(ctx, new BigDecimal(request.amount)));
-        String formattedFeeBTC = CurrencyUtils.getFormattedCurrencyString(ctx, getIso(ctx), m.getCurrentWallet(ctx).getCryptoForSmallestCrypto(ctx, new BigDecimal(feeForTx)));
-        String formattedTotalBTC = CurrencyUtils.getFormattedCurrencyString(ctx, getIso(ctx), m.getCurrentWallet(ctx).getCryptoForSmallestCrypto(ctx, new BigDecimal(total)));
+        long amount = getWallet().transactionAmount(request.tx);
+        final long total = getWallet().transactionAmount(request.tx) + feeForTx;
+        String formattedAmountBTC = CurrencyUtils.getFormattedCurrencyString(ctx, getIso(ctx), wallet.getCryptoForSmallestCrypto(ctx, new BigDecimal(amount)));
+        String formattedFeeBTC = CurrencyUtils.getFormattedCurrencyString(ctx, getIso(ctx), wallet.getCryptoForSmallestCrypto(ctx, new BigDecimal(feeForTx)));
+        String formattedTotalBTC = CurrencyUtils.getFormattedCurrencyString(ctx, getIso(ctx), wallet.getCryptoForSmallestCrypto(ctx, new BigDecimal(total)));
 
-        String formattedAmount = CurrencyUtils.getFormattedCurrencyString(ctx, iso, m.getCurrentWallet(ctx).getFiatForSmallestCrypto(ctx, new BigDecimal(request.amount)));
-        String formattedFee = CurrencyUtils.getFormattedCurrencyString(ctx, iso, m.getCurrentWallet(ctx).getFiatForSmallestCrypto(ctx, new BigDecimal(feeForTx)));
-        String formattedTotal = CurrencyUtils.getFormattedCurrencyString(ctx, iso, m.getCurrentWallet(ctx).getFiatForSmallestCrypto(ctx, new BigDecimal(total)));
+        String formattedAmount = CurrencyUtils.getFormattedCurrencyString(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(amount)));
+        String formattedFee = CurrencyUtils.getFormattedCurrencyString(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(feeForTx)));
+        String formattedTotal = CurrencyUtils.getFormattedCurrencyString(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(total)));
 
         //formatted text
         return receiver + "\n\n"
@@ -929,7 +988,7 @@ public class WalletBitcoin extends BaseWallet  {
         if (item.cn != null && item.cn.length() != 0) {
             certified = true;
         }
-        receiver = item.address;
+        receiver = item.tx.getAddress();
         if (certified) {
             receiver = "certified: " + item.cn + "\n";
         }
@@ -937,21 +996,20 @@ public class WalletBitcoin extends BaseWallet  {
     }
 
     private boolean isSmallerThanMin(Context app, PaymentItem paymentRequest) {
-        long minAmount = WalletsMaster.getInstance().getMinOutputAmount();
-        return paymentRequest.amount < minAmount;
+        long minAmount = getWallet().getMinOutputAmount();
+        return getWallet().transactionAmount(paymentRequest.tx) < minAmount;
     }
 
     private boolean isLargerThanBalance(Context app, PaymentItem paymentRequest) {
-        return paymentRequest.amount > getCachedBalance(app) && paymentRequest.amount > 0;
+        return getWallet().transactionAmount(paymentRequest.tx) > getCachedBalance(app) && getWallet().transactionAmount(paymentRequest.tx) > 0;
     }
 
     private boolean notEnoughForFee(Context app, PaymentItem paymentRequest) {
-        WalletsMaster m = WalletsMaster.getInstance();
-        long feeForTx = m.feeForTransaction(paymentRequest.address, paymentRequest.amount);
+        long feeForTx = getWallet().getTransactionFee(paymentRequest.tx);
         if (feeForTx == 0) {
-            long maxOutput = m.getMaxOutputAmount();
-            feeForTx = m.feeForTransaction(paymentRequest.address, maxOutput);
-            return feeForTx != 0;
+            long maxOutput = getWallet().getMaxOutputAmount();
+            feeForTx = getWallet().getFeeForTransactionAmount(maxOutput);
+            return feeForTx > 0;
         }
         return false;
     }
@@ -969,6 +1027,35 @@ public class WalletBitcoin extends BaseWallet  {
                 }, null, null, 0);
             }
         });
+    }
+
+    //todo temporary, delete after extending Ed's core JNI classes
+    public static void onBalanceChanged(long balance) {
+        Context app = BreadApp.getBreadContext();
+        BRSharedPrefs.putCachedBalance(app, "BTC", balance);
+        Log.e(TAG, "onBalanceChanged: " + balance);
+    }
+
+
+    //todo temporary, delete after extending Ed's core JNI classes
+    public static void onTxUpdated(String hash, int blockHeight, int timeStamp) {
+        Log.d(TAG, "onTxUpdated: " + String.format("hash: %s, blockHeight: %d, timestamp: %d", hash, blockHeight, timeStamp));
+    }
+
+    //todo temporary, delete after extending Ed's core JNI classes
+    public static void onTxDeleted(String hash, int notifyUser, final int recommendRescan) {
+        Log.e(TAG, "onTxDeleted: " + String.format("hash: %s, notifyUser: %d, recommendRescan: %d", hash, notifyUser, recommendRescan));
+    }
+
+    //todo temporary, delete after extending Ed's core JNI classes
+    public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, String hash) {
+        Log.d(TAG, "onTxAdded: " + String.format("tx.length: %d, blockHeight: %d, timestamp: %d, amount: %d, hash: %s", tx.length, blockHeight, timestamp, amount, hash));
+
+    }
+
+    //todo temporary, delete after extending Ed's core JNI classes
+    public static void publishCallback(final String message, final int error, byte[] txHash) {
+        BRToast.showCustomToast(BreadApp.getBreadContext(), message, BRActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
     }
 
 }

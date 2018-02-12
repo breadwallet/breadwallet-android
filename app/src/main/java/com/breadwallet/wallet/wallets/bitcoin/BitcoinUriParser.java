@@ -1,13 +1,15 @@
-package com.breadwallet.tools.uri;
+package com.breadwallet.wallet.wallets.bitcoin;
 
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.R;
+import com.breadwallet.core.BRCoreAddress;
+import com.breadwallet.core.BRCoreKey;
+import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.PaymentItem;
-import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
@@ -15,7 +17,7 @@ import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.wallets.WalletBitcoin;
+import com.breadwallet.wallet.abstracts.BaseWallet;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -74,7 +76,8 @@ public class BitcoinUriParser {
         BREventManager.getInstance().pushEvent("send.handleURL", attr);
 
         RequestObject requestObject = parseRequest(url);
-        if (WalletsMaster.getInstance().trySweepWallet(app, url)) {
+
+        if (WalletsMaster.getInstance(app).getCurrentWallet(app).trySweepWallet(app, url)) {
             return true;
         }
 
@@ -108,13 +111,14 @@ public class BitcoinUriParser {
         }
     }
 
-    public static boolean isBitcoinUrl(String url) {
+    public static boolean isBitcoinUrl(Context app, String url) {
         RequestObject requestObject = parseRequest(url);
+        BaseWallet wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
         // return true if the request is valid url and has param: r or param: address
         // return true if it is a valid bitcoinPrivKey
         return (requestObject != null && (requestObject.r != null || requestObject.address != null)
-                || WalletsMaster.getInstance().isValidBitcoinBIP38Key(url)
-                || WalletsMaster.getInstance().isValidBitcoinPrivateKey(url));
+                || BRCoreKey.isValidBitcoinBIP38Key(url)
+                || BRCoreKey.isValidBitcoinPrivateKey(url));
     }
 
 
@@ -142,7 +146,7 @@ public class BitcoinUriParser {
         if (host != null) {
             String addrs = host.trim();
 
-            if (WalletsMaster.validateAddress(addrs)) {
+            if (new BRCoreAddress(addrs).isValid()) {
                 obj.address = addrs;
             }
         }
@@ -200,7 +204,7 @@ public class BitcoinUriParser {
         RequestObject requestObject = parseRequest(url);
         if (requestObject == null || requestObject.address == null || requestObject.address.isEmpty())
             return false;
-
+        BaseWallet wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
         String amount = requestObject.amount;
 
         if (amount == null || amount.isEmpty() || new BigDecimal(amount).doubleValue() == 0) {
@@ -212,17 +216,13 @@ public class BitcoinUriParser {
             });
         } else {
             BRAnimator.killAllFragments(app);
-            WalletBitcoin.getInstance().sendTransaction(app, new PaymentItem(requestObject.address, null, new BigDecimal(amount).longValue(), null, true));
+            BRCoreTransaction tx =  wallet.getWallet().createTransaction(new BigDecimal(amount).longValue(), new BRCoreAddress(requestObject.address));
+            WalletBitcoin.getInstance(app).sendTransaction(app, new PaymentItem(tx, null, false, null));
         }
 
         return true;
 
     }
 
-//    public static native PaymentRequestWrapper parsePaymentRequest(byte[] req);
-//
-//    public static native String parsePaymentACK(byte[] req);
-//
-//    public static native byte[] getCertificatesFromPaymentRequest(byte[] req, int index);
 
 }

@@ -108,7 +108,7 @@ public class IntroActivity extends BRActivity implements Serializable {
             isFirstAddressCorrect = SmartValidator.checkFirstAddress(this, masterPubKey);
         }
         if (!isFirstAddressCorrect) {
-            WalletsMaster.getInstance().wipeWalletButKeystore(this);
+            WalletsMaster.getInstance(this).wipeWalletButKeystore(this);
         }
 
         PostAuth.getInstance().onCanaryCheck(this, false);

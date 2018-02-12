@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -33,7 +34,6 @@ import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWallet;
 import com.platform.HTTPServer;
@@ -329,7 +329,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 TxManager.getInstance().updateTxList(CurrencyActivity.this);
             }
         });
-        BRWalletManager.getInstance().refreshBalance(CurrencyActivity.this);
+        com.breadwallet.core.test.BRWalletManager.getInstance().refreshBalance(CurrencyActivity.this);
     }
 
     @Override

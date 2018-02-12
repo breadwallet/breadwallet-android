@@ -346,11 +346,11 @@ public class BRSharedPrefs {
         return settingsToGet.getInt("startHeight_" + iso, 0);
     }
 
-    public static void putStartHeight(Context context, String iso, int startHeight) {
+    public static void putStartHeight(Context context, String iso, long startHeight) {
         if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putInt("startHeight_" + iso, startHeight);
+        editor.putLong("startHeight_" + iso, startHeight);
         editor.apply();
     }
 

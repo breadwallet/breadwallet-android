@@ -13,7 +13,7 @@ import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.uri.BitcoinUriParser;
+import com.breadwallet.wallet.wallets.bitcoin.BitcoinUriParser;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;

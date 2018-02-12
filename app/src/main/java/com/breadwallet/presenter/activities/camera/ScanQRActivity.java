@@ -19,7 +19,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.QRCodeReaderView;
-import com.breadwallet.tools.uri.BitcoinUriParser;
+import com.breadwallet.wallet.wallets.bitcoin.BitcoinUriParser;
 import com.platform.tools.BRBitId;
 
 

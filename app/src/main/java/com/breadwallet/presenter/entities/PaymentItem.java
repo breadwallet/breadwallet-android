@@ -1,5 +1,7 @@
 package com.breadwallet.presenter.entities;
 
+import com.breadwallet.core.BRCoreTransaction;
+
 /**
  * BreadWallet
  * <p/>
@@ -28,28 +30,17 @@ package com.breadwallet.presenter.entities;
 public class PaymentItem {
     public static final String TAG = PaymentItem.class.getName();
 
-    public byte[] serializedTx;
-    public String address;
-    public long amount;
+    public BRCoreTransaction tx;
     public String cn;
     public boolean isAmountRequested;
     public String comment;
 
-    public PaymentItem(String address, byte[] tx, long theAmount, String theCn, boolean isAmountRequested) {
+    public PaymentItem(BRCoreTransaction tx, String certificationName, boolean isAmountRequested, String comment) {
         this.isAmountRequested = isAmountRequested;
-        this.serializedTx = tx;
-        this.address = address;
-        this.amount = theAmount;
-        this.cn = theCn;
-    }
-
-    public PaymentItem(String address, byte[] tx,long theAmount, String theCn, boolean isAmountRequested, String comment) {
-        this.isAmountRequested = isAmountRequested;
-        this.serializedTx = tx;
-        this.address = address;
-        this.amount = theAmount;
-        this.cn = theCn;
+        this.tx = tx;
+        this.cn = certificationName;
         this.comment = comment;
     }
+
 
 }
