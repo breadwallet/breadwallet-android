@@ -22,6 +22,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWallet;
 
 import java.util.concurrent.TimeUnit;
 
@@ -96,7 +97,8 @@ public class AuthManager {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                AuthManager.getInstance().setTotalLimit(app, WalletsMaster.getInstance(app).getCurrentWallet(app).getTotalSent(app)
+                BaseWallet wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
+                AuthManager.getInstance().setTotalLimit(app, wallet == null ? 0 : wallet.getTotalSent(app)
                         + BRKeyStore.getSpendLimit(app));
             }
         });
@@ -155,7 +157,8 @@ public class AuthManager {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    long totalSpent = WalletsMaster.getInstance(activity).getCurrentWallet(activity).getTotalSent(activity);
+                    BaseWallet wallet = WalletsMaster.getInstance(activity).getCurrentWallet(activity);
+                    long totalSpent = wallet == null ? 0 : wallet.getTotalSent(activity);
                     long totalLimit = totalSpent + BRKeyStore.getSpendLimit(activity);
                     setTotalLimit(activity, totalLimit);
                 }

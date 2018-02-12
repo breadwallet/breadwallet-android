@@ -33,7 +33,7 @@ public class BRConstants {
     /**
      * Native library name
      */
-    public static final String NATIVE_LIB_NAME =  "core-lib";
+    public static final String NATIVE_LIB_NAME =  "core";
 
     /**
      * Permissions

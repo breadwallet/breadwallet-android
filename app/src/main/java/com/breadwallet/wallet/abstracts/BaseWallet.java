@@ -52,13 +52,13 @@ public interface BaseWallet {
     //get the core wallet
     BRCoreWallet getWallet();
 
+    //get the core peerManager
+    BRCorePeerManager getPeerManager();
+
     //sign and publish the tx using the seed
     byte[] signAndPublishTransaction(BRCoreTransaction tx, byte[] seed);
 
     void addBalanceChangedListener(OnBalanceChangedListener list);
-
-    //get the core peerManager
-    BRCorePeerManager getPeerManager();
 
     //try sending a transaction
     boolean sendTransaction(Context app, PaymentItem item);

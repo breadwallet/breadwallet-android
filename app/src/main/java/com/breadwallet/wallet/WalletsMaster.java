@@ -66,8 +66,7 @@ public class WalletsMaster {
 
 
     private WalletsMaster(Context app) {
-        mWallets.add(WalletBitcoinManager.getInstance(app));
-        mWallets.add(WalletBitcoinCash.getInstance(app));
+
     }
 
     public static WalletsMaster getInstance(Context app) {
@@ -224,7 +223,6 @@ public class WalletsMaster {
     }
 
 
-
     public void wipeWalletButKeystore(final Context ctx) {
         Log.d(TAG, "wipeWalletButKeystore");
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -256,6 +254,10 @@ public class WalletsMaster {
     }
 
     public void initWallets(Context app) {
+        if (!mWallets.contains(WalletBitcoinManager.getInstance(app)))
+            mWallets.add(WalletBitcoinManager.getInstance(app));
+        if (!mWallets.contains(WalletBitcoinCash.getInstance(app)))
+            mWallets.add(WalletBitcoinCash.getInstance(app));
         for (BaseWallet wallet : mWallets) {
             wallet.initWallet(app);
         }

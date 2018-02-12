@@ -65,7 +65,6 @@ public class IntroActivity extends BRActivity implements Serializable {
         return app;
     }
 
-
     @Override
     protected void onRestart() {
         super.onRestart();  // Always call the superclass method first
