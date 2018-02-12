@@ -52,6 +52,9 @@ public interface BaseWallet {
     //get the core wallet
     BRCoreWallet getWallet();
 
+    //sign and publish the tx using the seed
+    byte[] signAndPublishTransaction(BRCoreTransaction tx, byte[] seed);
+
     void addBalanceChangedListener(OnBalanceChangedListener list);
 
     //get the core peerManager
@@ -64,6 +67,9 @@ public interface BaseWallet {
     BRCoreTransaction[] getTransactions();
 
     void updateFee(Context app);
+
+    //get the core address and store it locally
+    void refreshAddress(Context app);
 
     //get a list of all the transactions UI holders sorted by timestamp
     List<TxUiHolder> getTxUiHolders();

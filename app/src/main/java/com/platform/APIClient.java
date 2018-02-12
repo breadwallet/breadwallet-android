@@ -234,7 +234,7 @@ public class APIClient {
 
             JSONObject requestMessageJSON = new JSONObject();
             String base58PubKey = null;
-            base58PubKey = WalletsMaster.getAuthPublicKeyForAPI(BRKeyStore.getAuthKey(ctx));
+            base58PubKey = BRCoreKey.getAuthPublicKeyForAPI(BRKeyStore.getAuthKey(ctx));
             requestMessageJSON.put("pubKey", base58PubKey);
             requestMessageJSON.put("deviceID", BRSharedPrefs.getDeviceId(ctx));
 

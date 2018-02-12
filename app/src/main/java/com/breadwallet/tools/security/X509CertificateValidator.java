@@ -118,27 +118,28 @@ public class X509CertificateValidator {
 
     public static List<X509Certificate> getCertificateFromBytes(byte[] rawCerts) {
 //        Log.e(TAG, "This is the rawCerts.length supplied for certificates: " + rawCerts.length);
-        List<X509Certificate> theList = new ArrayList<>();
-        byte[] result;
-        int i = 0;
-        try {
-            CertificateFactory certFact = CertificateFactory.getInstance("X.509");
-            while (true) {
-                result = BitcoinUriParser.getCertificatesFromPaymentRequest(rawCerts, i++);
-//                Log.e(TAG, "The result certificate #" + i + " : " + result.length);
-                if (result.length > 0) {
-                    X509Certificate certForValidation = (X509Certificate)
-                            certFact.generateCertificate(new ByteArrayInputStream(result));
-                    theList.add(certForValidation);
-//                    Log.e(TAG, "THIS IS THE CERTIFICATE NAME: " + certForValidation.getIssuerDN().toString());
-                } else {
-                    break;
-                }
-            }
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        }
-        return theList;
+//        List<X509Certificate> theList = new ArrayList<>();
+//        byte[] result;
+//        int i = 0;
+//        try {
+//            CertificateFactory certFact = CertificateFactory.getInstance("X.509");
+//            while (true) {
+//                result = BitcoinUriParser.getCertificatesFromPaymentRequest(rawCerts, i++);
+////                Log.e(TAG, "The result certificate #" + i + " : " + result.length);
+//                if (result.length > 0) {
+//                    X509Certificate certForValidation = (X509Certificate)
+//                            certFact.generateCertificate(new ByteArrayInputStream(result));
+//                    theList.add(certForValidation);
+////                    Log.e(TAG, "THIS IS THE CERTIFICATE NAME: " + certForValidation.getIssuerDN().toString());
+//                } else {
+//                    break;
+//                }
+//            }
+//        } catch (CertificateException e) {
+//            e.printStackTrace();
+//        }
+//        return theList;
+        return null;
     }
 
 }

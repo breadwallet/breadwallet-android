@@ -71,26 +71,26 @@ public class DisplayCurrencyActivity extends BRActivity {
         adapter.addAll(CurrencyDataSource.getInstance(this).getAllCurrencies());
         leftButton = findViewById(R.id.left_button);
         rightButton = findViewById(R.id.right_button);
-        leftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setButton(true);
-            }
-        });
-
-        rightButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                setButton(false);
-            }
-        });
-
-        int unit = BRSharedPrefs.getBitcoinDenomination(this);
-        if (unit == BRConstants.CURRENT_UNIT_BITS) {
-            setButton(true);
-        } else {
-            setButton(false);
-        }
+//        leftButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                setButton(true);
+//            }
+//        });
+//
+//        rightButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                setButton(false);
+//            }
+//        });
+//
+//        int unit = BRSharedPrefs.getCryptoDenomination(this, );
+//        if (unit == BRConstants.CURRENT_UNIT_BITS) {
+//            setButton(true);
+//        } else {
+//            setButton(false);
+//        }
         updateExchangeRate();
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -118,29 +118,29 @@ public class DisplayCurrencyActivity extends BRActivity {
         CurrencyEntity entity = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso);
         if (entity != null) {
             String finalExchangeRate = CurrencyUtils.getFormattedCurrencyString(DisplayCurrencyActivity.this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(entity.rate));
-            boolean bits = BRSharedPrefs.getBitcoinDenomination(this) == BRConstants.CURRENT_UNIT_BITS;
+            boolean bits = BRSharedPrefs.getCryptoDenomination(this, "BTC") == BRConstants.CURRENT_UNIT_BITS;
             exchangeText.setText(CurrencyUtils.getFormattedCurrencyString(this, "BTC", new BigDecimal(bits ? 1000000 : 1)) + " = " + finalExchangeRate);
         }
         adapter.notifyDataSetChanged();
     }
 
-    private void setButton(boolean left) {
-        if (left) {
-            BRSharedPrefs.putBitcoinDenomination(this, BRConstants.CURRENT_UNIT_BITS);
-            leftButton.setTextColor(getColor(R.color.white));
-            leftButton.setBackground(getDrawable(R.drawable.b_half_left_blue));
-            rightButton.setTextColor(getColor(R.color.dark_blue));
-            rightButton.setBackground(getDrawable(R.drawable.b_half_right_blue_stroke));
-        } else {
-            BRSharedPrefs.putBitcoinDenomination(this, BRConstants.CURRENT_UNIT_BITCOINS);
-            leftButton.setTextColor(getColor(R.color.dark_blue));
-            leftButton.setBackground(getDrawable(R.drawable.b_half_left_blue_stroke));
-            rightButton.setTextColor(getColor(R.color.white));
-            rightButton.setBackground(getDrawable(R.drawable.b_half_right_blue));
-        }
-        updateExchangeRate();
-
-    }
+//    private void setButton(boolean left) {
+//        if (left) {
+//            BRSharedPrefs.putCryptoDenomination(this, BRConstants.CURRENT_UNIT_BITS);
+//            leftButton.setTextColor(getColor(R.color.white));
+//            leftButton.setBackground(getDrawable(R.drawable.b_half_left_blue));
+//            rightButton.setTextColor(getColor(R.color.dark_blue));
+//            rightButton.setBackground(getDrawable(R.drawable.b_half_right_blue_stroke));
+//        } else {
+//            BRSharedPrefs.putCryptoDenomination(this, BRConstants.CURRENT_UNIT_BITCOINS);
+//            leftButton.setTextColor(getColor(R.color.dark_blue));
+//            leftButton.setBackground(getDrawable(R.drawable.b_half_left_blue_stroke));
+//            rightButton.setTextColor(getColor(R.color.white));
+//            rightButton.setBackground(getDrawable(R.drawable.b_half_right_blue));
+//        }
+//        updateExchangeRate();
+//
+//    }
 
     @Override
     protected void onResume() {

@@ -26,7 +26,6 @@ import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWallet;
 import com.platform.entities.TxMetaData;
@@ -246,7 +245,7 @@ public class FragmentTransactionItem extends Fragment {
     private int getLevel(TxUiHolder item) {
         BaseWallet wallet = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
         int blockHeight = item.getBlockHeight();
-        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(getContext()) - blockHeight + 1;
+        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(getContext(),wallet.getIso(getActivity())) - blockHeight + 1;
         int level;
         if (confirms <= 0) {
             long relayCount = wallet.getPeerManager().getRelayCount(item.getTxHash());

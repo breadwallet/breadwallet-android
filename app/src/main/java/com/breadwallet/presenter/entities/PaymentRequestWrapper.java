@@ -1,6 +1,9 @@
 package com.breadwallet.presenter.entities;
 
 
+import com.breadwallet.core.BRCoreKey;
+import com.breadwallet.core.BRCoreTransaction;
+
 /**
  * BreadWallet
  * <p>
@@ -41,7 +44,7 @@ public class PaymentRequestWrapper {
 
     //response
     public byte[] payment;
-    public byte[] serializedTx;
+    public BRCoreTransaction tx;
 
     //Protocol
     public boolean isPaymentRequest;
@@ -81,8 +84,8 @@ public class PaymentRequestWrapper {
         this.payment = payment;
     }
 
-    public void serializedTx(byte[] serializedTx) {
-        this.serializedTx = serializedTx;
+    public void serializedTx(BRCoreTransaction tx) {
+        this.tx = tx;
     }
 
 }

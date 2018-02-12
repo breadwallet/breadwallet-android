@@ -79,14 +79,14 @@ public class BRSharedPrefs {
         return settingsToGet.getString(BRConstants.CURRENT_CURRENCY, defIso);
     }
 
-    public static void putPreferredFiatIso(Context context, String code) {
+    public static void putPreferredFiatIso(Context context, String iso) {
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putString(BRConstants.CURRENT_CURRENCY, code.equalsIgnoreCase(Locale.getDefault().getISO3Language()) ? null : code);
+        editor.putString(BRConstants.CURRENT_CURRENCY, iso.equalsIgnoreCase(Locale.getDefault().getISO3Language()) ? null : iso);
         editor.apply();
 
         for (OnIsoChangedListener listener : isoChangedListeners) {
-            if (listener != null) listener.onIsoChanged(code);
+            if (listener != null) listener.onIsoChanged(iso);
         }
 
     }
@@ -117,13 +117,13 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static boolean getFavorStandardFee(Context context) {
+    public static boolean getFavorStandardFee(Context context, String iso) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean("favorStandardFee", false);
 
     }
 
-    public static void putFavorStandardFee(Context context, boolean favorStandardFee) {
+    public static void putFavorStandardFee(Context context, String iso, boolean favorStandardFee) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("favorStandardFee", favorStandardFee);
@@ -142,12 +142,12 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static String getReceiveAddress(Context context) {
+    public static String getReceiveAddress(Context context, String iso) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(BRConstants.RECEIVE_ADDRESS, "");
     }
 
-    public static void putReceiveAddress(Context ctx, String tmpAddr) {
+    public static void putReceiveAddress(Context ctx, String tmpAddr, String iso) {
         SharedPreferences.Editor editor = ctx.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE).edit();
         editor.putString(BRConstants.RECEIVE_ADDRESS, tmpAddr);
         editor.apply();
@@ -165,24 +165,24 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static long getFeePerKb(Context context) {
+    public static long getFeePerKb(Context context, String iso) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getLong(BRConstants.FEE_KB_PREFS, 0);
     }
 
-    public static void putFeePerKb(Context context, long fee) {
+    public static void putFeePerKb(Context context, String iso, long fee) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong(BRConstants.FEE_KB_PREFS, fee);
         editor.apply();
     }
 
-    public static long getEconomyFeePerKb(Context context) {
+    public static long getEconomyFeePerKb(Context context, String iso) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getLong(BRConstants.ECONOMY_FEE_KB_PREFS, 0);
     }
 
-    public static void putEconomyFeePerKb(Context context, long fee) {
+    public static void putEconomyFeePerKb(Context context, String iso, long fee) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong(BRConstants.ECONOMY_FEE_KB_PREFS, fee);
@@ -354,12 +354,12 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static int getLastBlockHeight(Context context) {
+    public static int getLastBlockHeight(Context context, String iso) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         return settingsToGet.getInt(BRConstants.LAST_BLOCK_HEIGHT, 0);
     }
 
-    public static void putLastBlockHeight(Context context, int lastHeight) {
+    public static void putLastBlockHeight(Context context, String iso, int lastHeight) {
         if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
@@ -381,13 +381,13 @@ public class BRSharedPrefs {
     }
 
     // BTC, mBTC, Bits
-    public static int getBitcoinDenomination(Context context) {
+    public static int getCryptoDenomination(Context context, String iso) {
         SharedPreferences settingsToGet = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         return settingsToGet.getInt(BRConstants.CURRENT_UNIT, BRConstants.CURRENT_UNIT_BITS);
     }
 
     // BTC, mBTC, Bits
-    public static void putBitcoinDenomination(Context context, int unit) {
+    public static void putCryptoDenomination(Context context, String iso, int unit) {
         if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
@@ -452,18 +452,6 @@ public class BRSharedPrefs {
         SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("shareDataDismissed", dismissed);
-        editor.apply();
-    }
-
-    public static String getBCHTxId(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getString("bchTxId", "");
-    }
-
-    public static void putBCHTxId(Context context, String txId) {
-        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putString("bchTxId", txId);
         editor.apply();
     }
 
