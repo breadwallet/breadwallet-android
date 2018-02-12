@@ -19,7 +19,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.QRCodeReaderView;
-import com.breadwallet.tools.security.BRUrlParser;
+import com.breadwallet.tools.uri.BitcoinUriParser;
 import com.platform.tools.BRBitId;
 
 
@@ -174,7 +174,7 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
     public void onQRCodeRead(final String text, PointF[] points) {
 
         if (handlingCode) return;
-        if (BRUrlParser.isBitcoinUrl(text) || BRBitId.isBitId(text)) {
+        if (BitcoinUriParser.isBitcoinUrl(text) || BRBitId.isBitId(text)) {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

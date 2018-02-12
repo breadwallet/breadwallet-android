@@ -1,6 +1,7 @@
-package com.breadwallet.tools.security;
+package com.breadwallet.tools.uri;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.R;
@@ -50,11 +51,11 @@ import java.util.Map;
  * THE SOFTWARE.
  */
 
-public class BRUrlParser {
-    private static final String TAG = BRUrlParser.class.getName();
+public class BitcoinUriParser {
+    private static final String TAG = BitcoinUriParser.class.getName();
     private static final Object lockObject = new Object();
 
-    public static synchronized boolean processRequest(Activity app, String url) {
+    public static synchronized boolean processRequest(Context app, String url) {
         if (url == null) {
             Log.e(TAG, "processRequest: url is null");
             return false;
@@ -72,10 +73,11 @@ public class BRUrlParser {
         attr.put("path", uri == null ? "null" : uri.getPath());
         BREventManager.getInstance().pushEvent("send.handleURL", attr);
 
-        RequestObject requestObject = getRequestFromString(url);
+        RequestObject requestObject = parseRequest(url);
         if (WalletsMaster.getInstance().trySweepWallet(app, url)) {
             return true;
         }
+
         if (requestObject == null) {
             if (app != null) {
                 BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
@@ -107,7 +109,7 @@ public class BRUrlParser {
     }
 
     public static boolean isBitcoinUrl(String url) {
-        RequestObject requestObject = getRequestFromString(url);
+        RequestObject requestObject = parseRequest(url);
         // return true if the request is valid url and has param: r or param: address
         // return true if it is a valid bitcoinPrivKey
         return (requestObject != null && (requestObject.r != null || requestObject.address != null)
@@ -116,7 +118,7 @@ public class BRUrlParser {
     }
 
 
-    public static RequestObject getRequestFromString(String str) {
+    public static RequestObject parseRequest(String str) {
         if (str == null || str.isEmpty()) return null;
         RequestObject obj = new RequestObject();
 
@@ -132,7 +134,7 @@ public class BRUrlParser {
         try {
             uri = URI.create(tmp);
         } catch (IllegalArgumentException ex) {
-            Log.e(TAG, "getRequestFromString: ", ex);
+            Log.e(TAG, "parseRequest: ", ex);
             return null;
         }
 
@@ -185,8 +187,16 @@ public class BRUrlParser {
         return true;
     }
 
-    private static boolean tryBitcoinURL(final String url, final Activity app) {
-        RequestObject requestObject = getRequestFromString(url);
+    private static boolean tryBitcoinURL(final String url, final Context ctx) {
+        final Activity app;
+        if (ctx instanceof Activity) {
+            app = (Activity) ctx;
+        } else {
+            Log.e(TAG, "tryBitcoinURL: " + "app isn't activity: " + ctx.getClass().getSimpleName());
+            BRReportsManager.reportBug(new NullPointerException("app isn't activity: " + ctx.getClass().getSimpleName()));
+            return false;
+        }
+        RequestObject requestObject = parseRequest(url);
         if (requestObject == null || requestObject.address == null || requestObject.address.isEmpty())
             return false;
 
@@ -200,12 +210,8 @@ public class BRUrlParser {
                 }
             });
         } else {
-            if (app != null) {
-                BRAnimator.killAllFragments(app);
-                WalletBitcoin.getInstance().sendTransaction(app, new PaymentItem(requestObject.address, null, new BigDecimal(amount).longValue(), null, true));
-            } else {
-                BRReportsManager.reportBug(new NullPointerException("tryBitcoinURL, app is null!"));
-            }
+            BRAnimator.killAllFragments(app);
+            WalletBitcoin.getInstance().sendTransaction(app, new PaymentItem(requestObject.address, null, new BigDecimal(amount).longValue(), null, true));
         }
 
         return true;
