@@ -5,7 +5,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.presenter.activities.settings.TestActivity;
+import com.breadwallet.presenter.activities.bitcoin.TestActivity;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.BRExecutor;
 

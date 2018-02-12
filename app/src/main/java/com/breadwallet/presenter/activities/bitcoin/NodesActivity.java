@@ -1,4 +1,4 @@
-package com.breadwallet.presenter.activities.settings;
+package com.breadwallet.presenter.activities.bitcoin;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -22,7 +22,6 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWallet;
 
@@ -89,7 +88,8 @@ public class NodesActivity extends BRActivity {
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
-                                BRPeerManager.getInstance().updateFixedPeer(NodesActivity.this);
+                                BaseWallet wallet = WalletsMaster.getInstance(NodesActivity.this).getCurrentWallet(NodesActivity.this);
+//                                wallet.getWallet().updateFixedPeer(NodesActivity.this); //todo implement
                                 updatingNode = false;
                                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                     @Override
@@ -112,7 +112,7 @@ public class NodesActivity extends BRActivity {
     }
 
     private void updateButtonText() {
-        BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(this);
+        BaseWallet wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
         if (BRSharedPrefs.getTrustNode(this, BRSharedPrefs.getCurrentWalletIso(NodesActivity.this)).isEmpty()) {
             switchButton.setText(getString(R.string.NodeSelector_manualButton));
         } else {
@@ -179,7 +179,7 @@ public class NodesActivity extends BRActivity {
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
-                                BRPeerManager.getInstance().updateFixedPeer(app);
+//                                BRPeerManager.getInstance().updateFixedPeer(app); //todo implement fixed peer
                                 updatingNode = false;
                                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                     @Override

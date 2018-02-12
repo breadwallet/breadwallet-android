@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.WebViewActivity;
+import com.breadwallet.presenter.activities.bitcoin.WebViewActivity;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.Utils;
 import com.platform.BRHTTPHelper;

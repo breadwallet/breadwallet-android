@@ -1,4 +1,4 @@
-package com.breadwallet.presenter.activities.settings;
+package com.breadwallet.presenter.activities.bitcoin;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,7 +15,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 
@@ -125,15 +124,6 @@ public class AdvancedActivity extends BRActivity {
 
             }
         }, false));
-        items.add(new BRSettingsItem(getString(R.string.BCH_title), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(AdvancedActivity.this, WithdrawBchActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.empty_300);
-            }
-        }, false));
-
 
     }
 

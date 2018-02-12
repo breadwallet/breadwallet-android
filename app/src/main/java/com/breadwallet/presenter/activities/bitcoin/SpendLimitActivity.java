@@ -1,4 +1,4 @@
-package com.breadwallet.presenter.activities.settings;
+package com.breadwallet.presenter.activities.bitcoin;
 
 import android.app.Activity;
 import android.content.Context;
@@ -82,7 +82,7 @@ public class SpendLimitActivity extends BRActivity {
                 Log.e(TAG, "onItemClick: " + position);
                 int limit = adapter.getItem(position);
                 BRKeyStore.putSpendLimit(limit, app);
-                BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(SpendLimitActivity.this);
+                BaseWallet wallet = WalletsMaster.getInstance(SpendLimitActivity.this).getCurrentWallet(SpendLimitActivity.this);
                 AuthManager.getInstance().setTotalLimit(app, wallet.getWallet().getTotalSent()
                         + BRKeyStore.getSpendLimit(app));
                 adapter.notifyDataSetChanged();
@@ -186,7 +186,7 @@ public class SpendLimitActivity extends BRActivity {
             textViewItem = convertView.findViewById(R.id.currency_item_text);
             FontManager.overrideFonts(textViewItem);
             Integer item = getItem(position);
-            WalletsMaster master = WalletsMaster.getInstance();
+            WalletsMaster master = WalletsMaster.getInstance(SpendLimitActivity.this);
             BigDecimal curAmount = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(item));
             BigDecimal btcAmount = master.getCurrentWallet(app).getCryptoForSmallestCrypto(app, new BigDecimal(item));
             String text = String.format(item == 0 ? app.getString(R.string.TouchIdSpendingLimit) : "%s (%s)", curAmount, btcAmount);

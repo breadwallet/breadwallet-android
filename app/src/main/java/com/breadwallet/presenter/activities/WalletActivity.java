@@ -19,7 +19,6 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ViewFlipper;
 
-import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRSearchBar;
@@ -358,7 +357,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     @Override
     public void onConnectionChanged(boolean isConnected) {
-        final BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(this);
+        final BaseWallet wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
         if (isConnected) {
             if (barFlipper != null) {
                 if (barFlipper.getDisplayedChild() == 2)
