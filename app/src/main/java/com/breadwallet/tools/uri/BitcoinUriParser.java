@@ -218,10 +218,10 @@ public class BitcoinUriParser {
 
     }
 
-    public static native PaymentRequestWrapper parsePaymentRequest(byte[] req);
-
-    public static native String parsePaymentACK(byte[] req);
-
-    public static native byte[] getCertificatesFromPaymentRequest(byte[] req, int index);
+//    public static native PaymentRequestWrapper parsePaymentRequest(byte[] req);
+//
+//    public static native String parsePaymentACK(byte[] req);
+//
+//    public static native byte[] getCertificatesFromPaymentRequest(byte[] req, int index);
 
 }

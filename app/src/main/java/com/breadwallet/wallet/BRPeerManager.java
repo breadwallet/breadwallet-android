@@ -249,38 +249,38 @@ public class BRPeerManager {
         BRSharedPrefs.putLastBlockHeight(ctx, blockHeight);
     }
 
-    public native String getCurrentPeerName();
-
-    public native void create(int earliestKeyTime, int blockCount, int peerCount);
-
-    public native void connect();
-
-    public native void putPeer(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp);
-
-    public native void createPeerArrayWithCount(int count);
-
-    public native void putBlock(byte[] block, int blockHeight);
-
-    public native void createBlockArrayWithCount(int count);
-
-    public native static double syncProgress(int startHeight);
-
-    public native static int getCurrentBlockHeight();
-
-    public native static int getRelayCount(byte[] hash);
-
-    public native boolean setFixedPeer(String node, int port);
-
-    public native static int getEstimatedBlockHeight();
-
-    public native boolean isCreated();
-
-    //0 = disconnected, 1 = connecting, 2 = connected, -1 = _peerManager is null, -2 = something went wrong.
-    public native int connectionStatus();
-
-    public native void peerManagerFreeEverything();
-
-    public native long getLastBlockTimestamp();
-
-    public native void rescan();
+//    public native String getCurrentPeerName();
+//
+//    public native void create(int earliestKeyTime, int blockCount, int peerCount);
+//
+//    public native void connect();
+//
+//    public native void putPeer(byte[] peerAddress, byte[] peerPort, byte[] peerTimeStamp);
+//
+//    public native void createPeerArrayWithCount(int count);
+//
+//    public native void putBlock(byte[] block, int blockHeight);
+//
+//    public native void createBlockArrayWithCount(int count);
+//
+//    public native static double syncProgress(int startHeight);
+//
+//    public native static int getCurrentBlockHeight();
+//
+//    public native static int getRelayCount(byte[] hash);
+//
+//    public native boolean setFixedPeer(String node, int port);
+//
+//    public native static int getEstimatedBlockHeight();
+//
+//    public native boolean isCreated();
+//
+//    //0 = disconnected, 1 = connecting, 2 = connected, -1 = _peerManager is null, -2 = something went wrong.
+//    public native int connectionStatus();
+//
+//    public native void peerManagerFreeEverything();
+//
+//    public native long getLastBlockTimestamp();
+//
+//    public native void rescan();
 }

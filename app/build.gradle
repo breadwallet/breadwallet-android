@@ -103,7 +103,7 @@ android {
     }
 
     buildTypes {
-        gitUpdateModules()
+//        gitUpdateModules()
 //        proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         release {
             minifyEnabled = false
@@ -138,10 +138,10 @@ gradle.projectsEvaluated {
 }
 
 
-def gitUpdateModules() {
-    ['sh', '-c', 'git submodule foreach git pull origin master'].execute().text.trim()
-    getLogger().debug("gitUpdateModules done!")
-}
+//def gitUpdateModules() {
+//    ['sh', '-c', 'git submodule foreach git pull origin master'].execute().text.trim()
+//    getLogger().debug("gitUpdateModules done!")
+//}
 
 repositories {
     mavenCentral()
