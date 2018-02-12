@@ -122,6 +122,8 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         return app;
     }
 
+    private LinearLayout recyclerLayout;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -401,7 +403,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         mainLayout = (RelativeLayout) findViewById(R.id.main_layout);
         toolbarLayout = (LinearLayout) findViewById(R.id.toolbar_layout);
 //        syncingLayout = (ConstraintLayout) findViewById(R.id.syncing_layout);
-//        recyclerLayout = (LinearLayout) findViewById(R.id.recycler_layout);
+        recyclerLayout = (LinearLayout) findViewById(R.id.recycler_layout);
         searchIcon = (ImageButton) findViewById(R.id.search_icon);
         barFlipper = (ViewFlipper) findViewById(R.id.tool_bar_flipper);
         searchBar = (BRSearchBar) findViewById(R.id.search_bar);
@@ -415,6 +417,18 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 if (uiIsDone) return;
                 uiIsDone = true;
                 setPriceTags(BRSharedPrefs.getPreferredBTC(BreadActivity.this), false);
+            }
+        });
+
+        recyclerLayout.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+
+                Intent newIntent = new Intent(BreadActivity.this, TestHomeActivity.class);
+                startActivity(newIntent);
+
+
+                return false;
             }
         });
 
