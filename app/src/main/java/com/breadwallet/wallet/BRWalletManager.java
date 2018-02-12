@@ -98,19 +98,6 @@ public class BRWalletManager {
     private static BRWalletManager instance;
 
 
-    public void setBalance(final Context context, long balance) {
-        if (context == null) {
-            Log.e(TAG, "setBalance: FAILED TO SET THE BALANCE");
-            return;
-        }
-        BRSharedPrefs.putCatchedBalance(context, balance);
-        refreshAddress(context);
-
-        for (OnBalanceChanged listener : balanceListeners) {
-            if (listener != null) listener.onBalanceChanged(balance);
-        }
-    }
-
     public void refreshBalance(final Activity app) {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
