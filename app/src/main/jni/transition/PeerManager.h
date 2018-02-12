@@ -25,6 +25,13 @@
 #include "jni.h"
 #include "BRInt.h"
 #include "BRPeerManager.h"
+#include "BRChainParams.h"
+
+#if BITCOIN_TESTNET
+#define BR_CHAIN_PARAMS BRTestNetParams
+#else
+#define BR_CHAIN_PARAMS BRMainNetParams
+#endif
 
 #ifndef BREADWALLET_PEERMANAGER_H
 #define BREADWALLET_PEERMANAGER_H
@@ -86,7 +93,7 @@ JNIEXPORT void JNICALL Java_io_digibyte_wallet_BRPeerManager_peerManagerFreeEver
 JNIEXPORT void JNICALL Java_io_digibyte_presenter_activities_IntroActivity_testCore(JNIEnv *env,
                                                                                         jobject instance);
 
-JNIEXPORT jboolean JNICALL Java_io_digibyte_wallet_BRPeerManager_isConnected(JNIEnv *env,
+JNIEXPORT jint JNICALL Java_io_digibyte_wallet_BRPeerManager_connectionStatus(JNIEnv *env,
                                                                                  jobject obj);
 
 JNIEXPORT jint JNICALL Java_io_digibyte_wallet_BRPeerManager_getRelayCount(JNIEnv *env,

@@ -12,20 +12,18 @@ import android.text.style.ClickableSpan;
 import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
-import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
 import io.digibyte.R;
-import io.digibyte.presenter.activities.util.ActivityUTILS;
 import io.digibyte.presenter.activities.util.BRActivity;
 import io.digibyte.presenter.customviews.BRDialogView;
-import io.digibyte.tools.animation.BRAnimator;
+import io.digibyte.presenter.interfaces.BRAuthCompletion;
 import io.digibyte.tools.animation.BRDialog;
 import io.digibyte.tools.manager.BRSharedPrefs;
+import io.digibyte.tools.security.AuthManager;
 import io.digibyte.tools.security.BRKeyStore;
-import io.digibyte.tools.util.BRConstants;
 import io.digibyte.tools.util.BRCurrency;
 import io.digibyte.tools.util.BRExchange;
 import io.digibyte.tools.util.Utils;
@@ -97,10 +95,23 @@ public class FingerprintActivity extends BRActivity {
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(View textView) {
-                Intent intent = new Intent(FingerprintActivity.this, SpendLimitActivity.class);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                startActivity(intent);
-                finish();
+
+                AuthManager.getInstance().authPrompt(FingerprintActivity.this, null, getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
+                    @Override
+                    public void onComplete() {
+                        Intent intent = new Intent(FingerprintActivity.this, SpendLimitActivity.class);
+                        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                        startActivity(intent);
+                        finish();
+                    }
+
+                    @Override
+                    public void onCancel() {
+
+                    }
+                });
+
+
             }
 
             @Override
@@ -109,7 +120,10 @@ public class FingerprintActivity extends BRActivity {
                 ds.setUnderlineText(false);
             }
         };
-        ss.setSpan(clickableSpan, limitInfo.getText().toString().lastIndexOf(" "), limitInfo.getText().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        //start index of the last space (beginning of the last word)
+        int indexOfSpace = limitInfo.getText().toString().lastIndexOf(" ");
+        // make the whole text clickable if failed to select the last word
+        ss.setSpan(clickableSpan, indexOfSpace == -1 ? 0 : indexOfSpace, limitInfo.getText().length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
 
         limitInfo.setText(ss);
         limitInfo.setMovementMethod(LinkMovementMethod.getInstance());
@@ -134,7 +148,6 @@ public class FingerprintActivity extends BRActivity {
         super.onResume();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
     }
 
     @Override

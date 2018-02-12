@@ -14,23 +14,17 @@ import io.digibyte.BuildConfig;
 import io.digibyte.R;
 import io.digibyte.presenter.activities.BreadActivity;
 import io.digibyte.presenter.activities.SetPinActivity;
-import io.digibyte.presenter.activities.settings.WebViewActivity;
-import io.digibyte.presenter.activities.util.ActivityUTILS;
 import io.digibyte.presenter.activities.util.BRActivity;
 import io.digibyte.tools.animation.BRAnimator;
 import io.digibyte.tools.manager.BRReportsManager;
-import io.digibyte.tools.manager.BRSharedPrefs;
-import io.digibyte.tools.manager.SyncManager;
 import io.digibyte.tools.security.BRKeyStore;
 import io.digibyte.tools.security.PostAuth;
 import io.digibyte.tools.security.SmartValidator;
 import io.digibyte.tools.threads.BRExecutor;
-import io.digibyte.tools.util.BRConstants;
 import io.digibyte.tools.util.Utils;
 import io.digibyte.wallet.BRWalletManager;
-import com.google.firebase.crash.FirebaseCrash;
+
 import com.platform.APIClient;
-import com.platform.HTTPServer;
 
 import java.io.Serializable;
 
@@ -90,7 +84,6 @@ public class IntroActivity extends BRActivity implements Serializable {
         splashScreen = findViewById(R.id.splash_screen);
         setListeners();
         updateBundles();
-
 //        SyncManager.getInstance().updateAlarms(this);
         /* faq = (ImageButton) findViewById(R.id.faq_button);
 
@@ -152,6 +145,8 @@ public class IntroActivity extends BRActivity implements Serializable {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
+                BreadActivity bApp = BreadActivity.getApp();
+                if (bApp != null) bApp.finish();
                 Intent intent = new Intent(IntroActivity.this, SetPinActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -162,6 +157,8 @@ public class IntroActivity extends BRActivity implements Serializable {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
+                BreadActivity bApp = BreadActivity.getApp();
+                if (bApp != null) bApp.finish();
                 Intent intent = new Intent(IntroActivity.this, RecoverActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -174,7 +171,6 @@ public class IntroActivity extends BRActivity implements Serializable {
         super.onResume();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
 
     }
 

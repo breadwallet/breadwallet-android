@@ -1,7 +1,6 @@
 package com.platform;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -11,12 +10,10 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-
 import io.digibyte.DigiByte;
 import io.digibyte.tools.manager.BRReportsManager;
 import io.digibyte.tools.threads.BRExecutor;
 import io.digibyte.tools.util.Utils;
-import com.google.firebase.crash.FirebaseCrash;
 
 import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.server.Request;

@@ -117,7 +117,7 @@ public class NodesActivity extends BRActivity {
         } else {
             switchButton.setText(getString(R.string.NodeSelector_automaticButton));
         }
-        nodeStatus.setText(BRPeerManager.getInstance().isConnected() ? getString(R.string.NodeSelector_connected) : getString(R.string.NodeSelector_notConnected));
+        nodeStatus.setText(BRPeerManager.getInstance().connectionStatus() == 2 ? getString(R.string.NodeSelector_connected) : getString(R.string.NodeSelector_notConnected));
         if (trustNode != null)
             trustNode.setText(BRPeerManager.getInstance().getCurrentPeerName());
     }
@@ -218,7 +218,6 @@ public class NodesActivity extends BRActivity {
         super.onResume();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
         mHandler = new Handler();
         startRepeatingTask();
     }

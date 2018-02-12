@@ -2,10 +2,8 @@ package io.digibyte.tools.util;
 
 import android.content.Context;
 import android.content.res.AssetManager;
-import android.util.Log;
 
 import io.digibyte.tools.manager.BRReportsManager;
-import com.google.firebase.crash.FirebaseCrash;
 
 import java.io.BufferedReader;
 import java.io.IOException;

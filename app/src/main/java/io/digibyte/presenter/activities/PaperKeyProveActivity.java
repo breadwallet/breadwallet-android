@@ -7,7 +7,6 @@ import android.support.constraint.ConstraintSet;
 import android.support.transition.TransitionManager;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
@@ -19,7 +18,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import io.digibyte.R;
-import io.digibyte.presenter.activities.util.ActivityUTILS;
 import io.digibyte.presenter.activities.util.BRActivity;
 import io.digibyte.presenter.customviews.BRDialogView;
 import io.digibyte.presenter.interfaces.BROnSignalCompletion;
@@ -31,10 +29,7 @@ import io.digibyte.tools.manager.BRSharedPrefs;
 import io.digibyte.tools.security.SmartValidator;
 import io.digibyte.tools.util.Utils;
 import io.digibyte.tools.util.Bip39Reader;
-import com.google.firebase.crash.FirebaseCrash;
 
-import java.io.IOException;
-import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 
@@ -174,7 +169,6 @@ public class PaperKeyProveActivity extends BRActivity {
         super.onResume();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
     }
 
     @Override
