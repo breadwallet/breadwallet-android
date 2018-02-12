@@ -96,7 +96,7 @@ public class AuthManager {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                AuthManager.getInstance().setTotalLimit(app, WalletsMaster.getInstance().getCurrentWallet(app).getTotalSent(app)
+                AuthManager.getInstance().setTotalLimit(app, WalletsMaster.getInstance(app).getCurrentWallet(app).getTotalSent(app)
                         + BRKeyStore.getSpendLimit(app));
             }
         });
@@ -155,7 +155,7 @@ public class AuthManager {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    long totalSpent = WalletsMaster.getInstance().getCurrentWallet(activity).getTotalSent(activity);
+                    long totalSpent = WalletsMaster.getInstance(activity).getCurrentWallet(activity).getTotalSent(activity);
                     long totalLimit = totalSpent + BRKeyStore.getSpendLimit(activity);
                     setTotalLimit(activity, totalLimit);
                 }

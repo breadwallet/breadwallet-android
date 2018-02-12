@@ -168,12 +168,10 @@ public class PostAuth {
             } else {
                 if (phraseForKeyStore.length() != 0) {
                     BRSharedPrefs.putPhraseWroteDown(app, true);
-                    WalletBitcoinManager bitcoin = WalletBitcoinManager.getInstance(app);
                     byte[] seed = BRCoreKey.getSeedFromPhrase(phraseForKeyStore.getBytes());
-                    byte[] authKey = bitcoin.getAuthPrivKeyForAPI(seed);
+                    byte[] authKey = BRCoreKey.getAuthPrivKeyForAPI(seed);
                     BRKeyStore.putAuthKey(authKey, app);
                     BRCoreMasterPubKey mpk = new BRCoreMasterPubKey(phraseForKeyStore.getBytes(), true);
-//                    byte[] pubKey = bitcoin.getMasterPubKey(phraseForKeyStore.getBytes());
                     BRKeyStore.putMasterPublicKey(mpk.getPubKey(), app);
                     app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                     Intent intent = new Intent(app, SetPinActivity.class);
@@ -214,7 +212,7 @@ public class PostAuth {
         try {
             if (rawSeed.length != 0) {
                 if (paymentItem != null && paymentItem.tx != null) {
-                    byte[] txHash = walletManager.getCurrentWallet(app).getWallet().signTransaction(paymentItem.tx, rawSeed);
+                    byte[] txHash = walletManager.getCurrentWallet(app).signAndPublishTransaction(paymentItem.tx, rawSeed);
                     Log.e(TAG, "onPublishTxAuth: txhash:" + Arrays.toString(txHash));
                     if (Utils.isNullOrEmpty(txHash)) {
                         Log.e(TAG, "onPublishTxAuth: publishSerializedTransaction returned FALSE");
@@ -241,35 +239,34 @@ public class PostAuth {
 
 
     public void onPaymentProtocolRequest(final Activity app, boolean authAsked) {
-
-        final byte[] rawSeed;
-        try {
-            rawSeed = BRKeyStore.getPhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
-        } catch (UserNotAuthenticatedException e) {
-            if (authAsked) {
-                Log.e(TAG, new Object() {
-                }.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
-                isStuckWithAuthLoop = true;
-            }
-            return;
-        }
-        if (rawSeed == null || rawSeed.length < 10 || paymentRequest.serializedTx == null) {
-            Log.d(TAG, "onPaymentProtocolRequest() returned: rawSeed is malformed: " + Arrays.toString(rawSeed));
-            return;
-        }
-        if (rawSeed.length < 10) return;
-
-
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                byte[] txHash = WalletsMaster.getInstance(app).publishSerializedTransaction(paymentRequest.serializedTx, rawSeed);
-                if (Utils.isNullOrEmpty(txHash)) throw new NullPointerException("txHash is null!");
-                PaymentProtocolPostPaymentTask.sent = true;
-                Arrays.fill(rawSeed, (byte) 0);
-                paymentRequest = null;
-            }
-        });
+//        final byte[] rawSeed;
+//        try {
+//            rawSeed = BRKeyStore.getPhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
+//        } catch (UserNotAuthenticatedException e) {
+//            if (authAsked) {
+//                Log.e(TAG, new Object() {
+//                }.getClass().getEnclosingMethod().getName() + ": WARNING!!!! LOOP");
+//                isStuckWithAuthLoop = true;
+//            }
+//            return;
+//        }
+//        if (rawSeed == null || rawSeed.length < 10 || paymentRequest.serializedTx == null) {
+//            Log.d(TAG, "onPaymentProtocolRequest() returned: rawSeed is malformed: " + Arrays.toString(rawSeed));
+//            return;
+//        }
+//        if (rawSeed.length < 10) return;
+//
+//
+//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                byte[] txHash = WalletsMaster.getInstance(app).getCurrentWallet(app).signAndPublishTransaction(paymentRequest.tx, rawSeed);
+//                if (Utils.isNullOrEmpty(txHash)) throw new NullPointerException("txHash is null!");
+//                PaymentProtocolPostPaymentTask.sent = true;
+//                Arrays.fill(rawSeed, (byte) 0);
+//                paymentRequest = null;
+//            }
+//        });
 
     }
 

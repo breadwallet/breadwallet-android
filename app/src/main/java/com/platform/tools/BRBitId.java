@@ -199,7 +199,7 @@ public class BRBitId {
             return;
         }
         if (Utils.isNullOrEmpty(phrase)) throw new NullPointerException("cant happen");
-        seed = WalletsMaster.getSeedFromPhrase(phrase);
+        seed = BRCoreKey.getSeedFromPhrase(phrase);
         if (Utils.isNullOrEmpty(seed)) {
             Log.e(TAG, "completeBitID: seed is null!");
             return;
@@ -235,7 +235,7 @@ public class BRBitId {
     private static void bitIdPlatform(Activity app, Uri uri, byte[] seed) {
 
         final String biUri = uri.getHost() == null ? uri.toString() : uri.getHost();
-        final byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, biUri);
+        final byte[] key = BRCoreMasterPubKey.bip32BitIDKey(seed, _index, biUri);
         if (key == null) {
             Log.d(TAG, "bitIdPlatform: key is null!");
             return;
@@ -298,7 +298,7 @@ public class BRBitId {
         String uriWithNonce = String.format("bitid://%s%s?x=%s", uri.getHost(), uri.getPath(), nonce);
 
         Log.e(TAG, "LINK: callbackUrl:" + callbackUrl);
-        final byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, _bitUri);
+        final byte[] key = BRCoreMasterPubKey.bip32BitIDKey(seed, _index, _bitUri);
 
         if (key == null) {
             Log.d(TAG, "completeBitID: key is null!");

@@ -117,7 +117,7 @@ public class BRAnimator {
             } else if (tag.equalsIgnoreCase(FragmentReceive.class.getName())) {
                 showReceiveFragment(app, true);
             } else if (tag.equalsIgnoreCase(FragmentRequestAmount.class.getName())) {
-                showRequestFragment(app, BRSharedPrefs.getReceiveAddress(app));
+                showRequestFragment(app);
             } else if (tag.equalsIgnoreCase(FragmentMenu.class.getName())) {
                 showMenuFragment(app);
             } else {
@@ -288,13 +288,9 @@ public class BRAnimator {
         return itemLayoutTransition;
     }
 
-    public static void showRequestFragment(Activity app, String address) {
+    public static void showRequestFragment(Activity app) {
         if (app == null) {
             Log.e(TAG, "showRequestFragment: app is null");
-            return;
-        }
-        if (Utils.isNullOrEmpty(address)) {
-            Log.e(TAG, "showRequestFragment: address is empty: " + address);
             return;
         }
 
@@ -304,7 +300,6 @@ public class BRAnimator {
 
         fragmentRequestAmount = new FragmentRequestAmount();
         Bundle bundle = new Bundle();
-        bundle.putString("address", address);
         fragmentRequestAmount.setArguments(bundle);
         app.getFragmentManager().beginTransaction()
                 .setCustomAnimations(0, 0, 0, R.animator.plain_300)

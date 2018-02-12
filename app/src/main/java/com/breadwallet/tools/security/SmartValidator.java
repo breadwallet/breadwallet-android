@@ -69,7 +69,7 @@ public class SmartValidator {
             Log.e(TAG, "isPaperKeyValid: " + "The list size should divide by " + Bip39Reader.WORD_LIST_SIZE);
             BRReportsManager.reportBug(new IllegalArgumentException("words.length is not dividable by " + Bip39Reader.WORD_LIST_SIZE), true);
         }
-        return WalletsMaster.getInstance().validateRecoveryPhrase(words, paperKey);
+        return BRCoreMasterPubKey.validateRecoveryPhrase(words, paperKey);
     }
 
     public static boolean isPaperKeyCorrect(String insertedPhrase, Context activity) {

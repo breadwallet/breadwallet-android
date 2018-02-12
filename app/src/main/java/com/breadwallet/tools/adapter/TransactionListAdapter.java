@@ -71,6 +71,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private List<TxUiHolder> backUpFeed;
     private List<TxUiHolder> itemFeed;
     //    private Map<String, TxMetaData> mds;
+
     private final int txType = 0;
     private final int promptType = 1;
     private final int syncingType = 2;
@@ -247,7 +248,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         final String addr = item.getTo()[0];
         convertView.account.setText(addr);
         int blockHeight = item.getBlockHeight();
-        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext) - blockHeight + 1;
+        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext, wallet.getIso(mContext)) - blockHeight + 1;
 
         int level = 0;
         if (confirms <= 0) {
@@ -400,8 +401,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     if (switches[1] && (item.getSent() - item.getReceived() > 0)) {
                         willAdd = false;
                     }
+                    BaseWallet wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
 
-                    int confirms = item.getBlockHeight() == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext) - item.getBlockHeight() + 1;
+                    int confirms = item.getBlockHeight() ==
+                            Integer.MAX_VALUE ? 0
+                            : BRSharedPrefs.getLastBlockHeight(mContext, wallet.getIso(mContext)) - item.getBlockHeight() + 1;
                     //complete
                     if (switches[2] && confirms >= 6) {
                         willAdd = false;

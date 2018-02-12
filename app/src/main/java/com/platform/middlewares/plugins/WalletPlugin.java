@@ -71,17 +71,17 @@ public class WalletPlugin implements Plugin {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
-            WalletsMaster wm = WalletsMaster.getInstance();
+            WalletsMaster wm = WalletsMaster.getInstance(app);
             JSONObject jsonResp = new JSONObject();
             try {
                 /**whether or not the users wallet is set up yet, or is currently locked*/
                 jsonResp.put("no_wallet", wm.noWalletForPlatform(app));
 
                 /**the current receive address*/
-                jsonResp.put("receive_address", WalletsMaster.getInstance().getCurrentWallet(app).getReceiveAddress(app));
+                jsonResp.put("receive_address", WalletsMaster.getInstance(app).getCurrentWallet(app).getReceiveAddress(app));
 
                 /**how digits after the decimal point. 2 = bits 8 = btc 6 = mbtc*/
-                jsonResp.put("btc_denomiation_digits", BRSharedPrefs.getBitcoinDenomination(app) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
+                jsonResp.put("btc_denomiation_digits", BRSharedPrefs.getCryptoDenomination(app, wm.getCurrentWallet(app).getIso(app)) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
 
                 /**the users native fiat currency as an ISO 4217 code. Should be uppercased */
                 jsonResp.put("local_currency_code", Currency.getInstance(Locale.getDefault()).getCurrencyCode().toUpperCase());

@@ -314,16 +314,16 @@ public class FragmentRequestAmount extends Fragment {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                boolean success = WalletsMaster.refreshAddress(getActivity());
-                if (!success) throw new RuntimeException("failed to retrieve address");
+                final BaseWallet wallet = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
-                receiveAddress = BRSharedPrefs.getReceiveAddress(getActivity());
+                wallet.refreshAddress(getActivity());
+                receiveAddress = BRSharedPrefs.getReceiveAddress(getActivity(), wallet.getReceiveAddress(getActivity()));
 
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
                         mAddress.setText(receiveAddress);
-                        boolean generated = generateQrImage(receiveAddress, "0", "BTC");
+                        boolean generated = generateQrImage(receiveAddress, "0", wallet.getIso(getActivity()));
                         if (!generated)
                             throw new RuntimeException("failed to generate qr image for address");
                     }
@@ -417,7 +417,7 @@ public class FragmentRequestAmount extends Fragment {
         String tmpAmount = amountBuilder.toString();
         amountEdit.setText(tmpAmount);
         isoText.setText(CurrencyUtils.getSymbolByIso(getActivity(), selectedIso));
-        isoButton.setText(String.format("%s(%s)", CurrencyUtils.getCurrencyIso(getActivity(), selectedIso), CurrencyUtils.getSymbolByIso(getActivity(), selectedIso)));
+        isoButton.setText(String.format("%s(%s)", selectedIso, CurrencyUtils.getSymbolByIso(getActivity(), selectedIso)));
 
     }
 

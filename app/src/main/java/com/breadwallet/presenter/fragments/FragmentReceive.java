@@ -31,6 +31,7 @@ import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWallet;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 
 import static com.breadwallet.tools.animation.BRAnimator.animateBackgroundDim;
@@ -184,7 +185,7 @@ public class FragmentReceive extends Fragment {
                 if (!BRAnimator.isClickAllowed()) return;
                 Activity app = getActivity();
                 app.onBackPressed();
-                BRAnimator.showRequestFragment(app, receiveAddress);
+                BRAnimator.showRequestFragment(app);
 
             }
         });
@@ -283,23 +284,12 @@ public class FragmentReceive extends Fragment {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                boolean success = WalletsMaster.refreshAddress(ctx);
-                if (!success) {
-                    if (ctx instanceof Activity) {
-                        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                ((Activity) ctx).onBackPressed();
-                            }
-                        });
-
-                    }
-                    return;
-                }
+                WalletsMaster.getInstance(ctx).getCurrentWallet(ctx).refreshAddress(ctx);
+                final BaseWallet wallet = WalletsMaster.getInstance(ctx).getCurrentWallet(ctx);
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        receiveAddress = BRSharedPrefs.getReceiveAddress(ctx);
+                        receiveAddress = BRSharedPrefs.getReceiveAddress(ctx, wallet.getIso(ctx));
                         mAddress.setText(receiveAddress);
                         boolean generated = QRUtils.generateQR(ctx, "bitcoin:" + receiveAddress, mQrImage);
                         if (!generated)

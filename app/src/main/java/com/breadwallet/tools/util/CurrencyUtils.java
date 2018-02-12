@@ -2,6 +2,7 @@ package com.breadwallet.tools.util;
 
 import android.content.Context;
 
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWallet;
@@ -44,8 +45,8 @@ public class CurrencyUtils {
 
 
     // amount is in currency or BTC (bits, mBTC or BTC)
-    public static String getFormattedCurrencyString(Context app, String isoCurrencyCode, BigDecimal amount) {
-        if(amount == null) return "---";
+    public static String getFormattedCurrencyString(Context app, String iso, BigDecimal amount) {
+        if (amount == null) return "---";
 //        Log.e(TAG, "amount: " + amount);
         DecimalFormat currencyFormat;
 
@@ -54,25 +55,29 @@ public class CurrencyUtils {
         // This specifies the actual currency that the value is in, and provide
         // s the currency symbol.
         DecimalFormatSymbols decimalFormatSymbols;
-        Currency currency;
+        Currency currency = null;
         String symbol = null;
         decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
 //        int decimalPoints = 0;
-        if (Objects.equals(isoCurrencyCode, "BTC")) {
-            symbol = WalletBitcoinManager.getInstance().getSymbol(app);
-        } else {
-            try {
-                currency = Currency.getInstance(isoCurrencyCode);
-            } catch (IllegalArgumentException e) {
-                currency = Currency.getInstance(Locale.getDefault());
-            }
+        BaseWallet wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
+        try {
+            currency = Currency.getInstance(iso);
             symbol = currency.getSymbol();
-//            decimalPoints = currency.getDefaultFractionDigits();
+        } catch (IllegalArgumentException e) {
+
+            if (wallet == null) {
+                IllegalArgumentException ex = new IllegalArgumentException("Illegal iso: " + iso);
+                BRReportsManager.reportBug(ex);
+                throw ex;
+            } else {
+                symbol = wallet.getSymbol(app);
+            }
         }
+
         decimalFormatSymbols.setCurrencySymbol(symbol);
 //        currencyFormat.setMaximumFractionDigits(decimalPoints);
         currencyFormat.setGroupingUsed(true);
-        currencyFormat.setMaximumFractionDigits(BRSharedPrefs.getBitcoinDenomination(app) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
+        currencyFormat.setMaximumFractionDigits(currency != null ? currency.getDefaultFractionDigits() : wallet.getMaxDecimalPlaces(app));
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
         currencyFormat.setNegativeSuffix("");
@@ -81,7 +86,7 @@ public class CurrencyUtils {
 
     public static String getSymbolByIso(Context app, String iso) {
         String symbol;
-        BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(iso);
+        BaseWallet wallet = WalletsMaster.getInstance(app).getWalletByIso(app,iso);
         if (wallet != null) {
             symbol = wallet.getSymbol(app);
         } else {
@@ -96,15 +101,15 @@ public class CurrencyUtils {
         return Utils.isNullOrEmpty(symbol) ? iso : symbol;
     }
 
-    //get currency denomination (iso) BTC, ETH etc.
-    public static String getCurrencyIso(Context app, String iso) {
-        BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(iso);
-        if (wallet == null) return iso;
-        return wallet.getIso(app);
-    }
+//    //get currency denomination (iso) BTC, ETH etc.
+//    public static String getCurrencyIso(Context app, String iso) {
+//        BaseWallet wallet = WalletsMaster.getInstance(app).getWalletByIso(iso);
+//        if (wallet == null) return iso;
+//        return wallet.getIso(app);
+//    }
 
     public static int getMaxDecimalPlaces(Context app, String iso) {
-        BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(iso);
+        BaseWallet wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
         if (wallet == null) {
             Currency currency = Currency.getInstance(iso);
             return currency.getDefaultFractionDigits();

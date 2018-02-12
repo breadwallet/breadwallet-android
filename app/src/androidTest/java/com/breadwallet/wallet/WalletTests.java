@@ -173,7 +173,7 @@ public class WalletTests {
         CurrencyDataSource.getInstance(app).putCurrencies(tmp);
 
 
-        BRSharedPrefs.putBitcoinDenomination(app, BRConstants.CURRENT_UNIT_BITCOINS);
+        BRSharedPrefs.putCryptoDenomination(app, BRConstants.CURRENT_UNIT_BITCOINS);
 
         //getCryptoForSmallestCrypto(..)
         BigDecimal val = new BigDecimal(20000);
@@ -201,7 +201,7 @@ public class WalletTests {
         Assert.assertEquals(res.doubleValue(), 0.5, 0); //dollars
 
 
-        BRSharedPrefs.putBitcoinDenomination(app, BRConstants.CURRENT_UNIT_BITS);
+        BRSharedPrefs.putCryptoDenomination(app, BRConstants.CURRENT_UNIT_BITS);
 
         //getCryptoForSmallestCrypto(..)
         val = new BigDecimal(20000);
