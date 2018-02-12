@@ -19,6 +19,9 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ViewFlipper;
 
+import com.breadwallet.R;
+import com.breadwallet.core.BRCorePeer;
+import com.breadwallet.presenter.activities.bitcoin.WebViewActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRSearchBar;
@@ -165,8 +168,15 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     private void updateUi() {
-        BaseWallet currentWallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        final BaseWallet currentWallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
         Log.e(TAG, "updateUi: " + currentWallet.getIso(this));
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (currentWallet.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Disconnected)
+                    currentWallet.getPeerManager().connect();
+            }
+        });
 
         if (currentWallet.getUiConfiguration().buyVisible) {
             mBuyButton.setVisibility(View.VISIBLE);

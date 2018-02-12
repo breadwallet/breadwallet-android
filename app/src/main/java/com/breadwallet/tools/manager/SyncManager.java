@@ -140,7 +140,7 @@ public class SyncManager {
 
                 while (running) {
                     if (app != null) {
-                        int startHeight = BRSharedPrefs.getStartHeight(app, BRSharedPrefs.getCurrentWalletIso(app));
+                        long startHeight = BRSharedPrefs.getStartHeight(app, BRSharedPrefs.getCurrentWalletIso(app));
                         progressStatus = mWallet.getPeerManager().getSyncProgress(startHeight);
 //                    Log.e(TAG, "run: progressStatus: " + progressStatus);
                         if (progressStatus == 1) {
