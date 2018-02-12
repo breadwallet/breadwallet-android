@@ -28,13 +28,16 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.SyncManager;
-import com.breadwallet.tools.manager.TxManager;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
+import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.interfaces.BaseWallet;
 import com.platform.HTTPServer;
+
+import java.math.BigDecimal;
 
 /**
  * Created by byfieldj on 1/16/18.
@@ -44,8 +47,8 @@ import com.platform.HTTPServer;
  * (BTC, BCH, ETH)
  */
 
-public class CurrencyActivity extends BreadActivity implements InternetManager.ConnectionReceiverListener {
-    private static final String TAG = CurrencyActivity.class.getName();
+public class WalletActivity extends BreadActivity implements InternetManager.ConnectionReceiverListener {
+    private static final String TAG = WalletActivity.class.getName();
     BRText mCurrencyTitle;
     BRText mCurrencyPriceUsd;
     BRText mBalancePrimary;
@@ -72,7 +75,7 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        setContentView(R.layout.activity_currency);
+        setContentView(R.layout.activity_wallet);
 
         mCurrencyTitle = findViewById(R.id.currency_label);
         mCurrencyPriceUsd = findViewById(R.id.currency_usd_price);
@@ -100,7 +103,7 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BRAnimator.showSendFragment(CurrencyActivity.this, null);
+                BRAnimator.showSendFragment(WalletActivity.this, null);
 
             }
         });
@@ -108,7 +111,7 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
         mReceiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BRAnimator.showReceiveFragment(CurrencyActivity.this, false);
+                BRAnimator.showReceiveFragment(WalletActivity.this, false);
 
             }
         });
@@ -150,21 +153,18 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
         mDefaultTextSecondary = mBalanceSecondary.getText().toString();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
+    private void updateUi() {
         currentWallet = WalletsMaster.getInstance().getCurrentWallet(this);
+        Log.e(TAG, "updateUi: " + currentWallet.getIso(this));
 
-//        if (currency.equals("btc")) {
-        // Do nothing, BTC display is the default display
         if (currentWallet.getUiConfiguration().buyVisible) {
             mBuyButton.setVisibility(View.VISIBLE);
             mBuyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent = new Intent(CurrencyActivity.this, WebViewActivity.class);
+                    Intent intent = new Intent(WalletActivity.this, WebViewActivity.class);
                     intent.putExtra("url", HTTPServer.URL_BUY);
-                    Activity app = CurrencyActivity.this;
+                    Activity app = WalletActivity.this;
                     app.startActivity(intent);
                     app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
                 }
@@ -182,10 +182,19 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
             mBuyButton.setLayoutParams(param);
         }
 
+        String fiatIso = BRSharedPrefs.getPreferredFiatIso(this);
+        String fiatRate = CurrencyUtils.getFormattedCurrencyString(this, fiatIso, new BigDecimal(CurrencyDataSource.getInstance(this).getCurrencyByIso(fiatIso).rate));
+        String cryptoIso = currentWallet.getIso(this);
+
+//        String fiatBalance = CurrencyUtils.getFormattedCurrencyString(this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(ExchangeUtils....(currentWallet.getCachedBalance(this)));
+        String cryptoBalance = CurrencyUtils.getFormattedCurrencyString(this, currentWallet.getIso(this), new BigDecimal(currentWallet.getCachedBalance(this)));
+
+        String rateString = String.format("%s per %s", fiatRate, cryptoIso);
+
         mCurrencyTitle.setText(currentWallet.getName(this));
-        mCurrencyPriceUsd.setText("$2,665.41 per BCH");
-        mBalancePrimary.setText("$4,177.74");
-        mBalanceSecondary.setText("1.56739 BCH");
+        mCurrencyPriceUsd.setText(rateString);
+        mBalancePrimary.setText("-------");
+        mBalanceSecondary.setText(cryptoBalance);
         String color = currentWallet.getUiConfiguration().colorHex;
         Log.e(TAG, "onResume: " + currentWallet.getName(this));
         Log.e(TAG, "onResume: color:" + color);
@@ -193,8 +202,6 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
         mSendButton.setColor(Color.parseColor(color));
         mReceiveButton.setColor(Color.parseColor(color));
         mBuyButton.setColor(Color.parseColor(color));
-
-
     }
 
     private void swap() {
@@ -254,18 +261,18 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
             public void run() {
                 Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI");
                 //sleep a little in order to make sure all the commits are finished (like SharePreferences commits)
-                String iso = BRSharedPrefs.getPreferredFiatIso(CurrencyActivity.this);
+                String iso = BRSharedPrefs.getPreferredFiatIso(WalletActivity.this);
 
                 //current amount in satoshis
-                final BigDecimal amount = new BigDecimal(BRSharedPrefs.getCatchedBalance(CurrencyActivity.this));
+                final BigDecimal amount = new BigDecimal(BRSharedPrefs.getCatchedBalance(WalletActivity.this));
 
                 //amount in BTC units
-                BigDecimal btcAmount = BRExchange.getBitcoinForSatoshis(CurrencyActivity.this, amount);
-                final String formattedBTCAmount = BRCurrency.getFormattedCurrencyString(CurrencyActivity.this, "BTC", btcAmount);
+                BigDecimal btcAmount = BRExchange.getBitcoinForSatoshis(WalletActivity.this, amount);
+                final String formattedBTCAmount = BRCurrency.getFormattedCurrencyString(WalletActivity.this, "BTC", btcAmount);
 
                 //amount in currency units
-                BigDecimal curAmount = BRExchange.getAmountFromSatoshis(CurrencyActivity.this, iso, amount);
-                final String formattedCurAmount = BRCurrency.getFormattedCurrencyString(CurrencyActivity.this, iso, curAmount);
+                BigDecimal curAmount = BRExchange.getAmountFromSatoshis(WalletActivity.this, iso, amount);
+                final String formattedCurAmount = BRCurrency.getFormattedCurrencyString(WalletActivity.this, iso, curAmount);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -277,7 +284,7 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
 
                     }
                 });
-                TxManager.getInstance().updateTxList(CurrencyActivity.this);
+                TxManager.getInstance().updateTxList(WalletActivity.this);
             }
         });
     }
@@ -313,8 +320,8 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(CurrencyActivity.this,
-                            BRSharedPrefs.getCurrentWalletIso(CurrencyActivity.this)));
+                    final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(WalletActivity.this,
+                            BRSharedPrefs.getCurrentWalletIso(WalletActivity.this)));
 //                    Log.e(TAG, "run: " + progress);
                     if (progress < 1 && progress > 0) {
                         SyncManager.getInstance().startSyncingProgressThread();

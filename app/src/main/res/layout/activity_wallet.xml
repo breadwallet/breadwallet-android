@@ -12,14 +12,14 @@
                 android:fitsSystemWindows="true"
                 android:focusableInTouchMode="true"
                 android:orientation="vertical"
-                tools:context="com.breadwallet.presenter.activities.CurrencyActivity">
+                tools:context="com.breadwallet.presenter.activities.WalletActivity">
 
 
     <ViewFlipper
         android:id="@+id/tool_bar_flipper"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        tools:context="com.breadwallet.presenter.activities.CurrencyActivity">
+        tools:context="com.breadwallet.presenter.activities.WalletActivity">
 
 
         <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -69,13 +69,13 @@
                     android:id="@+id/currency_usd_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="$16,904.34 per BTC"
+                    android:text="$--- per BTC"
                     android:textColor="@color/currency_subheading_color"
                     android:textSize="@dimen/sub_header"
                     app:customTFont="CircularPro-Book.otf"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/currency_label"/>
+                    app:layout_constraintTop_toBottomOf="@+id/currency_label"/>
 
 
                 <com.breadwallet.presenter.customviews.BRText
@@ -97,7 +97,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:layout_marginStart="16dp"
-                    android:text="$26,495.69"
+                    android:text="$---"
                     android:textColor="@color/white"
                     android:textSize="28sp"
                     app:customTFont="CircularPro-Bold.otf"
@@ -122,7 +122,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="4dp"
                     android:layout_marginStart="8dp"
-                    android:text="1.56739 BTC"
+                    android:text="--- BTC"
                     android:textColor="@color/currency_subheading_color"
                     app:layout_constraintBottom_toBottomOf="@+id/swap"
                     app:layout_constraintLeft_toRightOf="@+id/swap"

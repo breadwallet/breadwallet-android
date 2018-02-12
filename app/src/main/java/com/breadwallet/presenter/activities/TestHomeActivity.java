@@ -33,7 +33,7 @@ public class TestHomeActivity extends Activity {
             @Override
             public void onClick(View view) {
                 BRSharedPrefs.putCurrentWalletIso(TestHomeActivity.this, "BTC");
-                Intent newIntent = new Intent(TestHomeActivity.this, CurrencyActivity.class);
+                Intent newIntent = new Intent(TestHomeActivity.this, WalletActivity.class);
                 startActivity(newIntent);
             }
         });
@@ -42,7 +42,7 @@ public class TestHomeActivity extends Activity {
             @Override
             public void onClick(View view) {
                 BRSharedPrefs.putCurrentWalletIso(TestHomeActivity.this, "BCH");
-                Intent newIntent = new Intent(TestHomeActivity.this, CurrencyActivity.class);
+                Intent newIntent = new Intent(TestHomeActivity.this, WalletActivity.class);
                 startActivity(newIntent);
             }
         });

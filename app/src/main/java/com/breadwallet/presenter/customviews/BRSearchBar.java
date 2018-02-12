@@ -1,30 +1,20 @@
 package com.breadwallet.presenter.customviews;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.presenter.activities.CurrencyActivity;
-import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.threads.BRExecutor;
-
-import org.eclipse.jetty.webapp.MetaData;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * BreadWallet
