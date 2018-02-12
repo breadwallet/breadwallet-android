@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.customviews;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.support.annotation.Nullable;
