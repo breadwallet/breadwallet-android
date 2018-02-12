@@ -12,17 +12,13 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
-import com.google.firebase.crash.FirebaseCrash;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;

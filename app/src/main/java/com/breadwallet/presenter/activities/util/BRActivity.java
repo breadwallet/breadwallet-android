@@ -2,6 +2,7 @@ package com.breadwallet.presenter.activities.util;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Point;
 import android.os.Handler;
 import android.util.Log;
 import android.webkit.WebChromeClient;
@@ -50,6 +51,7 @@ import com.platform.tools.BRBitId;
  */
 public class BRActivity extends Activity {
     private static final String TAG = BRActivity.class.getName();
+    public static final Point screenParametersPoint = new Point();
 
     static {
         System.loadLibrary(BRConstants.NATIVE_LIB_NAME);

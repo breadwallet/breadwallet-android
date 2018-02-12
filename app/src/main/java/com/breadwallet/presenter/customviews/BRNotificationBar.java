@@ -7,7 +7,7 @@ import android.util.AttributeSet;
 import android.view.View;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.WalletActivity;
 
 /**
  * BreadWallet
@@ -37,7 +37,7 @@ public class BRNotificationBar extends android.support.v7.widget.Toolbar {
 
     private static final String TAG = BRNotificationBar.class.getName();
 
-    private BreadActivity breadActivity;
+    private WalletActivity walletActivity;
     private BRText description;
     private BRButton close;
 
@@ -60,7 +60,7 @@ public class BRNotificationBar extends android.support.v7.widget.Toolbar {
 
     private void init(AttributeSet attrs) {
         inflate(getContext(), R.layout.notification_bar, this);
-        breadActivity = (BreadActivity) getContext();
+        walletActivity = (WalletActivity) getContext();
         description = (BRText) findViewById(R.id.description);
         close = (BRButton) findViewById(R.id.cancel_button);
 
@@ -80,7 +80,7 @@ public class BRNotificationBar extends android.support.v7.widget.Toolbar {
         close.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                breadActivity.resetFlipper();
+                walletActivity.resetFlipper();
             }
         });
 

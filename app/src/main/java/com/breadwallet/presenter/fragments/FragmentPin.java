@@ -16,8 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
@@ -133,7 +132,7 @@ public class FragmentPin extends Fragment {
             customMessage = messageString;
             message.setText(customMessage);
         }
-        keyboard.setTranslationY(keyboardTrY + BreadActivity.screenParametersPoint.y / 3);
+        keyboard.setTranslationY(keyboardTrY + BRActivity.screenParametersPoint.y / 3);
         keyboard.animate()
                 .translationY(keyboardTrY)
                 .setDuration(400)

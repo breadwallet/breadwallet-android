@@ -24,9 +24,10 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.LoginActivity;
+import com.breadwallet.presenter.activities.TestHomeActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
+import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.presenter.fragments.FragmentGreetings;
@@ -383,14 +384,14 @@ public class BRAnimator {
     }
 
     public static void startBreadIfNotStarted(Activity app) {
-        if (!(app instanceof BreadActivity))
+        if (!(app instanceof TestHomeActivity))
             startBreadActivity(app, false);
     }
 
     public static void startBreadActivity(Activity from, boolean auth) {
         if (from == null) return;
         Log.e(TAG, "startBreadActivity: " + from.getClass().getName());
-        Class toStart = auth ? LoginActivity.class : BreadActivity.class;
+        Class toStart = auth ? LoginActivity.class : TestHomeActivity.class;
         Intent intent = new Intent(from, toStart);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         from.startActivity(intent);
@@ -405,7 +406,7 @@ public class BRAnimator {
         float signalHeight = signalLayout.getHeight();
         signalLayout.setTranslationY(reverse ? translationY : translationY + signalHeight);
 
-        signalLayout.animate().translationY(reverse ? BreadActivity.screenParametersPoint.y : translationY).setDuration(SLIDE_ANIMATION_DURATION)
+        signalLayout.animate().translationY(reverse ? IntroActivity.screenParametersPoint.y : translationY).setDuration(SLIDE_ANIMATION_DURATION)
                 .setInterpolator(reverse ? new DecelerateInterpolator() : new OvershootInterpolator(0.7f))
                 .setListener(new AnimatorListenerAdapter() {
                     @Override

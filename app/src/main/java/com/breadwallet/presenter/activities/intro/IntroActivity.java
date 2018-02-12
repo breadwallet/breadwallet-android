@@ -12,8 +12,8 @@ import android.widget.ImageButton;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.SetPinActivity;
+import com.breadwallet.presenter.activities.TestHomeActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRReportsManager;
@@ -68,7 +68,7 @@ public class IntroActivity extends BRActivity implements Serializable {
         return app;
     }
 
-    public static final Point screenParametersPoint = new Point();
+
 
     @Override
     protected void onRestart() {
@@ -145,7 +145,12 @@ public class IntroActivity extends BRActivity implements Serializable {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
+<<<<<<< HEAD
                 BreadActivity bApp = BreadActivity.getApp();
+=======
+                TestHomeActivity bApp = TestHomeActivity.getApp();
+                if (bApp != null) bApp.finish();
+>>>>>>> refactor the code to match the new design
                 Intent intent = new Intent(IntroActivity.this, SetPinActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -157,7 +162,12 @@ public class IntroActivity extends BRActivity implements Serializable {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
+<<<<<<< HEAD
                 BreadActivity bApp = BreadActivity.getApp();
+=======
+                TestHomeActivity bApp = TestHomeActivity.getApp();
+                if (bApp != null) bApp.finish();
+>>>>>>> refactor the code to match the new design
                 Intent intent = new Intent(IntroActivity.this, RecoverActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);

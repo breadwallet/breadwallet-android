@@ -37,7 +37,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
@@ -236,7 +236,7 @@ public class FragmentFingerprint extends Fragment
     private void animateSignalSlide(final boolean reverse) {
         float layoutTY = fingerPrintLayout.getTranslationY();
         if (!reverse) {
-            fingerPrintLayout.setTranslationY(layoutTY + BreadActivity.screenParametersPoint.y);
+            fingerPrintLayout.setTranslationY(layoutTY + BRActivity.screenParametersPoint.y);
             fingerPrintLayout.animate()
                     .translationY(layoutTY)
                     .setDuration(ANIMATION_DURATION + 200)

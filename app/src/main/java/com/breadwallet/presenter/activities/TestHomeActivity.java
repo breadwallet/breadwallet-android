@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 
 /**
@@ -18,8 +19,15 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 
 public class TestHomeActivity extends Activity {
 
-    RelativeLayout mBitcoinCard;
-    RelativeLayout mBchCard;
+    private RelativeLayout mBitcoinCard;
+
+    private RelativeLayout mBchCard;
+    private static TestHomeActivity app;
+
+    public static TestHomeActivity getApp() {
+        return app;
+    }
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,6 +59,7 @@ public class TestHomeActivity extends Activity {
     @Override
     protected void onResume() {
         super.onResume();
+        app = this;
         BRSharedPrefs.putCurrentWalletIso(TestHomeActivity.this, "");
     }
 

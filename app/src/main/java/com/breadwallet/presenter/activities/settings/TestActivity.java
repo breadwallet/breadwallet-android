@@ -4,8 +4,11 @@ import android.app.Activity;
 import android.os.Bundle;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.BRActivity;
 
+
+/**
+ * Used for Unit testing onlyg
+ */
 public class TestActivity extends Activity {
     private static final String TAG = TestActivity.class.getName();
 

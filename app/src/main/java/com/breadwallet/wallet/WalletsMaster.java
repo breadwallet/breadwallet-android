@@ -17,8 +17,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
@@ -395,7 +394,6 @@ public class WalletsMaster {
 
         }
     }
-
 
 
     private native byte[] encodeSeed(byte[] seed, String[] wordList);

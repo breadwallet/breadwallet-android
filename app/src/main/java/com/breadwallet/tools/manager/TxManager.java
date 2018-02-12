@@ -14,7 +14,8 @@ import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.presenter.activities.WalletActivity;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -67,7 +68,7 @@ public class TxManager {
         return instance;
     }
 
-    public void init(final BreadActivity app) {
+    public void init(final WalletActivity app) {
         txList = app.findViewById(R.id.tx_list);
         txList.setLayoutManager(new CustomLinearLayoutManager(app));
         txList.addOnItemTouchListener(new RecyclerItemClickListener(app,
@@ -79,7 +80,7 @@ public class TxManager {
                 else {
                     //clicked on the  x (close)
                     if (x > view.getWidth() - 100 && y < 100) {
-                        view.animate().setDuration(150).translationX(BreadActivity.screenParametersPoint.x).setListener(new AnimatorListenerAdapter() {
+                        view.animate().setDuration(150).translationX(BRActivity.screenParametersPoint.x).setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
                                 super.onAnimationEnd(animation);
@@ -137,7 +138,7 @@ public class TxManager {
 
     }
 
-    public void showPrompt(Activity app, PromptManager.PromptItem item) {
+    public void showPrompt(Context app, PromptManager.PromptItem item) {
         crashIfNotMain();
         if (item == null) throw new RuntimeException("can't be null");
         BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".displayed");
@@ -147,7 +148,7 @@ public class TxManager {
         updateCard(app);
     }
 
-    public void hidePrompt(final Activity app, final PromptManager.PromptItem item) {
+    public void hidePrompt(final Context app, final PromptManager.PromptItem item) {
         crashIfNotMain();
         if (currentPrompt == PromptManager.PromptItem.SHARE_DATA) {
             BRSharedPrefs.putShareDataDismissed(app, true);
@@ -166,13 +167,13 @@ public class TxManager {
 
     }
 
-    private void showNextPrompt(Activity app) {
+    private void showNextPrompt(Context app) {
         crashIfNotMain();
         PromptManager.PromptItem toShow = PromptManager.getInstance().nextPrompt(app);
         if (toShow != null) {
 //            Log.d(TAG, "showNextPrompt: " + toShow);
             currentPrompt = toShow;
-            promptInfo = PromptManager.getInstance().promptInfo(app, currentPrompt);
+            promptInfo = PromptManager.getInstance().promptInfo((Activity) app, currentPrompt);
             updateCard(app);
         } else {
             Log.i(TAG, "showNextPrompt: nothing to show");
