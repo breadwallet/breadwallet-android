@@ -20,9 +20,6 @@ public class TestHomeActivity extends Activity {
 
     RelativeLayout mBitcoinCard;
     RelativeLayout mBchCard;
-    public static final String EXTRA_CURRENCY = "extra_currency";
-    private static final String CURRENCY_BTC = "btc";
-    private static final String CURRENCY_BCH = "bch";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -36,7 +33,8 @@ public class TestHomeActivity extends Activity {
             @Override
             public void onClick(View view) {
                 BRSharedPrefs.putCurrentWalletIso(TestHomeActivity.this, "BTC");
-                startCurrencyActivity(CURRENCY_BTC);
+                Intent newIntent = new Intent(TestHomeActivity.this, CurrencyActivity.class);
+                startActivity(newIntent);
             }
         });
 
@@ -44,7 +42,8 @@ public class TestHomeActivity extends Activity {
             @Override
             public void onClick(View view) {
                 BRSharedPrefs.putCurrentWalletIso(TestHomeActivity.this, "BCH");
-                startCurrencyActivity(CURRENCY_BCH);
+                Intent newIntent = new Intent(TestHomeActivity.this, CurrencyActivity.class);
+                startActivity(newIntent);
             }
         });
     }
@@ -55,10 +54,4 @@ public class TestHomeActivity extends Activity {
         BRSharedPrefs.putCurrentWalletIso(TestHomeActivity.this, "");
     }
 
-    private void startCurrencyActivity(String currency) {
-
-        Intent newIntent = new Intent(this, CurrencyActivity.class);
-        newIntent.putExtra(EXTRA_CURRENCY, currency);
-        startActivity(newIntent);
-    }
 }

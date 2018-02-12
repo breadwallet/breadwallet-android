@@ -219,7 +219,7 @@ public class BRButton extends Button {
     }
 
     public void setColor(int color){
-        bPaint.setColor(getContext().getColor(R.color.bitcoin_cash_row_color));
+        bPaint.setColor(color);
 
         invalidate();
 
