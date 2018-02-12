@@ -12,7 +12,6 @@ import android.widget.Toast;
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.presenter.activities.CurrencyActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRToast;
@@ -355,6 +354,11 @@ public class WalletBitcoin implements BaseWallet {
 
     @Override
     public String getIso(Context app) {
+        return "BTC";
+    }
+
+    @Override
+    public String getName(Context app) {
         if (app == null) return null;
         int unit = BRSharedPrefs.getBitcoinUnit(app);
         switch (unit) {
@@ -363,15 +367,9 @@ public class WalletBitcoin implements BaseWallet {
             case BRConstants.CURRENT_UNIT_MBITS:
                 return "MBits";
             default:
-                return "BTC";
+                return "Bitcoin";
         }
     }
-
-    @Override
-    public String getName(Context app) {
-        return "Bitcoin";
-    }
-
 
     @Override
     public int getMaxDecimalPlaces(Context app) {

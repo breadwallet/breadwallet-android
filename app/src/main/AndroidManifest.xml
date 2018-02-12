@@ -201,7 +201,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"></activity>
         <activity
-            android:name=".presenter.activities.CurrencyActivity"
+            android:name=".presenter.activities.WalletActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
 
