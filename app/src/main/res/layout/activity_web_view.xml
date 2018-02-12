@@ -58,9 +58,7 @@
 
         </RelativeLayout>
 
-
     </Toolbar>
-
 
     <Toolbar
         android:id="@+id/toolbar_bottom"

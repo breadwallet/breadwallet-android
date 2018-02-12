@@ -69,11 +69,13 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String TX_BUFF = "transactionBuff";
     public static final String TX_BLOCK_HEIGHT = "transactionBlockHeight";
     public static final String TX_TIME_STAMP = "transactionTimeStamp";
+    public static final String TX_ISO = "transactionISO";
 
     private static final String TX_DATABASE_CREATE = "create table if not exists " + TX_TABLE_NAME + "(" +
             TX_COLUMN_ID + " text, " +
             TX_BUFF + " blob, " +
             TX_BLOCK_HEIGHT + " integer, " +
+            TX_ISO + " text, " +
             TX_TIME_STAMP + " integer );";
 
     /**
