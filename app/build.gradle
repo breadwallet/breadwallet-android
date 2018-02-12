@@ -169,5 +169,5 @@ dependencies {
     implementation 'com.android.support.test:rules:1.0.1'
     implementation 'junit:junit:4.12'
     implementation 'com.android.support.test.espresso:espresso-core:3.0.1'
-    androidTestCompile 'tools.fastlane:screengrab:1.1.0'
+    implementation 'tools.fastlane:screengrab:1.1.0'
 }
