@@ -4,7 +4,7 @@ import android.app.Fragment;
 import android.app.FragmentManager;
 import android.support.v13.app.FragmentPagerAdapter;
 
-import com.breadwallet.presenter.entities.TxItem;
+import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.fragments.FragmentTransactionItem;
 
 import java.util.List;
@@ -35,9 +35,9 @@ import java.util.List;
  */
 public class TransactionPagerAdapter extends FragmentPagerAdapter {
     private static final String TAG = TransactionPagerAdapter.class.getName();
-    private List<TxItem> items;
+    private List<TxUiHolder> items;
 
-    public TransactionPagerAdapter(FragmentManager fm, List<TxItem> items) {
+    public TransactionPagerAdapter(FragmentManager fm, List<TxUiHolder> items) {
         super(fm);
         this.items = items;
 

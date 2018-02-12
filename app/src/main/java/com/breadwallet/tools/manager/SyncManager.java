@@ -10,7 +10,8 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.listeners.SyncReceiver;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRPeerManager;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWallet;
 
 import java.util.concurrent.TimeUnit;
 
@@ -108,6 +109,7 @@ public class SyncManager {
     private class SyncProgressTask extends Thread {
         public double progressStatus = 0;
         private Context app;
+        private BaseWallet mWallet;
 
         public SyncProgressTask() {
             progressStatus = 0;
@@ -118,12 +120,13 @@ public class SyncManager {
             if (running) return;
             try {
                 app = BreadApp.getBreadContext();
+                mWallet = WalletsMaster.getInstance().getCurrentWallet(app);
                 progressStatus = 0;
                 running = true;
                 Log.d(TAG, "run: starting: " + progressStatus);
 
                 if (app != null) {
-                    final long lastBlockTimeStamp = BRPeerManager.getInstance().getLastBlockTimestamp() * 1000;
+                    final long lastBlockTimeStamp = mWallet.getPeerManager().getLastBlockTimestamp() * 1000;
                     ((Activity) app).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -138,13 +141,13 @@ public class SyncManager {
                 while (running) {
                     if (app != null) {
                         int startHeight = BRSharedPrefs.getStartHeight(app, BRSharedPrefs.getCurrentWalletIso(app));
-                        progressStatus = BRPeerManager.syncProgress(startHeight);
+                        progressStatus = mWallet.getPeerManager().getSyncProgress(startHeight);
 //                    Log.e(TAG, "run: progressStatus: " + progressStatus);
                         if (progressStatus == 1) {
                             running = false;
                             continue;
                         }
-                        final long lastBlockTimeStamp = BRPeerManager.getInstance().getLastBlockTimestamp() * 1000;
+                        final long lastBlockTimeStamp = mWallet.getPeerManager().getLastBlockTimestamp() * 1000;
 //                        Log.e(TAG, "run: changing the progress to: " + progressStatus + ": " + Thread.currentThread().getName());
                         ((Activity) app).runOnUiThread(new Runnable() {
                             @Override

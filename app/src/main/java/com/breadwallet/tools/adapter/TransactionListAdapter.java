@@ -17,8 +17,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.presenter.customviews.BRText;
-import com.breadwallet.presenter.entities.TxItem;
+import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.PromptManager;
 import com.breadwallet.tools.manager.TxManager;
@@ -28,6 +29,7 @@ import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWallet;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
@@ -68,8 +70,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private final int txResId;
     private final int syncingResId;
     private final int promptResId;
-    private List<TxItem> backUpFeed;
-    private List<TxItem> itemFeed;
+    private List<TxUiHolder> backUpFeed;
+    private List<TxUiHolder> itemFeed;
     //    private Map<String, TxMetaData> mds;
     private final int txType = 0;
     private final int promptType = 1;
@@ -79,7 +81,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
 //    private boolean updatingMetadata;
 
-    public TransactionListAdapter(Context mContext, List<TxItem> items) {
+    public TransactionListAdapter(Context mContext, List<TxUiHolder> items) {
         this.txResId = R.layout.tx_item;
         this.syncingResId = R.layout.syncing_item;
         this.promptResId = R.layout.prompt_item;
@@ -89,11 +91,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 //        updateMetadata();
     }
 
-    public void setItems(List<TxItem> items) {
+    public void setItems(List<TxUiHolder> items) {
         init(items);
     }
 
-    private void init(List<TxItem> items) {
+    private void init(List<TxUiHolder> items) {
         if (items == null) items = new ArrayList<>();
         if (itemFeed == null) itemFeed = new ArrayList<>();
         if (backUpFeed == null) backUpFeed = new ArrayList<>();
@@ -113,8 +115,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             @Override
             public void run() {
                 long s = System.currentTimeMillis();
-                List<TxItem> newItems = new ArrayList<>(itemFeed);
-                TxItem item;
+                List<TxUiHolder> newItems = new ArrayList<>(itemFeed);
+                TxUiHolder item;
                 for (int i = 0; i < newItems.size(); i++) {
                     item = newItems.get(i);
                     item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
@@ -163,7 +165,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 //        });
 //    }
 
-    public List<TxItem> getItems() {
+    public List<TxUiHolder> getItems() {
         return itemFeed;
     }
 
@@ -213,7 +215,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void setTexts(final TxHolder convertView, int position) {
-        TxItem item = itemFeed.get(TxManager.getInstance().currentPrompt == null ? position : position - 1);
+        BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(mContext);
+        TxUiHolder item = itemFeed.get(TxManager.getInstance().currentPrompt == null ? position : position - 1);
         item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
         String commentString = (item.metaData == null || item.metaData.comment == null) ? "" : item.metaData.comment;
         convertView.comment.setText(commentString);
@@ -250,7 +253,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         int level = 0;
         if (confirms <= 0) {
-            int relayCount = BRPeerManager.getRelayCount(item.getTxHash());
+            long relayCount = wallet.getPeerManager().getRelayCount(item.getTxHash());
             if (relayCount <= 0)
                 level = 0;
             else if (relayCount == 1)
@@ -379,8 +382,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         int switchesON = 0;
         for (boolean i : switches) if (i) switchesON++;
 
-        final List<TxItem> filteredList = new ArrayList<>();
-        TxItem item;
+        final List<TxUiHolder> filteredList = new ArrayList<>();
+        TxUiHolder item;
         for (int i = 0; i < backUpFeed.size(); i++) {
             item = backUpFeed.get(i);
             boolean matchesHash = item.getTxHashHexReversed() != null && item.getTxHashHexReversed().contains(lowerQuery);

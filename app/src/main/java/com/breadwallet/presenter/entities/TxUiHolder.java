@@ -1,7 +1,6 @@
 package com.breadwallet.presenter.entities;
 
 
-import com.breadwallet.tools.util.Utils;
 import com.platform.entities.TxMetaData;
 
 /**
@@ -29,8 +28,8 @@ import com.platform.entities.TxMetaData;
  * THE SOFTWARE.
  */
 
-public class TxItem {
-    public static final String TAG = TxItem.class.getName();
+public class TxUiHolder {
+    public static final String TAG = TxUiHolder.class.getName();
     private long timeStamp;
     private int blockHeight;
     private byte[] txHash;
@@ -46,12 +45,12 @@ public class TxItem {
     private int txSize;
     public TxMetaData metaData;
 
-    private TxItem() {
+    private TxUiHolder() {
     }
 
-    public TxItem(long timeStamp, int blockHeight, byte[] hash, String txReversed, long sent,
-                  long received, long fee, String to[], String from[],
-                  long balanceAfterTx, int txSize, long[] outAmounts, boolean isValid) {
+    public TxUiHolder(long timeStamp, int blockHeight, byte[] hash, String txReversed, long sent,
+                      long received, long fee, String to[], String from[],
+                      long balanceAfterTx, int txSize, long[] outAmounts, boolean isValid) {
         this.timeStamp = timeStamp;
         this.blockHeight = blockHeight;
         this.txReversed = txReversed;

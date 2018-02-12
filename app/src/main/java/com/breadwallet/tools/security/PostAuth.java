@@ -9,11 +9,11 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
+import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.presenter.activities.SetPinActivity;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
-import com.breadwallet.presenter.activities.settings.WithdrawBchActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.PaymentItem;
@@ -24,9 +24,9 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.wallets.WalletBitcoin;
 import com.platform.APIClient;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.BRBitId;
@@ -193,12 +193,13 @@ public class PostAuth {
 =======
                 if (phraseForKeyStore.length() != 0) {
                     BRSharedPrefs.putPhraseWroteDown(app, true);
-                    bytePhrase = TypesConverter.getNullTerminatedPhrase(phraseForKeyStore.getBytes());
-                    byte[] seed = WalletsMaster.getSeedFromPhrase(bytePhrase);
-                    byte[] authKey = WalletsMaster.getAuthPrivKeyForAPI(seed);
+                    WalletBitcoin bitcoin = WalletBitcoin.getInstance();
+                    byte[] seed = bitcoin.getSeedFromPhrase(phraseForKeyStore.getBytes());
+                    byte[] authKey = bitcoin.getAuthPrivKeyForAPI(seed);
                     BRKeyStore.putAuthKey(authKey, app);
-                    byte[] pubKey = WalletsMaster.getInstance().getMasterPubKey(bytePhrase);
-                    BRKeyStore.putMasterPublicKey(pubKey, app);
+                    BRCoreMasterPubKey mpk = new BRCoreMasterPubKey(phraseForKeyStore.getBytes());
+//                    byte[] pubKey = bitcoin.getMasterPubKey(phraseForKeyStore.getBytes());
+                    BRKeyStore.putMasterPublicKey(mpk.getKey..., app);
                     app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                     Intent intent = new Intent(app, SetPinActivity.class);
                     intent.putExtra("noPin", true);
@@ -236,11 +237,10 @@ public class PostAuth {
             return;
         }
         if (rawSeed.length < 10) return;
-        final byte[] seed = TypesConverter.getNullTerminatedPhrase(rawSeed);
         try {
-            if (seed.length != 0) {
+            if (rawSeed.length != 0) {
                 if (paymentItem != null && paymentItem.serializedTx != null) {
-                    byte[] txHash = walletManager.publishSerializedTransaction(paymentItem.serializedTx, seed);
+                    byte[] txHash = walletManager.publishSerializedTransaction(paymentItem.serializedTx, rawSeed);
                     Log.e(TAG, "onPublishTxAuth: txhash:" + Arrays.toString(txHash));
                     if (Utils.isNullOrEmpty(txHash)) {
                         Log.e(TAG, "onPublishTxAuth: publishSerializedTransaction returned FALSE");
@@ -260,7 +260,7 @@ public class PostAuth {
                 return;
             }
         } finally {
-            Arrays.fill(seed, (byte) 0);
+            Arrays.fill(rawSeed, (byte) 0);
         }
 
     }
@@ -284,8 +284,7 @@ public class PostAuth {
             return;
         }
 
-        byte[] nullTerminatedPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
-        final byte[] serializedTx = WalletsMaster.sweepBCash(BRKeyStore.getMasterPublicKey(app), bchAddress, nullTerminatedPhrase);
+        final byte[] serializedTx = WalletsMaster.sweepBCash(BRKeyStore.getMasterPublicKey(app), bchAddress, phrase);
         assert (serializedTx != null);
         if (serializedTx == null) {
             Log.e(TAG, "onSendBch:serializedTx is null");
@@ -369,7 +368,7 @@ public class PostAuth {
 
     public void onPaymentProtocolRequest(Activity app, boolean authAsked) {
 
-        byte[] rawSeed;
+        final byte[] rawSeed;
         try {
             rawSeed = BRKeyStore.getPhrase(app, BRConstants.PAYMENT_PROTOCOL_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
@@ -386,15 +385,14 @@ public class PostAuth {
         }
         if (rawSeed.length < 10) return;
 
-        final byte[] seed = TypesConverter.getNullTerminatedPhrase(rawSeed);
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                byte[] txHash = WalletsMaster.getInstance().publishSerializedTransaction(paymentRequest.serializedTx, seed);
+                byte[] txHash = WalletsMaster.getInstance().publishSerializedTransaction(paymentRequest.serializedTx, rawSeed);
                 if (Utils.isNullOrEmpty(txHash)) throw new NullPointerException("txHash is null!");
                 PaymentProtocolPostPaymentTask.sent = true;
-                Arrays.fill(seed, (byte) 0);
+                Arrays.fill(rawSeed, (byte) 0);
                 paymentRequest = null;
             }
         });

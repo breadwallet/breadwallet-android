@@ -9,6 +9,7 @@ import android.util.Log;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.manager.BRApiManager;
@@ -19,7 +20,6 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.jniwrappers.BRKey;
 import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
 
@@ -285,7 +285,7 @@ public class APIClient {
     public String signRequest(String request) {
         Log.d(TAG, "signRequest: " + request);
         byte[] doubleSha256 = CryptoHelper.doubleSha256(request.getBytes(StandardCharsets.UTF_8));
-        BRKey key;
+        BRCoreKey key;
         try {
             byte[] authKey;
             authKey = BRKeyStore.getAuthKey(ctx);
@@ -293,7 +293,7 @@ public class APIClient {
                 Log.e(TAG, "signRequest: authkey is null");
                 return null;
             }
-            key = new BRKey(authKey);
+            key = new BRCoreKey(authKey);
         } catch (IllegalArgumentException ex) {
             key = null;
             Log.e(TAG, "signRequest: " + request, ex);

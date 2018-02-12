@@ -15,7 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.entities.TxItem;
+import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.adapter.TransactionPagerAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 
@@ -54,7 +54,7 @@ public class FragmentTransactionDetails extends Fragment {
     public LinearLayout backgroundLayout;
     private ViewPager txViewPager;
     private TransactionPagerAdapter txPagerAdapter;
-    private List<TxItem> items;
+    private List<TxUiHolder> items;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -129,7 +129,7 @@ public class FragmentTransactionDetails extends Fragment {
         super.onPause();
     }
 
-    public void setItems(List<TxItem> items) {
+    public void setItems(List<TxUiHolder> items) {
         this.items = items;
     }
 }

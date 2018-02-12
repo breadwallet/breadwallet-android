@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
+import com.breadwallet.core.BRCoreWalletManager;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRToast;
@@ -19,6 +20,7 @@ import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.PaymentItem;
+import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -42,8 +44,8 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.interfaces.BaseTx;
-import com.breadwallet.wallet.interfaces.BaseWallet;
+import com.breadwallet.wallet.abstracts.BaseTx;
+import com.breadwallet.wallet.abstracts.BaseWallet;
 import com.breadwallet.wallet.interfaces.OnBalanceChanged;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.exceptions.AmountSmallerThanMinException;
@@ -53,6 +55,9 @@ import com.breadwallet.wallet.wallets.exceptions.InsufficientFundsException;
 import com.breadwallet.wallet.wallets.exceptions.SomethingWentWrong;
 import com.breadwallet.wallet.wallets.exceptions.SpendingNotAllowed;
 import com.google.firebase.crash.FirebaseCrash;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -87,7 +92,7 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletBitcoin implements BaseWallet {
+public class WalletBitcoin extends BaseWallet  {
 
     private static final String TAG = WalletBitcoin.class.getName();
 
@@ -113,6 +118,7 @@ public class WalletBitcoin implements BaseWallet {
     private WalletBitcoin() {
         balanceListeners = new ArrayList<>();
         uiConfig = new WalletUiConfiguration("#f29500", true, true, true);
+        super();
     }
 
     public void setBalance(final Context context, long balance) {
@@ -130,7 +136,7 @@ public class WalletBitcoin implements BaseWallet {
     }
 
     public void refreshBalance(Activity app) {
-        long natBal = WalletsMaster.getInstance().nativeBalance();
+        long natBal = nativeBalance();
         if (natBal != -1) {
             setBalance(app, natBal);
         } else {
@@ -187,7 +193,7 @@ public class WalletBitcoin implements BaseWallet {
                     errTitle[0] = app.getString(R.string.Alerts_sendFailure);
                     errMessage[0] = "Insufficient Funds";
                 } catch (AmountSmallerThanMinException e) {
-                    long minAmount = WalletsMaster.getInstance().getMinOutputAmount();
+                    long minAmount = getWallet().getMinOutputAmount();
                     errTitle[0] = app.getString(R.string.Alerts_sendFailure);
                     errMessage[0] = String.format(Locale.getDefault(), app.getString(R.string.PaymentProtocol_Errors_smallPayment),
                             BRConstants.symbolBits + new BigDecimal(minAmount).divide(new BigDecimal(100), BRConstants.ROUNDING_MODE));
@@ -259,6 +265,45 @@ public class WalletBitcoin implements BaseWallet {
     }
 
     @Override
+    public void updateFee(Context app) {
+        String jsonString = BRApiManager.urlGET(app, "https://" + BreadApp.HOST + "/fee-per-kb");
+        if (jsonString == null || jsonString.isEmpty()) {
+            Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
+            return;
+        }
+        long fee;
+        long economyFee;
+        try {
+            JSONObject obj = new JSONObject(jsonString);
+            fee = obj.getLong("fee_per_kb");
+            economyFee = obj.getLong("fee_per_kb_economy");
+            BaseWallet wallet = WalletsMaster.getInstance().getWalletByIso(BTC);
+
+            if (fee != 0 && fee < wallet.getWallet().maxFee()) {
+                BRSharedPrefs.putFeePerKb(app, fee);
+                wallet.getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app) ? fee : economyFee);
+                BRSharedPrefs.putFeeTime(app, BRSharedPrefs.getCurrentWalletIso(app), System.currentTimeMillis()); //store the time of the last successful fee fetch
+            } else {
+                FirebaseCrash.report(new NullPointerException("Fee is weird:" + fee));
+            }
+            if (economyFee != 0 && economyFee < wallet.getWallet().maxFee()) {
+                BRSharedPrefs.putEconomyFeePerKb(app, economyFee);
+            } else {
+                FirebaseCrash.report(new NullPointerException("Economy fee is weird:" + economyFee));
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "updateFeePerKb: FAILED: " + jsonString, e);
+            BRReportsManager.reportBug(e);
+            BRReportsManager.reportBug(new IllegalArgumentException("JSON ERR: " + jsonString));
+        }
+    }
+
+    @Override
+    public List<TxUiHolder> getTxUiHolders() {
+        return null;
+    }
+
+    @Override
     public boolean generateWallet(Context app) {
         //todo implement
         return false;
@@ -278,6 +323,8 @@ public class WalletBitcoin implements BaseWallet {
             }
             WalletsMaster m = WalletsMaster.getInstance();
             final BRPeerManager pm = BRPeerManager.getInstance();
+
+
 
             if (!m.isCreated()) {
                 List<BRTransactionEntity> transactions = TransactionDataSource.getInstance(ctx).getAllTransactions();
@@ -414,6 +461,11 @@ public class WalletBitcoin implements BaseWallet {
     @Override
     public long getCachedBalance(Context app) {
         return BRSharedPrefs.getCachedBalance(app, "BTC");
+    }
+
+    @Override
+    public long getTotalSent(Context app) {
+        return 0;
     }
 
     @Override

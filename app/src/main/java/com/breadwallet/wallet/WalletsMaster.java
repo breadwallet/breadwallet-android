@@ -17,12 +17,10 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRToast;
-import com.breadwallet.presenter.entities.BRTransactionEntity;
-import com.breadwallet.presenter.entities.ImportPrivKeyEntity;
-import com.breadwallet.presenter.entities.TxItem;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
@@ -35,10 +33,9 @@ import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
-import com.breadwallet.wallet.interfaces.BaseWallet;
+import com.breadwallet.wallet.abstracts.BaseWallet;
 import com.breadwallet.wallet.interfaces.OnBalanceChanged;
 import com.breadwallet.wallet.wallets.WalletBitcoin;
 import com.breadwallet.wallet.wallets.WalletBitcoinCash;
@@ -93,6 +90,10 @@ public class WalletsMaster {
             instance = new WalletsMaster();
         }
         return instance;
+    }
+
+    public List<BaseWallet> getAllWallets() {
+        return mWallets;
     }
 
     //return the needed wallet for the iso
@@ -155,10 +156,9 @@ public class WalletsMaster {
             throw new RuntimeException("Failed to retrieve the phrase even though at this point the system auth was asked for sure.");
         }
         if (Utils.isNullOrEmpty(phrase)) throw new NullPointerException("phrase is null!!");
-        byte[] nulTermPhrase = TypesConverter.getNullTerminatedPhrase(phrase);
-        if (nulTermPhrase == null || nulTermPhrase.length == 0)
+        if (phrase.length == 0)
             throw new RuntimeException("nulTermPhrase is null");
-        byte[] seed = getSeedFromPhrase(nulTermPhrase);
+        byte[] seed = getSeedFromPhrase(phrase);
         if (seed == null || seed.length == 0) throw new RuntimeException("seed is null");
         byte[] authKey = getAuthPrivKeyForAPI(seed);
         if (authKey == null || authKey.length == 0) {
@@ -176,8 +176,7 @@ public class WalletsMaster {
             }
         });
 
-        byte[] strBytes = TypesConverter.getNullTerminatedPhrase(strPhrase);
-        byte[] pubKey = WalletsMaster.getInstance().getMasterPubKey(strBytes);
+        byte[] pubKey = new BRCoreMasterPubKey(strPhrase).getKey..;
         BRKeyStore.putMasterPublicKey(pubKey, ctx);
 
         return true;
@@ -240,7 +239,7 @@ public class WalletsMaster {
     }
 
     public static boolean refreshAddress(Context ctx) {
-        String address = getReceiveAddress();
+        String address = getInstance().getCurrentWallet(ctx).getReceiveAddress(ctx);
         if (Utils.isNullOrEmpty(address)) {
             Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
             return false;
@@ -255,8 +254,11 @@ public class WalletsMaster {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                BRPeerManager.getInstance().peerManagerFreeEverything();
-                walletFreeEverything();
+                for (BaseWallet wallet : mWallets) {
+                    wallet.getWallet().dispose();
+                    wallet.getPeerManager().dispose();
+                }
+                REMOVE ALL WALLETS DATA
                 TransactionDataSource.getInstance(ctx).deleteAllTransactions();
                 MerkleBlockDataSource.getInstance(ctx).deleteAllBlocks();
                 PeerDataSource.getInstance(ctx).deleteAllPeers();

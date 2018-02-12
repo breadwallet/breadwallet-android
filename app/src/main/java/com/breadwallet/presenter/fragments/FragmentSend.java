@@ -28,6 +28,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.core.BRCoreAddress;
+import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
@@ -48,7 +50,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.interfaces.BaseWallet;
+import com.breadwallet.wallet.abstracts.BaseWallet;
 
 import java.math.BigDecimal;
 
@@ -110,7 +112,6 @@ public class FragmentSend extends Fragment {
     private boolean feeButtonsShown = false;
     private BRText feeDescription;
     private BRText warningText;
-    public static boolean isEconomyFee;
     private boolean amountLabelOn = true;
 
     private static String savedMemo;
@@ -309,7 +310,8 @@ public class FragmentSend extends Fragment {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            if (wm.addressContainedInWallet(finalAddress)) {
+                            BaseWallet wallet = wm.getCurrentWallet(app);
+                            if (wallet.getWallet().containsAddress(new BRCoreAddress(finalAddress))) {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -323,7 +325,7 @@ public class FragmentSend extends Fragment {
                                     }
                                 });
 
-                            } else if (wm.addressIsUsed(finalAddress)) {
+                            } else if (wallet.getWallet().addressIsUsed(new BRCoreAddress(finalAddress))) {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -408,7 +410,7 @@ public class FragmentSend extends Fragment {
                 boolean isIsoCrypto = master.isIsoCrypto(getActivity(), selectedIso);
                 BigDecimal satoshiAmount = isIsoCrypto ? wallet.getSmallestCryptoForCrypto(getActivity(), bigAmount) : wallet.getSmallestCryptoForFiat(getActivity(), bigAmount);
 
-                if (address.isEmpty() || !WalletsMaster.validateAddress(address)) {
+                if (address.isEmpty() || !new BRCoreAddress(address).validateAddress()) {
                     allFilled = false;
                     Activity app = getActivity();
                     BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_noAddress), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
@@ -651,10 +653,13 @@ public class FragmentSend extends Fragment {
             fee = 0;
         } else {
             String address = addressEdit.getText().toString();
-            if (!address.isEmpty() && WalletsMaster.validateAddress(address))
-                fee = WalletsMaster.getInstance().feeForTransaction(addressEdit.getText().toString(), satoshis);
+            BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(app);
+            BRCoreAddress coreAddress = new BRCoreAddress(addressEdit.getText().toString());
+            BRCoreTransaction tx = wallet.getWallet().createTransaction(satoshis, coreAddress);
+            if (!address.isEmpty() && coreAddress.isValid())
+                fee = wallet.getWallet().getTransactionFee(tx);
             if (fee == 0) {
-                fee = WalletsMaster.getInstance().feeForTransactionAmount(satoshis);
+                fee = wallet.getWallet().getFeeForTransactionAmount(satoshis);
             }
         }
 
@@ -728,8 +733,9 @@ public class FragmentSend extends Fragment {
 
     private void setButton(boolean isRegular) {
         if (isRegular) {
-            isEconomyFee = false;
-            WalletsMaster.getInstance().setFeePerKb(BRSharedPrefs.getFeePerKb(getContext()), false);
+            BRSharedPrefs.putFavorStandardFee(getActivity(), true);
+            BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(getActivity());
+            wallet.getWallet().setFeePerKb(BRSharedPrefs.getFeePerKb(getContext()));
             regular.setTextColor(getContext().getColor(R.color.white));
             regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue));
             economy.setTextColor(getContext().getColor(R.color.dark_blue));
@@ -737,8 +743,9 @@ public class FragmentSend extends Fragment {
             feeDescription.setText(String.format(getString(R.string.FeeSelector_estimatedDeliver), getString(R.string.FeeSelector_regularTime)));
             warningText.getLayoutParams().height = 0;
         } else {
-            isEconomyFee = true;
-            WalletsMaster.getInstance().setFeePerKb(BRSharedPrefs.getEconomyFeePerKb(getContext()), false);
+            BRSharedPrefs.putFavorStandardFee(getActivity(), false);
+            BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(getActivity());
+            wallet.getWallet().setFeePerKb(BRSharedPrefs.getEconomyFeePerKb(getContext()));
             regular.setTextColor(getContext().getColor(R.color.dark_blue));
             regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue_stroke));
             economy.setTextColor(getContext().getColor(R.color.white));

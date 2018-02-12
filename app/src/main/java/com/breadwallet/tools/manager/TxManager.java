@@ -16,13 +16,13 @@ import android.view.View;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.presenter.entities.TxItem;
+import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.threads.BRExecutor;
-import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWallet;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -62,6 +62,7 @@ public class TxManager {
     public PromptManager.PromptItem currentPrompt;
     public PromptManager.PromptInfo promptInfo;
     public TransactionListAdapter.SyncingHolder syncingHolder;
+
 
     public static TxManager getInstance() {
         if (instance == null) instance = new TxManager();
@@ -121,7 +122,8 @@ public class TxManager {
             @Override
             public void run() {
                 String currentIso = BRSharedPrefs.getCurrentWalletIso(app);
-                final double progress = BRPeerManager.syncProgress(BRSharedPrefs.getStartHeight(app, currentIso));
+                BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(app);
+                final double progress = wallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(app, currentIso));
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -183,8 +185,9 @@ public class TxManager {
     @WorkerThread
     public synchronized void updateTxList(final Context app) {
         long start = System.currentTimeMillis();
-        final TxItem[] arr = WalletsMaster.getInstance().getTransactions();
-        final List<TxItem> items = arr == null ? null : new LinkedList<>(Arrays.asList(arr));
+        BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(app);
+
+        final List<TxUiHolder> items = wallet.getTxUiHolders();
 
         long took = (System.currentTimeMillis() - start);
         if (took > 500)

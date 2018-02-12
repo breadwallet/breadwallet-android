@@ -91,10 +91,4 @@ public class TypesConverter {
         return buf.array();
     }
 
-    public static byte[] getNullTerminatedPhrase(byte[] rawSeed) {
-        byte[] seed = Arrays.copyOf(rawSeed, rawSeed.length + 1);
-        seed[seed.length - 1] = 0;
-        Arrays.fill(rawSeed, (byte) 0);
-        return seed;
-    }
 }

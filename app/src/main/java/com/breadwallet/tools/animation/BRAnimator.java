@@ -29,7 +29,7 @@ import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.entities.TxItem;
+import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.fragments.FragmentGreetings;
 import com.breadwallet.presenter.fragments.FragmentMenu;
 import com.breadwallet.presenter.fragments.FragmentSignal;
@@ -209,7 +209,7 @@ public class BRAnimator {
 
     }
 
-    public static void showTransactionPager(Activity app, List<TxItem> items, int position) {
+    public static void showTransactionPager(Activity app, List<TxUiHolder> items, int position) {
         if (app == null) {
             Log.e(TAG, "showSendFragment: app is null");
             return;

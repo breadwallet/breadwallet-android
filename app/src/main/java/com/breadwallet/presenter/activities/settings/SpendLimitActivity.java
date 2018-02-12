@@ -23,6 +23,7 @@ import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWallet;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -81,8 +82,8 @@ public class SpendLimitActivity extends BRActivity {
                 Log.e(TAG, "onItemClick: " + position);
                 int limit = adapter.getItem(position);
                 BRKeyStore.putSpendLimit(limit, app);
-
-                AuthManager.getInstance().setTotalLimit(app, WalletsMaster.getInstance().getTotalSent()
+                BaseWallet wallet = WalletsMaster.getInstance().getCurrentWallet(SpendLimitActivity.this);
+                AuthManager.getInstance().setTotalLimit(app, wallet.getWallet().getTotalSent()
                         + BRKeyStore.getSpendLimit(app));
                 adapter.notifyDataSetChanged();
             }
