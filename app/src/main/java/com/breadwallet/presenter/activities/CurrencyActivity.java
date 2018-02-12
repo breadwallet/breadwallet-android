@@ -9,8 +9,8 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.transition.TransitionManager;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
@@ -26,10 +26,15 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.SyncManager;
+import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.threads.BRExecutor;
+import com.breadwallet.tools.util.BRCurrency;
+import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.platform.HTTPServer;
+
+import java.math.BigDecimal;
 
 import static com.breadwallet.presenter.activities.TestHomeActivity.EXTRA_CURRENCY;
 import static com.breadwallet.tools.animation.BRAnimator.t1Size;
@@ -48,13 +53,14 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
 
     BRText mCurrencyTitle;
     BRText mCurrencyPriceUsd;
-    BRText mBalanceAmountUsd;
-    BRText mBalanceAmountCurrency;
+    BRText mBalancePrimary;
+    BRText mBalanceSecondary;
     Toolbar mToolbar;
     ImageButton mBackButton;
     BRButton mSendButton;
     BRButton mReceiveButton;
     BRButton mBuyButton;
+    BRText mBalanceLabel;
 
     public ViewFlipper barFlipper;
     private BRSearchBar searchBar;
@@ -73,8 +79,8 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
 
         mCurrencyTitle = findViewById(R.id.currency_label);
         mCurrencyPriceUsd = findViewById(R.id.currency_usd_price);
-        mBalanceAmountUsd = findViewById(R.id.balance_display);
-        mBalanceAmountCurrency = findViewById(R.id.balance_count);
+        mBalancePrimary = findViewById(R.id.balance_primary);
+        mBalanceSecondary = findViewById(R.id.balance_secondary);
         mToolbar = findViewById(R.id.bread_bar);
         mBackButton = findViewById(R.id.back_icon);
         mSendButton = findViewById(R.id.send_button);
@@ -85,9 +91,15 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
         mSearchIcon = findViewById(R.id.search_icon);
         toolBarConstraintLayout = findViewById(R.id.bread_toolbar);
         mSwap = findViewById(R.id.swap);
+        mBalanceLabel = findViewById(R.id.balance_label);
 
 
         setUpBarFlipper();
+
+
+        BRAnimator.init(this);
+        mBalancePrimary.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);//make it the size it should be after animation to get the X
+        mBalanceSecondary.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);//make it the size it should be after animation to get the X
 
 
         mSendButton.setOnClickListener(new View.OnClickListener() {
@@ -127,8 +139,8 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
             } else if (currency.equals("bch")) {
                 mCurrencyTitle.setText("BitcoinCash");
                 mCurrencyPriceUsd.setText("$2,665.41 per BCH");
-                mBalanceAmountUsd.setText("$4,177.74");
-                mBalanceAmountCurrency.setText("1.56739 BCH");
+                mBalancePrimary.setText("$4,177.74");
+                mBalanceSecondary.setText("1.56739 BCH");
                 mToolbar.setBackgroundColor(getResources().getColor(R.color.bitcoin_cash_row_color, null));
                 mSendButton.setColor(R.color.bitcoin_cash_row_color);
                 mReceiveButton.setColor(R.color.bitcoin_cash_row_color);
@@ -163,13 +175,13 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
             }
         });
 
-        mBalanceAmountUsd.setOnClickListener(new View.OnClickListener() {
+        mBalancePrimary.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 swap();
             }
         });
-        mBalanceAmountCurrency.setOnClickListener(new View.OnClickListener() {
+        mBalanceSecondary.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 swap();
@@ -185,8 +197,8 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
     }
 
     private void setPriceTags(boolean btcPreferred, boolean animate) {
-        //secondaryPrice.setTextSize(!btcPreferred ? t1Size : t2Size);
-        //primaryPrice.setTextSize(!btcPreferred ? t2Size : t1Size);
+        //mBalanceSecondary.setTextSize(!btcPreferred ? t1Size : t2Size);
+        //mBalancePrimary.setTextSize(!btcPreferred ? t2Size : t1Size);
         ConstraintSet set = new ConstraintSet();
         set.clone(toolBarConstraintLayout);
         if (animate)
@@ -194,13 +206,17 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
         int px4 = Utils.getPixelsFromDps(this, 4);
         int px16 = Utils.getPixelsFromDps(this, 16);
         //align to parent left
-        set.connect(!btcPreferred ? R.id.secondary_price : R.id.primary_price, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.END, px16);
-        //align equals after the first item
-        set.connect(R.id.equals, ConstraintSet.START, !btcPreferred ? mBalanceAmountCurrency.getId() : mBalanceAmountUsd.getId(), ConstraintSet.END, px4);
-        //align second item after equals
-        set.connect(!btcPreferred ? R.id.primary_price : R.id.secondary_price, ConstraintSet.START, mSwap.getId(), ConstraintSet.END, px4);
-//        align the second item to the baseline of the first
-//        set.connect(!btcPreferred ? R.id.primary_price : R.id.secondary_price, ConstraintSet.BASELINE, btcPreferred ? R.id.primary_price : R.id.secondary_price, ConstraintSet.BASELINE, 0);
+        set.connect(!btcPreferred ? R.id.balance_secondary : R.id.balance_primary, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.END, px16);
+        //align swap symbol after the first item
+        set.connect(R.id.swap, ConstraintSet.START, !btcPreferred ? mBalanceSecondary.getId() : mBalancePrimary.getId(), ConstraintSet.END, px4);
+        //align second item after swap symbol
+        set.connect(!btcPreferred ? R.id.balance_primary : R.id.balance_secondary, ConstraintSet.START, mSwap.getId(), ConstraintSet.END, px4);
+
+//      align the "Balance" text to remain at the top of the USD balance
+        //set.connect(R.id.balance_display , ConstraintSet.TOP, R.id.balance_label, ConstraintSet.BOTTOM, px16);
+
+
+
         // Apply the changes
         set.applyTo(toolBarConstraintLayout);
 
@@ -211,6 +227,37 @@ public class CurrencyActivity extends BreadActivity implements InternetManager.C
             }
         }, toolBarConstraintLayout.getLayoutTransition().getDuration(LayoutTransition.CHANGING));
     }
+
+    /*public void updateUI() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI");
+                //sleep a little in order to make sure all the commits are finished (like SharePreferences commits)
+                String iso = BRSharedPrefs.getIso(CurrencyActivity.this);
+
+                //current amount in satoshis
+                final BigDecimal amount = new BigDecimal(BRSharedPrefs.getCatchedBalance(CurrencyActivity.this));
+
+                //amount in BTC units
+                BigDecimal btcAmount = BRExchange.getBitcoinForSatoshis(CurrencyActivity.this, amount);
+                final String formattedBTCAmount = BRCurrency.getFormattedCurrencyString(CurrencyActivity.this, "BTC", btcAmount);
+
+                //amount in currency units
+                BigDecimal curAmount = BRExchange.getAmountFromSatoshis(CurrencyActivity.this, iso, amount);
+                final String formattedCurAmount = BRCurrency.getFormattedCurrencyString(CurrencyActivity.this, iso, curAmount);
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBalancePrimary.setText(formattedBTCAmount);
+                        mBalanceSecondary.setText(String.format("%s", formattedCurAmount));
+
+                    }
+                });
+                TxManager.getInstance().updateTxList(CurrencyActivity.this);
+            }
+        });
+    }*/
 
 
     private void setUpBarFlipper() {
