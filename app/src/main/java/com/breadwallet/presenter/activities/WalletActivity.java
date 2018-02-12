@@ -69,16 +69,14 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private ImageButton mSwap;
     private ConstraintLayout toolBarConstraintLayout;
 
-    private String mDefaultTextPrimary;
-    private String mDefaultTextSecondary;
-    private BaseWallet currentWallet;
-
     private static WalletActivity app;
 
     public static WalletActivity getApp() {
         return app;
     }
 
+    private String mDefaultTextPrimary;
+    private String mDefaultTextSecondary;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -156,9 +154,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 swap();
             }
         });
-
-        t1Size = 28;
-        t2Size = 14;
 
         mDefaultTextPrimary = mBalancePrimary.getText().toString();
         mDefaultTextSecondary = mBalanceSecondary.getText().toString();
@@ -267,6 +262,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         }
 
+
         // Apply the changes
         set.applyTo(toolBarConstraintLayout);
 
@@ -274,87 +270,56 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                updateUI();
-
-                mBalanceSecondary.setTextSize(!btcPreferred ? t1Size : t2Size);
-                mBalancePrimary.setTextSize(!btcPreferred ? t2Size : t1Size);
-
+//                updateUI();
             }
-        }, toolBarConstraintLayout.getLayoutTransition().getDuration(LayoutTransition.CHANGE_APPEARING));
-    }
+        }, toolBarConstraintLayout.getLayoutTransition().getDuration(LayoutTransition.CHANGING));
+}
 
     public void updateUI() {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI");
-                //sleep a little in order to make sure all the commits are finished (like SharePreferences commits)
-                String iso = BRSharedPrefs.getPreferredFiatIso(WalletActivity.this);
+//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI");
+//                //sleep a little in order to make sure all the commits are finished (like SharePreferences commits)
+//                String iso = BRSharedPrefs.getPreferredFiatIso(WalletActivity.this);
+//
+//                //current amount in satoshis
+//                final BigDecimal amount = new BigDecimal(BRSharedPrefs.getCatchedBalance(WalletActivity.this));
+//
+//                //amount in BTC units
+//                BigDecimal btcAmount = BRExchange.getBitcoinForSatoshis(WalletActivity.this, amount);
+//                final String formattedBTCAmount = BRCurrency.getFormattedCurrencyString(WalletActivity.this, "BTC", btcAmount);
+//
+//                //amount in currency units
+//                BigDecimal curAmount = BRExchange.getAmountFromSatoshis(WalletActivity.this, iso, amount);
+//                final String formattedCurAmount = BRCurrency.getFormattedCurrencyString(WalletActivity.this, iso, curAmount);
+//                runOnUiThread(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        mBalancePrimary.setText(mDefaultTextPrimary);
+//                        mBalanceSecondary.setText(mDefaultTextSecondary);
+//                        //mBalancePrimary.setTextColor(getResources().getColor(R.color.white_trans, null));
+//                        //mBalanceSecondary.setTextColor(getResources().getColor(R.color.white, null));
+//
+//
+//                    }
+//                });
+//                TxManager.getInstance().updateTxList(WalletActivity.this);
+//            }
+//        });
+//
+//        TxManager.getInstance().updateTxList(CurrencyActivity.this);
 
-                //current amount in satoshis
-                final BigDecimal amount = new BigDecimal(BRSharedPrefs.getCatchedBalance(WalletActivity.this));
-
-                //amount in BTC units
-                BigDecimal btcAmount = BRExchange.getBitcoinForSatoshis(WalletActivity.this, amount);
-                final String formattedBTCAmount = BRCurrency.getFormattedCurrencyString(WalletActivity.this, "BTC", btcAmount);
-
-                //amount in currency units
-                BigDecimal curAmount = BRExchange.getAmountFromSatoshis(WalletActivity.this, iso, amount);
-                final String formattedCurAmount = BRCurrency.getFormattedCurrencyString(WalletActivity.this, iso, curAmount);
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        mBalancePrimary.setText(mDefaultTextPrimary);
-                        mBalanceSecondary.setText(mDefaultTextSecondary);
-                        //mBalancePrimary.setTextColor(getResources().getColor(R.color.white_trans, null));
-                        //mBalanceSecondary.setTextColor(getResources().getColor(R.color.white, null));
-
-
-                    }
-                });
-                TxManager.getInstance().updateTxList(WalletActivity.this);
-            }
-        });
-
-        TxManager.getInstance().updateTxList(CurrencyActivity.this);
-
-    }
-
-    @Override
-    public void onStatusUpdate() {
-        super.onStatusUpdate();
-
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                TxManager.getInstance().updateTxList(CurrencyActivity.this);
-            }
-        });
-    }
-
-    @Override
-    public void onTxAdded() {
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                TxManager.getInstance().updateTxList(CurrencyActivity.this);
-            }
-        });
-        com.breadwallet.core.test.BRWalletManager.getInstance().refreshBalance(CurrencyActivity.this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
 
-        /*new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                updateUI();
-            }
-        }, 1000);*/
+        app = this;
+        updateUi();
 
-        TxManager.getInstance().onResume(CurrencyActivity.this);
+        TxManager.getInstance().onResume(this);
 
     }
 
