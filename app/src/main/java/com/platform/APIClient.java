@@ -1,17 +1,14 @@
 package com.platform;
 
-import android.annotation.TargetApi;
 
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
-import android.os.Build;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.BuildConfig;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.manager.BRApiManager;
