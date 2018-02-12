@@ -28,19 +28,12 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.SyncManager;
-import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.threads.BRExecutor;
-import com.breadwallet.tools.util.BRCurrency;
-import com.breadwallet.tools.util.BRExchange;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
 import com.platform.HTTPServer;
 
-import java.math.BigDecimal;
-
 import static com.breadwallet.presenter.activities.TestHomeActivity.EXTRA_CURRENCY;
-import static com.breadwallet.tools.animation.BRAnimator.t1Size;
-import static com.breadwallet.tools.animation.BRAnimator.t2Size;
 
 /**
  * Created by byfieldj on 1/16/18.

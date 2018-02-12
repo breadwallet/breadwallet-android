@@ -140,17 +140,6 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static String getWalletName(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getString(BRConstants.WALLET_NAME, "My Bread");
-    }
-
-    public static void putWalletName(Context ctx, String name) {
-        SharedPreferences.Editor editor = ctx.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE).edit();
-        editor.putString(BRConstants.WALLET_NAME, name);
-        editor.apply();
-    }
-
     public static String getFirstAddress(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(BRConstants.FIRST_ADDRESS, "");
@@ -187,15 +176,15 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static long getCatchedBalance(Context context) {
+    public static long getCachedBalance(Context context, String iso) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getLong("balance", 0);
+        return prefs.getLong("balance_" + iso, 0);
     }
 
-    public static void putCatchedBalance(Context context, long fee) {
+    public static void putCachedBalance(Context context, String iso, long balance) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong("balance", fee);
+        editor.putLong("balance_" + iso, balance);
         editor.apply();
     }
 
