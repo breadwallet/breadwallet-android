@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BRText;
@@ -46,7 +47,7 @@ import java.math.BigDecimal;
  * (BTC, BCH, ETH)
  */
 
-public class WalletActivity extends BreadActivity implements InternetManager.ConnectionReceiverListener {
+public class WalletActivity extends BRActivity implements InternetManager.ConnectionReceiverListener {
     private static final String TAG = WalletActivity.class.getName();
     BRText mCurrencyTitle;
     BRText mCurrencyPriceUsd;
@@ -68,6 +69,12 @@ public class WalletActivity extends BreadActivity implements InternetManager.Con
     private String mDefaultTextPrimary;
     private String mDefaultTextSecondary;
     private BaseWallet currentWallet;
+
+    private static WalletActivity app;
+
+    public static WalletActivity getApp() {
+        return app;
+    }
 
 
     @Override
@@ -233,7 +240,6 @@ public class WalletActivity extends BreadActivity implements InternetManager.Con
         set.connect(R.id.balance_primary, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px8);
 
 
-
         if (!btcPreferred) {
             mBalanceSecondary.setTextColor(getResources().getColor(R.color.white, null));
             mBalancePrimary.setTextColor(getResources().getColor(R.color.currency_subheading_color, null));
@@ -252,17 +258,15 @@ public class WalletActivity extends BreadActivity implements InternetManager.Con
 
 
         new Handler().postDelayed(new Runnable() {
-                                      @Override
-                                      public void run() {
-                                          updateUI();
+            @Override
+            public void run() {
+                updateUI();
 
-                                          mBalanceSecondary.setTextSize(!btcPreferred ? t1Size : t2Size);
-                                          mBalancePrimary.setTextSize(!btcPreferred ? t2Size : t1Size);
+                mBalanceSecondary.setTextSize(!btcPreferred ? t1Size : t2Size);
+                mBalancePrimary.setTextSize(!btcPreferred ? t2Size : t1Size);
 
-                                      }
-                                  },
-
-                toolBarConstraintLayout.getLayoutTransition().getDuration(LayoutTransition.CHANGE_APPEARING));
+            }
+        }, toolBarConstraintLayout.getLayoutTransition().getDuration(LayoutTransition.CHANGE_APPEARING));
     }
 
     public void updateUI() {

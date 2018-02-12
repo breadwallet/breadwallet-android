@@ -1,12 +1,13 @@
 package com.breadwallet.tools.manager;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.BreadActivity;
+import com.breadwallet.BreadApp;
 import com.breadwallet.tools.listeners.SyncReceiver;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.BRPeerManager;
@@ -89,7 +90,7 @@ public class SyncManager {
 
     public synchronized void stopSyncingProgressThread() {
         Log.d(TAG, "stopSyncingProgressThread");
-        final BreadActivity ctx = BreadActivity.getApp();
+        final Context ctx = BreadApp.getBreadContext();
         if (ctx == null) {
             Log.e(TAG, "stopSyncingProgressThread: ctx is null");
             return;
@@ -106,7 +107,7 @@ public class SyncManager {
 
     private class SyncProgressTask extends Thread {
         public double progressStatus = 0;
-        private BreadActivity app;
+        private Context app;
 
         public SyncProgressTask() {
             progressStatus = 0;
@@ -116,14 +117,14 @@ public class SyncManager {
         public void run() {
             if (running) return;
             try {
-                app = BreadActivity.getApp();
+                app = BreadApp.getBreadContext();
                 progressStatus = 0;
                 running = true;
                 Log.d(TAG, "run: starting: " + progressStatus);
 
                 if (app != null) {
                     final long lastBlockTimeStamp = BRPeerManager.getInstance().getLastBlockTimestamp() * 1000;
-                    app.runOnUiThread(new Runnable() {
+                    ((Activity) app).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             if (TxManager.getInstance().syncingHolder != null)
@@ -145,7 +146,7 @@ public class SyncManager {
                         }
                         final long lastBlockTimeStamp = BRPeerManager.getInstance().getLastBlockTimestamp() * 1000;
 //                        Log.e(TAG, "run: changing the progress to: " + progressStatus + ": " + Thread.currentThread().getName());
-                        app.runOnUiThread(new Runnable() {
+                        ((Activity) app).runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
 
@@ -162,8 +163,8 @@ public class SyncManager {
                         });
 
                     } else {
-//                        Log.e(TAG, "run: app is null");
-                        app = BreadActivity.getApp();
+                        Log.e(TAG, "run: app is null!!!");
+
                     }
 
                     try {
@@ -182,7 +183,7 @@ public class SyncManager {
                 running = false;
                 progressStatus = 0;
                 if (app != null)
-                    app.runOnUiThread(new Runnable() {
+                    ((Activity) app).runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             TxManager.getInstance().hidePrompt(app, PromptManager.PromptItem.SYNCING);
