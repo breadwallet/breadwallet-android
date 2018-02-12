@@ -34,7 +34,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.manager.TxManager;
-import com.breadwallet.tools.security.BRUrlParser;
+import com.breadwallet.tools.uri.BitcoinUriParser;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
@@ -191,7 +191,7 @@ public class BreadActivity extends BRActivity implements OnBalanceChanged,
         String scheme = data.getScheme();
         if (scheme != null && (scheme.startsWith("bitcoin") || scheme.startsWith("bitid"))) {
             String str = intent.getDataString();
-            BRUrlParser.processRequest(this, str);
+            BitcoinUriParser.processRequest(this, str);
         }
     }
 

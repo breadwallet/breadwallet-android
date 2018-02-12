@@ -30,6 +30,7 @@ import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.uri.BitcoinUriParser;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
@@ -108,7 +109,7 @@ public class WalletBitcoin implements BaseWallet {
         WalletsMaster.refreshAddress(context);
 
         for (OnBalanceChanged listener : balanceListeners) {
-            if (listener != null) listener.onBalanceChanged(balance);
+            if (listener != null) listener.onBalanceChanged("BTC", balance);
 
         }
     }
@@ -239,6 +240,7 @@ public class WalletBitcoin implements BaseWallet {
 
     @Override
     public boolean generateWallet(Context app) {
+        //todo implement
         return false;
     }
 
@@ -380,6 +382,11 @@ public class WalletBitcoin implements BaseWallet {
     public BigDecimal maxAmount(Context app) {
         //return max bitcoin
         return new BigDecimal(MAX_BTC);
+    }
+
+    @Override
+    public boolean tryUri(Context app, String uriStr) {
+        return BitcoinUriParser.processRequest(app,uriStr);
     }
 
     public void addBalanceChangedListener(OnBalanceChanged listener) {
@@ -769,6 +776,7 @@ public class WalletBitcoin implements BaseWallet {
             }
         });
     }
+
 
     private class InsufficientFundsException extends Exception {
 

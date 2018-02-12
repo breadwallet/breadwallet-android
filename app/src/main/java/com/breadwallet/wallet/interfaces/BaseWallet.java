@@ -54,4 +54,7 @@ public interface BaseWallet {
     //return the maximum amount for this currency
     BigDecimal maxAmount(Context app);
 
+    //try parsing the URI and return true if it's a current wallet request
+    boolean tryUri(Context app, String uriStr);
+
 }

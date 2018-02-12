@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
 import com.breadwallet.exceptions.CertificateChainNotFound;
+import com.breadwallet.tools.uri.BitcoinUriParser;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -123,7 +124,7 @@ public class X509CertificateValidator {
         try {
             CertificateFactory certFact = CertificateFactory.getInstance("X.509");
             while (true) {
-                result = BRUrlParser.getCertificatesFromPaymentRequest(rawCerts, i++);
+                result = BitcoinUriParser.getCertificatesFromPaymentRequest(rawCerts, i++);
 //                Log.e(TAG, "The result certificate #" + i + " : " + result.length);
                 if (result.length > 0) {
                     X509Certificate certForValidation = (X509Certificate)
