@@ -1,4 +1,4 @@
-package com.breadwallet.wallet.wallets;
+package com.breadwallet.wallet.wallets.bitcoincash;
 
 import android.app.Activity;
 import android.content.Context;
@@ -36,15 +36,13 @@ import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
-import com.breadwallet.tools.uri.BitcoinUriParser;
+import com.breadwallet.wallet.wallets.bitcoin.BitcoinUriParser;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.BRPeerManager;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseTx;
 import com.breadwallet.wallet.abstracts.BaseWallet;
-import com.breadwallet.wallet.interfaces.OnBalanceChanged;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoin;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.exceptions.AmountSmallerThanMinException;
 import com.breadwallet.wallet.wallets.exceptions.FeeNeedsAdjust;
@@ -60,7 +58,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
-import static com.breadwallet.presenter.fragments.FragmentSend.isEconomyFee;
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
 /**
@@ -108,12 +105,12 @@ public class WalletBitcoinCash implements BaseWallet {
     private boolean sending;
 
 
-    public static WalletBitcoinCash getInstance() {
-        if (instance == null) instance = new WalletBitcoinCash();
+    public static WalletBitcoinCash getInstance(Context app) {
+        if (instance == null) instance = new WalletBitcoinCash(app);
         return instance;
     }
 
-    private WalletBitcoinCash() {
+    private WalletBitcoinCash(Context app) {
         balanceListeners = new ArrayList<>();
         uiConfig = new WalletUiConfiguration("#478559", true, true, false);
     }

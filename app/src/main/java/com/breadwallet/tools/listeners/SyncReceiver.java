@@ -51,7 +51,7 @@ public class SyncReceiver extends IntentService {
             if (SYNC_RECEIVER.equals(workIntent.getAction())) {
                 app = getApplication();
 //                BRToast.showCustomToast(getApplication(), "Starting background syncing...", BreadActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
-                WalletsMaster.getInstance().initLastWallet(app);
+                WalletsMaster.getInstance(app).initLastWallet(app);
             }
     }
 }

@@ -235,7 +235,6 @@ public class BRBitId {
     private static void bitIdPlatform(Activity app, Uri uri, byte[] seed) {
 
         final String biUri = uri.getHost() == null ? uri.toString() : uri.getHost();
-        BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey()
         final byte[] key = BRBIP32Sequence.getInstance().bip32BitIDKey(seed, _index, biUri);
         if (key == null) {
             Log.d(TAG, "bitIdPlatform: key is null!");

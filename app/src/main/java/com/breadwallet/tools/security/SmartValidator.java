@@ -76,9 +76,8 @@ public class SmartValidator {
         String normalizedPhrase = Normalizer.normalize(insertedPhrase.trim(), Normalizer.Form.NFKD);
         if (!SmartValidator.isPaperKeyValid(activity, normalizedPhrase))
             return false;
-        WalletsMaster m = WalletsMaster.getInstance();
         byte[] rawPhrase = normalizedPhrase.getBytes();
-        byte[] pubKey = new BRCoreMasterPubKey(rawPhrase).getKey...;
+        byte[] pubKey = new BRCoreMasterPubKey(rawPhrase, true).getPubKey();
         byte[] pubKeyFromKeyStore = new byte[0];
         try {
             pubKeyFromKeyStore = BRKeyStore.getMasterPublicKey(activity);
@@ -93,7 +92,7 @@ public class SmartValidator {
     public static boolean checkFirstAddress(Activity app, byte[] mpk) {
         String addressFromPrefs = BRSharedPrefs.getFirstAddress(app);
 
-        String generatedAddress = WalletsMaster.getInstance().getCurrentWallet(app).getWallet().getFirstAddress(mpk);
+        String generatedAddress = new BRCoreMasterPubKey(mpk, false).getPubKeyAsCoreKey().address();
         if (!addressFromPrefs.equalsIgnoreCase(generatedAddress) && addressFromPrefs.length() != 0 && generatedAddress.length() != 0) {
             Log.e(TAG, "checkFirstAddress: WARNING, addresses don't match: Prefs:" + addressFromPrefs + ", gen:" + generatedAddress);
         }

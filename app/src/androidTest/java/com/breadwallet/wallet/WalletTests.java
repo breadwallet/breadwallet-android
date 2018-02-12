@@ -11,9 +11,9 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.RequestObject;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.tools.uri.BitcoinUriParser;
+import com.breadwallet.wallet.wallets.bitcoin.BitcoinUriParser;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.wallet.wallets.WalletBitcoin;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoin;
 
 
 import org.junit.After;

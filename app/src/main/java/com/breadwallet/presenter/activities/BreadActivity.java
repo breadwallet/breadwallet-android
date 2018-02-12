@@ -34,7 +34,7 @@
 //import com.breadwallet.tools.manager.InternetManager;
 //import com.breadwallet.tools.manager.SyncManager;
 //import com.breadwallet.tools.manager.TxManager;
-//import com.breadwallet.tools.uri.BitcoinUriParser;
+//import com.breadwallet.wallet.wallets.bitcoin.BitcoinUriParser;
 //import com.breadwallet.tools.threads.BRExecutor;
 //import com.breadwallet.tools.util.BRConstants;
 //import com.breadwallet.tools.util.CurrencyUtils;
