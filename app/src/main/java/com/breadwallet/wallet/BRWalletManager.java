@@ -52,6 +52,7 @@ import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.wallet.interfaces.BaseWallet;
+import com.breadwallet.wallet.interfaces.OnBalanceChanged;
 import com.breadwallet.wallet.wallets.WalletBitcoin;
 import com.breadwallet.wallet.wallets.WalletBitcoinCash;
 import com.platform.entities.WalletInfo;
@@ -95,8 +96,7 @@ public class BRWalletManager {
     private static final String TAG = BRWalletManager.class.getName();
 
     private static BRWalletManager instance;
-    public List<OnBalanceChanged> balanceListeners;
-    private boolean itInitiatingWallet;
+
 
     public void setBalance(final Context context, long balance) {
         if (context == null) {
@@ -131,7 +131,7 @@ public class BRWalletManager {
     }
 
     private BRWalletManager() {
-        balanceListeners = new ArrayList<>();
+
     }
 
     public static BRWalletManager getInstance() {
@@ -375,112 +375,6 @@ public class BRWalletManager {
         } else {
             Log.e(TAG, "confirmSweep: !isValidBitcoinPrivateKey && !isValidBitcoinBIP38Key");
             return false;
-        }
-    }
-
-
-    /**
-     * Wallet callbacks
-     */
-    public static void publishCallback(final String message, final int error, byte[] txHash) {
-        Log.e(TAG, "publishCallback: " + message + ", err:" + error + ", txHash: " + Arrays.toString(txHash));
-        final Context app = BreadApp.getBreadContext();
-        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                if (app instanceof Activity)
-                    BRAnimator.showBreadSignal((Activity) app, error == 0 ? app.getString(R.string.Alerts_sendSuccess) : app.getString(R.string.Alert_error),
-                            error == 0 ? app.getString(R.string.Alerts_sendSuccessSubheader) : message, error == 0 ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
-                                @Override
-                                public void onComplete() {
-                                    if (!((Activity) app).isDestroyed())
-                                        ((Activity) app).getFragmentManager().popBackStack();
-                                }
-                            });
-            }
-        });
-
-    }
-
-    public static void onBalanceChanged(final long balance) {
-        Log.d(TAG, "onBalanceChanged:  " + balance);
-        Context app = BreadApp.getBreadContext();
-        BRWalletManager.getInstance().setBalance(app, balance);
-
-    }
-
-    public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, String hash) {
-        Log.d(TAG, "onTxAdded: " + String.format("tx.length: %d, blockHeight: %d, timestamp: %d, amount: %d, hash: %s", tx.length, blockHeight, timestamp, amount, hash));
-
-        final Context ctx = BreadApp.getBreadContext();
-        if (amount > 0) {
-            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    String am = CurrencyUtils.getFormattedCurrencyString(ctx, "BTC", ExchangeUtils.getBitcoinForSatoshis(ctx, new BigDecimal(amount)));
-                    String amCur = CurrencyUtils.getFormattedCurrencyString(ctx, BRSharedPrefs.getIso(ctx), ExchangeUtils.getAmountFromSatoshis(ctx, BRSharedPrefs.getIso(ctx), new BigDecimal(amount)));
-                    String formatted = String.format("%s (%s)", am, amCur);
-                    String strToShow = String.format(ctx.getString(R.string.TransactionDetails_received), formatted);
-                    showToastWithMessage(ctx, strToShow);
-                }
-            });
-        }
-        if (ctx != null)
-            TransactionDataSource.getInstance(ctx).putTransaction(new BRTransactionEntity(tx, blockHeight, timestamp, hash));
-        else
-            Log.e(TAG, "onTxAdded: ctx is null!");
-    }
-
-    private static void showToastWithMessage(Context ctx, final String message) {
-        if (ctx == null) ctx = BreadApp.getBreadContext();
-        if (ctx != null) {
-            final Context finalCtx = ctx;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    if (!BRToast.isToastShown()) {
-                        BRToast.showCustomToast(finalCtx, message,
-                                BreadApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
-                        AudioManager audioManager = (AudioManager) finalCtx.getSystemService(Context.AUDIO_SERVICE);
-                        if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
-                            final MediaPlayer mp = MediaPlayer.create(finalCtx, R.raw.coinflip);
-                            if (mp != null) try {
-                                mp.start();
-                            } catch (IllegalArgumentException ex) {
-                                Log.e(TAG, "run: ", ex);
-                            }
-                        }
-
-                        if (!BreadActivity.appVisible && BRSharedPrefs.getShowNotification(finalCtx))
-                            BRNotificationManager.sendNotification(finalCtx, R.drawable.notification_icon, finalCtx.getString(R.string.app_name), message, 1);
-                    }
-                }
-            }, 1000);
-
-
-        } else {
-            Log.e(TAG, "showToastWithMessage: failed, ctx is null");
-        }
-    }
-
-    public static void onTxUpdated(String hash, int blockHeight, int timeStamp) {
-        Log.d(TAG, "onTxUpdated: " + String.format("hash: %s, blockHeight: %d, timestamp: %d", hash, blockHeight, timeStamp));
-        Context ctx = BreadApp.getBreadContext();
-        if (ctx != null) {
-            TransactionDataSource.getInstance(ctx).updateTxBlockHeight(hash, blockHeight, timeStamp);
-
-        } else {
-            Log.e(TAG, "onTxUpdated: Failed, ctx is null");
-        }
-    }
-
-    public static void onTxDeleted(String hash, int notifyUser, final int recommendRescan) {
-        Log.e(TAG, "onTxDeleted: " + String.format("hash: %s, notifyUser: %d, recommendRescan: %d", hash, notifyUser, recommendRescan));
-        final Context ctx = BreadApp.getBreadContext();
-        if (ctx != null) {
-            BRSharedPrefs.putScanRecommended(ctx, true);
-        } else {
-            Log.e(TAG, "onTxDeleted: Failed! ctx is null");
         }
     }
 
