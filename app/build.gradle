@@ -125,6 +125,7 @@ android {
         }
 
     }
+    sourceSets { main { java.srcDirs = ['src/main/java', 'src/jni/breadwallet-core/Java/root'] } }
 }
 
 task copyResDirectoryToClasses(type: Copy) {
