@@ -15,6 +15,9 @@ import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWalletManager;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
+import com.breadwallet.presenter.entities.BRPeerEntity;
+import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.TxUiHolder;
@@ -25,7 +28,10 @@ import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
+import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.tools.util.BRConstants;
@@ -406,17 +412,41 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BRCoreTransaction[] loadTransactions() {
-        return new BRCoreTransaction[0];
+        Context app = BreadApp.getBreadContext();
+        List<BRTransactionEntity> txs = BtcBchTransactionDataStore.getInstance(app).getAllTransactions(app, this);
+        if (txs == null || txs.size() == 0) return new BRCoreTransaction[0];
+        BRCoreTransaction arr[] = new BRCoreTransaction[txs.size()];
+        for (int i = 0; i < txs.size(); i++) {
+            BRTransactionEntity ent = txs.get(i);
+            arr[i] = new BRCoreTransaction(ent.getBuff(), ent.getBlockheight(), ent.getTimestamp());
+        }
+        return arr;
     }
 
     @Override
     public BRCoreMerkleBlock[] loadBlocks() {
-        return new BRCoreMerkleBlock[0];
+        Context app = BreadApp.getBreadContext();
+        List<BRMerkleBlockEntity> blocks = MerkleBlockDataSource.getInstance(app).getAllMerkleBlocks(app, this);
+        if (blocks == null || blocks.size() == 0) return new BRCoreMerkleBlock[0];
+        BRCoreMerkleBlock arr[] = new BRCoreMerkleBlock[blocks.size()];
+        for (int i = 0; i < blocks.size(); i++) {
+            BRMerkleBlockEntity ent = blocks.get(i);
+            arr[i] = new BRCoreMerkleBlock(ent.getBuff(), ent.getBlockHeight());
+        }
+        return arr;
     }
 
     @Override
     public BRCorePeer[] loadPeers() {
-        return new BRCorePeer[0];
+        Context app = BreadApp.getBreadContext();
+        List<BRPeerEntity> peers = PeerDataSource.getInstance(app).getAllPeers(app, this);
+        if (peers == null || peers.size() == 0) return new BRCorePeer[0];
+        BRCorePeer arr[] = new BRCorePeer[peers.size()];
+        for (int i = 0; i < peers.size(); i++) {
+            BRPeerEntity ent = peers.get(i);
+            arr[i] = new BRCorePeer(ent.getAddress(), ent.getPort(), ent.getTimeStamp());
+        }
+        return arr;
     }
 
     @Override
