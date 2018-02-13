@@ -23,7 +23,7 @@ import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWallet;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 
 public class NodesActivity extends BRActivity {
@@ -88,7 +88,7 @@ public class NodesActivity extends BRActivity {
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
-                                BaseWallet wallet = WalletsMaster.getInstance(NodesActivity.this).getCurrentWallet(NodesActivity.this);
+                                BaseWalletManager wallet = WalletsMaster.getInstance(NodesActivity.this).getCurrentWallet(NodesActivity.this);
 //                                wallet.getWallet().updateFixedPeer(NodesActivity.this); //todo implement
                                 updatingNode = false;
                                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
@@ -112,7 +112,7 @@ public class NodesActivity extends BRActivity {
     }
 
     private void updateButtonText() {
-        BaseWallet wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
         if (BRSharedPrefs.getTrustNode(this, BRSharedPrefs.getCurrentWalletIso(NodesActivity.this)).isEmpty()) {
             switchButton.setText(getString(R.string.NodeSelector_manualButton));
         } else {

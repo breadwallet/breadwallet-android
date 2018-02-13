@@ -32,7 +32,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWallet;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.math.BigDecimal;
 
@@ -91,7 +91,7 @@ public class FragmentRequestAmount extends Fragment {
     private int keyboardIndex;
     //    private int currListIndex;
     private ImageButton close;
-    private BaseWallet mWallet;
+    private BaseWalletManager mWallet;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -314,7 +314,7 @@ public class FragmentRequestAmount extends Fragment {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final BaseWallet wallet = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+                final BaseWalletManager wallet = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
                 wallet.refreshAddress(getActivity());
                 receiveAddress = BRSharedPrefs.getReceiveAddress(getActivity(), wallet.getReceiveAddress(getActivity()));

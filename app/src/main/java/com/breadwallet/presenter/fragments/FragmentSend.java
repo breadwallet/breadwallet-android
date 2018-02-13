@@ -44,13 +44,13 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BitcoinUriParser;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWallet;
 
 import java.math.BigDecimal;
 
@@ -308,7 +308,7 @@ public class FragmentSend extends Fragment {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            BaseWallet wallet = wm.getCurrentWallet(app);
+                            BaseWalletManager wallet = wm.getCurrentWallet(app);
                             if (wallet.getWallet().containsAddress(address)) {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
@@ -391,7 +391,7 @@ public class FragmentSend extends Fragment {
                     return;
                 }
                 WalletsMaster master = WalletsMaster.getInstance(getActivity());
-                BaseWallet wallet = master.getCurrentWallet(getActivity());
+                BaseWalletManager wallet = master.getCurrentWallet(getActivity());
                 //get the current wallet used
                 if (wallet == null) {
                     BRReportsManager.reportBug(new NullPointerException("Wallet is null and it can't happen."), true);
@@ -662,7 +662,7 @@ public class FragmentSend extends Fragment {
             fee = 0;
         } else {
             String address = addressEdit.getText().toString();
-            BaseWallet wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
+            BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
             BRCoreAddress coreAddress = new BRCoreAddress(addressEdit.getText().toString());
             BRCoreTransaction tx = wallet.getWallet().createTransaction(satoshis, coreAddress);
             if (!address.isEmpty() && coreAddress.isValid())
@@ -741,7 +741,7 @@ public class FragmentSend extends Fragment {
     }
 
     private void setButton(boolean isRegular) {
-        BaseWallet wallet = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+        BaseWalletManager wallet = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
         String iso = wallet.getIso(getActivity());
         if (isRegular) {
             BRSharedPrefs.putFavorStandardFee(getActivity(), iso, true);

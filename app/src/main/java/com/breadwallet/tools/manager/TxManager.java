@@ -22,10 +22,8 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWallet;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 
@@ -122,7 +120,7 @@ public class TxManager {
             @Override
             public void run() {
                 String currentIso = BRSharedPrefs.getCurrentWalletIso(app);
-                BaseWallet wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
+                BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
                 final double progress = wallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(app, currentIso));
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
@@ -185,7 +183,7 @@ public class TxManager {
     @WorkerThread
     public synchronized void updateTxList(final Context app) {
         long start = System.currentTimeMillis();
-        BaseWallet wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
+        BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
 
         final List<TxUiHolder> items = wallet.getTxUiHolders();
 

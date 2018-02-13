@@ -41,9 +41,9 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public interface BaseWallet {
+public interface BaseWalletManager {
 
-//    public BaseWallet(BRCoreMasterPubKey masterPubKey,
+//    public BaseWalletManager(BRCoreMasterPubKey masterPubKey,
 //                      BRCoreChainParams chainParams,
 //                      double earliestPeerTime) {
 //        super(masterPubKey, chainParams, earliestPeerTime);

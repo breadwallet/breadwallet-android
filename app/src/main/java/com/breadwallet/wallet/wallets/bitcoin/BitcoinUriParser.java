@@ -17,7 +17,7 @@ import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWallet;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -113,7 +113,7 @@ public class BitcoinUriParser {
 
     public static boolean isBitcoinUrl(Context app, String url) {
         RequestObject requestObject = parseRequest(url);
-        BaseWallet wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
+        BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
         // return true if the request is valid url and has param: r or param: address
         // return true if it is a valid bitcoinPrivKey
         return (requestObject != null && (requestObject.r != null || requestObject.address != null)
@@ -204,7 +204,7 @@ public class BitcoinUriParser {
         RequestObject requestObject = parseRequest(url);
         if (requestObject == null || requestObject.address == null || requestObject.address.isEmpty())
             return false;
-        BaseWallet wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
+        BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
         String amount = requestObject.amount;
 
         if (amount == null || amount.isEmpty() || new BigDecimal(amount).doubleValue() == 0) {

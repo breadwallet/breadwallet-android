@@ -26,6 +26,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BRText;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
@@ -37,7 +38,7 @@ import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWallet;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
@@ -163,7 +164,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     private void updateUi() {
-        final BaseWallet currentWallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        final BaseWalletManager currentWallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
         Log.e(TAG, "updateUi: " + currentWallet.getIso(this));
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
@@ -201,7 +202,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         }
 
         String fiatIso = BRSharedPrefs.getPreferredFiatIso(this);
-        String fiatRate = CurrencyUtils.getFormattedCurrencyString(this, fiatIso, new BigDecimal(CurrencyDataSource.getInstance(this).getCurrencyByIso(fiatIso).rate));
+        CurrencyEntity ent = CurrencyDataSource.getInstance(this).getCurrencyByCode(this, currentWallet, fiatIso);
+        String fiatRate = CurrencyUtils.getFormattedCurrencyString(this, fiatIso, ent == null ? null : new BigDecimal(ent.rate));
         String cryptoIso = currentWallet.getIso(this);
 
 //        String fiatBalance = CurrencyUtils.getFormattedCurrencyString(this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(ExchangeUtils....(currentWallet.getCachedBalance(this)));
@@ -273,7 +275,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 //                updateUI();
             }
         }, toolBarConstraintLayout.getLayoutTransition().getDuration(LayoutTransition.CHANGING));
-}
+    }
 
     public void updateUI() {
 //        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -334,7 +336,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     @Override
     public void onConnectionChanged(boolean isConnected) {
-        final BaseWallet wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        final BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
         if (isConnected) {
             if (barFlipper != null) {
                 if (barFlipper.getDisplayedChild() == 2)

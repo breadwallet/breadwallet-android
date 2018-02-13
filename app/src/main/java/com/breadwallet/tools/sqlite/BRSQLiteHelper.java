@@ -52,12 +52,14 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String MB_TABLE_NAME = "merkleBlockTable";
     public static final String MB_BUFF = "merkleBlockBuff";
     public static final String MB_HEIGHT = "merkleBlockHeight";
+    public static final String MB_ISO = "merkleBlockIso";
 
     public static final String MB_COLUMN_ID = "_id";
 
     private static final String MB_DATABASE_CREATE = "create table if not exists " + MB_TABLE_NAME + "(" +
             MB_COLUMN_ID + " integer primary key autoincrement, " +
             MB_BUFF + " blob, " +
+            MB_ISO + " text, " +
             MB_HEIGHT + " integer);";
 
     /**
@@ -75,8 +77,8 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             TX_COLUMN_ID + " text, " +
             TX_BUFF + " blob, " +
             TX_BLOCK_HEIGHT + " integer, " +
-            TX_ISO + " text, " +
-            TX_TIME_STAMP + " integer );";
+            TX_TIME_STAMP + " integer, " +
+            TX_ISO + " text );";
 
     /**
      * Peer table
@@ -87,12 +89,14 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String PEER_ADDRESS = "peerAddress";
     public static final String PEER_PORT = "peerPort";
     public static final String PEER_TIMESTAMP = "peerTimestamp";
+    public static final String PEER_ISO = "peerIso";
 
     private static final String PEER_DATABASE_CREATE = "create table if not exists " + PEER_TABLE_NAME + "(" +
             PEER_COLUMN_ID + " integer primary key autoincrement, " +
             PEER_ADDRESS + " blob," +
             PEER_PORT + " blob," +
-            PEER_TIMESTAMP + " blob );";
+            PEER_TIMESTAMP + " blob," +
+            PEER_ISO + "  text);";
     /**
      * Currency table
      */
@@ -101,11 +105,13 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String CURRENCY_CODE = "code";
     public static final String CURRENCY_NAME = "name";
     public static final String CURRENCY_RATE = "rate";
+    public static final String CURRENCY_ISO = "iso";//iso for the currency of exchange (BTC, BCH, ETH)
 
     private static final String CURRENCY_DATABASE_CREATE = "create table if not exists " + CURRENCY_TABLE_NAME + "(" +
             CURRENCY_CODE + " text primary key," +
             CURRENCY_NAME + " text," +
-            CURRENCY_RATE + " integer );";
+            CURRENCY_RATE + " integer," +
+            CURRENCY_ISO + " text);";
 
 
     @Override
