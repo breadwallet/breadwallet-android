@@ -175,6 +175,30 @@
 
     </ViewFlipper>
 
+    <LinearLayout
+        android:id="@+id/recycler_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/bottom_toolbar_layout1"
+        android:layout_below="@+id/toolbar_layout"
+        android:animateLayoutChanges="true"
+        android:orientation="vertical">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/tx_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:clipToPadding="false"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
+            android:paddingBottom="8dp"
+            android:paddingTop="16dp"
+            />
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:id="@+id/bottom_toolbar_layout1"
