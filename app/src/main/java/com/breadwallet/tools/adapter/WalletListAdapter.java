@@ -55,13 +55,18 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     public void onBindViewHolder(WalletItemViewHolder holder, int position) {
 
         BaseWalletManager wallet = mWalletList.get(position);
-        Log.e(TAG, "onBindViewHolder: wallet: " + wallet.getIso(mContext));
+        String name = wallet.getName(mContext);
+        String exchangeRate = CurrencyUtils.getFormattedCurrencyString(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), new BigDecimal(wallet.getFiatExchangeRate(mContext)));
+        String fiatBalance = CurrencyUtils.getFormattedCurrencyString(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), new BigDecimal(wallet.getFiatBalance(mContext)));
+        String cryptoBalance = CurrencyUtils.getFormattedCurrencyString(mContext, wallet.getIso(mContext), new BigDecimal(wallet.getCachedBalance(mContext)));
+
+        Log.e(TAG, "onBindViewHolder: wallet: " + wallet.getIso(mContext) + "|" + name + "|" + exchangeRate + "|" + fiatBalance + "|" + cryptoBalance);
 
         // Set wallet fields
-        holder.mWalletName.setText(wallet.getName(mContext));
-        holder.mTradePrice.setText(CurrencyUtils.getFormattedCurrencyString(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), new BigDecimal(wallet.getFiatExchangeRate(mContext))));
-        holder.mWalletBalanceUSD.setText(CurrencyUtils.getFormattedCurrencyString(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), new BigDecimal(wallet.getFiatBalance(mContext))));
-        holder.mWalletBalanceCurrency.setText(CurrencyUtils.getFormattedCurrencyString(mContext, wallet.getIso(mContext), new BigDecimal(wallet.getCachedBalance(mContext))));
+        holder.mWalletName.setText(name);
+        holder.mTradePrice.setText(exchangeRate);
+        holder.mWalletBalanceUSD.setText(fiatBalance);
+        holder.mWalletBalanceCurrency.setText(cryptoBalance);
 
         if (wallet.getIso(mContext).equalsIgnoreCase(WalletBitcoinManager.getInstance(mContext).getIso(mContext))) {
             holder.mParent.setBackground(mContext.getResources().getDrawable(R.drawable.btc_card_shape, null));

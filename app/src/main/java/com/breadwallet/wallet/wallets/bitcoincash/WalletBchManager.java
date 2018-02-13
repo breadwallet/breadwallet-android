@@ -97,7 +97,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     private boolean timedOut;
     private boolean sending;
 
-
     public static WalletBchManager getInstance(Context app) {
         if (instance == null) {
             byte[] rawPubKey = BRKeyStore.getMasterPublicKey(app);

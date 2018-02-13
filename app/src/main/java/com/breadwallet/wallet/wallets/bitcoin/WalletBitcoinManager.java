@@ -153,15 +153,6 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         uiConfig = new WalletUiConfiguration("#f29500", true, true, true);
     }
 
-//    public void refreshBalance(Activity app) {
-//        long natBal = getWallet().getBalance();
-//        if (natBal != -1) {
-//            setBalance(app, natBal);
-//        } else {
-//            Log.e(TAG, "UpdateUI, nativeBalance is -1 meaning _wallet was null!");
-//        }
-//    }
-
     @Override
     public void addBalanceChangedListener(OnBalanceChangedListener listener) {
         if (listener != null && !balanceListeners.contains(listener))

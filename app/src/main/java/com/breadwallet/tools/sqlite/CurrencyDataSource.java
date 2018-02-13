@@ -100,7 +100,6 @@ public class CurrencyDataSource implements BRDataSourceInterface {
             database.endTransaction();
             closeDatabase();
         }
-
     }
 
     public void deleteAllCurrencies(Context app, BaseWalletManager walletManager) {
