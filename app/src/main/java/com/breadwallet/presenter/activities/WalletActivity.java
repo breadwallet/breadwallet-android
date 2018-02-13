@@ -70,8 +70,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private ImageButton mSwap;
     private ConstraintLayout toolBarConstraintLayout;
 
-    private String mDefaultTextPrimary;
-    private String mDefaultTextSecondary;
+//    private String mDefaultTextPrimary;
+//    private String mDefaultTextSecondary;
 
 
     private static WalletActivity app;
@@ -189,9 +189,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 //        t1Size = 28;
 //        t2Size = 14;
 
-        mDefaultTextPrimary = mBalancePrimary.getText().toString();
-
-        mDefaultTextSecondary = mBalanceSecondary.getText().toString();
+//        mDefaultTextPrimary = mBalancePrimary.getText().toString();
+//        mDefaultTextSecondary = mBalanceSecondary.getText().toString();
 
         TxManager.getInstance().init(this);
 
@@ -315,6 +314,18 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         updateUi();
 
         TxManager.getInstance().onResume(this);
+
+        CurrencyDataSource.getInstance(this).addOnDataChangedListener(new CurrencyDataSource.OnDataChanged() {
+            @Override
+            public void onChanged() {
+                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateUi();
+                    }
+                });
+            }
+        });
 
     }
 

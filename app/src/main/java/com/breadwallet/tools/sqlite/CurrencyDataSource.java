@@ -44,7 +44,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class CurrencyDataSource implements BRDataSourceInterface {
     private static final String TAG = CurrencyDataSource.class.getName();
 
-    private AtomicInteger mOpenCounter = new AtomicInteger();
+    List<OnDataChanged> onDataChangedListeners = new ArrayList<>();
+
 
     // Database fields
     private SQLiteDatabase database;
@@ -88,10 +89,12 @@ public class CurrencyDataSource implements BRDataSourceInterface {
                 database.insertWithOnConflict(BRSQLiteHelper.CURRENCY_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
             }
-
             database.setTransactionSuccessful();
+            for (OnDataChanged list : onDataChangedListeners) if (list != null) list.onChanged();
         } catch (Exception ex) {
+            Log.e(TAG, "putCurrencies: failed: ", ex);
             BRReportsManager.reportBug(ex);
+
             //Error in between database transaction
         } finally {
             database.endTransaction();
@@ -104,6 +107,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         try {
             database = openDatabase();
             database.delete(BRSQLiteHelper.CURRENCY_TABLE_NAME, BRSQLiteHelper.CURRENCY_ISO + " = ?", new String[]{walletManager.getIso(app)});
+            for (OnDataChanged list : onDataChangedListeners) if (list != null) list.onChanged();
         } finally {
             closeDatabase();
         }
@@ -207,5 +211,15 @@ public class CurrencyDataSource implements BRDataSourceInterface {
 //
 //        }
 //        Log.d("Database open counter: " , String.valueOf(mOpenCounter.get()));
+    }
+
+    public void addOnDataChangedListener(OnDataChanged list) {
+        if (!onDataChangedListeners.contains(list)) {
+            onDataChangedListeners.add(list);
+        }
+    }
+
+    public interface OnDataChanged {
+        void onChanged();
     }
 }
