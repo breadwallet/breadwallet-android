@@ -9,12 +9,17 @@ import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.threads.BRExecutor;
+import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -27,6 +32,7 @@ public class HomeActivity extends Activity {
 
     private RecyclerView mWalletRecycler;
     private WalletListAdapter mAdapter;
+    private BRText fiatTotal;
 
     private static HomeActivity app;
 
@@ -47,6 +53,7 @@ public class HomeActivity extends Activity {
         walletList.addAll(WalletsMaster.getInstance(this).getAllWallets());
 
         mWalletRecycler = findViewById(R.id.rv_wallet_list);
+        fiatTotal = findViewById(R.id.total_assets_usd);
         mAdapter = new WalletListAdapter(this, walletList);
 
         mWalletRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -66,7 +73,6 @@ public class HomeActivity extends Activity {
             }
         }));
 
-
     }
 
     @Override
@@ -74,6 +80,25 @@ public class HomeActivity extends Activity {
         super.onResume();
         app = this;
         BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, "");
+        updateUi();
+        CurrencyDataSource.getInstance(this).addOnDataChangedListener(new CurrencyDataSource.OnDataChanged() {
+            @Override
+            public void onChanged() {
+                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateUi();
+                    }
+                });
+
+            }
+        });
+    }
+
+    private void updateUi() {
+        BigDecimal fiatTotalAmount = WalletsMaster.getInstance(this).getAgregatedFiatBalance(this);
+        fiatTotal.setText(CurrencyUtils.getFormattedCurrencyString(this, BRSharedPrefs.getPreferredFiatIso(this), fiatTotalAmount));
+        mAdapter.notifyDataSetChanged();
     }
 
 }

@@ -532,8 +532,15 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     @Override
     public BRCoreTransaction[] loadTransactions() {
-        //todo implement
-        return new BRCoreTransaction[0];
+        Context app = BreadApp.getBreadContext();
+        List<BRTransactionEntity> txs = BtcBchTransactionDataStore.getInstance(app).getAllTransactions(app, this);
+        if (txs == null || txs.size() == 0) return new BRCoreTransaction[0];
+        BRCoreTransaction arr[] = new BRCoreTransaction[txs.size()];
+        for (int i = 0; i < txs.size(); i++) {
+            BRTransactionEntity ent = txs.get(i);
+            arr[i] = new BRCoreTransaction(ent.getBuff(), ent.getBlockheight(), ent.getTimestamp());
+        }
+        return arr;
     }
 
     @Override

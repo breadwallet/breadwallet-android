@@ -3,6 +3,7 @@ package com.breadwallet.tools.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,7 @@ import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -53,14 +55,15 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     public void onBindViewHolder(WalletItemViewHolder holder, int position) {
 
         BaseWalletManager wallet = mWalletList.get(position);
+        Log.e(TAG, "onBindViewHolder: wallet: " + wallet.getIso(mContext));
 
         // Set wallet fields
         holder.mWalletName.setText(wallet.getName(mContext));
         holder.mTradePrice.setText(CurrencyUtils.getFormattedCurrencyString(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), new BigDecimal(wallet.getFiatExchangeRate(mContext))));
         holder.mWalletBalanceUSD.setText(CurrencyUtils.getFormattedCurrencyString(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), new BigDecimal(wallet.getFiatBalance(mContext))));
-//        holder.mWalletBalanceCurrency.setText(wallet.getWalletBalanceCurrency());
+        holder.mWalletBalanceCurrency.setText(CurrencyUtils.getFormattedCurrencyString(mContext, wallet.getIso(mContext), new BigDecimal(wallet.getCachedBalance(mContext))));
 
-        if (wallet.getIso(mContext).equalsIgnoreCase("BTC")) {
+        if (wallet.getIso(mContext).equalsIgnoreCase(WalletBitcoinManager.getIso())) {
             holder.mParent.setBackground(mContext.getResources().getDrawable(R.drawable.btc_card_shape, null));
         } else {
             holder.mParent.setBackground(mContext.getResources().getDrawable(R.drawable.bch_card_shape, null));
