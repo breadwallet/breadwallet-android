@@ -181,7 +181,6 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
 
     @Override
     public SQLiteDatabase openDatabase() {
-        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
 //        if (mOpenCounter.incrementAndGet() == 1) {
         // Opening new database
         if (database == null || !database.isOpen())
