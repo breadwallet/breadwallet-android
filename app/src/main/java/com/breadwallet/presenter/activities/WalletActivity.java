@@ -198,7 +198,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     private void updateUi() {
         final BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
-
+        if (wallet == null) {
+            Log.e(TAG, "updateUi: wallet is null");
+            return;
+        }
         Log.e(TAG, "updateUi: " + wallet.getIso(this));
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
@@ -318,6 +321,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         CurrencyDataSource.getInstance(this).addOnDataChangedListener(new CurrencyDataSource.OnDataChanged() {
             @Override
             public void onChanged() {
+                Log.e(TAG, "onChanged: currency changed");
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {

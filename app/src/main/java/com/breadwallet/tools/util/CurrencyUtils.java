@@ -41,7 +41,7 @@ public class CurrencyUtils {
     public static final String TAG = CurrencyUtils.class.getName();
 
 
-    // amount is in currency or BTC (bits, mBTC or BTC)
+    // amount is in currency (e.g. cents) or BTC (bits, mBTC or BTC)
     public static String getFormattedCurrencyString(Context app, String iso, BigDecimal amount) {
         if (amount == null) return "---";
 //        Log.e(TAG, "amount: " + amount);
@@ -60,6 +60,7 @@ public class CurrencyUtils {
         try {
             currency = Currency.getInstance(iso);
             symbol = currency.getSymbol();
+            amount = amount.divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
         } catch (IllegalArgumentException e) {
 
             if (wallet == null) {
@@ -83,7 +84,7 @@ public class CurrencyUtils {
 
     public static String getSymbolByIso(Context app, String iso) {
         String symbol;
-        BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app,iso);
+        BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
         if (wallet != null) {
             symbol = wallet.getSymbol(app);
         } else {
