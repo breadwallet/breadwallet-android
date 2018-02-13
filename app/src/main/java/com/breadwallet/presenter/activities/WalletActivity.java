@@ -157,18 +157,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             mReceiveButton.setLayoutParams(param);
         }
 
-        String fiatExchangeRate = CurrencyUtils.getFormattedCurrencyString(this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(wallet.getFiatExchangeRate(this)));
-        String fiatBalance = CurrencyUtils.getFormattedCurrencyString(this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(wallet.getFiatBalance(this)));
-        String cryptoBalance = CurrencyUtils.getFormattedCurrencyString(this, wallet.getIso(this), new BigDecimal(wallet.getCachedBalance(this)));
-
-        mCurrencyTitle.setText(wallet.getName(this));
-        mCurrencyPriceUsd.setText(String.format("%s per %s", fiatExchangeRate, wallet.getIso(this)));
-        mBalancePrimary.setText(fiatBalance);
-        mBalanceSecondary.setText(cryptoBalance);
-        mToolbar.setBackgroundColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
-        mSendButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
-        mReceiveButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
-
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -210,19 +198,20 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     private void updateUi() {
-        final BaseWalletManager currentWallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
-        Log.e(TAG, "updateUi: " + currentWallet.getIso(this));
+        final BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
+
+        Log.e(TAG, "updateUi: " + wallet.getIso(this));
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                if (currentWallet.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Disconnected) {
-                    currentWallet.getPeerManager().connect();
+                if (wallet.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Disconnected) {
+                    wallet.getPeerManager().connect();
                     Log.e(TAG, "run: core connecting");
                 }
             }
         });
 
-        if (currentWallet.getUiConfiguration().buyVisible) {
+        if (wallet.getUiConfiguration().buyVisible) {
             mBuyButton.setVisibility(View.VISIBLE);
             mBuyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -248,26 +237,21 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         }
 
         String fiatIso = BRSharedPrefs.getPreferredFiatIso(this);
-        CurrencyEntity ent = CurrencyDataSource.getInstance(this).getCurrencyByCode(this, currentWallet, fiatIso);
-        String fiatRate = CurrencyUtils.getFormattedCurrencyString(this, fiatIso, ent == null ? null : new BigDecimal(ent.rate));
-        String cryptoIso = currentWallet.getIso(this);
+        CurrencyEntity ent = CurrencyDataSource.getInstance(this).getCurrencyByCode(this, wallet, fiatIso);
 
-//        String fiatBalance = CurrencyUtils.getFormattedCurrencyString(this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(ExchangeUtils....(currentWallet.getCachedBalance(this)));
-        String cryptoBalance = CurrencyUtils.getFormattedCurrencyString(this, currentWallet.getIso(this), new BigDecimal(currentWallet.getCachedBalance(this)));
+        String fiatExchangeRate = CurrencyUtils.getFormattedCurrencyString(this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(wallet.getFiatExchangeRate(this)));
+        String fiatBalance = CurrencyUtils.getFormattedCurrencyString(this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(wallet.getFiatBalance(this)));
+        String cryptoBalance = CurrencyUtils.getFormattedCurrencyString(this, wallet.getIso(this), new BigDecimal(wallet.getCachedBalance(this)));
 
-        String rateString = String.format("%s per %s", fiatRate, cryptoIso);
-
-        mCurrencyTitle.setText(currentWallet.getName(this));
-        mCurrencyPriceUsd.setText(rateString);
-        mBalancePrimary.setText("-------");
+        mCurrencyTitle.setText(wallet.getName(this));
+        mCurrencyPriceUsd.setText(String.format("%s per %s", fiatExchangeRate, wallet.getIso(this)));
+        mBalancePrimary.setText(fiatBalance);
         mBalanceSecondary.setText(cryptoBalance);
-        String color = currentWallet.getUiConfiguration().colorHex;
-        Log.e(TAG, "onResume: " + currentWallet.getName(this));
-        Log.e(TAG, "onResume: color:" + color);
-        mToolbar.setBackgroundColor(Color.parseColor(color));
-        mSendButton.setColor(Color.parseColor(color));
-        mReceiveButton.setColor(Color.parseColor(color));
-        mBuyButton.setColor(Color.parseColor(color));
+        mToolbar.setBackgroundColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
+        mSendButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
+        mReceiveButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
+
+        TxManager.getInstance().updateTxList(WalletActivity.this);
     }
 
     private void swap() {
@@ -310,53 +294,17 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         }
 
-
         // Apply the changes
         set.applyTo(toolBarConstraintLayout);
 
 
-        new Handler().postDelayed(new Runnable() {
-                                      @Override
-                                      public void run() {
-                                          updateUI();
-                                      }
-                                  },
-
-                toolBarConstraintLayout.getLayoutTransition().getDuration(LayoutTransition.CHANGE_APPEARING));
-    }
-
-    public void updateUI() {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                Thread.currentThread().setName(Thread.currentThread().getName() + ":updateUI");
-                //sleep a little in order to make sure all the commits are finished (like SharePreferences commits)
-                String iso = BRSharedPrefs.getIso(CurrencyActivity.this);
-
-                //current amount in satoshis
-                final BigDecimal amount = new BigDecimal(BRSharedPrefs.getCatchedBalance(CurrencyActivity.this));
-
-                //amount in BTC units
-                BigDecimal btcAmount = BRExchange.getBitcoinForSatoshis(CurrencyActivity.this, amount);
-                final String formattedBTCAmount = BRCurrency.getFormattedCurrencyString(CurrencyActivity.this, "BTC", btcAmount);
-
-                //amount in currency units
-                BigDecimal curAmount = BRExchange.getAmountFromSatoshis(CurrencyActivity.this, iso, amount);
-                final String formattedCurAmount = BRCurrency.getFormattedCurrencyString(CurrencyActivity.this, iso, curAmount);
-                runOnUiThread(new Runnable() {
+        new Handler().postDelayed(
+                new Runnable() {
                     @Override
                     public void run() {
-                        mBalancePrimary.setText(mDefaultTextPrimary);
-                        mBalanceSecondary.setText(mDefaultTextSecondary);
-                        //mBalancePrimary.setTextColor(getResources().getColor(R.color.white_trans, null));
-                        //mBalanceSecondary.setTextColor(getResources().getColor(R.color.white, null));
-
-
+                        updateUi();
                     }
-                });
-                TxManager.getInstance().updateTxList(CurrencyActivity.this);
-            }
-        });
+                }, toolBarConstraintLayout.getLayoutTransition().getDuration(LayoutTransition.CHANGE_APPEARING));
     }
 
     @Override
