@@ -2,12 +2,8 @@ package com.breadwallet.wallet.wallets.bitcoincash;
 
 import android.app.Activity;
 import android.content.Context;
-import android.media.AudioManager;
-import android.media.MediaPlayer;
-import android.os.Handler;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
@@ -15,43 +11,26 @@ import com.breadwallet.core.BRCoreChainParams;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.BRCoreMerkleBlock;
 import com.breadwallet.core.BRCorePeer;
-import com.breadwallet.core.BRCorePeerManager;
 import com.breadwallet.core.BRCoreTransaction;
-import com.breadwallet.core.BRCoreWallet;
 import com.breadwallet.core.BRCoreWalletManager;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.customviews.BRToast;
-import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
-import com.breadwallet.presenter.entities.BRPeerEntity;
-import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.TxUiHolder;
-import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BREventManager;
-import com.breadwallet.tools.manager.BRNotificationManager;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
-import com.breadwallet.tools.sqlite.PeerDataSource;
-import com.breadwallet.tools.sqlite.TransactionDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
-import com.breadwallet.wallet.wallets.bitcoin.BitcoinUriParser;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWallet;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.exceptions.AmountSmallerThanMinException;
@@ -64,7 +43,6 @@ import com.google.firebase.crash.FirebaseCrash;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -94,7 +72,7 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletBitcoinCash extends BRCoreWalletManager implements BaseWallet {
+public class WalletBchManager extends BRCoreWalletManager implements BaseWalletManager {
 
     private static final String TAG = WalletBitcoinManager.class.getName();
 
@@ -105,7 +83,7 @@ public class WalletBitcoinCash extends BRCoreWalletManager implements BaseWallet
     public final long MAX_BTC = 21000000;
     private final static long FEE_EXPIRATION_MILLIS = 72 * 60 * 60 * 1000L;
 
-    private static WalletBitcoinCash instance;
+    private static WalletBchManager instance;
     private WalletUiConfiguration uiConfig;
 
     private boolean isInitiatingWallet;
@@ -114,20 +92,20 @@ public class WalletBitcoinCash extends BRCoreWalletManager implements BaseWallet
     private boolean sending;
 
 
-    public static WalletBitcoinCash getInstance(Context app) {
+    public static WalletBchManager getInstance(Context app) {
         if (instance == null) {
             byte[] rawPubKey = BRKeyStore.getMasterPublicKey(app);
             BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
             long time = BRKeyStore.getWalletCreationTime(app);
 
-            instance = new WalletBitcoinCash(app, pubKey, /**BuildConfig.BITCOIN_TESTNET ? BRCoreChainParams.bcashChainParams :*/BRCoreChainParams.bcashChainParams, time);
+            instance = new WalletBchManager(app, pubKey, /**BuildConfig.BITCOIN_TESTNET ? BRCoreChainParams.bcashChainParams :*/BRCoreChainParams.bcashChainParams, time);
         }
         return instance;
     }
 
-    private WalletBitcoinCash(final Context app, BRCoreMasterPubKey masterPubKey,
-                              BRCoreChainParams chainParams,
-                              double earliestPeerTime) {
+    private WalletBchManager(final Context app, BRCoreMasterPubKey masterPubKey,
+                             BRCoreChainParams chainParams,
+                             double earliestPeerTime) {
         super(masterPubKey, chainParams, earliestPeerTime);
         String firstAddress = masterPubKey.getPubKeyAsCoreKey().address();
         BRSharedPrefs.putFirstAddress(app, firstAddress);
@@ -471,7 +449,7 @@ public class WalletBitcoinCash extends BRCoreWalletManager implements BaseWallet
     public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount) {
         if (amount.doubleValue() == 0) return null;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
+        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, this, iso);
         if (ent == null) return null;
         double rate = ent.rate;
         //get crypto amount
@@ -483,7 +461,7 @@ public class WalletBitcoinCash extends BRCoreWalletManager implements BaseWallet
     public BigDecimal getCryptoForFiat(Context app, BigDecimal amount) {
 //        if (amount.doubleValue() == 0) return null;
 //        String iso = BRSharedPrefs.getPreferredFiatIso(app);
-//        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
+//        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(iso);
 //        if (ent == null) return null;
 //        double rate = ent.rate;
 //        //convert c to $.
@@ -549,7 +527,7 @@ public class WalletBitcoinCash extends BRCoreWalletManager implements BaseWallet
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
         if (amount.doubleValue() == 0) return null;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByIso(iso);
+        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, this, iso);
         if (ent == null) return null;
         double rate = ent.rate;
         //convert c to $.
@@ -639,7 +617,7 @@ public class WalletBitcoinCash extends BRCoreWalletManager implements BaseWallet
         //        Log.d(TAG, "onTxUpdated: " + String.format("hash: %s, blockHeight: %d, timestamp: %d", hash, blockHeight, timeStamp));
 //        Context ctx = BreadApp.getBreadContext();
 //        if (ctx != null) {
-//            TransactionDataSource.getInstance(ctx).updateTxBlockHeight(hash, blockHeight, timeStamp);
+//            TransactionDataSource.getInstance(ctx).updateTransaction(hash, blockHeight, timeStamp);
 //
 //        } else {
 //            Log.e(TAG, "onTxUpdated: Failed, ctx is null");

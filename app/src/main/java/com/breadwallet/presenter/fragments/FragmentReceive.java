@@ -31,7 +31,7 @@ import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWallet;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 
 import static com.breadwallet.tools.animation.BRAnimator.animateBackgroundDim;
@@ -285,7 +285,7 @@ public class FragmentReceive extends Fragment {
             @Override
             public void run() {
                 WalletsMaster.getInstance(ctx).getCurrentWallet(ctx).refreshAddress(ctx);
-                final BaseWallet wallet = WalletsMaster.getInstance(ctx).getCurrentWallet(ctx);
+                final BaseWalletManager wallet = WalletsMaster.getInstance(ctx).getCurrentWallet(ctx);
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {

@@ -29,10 +29,12 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -50,7 +52,8 @@ public class CurrencyDataSource implements BRDataSourceInterface {
     private final String[] allColumns = {
             BRSQLiteHelper.CURRENCY_CODE,
             BRSQLiteHelper.CURRENCY_NAME,
-            BRSQLiteHelper.CURRENCY_RATE
+            BRSQLiteHelper.CURRENCY_RATE,
+            BRSQLiteHelper.CURRENCY_ISO,
     };
 
     private static CurrencyDataSource instance;
@@ -66,17 +69,22 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
-    public void putCurrencies(Collection<CurrencyEntity> currencyEntities) {
-        if (currencyEntities == null || currencyEntities.size() <= 0) return;
+    public void putCurrencies(Context app, BaseWalletManager walletManager, Collection<CurrencyEntity> currencyEntities) {
+        if (currencyEntities == null || currencyEntities.size() <= 0) {
+            Log.e(TAG, "putCurrencies: failed: " + currencyEntities);
+            return;
+        }
 
         try {
             database = openDatabase();
             database.beginTransaction();
+            String iso = walletManager.getIso(app);
             for (CurrencyEntity c : currencyEntities) {
                 ContentValues values = new ContentValues();
                 values.put(BRSQLiteHelper.CURRENCY_CODE, c.code);
                 values.put(BRSQLiteHelper.CURRENCY_NAME, c.name);
                 values.put(BRSQLiteHelper.CURRENCY_RATE, c.rate);
+                values.put(BRSQLiteHelper.CURRENCY_ISO, iso);
                 database.insertWithOnConflict(BRSQLiteHelper.CURRENCY_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
             }
@@ -92,16 +100,16 @@ public class CurrencyDataSource implements BRDataSourceInterface {
 
     }
 
-    public void deleteAllCurrencies() {
+    public void deleteAllCurrencies(Context app, BaseWalletManager walletManager) {
         try {
             database = openDatabase();
-            database.delete(BRSQLiteHelper.CURRENCY_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID + " <> -1", null);
+            database.delete(BRSQLiteHelper.CURRENCY_TABLE_NAME, BRSQLiteHelper.CURRENCY_ISO + " = ?", new String[]{walletManager.getIso(app)});
         } finally {
             closeDatabase();
         }
     }
 
-    public List<CurrencyEntity> getAllCurrencies() {
+    public List<CurrencyEntity> getAllCurrencies(Context app, BaseWalletManager walletManager) {
 
         List<CurrencyEntity> currencies = new ArrayList<>();
         Cursor cursor = null;
@@ -109,7 +117,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
             database = openDatabase();
 
             cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
-                    allColumns, null, null, null, null, "\'" + BRSQLiteHelper.CURRENCY_CODE + "\'");
+                    allColumns, BRSQLiteHelper.CURRENCY_ISO + " = ?", new String[]{walletManager.getIso(app)}, null, null, "\'" + BRSQLiteHelper.CURRENCY_CODE + "\'");
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -127,14 +135,15 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         return currencies;
     }
 
-    public List<String> getAllISOs() {
+    public List<String> getAllCurrencyCodes(Context app, BaseWalletManager walletManager) {
         List<String> ISOs = new ArrayList<>();
         Cursor cursor = null;
         try {
             database = openDatabase();
 
             cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
-                    allColumns, null, null, null, null, null);
+                    allColumns, BRSQLiteHelper.CURRENCY_ISO + " = ?", new String[]{walletManager.getIso(app)},
+                    null, null, null);
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -152,13 +161,14 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         return ISOs;
     }
 
-    public CurrencyEntity getCurrencyByIso(String iso) {
+    public CurrencyEntity getCurrencyByCode(Context app, BaseWalletManager walletManager, String code) {
         Cursor cursor = null;
         try {
             database = openDatabase();
 
             cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
-                    allColumns, BRSQLiteHelper.CURRENCY_CODE + " = ?", new String[]{iso}, null, null, null);
+                    allColumns, BRSQLiteHelper.CURRENCY_CODE + " = ? AND " + BRSQLiteHelper.CURRENCY_ISO + " = ?",
+                    new String[]{code, walletManager.getIso(app)}, null, null, null);
 
             cursor.moveToFirst();
             if (!cursor.isAfterLast()) {

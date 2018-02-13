@@ -13,8 +13,8 @@ import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWallet;
-import com.google.firebase.crash.FirebaseCrash;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
@@ -86,13 +86,13 @@ public class BRApiManager {
         return instance;
     }
 
-    private Set<CurrencyEntity> getCurrencies(Activity context) {
+    private Set<CurrencyEntity> getCurrencies(Activity context, BaseWalletManager walletManager) {
         if (ActivityUTILS.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
         Set<CurrencyEntity> set = new LinkedHashSet<>();
         try {
-            JSONArray arr = fetchRates(context);
+            JSONArray arr = fetchRates(context, walletManager);
             updateFeePerKb(context);
             if (arr != null) {
                 int length = arr.length();
@@ -137,12 +137,14 @@ public class BRApiManager {
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
-                                if (!BreadApp.isAppInBackground(context)) {
+                                if (BreadApp.isAppInBackground(context)) {
                                     Log.e(TAG, "doInBackground: Stopping timer, no activity on.");
-                                    BRApiManager.getInstance().stopTimerTask();
+                                    stopTimerTask();
                                 }
-                                Set<CurrencyEntity> tmp = getCurrencies((Activity) context);
-                                CurrencyDataSource.getInstance(context).putCurrencies(tmp);
+                                for (BaseWalletManager w : WalletsMaster.getInstance(context).getAllWallets()) {
+                                    Set<CurrencyEntity> tmp = getCurrencies((Activity) context, w);
+                                    CurrencyDataSource.getInstance(context).putCurrencies(context, w, tmp);
+                                }
                             }
                         });
                     }
@@ -172,8 +174,12 @@ public class BRApiManager {
     }
 
 
-    public static JSONArray fetchRates(Activity activity) {
-        String jsonString = urlGET(activity, "https://" + BreadApp.HOST + "/rates");
+    public static JSONArray fetchRates(Activity app, BaseWalletManager walletManager) {
+        String url = "https://" + BreadApp.HOST + "/rates";
+        if (!walletManager.getIso(app).equalsIgnoreCase(WalletBitcoinManager.getInstance(app).getIso(app))) {
+            url += "?currency=" + walletManager.getIso(app);
+        }
+        String jsonString = urlGET(app, url);
         JSONArray jsonArray = null;
         if (jsonString == null) return null;
         try {
@@ -182,11 +188,15 @@ public class BRApiManager {
 
         } catch (JSONException ignored) {
         }
-        return jsonArray == null ? backupFetchRates(activity) : jsonArray;
+        return jsonArray == null ? backupFetchRates(app, walletManager) : jsonArray;
     }
 
-    public static JSONArray backupFetchRates(Activity activity) {
-        String jsonString = urlGET(activity, "https://bitpay.com/rates");
+    public static JSONArray backupFetchRates(Activity app, BaseWalletManager walletManager) {
+        if (!walletManager.getIso(app).equalsIgnoreCase(WalletBitcoinManager.getInstance(app).getIso(app))) {
+            //todo add backup for BCH
+            return null;
+        }
+        String jsonString = urlGET(app, "https://bitpay.com/rates");
 
         JSONArray jsonArray = null;
         if (jsonString == null) return null;
@@ -202,7 +212,7 @@ public class BRApiManager {
 
     public static void updateFeePerKb(Context app) {
         WalletsMaster wm = WalletsMaster.getInstance(app);
-        for(BaseWallet wallet : wm.getAllWallets()){
+        for (BaseWalletManager wallet : wm.getAllWallets()) {
             wallet.updateFee(app);
         }
     }

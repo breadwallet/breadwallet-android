@@ -37,6 +37,7 @@ import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,15 +46,14 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class MerkleBlockDataSource implements BRDataSourceInterface {
     private static final String TAG = MerkleBlockDataSource.class.getName();
 
-    private AtomicInteger mOpenCounter = new AtomicInteger();
-
     // Database fields
     private SQLiteDatabase database;
     private final BRSQLiteHelper dbHelper;
     private final String[] allColumns = {
             BRSQLiteHelper.MB_COLUMN_ID,
             BRSQLiteHelper.MB_BUFF,
-            BRSQLiteHelper.MB_HEIGHT
+            BRSQLiteHelper.MB_HEIGHT,
+            BRSQLiteHelper.MB_ISO
     };
 
     private static MerkleBlockDataSource instance;
@@ -69,7 +69,7 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
-    public  void putMerkleBlocks(BlockEntity[] blockEntities) {
+    public void putMerkleBlocks(Context app, BaseWalletManager walletManager, BlockEntity[] blockEntities) {
         try {
             database = openDatabase();
             database.beginTransaction();
@@ -77,6 +77,7 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
                 ContentValues values = new ContentValues();
                 values.put(BRSQLiteHelper.MB_BUFF, b.getBlockBytes());
                 values.put(BRSQLiteHelper.MB_HEIGHT, b.getBlockHeight());
+                values.put(BRSQLiteHelper.MB_ISO, walletManager.getIso(app));
                 database.insert(BRSQLiteHelper.MB_TABLE_NAME, null, values);
             }
             database.setTransactionSuccessful();
@@ -90,35 +91,36 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
         }
     }
 
-    public  void deleteAllBlocks() {
+    public void deleteAllBlocks(Context app, BaseWalletManager walletManager) {
         try {
             database = openDatabase();
-            database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_COLUMN_ID + " <> -1", null);
+            database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_ISO + "=?", new String[]{walletManager.getIso(app)});
         } finally {
             closeDatabase();
         }
     }
 
-    public  void deleteMerkleBlock(BRMerkleBlockEntity merkleBlock) {
+    public void deleteMerkleBlock(Context app, BaseWalletManager walletManager, BRMerkleBlockEntity merkleBlock) {
         try {
             database = openDatabase();
             long id = merkleBlock.getId();
             Log.e(TAG, "MerkleBlock deleted with id: " + id);
             database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_COLUMN_ID
-                    + " = " + id, null);
+                    + " = ? AND " + BRSQLiteHelper.MB_ISO + " = ?", new String[]{String.valueOf(id), walletManager.getIso(app)});
         } finally {
             closeDatabase();
         }
     }
 
-    public  List<BRMerkleBlockEntity> getAllMerkleBlocks() {
+    public List<BRMerkleBlockEntity> getAllMerkleBlocks(Context app, BaseWalletManager walletManager) {
         List<BRMerkleBlockEntity> merkleBlocks = new ArrayList<>();
         Cursor cursor = null;
         try {
             database = openDatabase();
 
             cursor = database.query(BRSQLiteHelper.MB_TABLE_NAME,
-                    allColumns, null, null, null, null, null);
+                    allColumns, BRSQLiteHelper.MB_ISO + "=?", new String[]{walletManager.getIso(app)},
+                    null, null, null);
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -144,10 +146,10 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
     }
 
     @Override
-    public  SQLiteDatabase openDatabase() {
+    public SQLiteDatabase openDatabase() {
 //        if (mOpenCounter.incrementAndGet() == 1) {
         // Opening new database
-        if(ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
+        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         if (database == null || !database.isOpen())
             database = dbHelper.getWritableDatabase();
         dbHelper.setWriteAheadLoggingEnabled(BRConstants.WAL);
@@ -157,7 +159,7 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
     }
 
     @Override
-    public  void closeDatabase() {
+    public void closeDatabase() {
 //        if (mOpenCounter.decrementAndGet() == 0) {
 //            // Closing database
 //            database.close();

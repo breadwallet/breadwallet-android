@@ -25,6 +25,7 @@ import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.wallet.WalletsMaster;
 
 import java.math.BigDecimal;
 import java.util.Currency;
@@ -68,7 +69,7 @@ public class DisplayCurrencyActivity extends BRActivity {
         exchangeText = findViewById(R.id.exchange_text);
         listView = findViewById(R.id.currency_list_view);
         adapter = new CurrencyListAdapter(this);
-        adapter.addAll(CurrencyDataSource.getInstance(this).getAllCurrencies());
+        adapter.addAll(CurrencyDataSource.getInstance(this).getAllCurrencies(this, WalletsMaster.getInstance(this).getCurrentWallet(this)));
         leftButton = findViewById(R.id.left_button);
         rightButton = findViewById(R.id.right_button);
 //        leftButton.setOnClickListener(new View.OnClickListener() {
@@ -115,7 +116,7 @@ public class DisplayCurrencyActivity extends BRActivity {
     private void updateExchangeRate() {
         //set the rate from the last saved
         String iso = BRSharedPrefs.getPreferredFiatIso(this);
-        CurrencyEntity entity = CurrencyDataSource.getInstance(this).getCurrencyByIso(iso);
+        CurrencyEntity entity = CurrencyDataSource.getInstance(this).getCurrencyByCode(this, WalletsMaster.getInstance(this).getCurrentWallet(this), iso);
         if (entity != null) {
             String finalExchangeRate = CurrencyUtils.getFormattedCurrencyString(DisplayCurrencyActivity.this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(entity.rate));
             boolean bits = BRSharedPrefs.getCryptoDenomination(this, "BTC") == BRConstants.CURRENT_UNIT_BITS;
@@ -241,7 +242,6 @@ public class DisplayCurrencyActivity extends BRActivity {
         }
 
     }
-
 
 
 }

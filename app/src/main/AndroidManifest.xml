@@ -222,13 +222,6 @@
 
         </activity>
 
-        <activity
-            android:name=".presenter.activities.TestHomeActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait">
-
-        </activity>
-
         <service
             android:name=".tools.listeners.SyncReceiver"
             android:enabled="true"

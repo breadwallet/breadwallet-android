@@ -14,7 +14,6 @@ import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.wallet.wallets.bitcoin.BitcoinUriParser;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
@@ -22,7 +21,7 @@ import com.breadwallet.tools.security.X509CertificateValidator;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.CustomLogger;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWallet;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -324,7 +323,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                BaseWallet wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
+                BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
 
                 double minOutput = wallet.getWallet().getMinOutputAmount();
                 if (paymentRequest.amount < minOutput) {

@@ -3,17 +3,14 @@ package com.breadwallet.tools.util;
 import android.content.Context;
 
 import com.breadwallet.tools.manager.BRReportsManager;
-import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWallet;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Currency;
 import java.util.Locale;
-import java.util.Objects;
 
 /**
  * BreadWallet
@@ -59,7 +56,7 @@ public class CurrencyUtils {
         String symbol = null;
         decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
 //        int decimalPoints = 0;
-        BaseWallet wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
+        BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
         try {
             currency = Currency.getInstance(iso);
             symbol = currency.getSymbol();
@@ -86,7 +83,7 @@ public class CurrencyUtils {
 
     public static String getSymbolByIso(Context app, String iso) {
         String symbol;
-        BaseWallet wallet = WalletsMaster.getInstance(app).getWalletByIso(app,iso);
+        BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app,iso);
         if (wallet != null) {
             symbol = wallet.getSymbol(app);
         } else {
@@ -103,13 +100,13 @@ public class CurrencyUtils {
 
 //    //get currency denomination (iso) BTC, ETH etc.
 //    public static String getCurrencyIso(Context app, String iso) {
-//        BaseWallet wallet = WalletsMaster.getInstance(app).getWalletByIso(iso);
+//        BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(iso);
 //        if (wallet == null) return iso;
 //        return wallet.getIso(app);
 //    }
 
     public static int getMaxDecimalPlaces(Context app, String iso) {
-        BaseWallet wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
+        BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
         if (wallet == null) {
             Currency currency = Currency.getInstance(iso);
             return currency.getDefaultFractionDigits();

@@ -1,8 +1,13 @@
 package com.breadwallet.tools.sqlite;
 
-import android.content.Context;
 
-import com.breadwallet.presenter.entities.BaseWallet;
+import android.content.Context;
+import android.util.Log;
+
+import com.breadwallet.presenter.entities.BRTransactionEntity;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
+
+import java.util.List;
 
 /**
  * Created by byfieldj on 2/1/18.
@@ -13,38 +18,55 @@ import com.breadwallet.presenter.entities.BaseWallet;
  */
 
 public class TransactionStorageManager {
+    private static final String TAG = TransactionStorageManager.class.getSimpleName();
 
+    public static boolean putTransaction(Context app, BaseWalletManager wallet, BRTransactionEntity tx) {
+        if (wallet == null || tx == null || app == null) {
+            Log.e(TAG, "putTransaction: failed: " + app + "|" + wallet + "|" + tx);
+            return false;
 
-    private BaseWallet mWallet;
-    private Context mContext;
+        }
 
+        if (wallet.getIso(app).equalsIgnoreCase("btc") || wallet.getIso(app).equalsIgnoreCase("bch")) {
+            BRTransactionEntity result = BtcBchTransactionDataStore.getInstance(app).putTransaction(app, wallet, tx);
+            return result != null;
+        }
 
-    public TransactionStorageManager(Context context, BaseWallet wallet) {
+        //other wallets
 
-        this.mContext = context;
-        this.mWallet = wallet;
-
+        return false;
     }
 
-    public void initTransactionStorage() {
-
-        // TODO: Should probably change this to a switch statement in the future as we
-        // add more currencies/wallets
-
-        if (mWallet.getWalletType().equals(BaseWallet.WalletType.BTC_WALLET)) {
-
-            // Open BTC/BCH DB and hand off "saving" operation to relevant class
-
-            BtcBchTransactionDataStore.getInstance(mContext, mWallet).openDatabase();
-
-        }
-        else if(mWallet.getWalletType().equals(BaseWallet.WalletType.BCH_WALLET)){
-
-            BtcBchTransactionDataStore.getInstance(mContext, mWallet).openDatabase();
+    public static List<BRTransactionEntity> getTransactions(Context app, BaseWalletManager wallet) {
+        if (wallet == null || app == null) {
+            Log.e(TAG, "putTransaction: failed: " + app + "|" + wallet);
+            return null;
 
         }
 
+        if (wallet.getIso(app).equalsIgnoreCase("btc") || wallet.getIso(app).equalsIgnoreCase("bch")) {
+            return BtcBchTransactionDataStore.getInstance(app).getAllTransactions(app, wallet);
+        }
 
+        //other wallets
+
+        return null;
+    }
+    public static boolean updateTransaction(Context app, BaseWalletManager wallet, BRTransactionEntity tx) {
+        if (wallet == null || app == null) {
+            Log.e(TAG, "putTransaction: failed: " + app + "|" + wallet);
+            return false;
+
+        }
+
+        if (wallet.getIso(app).equalsIgnoreCase("btc") || wallet.getIso(app).equalsIgnoreCase("bch")) {
+            return BtcBchTransactionDataStore.getInstance(app).updateTransaction(app, wallet, tx);
+
+        }
+
+        //other wallets
+
+        return false;
     }
 
 

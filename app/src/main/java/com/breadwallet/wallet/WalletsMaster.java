@@ -22,9 +22,9 @@ import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
-import com.breadwallet.wallet.abstracts.BaseWallet;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.breadwallet.wallet.wallets.bitcoincash.WalletBitcoinCash;
+import com.breadwallet.wallet.wallets.bitcoincash.WalletBchManager;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
@@ -64,7 +64,7 @@ public class WalletsMaster {
 
     private static WalletsMaster instance;
 
-    private List<BaseWallet> mWallets = new ArrayList<>();
+    private List<BaseWalletManager> mWallets = new ArrayList<>();
 
 
     private WalletsMaster(Context app) {
@@ -78,26 +78,26 @@ public class WalletsMaster {
         return instance;
     }
 
-    public List<BaseWallet> getAllWallets() {
+    public List<BaseWalletManager> getAllWallets() {
         return mWallets;
     }
 
     //return the needed wallet for the iso
-    public BaseWallet getWalletByIso(Context app, String iso) {
+    public BaseWalletManager getWalletByIso(Context app, String iso) {
         if (Utils.isNullOrEmpty(iso)) return null;
         if (iso.equalsIgnoreCase("BTC")) return WalletBitcoinManager.getInstance(app);
-        if (iso.equalsIgnoreCase("BCH")) return WalletBitcoinCash.getInstance(app);
+        if (iso.equalsIgnoreCase("BCH")) return WalletBchManager.getInstance(app);
         return null;
     }
 
-    public BaseWallet getCurrentWallet(Context app) {
+    public BaseWalletManager getCurrentWallet(Context app) {
         return getWalletByIso(app, BRSharedPrefs.getCurrentWalletIso(app));
     }
 
     //get the total fiat balance held in all the wallets in the smallest unit (e.g. cents)
     public BigDecimal getAgregatedFiatBalance(Context app) {
         long totalBalance = 0;
-        for (BaseWallet wallet : mWallets) {
+        for (BaseWalletManager wallet : mWallets) {
             totalBalance += wallet.getFiatBalance(app);
         }
         return new BigDecimal(totalBalance);
@@ -171,7 +171,7 @@ public class WalletsMaster {
     }
 
     public boolean isIsoCrypto(Context app, String iso) {
-        for (BaseWallet w : mWallets) {
+        for (BaseWalletManager w : mWallets) {
             if (w.getIso(app).equalsIgnoreCase(iso)) return true;
         }
         return false;
@@ -231,7 +231,7 @@ public class WalletsMaster {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                for (BaseWallet wallet : mWallets) {
+                for (BaseWalletManager wallet : mWallets) {
                     wallet.getWallet().dispose();
                     wallet.getPeerManager().dispose();
                     wallet.wipeData(ctx);
@@ -249,7 +249,7 @@ public class WalletsMaster {
 
 
     public void refreshBalances(Context app) {
-        for (BaseWallet wallet : mWallets) {
+        for (BaseWalletManager wallet : mWallets) {
             long balance = wallet.getWallet().getBalance();
             wallet.setCashedBalance(app, balance);
         }
@@ -259,15 +259,15 @@ public class WalletsMaster {
     public void initWallets(Context app) {
         if (!mWallets.contains(WalletBitcoinManager.getInstance(app)))
             mWallets.add(WalletBitcoinManager.getInstance(app));
-        if (!mWallets.contains(WalletBitcoinCash.getInstance(app)))
-            mWallets.add(WalletBitcoinCash.getInstance(app));
-        for (BaseWallet wallet : mWallets) {
+        if (!mWallets.contains(WalletBchManager.getInstance(app)))
+            mWallets.add(WalletBchManager.getInstance(app));
+        for (BaseWalletManager wallet : mWallets) {
             wallet.initWallet(app);
         }
     }
 
     public void initLastWallet(Context app) {
-        BaseWallet wallet = getWalletByIso(app, BRSharedPrefs.getCurrentWalletIso(app));
+        BaseWalletManager wallet = getWalletByIso(app, BRSharedPrefs.getCurrentWalletIso(app));
         if (wallet == null) wallet = getWalletByIso(app, "BTC");
         wallet.initWallet(app);
     }

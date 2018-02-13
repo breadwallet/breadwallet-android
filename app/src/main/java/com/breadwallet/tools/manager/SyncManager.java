@@ -11,7 +11,7 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.tools.listeners.SyncReceiver;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWallet;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.util.concurrent.TimeUnit;
 
@@ -109,7 +109,7 @@ public class SyncManager {
     private class SyncProgressTask extends Thread {
         public double progressStatus = 0;
         private Context app;
-        private BaseWallet mWallet;
+        private BaseWalletManager mWallet;
 
         public SyncProgressTask() {
             progressStatus = 0;

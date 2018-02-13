@@ -27,7 +27,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWallet;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
@@ -214,7 +214,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void setTexts(final TxHolder convertView, int position) {
-        BaseWallet wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
+        BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
         TxUiHolder item = itemFeed.get(TxManager.getInstance().currentPrompt == null ? position : position - 1);
         item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
         String commentString = (item.metaData == null || item.metaData.comment == null) ? "" : item.metaData.comment;
@@ -401,7 +401,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                     if (switches[1] && (item.getSent() - item.getReceived() > 0)) {
                         willAdd = false;
                     }
-                    BaseWallet wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
+                    BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
 
                     int confirms = item.getBlockHeight() ==
                             Integer.MAX_VALUE ? 0
