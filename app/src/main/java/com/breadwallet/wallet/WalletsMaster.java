@@ -68,7 +68,6 @@ public class WalletsMaster {
 
 
     private WalletsMaster(Context app) {
-
     }
 
     public static WalletsMaster getInstance(Context app) {

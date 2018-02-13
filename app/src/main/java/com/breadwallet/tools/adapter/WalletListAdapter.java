@@ -10,8 +10,11 @@ import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRText;
+import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -26,9 +29,9 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     private ArrayList<BaseWalletManager> mWalletList;
 
 
-    public WalletListAdapter(Context context, ArrayList<BaseWalletManager> walletList){
+    public WalletListAdapter(Context context, ArrayList<BaseWalletManager> walletList) {
 
-        this.mContext= context;
+        this.mContext = context;
         this.mWalletList = walletList;
     }
 
@@ -42,6 +45,10 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         return new WalletItemViewHolder(convertView);
     }
 
+    public BaseWalletManager getItemAt(int pos) {
+        return mWalletList.get(pos);
+    }
+
     @Override
     public void onBindViewHolder(WalletItemViewHolder holder, int position) {
 
@@ -49,13 +56,13 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
         // Set wallet fields
         holder.mWalletName.setText(wallet.getName(mContext));
-//        holder.mTradePrice.setText(wallet.getTradeValue());
-//        holder.mWalletBalanceUSD.setText(wallet.getWalletBalanceUSD());
+        holder.mTradePrice.setText(CurrencyUtils.getFormattedCurrencyString(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), new BigDecimal(wallet.getFiatExchangeRate(mContext))));
+        holder.mWalletBalanceUSD.setText(CurrencyUtils.getFormattedCurrencyString(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), new BigDecimal(wallet.getFiatBalance(mContext))));
 //        holder.mWalletBalanceCurrency.setText(wallet.getWalletBalanceCurrency());
 
-        if(wallet.getName(mContext).equals("Bitcoin")){
+        if (wallet.getIso(mContext).equalsIgnoreCase("BTC")) {
             holder.mParent.setBackground(mContext.getResources().getDrawable(R.drawable.btc_card_shape, null));
-        }else{
+        } else {
             holder.mParent.setBackground(mContext.getResources().getDrawable(R.drawable.bch_card_shape, null));
 
         }
@@ -66,7 +73,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         return mWalletList.size();
     }
 
-    public class WalletItemViewHolder extends RecyclerView.ViewHolder{
+    public class WalletItemViewHolder extends RecyclerView.ViewHolder {
 
         public BRText mWalletName;
         public BRText mTradePrice;
@@ -74,7 +81,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         public BRText mWalletBalanceCurrency;
         public RelativeLayout mParent;
 
-        public WalletItemViewHolder(View view){
+        public WalletItemViewHolder(View view) {
             super(view);
 
             mWalletName = view.findViewById(R.id.wallet_name);

@@ -19,7 +19,8 @@
         android:id="@+id/tool_bar_flipper"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        tools:context="com.breadwallet.presenter.activities.WalletActivity">
+        tools:context="com.breadwallet.presenter.activities.CurrencyActivity">
+
 
         <android.support.v7.widget.Toolbar xmlns:app="http://schemas.android.com/apk/res-auto"
                                            android:id="@+id/bread_bar"
@@ -68,13 +69,13 @@
                     android:id="@+id/currency_usd_price"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="$--- per BTC"
+                    android:text="$16,904.34 per BTC"
                     android:textColor="@color/currency_subheading_color"
                     android:textSize="@dimen/sub_header"
                     app:customTFont="CircularPro-Book.otf"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/currency_label"/>
+                    app:layout_constraintTop_toBottomOf="@id/currency_label"/>
 
 
                 <com.breadwallet.presenter.customviews.BRText
@@ -94,41 +95,41 @@
                     android:id="@+id/balance_primary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginBottom="4dp"
                     android:layout_marginStart="16dp"
-                    android:text="$---"
+                    android:text="$26,495.69"
                     android:textColor="@color/white"
                     android:textSize="28sp"
                     app:customTFont="CircularPro-Bold.otf"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintLeft_toLeftOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintVertical_bias="0.492"/>
+
 
                 <ImageButton
                     android:id="@+id/swap"
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:background="@drawable/ic_swap_horizontal"
-                    android:layout_marginBottom="10dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
                     android:layout_marginStart="8dp"
-                    app:layout_constraintVertical_bias="0.492"
+                    android:background="@drawable/ic_sync_white_24dp"
+                    app:layout_constraintBottom_toBottomOf="@id/balance_primary"
                     app:layout_constraintLeft_toRightOf="@id/balance_primary"
-                    app:layout_constraintBottom_toBottomOf="@id/balance_primary" />
+                    app:layout_constraintVertical_bias="0.492"/>
 
                 <com.breadwallet.presenter.customviews.BRText
                     android:id="@+id/balance_secondary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="28dp"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="18dp"
                     android:text="1.56739 BTC"
-                    android:layout_marginBottom="16dp"
-                    app:layout_constraintVertical_bias="0.492"
-                    app:layout_constraintBottom_toBottomOf="parent"
                     android:textColor="@color/currency_subheading_color"
-                    app:layout_constraintLeft_toRightOf="@+id/swap"
-                    app:layout_constraintStart_toEndOf="@+id/swap"
-                    app:layout_constraintTop_toTopOf="@+id/swap"/>
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintLeft_toRightOf="@id/swap"
+                    app:layout_constraintStart_toEndOf="@id/balance_primary"
+                    app:layout_constraintVertical_bias="0.492"/>
 
 
                 <ImageButton
@@ -173,29 +174,6 @@
         </com.breadwallet.presenter.customviews.BRNotificationBar>
 
     </ViewFlipper>
-
-    <LinearLayout
-        android:id="@+id/recycler_layout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/tool_bar_flipper"
-        android:animateLayoutChanges="true"
-        android:orientation="vertical">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/tx_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:clipToPadding="false"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="8dp"
-            android:paddingTop="16dp"
-            />
-
-    </LinearLayout>
 
 
     <LinearLayout
@@ -266,30 +244,6 @@
             app:customTFont="CircularPro-Bold.otf"
             app:hasShadow="false"
             app:isBreadButton="true"/>
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/recycler_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_above="@+id/bottom_toolbar_layout1"
-        android:layout_below="@+id/toolbar_layout"
-        android:animateLayoutChanges="true"
-        android:orientation="vertical">
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/tx_list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:clipToPadding="false"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
-            android:paddingBottom="8dp"
-            android:paddingTop="16dp"
-            />
 
     </LinearLayout>
 

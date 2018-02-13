@@ -137,6 +137,11 @@ public interface BaseWalletManager {
     WalletUiConfiguration getUiConfiguration();
 
     /**
+     * @return - the wallet's currency exchange rate in the smallest denomination amount in the user's favorite fiat currency (e.g. cents)
+     */
+    long getFiatExchangeRate(Context app);
+
+    /**
      * @return - the total balance in the smallest denomination amount in the user's favorite fiat currency (e.g. cents)
      */
     long getFiatBalance(Context app);
