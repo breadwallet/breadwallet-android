@@ -333,20 +333,26 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     @Override
     public boolean initWallet(final Context app) {
 
-        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
-        if (isInitiatingWallet) return false;
-        isInitiatingWallet = true;
-        try {
-            Log.d(TAG, "initWallet:" + Thread.currentThread().getName());
-            if (app == null) {
-                Log.e(TAG, "initWallet: app is null");
-                return false;
-            }
-            getPeerManager().connect();
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
+                if (isInitiatingWallet) return;
+                isInitiatingWallet = true;
+                try {
+                    Log.d(TAG, "initWallet:" + Thread.currentThread().getName());
+                    if (app == null) {
+                        Log.e(TAG, "initWallet: app is null");
+                        return;
+                    }
+                    getPeerManager().connect();
 
-        } finally {
-            isInitiatingWallet = false;
-        }
+                } finally {
+                    isInitiatingWallet = false;
+                }
+            }
+        });
+
 
         return true;
     }
@@ -578,8 +584,15 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
+    public long getFiatExchangeRate(Context app) {
+        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, this, BRSharedPrefs.getPreferredFiatIso(app));
+        return ent == null ? 0 : (long) (ent.rate * 100); //cents
+    }
+
+    @Override
     public long getFiatBalance(Context app) {
-        return getFiatForSmallestCrypto(app, new BigDecimal(getCachedBalance(app))).longValue();
+        BigDecimal bal = getFiatForSmallestCrypto(app, new BigDecimal(getCachedBalance(app)));
+        return bal == null ? 0 : bal.longValue();
     }
 
     @Override

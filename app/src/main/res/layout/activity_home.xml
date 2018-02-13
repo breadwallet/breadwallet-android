@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
-    android:background="@color/extra_light_blue_background"
-    android:clipToPadding="false"
-    android:descendantFocusability="beforeDescendants"
-    android:filterTouchesWhenObscured="true"
-    android:fitsSystemWindows="true"
-    android:focusableInTouchMode="true"
-    android:orientation="vertical"
-    tools:context="com.breadwallet.presenter.activities.HomeActivity">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:animateLayoutChanges="true"
+                android:background="@color/extra_light_blue_background"
+                android:clipToPadding="false"
+                android:descendantFocusability="beforeDescendants"
+                android:filterTouchesWhenObscured="true"
+                android:fitsSystemWindows="true"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical"
+                tools:context="com.breadwallet.presenter.activities.HomeActivity">
+
+    <ImageView
+        android:background="@drawable/bread_logo_gradient"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="60dp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="16dp"
+        android:layout_width="80dp"
+        android:layout_height="22dp" />
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/total_assets_label"
@@ -49,6 +58,18 @@
         android:text="@string/Portfolio"
         android:textColor="#788f9e" />
 
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_wallet_list"
+        android:layout_below="@id/portfolio_label"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    </android.support.v7.widget.RecyclerView>
+
     <RelativeLayout
         android:id="@+id/bitcoin_card"
         android:layout_width="match_parent"
@@ -57,6 +78,7 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:visibility="gone"
         android:background="@drawable/btc_card_shape">
 
 
@@ -118,6 +140,8 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:visibility="gone"
+
         android:background="@drawable/bch_card_shape">
 
 
@@ -176,7 +200,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/bitcoin_cash_card"
+        android:layout_below="@id/rv_wallet_list"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginTop="16dp"
         android:text="@string/Admin"

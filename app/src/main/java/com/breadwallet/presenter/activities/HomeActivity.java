@@ -4,13 +4,18 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.View;
-import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
+import com.breadwallet.tools.adapter.WalletListAdapter;
+import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
+
+import java.util.ArrayList;
 
 /**
  * Created by byfieldj on 1/17/18.
@@ -20,9 +25,9 @@ import com.breadwallet.wallet.WalletsMaster;
 
 public class HomeActivity extends Activity {
 
-    private RelativeLayout mBitcoinCard;
+    private RecyclerView mWalletRecycler;
+    private WalletListAdapter mAdapter;
 
-    private RelativeLayout mBchCard;
     private static HomeActivity app;
 
     public static HomeActivity getApp() {
@@ -35,33 +40,32 @@ public class HomeActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        mBitcoinCard = findViewById(R.id.bitcoin_card);
-        mBchCard = findViewById(R.id.bitcoin_cash_card);
+        WalletsMaster.getInstance(this).initWallets(this);
 
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                WalletsMaster.getInstance(HomeActivity.this).initWallets(HomeActivity.this);
-            }
-        });
+        ArrayList<BaseWalletManager> walletList = new ArrayList<>();
 
-        mBitcoinCard.setOnClickListener(new View.OnClickListener() {
+        walletList.addAll(WalletsMaster.getInstance(this).getAllWallets());
+
+        mWalletRecycler = findViewById(R.id.rv_wallet_list);
+        mAdapter = new WalletListAdapter(this, walletList);
+
+        mWalletRecycler.setLayoutManager(new LinearLayoutManager(this));
+        mWalletRecycler.setAdapter(mAdapter);
+
+        mWalletRecycler.addOnItemTouchListener(new RecyclerItemClickListener(this, mWalletRecycler, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
-            public void onClick(View view) {
-                BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, "BTC");
+            public void onItemClick(View view, int position, float x, float y) {
+                BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, mAdapter.getItemAt(position).getIso(HomeActivity.this));
                 Intent newIntent = new Intent(HomeActivity.this, WalletActivity.class);
                 startActivity(newIntent);
             }
-        });
 
-        mBchCard.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, "BCH");
-                Intent newIntent = new Intent(HomeActivity.this, WalletActivity.class);
-                startActivity(newIntent);
+            public void onLongItemClick(View view, int position) {
+
             }
-        });
+        }));
+
 
     }
 
