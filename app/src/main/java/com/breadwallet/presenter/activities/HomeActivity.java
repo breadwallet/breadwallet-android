@@ -3,14 +3,19 @@ package com.breadwallet.presenter.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.bitcoin.SecurityCenterActivity;
+import com.breadwallet.presenter.activities.bitcoin.SettingsActivity;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.adapter.WalletListAdapter;
+import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
@@ -32,7 +37,10 @@ public class HomeActivity extends Activity {
 
     private RecyclerView mWalletRecycler;
     private WalletListAdapter mAdapter;
-    private BRText fiatTotal;
+    private BRText mFiatTotal;
+    private RelativeLayout mSettings;
+    private RelativeLayout mSecurity;
+    private RelativeLayout mSupport;
 
     private static HomeActivity app;
 
@@ -53,7 +61,12 @@ public class HomeActivity extends Activity {
         walletList.addAll(WalletsMaster.getInstance(this).getAllWallets());
 
         mWalletRecycler = findViewById(R.id.rv_wallet_list);
-        fiatTotal = findViewById(R.id.total_assets_usd);
+        mFiatTotal = findViewById(R.id.total_assets_usd);
+
+        mSettings = findViewById(R.id.settings_row);
+        mSecurity = findViewById(R.id.security_row);
+        mSupport = findViewById(R.id.support_row);
+
         mAdapter = new WalletListAdapter(this, walletList);
 
         mWalletRecycler.setLayoutManager(new LinearLayoutManager(this));
@@ -72,6 +85,30 @@ public class HomeActivity extends Activity {
 
             }
         }));
+
+        mSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            }
+        });
+        mSecurity.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, SecurityCenterActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+            }
+        });
+        mSupport.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
+                BRAnimator.showSupportFragment(HomeActivity.this, null);
+            }
+        });
 
     }
 
@@ -97,7 +134,7 @@ public class HomeActivity extends Activity {
 
     private void updateUi() {
         BigDecimal fiatTotalAmount = WalletsMaster.getInstance(this).getAgregatedFiatBalance(this);
-        fiatTotal.setText(CurrencyUtils.getFormattedCurrencyString(this, BRSharedPrefs.getPreferredFiatIso(this), fiatTotalAmount));
+        mFiatTotal.setText(CurrencyUtils.getFormattedCurrencyString(this, BRSharedPrefs.getPreferredFiatIso(this), fiatTotalAmount));
         mAdapter.notifyDataSetChanged();
     }
 
