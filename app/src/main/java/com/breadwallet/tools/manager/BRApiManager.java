@@ -175,13 +175,13 @@ public class BRApiManager {
 
 
     public static JSONArray fetchRates(Activity app, BaseWalletManager walletManager) {
-        String url = "https://" + BreadApp.HOST + "/rates";
-        if (!walletManager.getIso(app).equalsIgnoreCase(WalletBitcoinManager.getInstance(app).getIso(app))) {
-            url += "?currency=" + walletManager.getIso(app);
-        }
+        String url = "https://" + BreadApp.HOST + "/rates?currency=" + walletManager.getIso(app);
         String jsonString = urlGET(app, url);
         JSONArray jsonArray = null;
-        if (jsonString == null) return null;
+        if (jsonString == null) {
+            Log.e(TAG, "fetchRates: failed, response is null");
+            return null;
+        }
         try {
             JSONObject obj = new JSONObject(jsonString);
             jsonArray = obj.getJSONArray("body");

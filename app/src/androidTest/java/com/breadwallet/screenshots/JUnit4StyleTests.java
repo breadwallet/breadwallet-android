@@ -6,8 +6,7 @@ import android.support.test.espresso.IdlingPolicies;
 import android.support.test.rule.ActivityTestRule;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.BreadActivity;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.presenter.activities.bitcoin.TestActivity;
 
 import org.junit.After;
 import org.junit.Before;
@@ -66,7 +65,7 @@ public class JUnit4StyleTests {
     public static final LocaleTestRule localeTestRule = new LocaleTestRule();
 
     @Rule
-    public ActivityTestRule<BreadActivity> activityRule = new ActivityTestRule<>(BreadActivity.class);
+    public ActivityTestRule<TestActivity> activityRule = new ActivityTestRule<>(TestActivity.class);
 
     @BeforeClass
     public static void beforeClass() {

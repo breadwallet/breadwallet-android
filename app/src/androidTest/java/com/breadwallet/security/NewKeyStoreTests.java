@@ -5,10 +5,8 @@ import android.security.keystore.UserNotAuthenticatedException;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.breadwallet.presenter.activities.BreadActivity;
 import com.breadwallet.presenter.activities.bitcoin.TestActivity;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.jniwrappers.BRKey;
 
 import org.junit.Assert;
 import org.junit.Before;
