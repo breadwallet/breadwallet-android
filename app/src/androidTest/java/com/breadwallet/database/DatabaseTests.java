@@ -92,8 +92,8 @@ public class DatabaseTests {
         // Test BTC transaction insert
         Activity app = mActivityRule.getActivity();
         BtcBchTransactionDataStore tds = BtcBchTransactionDataStore.getInstance(app);
-        tds.putTransaction(app, mBchWallet, new BRTransactionEntity(new byte[0], 1234, 4314123, "some hash", mBtcWallet.getIso(app)));
-        List<BRTransactionEntity> txs = tds.getAllTransactions(app, mBchWallet);
+        tds.putTransaction(app, mBtcWallet, new BRTransactionEntity(new byte[0], 1234, 4314123, "some hash", mBtcWallet.getIso(app)));
+        List<BRTransactionEntity> txs = tds.getAllTransactions(app, mBtcWallet);
         Assert.assertNotNull(txs);
         Assert.assertEquals(txs.size(), 1);
         Assert.assertArrayEquals(txs.get(0).getBuff(), new byte[0]);
@@ -116,16 +116,16 @@ public class DatabaseTests {
 
 
         MerkleBlockDataSource mds = MerkleBlockDataSource.getInstance(mActivityRule.getActivity());
-        mds.putMerkleBlocks(new BlockEntity[]{new BlockEntity("SOme cool stuff".getBytes(), 123343)});
-        List<BRMerkleBlockEntity> ms = mds.getAllMerkleBlocks();
+        mds.putMerkleBlocks(app, mBtcWallet, new BlockEntity[]{new BlockEntity("SOme cool stuff".getBytes(), 123343)});
+        List<BRMerkleBlockEntity> ms = mds.getAllMerkleBlocks(app , mBtcWallet);
         Assert.assertNotNull(ms);
         Assert.assertEquals(ms.size(), 1);
         Assert.assertArrayEquals(ms.get(0).getBuff(), "SOme cool stuff".getBytes());
         Assert.assertEquals(ms.get(0).getBlockHeight(), 123343);
 
         PeerDataSource pds = PeerDataSource.getInstance(mActivityRule.getActivity());
-        pds.putPeers(new PeerEntity[]{new PeerEntity("someAddress".getBytes(), "somePort".getBytes(), "someTimestamp".getBytes())});
-        List<BRPeerEntity> ps = pds.getAllPeers();
+        pds.putPeers(app, mBtcWallet, new PeerEntity[]{new PeerEntity("someAddress".getBytes(), "somePort".getBytes(), "someTimestamp".getBytes())});
+        List<BRPeerEntity> ps = pds.getAllPeers(app, mBtcWallet);
         Assert.assertNotNull(ps);
         Assert.assertEquals(ps.size(), 1);
         Assert.assertArrayEquals(ps.get(0).getAddress(), "someAddress".getBytes());
@@ -139,8 +139,8 @@ public class DatabaseTests {
         ent.name = "OmiseGo";
         ent.rate = 8.43f;
         toInsert.add(ent);
-        cds.putCurrencies(toInsert);
-        List<CurrencyEntity> cs = cds.getAllCurrencies();
+        cds.putCurrencies(app, mBtcWallet, toInsert);
+        List<CurrencyEntity> cs = cds.getAllCurrencies(app , mBtcWallet);
         Assert.assertNotNull(cs);
         Assert.assertEquals(cs.size(), 1);
         Assert.assertEquals(cs.get(0).name, "OmiseGo");

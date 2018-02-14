@@ -32,11 +32,9 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
 
     public WalletListAdapter(Context context, ArrayList<BaseWalletManager> walletList) {
-
         this.mContext = context;
         this.mWalletList = walletList;
     }
-
 
     @Override
     public WalletItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {

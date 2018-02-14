@@ -162,7 +162,7 @@ public class WalletTests {
     @Test
     public void walletBitcoinTests() {
         Activity app = mActivityRule.getActivity();
-        WalletBitcoinManager wallet = WalletBitcoinManager.getInstance();
+        WalletBitcoinManager wallet = WalletBitcoinManager.getInstance(app);
 
         BRSharedPrefs.putPreferredFiatIso(app, "USD");
 
@@ -170,10 +170,10 @@ public class WalletTests {
 
         Set<CurrencyEntity> tmp = new HashSet<>();
         tmp.add(new CurrencyEntity("USD", "Dollar", usdRate));
-        CurrencyDataSource.getInstance(app).putCurrencies(tmp);
+        CurrencyDataSource.getInstance(app).putCurrencies(app, wallet, tmp);
 
 
-        BRSharedPrefs.putCryptoDenomination(app, BRConstants.CURRENT_UNIT_BITCOINS);
+        BRSharedPrefs.putCryptoDenomination(app, "BTC", BRConstants.CURRENT_UNIT_BITCOINS);
 
         //getCryptoForSmallestCrypto(..)
         BigDecimal val = new BigDecimal(20000);
@@ -201,7 +201,7 @@ public class WalletTests {
         Assert.assertEquals(res.doubleValue(), 0.5, 0); //dollars
 
 
-        BRSharedPrefs.putCryptoDenomination(app, BRConstants.CURRENT_UNIT_BITS);
+        BRSharedPrefs.putCryptoDenomination(app, "BTC", BRConstants.CURRENT_UNIT_BITS);
 
         //getCryptoForSmallestCrypto(..)
         val = new BigDecimal(20000);
