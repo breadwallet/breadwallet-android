@@ -46,7 +46,6 @@ public class CurrencyDataSource implements BRDataSourceInterface {
 
     List<OnDataChanged> onDataChangedListeners = new ArrayList<>();
 
-
     // Database fields
     private SQLiteDatabase database;
     private final BRSQLiteHelper dbHelper;

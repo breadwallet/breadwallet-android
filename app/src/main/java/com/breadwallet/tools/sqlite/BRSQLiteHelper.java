@@ -44,7 +44,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     }
 
     private static final String DATABASE_NAME = "breadwallet.db";
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 15;
 
     /**
      * MerkleBlock table
@@ -108,10 +108,12 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String CURRENCY_ISO = "iso";//iso for the currency of exchange (BTC, BCH, ETH)
 
     private static final String CURRENCY_DATABASE_CREATE = "create table if not exists " + CURRENCY_TABLE_NAME + "(" +
-            CURRENCY_CODE + " text primary key," +
+            CURRENCY_CODE + " text," +
             CURRENCY_NAME + " text," +
             CURRENCY_RATE + " integer," +
-            CURRENCY_ISO + " text);";
+            CURRENCY_ISO + " text, " +
+            "PRIMARY KEY (" + CURRENCY_CODE + ", " + CURRENCY_ISO + ")" +
+            ");";
 
 
     @Override
@@ -127,14 +129,10 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         Log.e(TAG, "Upgrading database from version " + oldVersion + " to "
                 + newVersion + ", which will destroy all old data");
-//        db.execSQL("DROP TABLE IF EXISTS " + MB_TABLE_NAME);
-//        db.execSQL("DROP TABLE IF EXISTS " + TX_TABLE_NAME);
-//        db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME);
-//        db.execSQL("DROP TABLE IF EXISTS " + CURRENCY_TABLE_NAME);
-//        db.execSQL(MB_DATABASE_CREATE);
-//        db.execSQL(TX_DATABASE_CREATE);
-//        db.execSQL(PEER_DATABASE_CREATE);
-//        db.execSQL(CURRENCY_DATABASE_CREATE);
+        db.execSQL("DROP TABLE IF EXISTS " + MB_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + TX_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + CURRENCY_TABLE_NAME);
 //        db.execSQL("PRAGMA journal_mode=WAL;");
         onCreate(db);
 
