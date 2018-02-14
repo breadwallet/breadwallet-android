@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:background="@color/extra_light_blue_background"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/back_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_chevron_left" />
+
+
+            <com.breadwallet.presenter.customviews.BRText
+                android:id="@+id/nav_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:text="Settings"
+                android:textSize="16sp"
+                app:customTFont="CircularPro-Bold.otf" />
+
+
+        </LinearLayout>
+
+
+    </android.support.v7.widget.Toolbar>
+
+
+    <com.breadwallet.presenter.customviews.BRText
+        app:customTFont="CircularPro-Bold.otf"
+        android:id="@+id/title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Bitcoin Settings"
+        android:layout_below="@id/toolbar"
+        android:layout_alignParentRight="true"
+        android:textColor="@color/total_assets_usd_color"
+        android:textSize="28sp"
+        android:layout_margin="@dimen/bread_margin"/>
+
+    <RelativeLayout
+        android:id="@+id/redeem_private_key_row"
+        android:background="@drawable/settings_row_shape"
+        android:layout_below="@id/title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/redeem_key"
+            android:text="Redeem Private Key"
+            android:textSize="16sp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:textColor="@color/total_assets_usd_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <ImageButton
+            android:id="@+id/chevron_right"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/chevron_right_light"
+            android:layout_marginRight="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rescan_row"
+        android:background="@drawable/settings_row_shape"
+        android:layout_below="@id/redeem_private_key_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/rescan"
+            android:text="Rescan Blockchain"
+            android:textSize="16sp"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="16dp"
+            android:textColor="@color/total_assets_usd_color"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+        <ImageButton
+            android:id="@+id/rescan_chevron_right"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:background="@drawable/ic_rescan"
+            android:layout_marginRight="8dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+
+
+    </RelativeLayout>
+
+
+
+</RelativeLayout>
