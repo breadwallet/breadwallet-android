@@ -1,5 +1,6 @@
 package com.breadwallet.tools.manager;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
@@ -318,11 +319,14 @@ public class BRSharedPrefs {
     }
 
     public static String getCurrentWalletIso(Context activity) {
+        Log.d(TAG, "getCurrentWalletIso() Activity -> " + activity.getClass().getSimpleName());
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getString("currentWalletIso", "");
+        Log.d(TAG, "Getting current wallet ISO -> " + prefs.getString("currentWalletIso", "BTC"));
+        return prefs.getString("currentWalletIso", "BTC");
     }
 
     public static void putCurrentWalletIso(Context activity, String iso) {
+        Log.d(TAG, "putCurrentWalletIso(), ISO -> " + iso);
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("currentWalletIso", iso);
