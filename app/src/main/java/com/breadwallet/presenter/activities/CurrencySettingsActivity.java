@@ -136,6 +136,7 @@ public class CurrencySettingsActivity extends BRActivity {
 
 
         } else if (mIso.equals(EXTRA_CURRENCY_BCH)) {
+
             mTitle.setText("BitcoinCash Settings");
         }
     }
