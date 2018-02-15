@@ -193,13 +193,11 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 //        mDefaultTextSecondary = mBalanceSecondary.getText().toString();
 
         TxManager.getInstance().init(this);
-
-
+        
         // Store the default wallet as BTC in SharedPreferences when the user is first taken to their wallet
         if (BRSharedPrefs.getCurrentWalletIso(this).isEmpty() || BRSharedPrefs.getCurrentWalletIso(this) == null) {
             BRSharedPrefs.putCurrentWalletIso(WalletActivity.this, "BTC");
         }
-
     }
 
     private void updateUi() {
