@@ -100,7 +100,15 @@ public class SettingsActivity extends BRActivity {
                     leaveArrow.setVisibility(View.VISIBLE);
                     chevronRight.setVisibility(View.INVISIBLE);
                 }
-              
+                else if(position == 9){
+                    boolean shareData = BRSharedPrefs.getShareData(SettingsActivity.this);
+                    if(shareData){
+                        addon.setText("ON");
+                    }else{
+                        addon.setText("OFF");
+
+                    }
+                }
 
                 v.setOnClickListener(item.listener);
 
