@@ -167,6 +167,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         //array in order to be able to modify the first element from an inner block (can't be final)
         final String[] errTitle = {null};
         final String[] errMessage = {null};
+
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -297,7 +298,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             if (fee != 0 && fee < wallet.getWallet().getMaxFeePerKb()) {
                 BRSharedPrefs.putFeePerKb(app, BTC, fee);
                 wallet.getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app, BTC) ? fee : economyFee);
-                BRSharedPrefs.putFeeTime(app, BRSharedPrefs.getCurrentWalletIso(app), System.currentTimeMillis()); //store the time of the last successful fee fetch
+                BRSharedPrefs.putFeeTime(app, getIso(app), System.currentTimeMillis()); //store the time of the last successful fee fetch
             } else {
                 FirebaseCrash.report(new NullPointerException("Fee is weird:" + fee));
             }
@@ -828,12 +829,12 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
         //check if amount isn't smaller than the min amount
         if (isSmallerThanMin(app, paymentRequest)) {
-            throw new AmountSmallerThanMinException(getWallet().getTransactionAmount(paymentRequest.tx), minOutputAmount);
+            throw new AmountSmallerThanMinException(Math.abs(getWallet().getTransactionAmount(paymentRequest.tx)), minOutputAmount);
         }
 
         //amount is larger than balance
         if (isLargerThanBalance(app, paymentRequest)) {
-            throw new InsufficientFundsException(getWallet().getTransactionAmount(paymentRequest.tx), balance);
+            throw new InsufficientFundsException(Math.abs(getWallet().getTransactionAmount(paymentRequest.tx)), balance);
         }
 
         //not enough for fee
@@ -844,11 +845,11 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             }
             // max you can spend is smaller than the min you can spend
             if (maxOutputAmount == 0 || maxOutputAmount < minOutputAmount) {
-                throw new InsufficientFundsException(getWallet().getTransactionAmount(paymentRequest.tx), balance);
+                throw new InsufficientFundsException(Math.abs(getWallet().getTransactionAmount(paymentRequest.tx)), balance);
             }
 
             long feeForTx = getWallet().getTransactionFee(tx);
-            throw new FeeNeedsAdjust(getWallet().getTransactionAmount(paymentRequest.tx), balance, feeForTx);
+            throw new FeeNeedsAdjust(Math.abs(getWallet().getTransactionAmount(paymentRequest.tx)), balance, feeForTx);
         }
         // payment successful
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -930,7 +931,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         }
 
         //amount can't be less than the min
-        if (getWallet().getTransactionAmount(request.tx) < minOutput) {
+        if (Math.abs(getWallet().getTransactionAmount(request.tx)) < minOutput) {
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.PaymentProtocol_Errors_smallTransaction),
                     BRConstants.symbolBits + new BigDecimal(minOutput).divide(new BigDecimal("100")));
 
@@ -955,7 +956,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         Log.e(TAG, "confirmPay: total limit: " + AuthManager.getInstance().getTotalLimit(ctx));
         Log.e(TAG, "confirmPay: limit: " + BRKeyStore.getSpendLimit(ctx));
 
-        if (getWallet().getTotalSent() + getWallet().getTransactionAmount(request.tx) > AuthManager.getInstance().getTotalLimit(ctx)) {
+        if (getWallet().getTotalSent() + Math.abs(getWallet().getTransactionAmount(request.tx)) > AuthManager.getInstance().getTotalLimit(ctx)) {
             forcePin = true;
         }
 
@@ -1011,10 +1012,10 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             }
             request.tx = getWallet().createTransaction(maxAmount, wallet.getWallet().getTransactionAddress(request.tx));
             feeForTx = getWallet().getTransactionFee(request.tx);
-            feeForTx += (getCachedBalance(ctx) - getWallet().getTransactionAmount(request.tx)) % 100;
+            feeForTx += (getCachedBalance(ctx) - Math.abs(getWallet().getTransactionAmount(request.tx))) % 100;
         }
-        long amount = getWallet().getTransactionAmount(request.tx);
-        final long total = getWallet().getTransactionAmount(request.tx) + feeForTx;
+        long amount = Math.abs(getWallet().getTransactionAmount(request.tx));
+        final long total = amount + feeForTx;
         String formattedAmountBTC = CurrencyUtils.getFormattedCurrencyString(ctx, getIso(ctx), wallet.getCryptoForSmallestCrypto(ctx, new BigDecimal(amount)));
         String formattedFeeBTC = CurrencyUtils.getFormattedCurrencyString(ctx, getIso(ctx), wallet.getCryptoForSmallestCrypto(ctx, new BigDecimal(feeForTx)));
         String formattedTotalBTC = CurrencyUtils.getFormattedCurrencyString(ctx, getIso(ctx), wallet.getCryptoForSmallestCrypto(ctx, new BigDecimal(total)));
@@ -1046,11 +1047,13 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     private boolean isSmallerThanMin(Context app, PaymentItem paymentRequest) {
         long minAmount = getWallet().getMinOutputAmount();
-        return getWallet().getTransactionAmount(paymentRequest.tx) < minAmount;
+        long amount = Math.abs(getWallet().getTransactionAmount(paymentRequest.tx));
+        Log.e(TAG, "isSmallerThanMin: " + amount);
+        return amount < minAmount;
     }
 
     private boolean isLargerThanBalance(Context app, PaymentItem paymentRequest) {
-        return getWallet().getTransactionAmount(paymentRequest.tx) > getCachedBalance(app) && getWallet().getTransactionAmount(paymentRequest.tx) > 0;
+        return Math.abs(getWallet().getTransactionAmount(paymentRequest.tx)) > getCachedBalance(app) && Math.abs(getWallet().getTransactionAmount(paymentRequest.tx)) > 0;
     }
 
     private boolean notEnoughForFee(Context app, PaymentItem paymentRequest) {

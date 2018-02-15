@@ -321,7 +321,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         CurrencyDataSource.getInstance(this).addOnDataChangedListener(new CurrencyDataSource.OnDataChanged() {
             @Override
             public void onChanged() {
-                Log.e(TAG, "onChanged: currency changed");
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
