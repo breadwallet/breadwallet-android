@@ -863,11 +863,13 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                                         ((Activity) app).getFragmentManager().popBackStack();
                                 }
                             });
+
             }
         });
 
     }
 
+<<<<<<< HEAD
     @Override
     public void balanceChanged(long balance) {
         super.balanceChanged(balance);
