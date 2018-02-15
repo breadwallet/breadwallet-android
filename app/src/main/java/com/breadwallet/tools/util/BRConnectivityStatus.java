@@ -23,7 +23,7 @@ public class BRConnectivityStatus {
 
 
     // Returns true if connected to wifi, false if connected to mobile data
-    public boolean isWifiOrMobileDataConntect() {
+    public boolean isWifiOrMobileDataConntected() {
         ConnectivityManager cm = (ConnectivityManager)
                 mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netinfo = cm.getActiveNetworkInfo();
