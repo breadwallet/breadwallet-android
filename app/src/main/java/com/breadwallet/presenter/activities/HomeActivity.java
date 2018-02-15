@@ -7,6 +7,7 @@ import android.provider.Settings;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 
@@ -76,6 +77,9 @@ public class HomeActivity extends Activity {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
                 BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, mAdapter.getItemAt(position).getIso(HomeActivity.this));
+                Log.d("HomeActivity", "Saving current wallet ISO as " + mAdapter.getItemAt(position).getIso(HomeActivity.this)
+                        );
+
                 Intent newIntent = new Intent(HomeActivity.this, WalletActivity.class);
                 startActivity(newIntent);
             }
@@ -119,7 +123,7 @@ public class HomeActivity extends Activity {
     protected void onResume() {
         super.onResume();
         app = this;
-        BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, "");
+        //BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, "");
         updateUi();
         CurrencyDataSource.getInstance(this).addOnDataChangedListener(new CurrencyDataSource.OnDataChanged() {
             @Override

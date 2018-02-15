@@ -20,8 +20,8 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.tools.util.Bip39Reader;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.bitcoincash.WalletBchManager;
@@ -83,14 +83,15 @@ public class WalletsMaster {
 
     //return the needed wallet for the iso
     public BaseWalletManager getWalletByIso(Context app, String iso) {
-        Log.d(TAG, "Getting wallet for ISO -> " + iso);
+        Log.d(TAG, "getWalletByIso() Getting wallet by ISO -> " + iso);
         if (Utils.isNullOrEmpty(iso)) return null;
-        if (iso.equalsIgnoreCase("BTC")) return WalletBitcoinManager.getInstance(app);
+        if (iso.equalsIgnoreCase("BTC"))
+            return WalletBitcoinManager.getInstance(app);
         if (iso.equalsIgnoreCase("BCH")) return WalletBchManager.getInstance(app);
         return null;
     }
 
-    public BaseWalletManager getCurrentWallet(Context app) {
+    public BaseWalletManager getCurrentWallet(Context app) {A
         return getWalletByIso(app, BRSharedPrefs.getCurrentWalletIso(app));
     }
 
