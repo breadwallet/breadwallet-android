@@ -352,6 +352,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         return true;
     }
 
+
     @Override
     public String getSymbol(Context app) {
 
@@ -443,6 +444,21 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
+    public void txStatusUpdate() {
+        super.txStatusUpdate();
+    }
+
+    @Override
+    public void saveBlocks(boolean replace, BRCoreMerkleBlock[] blocks) {
+        super.saveBlocks(replace, blocks);
+    }
+
+    @Override
+    public void savePeers(boolean replace, BRCorePeer[] peers) {
+        super.savePeers(replace, peers);
+    }
+
+    @Override
     public boolean trySweepWallet(final Context ctx, final String privKey) {
         if (ctx == null) return false;
         return false;
@@ -526,6 +542,14 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
+    public boolean networkIsReachable() {
+        return super.networkIsReachable();
+    }
+
+
+
+
+    @Override
     public BRCoreTransaction[] loadTransactions() {
         Context app = BreadApp.getBreadContext();
         List<BRTransactionEntity> txs = BtcBchTransactionDataStore.getInstance(app).getAllTransactions(app, this);
@@ -562,6 +586,11 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             arr[i] = new BRCorePeer(ent.getAddress(), ent.getPort(), ent.getTimeStamp());
         }
         return arr;
+    }
+
+    @Override
+    public void syncStopped() {
+
     }
 
     @Override
@@ -703,7 +732,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     /**
      * Wallet callbacks
      */
-    public static void publishCallback(final String message, final int error, byte[] txHash) {
+    @Override
+    public void publishCallback(final String message, final int error, byte[] txHash) {
         Log.e(TAG, "publishCallback: " + message + ", err:" + error + ", txHash: " + Arrays.toString(txHash));
         final Context app = BreadApp.getBreadContext();
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
@@ -723,8 +753,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     }
 
-
-    public static void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, String hash) {
+    @Override
+    public void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, String hash) {
         Log.d(TAG, "onTxAdded: " + String.format("tx.length: %d, blockHeight: %d, timestamp: %d, amount: %d, hash: %s", tx.length, blockHeight, timestamp, amount, hash));
 
         final Context ctx = BreadApp.getBreadContext();
@@ -798,6 +828,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             Log.e(TAG, "onTxUpdated: Failed, ctx is null");
         }
     }
+
 
     /**
      * Try transaction and throw appropriate exceptions if something was wrong
@@ -1085,6 +1116,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     public void addOnBalanceChangeListener(OnBalanceChangedListener list) {
         if (!balanceListeners.contains(list) && list != null) balanceListeners.add(list);
     }
+
 
     @Override
     public void txPublished(final String error) {

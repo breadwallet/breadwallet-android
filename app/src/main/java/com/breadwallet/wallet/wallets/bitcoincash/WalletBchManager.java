@@ -450,6 +450,21 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     @Override
+    public void syncStopped() {
+
+    }
+
+    @Override
+    public void publishCallback(String message, int error, byte[] txHash) {
+
+    }
+
+    @Override
+    public void onTxAdded(byte[] tx, int blockHeight, long timestamp, long amount, String hash) {
+
+    }
+
+    @Override
     public void setCashedBalance(Context app, long balance) {
         BRSharedPrefs.putCachedBalance(app, BCH, balance);
         refreshAddress(app);

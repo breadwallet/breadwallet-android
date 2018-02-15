@@ -118,6 +118,33 @@ public interface BaseWalletManager {
     //load the peers from DB
     BRCorePeer[] loadPeers();
 
+    void syncStarted();
+
+    void syncStopped();
+
+    void syncStopped(String error);
+
+    void publishCallback(final String message, final int error, byte[] txHash);
+
+    void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, String hash);
+
+    void onTxDeleted(String hash, int notifyUser, int recommendRescan);
+
+    void onTxUpdated(String hash, int blockHeight, int timeStamp);
+
+    void txPublished(final String error);
+
+    void balanceChanged(long balance);
+
+    void txStatusUpdate();
+
+    void saveBlocks(boolean replace, BRCoreMerkleBlock[] blocks);
+
+    void savePeers(boolean replace, BRCorePeer[] peers);
+
+    boolean networkIsReachable();
+
+
     /**
      * @param balance - the balance to be saved in the smallest unit.(e.g. cents, satoshis)
      */
