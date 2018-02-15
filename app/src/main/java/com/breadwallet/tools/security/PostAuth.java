@@ -195,9 +195,9 @@ public class PostAuth {
         if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
 
         final WalletsMaster walletManager = WalletsMaster.getInstance(app);
-        byte[] rawSeed;
+        byte[] rawPhrase;
         try {
-            rawSeed = BRKeyStore.getPhrase(app, BRConstants.PAY_REQUEST_CODE);
+            rawPhrase = BRKeyStore.getPhrase(app, BRConstants.PAY_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
             if (authAsked) {
                 Log.e(TAG, new Object() {
@@ -206,11 +206,11 @@ public class PostAuth {
             }
             return;
         }
-        if (rawSeed.length < 10) return;
+        if (rawPhrase.length < 10) return;
         try {
-            if (rawSeed.length != 0) {
+            if (rawPhrase.length != 0) {
                 if (paymentItem != null && paymentItem.tx != null) {
-                    byte[] txHash = walletManager.getCurrentWallet(app).signAndPublishTransaction(paymentItem.tx, rawSeed);
+                    byte[] txHash = walletManager.getCurrentWallet(app).signAndPublishTransaction(paymentItem.tx, rawPhrase);
                     Log.e(TAG, "onPublishTxAuth: txhash:" + Arrays.toString(txHash));
                     if (Utils.isNullOrEmpty(txHash)) {
                         Log.e(TAG, "onPublishTxAuth: publishSerializedTransaction returned FALSE");
@@ -230,7 +230,7 @@ public class PostAuth {
                 return;
             }
         } finally {
-            Arrays.fill(rawSeed, (byte) 0);
+            Arrays.fill(rawPhrase, (byte) 0);
         }
 
     }

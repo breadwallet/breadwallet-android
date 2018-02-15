@@ -6,6 +6,7 @@ import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreChainParams;
 import com.breadwallet.core.BRCoreMasterPubKey;
@@ -103,7 +104,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
             long time = BRKeyStore.getWalletCreationTime(app);
 
-            instance = new WalletBchManager(app, pubKey, /**BuildConfig.BITCOIN_TESTNET ? BRCoreChainParams.bcashChainParams :*/BRCoreChainParams.bcashChainParams, time);
+            instance = new WalletBchManager(app, pubKey, BuildConfig.BITCOIN_TESTNET ? BRCoreChainParams.testnetBcashChainParams : BRCoreChainParams.mainnetBcashChainParams, time);
         }
         return instance;
     }
