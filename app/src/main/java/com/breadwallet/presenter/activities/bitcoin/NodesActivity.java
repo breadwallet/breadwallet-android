@@ -36,7 +36,7 @@ public class NodesActivity extends BRActivity {
     private int mInterval = 3000;
     private Handler mHandler;
     private boolean updatingNode;
-//    private TextView nodeLabel;
+    private TextView nodeTitle;
 
     Runnable mStatusChecker = new Runnable() {
         @Override
@@ -72,8 +72,15 @@ public class NodesActivity extends BRActivity {
 
         nodeStatus = (TextView) findViewById(R.id.node_status);
         trustNode = (TextView) findViewById(R.id.node_text);
+        nodeTitle = (TextView)findViewById(R.id.title);
 
         switchButton = (Button) findViewById(R.id.button_switch);
+
+        String currentWalletIso = BRSharedPrefs.getCurrentWalletIso(this);
+
+        if(currentWalletIso.equals("BCH")){
+            nodeTitle.setText("BitcoinCash Nodes");
+        }
         switchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
