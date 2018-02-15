@@ -91,7 +91,7 @@ public class WalletsMaster {
         return null;
     }
 
-    public BaseWalletManager getCurrentWallet(Context app) {A
+    public BaseWalletManager getCurrentWallet(Context app) {
         return getWalletByIso(app, BRSharedPrefs.getCurrentWalletIso(app));
     }
 
