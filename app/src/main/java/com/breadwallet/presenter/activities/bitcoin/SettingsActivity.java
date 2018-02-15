@@ -42,12 +42,23 @@ public class SettingsActivity extends BRActivity {
         return app;
     }
 
+    private ImageButton mBackButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
 
-        listView = (ListView) findViewById(R.id.settings_list);
+        listView = findViewById(R.id.settings_list);
+
+        mBackButton = findViewById(R.id.back_button);
+
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onBackPressed();
+            }
+        });
 
     }
 
@@ -89,6 +100,7 @@ public class SettingsActivity extends BRActivity {
                     leaveArrow.setVisibility(View.VISIBLE);
                     chevronRight.setVisibility(View.INVISIBLE);
                 }
+              
 
                 v.setOnClickListener(item.listener);
 
@@ -130,7 +142,7 @@ public class SettingsActivity extends BRActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 
     private void populateItems() {

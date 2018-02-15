@@ -87,11 +87,13 @@ public class AdvancedActivity extends BRActivity {
 
             TextView title = v.findViewById(R.id.item_title);
 
-            if (BRSharedPrefs.getCurrentWalletIso(AdvancedActivity.this).equals("BTC")) {
-                title.setText("Bitcoin Nodes");
-            } else if (BRSharedPrefs.getCurrentWalletIso(AdvancedActivity.this).equals("BCH")) {
-                title.setText("BitcoinCash Nodes");
+            if(position == 1) {
+                if (BRSharedPrefs.getCurrentWalletIso(AdvancedActivity.this).equals("BTC")) {
+                    title.setText("Bitcoin Nodes");
+                } else if (BRSharedPrefs.getCurrentWalletIso(AdvancedActivity.this).equals("BCH")) {
+                    title.setText("BitcoinCash Nodes");
 
+                }
             }
             return v;
 
