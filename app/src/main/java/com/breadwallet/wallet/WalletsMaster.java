@@ -83,6 +83,7 @@ public class WalletsMaster {
 
     //return the needed wallet for the iso
     public BaseWalletManager getWalletByIso(Context app, String iso) {
+        Log.d(TAG, "Getting wallet for ISO -> " + iso);
         if (Utils.isNullOrEmpty(iso)) return null;
         if (iso.equalsIgnoreCase("BTC")) return WalletBitcoinManager.getInstance(app);
         if (iso.equalsIgnoreCase("BCH")) return WalletBchManager.getInstance(app);
