@@ -9,7 +9,6 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.ImportActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -92,7 +91,6 @@ public class CurrencySettingsActivity extends Activity {
                 onBackPressed();
             }
         });
-
 
         String currency = getIntent().getStringExtra(EXTRA_CURRENCY);
 
