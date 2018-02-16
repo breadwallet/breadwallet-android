@@ -109,7 +109,7 @@ public class APIClient {
 
 
     private static final String BUNDLES = "bundles";
-    public static String BREAD_POINT = "bread-frontend-staging"; //todo make this production
+    public static String BREAD_POINT = "bread-frontend";
 
     private static final String BUNDLES_FOLDER = String.format("/%s", BUNDLES);
 
