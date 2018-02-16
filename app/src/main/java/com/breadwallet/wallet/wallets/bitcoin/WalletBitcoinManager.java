@@ -337,10 +337,10 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         List<TxUiHolder> uiTxs = new ArrayList<>();
         for (BRCoreTransaction tx : txs) {
             uiTxs.add(new TxUiHolder(tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
-                    "", getWallet().getTransactionAmountSent(tx),
-                    getWallet().getTransactionAmountReceived(tx), getWallet().getTransactionFee(tx), null, null,
+                    tx.getReverseHash(), getWallet().getTransactionAmountSent(tx),
+                    getWallet().getTransactionAmountReceived(tx), getWallet().getTransactionFee(tx), tx.getOutputAddresses(), tx.getInputAddresses(),
                     getWallet().getBalanceAfterTransaction(tx), (int) tx.getSize(),
-                    getWallet().getTransactionAmount(tx), getWallet().transactionIsValid(tx))); //todo finish implementation
+                    getWallet().getTransactionAmount(tx), getWallet().transactionIsValid(tx)));
         }
         return uiTxs;
     }
@@ -1123,11 +1123,11 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         final Context ctx = BreadApp.getBreadContext();
         final WalletsMaster master = WalletsMaster.getInstance(ctx);
         final BaseWalletManager wallet = master.getCurrentWallet(ctx);
-        if (getWallet().getTransactionAmount(transaction) > 0) {
+        final long amount = getWallet().getTransactionAmount(transaction);
+        if (amount > 0) {
             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-
                     String am = CurrencyUtils.getFormattedCurrencyString(ctx, wallet.getIso(ctx), wallet.getCryptoForSmallestCrypto(ctx, new BigDecimal(amount)));
                     String amCur = CurrencyUtils.getFormattedCurrencyString(ctx, BRSharedPrefs.getPreferredFiatIso(ctx), master.getCurrentWallet(ctx).getFiatForSmallestCrypto(ctx, new BigDecimal(amount)));
                     String formatted = String.format("%s (%s)", am, amCur);
@@ -1160,7 +1160,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             });
         }
         if (ctx != null)
-            TransactionStorageManager.putTransaction(ctx, getInstance(ctx), new BRTransactionEntity(transaction.serialize(), transaction.getBlockHeight(), transaction.getTimestamp(), transaction.getHash(), getInstance(ctx).getIso(ctx)));
+            TransactionStorageManager.putTransaction(ctx, getInstance(ctx), new BRTransactionEntity(transaction.serialize(), transaction.getBlockHeight(), transaction.getTimestamp(), transaction.getReverseHash(), getIso(ctx)));
         else
             Log.e(TAG, "onTxAdded: ctx is null!");
     }
