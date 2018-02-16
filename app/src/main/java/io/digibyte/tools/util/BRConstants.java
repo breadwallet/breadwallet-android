@@ -76,12 +76,12 @@ public class BRConstants {
     public static final int ONE_BITCOIN = 100000000;
     public static final int HUNDRED_BITS = 10000000;
 
-    /**
-     * BRWalletManager
-     */
-    public static final long TX_FEE_PER_KB = 5000;
-    public static final long DEFAULT_FEE_PER_KB = (TX_FEE_PER_KB * 1000 + 190) / 191;
-    public static final long MAX_FEE_PER_KB = (100100 * 1000 + 190) / 191;
+//    /**
+//     * BRWalletManager
+//     */
+//    public static final long TX_FEE_PER_KB = 5000;
+//    public static final long DEFAULT_FEE_PER_KB = (TX_FEE_PER_KB * 1000 + 190) / 191;
+//    public static final long MAX_FEE_PER_KB = (100100 * 1000 + 190) / 191;
 
     /**
      * BRSharedPrefs
@@ -131,7 +131,7 @@ public class BRConstants {
     public static final String transactionDetails = "transaction-details";
 //    public static final String manageWallet = "manage-wallet";
     public static final String receive = "receive-bitcoin";
-//    public static final String requestAmount = "request-amount";
+    public static final String requestAmount = "request-amount";
     public static final String send = "send-bitcoin";
     public static final String walletDisabled = "wallet-disabled";
     public static final String resetPinWithPaperKey = "reset-pin-paper-key";
@@ -141,6 +141,7 @@ public class BRConstants {
 //    public static final String confirmPhrase = "confirm-phrase";
     public static final String startView = "start-view";
     public static final String wipeWallet = "wipe-wallet";
+    public static final String loopBug = "android-loop-bug";
 
     private BRConstants() {
     }

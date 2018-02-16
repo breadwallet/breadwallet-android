@@ -42,6 +42,7 @@ add_library( # Specifies the name of the library.
              src/main/jni/digibytewallet-core/BRBIP39WordsEn.h
              src/main/jni/digibytewallet-core/BRBloomFilter.c
              src/main/jni/digibytewallet-core/BRBloomFilter.h
+             src/main/jni/digibytewallet-core/BRChainParams.h
              src/main/jni/digibytewallet-core/BRCrypto.c
              src/main/jni/digibytewallet-core/BRCrypto.h
              src/main/jni/digibytewallet-core/BRInt.h

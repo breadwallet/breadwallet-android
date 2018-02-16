@@ -1,7 +1,6 @@
 package io.digibyte.tools.util;
 
 import io.digibyte.tools.manager.BRReportsManager;
-import com.google.firebase.crash.FirebaseCrash;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorOutputStream;

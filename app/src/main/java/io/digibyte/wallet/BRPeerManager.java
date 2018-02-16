@@ -110,7 +110,6 @@ public class BRPeerManager {
         SyncManager.getInstance().stopSyncingProgressThread();
         Context ctx = DigiByte.getBreadContext();
         if (ctx == null) return;
-        Log.e(TAG, "Network Not Available, showing not connected bar  ");
 
         SyncManager.getInstance().stopSyncingProgressThread();
         if (onSyncFinished != null) onSyncFinished.onFinished();
@@ -270,15 +269,16 @@ public class BRPeerManager {
 
     public native static int getCurrentBlockHeight();
 
-    public native static int getRelayCount(byte[] hash);
+    public  native static int getRelayCount(byte[] hash);
 
-    public native boolean setFixedPeer(String node, int port);
+    public  native boolean setFixedPeer(String node, int port);
 
     public native static int getEstimatedBlockHeight();
 
     public native boolean isCreated();
 
-    public native boolean isConnected();
+    //0 = disconnected, 1 = connecting, 2 = connected, -1 = _peerManager is null, -2 = something went wrong.
+    public native int connectionStatus();
 
     public native void peerManagerFreeEverything();
 

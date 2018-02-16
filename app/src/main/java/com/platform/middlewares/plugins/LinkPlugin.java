@@ -11,21 +11,13 @@ import io.digibyte.R;
 import io.digibyte.presenter.activities.settings.WebViewActivity;
 import io.digibyte.tools.manager.BRReportsManager;
 import io.digibyte.tools.util.Utils;
-import com.google.firebase.crash.FirebaseCrash;
+
 import com.platform.BRHTTPHelper;
-import com.platform.HTTPServer;
 import com.platform.interfaces.Plugin;
 
 import org.eclipse.jetty.server.Request;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

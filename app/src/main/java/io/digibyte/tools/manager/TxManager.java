@@ -171,7 +171,7 @@ public class TxManager {
         crashIfNotMain();
         PromptManager.PromptItem toShow = PromptManager.getInstance().nextPrompt(app);
         if (toShow != null) {
-            Log.d(TAG, "showNextPrompt: " + toShow);
+//            Log.d(TAG, "showNextPrompt: " + toShow);
             currentPrompt = toShow;
             promptInfo = PromptManager.getInstance().promptInfo(app, currentPrompt);
             updateCard(app);
@@ -189,7 +189,7 @@ public class TxManager {
         long took = (System.currentTimeMillis() - start);
         if (took > 500)
             Log.e(TAG, "updateTxList: took: " + took);
-        if (adapter != null && items != null) {
+        if (adapter != null ) {
             ((Activity) app).runOnUiThread(new Runnable() {
                 @Override
                 public void run() {

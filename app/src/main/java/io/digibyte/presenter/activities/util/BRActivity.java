@@ -6,13 +6,22 @@ import android.os.Handler;
 import android.util.Log;
 
 import io.digibyte.DigiByte;
+import io.digibyte.presenter.activities.DisabledActivity;
+import io.digibyte.presenter.activities.intro.IntroActivity;
+import io.digibyte.presenter.activities.intro.RecoverActivity;
+import io.digibyte.presenter.activities.intro.WriteDownActivity;
 import io.digibyte.tools.animation.BRAnimator;
+import io.digibyte.tools.manager.BRApiManager;
+import io.digibyte.tools.manager.InternetManager;
+import io.digibyte.tools.security.AuthManager;
 import io.digibyte.tools.security.BRKeyStore;
 import io.digibyte.tools.security.BitcoinUrlHandler;
 import io.digibyte.tools.security.PostAuth;
 import io.digibyte.tools.threads.BRExecutor;
 import io.digibyte.tools.util.BRConstants;
 import io.digibyte.wallet.BRWalletManager;
+
+import com.platform.HTTPServer;
 import com.platform.tools.BRBitId;
 
 /**
@@ -61,16 +70,8 @@ public class BRActivity extends Activity {
 
     @Override
     protected void onResume() {
+        init(this);
         super.onResume();
-        DigiByte.activityCounter.incrementAndGet();
-        DigiByte.setBreadContext(this);
-        //lock wallet if 3 minutes passed
-        if (DigiByte.backgroundedTime != 0 && (System.currentTimeMillis() - DigiByte.backgroundedTime >= 180 * 1000)) {
-            if (!BRKeyStore.getPinCode(this).isEmpty()) {
-                DigiByte.backgroundedTime = System.currentTimeMillis();
-                BRAnimator.startBreadActivity(this, true);
-            }
-        }
     }
 
     @Override
@@ -168,5 +169,33 @@ public class BRActivity extends Activity {
                 }
                 break;
         }
+    }
+
+    public static void init(Activity app) {
+        //set status bar color
+//        ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
+        InternetManager.getInstance();
+        if (!(app instanceof IntroActivity || app instanceof RecoverActivity || app instanceof WriteDownActivity))
+            BRApiManager.getInstance().startTimer(app);
+        //show wallet locked if it is
+        if (!ActivityUTILS.isAppSafe(app))
+            if (AuthManager.getInstance().isWalletDisabled(app))
+                AuthManager.getInstance().setWalletDisabled(app);
+
+        DigiByte.activityCounter.incrementAndGet();
+        DigiByte.setBreadContext(app);
+        //lock wallet if 3 minutes passed
+        if (DigiByte.backgroundedTime != 0 && (System.currentTimeMillis() - DigiByte.backgroundedTime >= 180 * 1000) && !(app instanceof DisabledActivity)) {
+            if (!BRKeyStore.getPinCode(app).isEmpty()) {
+                BRAnimator.startBreadActivity(app, true);
+            }
+        }
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                HTTPServer.startServer();
+            }
+        });
+        DigiByte.backgroundedTime = System.currentTimeMillis();
     }
 }

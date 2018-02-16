@@ -6,21 +6,17 @@ import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Typeface;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.hardware.fingerprint.FingerprintManagerCompat;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
 import android.widget.Toast;
 
-import io.digibyte.presenter.activities.BreadActivity;
 import io.digibyte.presenter.activities.intro.IntroActivity;
 
 import java.math.BigDecimal;
@@ -64,6 +60,9 @@ public class Utils {
         if (context == null) return false;
         InputMethodManager imm = (InputMethodManager) context.getSystemService(
                 Context.INPUT_METHOD_SERVICE);
+        if (imm == null) {
+            return false;
+        }
         List<InputMethodInfo> mInputMethodProperties = imm.getEnabledInputMethodList();
         final int N = mInputMethodProperties.size();
         for (int i = 0; i < N; i++) {
@@ -124,8 +123,7 @@ public class Utils {
 //        SimpleDateFormat formatter = new SimpleDateFormat(pattern, Locale.getDefault());
 //        Calendar calendar = Calendar.getInstance();
 //        calendar.setTimeInMillis(time);
-        return android.text.format.DateFormat.format(
-                pattern, time).toString();
+        return android.text.format.DateFormat.format(pattern, time).toString();
     }
 
     public static boolean isNullOrEmpty(String str) {
@@ -190,6 +188,7 @@ public class Utils {
 
     public static boolean isFingerprintAvailable(Context app) {
         FingerprintManager fingerprintManager = (FingerprintManager) app.getSystemService(FINGERPRINT_SERVICE);
+        if (fingerprintManager == null) return false;
         // Device doesn't support fingerprint authentication
         if (ActivityCompat.checkSelfPermission(app, Manifest.permission.USE_FINGERPRINT) != PackageManager.PERMISSION_GRANTED) {
             Toast.makeText(app, "Fingerprint authentication permission not enabled", Toast.LENGTH_LONG).show();
@@ -203,7 +202,8 @@ public class Utils {
             View view = ((Activity) app).getCurrentFocus();
             if (view != null) {
                 InputMethodManager imm = (InputMethodManager) app.getSystemService(Context.INPUT_METHOD_SERVICE);
-                imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                if (imm != null)
+                    imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         }
 

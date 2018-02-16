@@ -2,7 +2,6 @@ package io.digibyte.tools.manager;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.AsyncTask;
 import android.os.Handler;
 import android.util.Log;
 
@@ -10,9 +9,10 @@ import io.digibyte.DigiByte;
 import io.digibyte.presenter.entities.CurrencyEntity;
 import io.digibyte.tools.sqlite.CurrencyDataSource;
 import io.digibyte.tools.threads.BRExecutor;
-import io.digibyte.tools.util.BRConstants;
 import io.digibyte.tools.util.Utils;
 import io.digibyte.wallet.BRWalletManager;
+
+import com.google.firebase.crash.FirebaseCrash;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
@@ -136,9 +136,7 @@ public class BRApiManager {
                                     BRApiManager.getInstance().stopTimerTask();
                                 }
                                 Set<CurrencyEntity> tmp = getCurrencies((Activity) context);
-                                if (tmp.size() > 0) {
-                                    CurrencyDataSource.getInstance(context).putCurrencies(tmp);
-                                }
+                                CurrencyDataSource.getInstance(context).putCurrencies(tmp);
                             }
                         });
                     }
@@ -169,7 +167,7 @@ public class BRApiManager {
 
 
     public static JSONArray fetchRates(Activity activity) {
-        String jsonString = urlGET(activity, "https://digibyte.io/rates.php");
+        String jsonString = urlGET(activity, "https://" + DigiByte.HOST + "/rates");
         JSONArray jsonArray = null;
         if (jsonString == null) return null;
         try {
@@ -195,8 +193,9 @@ public class BRApiManager {
         return jsonArray;
     }
 
-    public static void updateFeePerKb(Activity activity) {
-        String jsonString = urlGET(activity, String.format("https://%s/fee-per-kb", DigiByte.HOST));
+
+    public static void updateFeePerKb(Context app) {
+        String jsonString = urlGET(app, "https://" + DigiByte.HOST + "/fee-per-kb");
         if (jsonString == null || jsonString.isEmpty()) {
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
             return;
@@ -207,16 +206,22 @@ public class BRApiManager {
             JSONObject obj = new JSONObject(jsonString);
             fee = obj.getLong("fee_per_kb");
             economyFee = obj.getLong("fee_per_kb_economy");
-            if (fee != 0 && fee < BRConstants.MAX_FEE_PER_KB) {
-                BRSharedPrefs.putFeePerKb(activity, fee);
-                BRWalletManager.getInstance().setFeePerKb(fee, isEconomyFee);
+            if (fee != 0 && fee < BRWalletManager.getInstance().maxFee()) {
+                BRSharedPrefs.putFeePerKb(app, fee);
+                BRWalletManager.getInstance().setFeePerKb(fee, isEconomyFee); //todo improve that logic
+                BRSharedPrefs.putFeeTime(app, System.currentTimeMillis()); //store the time of the last successful fee fetch
+            } else {
+                FirebaseCrash.report(new NullPointerException("Fee is weird:" + fee));
             }
-            if (economyFee != 0 && economyFee < BRConstants.MAX_FEE_PER_KB) {
-                BRSharedPrefs.putEconomyFeePerKb(activity, economyFee);
+            if (economyFee != 0 && economyFee < BRWalletManager.getInstance().maxFee()) {
+                BRSharedPrefs.putEconomyFeePerKb(app, economyFee);
+            } else {
+                FirebaseCrash.report(new NullPointerException("Economy fee is weird:" + economyFee));
             }
         } catch (JSONException e) {
+            Log.e(TAG, "updateFeePerKb: FAILED: " + jsonString, e);
             BRReportsManager.reportBug(e);
-            e.printStackTrace();
+            BRReportsManager.reportBug(new IllegalArgumentException("JSON ERR: " + jsonString));
         }
     }
 
@@ -238,6 +243,10 @@ public class BRApiManager {
             }
             response = resp.body().string();
             String strDate = resp.header("date");
+            if (strDate == null) {
+                Log.e(TAG, "urlGET: strDate is null!");
+                return response;
+            }
             SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
             Date date = formatter.parse(strDate);
             long timeStamp = date.getTime();
@@ -250,5 +259,6 @@ public class BRApiManager {
         }
         return response;
     }
+
 
 }

@@ -94,7 +94,6 @@ public class UpdatePinActivity extends BRActivity {
         updateDots();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
     }
 
     @Override

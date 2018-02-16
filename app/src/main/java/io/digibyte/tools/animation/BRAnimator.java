@@ -78,6 +78,7 @@ public class BRAnimator {
     public static int SLIDE_ANIMATION_DURATION = 300;
     public static float t1Size;
     public static float t2Size;
+    public static boolean supportIsShowing;
 
     public static void showBreadSignal(Activity activity, String title, String iconDescription, int drawableId, BROnSignalCompletion completion) {
         fragmentSignal = new FragmentSignal();
@@ -160,6 +161,8 @@ public class BRAnimator {
     }
 
     public static void showSupportFragment(Activity app, String articleId) {
+        if (supportIsShowing) return;
+        supportIsShowing = true;
         if (app == null) {
             Log.e(TAG, "showSupportFragment: app is null");
             return;
@@ -180,9 +183,28 @@ public class BRAnimator {
                     .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                     .add(android.R.id.content, fragmentSupport, FragmentSend.class.getName())
                     .addToBackStack(FragmentSend.class.getName()).commit();
+
         } finally {
 
         }
+
+    }
+
+    public static void popBackStackTillEntry(Activity app, int entryIndex) {
+
+        if (app.getFragmentManager() == null) {
+            return;
+        }
+        if (app.getFragmentManager().getBackStackEntryCount() <= entryIndex) {
+            return;
+        }
+        FragmentManager.BackStackEntry entry = app.getFragmentManager().getBackStackEntryAt(
+                entryIndex);
+        if (entry != null) {
+            app.getFragmentManager().popBackStackImmediate(entry.getId(),
+                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        }
+
 
     }
 
@@ -366,6 +388,8 @@ public class BRAnimator {
     }
 
     public static void startBreadActivity(Activity from, boolean auth) {
+        if (from == null) return;
+        Log.e(TAG, "startBreadActivity: " + from.getClass().getName());
         Class toStart = auth ? LoginActivity.class : BreadActivity.class;
         Intent intent = new Intent(from, toStart);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

@@ -166,6 +166,8 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                     BRSharedPrefs.putGreetingsShown(BreadActivity.this, true);
                 }
             }, 1000);
+
+
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
 
         updateUI();
@@ -308,7 +310,6 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         super.onResume();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
         if (PLATFORM_ON)
             APIClient.getInstance(this).updatePlatform();
 
@@ -322,6 +323,12 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
                 }
             });
         }
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                updateUI();
+            }
+        }, 1000);
 
         BRWalletManager.getInstance().refreshBalance(this);
 
@@ -361,7 +368,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
 
         //sync the kv stores
         if (PLATFORM_ON) {
-            BRExecutor.getInstance().forSerializedTasks().execute(new Runnable() {
+            BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     APIClient.getInstance(BreadActivity.this).syncKvStore();
