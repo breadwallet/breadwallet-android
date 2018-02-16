@@ -15,6 +15,10 @@ public class BRConnectivityStatus {
 
 
     private Context mContext;
+    public static final int NO_NETWORK = 0;
+    public static final int WIFI_ON = 1;
+    public static final int MOBILE_ON = 2;
+    public static final int MOBILE_WIFI_ON = 3;
 
 
     public BRConnectivityStatus(Context context) {
@@ -23,7 +27,7 @@ public class BRConnectivityStatus {
 
 
     // Returns true if connected to wifi, false if connected to mobile data
-    public boolean isWifiOrMobileDataConntected() {
+    public int isMobileDataOrWifiConnected() {
         ConnectivityManager cm = (ConnectivityManager)
                 mContext.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo netinfo = cm.getActiveNetworkInfo();
@@ -34,16 +38,26 @@ public class BRConnectivityStatus {
             android.net.NetworkInfo mobile =
                     cm.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
 
-            if ((mobile != null && mobile.isConnectedOrConnecting()) || (wifi != null &&
-                    wifi.isConnectedOrConnecting())) {
-                return true;
-            } else {
-                return false;
+            // Mobile Data is on only
+            if ((mobile != null && mobile.isConnectedOrConnecting()) && (wifi == null ||
+                    !wifi.isConnectedOrConnecting())) {
+                return MOBILE_ON;
+
+                // Wifi is on only
+            } else if (wifi != null && wifi.isConnectedOrConnecting() && (mobile == null || !mobile.isConnectedOrConnecting())) {
+                return WIFI_ON;
+
+                // Both mobile and wifi is on
+            } else if (mobile != null && wifi != null && mobile.isConnectedOrConnecting() && wifi.isConnectedOrConnecting()) {
+
+                return MOBILE_WIFI_ON;
             }
-        } else {
-            return false;
         }
+
+        return NO_NETWORK;
     }
+
+
 
 
 }
