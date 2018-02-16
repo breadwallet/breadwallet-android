@@ -60,7 +60,6 @@ public class TxManager {
     public PromptManager.PromptItem currentPrompt;
     public PromptManager.PromptInfo promptInfo;
 
-
     public static TxManager getInstance() {
         if (instance == null) instance = new TxManager();
         return instance;
@@ -77,7 +76,7 @@ public class TxManager {
                     BRAnimator.showTransactionPager(app, adapter.getItems(), currentPrompt == null ? position : position - 1);
                 else {
                     //clicked on the  x (close)
-                    if (x > view.getWidth() - 100 && y < 100) {
+                    if (x > view.getWidth() - 150 && y < 150) {
                         view.animate().setDuration(150).translationX(BRActivity.screenParametersPoint.x).setListener(new AnimatorListenerAdapter() {
                             @Override
                             public void onAnimationEnd(Animator animation) {
@@ -143,7 +142,7 @@ public class TxManager {
         currentPrompt = null;
         if (txList != null && txList.getAdapter() != null)
             txList.getAdapter().notifyItemRemoved(0);
-        showNextPrompt(app);
+//        showNextPrompt(app);
         updateCard(app);
         if (item != null)
             BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".dismissed");
