@@ -69,6 +69,7 @@
         android:layout_height="wrap_content" />
 
 
+
     <ProgressBar
         android:id="@+id/sync_progress"
         style="?android:attr/progressBarStyleHorizontal"
@@ -84,6 +85,7 @@
         android:progressTint="#ffffff"
         android:layout_width="30dp"
         android:layout_height="3dp" />
+
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/wallet_balance_currency"
