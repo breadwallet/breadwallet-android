@@ -33,6 +33,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
+import com.breadwallet.wallet.wallets.bitcoin.BitcoinUriParser;
 
 import static com.breadwallet.tools.animation.BRAnimator.animateBackgroundDim;
 import static com.breadwallet.tools.animation.BRAnimator.animateSignalSlide;
@@ -151,7 +152,7 @@ public class FragmentReceive extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
+                String bitcoinUri = BitcoinUriParser.createBitcoinUrl(receiveAddress, 0, null, null, null);
                 QRUtils.share("mailto:", getActivity(), bitcoinUri);
 
             }
@@ -160,7 +161,7 @@ public class FragmentReceive extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                String bitcoinUri = Utils.createBitcoinUrl(receiveAddress, 0, null, null, null);
+                String bitcoinUri = BitcoinUriParser.createBitcoinUrl(receiveAddress, 0, null, null, null);
                 QRUtils.share("sms:", getActivity(), bitcoinUri);
             }
         });

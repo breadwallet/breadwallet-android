@@ -61,6 +61,8 @@ public interface BaseWalletManager {
 
     void addBalanceChangedListener(OnBalanceChangedListener list);
 
+    void addTxStatusUpdatedListener(OnTxStatusUpdatedListener list);
+
     //try sending a transaction
     boolean sendTransaction(Context app, PaymentItem item);
 

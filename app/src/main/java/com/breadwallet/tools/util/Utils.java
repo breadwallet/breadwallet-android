@@ -162,25 +162,6 @@ public class Utils {
         return data;
     }
 
-    public static String createBitcoinUrl(String address, long satoshiAmount, String label, String message, String rURL) {
-
-        Uri.Builder builder = new Uri.Builder();
-        builder = builder.scheme("bitcoin");
-        if (address != null && !address.isEmpty())
-            builder = builder.appendPath(address);
-        if (satoshiAmount != 0)
-            builder = builder.appendQueryParameter("amount", new BigDecimal(satoshiAmount).divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString());
-        if (label != null && !label.isEmpty())
-            builder = builder.appendQueryParameter("label", label);
-        if (message != null && !message.isEmpty())
-            builder = builder.appendQueryParameter("message", message);
-        if (rURL != null && !rURL.isEmpty())
-            builder = builder.appendQueryParameter("r", rURL);
-
-        return builder.build().toString().replaceFirst("/", "");
-
-    }
-
     public static boolean isFingerprintEnrolled(Context app) {
         FingerprintManager fingerprintManager = (FingerprintManager) app.getSystemService(FINGERPRINT_SERVICE);
         // Device doesn't support fingerprint authentication

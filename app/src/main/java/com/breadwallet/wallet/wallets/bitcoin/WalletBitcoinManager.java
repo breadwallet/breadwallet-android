@@ -32,6 +32,7 @@ import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
+import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.PeerEntity;
@@ -46,6 +47,7 @@ import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRNotificationManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
@@ -62,6 +64,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
+import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.exceptions.AmountSmallerThanMinException;
 import com.breadwallet.wallet.wallets.exceptions.FeeNeedsAdjust;
@@ -81,6 +84,7 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
+import static com.breadwallet.tools.util.BRConstants.paperKey;
 
 /**
  * BreadWallet
@@ -124,6 +128,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     private boolean sending;
     private WalletUiConfiguration uiConfig;
     private List<OnBalanceChangedListener> balanceListeners = new ArrayList<>();
+    private List<OnTxStatusUpdatedListener> txStatusUpdatedListeners = new ArrayList<>();
 
     public static WalletBitcoinManager getInstance(Context app) {
         if (instance == null) {
@@ -168,6 +173,12 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     public void addBalanceChangedListener(OnBalanceChangedListener listener) {
         if (listener != null && !balanceListeners.contains(listener))
             balanceListeners.add(listener);
+    }
+
+    @Override
+    public void addTxStatusUpdatedListener(OnTxStatusUpdatedListener list) {
+        if (list != null && !txStatusUpdatedListeners.contains(list))
+            txStatusUpdatedListeners.add(list);
     }
 
     /**
@@ -286,6 +297,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         return true;
     }
 
+
     @Override
     public BRCoreTransaction[] getTransactions() {
         return getWallet().getTransactions();
@@ -333,7 +345,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     @Override
     public boolean generateWallet(Context app) {
         //no need, one key for all wallets so far
-        return false;
+        return true;
     }
 
     @Override
@@ -457,16 +469,47 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     @Override
     public void txStatusUpdate() {
         super.txStatusUpdate();
+        for (OnTxStatusUpdatedListener listener : txStatusUpdatedListeners)
+            if (listener != null) listener.onTxStatusUpdated();
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                long blockHeight = getPeerManager().getLastBlockHeight();
+
+                final Context ctx = BreadApp.getBreadContext();
+                if (ctx == null) return;
+                BRSharedPrefs.putLastBlockHeight(ctx, getIso(ctx), (int) blockHeight);
+            }
+        });
+
     }
 
     @Override
     public void saveBlocks(boolean replace, BRCoreMerkleBlock[] blocks) {
         super.saveBlocks(replace, blocks);
+        Context app = BreadApp.getBreadContext();
+//        if (replace) MerkleBlockDataSource.getInstance(app).deleteAllBlocks(app, this);
+//        BlockEntity[] entities = new BlockEntity[blocks.length];
+//        for (int i = 0; i < entities.length; i++) {
+//            entities[i] = new BlockEntity(blocks[i].serialize(), blocks[i].getHeight());
+//        }
+//
+//        MerkleBlockDataSource.getInstance(app).putMerkleBlocks(app, this, entities);
+        //todo fix when methods implemented
     }
 
     @Override
     public void savePeers(boolean replace, BRCorePeer[] peers) {
         super.savePeers(replace, peers);
+        Context app = BreadApp.getBreadContext();
+//        if (replace) PeerDataSource.getInstance(app).deleteAllPeers(app, this);
+//        PeerEntity[] entities = new PeerEntity[peers.length];
+//        for (int i = 0; i < entities.length; i++) {
+//            entities[i] = new PeerEntity(peers[i].getAddress(), Utils.peers[i].getPort(), peers[i].getTimestamp());
+//        }
+//        PeerDataSource.getInstance(app).putPeers(app, this, entities);
+        //todo fix when methods implemented
+
     }
 
     @Override
@@ -554,7 +597,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     @Override
     public boolean networkIsReachable() {
-        return super.networkIsReachable();
+        Context app = BreadApp.getBreadContext();
+        return InternetManager.getInstance().isConnected(app);
     }
 
 
@@ -599,7 +643,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     @Override
     public void syncStopped() {
-
+        Log.e(TAG, "syncStopped: ");
+        //todo implement
     }
 
     @Override
