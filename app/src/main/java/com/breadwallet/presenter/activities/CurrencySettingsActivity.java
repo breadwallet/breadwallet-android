@@ -9,6 +9,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -22,7 +23,7 @@ import com.breadwallet.wallet.WalletsMaster;
  * Created by byfieldj on 2/5/18.
  */
 
-public class CurrencySettingsActivity extends Activity {
+public class CurrencySettingsActivity extends BRActivity {
 
     public static final String EXTRA_CURRENCY_BTC = "btc";
     public static final String EXTRA_CURRENCY_BCH = "bch";
