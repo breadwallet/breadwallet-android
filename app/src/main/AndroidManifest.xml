@@ -94,12 +94,12 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".presenter.activities.bitcoin.WipeActivity"
+            android:name=".presenter.activities.settings.WipeActivity"
             android:launchMode="singleTask"
 
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".presenter.activities.bitcoin.ImportActivity"
+            android:name=".presenter.activities.settings.ImportActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
@@ -117,36 +117,36 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".presenter.activities.bitcoin.SettingsActivity"
+            android:name=".presenter.activities.settings.SettingsActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
         </activity>
         <activity
-            android:name=".presenter.activities.bitcoin.NotificationActivity"
+            android:name=".presenter.activities.settings.NotificationActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".presenter.activities.bitcoin.SyncBlockchainActivity"
-            android:launchMode="singleTask"
-
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name=".presenter.activities.bitcoin.DisplayCurrencyActivity"
+            android:name=".presenter.activities.settings.SyncBlockchainActivity"
             android:launchMode="singleTask"
 
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".presenter.activities.bitcoin.AboutActivity"
+            android:name=".presenter.activities.settings.DisplayCurrencyActivity"
             android:launchMode="singleTask"
 
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".presenter.activities.bitcoin.SecurityCenterActivity"
+            android:name=".presenter.activities.settings.AboutActivity"
             android:launchMode="singleTask"
 
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".presenter.activities.bitcoin.ShareDataActivity"
+            android:name=".presenter.activities.settings.SecurityCenterActivity"
+            android:launchMode="singleTask"
+
+            android:screenOrientation="portrait"/>
+        <activity
+            android:name=".presenter.activities.settings.ShareDataActivity"
             android:launchMode="singleTask"
 
             android:screenOrientation="portrait"/>
@@ -161,7 +161,7 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".presenter.activities.bitcoin.SpendLimitActivity"
+            android:name=".presenter.activities.settings.SpendLimitActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 
@@ -180,7 +180,7 @@
         </activity>
         <!--Use launchMode="standard for WebViewActivity in order to be able to have multiple instances"-->
         <activity
-            android:name=".presenter.activities.bitcoin.WebViewActivity"
+            android:name=".presenter.activities.settings.WebViewActivity"
             android:configChanges="orientation|keyboardHidden"
             android:launchMode="standard"
             android:screenOrientation="portrait"
@@ -190,15 +190,15 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".presenter.activities.bitcoin.FingerprintActivity"
+            android:name=".presenter.activities.settings.FingerprintActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".presenter.activities.bitcoin.AdvancedActivity"
+            android:name=".presenter.activities.settings.AdvancedActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".presenter.activities.bitcoin.NodesActivity"
+            android:name=".presenter.activities.settings.NodesActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
@@ -206,7 +206,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".presenter.activities.bitcoin.TestActivity"
+            android:name=".presenter.activities.settings.TestActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
 

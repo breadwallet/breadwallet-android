@@ -8,6 +8,7 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreChainParams;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.BRCoreMerkleBlock;
@@ -294,7 +295,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public void refreshAddress(Context app) {
-        String address = getReceiveAddress(app);
+        String address = getReceiveAddress(app).stringify();
         if (Utils.isNullOrEmpty(address)) {
             Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
         }
@@ -373,8 +374,8 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     @Override
-    public String getReceiveAddress(Context app) {
-        return getWallet().getReceiveAddress().stringify();
+    public BRCoreAddress getReceiveAddress(Context app) {
+        return getWallet().getReceiveAddress();
     }
 
     @Override
