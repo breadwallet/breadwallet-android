@@ -651,7 +651,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     @Override
     public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount) {
-        if (amount.doubleValue() == 0) return null;
+        if (amount.doubleValue() == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, this, iso);
         if (ent == null) return null;
@@ -663,7 +663,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     @Override
     public BigDecimal getCryptoForFiat(Context app, BigDecimal amount) {
-        if (amount.doubleValue() == 0) return null;
+        if (amount.doubleValue() == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, this, iso);
         if (ent == null) return null;
@@ -689,7 +689,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     @Override
     public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
-        if (amount.doubleValue() == 0) return null;
+        if (amount.doubleValue() == 0) return amount;
         BigDecimal result = new BigDecimal(0);
         int unit = BRSharedPrefs.getCryptoDenomination(app, BTC);
         switch (unit) {
@@ -708,7 +708,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     @Override
     public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
-        if (amount.doubleValue() == 0) return null;
+        if (amount.doubleValue() == 0) return amount;
         BigDecimal result = new BigDecimal(0);
         int unit = BRSharedPrefs.getCryptoDenomination(app, BTC);
         switch (unit) {
@@ -727,10 +727,13 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     @Override
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
-        if (amount.doubleValue() == 0) return null;
+        if (amount.doubleValue() == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, this, iso);
-        if (ent == null) return null;
+        if (ent == null) {
+            Log.e(TAG, "getSmallestCryptoForFiat: no exchange rate data!");
+            return amount;
+        }
         double rate = ent.rate;
         //convert c to $.
         BigDecimal fiatAmount = amount.divide(new BigDecimal(100), ROUNDING_MODE);

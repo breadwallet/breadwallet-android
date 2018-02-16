@@ -168,6 +168,8 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         try {
             database = openDatabase();
 
+            printTest();
+
             cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
                     allColumns, BRSQLiteHelper.CURRENCY_CODE + " = ? AND " + BRSQLiteHelper.CURRENCY_ISO + " = ?",
                     new String[]{code, walletManager.getIso(app)}, null, null, null);
@@ -183,6 +185,28 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         }
 
         return null;
+    }
+
+    private void printTest() {
+        Cursor cursor = null;
+        try {
+            database = openDatabase();
+            StringBuilder builder = new StringBuilder();
+
+            cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
+                    allColumns, null, null, null, null, null);
+            builder.append("Total: " + cursor.getCount() + "\n");
+            cursor.moveToFirst();
+            if (!cursor.isAfterLast()) {
+                CurrencyEntity ent = cursorToCurrency(cursor);
+                builder.append("Name:" + ent.name + ", code:" + ent.code + ", rate:" + ent.rate + "\n");
+            }
+            Log.e(TAG, "printTest: " + builder.toString());
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
     }
 
     private CurrencyEntity cursorToCurrency(Cursor cursor) {
