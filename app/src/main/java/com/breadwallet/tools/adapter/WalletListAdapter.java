@@ -4,7 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.Pair;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -31,10 +31,6 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
     private final Context mContext;
     private ArrayList<BaseWalletManager> mWalletList;
-
-    private ArrayList<Pair<WalletItemViewHolder, Boolean>> mSyncList = new ArrayList<>();
-
-    private Integer mSyncingWalletPos;
 
 
     public WalletListAdapter(Context context, ArrayList<BaseWalletManager> walletList) {
@@ -67,6 +63,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), new BigDecimal(wallet.getFiatBalance(mContext)));
         String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getIso(mContext), new BigDecimal(wallet.getCachedBalance(mContext)));
 
+
         // Set wallet fields
         holder.mWalletName.setText(name);
         holder.mTradePrice.setText(exchangeRate);
@@ -79,10 +76,34 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         holder.mWait.setVisibility(View.INVISIBLE);
 
 
+
         if (wallet.getIso(mContext).equalsIgnoreCase(WalletBitcoinManager.getInstance(mContext).getIso(mContext))) {
             holder.mParent.setBackground(mContext.getResources().getDrawable(R.drawable.btc_card_shape, null));
         } else {
             holder.mParent.setBackground(mContext.getResources().getDrawable(R.drawable.bch_card_shape, null));
+
+        }
+
+
+        // Get the last used currency
+        String currentWalletIso = BRSharedPrefs.getCurrentWalletIso(mContext);
+
+        if(iso == currentWalletIso){
+
+           double syncProgress =  wallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mContext, currentWalletIso));
+           Log.d(TAG, "Sync progress -> " + syncProgress);
+           holder.mSyncingProgressBar.setVisibility(View.VISIBLE);
+           holder.mSyncing.setText("Syncing");
+
+        }
+        else{
+
+            // Start syncing the last used currency
+            wallet.getPeerManager().connect();
+            
+
+            //wallet.getPeerManager().
+
 
         }
 
@@ -111,6 +132,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         public ProgressBar mSyncingProgressBar;
         public BRText mWait;
 
+
         public WalletItemViewHolder(View view) {
             super(view);
 
@@ -122,6 +144,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             mSyncing = view.findViewById(R.id.syncing);
             mSyncingProgressBar = view.findViewById(R.id.sync_progress);
             mWait = view.findViewById(R.id.wait_syncing);
+
         }
     }
 }
