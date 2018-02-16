@@ -477,7 +477,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount) {
-        if (amount.doubleValue() == 0) return null;
+        if (amount.doubleValue() == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, this, iso);
         if (ent == null) return null;
@@ -517,7 +517,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
-        if (amount.doubleValue() == 0) return null;
+        if (amount.doubleValue() == 0) return amount;
         BigDecimal result = new BigDecimal(0);
         int unit = BRSharedPrefs.getCryptoDenomination(app, BCH);
         switch (unit) {
@@ -536,7 +536,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
-        if (amount.doubleValue() == 0) return null;
+        if (amount.doubleValue() == 0) return amount;
         BigDecimal result = new BigDecimal(0);
         int unit = BRSharedPrefs.getCryptoDenomination(app, BCH);
         switch (unit) {
@@ -555,7 +555,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
-        if (amount.doubleValue() == 0) return null;
+        if (amount.doubleValue() == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, this, iso);
         if (ent == null) return null;
