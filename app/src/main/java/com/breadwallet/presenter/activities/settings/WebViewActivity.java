@@ -1,4 +1,4 @@
-package com.breadwallet.presenter.activities.bitcoin;
+package com.breadwallet.presenter.activities.settings;
 
 import android.Manifest;
 import android.annotation.SuppressLint;

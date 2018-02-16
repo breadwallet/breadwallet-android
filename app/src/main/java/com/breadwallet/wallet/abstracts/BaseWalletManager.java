@@ -2,6 +2,7 @@ package com.breadwallet.wallet.abstracts;
 
 import android.content.Context;
 
+import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreChainParams;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.BRCoreMerkleBlock;
@@ -93,7 +94,7 @@ public interface BaseWalletManager {
     String getDenomination(Context app);
 
     //get the wallet's receive address
-    String getReceiveAddress(Context app);
+    BRCoreAddress getReceiveAddress(Context app);
 
     //get the number of decimal places to use for this currency
     int getMaxDecimalPlaces(Context app);

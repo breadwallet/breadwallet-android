@@ -6,7 +6,7 @@ import android.support.test.espresso.IdlingPolicies;
 import android.support.test.rule.ActivityTestRule;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.bitcoin.TestActivity;
+import com.breadwallet.presenter.activities.settings.TestActivity;
 
 import org.junit.After;
 import org.junit.Before;
@@ -22,14 +22,12 @@ import java.util.concurrent.TimeUnit;
 import static android.support.test.espresso.Espresso.onData;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
-import static android.support.test.espresso.matcher.ViewMatchers.isCompletelyDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.allOf;
 import static org.hamcrest.Matchers.anything;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasToString;
-import static org.hamcrest.core.StringStartsWith.startsWith;
 import tools.fastlane.screengrab.Screengrab;
 import tools.fastlane.screengrab.UiAutomatorScreenshotStrategy;
 import tools.fastlane.screengrab.locale.LocaleTestRule;

@@ -9,12 +9,14 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.ImportActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
 
 /**
@@ -41,6 +43,14 @@ public class CurrencySettingsActivity extends Activity {
         mBackButton = findViewById(R.id.back_button);
         mRescanBlockchainRow = findViewById(R.id.rescan_row);
         mRedeemPrivateKeyRow = findViewById(R.id.redeem_private_key_row);
+
+        mRedeemPrivateKeyRow.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!BRAnimator.isClickAllowed()) return;
+                BRAnimator.openScanner(CurrencySettingsActivity.this, BRConstants.SCANNER_REQUEST);
+            }
+        });
 
         mRescanBlockchainRow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -86,13 +96,9 @@ public class CurrencySettingsActivity extends Activity {
 
         String currency = getIntent().getStringExtra(EXTRA_CURRENCY);
 
-        if (currency.equals(EXTRA_CURRENCY_BTC))
-
-        {
+        if (currency.equals(EXTRA_CURRENCY_BTC)) {
             mTitle.setText("Bitcoin Settings");
-        } else if (currency.equals(EXTRA_CURRENCY_BCH))
-
-        {
+        } else if (currency.equals(EXTRA_CURRENCY_BCH)) {
             mTitle.setText("BitcoinCash Settings");
         }
     }

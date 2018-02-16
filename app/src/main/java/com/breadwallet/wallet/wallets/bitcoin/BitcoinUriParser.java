@@ -77,9 +77,7 @@ public class BitcoinUriParser {
 
         RequestObject requestObject = parseRequest(url);
 
-        if (WalletsMaster.getInstance(app).getCurrentWallet(app).trySweepWallet(app, url)) {
-            return true;
-        }
+        if (WalletsMaster.getInstance(app).getCurrentWallet(app).trySweepWallet(app, url)) return true;
 
         if (requestObject == null) {
             if (app != null) {

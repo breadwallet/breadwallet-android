@@ -5,12 +5,11 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.presenter.activities.bitcoin.TestActivity;
+import com.breadwallet.presenter.activities.settings.TestActivity;
 import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
-import com.platform.tools.BRBitId;
 
 import org.apache.commons.io.IOUtils;
 import org.junit.Assert;
