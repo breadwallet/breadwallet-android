@@ -66,7 +66,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private final Context mContext;
     private final int txResId;
-    private final int syncingResId;
     private final int promptResId;
     private List<TxUiHolder> backUpFeed;
     private List<TxUiHolder> itemFeed;
@@ -74,7 +73,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private final int txType = 0;
     private final int promptType = 1;
-    private final int syncingType = 2;
     private boolean updatingReverseTxHash;
     private boolean updatingData;
 
@@ -82,7 +80,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     public TransactionListAdapter(Context mContext, List<TxUiHolder> items) {
         this.txResId = R.layout.tx_item;
-        this.syncingResId = R.layout.syncing_item;
         this.promptResId = R.layout.prompt_item;
         this.mContext = mContext;
         items = new ArrayList<>();
@@ -176,8 +173,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             return new TxHolder(inflater.inflate(txResId, parent, false));
         else if (viewType == promptType)
             return new PromptHolder(inflater.inflate(promptResId, parent, false));
-        else if (viewType == syncingType)
-            return new SyncingHolder(inflater.inflate(syncingResId, parent, false));
         return null;
     }
 
@@ -190,18 +185,13 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             case promptType:
                 setPrompt((PromptHolder) holder);
                 break;
-            case syncingType:
-                setSyncing((SyncingHolder) holder);
-                break;
         }
 
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0 && TxManager.getInstance().currentPrompt == PromptManager.PromptItem.SYNCING) {
-            return syncingType;
-        } else if (position == 0 && TxManager.getInstance().currentPrompt != null) {
+        if (position == 0 && TxManager.getInstance().currentPrompt != null) {
             return promptType;
         } else {
             return txType;
@@ -344,12 +334,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     }
 
-    private void setSyncing(final SyncingHolder syncing) {
-//        Log.e(TAG, "setSyncing: " + syncing);
-        TxManager.getInstance().syncingHolder = syncing;
-        syncing.mainLayout.setBackgroundResource(R.drawable.tx_rounded);
-    }
-
     private int getResourceByPos(int pos) {
         if (TxManager.getInstance().currentPrompt != null) pos--;
         if (itemFeed != null && itemFeed.size() == 1) {
@@ -474,21 +458,5 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
-    public class SyncingHolder extends RecyclerView.ViewHolder {
-        public RelativeLayout mainLayout;
-        public ConstraintLayout constraintLayout;
-        public BRText date;
-        public BRText label;
-        public ProgressBar progress;
-
-        public SyncingHolder(View view) {
-            super(view);
-            mainLayout = (RelativeLayout) view.findViewById(R.id.main_layout);
-            constraintLayout = (ConstraintLayout) view.findViewById(R.id.syncing_layout);
-            date = (BRText) view.findViewById(R.id.sync_date);
-            label = (BRText) view.findViewById(R.id.syncing_label);
-            progress = (ProgressBar) view.findViewById(R.id.sync_progress);
-        }
-    }
 
 }

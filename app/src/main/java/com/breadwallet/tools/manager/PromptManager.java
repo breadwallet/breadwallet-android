@@ -59,7 +59,6 @@ public class PromptManager {
     }
 
     public enum PromptItem {
-        SYNCING,
         FINGER_PRINT,
         PAPER_KEY,
         UPGRADE_PIN,

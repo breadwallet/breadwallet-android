@@ -59,7 +59,6 @@ public class TxManager {
     public TransactionListAdapter adapter;
     public PromptManager.PromptItem currentPrompt;
     public PromptManager.PromptInfo promptInfo;
-    public TransactionListAdapter.SyncingHolder syncingHolder;
 
 
     public static TxManager getInstance() {
@@ -89,12 +88,10 @@ public class TxManager {
 
                     } else { //clicked on the prompt
                         BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(currentPrompt) + ".trigger");
-                        if (currentPrompt != PromptManager.PromptItem.SYNCING) {
-                            PromptManager.PromptInfo info = PromptManager.getInstance().promptInfo(app, currentPrompt);
-                            if (info != null)
-                                info.listener.onClick(view);
-                            currentPrompt = null;
-                        }
+                        PromptManager.PromptInfo info = PromptManager.getInstance().promptInfo(app, currentPrompt);
+                        if (info != null)
+                            info.listener.onClick(view);
+                        currentPrompt = null;
                     }
                 }
             }
@@ -119,18 +116,10 @@ public class TxManager {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                String currentIso = BRSharedPrefs.getCurrentWalletIso(app);
-                BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                final double progress = wallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(app, currentIso));
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        if (progress > 0 && progress < 1) {
-                            currentPrompt = PromptManager.PromptItem.SYNCING;
-                            updateCard(app);
-                        } else {
-                            showNextPrompt(app);
-                        }
+                        showNextPrompt(app);
                     }
                 });
             }
@@ -142,9 +131,7 @@ public class TxManager {
         crashIfNotMain();
         if (item == null) throw new RuntimeException("can't be null");
         BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".displayed");
-        if (currentPrompt != PromptManager.PromptItem.SYNCING) {
-            currentPrompt = item;
-        }
+        currentPrompt = item;
         updateCard(app);
     }
 
@@ -156,14 +143,10 @@ public class TxManager {
         currentPrompt = null;
         if (txList != null && txList.getAdapter() != null)
             txList.getAdapter().notifyItemRemoved(0);
-        if (item == PromptManager.PromptItem.SYNCING) {
-            showNextPrompt(app);
-            updateCard(app);
-        } else {
-            if (item != null)
-                BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".dismissed");
-
-        }
+        showNextPrompt(app);
+        updateCard(app);
+        if (item != null)
+            BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".dismissed");
 
     }
 
