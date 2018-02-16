@@ -38,8 +38,35 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="16sp"
         android:textColor="@color/white"
+        android:text="$12.00"
         android:textSize="18sp"
         app:customTFont="CircularPro-Book.otf" />
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/syncing"
+        android:text="Syncing"
+        android:textColor="#88ffffff"
+        android:layout_below="@id/wallet_balance_usd"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="50dp"
+        android:textSize="10sp"
+        app:customTFont="CircularPro-Book.otf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <ProgressBar
+        android:id="@+id/sync_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_below="@id/wallet_balance_usd"
+        android:layout_alignParentRight="true"
+
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="6dp"
+        android:progressBackgroundTint="#88ffffff"
+        android:progress="25"
+        android:progressTint="#ffffff"
+        android:layout_width="30dp"
+        android:layout_height="5dp" />
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/wallet_balance_currency"

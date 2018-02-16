@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
@@ -56,13 +57,19 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         String name = wallet.getName(mContext);
         String exchangeRate = CurrencyUtils.getFormattedCurrencyString(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), new BigDecimal(wallet.getFiatExchangeRate(mContext)));
         String fiatBalance = CurrencyUtils.getFormattedCurrencyString(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), new BigDecimal(wallet.getFiatBalance(mContext)));
-        String cryptoBalance = CurrencyUtils.getFormattedCurrencyString(mContext, wallet.getIso(mContext), wallet.getCryptoForSmallestCrypto(mContext, new BigDecimal(wallet.getCachedBalance(mContext))));
+
+        String cryptoBalance = CurrencyUtils.getFormattedCurrencyString(mContext, wallet.getIso(mContext), new BigDecimal(wallet.getCachedBalance(mContext)));
+        String iso = wallet.getIso(mContext);
 
         // Set wallet fields
         holder.mWalletName.setText(name);
         holder.mTradePrice.setText(exchangeRate);
         holder.mWalletBalanceUSD.setText(fiatBalance);
         holder.mWalletBalanceCurrency.setText(cryptoBalance);
+        holder.mSyncingProgressBar.setVisibility(View.GONE);
+        holder.mSyncing.setText("Waiting to Sync");
+
+        // TODO : Align the "waiting to sync" text with the balance USD
 
         if (wallet.getIso(mContext).equalsIgnoreCase(WalletBitcoinManager.getInstance(mContext).getIso(mContext))) {
             holder.mParent.setBackground(mContext.getResources().getDrawable(R.drawable.btc_card_shape, null));
@@ -70,6 +77,30 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             holder.mParent.setBackground(mContext.getResources().getDrawable(R.drawable.bch_card_shape, null));
 
         }
+
+        // Get the last used currency
+        String currentWalletIso = BRSharedPrefs.getCurrentWalletIso(mContext);
+
+        if(iso == currentWalletIso){
+
+           double syncProgress =  wallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mContext, currentWalletIso));
+           Log.d(TAG, "Sync progress -> " + syncProgress);
+           holder.mSyncingProgressBar.setVisibility(View.VISIBLE);
+           holder.mSyncing.setText("Syncing");
+
+        }
+        else{
+
+            // Start syncing the last used currency
+            wallet.getPeerManager().connect();
+            
+
+            //wallet.getPeerManager().
+
+
+        }
+
+
     }
 
     @Override
@@ -84,6 +115,8 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         public BRText mWalletBalanceUSD;
         public BRText mWalletBalanceCurrency;
         public RelativeLayout mParent;
+        public BRText mSyncing;
+        public ProgressBar mSyncingProgressBar;
 
         public WalletItemViewHolder(View view) {
             super(view);
@@ -93,6 +126,8 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             mWalletBalanceUSD = view.findViewById(R.id.wallet_balance_usd);
             mWalletBalanceCurrency = view.findViewById(R.id.wallet_balance_currency);
             mParent = view.findViewById(R.id.wallet_card);
+            mSyncing = view.findViewById(R.id.syncing);
+            mSyncingProgressBar = view.findViewById(R.id.sync_progress);
         }
     }
 }
