@@ -39,6 +39,8 @@ import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.abstracts.OnSyncStopped;
+import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.exceptions.AmountSmallerThanMinException;
@@ -137,35 +139,20 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         uiConfig = new WalletUiConfiguration("#478559", true, true, false);
     }
 
-//
-//    public void setBalance(final Context context, long balance) {
-//        if (context == null) {
-//            Log.e(TAG, "setBalance: FAILED TO SET THE BALANCE");
-//            return;
-//        }
-//        BRSharedPrefs.putCachedBalance(context, BCH, balance);
-//        WalletsMaster.refreshAddress(context);
-//
-//        for (OnBalanceChanged listener : balanceListeners) {
-//            if (listener != null) listener.onBalanceChanged(BCH, balance);
-//
-//        }
-//    }
-
-//    public void refreshBalance(Activity app) {
-//        long natBal = WalletsMaster.getInstance().nativeBalance();
-//        if (natBal != -1) {
-//            setBalance(app, natBal);
-//        } else {
-//            Log.e(TAG, "UpdateUI, nativeBalance is -1 meaning _wallet was null!");
-//        }
-//    }
-
-
     @Override
     public void addBalanceChangedListener(OnBalanceChangedListener list) {
         if (list != null && !balanceListeners.contains(list))
             balanceListeners.add(list);
+    }
+
+    @Override
+    public void addTxStatusUpdatedListener(OnTxStatusUpdatedListener list) {
+
+    }
+
+    @Override
+    public void addSyncStoppedListener(OnSyncStopped list) {
+
     }
 
 
@@ -449,16 +436,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             arr[i] = new BRCorePeer(ent.getAddress(), ent.getPort(), ent.getTimeStamp());
         }
         return arr;
-    }
-
-    @Override
-    public void syncStopped() {
-
-    }
-
-    @Override
-    public void publishCallback(String message, int error, byte[] txHash) {
-
     }
 
     @Override

@@ -40,7 +40,7 @@ public class TxUiHolder {
     private String from[];
     public String txReversed;
     private long balanceAfterTx;
-    private long outAmounts[];
+    private long amount;
     private boolean isValid;
     private int txSize;
     public TxMetaData metaData;
@@ -50,7 +50,7 @@ public class TxUiHolder {
 
     public TxUiHolder(long timeStamp, int blockHeight, byte[] hash, String txReversed, long sent,
                       long received, long fee, String to[], String from[],
-                      long balanceAfterTx, int txSize, long[] outAmounts, boolean isValid) {
+                      long balanceAfterTx, int txSize, long amount, boolean isValid) {
         this.timeStamp = timeStamp;
         this.blockHeight = blockHeight;
         this.txReversed = txReversed;
@@ -61,7 +61,7 @@ public class TxUiHolder {
         this.to = to;
         this.from = from;
         this.balanceAfterTx = balanceAfterTx;
-        this.outAmounts = outAmounts;
+        this.amount = amount;
         this.isValid = isValid;
         this.txSize = txSize;
     }
@@ -114,8 +114,8 @@ public class TxUiHolder {
         return balanceAfterTx;
     }
 
-    public long[] getOutAmounts() {
-        return outAmounts;
+    public long getAmount() {
+        return amount;
     }
 
     public boolean isValid() {

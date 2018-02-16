@@ -63,6 +63,8 @@ public interface BaseWalletManager {
 
     void addTxStatusUpdatedListener(OnTxStatusUpdatedListener list);
 
+    void addSyncStoppedListener(OnSyncStopped list);
+
     //try sending a transaction
     boolean sendTransaction(Context app, PaymentItem item);
 
@@ -123,13 +125,9 @@ public interface BaseWalletManager {
 
     void syncStarted();
 
-    void syncStopped();
-
     void syncStopped(String error);
 
-    void publishCallback(final String message, final int error, byte[] txHash);
-
-    void onTxAdded(byte[] tx, int blockHeight, long timestamp, final long amount, String hash);
+    void onTxAdded(BRCoreTransaction transaction);
 
     void onTxDeleted(String hash, int notifyUser, int recommendRescan);
 
