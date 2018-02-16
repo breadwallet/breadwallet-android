@@ -76,8 +76,7 @@ public class HomeActivity extends BRActivity {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
                 BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, mAdapter.getItemAt(position).getIso(HomeActivity.this));
-                Log.d("HomeActivity", "Saving current wallet ISO as " + mAdapter.getItemAt(position).getIso(HomeActivity.this)
-                        );
+                Log.d("HomeActivity", "Saving current wallet ISO as " + mAdapter.getItemAt(position).getIso(HomeActivity.this));
 
                 Intent newIntent = new Intent(HomeActivity.this, WalletActivity.class);
                 startActivity(newIntent);
