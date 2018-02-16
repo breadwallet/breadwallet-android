@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -13,6 +12,7 @@ import android.widget.RelativeLayout;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -33,7 +33,7 @@ import java.util.ArrayList;
  * Dummy Home activity to simulate navigating to and from the new Currency screen
  */
 
-public class HomeActivity extends Activity {
+public class HomeActivity extends BRActivity {
 
     private RecyclerView mWalletRecycler;
     private WalletListAdapter mAdapter;
