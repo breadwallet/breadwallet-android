@@ -11,6 +11,7 @@ import io.digibyte.presenter.entities.RequestObject;
 import io.digibyte.tools.animation.BRAnimator;
 import io.digibyte.tools.animation.BRDialog;
 import io.digibyte.tools.manager.BREventManager;
+import io.digibyte.tools.manager.BRReportsManager;
 import io.digibyte.tools.threads.PaymentProtocolTask;
 import io.digibyte.wallet.BRWalletManager;
 
@@ -126,7 +127,13 @@ public class BitcoinUrlHandler {
             else
                 tmp = tmp.replace("digibyte:", "digibyte://");
         }
-        URI uri = URI.create(tmp);
+        URI uri;
+        try {
+            uri = URI.create(tmp);
+        } catch (IllegalArgumentException ex) {
+            Log.e(TAG, "getRequestFromString: ", ex);
+            return null;
+        }
 
         String host = uri.getHost();
         if (host != null) {
@@ -197,6 +204,8 @@ public class BitcoinUrlHandler {
             if (app != null) {
                 BRAnimator.killAllFragments(app);
                 BRSender.getInstance().sendTransaction(app, new PaymentItem(addresses, null, new BigDecimal(amount).longValue(), null, true));
+            } else {
+                BRReportsManager.reportBug(new NullPointerException("tryBitcoinURL, app is null!"));
             }
         }
 

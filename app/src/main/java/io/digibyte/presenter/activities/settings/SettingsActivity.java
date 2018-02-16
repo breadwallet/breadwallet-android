@@ -101,7 +101,6 @@ public class SettingsActivity extends BRActivity {
         super.onResume();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
         if (items == null)
             items = new ArrayList<>();
         items.clear();
@@ -157,7 +156,7 @@ public class SettingsActivity extends BRActivity {
             items.add(new BRSettingsItem(getString(R.string.Settings_touchIdLimit_android), "", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    AuthManager.getInstance().authPrompt(SettingsActivity.this, null, getString(R.string.VerifyPin_continueBody), true, new BRAuthCompletion() {
+                    AuthManager.getInstance().authPrompt(SettingsActivity.this, null, getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
                         @Override
                         public void onComplete() {
                             Intent intent = new Intent(SettingsActivity.this, SpendLimitActivity.class);

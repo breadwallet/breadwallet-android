@@ -5,8 +5,6 @@ import android.app.AlertDialog;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.ConnectivityManager;
@@ -15,15 +13,11 @@ import android.os.Handler;
 import android.os.NetworkOnMainThreadException;
 import android.os.SystemClock;
 import android.security.keystore.UserNotAuthenticatedException;
-import android.support.annotation.UiThread;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
-import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import io.digibyte.DigiByte;
@@ -58,11 +52,10 @@ import io.digibyte.tools.util.BRExchange;
 import io.digibyte.tools.util.TypesConverter;
 import io.digibyte.tools.util.Utils;
 import io.digibyte.tools.util.Bip39Reader;
-import com.google.firebase.crash.FirebaseCrash;
+
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.ArrayList;
@@ -102,6 +95,7 @@ public class BRWalletManager {
 
     private static BRWalletManager instance;
     public List<OnBalanceChanged> balanceListeners;
+    private boolean itInitiatingWallet;
 
     public void setBalance(final Context context, long balance) {
         if (context == null) {
@@ -140,21 +134,30 @@ public class BRWalletManager {
         return instance;
     }
 
-    public boolean generateRandomSeed(final Context ctx) {
+    public synchronized boolean generateRandomSeed(final Context ctx) {
         SecureRandom sr = new SecureRandom();
         final String[] words;
         List<String> list;
         String languageCode = Locale.getDefault().getLanguage();
+        if (languageCode == null) languageCode = "en";
         list = Bip39Reader.bip39List(ctx, languageCode);
         words = list.toArray(new String[list.size()]);
         final byte[] randomSeed = sr.generateSeed(16);
-        if (words.length < 2000) {
+        if (words.length != 2048) {
             BRReportsManager.reportBug(new IllegalArgumentException("the list is wrong, size: " + words.length), true);
+            return false;
         }
-        if (randomSeed.length == 0) throw new NullPointerException("failed to create the seed");
+        if (randomSeed.length != 16)
+            throw new NullPointerException("failed to create the seed, seed length is not 128: " + randomSeed.length);
         byte[] strPhrase = encodeSeed(randomSeed, words);
         if (strPhrase == null || strPhrase.length == 0) {
             BRReportsManager.reportBug(new NullPointerException("failed to encodeSeed"), true);
+            return false;
+        }
+        String[] splitPhrase = new String(strPhrase).split(" ");
+        if (splitPhrase.length != 12) {
+            BRReportsManager.reportBug(new NullPointerException("phrase does not have 12 words:" + splitPhrase.length + ", lang: " + languageCode), true);
+            return false;
         }
         boolean success = false;
         try {
@@ -274,6 +277,11 @@ public class BRWalletManager {
 
     }
 
+    public void wipeAll(Context app) {
+        wipeKeyStore(app);
+        wipeWalletButKeystore(app);
+    }
+
     public boolean confirmSweep(final Context ctx, final String privKey) {
         if (ctx == null) return false;
         if (isValidBitcoinBIP38Key(privKey)) {
@@ -365,20 +373,15 @@ public class BRWalletManager {
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (app instanceof Activity)
-                            BRAnimator.showBreadSignal((Activity) app, error == 0 ? app.getString(R.string.Alerts_sendSuccess) : app.getString(R.string.Alert_error),
-                                    error == 0 ? app.getString(R.string.Alerts_sendSuccessSubheader) : message, error == 0 ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
-                                        @Override
-                                        public void onComplete() {
-                                            if (!((Activity) app).isDestroyed())
-                                                ((Activity) app).getFragmentManager().popBackStack();
-                                        }
-                                    });
-                    }
-                }, 500);
+                if (app instanceof Activity)
+                    BRAnimator.showBreadSignal((Activity) app, error == 0 ? app.getString(R.string.Alerts_sendSuccess) : app.getString(R.string.Alert_error),
+                            error == 0 ? app.getString(R.string.Alerts_sendSuccessSubheader) : message, error == 0 ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
+                                @Override
+                                public void onComplete() {
+                                    if (!((Activity) app).isDestroyed())
+                                        ((Activity) app).getFragmentManager().popBackStack();
+                                }
+                            });
             }
         });
 
@@ -426,8 +429,11 @@ public class BRWalletManager {
                         AudioManager audioManager = (AudioManager) finalCtx.getSystemService(Context.AUDIO_SERVICE);
                         if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
                             final MediaPlayer mp = MediaPlayer.create(finalCtx, R.raw.coinflip);
-                            mp.start();
-
+                            if (mp != null) try {
+                                mp.start();
+                            } catch (IllegalArgumentException ex) {
+                                Log.e(TAG, "run: ", ex);
+                            }
                         }
 
                         if (!BreadActivity.appVisible && BRSharedPrefs.getShowNotification(finalCtx))
@@ -484,6 +490,7 @@ public class BRWalletManager {
             if (!m.noWallet(app)) {
                 BRAnimator.startBreadActivity(app, true);
             }
+            //else just sit in the intro screen
 
         }
     }
@@ -491,76 +498,82 @@ public class BRWalletManager {
     @WorkerThread
     public void initWallet(final Context ctx) {
         if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
-        Log.d(TAG, "initWallet:" + Thread.currentThread().getName());
-        if (ctx == null) {
-            Log.e(TAG, "initWallet: ctx is null");
-            return;
-        }
-        BRWalletManager m = BRWalletManager.getInstance();
-        final BRPeerManager pm = BRPeerManager.getInstance();
-
-        if (!m.isCreated()) {
-            List<BRTransactionEntity> transactions = TransactionDataSource.getInstance(ctx).getAllTransactions();
-            int transactionsCount = transactions.size();
-            if (transactionsCount > 0) {
-                m.createTxArrayWithCount(transactionsCount);
-                for (BRTransactionEntity entity : transactions) {
-                    m.putTransaction(entity.getBuff(), entity.getBlockheight(), entity.getTimestamp());
-                }
-            }
-
-            byte[] pubkeyEncoded = BRKeyStore.getMasterPublicKey(ctx);
-            if (Utils.isNullOrEmpty(pubkeyEncoded)) {
-                Log.e(TAG, "initWallet: pubkey is missing");
+        if (itInitiatingWallet) return;
+        itInitiatingWallet = true;
+        try {
+            Log.d(TAG, "initWallet:" + Thread.currentThread().getName());
+            if (ctx == null) {
+                Log.e(TAG, "initWallet: ctx is null");
                 return;
             }
-            //Save the first address for future check
-            m.createWallet(transactionsCount, pubkeyEncoded);
-            String firstAddress = BRWalletManager.getFirstAddress(pubkeyEncoded);
-            BRSharedPrefs.putFirstAddress(ctx, firstAddress);
-            long fee = BRSharedPrefs.getFeePerKb(ctx);
-            if (fee == 0) {
-                fee = BRConstants.DEFAULT_FEE_PER_KB;
-                BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
+            BRWalletManager m = BRWalletManager.getInstance();
+            final BRPeerManager pm = BRPeerManager.getInstance();
+
+            if (!m.isCreated()) {
+                List<BRTransactionEntity> transactions = TransactionDataSource.getInstance(ctx).getAllTransactions();
+                int transactionsCount = transactions.size();
+                if (transactionsCount > 0) {
+                    m.createTxArrayWithCount(transactionsCount);
+                    for (BRTransactionEntity entity : transactions) {
+                        m.putTransaction(entity.getBuff(), entity.getBlockheight(), entity.getTimestamp());
+                    }
+                }
+
+                byte[] pubkeyEncoded = BRKeyStore.getMasterPublicKey(ctx);
+                if (Utils.isNullOrEmpty(pubkeyEncoded)) {
+                    Log.e(TAG, "initWallet: pubkey is missing");
+                    return;
+                }
+                //Save the first address for future check
+                m.createWallet(transactionsCount, pubkeyEncoded);
+                String firstAddress = BRWalletManager.getFirstAddress(pubkeyEncoded);
+                BRSharedPrefs.putFirstAddress(ctx, firstAddress);
+                long fee = BRSharedPrefs.getFeePerKb(ctx);
+                if (fee == 0) {
+                    fee = defaultFee();
+                    BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
+                }
+                BRWalletManager.getInstance().setFeePerKb(fee, isEconomyFee);
             }
-            BRWalletManager.getInstance().setFeePerKb(fee, isEconomyFee);
+
+            if (!pm.isCreated()) {
+                List<BRMerkleBlockEntity> blocks = MerkleBlockDataSource.getInstance(ctx).getAllMerkleBlocks();
+                List<BRPeerEntity> peers = PeerDataSource.getInstance(ctx).getAllPeers();
+                final int blocksCount = blocks.size();
+                final int peersCount = peers.size();
+                if (blocksCount > 0) {
+                    pm.createBlockArrayWithCount(blocksCount);
+                    for (BRMerkleBlockEntity entity : blocks) {
+                        pm.putBlock(entity.getBuff(), entity.getBlockHeight());
+                    }
+                }
+                if (peersCount > 0) {
+                    pm.createPeerArrayWithCount(peersCount);
+                    for (BRPeerEntity entity : peers) {
+                        pm.putPeer(entity.getAddress(), entity.getPort(), entity.getTimeStamp());
+                    }
+                }
+                Log.d(TAG, "blocksCount before connecting: " + blocksCount);
+                Log.d(TAG, "peersCount before connecting: " + peersCount);
+
+                int walletTime = BRKeyStore.getWalletCreationTime(ctx);
+
+                Log.e(TAG, "initWallet: walletTime: " + walletTime);
+                pm.create(walletTime, blocksCount, peersCount);
+                BRPeerManager.getInstance().updateFixedPeer(ctx);
+            }
+
+            pm.connect();
+            if (BRSharedPrefs.getStartHeight(ctx) == 0)
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        BRSharedPrefs.putStartHeight(ctx, BRPeerManager.getCurrentBlockHeight());
+                    }
+                });
+        } finally {
+            itInitiatingWallet = false;
         }
-
-        if (!pm.isCreated()) {
-            List<BRMerkleBlockEntity> blocks = MerkleBlockDataSource.getInstance(ctx).getAllMerkleBlocks();
-            List<BRPeerEntity> peers = PeerDataSource.getInstance(ctx).getAllPeers();
-            final int blocksCount = blocks.size();
-            final int peersCount = peers.size();
-            if (blocksCount > 0) {
-                pm.createBlockArrayWithCount(blocksCount);
-                for (BRMerkleBlockEntity entity : blocks) {
-                    pm.putBlock(entity.getBuff(), entity.getBlockHeight());
-                }
-            }
-            if (peersCount > 0) {
-                pm.createPeerArrayWithCount(peersCount);
-                for (BRPeerEntity entity : peers) {
-                    pm.putPeer(entity.getAddress(), entity.getPort(), entity.getTimeStamp());
-                }
-            }
-            Log.d(TAG, "blocksCount before connecting: " + blocksCount);
-            Log.d(TAG, "peersCount before connecting: " + peersCount);
-
-            int walletTime = BRKeyStore.getWalletCreationTime(ctx);
-
-            Log.e(TAG, "initWallet: walletTime: " + walletTime);
-            pm.create(walletTime, blocksCount, peersCount);
-
-        }
-        BRPeerManager.getInstance().updateFixedPeer(ctx);
-        pm.connect();
-        if (BRSharedPrefs.getStartHeight(ctx) == 0)
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    BRSharedPrefs.putStartHeight(ctx, BRPeerManager.getCurrentBlockHeight());
-                }
-            });
     }
 
     public void addBalanceChangedListener(OnBalanceChanged listener) {
@@ -662,6 +675,10 @@ public class BRWalletManager {
 
     public native long nativeBalance();
 
+    public native long defaultFee();
+
+    public native long maxFee();
+
     public native int getTxCount();
 
     public native long getMinOutputAmountRequested();
@@ -679,5 +696,6 @@ public class BRWalletManager {
     public static native long getBCashBalance(byte[] pubKey);
 
     public static native int getTxSize(byte[] serializedTx);
+
 
 }

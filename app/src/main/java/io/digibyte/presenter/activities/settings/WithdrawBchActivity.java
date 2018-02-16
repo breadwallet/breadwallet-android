@@ -78,12 +78,8 @@ public class WithdrawBchActivity extends BRActivity {
             BRReportsManager.reportBug(new NullPointerException("WithdrawBchActivity: onCreate: pubkey is missing!"));
         }
         long satoshis = BRWalletManager.getBCashBalance(pubkey);
-        String iso = BRSharedPrefs.getPreferredBTC(this) ? "DGB" : BRSharedPrefs.getIso(this);
-        BigDecimal amount = iso.equalsIgnoreCase("DGB") ?
-                BRExchange.getBitcoinForSatoshis(this, new BigDecimal(satoshis)) :
-                BRExchange.getAmountFromSatoshis(this, iso, new BigDecimal(satoshis));
-
-        String balance = BRCurrency.getFormattedCurrencyString(this, iso, amount);
+        BigDecimal amount = BRExchange.getBitcoinForSatoshis(this, new BigDecimal(satoshis));
+        String balance = BRCurrency.getFormattedCurrencyString(this, "DGB", amount);
         description.setText(String.format(getString(R.string.BCH_body), balance));
 
         txHash.setOnClickListener(new View.OnClickListener() {
@@ -181,6 +177,16 @@ public class WithdrawBchActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
+                if (BRWalletManager.getBCashBalance(BRKeyStore.getMasterPublicKey(app)) == 0) {
+                    BRDialog.showCustomDialog(app, "", app.getString(R.string.BCH_genericError), app.getString(R.string.AccessibilityLabels_close), null,
+                            new BRDialogView.BROnClickListener() {
+                                @Override
+                                public void onClick(BRDialogView brDialogView) {
+                                    brDialogView.dismissWithAnimation();
+                                }
+                            }, null, null, 0);
+                    return;
+                }
                 BRAnimator.openScanner(WithdrawBchActivity.this, SCANNER_BCH_REQUEST);
             }
         });
@@ -241,7 +247,7 @@ public class WithdrawBchActivity extends BRActivity {
                             }
                         }, null, null, 0);
             } else {
-                AuthManager.getInstance().authPrompt(app, app.getString(R.string.BCH_confirmationTitle), theAddress, true, new BRAuthCompletion() {
+                AuthManager.getInstance().authPrompt(app, app.getString(R.string.BCH_confirmationTitle), theAddress, true, false, new BRAuthCompletion() {
                     @Override
                     public void onComplete() {
                         PostAuth.getInstance().onSendBch(getApp(), false, address);
@@ -263,7 +269,6 @@ public class WithdrawBchActivity extends BRActivity {
         super.onResume();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
     }
 
     @Override

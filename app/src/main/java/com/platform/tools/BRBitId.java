@@ -153,7 +153,7 @@ public class BRBitId {
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            AuthManager.getInstance().authPrompt(app, _promptString, bitIdUri.getHost(), true, new BRAuthCompletion() {
+                            AuthManager.getInstance().authPrompt(app, _promptString, bitIdUri.getHost(), true,false, new BRAuthCompletion() {
                                 @Override
                                 public void onComplete() {
                                     PostAuth.getInstance().onBitIDAuth(app, true);

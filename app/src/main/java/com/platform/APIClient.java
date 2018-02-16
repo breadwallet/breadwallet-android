@@ -13,6 +13,7 @@ import io.digibyte.DigiByte;
 import io.digibyte.BuildConfig;
 import io.digibyte.presenter.activities.util.ActivityUTILS;
 import io.digibyte.tools.crypto.Base58;
+import io.digibyte.tools.manager.BRApiManager;
 import io.digibyte.tools.manager.BRReportsManager;
 import io.digibyte.tools.manager.BRSharedPrefs;
 import io.digibyte.tools.crypto.CryptoHelper;
@@ -20,6 +21,7 @@ import io.digibyte.tools.security.BRKeyStore;
 import io.digibyte.tools.threads.BRExecutor;
 import io.digibyte.tools.util.Utils;
 import io.digibyte.wallet.BRWalletManager;
+
 import com.jniwrappers.BRKey;
 import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
@@ -716,7 +718,7 @@ public class APIClient {
 
     public boolean isFeatureEnabled(String feature) {
         boolean b = BRSharedPrefs.getFeatureEnabled(ctx, feature);
-        Log.e(TAG, "isFeatureEnabled: " + feature + " - " + b);
+//        Log.e(TAG, "isFeatureEnabled: " + feature + " - " + b);
         return b;
     }
 
@@ -765,11 +767,11 @@ public class APIClient {
         });
 
         //update feature flags
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(2000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -792,7 +794,19 @@ public class APIClient {
                 APIClient apiClient = APIClient.getInstance(ctx);
                 apiClient.syncKvStore();
                 long endTime = System.currentTimeMillis();
-                Log.d(TAG, "updatePlatform: DONE in " + (endTime - startTime) + "ms");
+                Log.d(TAG, "syncKvStore: DONE in " + (endTime - startTime) + "ms");
+                itemFinished();
+            }
+        });
+
+        //update fee
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                final long startTime = System.currentTimeMillis();
+                BRApiManager.updateFeePerKb(ctx);
+                long endTime = System.currentTimeMillis();
+                Log.d(TAG, "update fee: DONE in " + (endTime - startTime) + "ms");
                 itemFinished();
             }
         });
@@ -801,7 +815,7 @@ public class APIClient {
 
     private void itemFinished() {
         int items = itemsLeftToUpdate.incrementAndGet();
-        if (items >= 3) {
+        if (items >= 4) {
             Log.d(TAG, "PLATFORM ALL UPDATED: " + items);
             platformUpdating = false;
             itemsLeftToUpdate.set(0);

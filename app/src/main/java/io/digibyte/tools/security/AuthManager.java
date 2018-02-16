@@ -11,6 +11,7 @@ import android.util.Log;
 import android.view.View;
 
 import io.digibyte.R;
+import io.digibyte.presenter.activities.DisabledActivity;
 import io.digibyte.presenter.activities.util.ActivityUTILS;
 import io.digibyte.presenter.customviews.BRDialogView;
 import io.digibyte.presenter.fragments.FragmentFingerprint;
@@ -21,7 +22,6 @@ import io.digibyte.tools.manager.BRSharedPrefs;
 import io.digibyte.tools.threads.BRExecutor;
 import io.digibyte.tools.util.Utils;
 import io.digibyte.wallet.BRWalletManager;
-import com.jniwrappers.BRKey;
 
 import java.util.concurrent.TimeUnit;
 
@@ -111,20 +111,20 @@ public class AuthManager {
 
     public boolean isWalletDisabled(Activity app) {
         int failCount = BRKeyStore.getFailCount(app);
-        long secureTime = BRSharedPrefs.getSecureTime(app);
-        long failTimestamp = BRKeyStore.getFailTimeStamp(app);
-        return failCount >= 3 && secureTime < failTimestamp + Math.pow(6, failCount - 3) * 60.0;
+        return failCount >= 3 && disabledUntil(app) > BRSharedPrefs.getSecureTime(app);
 
     }
 
-    public void setWalletDisabled(Activity app) {
+    public long disabledUntil(Activity app) {
         int failCount = BRKeyStore.getFailCount(app);
-        long now = System.currentTimeMillis() / 1000;
-        long secureTime = BRSharedPrefs.getSecureTime(app);
         long failTimestamp = BRKeyStore.getFailTimeStamp(app);
-        double waitTimeMinutes = (failTimestamp + Math.pow(6, failCount - 3) * 60.0 - secureTime) / 60.0;
+        double pow = Math.pow(6, failCount - 3) * 60;
+        return (long) ((failTimestamp + pow * 1000));
+    }
 
-        ActivityUTILS.showWalletDisabled(app, waitTimeMinutes);
+    public void setWalletDisabled(Activity app) {
+        if (!(app instanceof DisabledActivity))
+            ActivityUTILS.showWalletDisabled(app);
     }
 
     public void setPinCode(String pass, Activity context) {
@@ -202,7 +202,7 @@ public class AuthManager {
         }
     }
 
-    public void authPrompt(final Context context, String title, String message, boolean forcePin, BRAuthCompletion completion) {
+    public void authPrompt(final Context context, String title, String message, boolean forcePin, boolean forceFingerprint, BRAuthCompletion completion) {
         if (context == null || !(context instanceof Activity)) {
             Log.e(TAG, "authPrompt: context is null or not Activity: " + context);
             return;
@@ -220,22 +220,19 @@ public class AuthManager {
             useFingerPrint = false;
         }
 
+        if (forceFingerprint)
+            useFingerPrint = true;
+
         if (forcePin)
             useFingerPrint = false;
 
         final Activity app = (Activity) context;
 
-        FragmentFingerprint fingerprintFragment = (FragmentFingerprint) app.getFragmentManager().findFragmentByTag(FragmentFingerprint.class.getName());
-        FragmentPin breadPin = (FragmentPin) app.getFragmentManager().findFragmentByTag(FragmentPin.class.getName());
-
-        if (fingerprintFragment != null && fingerprintFragment.isAdded() || breadPin != null && breadPin.isAdded()) {
-            Log.e(TAG, "authPrompt: auth fragment already added: F:" + fingerprintFragment + ", P:" + breadPin);
-            return;
-        }
+        FragmentFingerprint fingerprintFragment;
+        FragmentPin breadPin;
 
         if (keyguardManager.isKeyguardSecure()) {
             if (useFingerPrint) {
-
                 fingerprintFragment = new FragmentFingerprint();
                 Bundle args = new Bundle();
                 args.putString("title", title);
@@ -270,16 +267,16 @@ public class AuthManager {
                     app.getString(R.string.AccessibilityLabels_close),
                     null,
                     new BRDialogView.BROnClickListener() {
-                @Override
-                public void onClick(BRDialogView brDialogView) {
-                    app.finish();
-                }
-            }, null, new DialogInterface.OnDismissListener() {
-                @Override
-                public void onDismiss(DialogInterface dialog) {
-                    app.finish();
-                }
-            }, 0);
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            app.finish();
+                        }
+                    }, null, new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialog) {
+                            app.finish();
+                        }
+                    }, 0);
         }
 
     }

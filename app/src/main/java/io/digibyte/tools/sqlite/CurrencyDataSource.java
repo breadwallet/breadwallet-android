@@ -29,16 +29,10 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.NetworkOnMainThreadException;
-import android.util.Log;
 
-import io.digibyte.presenter.activities.util.ActivityUTILS;
-import io.digibyte.presenter.entities.BRPeerEntity;
 import io.digibyte.presenter.entities.CurrencyEntity;
-import io.digibyte.presenter.entities.PeerEntity;
 import io.digibyte.tools.manager.BRReportsManager;
 import io.digibyte.tools.util.BRConstants;
-import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -73,7 +67,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
     }
 
     public void putCurrencies(Collection<CurrencyEntity> currencyEntities) {
-        if (currencyEntities == null) return;
+        if (currencyEntities == null || currencyEntities.size() <= 0) return;
 
         try {
             database = openDatabase();
@@ -164,8 +158,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
             database = openDatabase();
 
             cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
-                    allColumns, BRSQLiteHelper.CURRENCY_CODE + "=\'" + iso + "\'", null, null, null, null);
-
+                    allColumns, BRSQLiteHelper.CURRENCY_CODE + " = ?", new String[]{iso}, null, null, null);
 
             cursor.moveToFirst();
             if (!cursor.isAfterLast()) {

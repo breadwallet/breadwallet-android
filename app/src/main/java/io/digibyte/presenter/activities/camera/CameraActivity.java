@@ -890,22 +890,27 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
 
         @Override
         public void run() {
+            Log.e(TAG, "run: ");
             ByteBuffer buffer = mImage.getPlanes()[0].getBuffer();
             final byte[] bytes = new byte[buffer.remaining()];
             buffer.get(bytes);
             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    app.onBackPressed();
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(1000);
+                                CameraPlugin.handleCameraImageTaken(BreadActivity.getApp(), bytes);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                    app.finish();
                 }
             });
-
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    CameraPlugin.handleCameraImageTaken(BreadActivity.getApp(), bytes);
-                }
-            },1000);
 
         }
 
@@ -1006,7 +1011,6 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
         super.onResume();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
         startBackgroundThread();
         imageTaken = false;
 

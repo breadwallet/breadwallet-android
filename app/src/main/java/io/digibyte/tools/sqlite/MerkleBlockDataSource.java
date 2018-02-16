@@ -35,10 +35,8 @@ import android.util.Log;
 import io.digibyte.presenter.activities.util.ActivityUTILS;
 import io.digibyte.presenter.entities.BRMerkleBlockEntity;
 import io.digibyte.presenter.entities.BlockEntity;
-import io.digibyte.tools.animation.BRDialog;
 import io.digibyte.tools.manager.BRReportsManager;
 import io.digibyte.tools.util.BRConstants;
-import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
 import java.util.List;

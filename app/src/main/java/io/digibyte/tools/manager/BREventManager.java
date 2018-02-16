@@ -89,7 +89,7 @@ public class BREventManager implements DigiByte.OnAppBackgrounded {
     }
 
     private void saveEvents() {
-        Log.d(TAG, "saveEvents: ");
+//        Log.d(TAG, "saveEvents: ");
         JSONArray array = new JSONArray();
         for (Event event : events) {
             JSONObject obj = new JSONObject();
@@ -108,7 +108,7 @@ public class BREventManager implements DigiByte.OnAppBackgrounded {
             } catch (JSONException e) {
                 e.printStackTrace();
             }
-            Log.e(TAG, "saveEvents: insert json to array: " + obj);
+//            Log.e(TAG, "saveEvents: insert json to array: " + obj);
             array.put(obj);
         }
         Context app = DigiByte.getBreadContext();
@@ -121,7 +121,7 @@ public class BREventManager implements DigiByte.OnAppBackgrounded {
     }
 
     private void pushToServer() {
-        Log.d(TAG, "pushToServer");
+//        Log.d(TAG, "pushToServer");
         Context app = DigiByte.getBreadContext();
         if (app != null) {
             List<JSONArray> arrs = getEventsFromDisk(app);

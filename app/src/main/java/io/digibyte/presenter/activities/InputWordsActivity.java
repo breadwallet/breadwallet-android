@@ -72,7 +72,7 @@ public class InputWordsActivity extends BRActivity {
 //            debugPhrases = "vocation triage capsule marchand onduler tibia illicite entier fureur minorer amateur lubie";//french
 //            debugPhrase = "zorro turismo mezcla nicho morir chico blanco pájaro alba esencia roer repetir";//spanish
 //            debugPhrase = "怨 贪 旁 扎 吹 音 决 廷 十 助 畜 怒";//chinese
-            debugPhrase = "aim lawn sniff tenant coffee smoke meat hockey glow try also angle";
+//            debugPhrase = "aim lawn sniff tenant coffee smoke meat hockey glow try also angle";
 
         }
 
@@ -242,7 +242,8 @@ public class InputWordsActivity extends BRActivity {
         overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
         startActivity(intent);
         if (!InputWordsActivity.this.isDestroyed()) finish();
-        if (!BreadActivity.getApp().isDestroyed()) BreadActivity.getApp().finish();
+        Activity app = BreadActivity.getApp();
+        if (app != null && !app.isDestroyed()) app.finish();
     }
 
     @Override
@@ -250,7 +251,6 @@ public class InputWordsActivity extends BRActivity {
         super.onResume();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
     }
 
     @Override
@@ -332,9 +332,12 @@ public class InputWordsActivity extends BRActivity {
 
         if (!success) return null;
 
-        return w1 + " " + w2 + " " + w3 + " " + w4 + " " + w5 + " " + w6 + " " + w7 + " " + w8 + " " + w9 + " " + w10 + " " + w11 + " " + w12;
+        return w(w1) + " " + w(w2) + " " + w(w3) + " " + w(w4) + " " + w(w5) + " " + w(w6) + " " + w(w7) + " " + w(w8) + " " + w(w9) + " " + w(w10) + " " + w(w11) + " " + w(w12);
     }
 
+    private String w(String word) {
+        return word.replaceAll(" ", "");
+    }
 
     private void clearWords() {
         word1.setText("");

@@ -94,7 +94,6 @@ public class ReEnterPinActivity extends BRActivity {
         updateDots();
         appVisible = true;
         app = this;
-        ActivityUTILS.init(this);
         isPressAllowed = true;
     }
 
