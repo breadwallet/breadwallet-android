@@ -99,8 +99,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 //        boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size() && BRSharedPrefs.getAllowSpend(mContext);
         this.itemFeed = items;
         this.backUpFeed = items;
-        updateTxHashes();
-
 //        if (updateMetadata)
 //            updateMetadata();
     }
@@ -128,38 +126,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     }
 
-    private void updateTxHashes() {
-        if (updatingReverseTxHash) return;
-        updatingReverseTxHash = true;
-
-//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                for (int i = 0; i < itemFeed.size(); i++)
-//                    itemFeed.get(i).txReversed = Utils.reverseHex(Utils.bytesToHex(itemFeed.get(i).getTxHash()));
-//                for (int i = 0; i < backUpFeed.size(); i++)
-//                    backUpFeed.get(i).txReversed = Utils.reverseHex(Utils.bytesToHex(backUpFeed.get(i).getTxHash()));
-//                updatingReverseTxHash = false;
-//            }
-//        });
-    }
-
-    //update metadata ONLY when the feed is different than the new one
-//    private void updateMetadata() {
-//        if (updatingMetadata) return;
-//        updatingMetadata = true;
-//        Log.e(TAG, "updateMetadata: itemFeed: " + itemFeed.size());
-//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                long start = System.currentTimeMillis();
-//                mds = KVStoreManager.getInstance().getAllTxMD(mContext);
-//                Log.e(TAG, "updateMetadata, took:" + (System.currentTimeMillis() - start));
-//                updatingMetadata = false;
-//                TxManager.getInstance().updateTxList(mContext);
-//            }
-//        });
-//    }
 
     public List<TxUiHolder> getItems() {
         return itemFeed;
