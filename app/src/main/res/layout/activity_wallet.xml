@@ -18,7 +18,7 @@
     <ViewFlipper
         android:id="@+id/tool_bar_flipper"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         tools:context="com.breadwallet.presenter.activities.CurrencyActivity">

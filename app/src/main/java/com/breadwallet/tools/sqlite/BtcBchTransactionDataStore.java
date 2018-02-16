@@ -29,10 +29,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
@@ -41,10 +39,8 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class BtcBchTransactionDataStore implements BRDataSourceInterface {
     private static final String TAG = BtcBchTransactionDataStore.class.getName();
-
 
     // Database fields
     private SQLiteDatabase database;
@@ -57,7 +53,6 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
             BRSQLiteHelper.TX_ISO
     };
 
-
     private static BtcBchTransactionDataStore instance;
 
     public static BtcBchTransactionDataStore getInstance(Context context) {
@@ -66,7 +61,6 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
         }
         return instance;
     }
-
 
     private BtcBchTransactionDataStore(Context context) {
         dbHelper = BRSQLiteHelper.getInstance(context);
@@ -110,7 +104,6 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
 
 
     }
-
 
     public void deleteAllTransactions(Context app, BaseWalletManager wallet) {
         try {

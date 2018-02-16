@@ -28,7 +28,7 @@ package com.breadwallet.presenter.entities;
 
 public class BRTransactionEntity {
     private byte[] buff;
-    private int blockheight;
+    private long blockheight;
     private long timestamp;
     private String txHash;
     private String txISO;
@@ -57,7 +57,7 @@ public class BRTransactionEntity {
         this.txHash = txHash;
     }
 
-    public BRTransactionEntity(byte[] txBuff, int blockheight, long timestamp, String txHash, String iso) {
+    public BRTransactionEntity(byte[] txBuff, long blockheight, long timestamp, String txHash, String iso) {
         this.blockheight = blockheight;
         this.timestamp = timestamp;
         this.buff = txBuff;
