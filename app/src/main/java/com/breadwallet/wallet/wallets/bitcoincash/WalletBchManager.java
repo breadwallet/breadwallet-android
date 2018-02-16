@@ -102,6 +102,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     public static WalletBchManager getInstance(Context app) {
         if (instance == null) {
             byte[] rawPubKey = BRKeyStore.getMasterPublicKey(app);
+            if (Utils.isNullOrEmpty(rawPubKey)) return null;
             BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
             long time = BRKeyStore.getWalletCreationTime(app);
 
