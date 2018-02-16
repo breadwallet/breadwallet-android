@@ -2,6 +2,7 @@ package com.breadwallet.wallet.wallets.bitcoin;
 
 import android.app.Activity;
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import com.breadwallet.R;
@@ -16,6 +17,7 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
@@ -219,6 +221,25 @@ public class BitcoinUriParser {
         }
 
         return true;
+
+    }
+
+    public static String createBitcoinUrl(String address, long satoshiAmount, String label, String message, String rURL) {
+
+        Uri.Builder builder = new Uri.Builder();
+        builder = builder.scheme("bitcoin");
+        if (address != null && !address.isEmpty())
+            builder = builder.appendPath(address);
+        if (satoshiAmount != 0)
+            builder = builder.appendQueryParameter("amount", new BigDecimal(satoshiAmount).divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString());
+        if (label != null && !label.isEmpty())
+            builder = builder.appendQueryParameter("label", label);
+        if (message != null && !message.isEmpty())
+            builder = builder.appendQueryParameter("message", message);
+        if (rURL != null && !rURL.isEmpty())
+            builder = builder.appendQueryParameter("r", rURL);
+
+        return builder.build().toString().replaceFirst("/", "");
 
     }
 
