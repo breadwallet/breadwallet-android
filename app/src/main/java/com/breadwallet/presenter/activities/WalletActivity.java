@@ -125,7 +125,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mReceiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BRAnimator.showReceiveFragment(WalletActivity.this, false);
+                BRAnimator.showReceiveFragment(WalletActivity.this, true);
 
             }
         });

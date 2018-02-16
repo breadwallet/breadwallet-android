@@ -256,7 +256,7 @@ public class FragmentReceive extends Fragment {
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                observer.removeGlobalOnLayoutListener(this);
+                observer.removeOnGlobalLayoutListener(this);
                 animateBackgroundDim(backgroundLayout, false);
                 animateSignalSlide(signalLayout, false, null);
             }

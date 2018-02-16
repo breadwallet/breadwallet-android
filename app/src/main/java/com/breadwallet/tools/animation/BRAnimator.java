@@ -396,7 +396,7 @@ public class BRAnimator {
         }
     }
 
-    public static void animateSignalSlide(ViewGroup signalLayout, final boolean reverse, final OnSlideAnimationEnd listener) {
+    public static void animateSignalSlide(final ViewGroup signalLayout, final boolean reverse, final OnSlideAnimationEnd listener) {
         float translationY = signalLayout.getTranslationY();
         float signalHeight = signalLayout.getHeight();
         signalLayout.setTranslationY(reverse ? translationY : translationY + signalHeight);
@@ -411,6 +411,7 @@ public class BRAnimator {
                             listener.onAnimationEnd();
                     }
                 });
+
 
     }
 

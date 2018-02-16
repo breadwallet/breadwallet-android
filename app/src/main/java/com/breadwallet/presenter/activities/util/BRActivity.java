@@ -215,7 +215,6 @@ public class BRActivity extends Activity {
     public static void init(Activity app) {
         //set status bar color
 //        ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
-        Log.e(TAG, "init: ");
         InternetManager.getInstance();
         if (!(app instanceof IntroActivity || app instanceof RecoverActivity || app instanceof WriteDownActivity))
             BRApiManager.getInstance().startTimer(app);

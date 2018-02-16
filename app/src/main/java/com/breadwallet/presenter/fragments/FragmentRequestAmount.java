@@ -446,8 +446,20 @@ public class FragmentRequestAmount extends Fragment {
         String amountArg = "";
         if (strAmount != null && !strAmount.isEmpty()) {
             WalletsMaster master = WalletsMaster.getInstance(getActivity());
+
+            boolean isCrypto = master.isIsoCrypto(getActivity(), iso);
+
             BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
-            long amount = master.getCurrentWallet(getActivity()).getSmallestCryptoForFiat(getActivity(), bigAmount).longValue();
+
+            long amount;
+
+            if (isCrypto) {
+                amount = master.getCurrentWallet(getActivity()).getSmallestCryptoForCrypto(getActivity(), bigAmount).longValue();
+            } else {
+                amount = master.getCurrentWallet(getActivity()).getSmallestCryptoForFiat(getActivity(), bigAmount).longValue();
+            }
+
+            //todo hardcoded bitcoin QR for now
             String am = new BigDecimal(amount).divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString();
             amountArg = "?amount=" + am;
         }
