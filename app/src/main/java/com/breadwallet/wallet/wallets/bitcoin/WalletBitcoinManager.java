@@ -869,7 +869,6 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     }
 
-<<<<<<< HEAD
     @Override
     public void balanceChanged(long balance) {
         super.balanceChanged(balance);
