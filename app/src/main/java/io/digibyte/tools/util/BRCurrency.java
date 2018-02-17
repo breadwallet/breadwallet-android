@@ -55,7 +55,7 @@ public class BRCurrency {
         Currency currency;
         String symbol = null;
         decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
-//        int decimalPoints = 0;
+      int decimalPoints = 0;
         if (Objects.equals(isoCurrencyCode, "DGB")) {
             symbol = BRExchange.getBitcoinSymbol(app);
         } else {
@@ -65,12 +65,16 @@ public class BRCurrency {
                 currency = Currency.getInstance(Locale.getDefault());
             }
             symbol = currency.getSymbol();
-//            decimalPoints = currency.getDefaultFractionDigits();
+            decimalPoints = currency.getDefaultFractionDigits();
         }
         decimalFormatSymbols.setCurrencySymbol(symbol);
 //        currencyFormat.setMaximumFractionDigits(decimalPoints);
         currencyFormat.setGroupingUsed(true);
-        currencyFormat.setMaximumFractionDigits(BRSharedPrefs.getCurrencyUnit(app) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
+        if (Objects.equals(isoCurrencyCode, "DGB")){
+            currencyFormat.setMaximumFractionDigits(BRSharedPrefs.getCurrencyUnit(app) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
+        } else {
+            currencyFormat.setMaximumFractionDigits(decimalPoints);
+        }
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
         currencyFormat.setNegativeSuffix("");
