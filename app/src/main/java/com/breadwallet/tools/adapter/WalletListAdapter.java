@@ -93,6 +93,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
             // Start syncing the last used currency
             wallet.getPeerManager().connect();
+            //wallet.
             
 
             //wallet.getPeerManager().
