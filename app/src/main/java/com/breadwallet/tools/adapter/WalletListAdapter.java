@@ -2,6 +2,7 @@ package com.breadwallet.tools.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.os.Handler;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -13,7 +14,9 @@ import android.widget.RelativeLayout;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.util.BRConnectivityStatus;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
@@ -30,6 +33,8 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
     private final Context mContext;
     private ArrayList<BaseWalletManager> mWalletList;
+    private String currentlySyncingWallet;
+    private int currentlySyncingWalletPosition;
 
 
     public WalletListAdapter(Context context, ArrayList<BaseWalletManager> walletList) {
@@ -51,23 +56,24 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     }
 
     @Override
-    public void onBindViewHolder(WalletItemViewHolder holder, int position) {
+    public void onBindViewHolder(final WalletItemViewHolder holder, int position) {
 
-        BaseWalletManager wallet = mWalletList.get(position);
+        final BaseWalletManager wallet = mWalletList.get(position);
         String name = wallet.getName(mContext);
         String exchangeRate = CurrencyUtils.getFormattedCurrencyString(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), new BigDecimal(wallet.getFiatExchangeRate(mContext)));
         String fiatBalance = CurrencyUtils.getFormattedCurrencyString(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), new BigDecimal(wallet.getFiatBalance(mContext)));
 
         String cryptoBalance = CurrencyUtils.getFormattedCurrencyString(mContext, wallet.getIso(mContext), new BigDecimal(wallet.getCachedBalance(mContext)));
-        String iso = wallet.getIso(mContext);
+        final String iso = wallet.getIso(mContext);
 
         // Set wallet fields
         holder.mWalletName.setText(name);
         holder.mTradePrice.setText(exchangeRate);
         holder.mWalletBalanceUSD.setText(fiatBalance);
         holder.mWalletBalanceCurrency.setText(cryptoBalance);
-        holder.mSyncingProgressBar.setVisibility(View.GONE);
+        holder.mSyncingProgressBar.setVisibility(View.VISIBLE);
         holder.mSyncing.setText("Waiting to Sync");
+        holder.mWalletBalanceCurrency.setVisibility(View.INVISIBLE);
 
         // TODO : Align the "waiting to sync" text with the balance USD
 
@@ -78,29 +84,79 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
         }
 
-        // Get the last used currency
-        String currentWalletIso = BRSharedPrefs.getCurrentWalletIso(mContext);
+        String lastUsedWalletIso = BRSharedPrefs.getCurrentWalletIso(mContext);
 
-        if(iso == currentWalletIso){
+        BRConnectivityStatus connectivityChecker = new BRConnectivityStatus(mContext);
 
-           double syncProgress =  wallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mContext, currentWalletIso));
-           Log.d(TAG, "Sync progress -> " + syncProgress);
-           holder.mSyncingProgressBar.setVisibility(View.VISIBLE);
-           holder.mSyncing.setText("Syncing");
-
-        }
-        else{
-
-            // Start syncing the last used currency
-            wallet.getPeerManager().connect();
-            //wallet.
-            
-
-            //wallet.getPeerManager().
+        int connectionStatus = connectivityChecker.isMobileDataOrWifiConnected();
 
 
+        if (iso.equals(lastUsedWalletIso)) {
+            if (connectionStatus == BRConnectivityStatus.MOBILE_ON || connectionStatus == BRConnectivityStatus.WIFI_ON || connectionStatus == BRConnectivityStatus.MOBILE_WIFI_ON) {
+
+                syncWallet(wallet, holder);
+
+            }
         }
 
+
+    }
+
+    private void syncWallet(final BaseWalletManager wallet, final WalletItemViewHolder holder) {
+
+        final Handler progressHandler = new Handler();
+        Runnable progressRunnable = new Runnable() {
+            @Override
+            public void run() {
+                Log.d(TAG, "progressRunnable running!");
+                final double syncProgress = wallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mContext, wallet.getIso(mContext)));
+
+
+                progressHandler.postDelayed(this, 500);
+
+                progressHandler.post(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        // SYNCING
+                        if (syncProgress > 0.0 && syncProgress < 1.0) {
+                            int progress = (int) (syncProgress * 100);
+                            Log.d(TAG, "Sync progress -> " + syncProgress);
+                            Log.d(TAG, "Wallet ISO  -> " + wallet.getIso(mContext));
+                            Log.d(TAG, "Sync status SYNCING");
+                            holder.mSyncingProgressBar.setVisibility(View.VISIBLE);
+                            holder.mSyncing.setText("Syncing ");
+                            holder.mSyncingProgressBar.setProgress(progress);
+                        }
+
+
+                        // HAS NOT STARTED SYNCING
+                        else if (syncProgress == 0.0) {
+                            Log.d(TAG, "Sync progress -> " + syncProgress);
+                            holder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
+                            holder.mSyncing.setText("Waiting to Sync");
+                            holder.mSyncingProgressBar.setProgress(0);
+                            Log.d(TAG, "Wallet ISO  -> " + wallet.getIso(mContext));
+                            Log.d(TAG, "Sync status NOT SYNCING");
+                        }
+
+                        // FINISHED SYNCING
+                        else if (syncProgress == 1.0) {
+                            Log.d(TAG, "Sync progress -> " + syncProgress);
+                            holder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
+                            holder.mSyncing.setVisibility(View.INVISIBLE);
+                            holder.mWalletBalanceCurrency.setVisibility(View.VISIBLE);
+                            holder.mSyncingProgressBar.setProgress(100);
+                            Log.d(TAG, "Wallet ISO  -> " + wallet.getIso(mContext));
+                            Log.d(TAG, "Sync status FINISHED");
+
+                        }
+                    }
+                });
+            }
+        };
+
+        progressHandler.postDelayed(progressRunnable, 500);
 
     }
 
