@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +52,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
     @Override
     public void onBindViewHolder(final WalletItemViewHolder holder, int position) {
-        Log.d(TAG, "onBindViewHolder");
+
 
         final BaseWalletManager wallet = mWalletList.get(position);
         String name = wallet.getName(mContext);
@@ -76,34 +75,10 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         holder.mWait.setVisibility(View.INVISIBLE);
 
 
-
         if (wallet.getIso(mContext).equalsIgnoreCase(WalletBitcoinManager.getInstance(mContext).getIso(mContext))) {
             holder.mParent.setBackground(mContext.getResources().getDrawable(R.drawable.btc_card_shape, null));
         } else {
             holder.mParent.setBackground(mContext.getResources().getDrawable(R.drawable.bch_card_shape, null));
-
-        }
-
-
-        // Get the last used currency
-        String currentWalletIso = BRSharedPrefs.getCurrentWalletIso(mContext);
-
-        if(iso == currentWalletIso){
-
-           double syncProgress =  wallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mContext, currentWalletIso));
-           Log.d(TAG, "Sync progress -> " + syncProgress);
-           holder.mSyncingProgressBar.setVisibility(View.VISIBLE);
-           holder.mSyncing.setText("Syncing");
-
-        }
-        else{
-
-            // Start syncing the last used currency
-            wallet.getPeerManager().connect();
-            
-
-            //wallet.getPeerManager().
-
 
         }
 
@@ -113,7 +88,6 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     public ArrayList<BaseWalletManager> getWalletList() {
         return mWalletList;
     }
-
 
     @Override
     public int getItemCount() {
