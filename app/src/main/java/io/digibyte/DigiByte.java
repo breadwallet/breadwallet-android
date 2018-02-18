@@ -65,7 +65,7 @@ public class DigiByte extends Application {
         super.onCreate();
         if (Utils.isEmulatorOrDebug(this)) {
 //            BRKeyStore.putFailCount(0, this);
-            HOST = "stage2.breadwallet.com";
+//            HOST = "stage2.breadwallet.com";
             FirebaseCrash.setCrashCollectionEnabled(false);
 //            FirebaseCrash.report(new RuntimeException("test with new json file"));
         }
