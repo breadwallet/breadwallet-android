@@ -31,6 +31,9 @@ import io.digibyte.presenter.entities.BRMenuItem;
 import io.digibyte.presenter.interfaces.BROnSignalCompletion;
 import io.digibyte.tools.animation.BRAnimator;
 import io.digibyte.tools.animation.SlideDetector;
+
+
+import com.buglife.sdk.Buglife;
 import com.platform.APIClient;
 import com.platform.HTTPServer;
 
@@ -122,7 +125,10 @@ public class FragmentMenu extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(getActivity(), null);
+                //BRAnimator.showSupportFragment(getActivity(), null);
+
+                // Show the bug reporter activity.
+                Buglife.showReporter();
             }
         }));
         itemList.add(new BRMenuItem(getString(R.string.MenuButton_settings), R.drawable.ic_settings, new View.OnClickListener() {
@@ -176,7 +182,7 @@ public class FragmentMenu extends Fragment {
 
     public class MenuListAdapter extends ArrayAdapter<BRMenuItem> {
 
-//        private List<BRMenuItem> items;
+        //        private List<BRMenuItem> items;
         private Context mContext;
         private int defaultLayoutResource = R.layout.menu_list_item;
 

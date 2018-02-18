@@ -12,6 +12,9 @@ import android.view.WindowManager;
 import io.digibyte.presenter.activities.util.BRActivity;
 import io.digibyte.tools.listeners.SyncReceiver;
 import io.digibyte.tools.util.Utils;
+
+import com.buglife.sdk.Buglife;
+import com.buglife.sdk.InvocationMethod;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.util.ArrayList;
@@ -77,6 +80,10 @@ public class DigiByte extends Application {
         int DISPLAY_WIDTH_PX = size.x;
         DISPLAY_HEIGHT_PX = size.y;
         mFingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
+
+        // Fill in API key here
+        Buglife.initWithApiKey(this, "");
+        Buglife.setInvocationMethod(InvocationMethod.SHAKE);
 
 //        addOnBackgroundedListener(new OnAppBackgrounded() {
 //            @Override
