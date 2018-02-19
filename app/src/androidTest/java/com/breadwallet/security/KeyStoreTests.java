@@ -1,5 +1,6 @@
 package com.breadwallet.security;
 
+import android.app.Activity;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
@@ -133,9 +134,6 @@ public class KeyStoreTests {
 
         }
 
-        assertFilesExist(BRKeyStore.CANARY_ALIAS);
-
-
         for (int i = 0; i < 100; i++) {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
@@ -156,6 +154,8 @@ public class KeyStoreTests {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+
+        assertFilesExist(BRKeyStore.CANARY_ALIAS);
 
     }
 
@@ -345,13 +345,24 @@ public class KeyStoreTests {
     }
 
     public void assertFilesExist(String alias) {
-        Assert.assertTrue(new File(BRKeyStore.getFilePath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
-        Assert.assertTrue(new File(BRKeyStore.getFilePath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
+        Activity app = mActivityRule.getActivity();
+        byte[] data = BRKeyStore.retrieveEncryptedData(app, alias);
+        Assert.assertNotNull(data);
+        Assert.assertNotEquals(data.length, 0);
+
+        byte[] iv = BRKeyStore.retrieveEncryptedData(app, aliasObjectMap.get(alias).ivFileName);
+        Assert.assertNotNull(iv);
+        Assert.assertNotEquals(iv.length, 0);
+
     }
 
     public void assertFilesDontExist(String alias) {
-        Assert.assertFalse(new File(BRKeyStore.getFilePath(aliasObjectMap.get(alias).datafileName, mActivityRule.getActivity())).exists());
-        Assert.assertFalse(new File(BRKeyStore.getFilePath(aliasObjectMap.get(alias).ivFileName, mActivityRule.getActivity())).exists());
+        Activity app = mActivityRule.getActivity();
+        byte[] data = BRKeyStore.retrieveEncryptedData(app, alias);
+        Assert.assertNull(data);
+
+        byte[] iv = BRKeyStore.retrieveEncryptedData(app, aliasObjectMap.get(alias).ivFileName);
+        Assert.assertNull(iv);
     }
 
 }

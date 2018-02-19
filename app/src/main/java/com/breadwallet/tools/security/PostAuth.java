@@ -207,11 +207,12 @@ public class PostAuth {
             return;
         }
         if (rawPhrase.length < 10) return;
+        Log.e(TAG, "onPublish: " + Utils.bytesToHex(rawPhrase));
         try {
             if (rawPhrase.length != 0) {
                 if (paymentItem != null && paymentItem.tx != null) {
+
                     byte[] txHash = walletManager.getCurrentWallet(app).signAndPublishTransaction(paymentItem.tx, rawPhrase);
-                    Log.e(TAG, "onPublishTxAuth: txhash:" + Arrays.toString(txHash));
                     if (Utils.isNullOrEmpty(txHash)) {
                         Log.e(TAG, "onPublishTxAuth: publishSerializedTransaction returned FALSE");
                         //todo fix this
