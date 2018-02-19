@@ -75,7 +75,7 @@ public class PostAuth {
     }
 
     public void onCreateWalletAuth(Activity app, boolean authAsked) {
-//        Log.e(TAG, "onCreateWalletAuth: " + authAsked + ", " + app.getClass().getName());
+        Log.e(TAG, "onCreateWalletAuth: " + authAsked + ", " + app.getClass().getName());
         long start = System.currentTimeMillis();
         boolean success = WalletsMaster.getInstance(app).generateRandomSeed(app);
         if (success) {
@@ -207,7 +207,6 @@ public class PostAuth {
             return;
         }
         if (rawPhrase.length < 10) return;
-        Log.e(TAG, "onPublish: " + Utils.bytesToHex(rawPhrase));
         try {
             if (rawPhrase.length != 0) {
                 if (paymentItem != null && paymentItem.tx != null) {
