@@ -1119,14 +1119,13 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     public void onTxAdded(BRCoreTransaction transaction) {
         final Context ctx = BreadApp.getBreadContext();
         final WalletsMaster master = WalletsMaster.getInstance(ctx);
-        final BaseWalletManager wallet = master.getCurrentWallet(ctx);
         final long amount = getWallet().getTransactionAmount(transaction);
         if (amount > 0) {
             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    String am = CurrencyUtils.getFormattedCurrencyString(ctx, wallet.getIso(ctx), wallet.getCryptoForSmallestCrypto(ctx, new BigDecimal(amount)));
-                    String amCur = CurrencyUtils.getFormattedCurrencyString(ctx, BRSharedPrefs.getPreferredFiatIso(ctx), master.getCurrentWallet(ctx).getFiatForSmallestCrypto(ctx, new BigDecimal(amount)));
+                    String am = CurrencyUtils.getFormattedCurrencyString(ctx, getIso(ctx), getCryptoForSmallestCrypto(ctx, new BigDecimal(amount)));
+                    String amCur = CurrencyUtils.getFormattedCurrencyString(ctx, BRSharedPrefs.getPreferredFiatIso(ctx), master.getCurrentWallet(ctx).getFiatForSmallestCrypto(ctx, new BigDecimal(amount)).divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE));
                     String formatted = String.format("%s (%s)", am, amCur);
                     final String strToShow = String.format(ctx.getString(R.string.TransactionDetails_received), formatted);
 
