@@ -308,7 +308,7 @@ public class BRKeyStore {
             boolean aliasExists = new File(getFilePath(alias_file, context)).exists();
             //cannot happen, they all should be present
             if (!ivExists || !aliasExists) {
-                removeAliasAndFiles(keyStore, alias, context);
+                removeAliasAndDatas(keyStore, alias, context);
                 //report it if one exists and not the other.
                 if (ivExists != aliasExists) {
                     BRKeystoreErrorException ex = new BRKeystoreErrorException("alias or iv isn't on the disk: " + alias + ", aliasExists:" + aliasExists);
@@ -743,7 +743,7 @@ public class BRKeyStore {
             if (keyStore.aliases() != null) {
                 while (keyStore.aliases().hasMoreElements()) {
                     String alias = keyStore.aliases().nextElement();
-                    removeAliasAndFiles(keyStore, alias, context);
+                    removeAliasAndDatas(keyStore, alias, context);
                     destroyEncryptedData(context, alias);
                     count++;
                 }
@@ -769,11 +769,13 @@ public class BRKeyStore {
         return true;
     }
 
-    public synchronized static void removeAliasAndFiles(KeyStore keyStore, String alias, Context context) {
+    public synchronized static void removeAliasAndDatas(KeyStore keyStore, String alias, Context context) {
         try {
             keyStore.deleteEntry(alias);
-            boolean b1 = new File(getFilePath(aliasObjectMap.get(alias).datafileName, context)).delete();
-            boolean b2 = new File(getFilePath(aliasObjectMap.get(alias).ivFileName, context)).delete();
+
+            BRKeyStore.destroyEncryptedData(context, alias);
+            BRKeyStore.destroyEncryptedData(context, aliasObjectMap.get(alias).ivFileName);
+
         } catch (KeyStoreException e) {
             e.printStackTrace();
         }
@@ -966,7 +968,7 @@ public class BRKeyStore {
             boolean ivExists = new File(getFilePath(alias_iv, context)).exists();
             boolean aliasExists = new File(getFilePath(alias_file, context)).exists();
             if (!ivExists || !aliasExists) {
-                removeAliasAndFiles(keyStore, alias, context);
+                removeAliasAndDatas(keyStore, alias, context);
                 //report it if one exists and not the other.
                 if (ivExists != aliasExists) {
                     Log.e(TAG, "_getOldData: " + "alias or iv isn't on the disk: " + alias + ", aliasExists:" + aliasExists);

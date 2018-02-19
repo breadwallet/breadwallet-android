@@ -703,9 +703,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         long minOutputAmount = getWallet().getMinOutputAmount();
         final long maxOutputAmount = getWallet().getMaxOutputAmount();
 
-        final BRCoreTransaction tx = paymentRequest.tx;
-
-        if (tx == null) {
+        if (paymentRequest.tx == null) {
             throw new SomethingWentWrong("transaction is null");
         }
         // check if spending is allowed
@@ -734,7 +732,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                 throw new InsufficientFundsException(Math.abs(getWallet().getTransactionAmount(paymentRequest.tx)), balance);
             }
 
-            long feeForTx = getWallet().getTransactionFee(tx);
+            long feeForTx = getWallet().getTransactionFee(paymentRequest.tx);
             throw new FeeNeedsAdjust(Math.abs(getWallet().getTransactionAmount(paymentRequest.tx)), balance, feeForTx);
         }
         // payment successful
@@ -758,7 +756,6 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 //                    });
 //                    return;
 //                }
-                paymentRequest.tx = tx;
                 PostAuth.getInstance().setPaymentItem(paymentRequest);
                 confirmPay(app, paymentRequest);
             }

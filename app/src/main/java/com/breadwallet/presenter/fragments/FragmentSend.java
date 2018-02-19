@@ -674,10 +674,10 @@ public class FragmentSend extends Fragment {
 
         //wallet's balance for the selected ISO
         BigDecimal balanceForISO = isIsoCrypto ? new BigDecimal(curBalance) : wallet.getFiatForSmallestCrypto(app, new BigDecimal(curBalance));
-        Log.e(TAG, "updateText: balanceForISO:" + balanceForISO);
+//        Log.e(TAG, "updateText: balanceForISO:" + balanceForISO);
         //formattedBalance
         String formattedBalance = CurrencyUtils.getFormattedCurrencyString(app, selectedIso, balanceForISO);
-        Log.e(TAG, "updateText: formattedBalance:" + formattedBalance);
+//        Log.e(TAG, "updateText: formattedBalance:" + formattedBalance);
 
         //Balance depending on the selected ISO
         long fee; //todo fix the 0 fee bug
@@ -699,16 +699,16 @@ public class FragmentSend extends Fragment {
             }
         }
 
-        Log.e(TAG, "updateText: fee:" + fee);
+//        Log.e(TAG, "updateText: fee:" + fee);
         //get the fee for iso (in cents, satoshis..)
         BigDecimal feeForISO = isIsoCrypto ? wallet.getSmallestCryptoForCrypto(app, new BigDecimal(fee)) : wallet.getFiatForSmallestCrypto(app, new BigDecimal(fee));
-        Log.e(TAG, "updateText: feeForISO:" + feeForISO);
+//        Log.e(TAG, "updateText: feeForISO:" + feeForISO);
 
         if (balanceForISO == null) balanceForISO = new BigDecimal(0);
 
         //format the fee to the selected ISO
         String aproxFee = CurrencyUtils.getFormattedCurrencyString(app, selectedIso, feeForISO);
-        Log.e(TAG, "updateText: aproxFee:" + aproxFee);
+//        Log.e(TAG, "updateText: aproxFee:" + aproxFee);
 
         boolean isOverTheBalance = smallestAmount.doubleValue() > balanceForISO.doubleValue();
         if (isOverTheBalance) {

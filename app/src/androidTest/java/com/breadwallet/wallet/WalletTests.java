@@ -162,6 +162,8 @@ public class WalletTests {
     @Test
     public void walletBitcoinTests() {
         Activity app = mActivityRule.getActivity();
+
+
         WalletBitcoinManager wallet = WalletBitcoinManager.getInstance(app);
 
         BRSharedPrefs.putPreferredFiatIso(app, "USD");
@@ -227,6 +229,11 @@ public class WalletTests {
         val = new BigDecimal(600000);//$6000.00 = c600000
         res = wallet.getCryptoForFiat(app, val);
         Assert.assertEquals(res.doubleValue(), 500000, 0); //dollars
+
+    }
+
+    @Test
+    public void walletPaperKeyTests() {
 
     }
 
