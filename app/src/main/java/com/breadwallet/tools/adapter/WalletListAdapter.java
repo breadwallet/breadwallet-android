@@ -159,10 +159,9 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                             holder.mSyncingProgressBar.setProgress(100);
                             Log.d(TAG, "Wallet ISO  -> " + wallet.getIso(mContext));
                             Log.d(TAG, "Sync status FINISHED");
-                            //progressHandler.removeCallbacks(this);
+                            progressHandler.removeCallbacks(this);
 
-                            // TODO : Find a way to cancel the runnable after the currently used wallet
-                            // has successfully finished syncing
+
 
                         }
                     }

@@ -284,8 +284,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             TransitionManager.beginDelayedTransition(toolBarConstraintLayout);
         int px8 = Utils.getPixelsFromDps(this, 8);
         int px16 = Utils.getPixelsFromDps(this, 14);
-        //align to parent left
-        set.connect(!btcPreferred ? R.id.balance_secondary : R.id.balance_primary, ConstraintSet.START, ConstraintSet.PARENT_ID, ConstraintSet.END, px16);
+
+        //align first item to parent right
+        set.connect(!btcPreferred ? R.id.balance_secondary : R.id.balance_primary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, px16);
         //align swap symbol after the first item
         set.connect(R.id.swap, ConstraintSet.START, !btcPreferred ? mBalanceSecondary.getId() : mBalancePrimary.getId(), ConstraintSet.END, px8);
         //align second item after swap symbol
