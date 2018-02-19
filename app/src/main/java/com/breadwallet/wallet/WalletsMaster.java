@@ -31,6 +31,7 @@ import com.platform.tools.KVStoreManager;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -119,19 +120,19 @@ public class WalletsMaster {
         }
         if (randomSeed.length != 16)
             throw new NullPointerException("failed to create the seed, seed length is not 128: " + randomSeed.length);
-        byte[] strPhrase = BRCoreMasterPubKey.encodeSeed(randomSeed, words);
-        if (strPhrase == null || strPhrase.length == 0) {
+        byte[] paperKeyBytes = BRCoreMasterPubKey.encodeSeed(randomSeed, words);
+        if (paperKeyBytes == null || paperKeyBytes.length == 0) {
             BRReportsManager.reportBug(new NullPointerException("failed to encodeSeed"), true);
             return false;
         }
-        String[] splitPhrase = new String(strPhrase).split(" ");
+        String[] splitPhrase = new String(paperKeyBytes).split(" ");
         if (splitPhrase.length != 12) {
             BRReportsManager.reportBug(new NullPointerException("phrase does not have 12 words:" + splitPhrase.length + ", lang: " + languageCode), true);
             return false;
         }
         boolean success = false;
         try {
-            success = BRKeyStore.putPhrase(strPhrase, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
+            success = BRKeyStore.putPhrase(paperKeyBytes, ctx, BRConstants.PUT_PHRASE_NEW_WALLET_REQUEST_CODE);
         } catch (UserNotAuthenticatedException e) {
             return false;
         }
@@ -163,8 +164,7 @@ public class WalletsMaster {
             }
         });
 
-        byte[] pubKey = new BRCoreMasterPubKey(strPhrase, true).getPubKey();
-        Log.e(TAG, "generateRandomSeed: pubKey: " + pubKey);
+        byte[] pubKey = new BRCoreMasterPubKey(paperKeyBytes, true).getPubKey();
         BRKeyStore.putMasterPublicKey(pubKey, ctx);
 
         return true;
