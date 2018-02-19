@@ -90,19 +90,29 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
         int connectionStatus = connectivityChecker.isMobileDataOrWifiConnected();
 
+        Log.d(TAG, "Current wallet ISO -> " + iso + ", last used wallet ISO -> " + lastUsedWalletIso);
+        Log.d(TAG, "Connection status -> " + connectionStatus);
 
+
+        // Mobile or Wifi is ON, sync the last used wallet
         if (iso.equals(lastUsedWalletIso)) {
+            Log.d(TAG, "Current wallet is last used, Connection Status -> " + connectionStatus);
             if (connectionStatus == BRConnectivityStatus.MOBILE_ON || connectionStatus == BRConnectivityStatus.WIFI_ON || connectionStatus == BRConnectivityStatus.MOBILE_WIFI_ON) {
 
                 syncWallet(wallet, holder);
 
             }
         }
+        else{
+
+        }
 
 
     }
 
     private void syncWallet(final BaseWalletManager wallet, final WalletItemViewHolder holder) {
+
+        wallet.getPeerManager().connect();
 
         final Handler progressHandler = new Handler();
         Runnable progressRunnable = new Runnable() {
@@ -149,6 +159,10 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                             holder.mSyncingProgressBar.setProgress(100);
                             Log.d(TAG, "Wallet ISO  -> " + wallet.getIso(mContext));
                             Log.d(TAG, "Sync status FINISHED");
+                            //progressHandler.removeCallbacks(this);
+
+                            // TODO : Find a way to cancel the runnable after the currently used wallet
+                            // has successfully finished syncing
 
                         }
                     }
