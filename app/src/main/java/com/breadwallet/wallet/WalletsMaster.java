@@ -31,7 +31,6 @@ import com.platform.tools.KVStoreManager;
 import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -264,14 +263,14 @@ public class WalletsMaster {
         if (!mWallets.contains(WalletBchManager.getInstance(app)))
             mWallets.add(WalletBchManager.getInstance(app));
         for (BaseWalletManager wallet : mWallets) {
-            wallet.initWallet(app);
+            wallet.connectWallet(app);
         }
     }
 
     public void initLastWallet(Context app) {
         BaseWalletManager wallet = getWalletByIso(app, BRSharedPrefs.getCurrentWalletIso(app));
         if (wallet == null) wallet = getWalletByIso(app, "BTC");
-        wallet.initWallet(app);
+        wallet.connectWallet(app);
     }
 
     public void startTheWalletIfExists(final Activity app) {

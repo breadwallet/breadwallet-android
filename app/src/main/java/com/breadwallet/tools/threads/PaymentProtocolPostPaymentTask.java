@@ -10,7 +10,6 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.PaymentRequestWrapper;
-import com.breadwallet.wallet.wallets.bitcoin.BitcoinUriParser;
 import com.breadwallet.tools.util.BytesUtil;
 
 import java.io.DataOutputStream;
@@ -96,7 +95,7 @@ public class PaymentProtocolPostPaymentTask extends AsyncTask<String, String, St
                 return null;
             }
 
-//            message = BitcoinUriParser.parsePaymentACK(serializedBytes);//todo implement that
+//            message = CryptoUriParser.parsePaymentACK(serializedBytes);//todo implement that
 //            PostAuth.getInstance().setTmpPaymentRequest(paymentRequest);
 //            PostAuth.getInstance().onPaymentProtocolRequest(app,false);
         } catch (Exception e) {

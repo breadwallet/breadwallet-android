@@ -1,4 +1,4 @@
-package com.breadwallet.wallet.wallets.bitcoin;
+package com.breadwallet.wallet.wallets.util;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,10 +16,12 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -55,11 +57,11 @@ import java.util.Map;
  * THE SOFTWARE.
  */
 
-public class BitcoinUriParser {
-    private static final String TAG = BitcoinUriParser.class.getName();
+public class CryptoUriParser {
+    private static final String TAG = CryptoUriParser.class.getName();
     private static final Object lockObject = new Object();
 
-    public static synchronized boolean processRequest(Context app, String url) {
+    public static synchronized boolean processRequest(Context app, String url, BaseWalletManager walletManager) {
         if (url == null) {
             Log.e(TAG, "processRequest: url is null");
             return false;
@@ -79,7 +81,7 @@ public class BitcoinUriParser {
 
         RequestObject requestObject = parseRequest(url);
 
-        if (WalletsMaster.getInstance(app).getCurrentWallet(app).trySweepWallet(app, url)) return true;
+        if (ImportPrivKeyTask.trySweepWallet(app, url, walletManager)) return true;
 
         if (requestObject == null) {
             if (app != null) {
@@ -216,7 +218,7 @@ public class BitcoinUriParser {
             });
         } else {
             BRAnimator.killAllFragments(app);
-            BRCoreTransaction tx =  wallet.getWallet().createTransaction(new BigDecimal(amount).longValue(), new BRCoreAddress(requestObject.address));
+            BRCoreTransaction tx = wallet.getWallet().createTransaction(new BigDecimal(amount).longValue(), new BRCoreAddress(requestObject.address));
             WalletBitcoinManager.getInstance(app).sendTransaction(app, new PaymentItem(tx, null, false, null));
         }
 

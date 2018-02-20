@@ -92,7 +92,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 return null;
             }
 
-//            paymentRequest = BitcoinUriParser.parsePaymentRequest(serializedBytes);//todo implement that
+//            paymentRequest = CryptoUriParser.parsePaymentRequest(serializedBytes);//todo implement that
 
             if (paymentRequest == null || paymentRequest.error == PaymentRequestWrapper.INVALID_REQUEST_ERROR) {
                 Log.e(TAG, "paymentRequest is null!!!");

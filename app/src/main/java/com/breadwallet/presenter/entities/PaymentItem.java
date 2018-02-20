@@ -1,6 +1,10 @@
 package com.breadwallet.presenter.entities;
 
+import android.content.Context;
+import android.util.Log;
+
 import com.breadwallet.core.BRCoreTransaction;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 /**
  * BreadWallet
@@ -40,6 +44,41 @@ public class PaymentItem {
         this.tx = tx;
         this.cn = certificationName;
         this.comment = comment;
+    }
+
+    public boolean isSmallerThanMin(Context app,  BaseWalletManager walletManager) {
+        long minAmount = walletManager.getWallet().getMinOutputAmount();
+        long amount = Math.abs(walletManager.getWallet().getTransactionAmount(tx));
+        Log.e(TAG, "isSmallerThanMin: " + amount);
+        return amount < minAmount;
+    }
+
+    public boolean isLargerThanBalance(Context app, BaseWalletManager walletManager) {
+        return Math.abs(walletManager.getWallet().getTransactionAmount(tx)) > walletManager.getCachedBalance(app)
+                && Math.abs(walletManager.getWallet().getTransactionAmount(tx)) > 0;
+    }
+
+    public boolean notEnoughForFee(Context app,  BaseWalletManager walletManager) {
+        long feeForTx = walletManager.getWallet().getTransactionFee(tx);
+        if (feeForTx == 0) {
+            long maxOutput = walletManager.getWallet().getMaxOutputAmount();
+            feeForTx = walletManager.getWallet().getFeeForTransactionAmount(maxOutput);
+            return feeForTx > 0;
+        }
+        return false;
+    }
+
+    public String getReceiver(PaymentItem item, BaseWalletManager walletManager) {
+        String receiver;
+        boolean certified = false;
+        if (item.cn != null && item.cn.length() != 0) {
+            certified = true;
+        }
+        receiver = walletManager.getWallet().getTransactionAddress(item.tx).stringify();
+        if (certified) {
+            receiver = "certified: " + item.cn + "\n";
+        }
+        return receiver;
     }
 
 

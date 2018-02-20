@@ -1,9 +1,17 @@
 package com.breadwallet.tools.threads;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.AsyncTask;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
@@ -14,7 +22,9 @@ import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreTransactionInput;
 import com.breadwallet.core.BRCoreTransactionOutput;
 import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.CurrencyUtils;
@@ -216,6 +226,89 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             e.printStackTrace();
         }
         return null;
+    }
+
+
+    public static boolean trySweepWallet(final Context ctx, final String privKey, final BaseWalletManager walletManager) {
+        if (ctx == null) {
+            Log.e(TAG, "trySweepWallet: ctx is null");
+            return false;
+        }
+        if (BRCoreKey.isValidBitcoinBIP38Key(privKey)) {
+            Log.d(TAG, "isValidBitcoinBIP38Key true");
+            ((Activity) ctx).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+
+                    final AlertDialog.Builder builder = new AlertDialog.Builder(ctx);
+//                    builder.setTitle("password protected key");
+
+                    final View input = ((Activity) ctx).getLayoutInflater().inflate(R.layout.view_bip38password_dialog, null);
+                    // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+                    builder.setView(input);
+
+                    final EditText editText = (EditText) input.findViewById(R.id.bip38password_edittext);
+
+                    new Handler().postDelayed(new Runnable() {
+                        public void run() {
+                            editText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_DOWN, 0, 0, 0));
+                            editText.dispatchTouchEvent(MotionEvent.obtain(SystemClock.uptimeMillis(), SystemClock.uptimeMillis(), MotionEvent.ACTION_UP, 0, 0, 0));
+
+                        }
+                    }, 100);
+
+                    // Set up the buttons
+                    builder.setPositiveButton(ctx.getString(R.string.Button_ok), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            if (ctx != null)
+                                ((Activity) ctx).runOnUiThread(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        BRToast.showCustomToast(ctx, ctx.getString(R.string.Import_checking), 500, Toast.LENGTH_LONG, R.drawable.toast_layout_blue);
+                                    }
+                                });
+                            if (editText == null) {
+                                Log.e(TAG, "onClick: edit text is null!");
+                                return;
+                            }
+
+                            final String pass = editText.getText().toString();
+                            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    String decryptedKey = BRCoreKey.decryptBip38Key(privKey, pass);
+                                    //if the decryptedKey is not empty then we have a regular private key and isValidBitcoinBIP38Key will be false
+                                    if (decryptedKey.equals("")) {
+                                        SpringAnimator.springView(input);
+                                        trySweepWallet(ctx, privKey, walletManager);
+                                    } else {
+                                        trySweepWallet(ctx, decryptedKey, walletManager);
+                                    }
+                                }
+                            });
+
+                        }
+                    });
+                    builder.setNegativeButton(ctx.getString(R.string.Button_cancel), new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.cancel();
+                        }
+                    });
+
+                    builder.show();
+                }
+            });
+            return true;
+        } else if (BRCoreKey.isValidBitcoinPrivateKey(privKey)) {
+            Log.d(TAG, "isValidBitcoinPrivateKey true");
+            new ImportPrivKeyTask(((Activity) ctx)).execute(privKey, walletManager.getIso(ctx));
+            return true;
+        } else {
+            Log.e(TAG, "trySweepWallet: !isValidBitcoinPrivateKey && !isValidBitcoinBIP38Key");
+            return false;
+        }
     }
 
 

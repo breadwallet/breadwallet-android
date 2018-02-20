@@ -130,7 +130,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             }
         });
 
-        BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        final BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
         Log.d(TAG, "Current wallet ISO -> " + wallet.getIso(this));
         if (wallet.getIso(this).equalsIgnoreCase("BTC")) {
 
@@ -199,6 +199,13 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 //        if (BRSharedPrefs.getCurrentWalletIso(this).isEmpty() || BRSharedPrefs.getCurrentWalletIso(this) == null) {
 //            BRSharedPrefs.putCurrentWalletIso(WalletActivity.this, "BTC");
 //        }
+
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                wallet.connectWallet(WalletActivity.this);
+            }
+        });
     }
 
     private void updateUi() {
