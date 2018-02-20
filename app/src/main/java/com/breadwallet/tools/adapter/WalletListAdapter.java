@@ -12,8 +12,10 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
+import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConnectivityStatus;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -112,7 +114,16 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
     private void syncWallet(final BaseWalletManager wallet, final WalletItemViewHolder holder) {
 
-        wallet.getPeerManager().connect();
+        //wallet.getPeerManager().connect();
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (wallet.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Disconnected) {
+                    wallet.getPeerManager().connect();
+                    Log.e(TAG, "run: core connecting");
+                }
+            }
+        });
 
         final Handler progressHandler = new Handler();
         Runnable progressRunnable = new Runnable() {
