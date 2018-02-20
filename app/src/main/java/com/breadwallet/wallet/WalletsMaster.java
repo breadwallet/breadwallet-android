@@ -120,7 +120,7 @@ public class WalletsMaster {
         }
         if (randomSeed.length != 16)
             throw new NullPointerException("failed to create the seed, seed length is not 128: " + randomSeed.length);
-        byte[] paperKeyBytes = BRCoreMasterPubKey.encodeSeed(randomSeed, words);
+        byte[] paperKeyBytes = BRCoreMasterPubKey.generatePaperKey(randomSeed, words);
         if (paperKeyBytes == null || paperKeyBytes.length == 0) {
             BRReportsManager.reportBug(new NullPointerException("failed to encodeSeed"), true);
             return false;
@@ -164,7 +164,8 @@ public class WalletsMaster {
             }
         });
 
-        byte[] pubKey = new BRCoreMasterPubKey(paperKeyBytes, true).getPubKey();
+        //store the serialized in the KeyStore
+        byte[] pubKey = new BRCoreMasterPubKey(paperKeyBytes, true).serialize();
         BRKeyStore.putMasterPublicKey(pubKey, ctx);
 
         return true;

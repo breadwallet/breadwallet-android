@@ -77,7 +77,7 @@ public class SmartValidator {
         if (!SmartValidator.isPaperKeyValid(activity, normalizedPhrase))
             return false;
         byte[] rawPhrase = normalizedPhrase.getBytes();
-        byte[] pubKey = new BRCoreMasterPubKey(rawPhrase, true).getPubKey();
+        byte[] pubKey = new BRCoreMasterPubKey(rawPhrase, true).serialize();
         byte[] pubKeyFromKeyStore = new byte[0];
         try {
             pubKeyFromKeyStore = BRKeyStore.getMasterPublicKey(activity);
