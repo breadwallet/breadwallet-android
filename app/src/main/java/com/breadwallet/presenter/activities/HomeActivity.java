@@ -54,7 +54,7 @@ public class HomeActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        WalletsMaster.getInstance(this).initWallets(this);
+        WalletsMaster.getInstance(HomeActivity.this).initWallets(HomeActivity.this);
 
         ArrayList<BaseWalletManager> walletList = new ArrayList<>();
 
@@ -111,8 +111,6 @@ public class HomeActivity extends BRActivity {
                 BRAnimator.showSupportFragment(HomeActivity.this, null);
             }
         });
-
-
 
 
     }

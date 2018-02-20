@@ -33,7 +33,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.BitcoinUriParser;
+import com.breadwallet.wallet.wallets.util.CryptoUriParser;
 
 import java.math.BigDecimal;
 
@@ -216,7 +216,7 @@ public class FragmentRequestAmount extends Fragment {
                 String strAmount = amountEdit.getText().toString();
                 BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
                 long amount = master.getCurrentWallet(getActivity()).getSmallestCryptoForFiat(getActivity(), bigAmount).longValue();
-                String bitcoinUri = BitcoinUriParser.createBitcoinUrl(receiveAddress, amount, null, null, null);
+                String bitcoinUri = CryptoUriParser.createBitcoinUrl(receiveAddress, amount, null, null, null);
                 QRUtils.share("mailto:", getActivity(), bitcoinUri);
 
             }
@@ -232,7 +232,7 @@ public class FragmentRequestAmount extends Fragment {
                 String strAmount = amountEdit.getText().toString();
                 BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
                 long amount = master.getCurrentWallet(getActivity()).getSmallestCryptoForFiat(getActivity(), bigAmount).longValue();
-                String bitcoinUri = BitcoinUriParser.createBitcoinUrl(receiveAddress, amount, null, null, null);
+                String bitcoinUri = CryptoUriParser.createBitcoinUrl(receiveAddress, amount, null, null, null);
                 QRUtils.share("sms:", getActivity(), bitcoinUri);
             }
         });

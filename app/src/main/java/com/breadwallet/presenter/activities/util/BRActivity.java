@@ -4,9 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
-import android.webkit.WebChromeClient;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.activities.DisabledActivity;
@@ -18,7 +16,7 @@ import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.wallet.wallets.bitcoin.BitcoinUriParser;
+import com.breadwallet.wallet.wallets.util.CryptoUriParser;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
@@ -179,8 +177,9 @@ public class BRActivity extends Activity {
                                 e.printStackTrace();
                             }
                             String result = data.getStringExtra("result");
-                            if (BitcoinUriParser.isBitcoinUrl(BRActivity.this, result))
-                                BitcoinUriParser.processRequest(BRActivity.this, result);
+                            if (CryptoUriParser.isBitcoinUrl(BRActivity.this, result))
+                                CryptoUriParser.processRequest(BRActivity.this, result,
+                                        WalletsMaster.getInstance(BRActivity.this).getCurrentWallet(BRActivity.this));
                             else if (BRBitId.isBitId(result))
                                 BRBitId.signBitID(BRActivity.this, result, null);
                             else

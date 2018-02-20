@@ -83,7 +83,7 @@ public interface BaseWalletManager {
     boolean generateWallet(Context app);
 
     //init the current wallet
-    boolean initWallet(Context app);
+    boolean connectWallet(Context app);
 
     //get the currency symbol e.g. Bitcoin - ₿, Ether - Ξ
     String getSymbol(Context app);
@@ -111,8 +111,6 @@ public interface BaseWalletManager {
 
     //wipe all wallet data
     void wipeData(Context app);
-
-    boolean trySweepWallet(Context app, String privKey);
 
     //load the txs from DB
     BRCoreTransaction[] loadTransactions();
@@ -153,11 +151,6 @@ public interface BaseWalletManager {
 
     //return the maximum amount for this currency
     BigDecimal getMaxAmount(Context app);
-
-    /**
-     * @return - true if the uri is compatible with the  and can be processed (proceed with processing the uri)
-     */
-    boolean tryUri(Context app, String uriStr);
 
     /**
      * @return - the wallet's Ui configuration
