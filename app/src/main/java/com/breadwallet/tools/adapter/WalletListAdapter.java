@@ -114,7 +114,6 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
     private void syncWallet(final BaseWalletManager wallet, final WalletItemViewHolder holder) {
 
-        //wallet.getPeerManager().connect();
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -133,7 +132,6 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                 final double syncProgress = wallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mContext, wallet.getIso(mContext)));
 
 
-                progressHandler.postDelayed(this, 500);
 
                 progressHandler.post(new Runnable() {
                     @Override
@@ -177,6 +175,9 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                         }
                     }
                 });
+
+                progressHandler.postDelayed(this, 500);
+
             }
         };
 
