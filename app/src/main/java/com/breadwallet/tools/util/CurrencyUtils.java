@@ -1,6 +1,7 @@
 package com.breadwallet.tools.util;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.wallet.WalletsMaster;
@@ -41,8 +42,8 @@ public class CurrencyUtils {
     public static final String TAG = CurrencyUtils.class.getName();
 
 
-    // amount is in currency (e.g. cents) or BTC (bits, mBTC or BTC)
-    public static String getFormattedCurrencyString(Context app, String iso, BigDecimal amount) {
+    // amount is the smallest denomination currency (e.g. cents or satoshis)
+    public static String getFormattedAmount(Context app, String iso, BigDecimal amount) {
         if (amount == null) return "---"; //to be able to detect in a bug
 //        Log.e(TAG, "amount: " + amount);
         DecimalFormat currencyFormat;
@@ -57,18 +58,16 @@ public class CurrencyUtils {
         decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
 //        int decimalPoints = 0;
         BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
-        try {
-            currency = Currency.getInstance(iso);
-            symbol = currency.getSymbol();
-            amount = amount.divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
-        } catch (IllegalArgumentException e) {
-
-            if (wallet == null) {
-                IllegalArgumentException ex = new IllegalArgumentException("Illegal iso: " + iso);
-                BRReportsManager.reportBug(ex);
-                throw ex;
-            } else {
-                symbol = wallet.getSymbol(app);
+        if (wallet != null) {
+            symbol = wallet.getSymbol(app);
+            amount = wallet.getCryptoForSmallestCrypto(app, amount);
+        } else {
+            try {
+                currency = Currency.getInstance(iso);
+                symbol = currency.getSymbol();
+                amount = amount.divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
             }
         }
 
