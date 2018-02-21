@@ -194,6 +194,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             JSONObject obj = new JSONObject(jsonString);
             fee = obj.getLong("fee_per_kb");
             economyFee = obj.getLong("fee_per_kb_economy");
+            Log.e(TAG, "updateFee: " + getIso(app) + ":" + fee + "|" + economyFee);
             BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app, getIso(app));
 
             if (fee != 0 && fee < wallet.getWallet().getMaxFeePerKb()) {
@@ -608,6 +609,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     @Override
     public void syncStopped(String error) {
         Log.d(TAG, "syncStopped: " + error);
+        Context app = BreadApp.getBreadContext();
+        BRSharedPrefs.putAllowSpend(app, getIso(app), true);
         for (OnSyncStopped list : syncStoppedListeners)
             if (list != null) list.syncStopped(error);
     }
