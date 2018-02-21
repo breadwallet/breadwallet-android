@@ -79,8 +79,9 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         holder.mWalletBalanceUSD.setText(fiatBalance);
         holder.mWalletBalanceCurrency.setText(cryptoBalance);
         holder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
-        holder.mSyncing.setText("Waiting to Sync");
+        holder.mSyncing.setVisibility(View.INVISIBLE);
         holder.mWalletBalanceCurrency.setVisibility(View.INVISIBLE);
+        holder.mWait.setVisibility(View.VISIBLE);
 
 
         if (wallet.getIso(mContext).equalsIgnoreCase(WalletBitcoinManager.getInstance(mContext).getIso(mContext))) {
@@ -150,16 +151,20 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                             Log.d(TAG, "Wallet ISO  -> " + wallet.getIso(mContext));
                             Log.d(TAG, "Sync status SYNCING");
                             holder.mSyncingProgressBar.setVisibility(View.VISIBLE);
+                            holder.mSyncing.setVisibility(View.VISIBLE);
                             holder.mSyncing.setText("Syncing ");
                             holder.mSyncingProgressBar.setProgress(progress);
+                            holder.mWait.setVisibility(View.INVISIBLE);
                         }
 
 
                         // HAS NOT STARTED SYNCING
-                        else if (syncProgress == 0.0) {
+                        else if (syncProgress <= 0.0) {
                             Log.d(TAG, "Sync progress -> " + syncProgress);
                             holder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
-                            holder.mSyncing.setText("Waiting to Sync");
+                            //holder.mSyncing.setText("Waiting to Sync");
+                            holder.mSyncing.setVisibility(View.INVISIBLE);
+                            holder.mWait.setVisibility(View.VISIBLE);
                             holder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
                             holder.mSyncingProgressBar.setProgress(0);
                             Log.d(TAG, "Wallet ISO  -> " + wallet.getIso(mContext));
@@ -177,12 +182,12 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                             Log.d(TAG, "Sync progress -> " + syncProgress);
                             holder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
                             holder.mSyncing.setVisibility(View.INVISIBLE);
+                            holder.mWait.setVisibility(View.INVISIBLE);
                             holder.mWalletBalanceCurrency.setVisibility(View.VISIBLE);
                             holder.mSyncingProgressBar.setProgress(100);
-                            holder.mWalletBalanceCurrency.setVisibility(View.VISIBLE);
 
                             long balance = BRSharedPrefs.getCachedBalance(mContext, wallet.getIso(mContext));
-                            holder.mWalletBalanceCurrency.setText(String.valueOf(balance));
+                            holder.mWalletBalanceCurrency.setText(BRSharedPrefs.getCurrentWalletIso(mContext) + String.valueOf(balance));
                             Log.d(TAG, "Wallet ISO  -> " + wallet.getIso(mContext));
                             Log.d(TAG, "Sync status FINISHED");
 
@@ -228,6 +233,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         public RelativeLayout mParent;
         public BRText mSyncing;
         public ProgressBar mSyncingProgressBar;
+        public BRText mWait;
 
         public WalletItemViewHolder(View view) {
             super(view);
@@ -239,6 +245,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             mParent = view.findViewById(R.id.wallet_card);
             mSyncing = view.findViewById(R.id.syncing);
             mSyncingProgressBar = view.findViewById(R.id.sync_progress);
+            mWait = view.findViewById(R.id.wait_syncing);
         }
     }
 }
