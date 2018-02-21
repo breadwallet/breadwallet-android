@@ -214,7 +214,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             Log.e(TAG, "updateUi: wallet is null");
             return;
         }
-        Log.e(TAG, "updateUi: " + wallet.getIso(this));
+//        Log.e(TAG, "updateUi: " + wallet.getIso(this));
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
