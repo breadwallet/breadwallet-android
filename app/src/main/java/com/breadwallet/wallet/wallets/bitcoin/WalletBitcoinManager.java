@@ -20,6 +20,7 @@ import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWalletManager;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
@@ -655,13 +656,21 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public void onTxDeleted(String hash, int notifyUser, int recommendRescan) {
+    public void onTxDeleted(final String hash, int notifyUser, int recommendRescan) {
 
         Log.e(TAG, "onTxDeleted: " + String.format("hash: %s, notifyUser: %d, recommendRescan: %d", hash, notifyUser, recommendRescan));
         final Context ctx = BreadApp.getBreadContext();
         if (ctx != null) {
-            if (notifyUser != 0)
+            if (recommendRescan != 0)
                 BRSharedPrefs.putScanRecommended(ctx, getIso(ctx), true);
+            if (notifyUser != 0)
+                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        //todo show a message
+                        BRToast.showCustomToast(ctx, "Transaction deleted: " + hash, BRActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                    }
+                });
             TransactionStorageManager.removeTransaction(ctx, this, hash);
         } else {
             Log.e(TAG, "onTxDeleted: Failed! ctx is null");
