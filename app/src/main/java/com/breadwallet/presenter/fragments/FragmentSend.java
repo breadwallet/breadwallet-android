@@ -44,6 +44,7 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.util.CryptoUriParser;
 import com.breadwallet.tools.threads.BRExecutor;
@@ -403,11 +404,11 @@ public class FragmentSend extends Fragment {
                 String comment = commentEdit.getText().toString();
 
                 //inserted amount
-                BigDecimal bigAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) ? "0" : amountStr);
+                BigDecimal rawAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) ? "0" : amountStr);
                 //is the chosen ISO a crypto (could be a fiat currency)
                 boolean isIsoCrypto = master.isIsoCrypto(getActivity(), selectedIso);
 
-                BigDecimal smallestCryptoAmount = isIsoCrypto ? wallet.getSmallestCryptoForCrypto(getActivity(), bigAmount) : wallet.getSmallestCryptoForFiat(getActivity(), bigAmount);
+                BigDecimal cryptoAmount = isIsoCrypto ? wallet.getSmallestCryptoForCrypto(getActivity(), rawAmount) : wallet.getSmallestCryptoForFiat(getActivity(), rawAmount);
                 BRCoreAddress address = new BRCoreAddress(addressString);
                 Activity app = getActivity();
                 if (address.stringify().isEmpty() || !address.isValid()) {
@@ -421,18 +422,18 @@ public class FragmentSend extends Fragment {
                     }, null, null, 0);
                     return;
                 }
-                if (smallestCryptoAmount.doubleValue() <= 0) {
+                if (cryptoAmount.doubleValue() <= 0) {
                     allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), amountEdit);
                 }
-                if (smallestCryptoAmount.longValue() > wallet.getCachedBalance(getActivity())) {
+                if (cryptoAmount.longValue() > wallet.getCachedBalance(getActivity())) {
                     allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), balanceText);
                     SpringAnimator.failShakeAnimation(getActivity(), feeText);
                 }
 
-                Log.e(TAG, "before createTransaction: smallestCryptoAmount.longValue: " + smallestCryptoAmount.longValue() + ", addrs: " + address.stringify());
-                BRCoreTransaction tx = wallet.getWallet().createTransaction(smallestCryptoAmount.longValue(), address);
+//                Log.e(TAG, "before createTransaction: smallestCryptoAmount.longValue: " + cryptoAmount.longValue() + ", addrs: " + address.stringify());
+                BRCoreTransaction tx = wallet.getWallet().createTransaction(cryptoAmount.longValue(), address);
                 if (tx == null) {
                     BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_creatTransactionError), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                         @Override
@@ -443,8 +444,10 @@ public class FragmentSend extends Fragment {
                     return;
                 }
 
-                if (allFilled)
-                    wallet.sendTransaction(getActivity(), new PaymentItem(tx, null, false, comment));
+                if (allFilled) {
+                    PaymentItem item = new PaymentItem(tx, null, false, comment);
+                    SendManager.sendTransaction(getActivity(), item, wallet);
+                }
             }
         });
 
@@ -680,7 +683,7 @@ public class FragmentSend extends Fragment {
 //        Log.e(TAG, "updateText: formattedBalance:" + formattedBalance);
 
         //Balance depending on the selected ISO
-        long fee; //todo fix the 0 fee bug
+        long fee;
         if (smallestAmount.longValue() == 0) {
             fee = 0;
         } else {
@@ -741,7 +744,6 @@ public class FragmentSend extends Fragment {
             commentEdit.setText(obj.message);
         }
         if (obj.amount != null) {
-            String iso = selectedIso;
             BigDecimal satoshiAmount = new BigDecimal(obj.amount).multiply(new BigDecimal(100000000));
             amountBuilder = new StringBuilder(master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), satoshiAmount).toPlainString());
             updateText();

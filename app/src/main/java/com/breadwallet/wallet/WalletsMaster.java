@@ -143,8 +143,7 @@ public class WalletsMaster {
             throw new RuntimeException("Failed to retrieve the phrase even though at this point the system auth was asked for sure.");
         }
         if (Utils.isNullOrEmpty(phrase)) throw new NullPointerException("phrase is null!!");
-        if (phrase.length == 0)
-            throw new RuntimeException("nulTermPhrase is null");
+        if (phrase.length == 0) throw new RuntimeException("phrase is empty");
         byte[] seed = BRCoreKey.getSeedFromPhrase(phrase);
         if (seed == null || seed.length == 0) throw new RuntimeException("seed is null");
         byte[] authKey = BRCoreKey.getAuthPrivKeyForAPI(seed);

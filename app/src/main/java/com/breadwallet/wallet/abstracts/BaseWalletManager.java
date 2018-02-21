@@ -65,9 +65,6 @@ public interface BaseWalletManager {
 
     void addSyncStoppedListener(OnSyncStopped list);
 
-    //try sending a transaction
-    boolean sendTransaction(Context app, PaymentItem item);
-
     //get a list of all the transactions sorted by timestamp
     BRCoreTransaction[] getTransactions();
 

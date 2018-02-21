@@ -16,6 +16,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.util.BRConstants;
@@ -219,7 +220,7 @@ public class CryptoUriParser {
         } else {
             BRAnimator.killAllFragments(app);
             BRCoreTransaction tx = wallet.getWallet().createTransaction(new BigDecimal(amount).longValue(), new BRCoreAddress(requestObject.address));
-            WalletBitcoinManager.getInstance(app).sendTransaction(app, new PaymentItem(tx, null, false, null));
+            SendManager.sendTransaction(app, new PaymentItem(tx, null, false, null), wallet);
         }
 
         return true;
