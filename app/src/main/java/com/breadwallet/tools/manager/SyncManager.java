@@ -177,6 +177,7 @@ public class SyncManager {
 
 
             } finally {
+
                 running = false;
                 progressStatus = 0;
 

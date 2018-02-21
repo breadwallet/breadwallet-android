@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,12 +14,14 @@ import android.widget.RelativeLayout;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Created by byfieldj on 1/31/18.
@@ -30,6 +33,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
     private final Context mContext;
     private ArrayList<BaseWalletManager> mWalletList;
+
 
 
     public WalletListAdapter(Context context, ArrayList<BaseWalletManager> walletList) {
@@ -54,6 +58,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     public void onBindViewHolder(final WalletItemViewHolder holder, int position) {
 
 
+
         final BaseWalletManager wallet = mWalletList.get(position);
         String name = wallet.getName(mContext);
 
@@ -75,6 +80,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         holder.mWait.setVisibility(View.INVISIBLE);
 
 
+
         if (wallet.getIso(mContext).equalsIgnoreCase(WalletBitcoinManager.getInstance(mContext).getIso(mContext))) {
             holder.mParent.setBackground(mContext.getResources().getDrawable(R.drawable.btc_card_shape, null));
         } else {
@@ -86,6 +92,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
     public ArrayList<BaseWalletManager> getWalletList() {
         return mWalletList;
+
     }
 
     @Override
