@@ -108,8 +108,44 @@
             android:layout_height="100dp"
             android:layout_below="@+id/textView2"
             android:layout_centerHorizontal="true"
-            android:layout_marginTop="@dimen/bread_margin"
+
             android:src="@drawable/import_symbol"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignLeft="@id/imageView9"
+            android:layout_alignRight="@id/imageView9"
+            android:layout_below="@id/imageView9"
+            android:orientation="horizontal"
+            android:weightSum="2">
+            <io.digibyte.presenter.customviews.BRText
+                android:id="@+id/leftImportLabel"
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="wrap_content"
+                android:text="@string/Settings.importLeftMessage"
+                android:textColor="@color/black"
+                android:paddingRight="14dp"
+                android:textSize="12sp"
+                app:customTFont="CircularPro-Bold.otf"
+                tools:layout_constraintTop_creator="1"/>
+            <io.digibyte.presenter.customviews.BRText
+                android:id="@+id/rightImportLabel"
+                android:gravity="center"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:paddingLeft="14dp"
+                android:layout_height="wrap_content"
+                android:text="@string/Settings.importRightMessage"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                app:customTFont="CircularPro-Bold.otf"
+                tools:layout_constraintTop_creator="1"/>
+
+
+        </LinearLayout>
 
     </RelativeLayout>
 

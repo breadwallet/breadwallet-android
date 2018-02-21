@@ -486,6 +486,10 @@
   <string name="Settings.enjoying">Are you enjoying DigiByte?</string>
   <!-- Import wallet label -->
   <string name="Settings.importTitle">Import Wallet</string>
+  <!-- Import wallet left message -->
+  <string name="Settings.importLeftMessage">Wallet to be Imported</string>
+  <!-- Import wallet right message -->
+  <string name="Settings.importRightMessage">Your DigiByte Wallet</string>
   <!-- Manage settings section header -->
   <string name="Settings.manage">Manage</string>
   <!-- Notifications label -->
@@ -504,6 +508,8 @@
   <string name="Settings.touchIdLimit.android">Fingerprint Authentication Spending Limit</string>
   <!-- Wallet Settings section header -->
   <string name="Settings.wallet">Wallet</string>
+  <!-- Restore screen lower label. -->
+  <string name="Settings.restore_label">Your DigiByte on this Device</string>
   <!-- Start or recover another wallet menu label. -->
   <string name="Settings.wipe">Start/Recover Another Wallet</string>
   <!-- Share data view body -->
@@ -734,4 +740,5 @@
   <string name="WritePaperPhrase.previous">Previous</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d of %2$d</string>
+
 </resources>

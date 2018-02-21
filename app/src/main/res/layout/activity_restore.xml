@@ -109,6 +109,21 @@
             android:layout_centerHorizontal="true"
             android:src="@drawable/restore_image"/>
 
+        <io.digibyte.presenter.customviews.BRText
+            android:id="@+id/restoreLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_alignParentBottom="true"
+            android:text="@string/Settings.restore_label"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:customTFont="CircularPro-Bold.otf"
+            tools:layout_constraintTop_creator="1"/>
+
 
         <ImageButton
             android:id="@+id/close_button"
