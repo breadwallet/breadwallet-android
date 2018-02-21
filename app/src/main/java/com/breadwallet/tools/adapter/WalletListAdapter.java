@@ -82,7 +82,6 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
         }
 
-
     }
 
     public ArrayList<BaseWalletManager> getWalletList() {

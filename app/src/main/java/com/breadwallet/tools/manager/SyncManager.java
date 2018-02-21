@@ -8,6 +8,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.listeners.SyncReceiver;
+import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.util.concurrent.TimeUnit;
@@ -43,6 +44,7 @@ public class SyncManager {
     private static final long SYNC_PERIOD = TimeUnit.HOURS.toMillis(24);
     private static SyncProgressTask syncTask;
     public boolean running;
+
 
     private BaseWalletManager mWallet;
     private SyncListener mListener;
@@ -135,6 +137,8 @@ public class SyncManager {
             if (running) return;
             try {
                 app = BreadApp.getBreadContext();
+
+                mWallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
                 progressStatus = 0;
                 running = true;
                 Log.d(TAG, "run: starting: " + progressStatus);
@@ -142,15 +146,15 @@ public class SyncManager {
 
                 while (running) {
                     if (app != null) {
-                        long startHeight = BRSharedPrefs.getStartHeight(app, mWallet.getIso(app));
+                        long startHeight = BRSharedPrefs.getStartHeight(app, BRSharedPrefs.getCurrentWalletIso(app));
                         progressStatus = mWallet.getPeerManager().getSyncProgress(startHeight);
-                        mListener.onSyncProgressUpdate(progressStatus);
 //                    Log.e(TAG, "run: progressStatus: " + progressStatus);
                         if (progressStatus == 1) {
-                            mListener.onSyncFinished();
                             running = false;
-                            break;
+                            continue;
                         }
+                        final long lastBlockTimeStamp = mWallet.getPeerManager().getLastBlockTimestamp() * 1000;
+//                        Log.e(TAG, "run: changing the progress to: " + progressStatus + ": " + Thread.currentThread().getName());
 
 
                     } else {
@@ -175,6 +179,7 @@ public class SyncManager {
             } finally {
                 running = false;
                 progressStatus = 0;
+
 
             }
 
