@@ -12,7 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -20,7 +19,6 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.manager.PromptManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.CurrencyUtils;
@@ -273,11 +271,14 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         if (!item.isValid())
             convertView.status.setText(mContext.getString(R.string.Transaction_invalid));
 
-        long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived());
+        long satoshisAmount = item.getAmount();
 
-        boolean isBTCPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
-        String iso = isBTCPreferred ? "BTC" : BRSharedPrefs.getPreferredFiatIso(mContext);
-        convertView.amount.setText(CurrencyUtils.getFormattedCurrencyString(mContext, iso, WalletsMaster.getInstance(mContext).getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
+        boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
+        String iso = isCryptoPreferred ? wallet.getIso(mContext) : BRSharedPrefs.getPreferredFiatIso(mContext);
+        String amountText = CurrencyUtils.getFormattedAmount(mContext, iso, isCryptoPreferred ?
+                new BigDecimal(satoshisAmount) : wallet.getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount)));
+
+        convertView.amount.setText(amountText);
 
         //if it's 0 we use the current time.
         long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * 1000;

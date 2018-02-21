@@ -14,7 +14,6 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreKey;
@@ -32,7 +31,6 @@ import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.google.android.gms.common.stats.WakeLockEvent;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -136,8 +134,8 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         final BaseWalletManager walletManager = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
 
         //bits, BTCs..
-        String amount = CurrencyUtils.getFormattedCurrencyString(app, iso, walletManager.getFiatForSmallestCrypto(app, new BigDecimal(walletManager.getWallet().getTransactionAmount(mTransaction))));
-        String fee = CurrencyUtils.getFormattedCurrencyString(app, iso, walletManager.getFiatForSmallestCrypto(app, new BigDecimal(walletManager.getWallet().getTransactionFee(mTransaction))));
+        String amount = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), new BigDecimal(walletManager.getWallet().getTransactionAmount(mTransaction)));
+        String fee = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), new BigDecimal(walletManager.getWallet().getTransactionFee(mTransaction)));
 
         String message = String.format(app.getString(R.string.Import_confirm), amount, fee);
         String posButton = String.format("%s (%s)", amount, fee);
