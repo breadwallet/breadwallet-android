@@ -114,15 +114,18 @@ public class DisplayCurrencyActivity extends BRActivity {
     }
 
     private void updateExchangeRate() {
+        //todo reimplement for multiple currency
         //set the rate from the last saved
-        String iso = BRSharedPrefs.getPreferredFiatIso(this);
-        CurrencyEntity entity = CurrencyDataSource.getInstance(this).getCurrencyByCode(this, WalletsMaster.getInstance(this).getCurrentWallet(this), iso);
-        if (entity != null) {
-            String finalExchangeRate = CurrencyUtils.getFormattedCurrencyString(DisplayCurrencyActivity.this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(entity.rate));
-            boolean bits = BRSharedPrefs.getCryptoDenomination(this, "BTC") == BRConstants.CURRENT_UNIT_BITS;
-            exchangeText.setText(CurrencyUtils.getFormattedCurrencyString(this, "BTC", new BigDecimal(bits ? 1000000 : 1)) + " = " + finalExchangeRate);
-        }
-        adapter.notifyDataSetChanged();
+//        String iso = BRSharedPrefs.getPreferredFiatIso(this);
+//        CurrencyEntity entity = CurrencyDataSource.getInstance(this).getCurrencyByCode(this, WalletsMaster.getInstance(this).getCurrentWallet(this), iso);
+//        if (entity != null) {
+//            String finalExchangeRate = CurrencyUtils.getFormattedAmount(
+//                    DisplayCurrencyActivity.this, BRSharedPrefs.getPreferredFiatIso(this),
+//                    new BigDecimal(entity.rate).multiply(new BigDecimal(100))); //multiply by 100 ($ - c), getFormattedAmount accepts the smallest denomination
+//            boolean bits = BRSharedPrefs.getCryptoDenomination(this, "BTC") == BRConstants.CURRENT_UNIT_BITS;
+//            exchangeText.setText(CurrencyUtils.getFormattedAmount(this, "BTC", new BigDecimal(bits ? 1000000 : 1)) + " = " + finalExchangeRate);
+//        }
+//        adapter.notifyDataSetChanged();
     }
 
 //    private void setButton(boolean left) {
