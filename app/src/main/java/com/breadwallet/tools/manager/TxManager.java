@@ -88,6 +88,7 @@ public class TxManager {
                     } else { //clicked on the prompt
                         BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(currentPrompt) + ".trigger");
                         PromptManager.PromptInfo info = PromptManager.getInstance().promptInfo(app, currentPrompt);
+                        hidePrompt(app, null);
                         if (info != null)
                             info.listener.onClick(view);
                         currentPrompt = null;
@@ -126,13 +127,13 @@ public class TxManager {
 
     }
 
-    public void showPrompt(Context app, PromptManager.PromptItem item) {
-        crashIfNotMain();
-        if (item == null) throw new RuntimeException("can't be null");
-        BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".displayed");
-        currentPrompt = item;
-        updateCard(app);
-    }
+//    public void showPrompt(Context app, PromptManager.PromptItem item) {
+//        crashIfNotMain();
+//        if (item == null) throw new RuntimeException("can't be null");
+//        BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".displayed");
+//        currentPrompt = item;
+//        updateCard(app);
+//    }
 
     public void hidePrompt(final Context app, final PromptManager.PromptItem item) {
         crashIfNotMain();
