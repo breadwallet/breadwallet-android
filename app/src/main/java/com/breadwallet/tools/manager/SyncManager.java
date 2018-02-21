@@ -184,11 +184,12 @@ public class SyncManager {
 
                 }
 
+                mProgressBar.setProgress(100);
                 Log.d(TAG, "run: SyncProgress task finished:" + Thread.currentThread().getName());
             } finally {
-//                if (progressStatus != 1) {
-//                    throw new RuntimeException("didn't finish");
-//                }
+                if (progressStatus != 1) {
+                    throw new RuntimeException("didn't finish");
+                }
                 running = false;
                 progressStatus = 0;
                 if (app != null)
