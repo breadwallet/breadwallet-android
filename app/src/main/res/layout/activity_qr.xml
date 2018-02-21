@@ -6,7 +6,7 @@
                 android:gravity="center">
 
 
-    <com.breadwallet.tools.qrcode.QRCodeReaderView
+    <io.digibyte.tools.qrcode.QRCodeReaderView
         android:id="@+id/qrdecoderview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -23,7 +23,7 @@
         android:layout_centerHorizontal="true"
         android:layout_centerVertical="true"/>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <io.digibyte.presenter.customviews.BRText
         android:layout_width="wrap_content"
         android:id="@+id/description_text"
         android:layout_centerHorizontal="true"

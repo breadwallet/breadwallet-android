@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<io.digibyte.presenter.customviews.BRLockScreenConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                                                     xmlns:app="http://schemas.android.com/apk/res-auto"
                                                                     android:id="@+id/intro_layout"
                                                                     android:layout_width="match_parent"
@@ -12,7 +12,7 @@
         android:layout_width="128dp"
         android:layout_height="64dp"
         android:layout_marginTop="96dp"
-        android:src="@drawable/ic_bread_logo_white"
+        android:src="@drawable/digibyte_logo"
 
         app:layout_constraintTop_toTopOf="parent"
         android:layout_marginRight="8dp"
@@ -20,7 +20,7 @@
         android:layout_marginLeft="8dp"
         app:layout_constraintLeft_toLeftOf="parent"/>
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <io.digibyte.presenter.customviews.BRButton
         android:id="@+id/button_new_wallet"
         android:layout_width="0dp"
         android:layout_height="80dp"
@@ -38,7 +38,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <io.digibyte.presenter.customviews.BRButton
         android:id="@+id/button_recover_wallet"
         android:layout_width="0dp"
         android:layout_height="80dp"
@@ -56,7 +56,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <io.digibyte.presenter.customviews.BRText
         android:id="@+id/textView7"
         android:layout_width="240dp"
         android:layout_height="wrap_content"
@@ -75,16 +75,6 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/BRText"/>
 
-    <ImageButton
-        android:id="@+id/faq_button"
-        android:layout_width="@dimen/faq_dimen"
-        android:layout_height="@dimen/faq_dimen"
-        android:layout_marginEnd="@dimen/bread_margin"
-        android:layout_marginTop="@dimen/bread_margin"
-        android:background="@drawable/faq_question_white"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        />
 
     <View
         android:id="@+id/splash_screen"
@@ -103,4 +93,4 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.0"/>
 
-</com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout>
+</io.digibyte.presenter.customviews.BRLockScreenConstraintLayout>

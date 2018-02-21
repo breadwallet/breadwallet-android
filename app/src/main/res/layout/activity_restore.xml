@@ -7,9 +7,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/extra_light_blue_background"
-    tools:context="com.breadwallet.presenter.activities.intro.RecoverActivity">
+    tools:context="io.digibyte.presenter.activities.intro.RecoverActivity">
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <io.digibyte.presenter.customviews.BRButton
         android:id="@+id/send_button"
         android:layout_width="0dp"
         android:layout_height="@dimen/big_button_height"
@@ -27,7 +27,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <io.digibyte.presenter.customviews.BRText
         android:id="@+id/textView8"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -42,7 +42,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/relativeLayout"/>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <io.digibyte.presenter.customviews.BRText
         android:id="@+id/textView12"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -87,7 +87,7 @@
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1">
 
-        <com.breadwallet.presenter.customviews.BRText
+        <io.digibyte.presenter.customviews.BRText
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -109,15 +109,21 @@
             android:layout_centerHorizontal="true"
             android:src="@drawable/restore_image"/>
 
-        <ImageButton
-            android:id="@+id/faq_button"
-            android:layout_width="@dimen/faq_dimen"
-            android:layout_height="@dimen/faq_dimen"
-            android:layout_alignBottom="@+id/textView2"
-            android:layout_alignParentEnd="true"
-            android:layout_marginEnd="15dp"
-            android:background="@drawable/faq_question_white"
-            android:scaleType="centerCrop"/>
+        <io.digibyte.presenter.customviews.BRText
+            android:id="@+id/restoreLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="8dp"
+            android:layout_alignParentBottom="true"
+            android:text="@string/Settings.restore_label"
+            android:textColor="@color/white"
+            android:textSize="14sp"
+            app:customTFont="CircularPro-Bold.otf"
+            tools:layout_constraintTop_creator="1"/>
+
 
         <ImageButton
             android:id="@+id/close_button"

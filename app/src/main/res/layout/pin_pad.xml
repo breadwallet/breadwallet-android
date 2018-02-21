@@ -8,7 +8,7 @@
             android:orientation="horizontal"
             android:rowCount="4">
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <io.digibyte.presenter.customviews.BRButton
         android:id="@+id/num1"
         android:layout_column="0"
         android:layout_columnWeight="1"
@@ -25,7 +25,7 @@
         android:textSize="@dimen/pin_par_text_size"
         app:customBFont="CircularPro-Book.otf"/>
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <io.digibyte.presenter.customviews.BRButton
         android:id="@+id/num2"
         android:layout_column="1"
         android:layout_columnWeight="1"
@@ -41,7 +41,7 @@
         android:textSize="@dimen/pin_par_text_size"
         app:customBFont="CircularPro-Book.otf"/>
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <io.digibyte.presenter.customviews.BRButton
         android:id="@+id/num3"
         android:layout_column="2"
         android:layout_columnWeight="1"
@@ -57,7 +57,7 @@
         android:textSize="@dimen/pin_par_text_size"
         app:customBFont="CircularPro-Book.otf"/>
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <io.digibyte.presenter.customviews.BRButton
         android:id="@+id/num4"
         android:layout_column="0"
         android:layout_gravity="fill_horizontal"
@@ -72,7 +72,7 @@
         android:textSize="@dimen/pin_par_text_size"
         app:customBFont="CircularPro-Book.otf"/>
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <io.digibyte.presenter.customviews.BRButton
         android:id="@+id/num5"
         android:layout_column="1"
         android:layout_gravity="fill_horizontal"
@@ -87,7 +87,7 @@
         android:textSize="@dimen/pin_par_text_size"
         app:customBFont="CircularPro-Book.otf"/>
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <io.digibyte.presenter.customviews.BRButton
         android:id="@+id/num6"
         android:layout_column="2"
         android:layout_gravity="fill_horizontal"
@@ -102,7 +102,7 @@
         android:textSize="@dimen/pin_par_text_size"
         app:customBFont="CircularPro-Book.otf"/>
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <io.digibyte.presenter.customviews.BRButton
         android:id="@+id/num7"
         android:layout_column="0"
         android:layout_gravity="fill_horizontal"
@@ -117,7 +117,7 @@
         android:textSize="@dimen/pin_par_text_size"
         app:customBFont="CircularPro-Book.otf"/>
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <io.digibyte.presenter.customviews.BRButton
         android:id="@+id/num8"
         android:layout_column="1"
         android:layout_gravity="fill_horizontal"
@@ -132,7 +132,7 @@
         android:textSize="@dimen/pin_par_text_size"
         app:customBFont="CircularPro-Book.otf"/>
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <io.digibyte.presenter.customviews.BRButton
         android:id="@+id/num9"
         android:layout_column="2"
         android:layout_gravity="fill_horizontal"
@@ -147,7 +147,7 @@
         android:textSize="@dimen/pin_par_text_size"
         app:customBFont="CircularPro-Book.otf"/>
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <io.digibyte.presenter.customviews.BRButton
         android:id="@+id/numDot"
         android:layout_column="0"
         android:layout_gravity="fill_horizontal"
@@ -162,7 +162,7 @@
         android:textSize="@dimen/pin_par_text_size"
         app:customBFont="CircularPro-Book.otf"/>
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <io.digibyte.presenter.customviews.BRButton
         android:id="@+id/num0"
         android:layout_column="1"
         android:layout_gravity="fill_horizontal|fill_vertical"

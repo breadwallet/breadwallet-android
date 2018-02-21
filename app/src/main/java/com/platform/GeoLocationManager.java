@@ -1,7 +1,6 @@
 package com.platform;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -11,11 +10,10 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 
-
-import com.breadwallet.BreadApp;
-import com.breadwallet.tools.manager.BRReportsManager;
-import com.breadwallet.tools.threads.BRExecutor;
-import com.breadwallet.tools.util.Utils;
+import io.digibyte.DigiByte;
+import io.digibyte.tools.manager.BRReportsManager;
+import io.digibyte.tools.threads.BRExecutor;
+import io.digibyte.tools.util.Utils;
 
 import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.server.Request;
@@ -68,7 +66,7 @@ public class GeoLocationManager {
     public void getOneTimeGeoLocation(Continuation cont, Request req) {
         this.continuation = cont;
         this.baseRequest = req;
-        final Context app = BreadApp.getBreadContext();
+        final Context app = DigiByte.getBreadContext();
         if (app == null)
             return;
         locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
@@ -96,7 +94,7 @@ public class GeoLocationManager {
     public void startGeoSocket(Session sess) {
         session = sess;
 
-        final Context app = BreadApp.getBreadContext();
+        final Context app = DigiByte.getBreadContext();
         if (app == null)
             return;
         final LocationManager locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
@@ -117,7 +115,7 @@ public class GeoLocationManager {
     }
 
     public void stopGeoSocket() {
-        final Context app = BreadApp.getBreadContext();
+        final Context app = DigiByte.getBreadContext();
         if (app == null)
             return;
         final LocationManager locationManager = (LocationManager) app.getSystemService(Context.LOCATION_SERVICE);
@@ -214,7 +212,7 @@ public class GeoLocationManager {
                         } finally {
 
                             processing = false;
-                            Context app = BreadApp.getBreadContext();
+                            Context app = DigiByte.getBreadContext();
                             if (app == null || ActivityCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION)
                                     != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(app,
                                     Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {

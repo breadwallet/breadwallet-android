@@ -1,4 +1,4 @@
-<com.breadwallet.presenter.customviews.BRRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<io.digibyte.presenter.customviews.BRRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                                         xmlns:app="http://schemas.android.com/apk/res-auto"
                                                         android:id="@+id/layout"
                                                         android:layout_width="match_parent"
@@ -28,25 +28,16 @@
             >
 
 
-            <com.breadwallet.presenter.customviews.BRText
+            <io.digibyte.presenter.customviews.BRText
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignTop="@+id/faq_button"
                 android:layout_centerHorizontal="true"
                 android:text="@string/TouchIdSettings.title.android"
                 android:textColor="@color/white"
                 android:textSize="@dimen/header"
                 app:customTFont="CircularPro-Bold.otf"/>
 
-            <ImageButton
-                android:id="@+id/faq_button"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_alignParentEnd="true"
-                android:layout_margin="@dimen/bread_margin"
-                android:background="@drawable/faq_question_white"
-                />
 
 
         </RelativeLayout>
@@ -61,7 +52,7 @@
 
     </LinearLayout>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <io.digibyte.presenter.customviews.BRText
         android:id="@+id/textView10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -73,7 +64,7 @@
         android:textColor="@color/almost_black"
         android:textSize="@dimen/sub_header"/>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <io.digibyte.presenter.customviews.BRText
         android:id="@+id/enable_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -108,7 +99,7 @@
         android:layout_marginTop="16dp"
         android:background="@color/extra_light_gray"/>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <io.digibyte.presenter.customviews.BRText
         android:id="@+id/limit_exchange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -118,7 +109,7 @@
         android:textSize="18sp"
         />
 
-    <com.breadwallet.presenter.customviews.BRText
+    <io.digibyte.presenter.customviews.BRText
         android:id="@+id/limit_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -130,4 +121,4 @@
         android:textColor="@color/almost_black"
         android:textSize="@dimen/sub_header"/>
 
-</com.breadwallet.presenter.customviews.BRRelativeLayout>
+</io.digibyte.presenter.customviews.BRRelativeLayout>

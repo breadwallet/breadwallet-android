@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/black_trans"
-    tools:context="com.breadwallet.presenter.activities.LoginActivity">
+    tools:context="io.digibyte.presenter.activities.LoginActivity">
 
     <RelativeLayout
         android:id="@+id/pin_dialog"
@@ -20,7 +20,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent">
 
-        <com.breadwallet.presenter.customviews.BRText
+        <io.digibyte.presenter.customviews.BRText
             app:customTFont="CircularPro-Bold.otf"
             android:id="@+id/title"
             android:layout_width="wrap_content"
@@ -31,7 +31,7 @@
             android:textColor="@color/almost_black"
             android:text="@string/VerifyPin.title"/>
 
-        <com.breadwallet.presenter.customviews.BRText
+        <io.digibyte.presenter.customviews.BRText
             android:id="@+id/message"
             android:textSize="@dimen/paragraph"
             android:layout_width="wrap_content"
@@ -92,7 +92,7 @@
 
     </RelativeLayout>
 
-    <com.breadwallet.presenter.customviews.BRKeyboard
+    <io.digibyte.presenter.customviews.BRKeyboard
         android:id="@+id/brkeyboard"
         android:layout_width="0dp"
         android:paddingTop="8dp"

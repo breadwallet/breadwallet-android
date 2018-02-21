@@ -7,9 +7,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/extra_light_blue_background"
-    tools:context="com.breadwallet.presenter.activities.SetPinActivity">
+    tools:context="io.digibyte.presenter.activities.SetPinActivity">
 
-    <com.breadwallet.presenter.customviews.BRText
+    <io.digibyte.presenter.customviews.BRText
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -19,12 +19,11 @@
         android:textColor="@color/almost_black"
         android:textSize="@dimen/header"
         app:customTFont="CircularPro-Bold.otf"
-        app:layout_constraintEnd_toStartOf="@+id/faq_button"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
 
-    <com.breadwallet.presenter.customviews.BRText
+    <io.digibyte.presenter.customviews.BRText
         android:id="@+id/description"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -48,16 +47,5 @@
         app:layout_constraintTop_toBottomOf="@+id/description"
         />
 
-    <ImageButton
-        android:id="@+id/faq_button"
-        android:layout_width="@dimen/faq_dimen"
-        android:layout_height="@dimen/faq_dimen"
-        android:layout_marginBottom="0dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="0dp"
-        app:layout_constraintBottom_toBottomOf="@+id/title"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/title"
-        android:background="@drawable/faq_question_black"/>
 
 </android.support.constraint.ConstraintLayout>

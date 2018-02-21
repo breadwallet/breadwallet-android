@@ -1,4 +1,4 @@
-<com.breadwallet.presenter.customviews.BRRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<io.digibyte.presenter.customviews.BRRelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                                                         xmlns:app="http://schemas.android.com/apk/res-auto"
                                                         android:id="@+id/layout"
                                                         android:layout_width="match_parent"
@@ -35,7 +35,7 @@
             app:layout_constraintTop_toTopOf="parent">
         </LinearLayout>
 
-        <com.breadwallet.presenter.customviews.BRText
+        <io.digibyte.presenter.customviews.BRText
             android:id="@+id/BRText3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -52,7 +52,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout4"/>
 
-        <com.breadwallet.presenter.customviews.BRText
+        <io.digibyte.presenter.customviews.BRText
             android:id="@+id/BRText4"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -70,7 +70,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/BRText3"/>
 
-        <com.breadwallet.presenter.customviews.BRButton
+        <io.digibyte.presenter.customviews.BRButton
             android:id="@+id/ok"
             android:layout_width="0dp"
             android:layout_height="80dp"
@@ -95,4 +95,4 @@
 
     </android.support.constraint.ConstraintLayout>
 
-</com.breadwallet.presenter.customviews.BRRelativeLayout>
+</io.digibyte.presenter.customviews.BRRelativeLayout>

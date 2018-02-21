@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.breadwallet">
+          package="io.digibyte">
 
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.BIND_JOB_SERVICE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <!-- Allows unlocking your device and activating its screen so UI tests can succeed -->
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
@@ -38,7 +39,7 @@
         android:required="false"/>
 
     <application
-        android:name=".BreadApp"
+        android:name=".DigiByte"
         android:allowBackup="false"
         android:fullBackupContent="false"
         android:icon="@mipmap/ic_launcher"
@@ -75,7 +76,7 @@
                 <category android:name="android.intent.category.DEFAULT"/>
                 <category android:name="android.intent.category.BROWSABLE"/>
 
-                <data android:scheme="bitcoin"/>
+                <data android:scheme="digibyte"/>
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH"/>
@@ -231,6 +232,11 @@
             android:enabled="true"
             android:exported="false"
             android:label="SyncReceiver"/>
+
+        <service android:name=".tools.manager.SyncService"
+            android:permission="android.permission.BIND_JOB_SERVICE" >
+            ...
+        </service>
     </application>
 
 </manifest>
