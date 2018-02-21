@@ -15,6 +15,7 @@ import com.breadwallet.R;
 import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.threads.BRExecutor;
 import com.breadwallet.tools.util.BRConnectivityStatus;
 import com.breadwallet.tools.util.CurrencyUtils;
@@ -101,7 +102,11 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             Log.d(TAG, "Current wallet is last used, Connection Status -> " + connectionStatus);
             if (connectionStatus == BRConnectivityStatus.MOBILE_ON || connectionStatus == BRConnectivityStatus.WIFI_ON || connectionStatus == BRConnectivityStatus.MOBILE_WIFI_ON) {
 
-                syncWallet(wallet, holder);
+                //syncWallet(wallet, holder);
+
+                SyncManager syncManager = SyncManager.getInstance();
+                syncManager.setProgressBar(holder.mSyncingProgressBar);
+                syncManager.startSyncingProgressThread();
 
             }
         }
