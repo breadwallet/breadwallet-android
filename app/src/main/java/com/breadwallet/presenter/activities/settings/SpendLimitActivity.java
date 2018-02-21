@@ -18,12 +18,15 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -80,6 +83,7 @@ public class SpendLimitActivity extends BRActivity {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 Log.e(TAG, "onItemClick: " + position);
+                //todo REFACTOR ALL FOR NEW LIMIT SCREEN
                 int limit = adapter.getItem(position);
                 BRKeyStore.putSpendLimit(limit, app);
                 BaseWalletManager wallet = WalletsMaster.getInstance(SpendLimitActivity.this).getCurrentWallet(SpendLimitActivity.this);
@@ -186,10 +190,13 @@ public class SpendLimitActivity extends BRActivity {
             textViewItem = convertView.findViewById(R.id.currency_item_text);
             FontManager.overrideFonts(textViewItem);
             Integer item = getItem(position);
-            WalletsMaster master = WalletsMaster.getInstance(SpendLimitActivity.this);
-            BigDecimal curAmount = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(item));
-            BigDecimal btcAmount = master.getCurrentWallet(app).getCryptoForSmallestCrypto(app, new BigDecimal(item));
-            String text = String.format(item == 0 ? app.getString(R.string.TouchIdSpendingLimit) : "%s (%s)", curAmount, btcAmount);
+            BaseWalletManager walletManager = WalletBitcoinManager.getInstance(app); //use the bitcoin wallet to show the limits
+            //todo REFACTOR ALL FOR NEW LIMIT SCREEN
+
+            String curAmount = CurrencyUtils.getFormattedAmount(app, BRSharedPrefs.getPreferredFiatIso(app), walletManager.getFiatForSmallestCrypto(app, new BigDecimal(item)));
+            String cryptoAmount = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), walletManager.getCryptoForSmallestCrypto(app, new BigDecimal(item)));
+
+            String text = String.format(item == 0 ? app.getString(R.string.TouchIdSpendingLimit) : "%s (%s)", curAmount, cryptoAmount);
             textViewItem.setText(text);
             ImageView checkMark = convertView.findViewById(R.id.currency_checkmark);
 
