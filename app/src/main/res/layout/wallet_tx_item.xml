@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="60dp"
+    android:background="@color/white"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
 
@@ -26,6 +27,7 @@
         android:singleLine="true"
         android:maxLength="10"
         android:ellipsize="end"
+        android:layout_marginTop="-5dp"
         android:layout_alignLeft="@id/tx_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -40,5 +42,11 @@
         app:customTFont="CircularPro-Bold.otf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <View
+        android:layout_width="match_parent"
+        android:background="@color/gray"
+        android:layout_alignParentBottom="true"
+        android:layout_height="1px"/>
 
 </RelativeLayout>
