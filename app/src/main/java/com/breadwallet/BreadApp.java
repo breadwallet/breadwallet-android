@@ -2,7 +2,9 @@ package com.breadwallet;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Application;
+import android.content.ComponentName;
 import android.content.Context;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
