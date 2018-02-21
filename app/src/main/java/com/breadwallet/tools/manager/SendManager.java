@@ -411,9 +411,9 @@ public class SendManager {
         }
         long amount = Math.abs(walletManager.getWallet().getTransactionAmount(request.tx));
         final long total = amount + feeForTx;
-        String formattedAmountBTC = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), wallet.getCryptoForSmallestCrypto(ctx, new BigDecimal(amount)));
-        String formattedFeeBTC = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), wallet.getCryptoForSmallestCrypto(ctx, new BigDecimal(feeForTx)));
-        String formattedTotalBTC = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), wallet.getCryptoForSmallestCrypto(ctx, new BigDecimal(total)));
+        String formattedCryptoAmount = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), new BigDecimal(amount));
+        String formatterCryptoFee = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), new BigDecimal(feeForTx));
+        String formatterCryptoTotal = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), new BigDecimal(total));
 
         String formattedAmount = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(amount)));
         String formattedFee = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(feeForTx)));
@@ -421,9 +421,9 @@ public class SendManager {
 
         //formatted text
         return receiver + "\n\n"
-                + ctx.getString(R.string.Confirmation_amountLabel) + " " + formattedAmountBTC + " (" + formattedAmount + ")"
-                + "\n" + ctx.getString(R.string.Confirmation_feeLabel) + " " + formattedFeeBTC + " (" + formattedFee + ")"
-                + "\n" + ctx.getString(R.string.Confirmation_totalLabel) + " " + formattedTotalBTC + " (" + formattedTotal + ")"
+                + ctx.getString(R.string.Confirmation_amountLabel) + " " + formattedCryptoAmount + " (" + formattedAmount + ")"
+                + "\n" + ctx.getString(R.string.Confirmation_feeLabel) + " " + formatterCryptoFee + " (" + formattedFee + ")"
+                + "\n" + ctx.getString(R.string.Confirmation_totalLabel) + " " + formatterCryptoTotal + " (" + formattedTotal + ")"
                 + (request.comment == null ? "" : "\n\n" + request.comment);
     }
 
