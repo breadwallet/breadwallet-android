@@ -52,6 +52,7 @@ public class TransactionStorageManager {
 
         return null;
     }
+
     public static boolean updateTransaction(Context app, BaseWalletManager wallet, BRTransactionEntity tx) {
         if (wallet == null || app == null) {
             Log.e(TAG, "putTransaction: failed: " + app + "|" + wallet);
@@ -64,6 +65,22 @@ public class TransactionStorageManager {
 
         }
 
+        //other wallets
+
+        return false;
+    }
+
+    public static boolean removeTransaction(Context app, BaseWalletManager wallet, String hash) {
+        if (wallet == null || app == null) {
+            Log.e(TAG, "putTransaction: failed: " + app + "|" + wallet);
+            return false;
+
+        }
+
+        if (wallet.getIso(app).equalsIgnoreCase("btc") || wallet.getIso(app).equalsIgnoreCase("bch")) {
+            BtcBchTransactionDataStore.getInstance(app).deleteTxByHash(app, wallet, hash);
+            return true;
+        }
         //other wallets
 
         return false;

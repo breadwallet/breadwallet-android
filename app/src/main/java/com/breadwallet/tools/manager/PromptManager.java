@@ -182,6 +182,7 @@ public class PromptManager {
      * shareDataPrompt - Shown when asking the user if they wish to share anonymous data. Lowest priority prompt. Only show once and if they dismiss do not show again.
      */
     public String getPromptName(PromptItem prompt) {
+        if (prompt == null) return null;
         switch (prompt) {
             case FINGER_PRINT:
                 return "touchIdPrompt";
