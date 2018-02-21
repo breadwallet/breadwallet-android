@@ -256,9 +256,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         String fiatIso = BRSharedPrefs.getPreferredFiatIso(this);
         CurrencyEntity ent = CurrencyDataSource.getInstance(this).getCurrencyByCode(this, wallet, fiatIso);
 
-        String fiatExchangeRate = CurrencyUtils.getFormattedCurrencyString(this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(wallet.getFiatExchangeRate(this)));
-        String fiatBalance = CurrencyUtils.getFormattedCurrencyString(this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(wallet.getFiatBalance(this)));
-        String cryptoBalance = CurrencyUtils.getFormattedCurrencyString(this, wallet.getIso(this), new BigDecimal(wallet.getCachedBalance(this)));
+        String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(wallet.getFiatExchangeRate(this)));
+        String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(wallet.getFiatBalance(this)));
+        String cryptoBalance = CurrencyUtils.getFormattedAmount(this, wallet.getIso(this), new BigDecimal(wallet.getCachedBalance(this)));
 
         mCurrencyTitle.setText(wallet.getName(this));
         mCurrencyPriceUsd.setText(String.format("%s per %s", fiatExchangeRate, wallet.getIso(this)));

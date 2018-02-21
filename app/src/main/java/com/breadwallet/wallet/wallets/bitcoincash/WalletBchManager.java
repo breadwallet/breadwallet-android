@@ -58,7 +58,6 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnSyncStopped;
 import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
-import com.breadwallet.wallet.wallets.util.CryptoUriParser;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.exceptions.AmountSmallerThanMinException;
@@ -799,13 +798,13 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         }
         long amount = Math.abs(getWallet().getTransactionAmount(request.tx));
         final long total = amount + feeForTx;
-        String formattedAmountBTC = CurrencyUtils.getFormattedCurrencyString(ctx, getIso(ctx), wallet.getCryptoForSmallestCrypto(ctx, new BigDecimal(amount)));
-        String formattedFeeBTC = CurrencyUtils.getFormattedCurrencyString(ctx, getIso(ctx), wallet.getCryptoForSmallestCrypto(ctx, new BigDecimal(feeForTx)));
-        String formattedTotalBTC = CurrencyUtils.getFormattedCurrencyString(ctx, getIso(ctx), wallet.getCryptoForSmallestCrypto(ctx, new BigDecimal(total)));
+        String formattedAmountBTC = CurrencyUtils.getFormattedAmount(ctx, getIso(ctx), wallet.getCryptoForSmallestCrypto(ctx, new BigDecimal(amount)));
+        String formattedFeeBTC = CurrencyUtils.getFormattedAmount(ctx, getIso(ctx), wallet.getCryptoForSmallestCrypto(ctx, new BigDecimal(feeForTx)));
+        String formattedTotalBTC = CurrencyUtils.getFormattedAmount(ctx, getIso(ctx), wallet.getCryptoForSmallestCrypto(ctx, new BigDecimal(total)));
 
-        String formattedAmount = CurrencyUtils.getFormattedCurrencyString(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(amount)));
-        String formattedFee = CurrencyUtils.getFormattedCurrencyString(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(feeForTx)));
-        String formattedTotal = CurrencyUtils.getFormattedCurrencyString(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(total)));
+        String formattedAmount = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(amount)));
+        String formattedFee = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(feeForTx)));
+        String formattedTotal = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(total)));
 
         //formatted text
         return receiver + "\n\n"
@@ -976,8 +975,8 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    String am = CurrencyUtils.getFormattedCurrencyString(ctx, getIso(ctx), getCryptoForSmallestCrypto(ctx, new BigDecimal(amount)));
-                    String amCur = CurrencyUtils.getFormattedCurrencyString(ctx, BRSharedPrefs.getPreferredFiatIso(ctx), master.getCurrentWallet(ctx).getFiatForSmallestCrypto(ctx, new BigDecimal(amount)).divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE));
+                    String am = CurrencyUtils.getFormattedAmount(ctx, getIso(ctx), getCryptoForSmallestCrypto(ctx, new BigDecimal(amount)));
+                    String amCur = CurrencyUtils.getFormattedAmount(ctx, BRSharedPrefs.getPreferredFiatIso(ctx), master.getCurrentWallet(ctx).getFiatForSmallestCrypto(ctx, new BigDecimal(amount)).divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE));
                     String formatted = String.format("%s (%s)", am, amCur);
                     final String strToShow = String.format(ctx.getString(R.string.TransactionDetails_received), formatted);
 
