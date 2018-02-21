@@ -49,7 +49,7 @@
         android:layout_below="@id/wallet_balance_usd"
         android:layout_alignParentRight="true"
         android:layout_marginRight="50dp"
-        android:textSize="10sp"
+        android:textSize="12sp"
         app:customTFont="CircularPro-Bold.otf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -62,12 +62,13 @@
         android:indeterminate="false"
         android:layout_marginRight="15dp"
         android:max="100"
-        android:layout_marginTop="6dp"
+        android:layout_marginTop="10dp"
         android:progressBackgroundTint="#88ffffff"
         android:progress="0"
+        android:progressDrawable="@drawable/wallet_sync_progress_bar"
         android:progressTint="#ffffff"
         android:layout_width="30dp"
-        android:layout_height="5dp" />
+        android:layout_height="3dp" />
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/wallet_balance_currency"
