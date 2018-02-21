@@ -25,8 +25,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.ViewFlipper;
 
+import com.platform.APIClient;
+
+import java.math.BigDecimal;
+
 import io.digibyte.R;
-import io.digibyte.presenter.activities.util.ActivityUTILS;
 import io.digibyte.presenter.activities.util.BRActivity;
 import io.digibyte.presenter.customviews.BRSearchBar;
 import io.digibyte.presenter.fragments.FragmentManage;
@@ -34,6 +37,7 @@ import io.digibyte.tools.animation.BRAnimator;
 import io.digibyte.tools.manager.BRSharedPrefs;
 import io.digibyte.tools.manager.InternetManager;
 import io.digibyte.tools.manager.SyncManager;
+import io.digibyte.tools.manager.SyncService;
 import io.digibyte.tools.manager.TxManager;
 import io.digibyte.tools.security.BitcoinUrlHandler;
 import io.digibyte.tools.sqlite.TransactionDataSource;
@@ -44,13 +48,10 @@ import io.digibyte.tools.util.BRExchange;
 import io.digibyte.tools.util.Utils;
 import io.digibyte.wallet.BRPeerManager;
 import io.digibyte.wallet.BRWalletManager;
-import com.platform.APIClient;
 
-import java.math.BigDecimal;
-
-import static io.digibyte.presenter.activities.intro.IntroActivity.introActivity;
 import static io.digibyte.presenter.activities.ReEnterPinActivity.reEnterPinActivity;
 import static io.digibyte.presenter.activities.SetPinActivity.introSetPitActivity;
+import static io.digibyte.presenter.activities.intro.IntroActivity.introActivity;
 import static io.digibyte.tools.animation.BRAnimator.t1Size;
 import static io.digibyte.tools.animation.BRAnimator.t2Size;
 import static io.digibyte.tools.util.BRConstants.PLATFORM_ON;
@@ -331,6 +332,7 @@ public class BreadActivity extends BRActivity implements BRWalletManager.OnBalan
         }, 1000);
 
         BRWalletManager.getInstance().refreshBalance(this);
+        SyncService.scheduleBackgroundSync(this);
 
         BRAnimator.showFragmentByTag(this, savedFragmentTag);
         savedFragmentTag = null;

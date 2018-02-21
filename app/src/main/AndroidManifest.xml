@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.BIND_JOB_SERVICE"/>
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 
     <!-- Allows unlocking your device and activating its screen so UI tests can succeed -->
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
@@ -231,6 +232,11 @@
             android:enabled="true"
             android:exported="false"
             android:label="SyncReceiver"/>
+
+        <service android:name=".tools.manager.SyncService"
+            android:permission="android.permission.BIND_JOB_SERVICE" >
+            ...
+        </service>
     </application>
 
 </manifest>
