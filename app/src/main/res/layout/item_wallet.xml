@@ -54,6 +54,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/wait_syncing"
+        android:text="Waiting to Sync"
+        android:textColor="#88ffffff"
+        android:layout_below="@id/wallet_balance_usd"
+        android:layout_alignLeft="@id/wallet_balance_usd"
+        android:textSize="12sp"
+        app:customTFont="CircularPro-Bold.otf"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
     <ProgressBar
         android:id="@+id/sync_progress"
         style="?android:attr/progressBarStyleHorizontal"
