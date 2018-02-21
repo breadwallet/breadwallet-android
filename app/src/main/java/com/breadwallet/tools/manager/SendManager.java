@@ -315,7 +315,7 @@ public class SendManager {
         //amount can't be less than the min
         if (Math.abs(walletManager.getWallet().getTransactionAmount(request.tx)) < minOutput) {
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.PaymentProtocol_Errors_smallTransaction),
-                    BRConstants.symbolBits + new BigDecimal(minOutput).divide(new BigDecimal("100")));
+                    CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), new BigDecimal(minOutput)));
 
 
             ((Activity) ctx).runOnUiThread(new Runnable() {
@@ -386,9 +386,10 @@ public class SendManager {
             receiver = "certified: " + request.cn + "\n";
         }
 
-
         String iso = BRSharedPrefs.getPreferredFiatIso(ctx);
         BaseWalletManager wallet = WalletsMaster.getInstance(ctx).getCurrentWallet(ctx);
+        long size = request.tx.getSize();
+        long stdFee = request.tx.getStandardFee();
         long feeForTx = walletManager.getWallet().getTransactionFee(request.tx);
         if (feeForTx <= 0) {
             long maxAmount = walletManager.getWallet().getMaxOutputAmount();
@@ -407,7 +408,7 @@ public class SendManager {
             }
             request.tx = walletManager.getWallet().createTransaction(maxAmount, wallet.getWallet().getTransactionAddress(request.tx));
             feeForTx = walletManager.getWallet().getTransactionFee(request.tx);
-            feeForTx += (walletManager.getCachedBalance(ctx) - Math.abs(walletManager.getWallet().getTransactionAmount(request.tx))) % 100;
+            feeForTx += walletManager.getCachedBalance(ctx) - Math.abs(walletManager.getWallet().getTransactionAmount(request.tx));
         }
         long amount = Math.abs(walletManager.getWallet().getTransactionAmount(request.tx));
         final long total = amount + feeForTx;

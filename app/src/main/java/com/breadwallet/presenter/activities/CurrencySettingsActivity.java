@@ -29,6 +29,8 @@ public class CurrencySettingsActivity extends BRActivity {
     public static final String EXTRA_CURRENCY_BCH = "bch";
     public static final String EXTRA_CURRENCY = "currency";
 
+    private String mIso;
+
     private BRText mTitle;
     private ImageButton mBackButton;
     private RelativeLayout mRescanBlockchainRow;
@@ -66,9 +68,9 @@ public class CurrencySettingsActivity extends BRActivity {
                                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                                     @Override
                                     public void run() {
-                                        BRSharedPrefs.putStartHeight(CurrencySettingsActivity.this, BRSharedPrefs.getCurrentWalletIso(CurrencySettingsActivity.this), 0);
-                                        BRSharedPrefs.putAllowSpend(CurrencySettingsActivity.this, BRSharedPrefs.getCurrentWalletIso(CurrencySettingsActivity.this), false);
-                                        WalletsMaster.getInstance(CurrencySettingsActivity.this).getCurrentWallet(CurrencySettingsActivity.this).getPeerManager().rescan();
+                                        BRSharedPrefs.putStartHeight(CurrencySettingsActivity.this, mIso, 0);
+                                        BRSharedPrefs.putAllowSpend(CurrencySettingsActivity.this, mIso, false);
+                                        WalletsMaster.getInstance(CurrencySettingsActivity.this).getWalletByIso(CurrencySettingsActivity.this, mIso).getPeerManager().rescan();
                                         BRAnimator.startBreadActivity(CurrencySettingsActivity.this, false);
 
                                     }
@@ -93,11 +95,12 @@ public class CurrencySettingsActivity extends BRActivity {
             }
         });
 
-        String currency = getIntent().getStringExtra(EXTRA_CURRENCY);
+        mIso = getIntent().getStringExtra(EXTRA_CURRENCY);
 
-        if (currency.equals(EXTRA_CURRENCY_BTC)) {
+        if (mIso.equals(EXTRA_CURRENCY_BTC)) {
             mTitle.setText("Bitcoin Settings");
-        } else if (currency.equals(EXTRA_CURRENCY_BCH)) {
+
+        } else if (mIso.equals(EXTRA_CURRENCY_BCH)) {
             mTitle.setText("BitcoinCash Settings");
         }
     }

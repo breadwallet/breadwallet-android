@@ -207,7 +207,6 @@ public class BRActivity extends Activity {
                 }
                 break;
 
-
         }
     }
 
