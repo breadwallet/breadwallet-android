@@ -116,12 +116,11 @@ public class CryptoUriParser {
 
     public static boolean isBitcoinUrl(Context app, String url) {
         RequestObject requestObject = parseRequest(url);
-        BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
         // return true if the request is valid url and has param: r or param: address
         // return true if it is a valid bitcoinPrivKey
-        return (requestObject != null && (requestObject.r != null || requestObject.address != null)
+        return (requestObject != null && (requestObject.r != null || requestObject.address != null))
                 || BRCoreKey.isValidBitcoinBIP38Key(url)
-                || BRCoreKey.isValidBitcoinPrivateKey(url));
+                || BRCoreKey.isValidBitcoinPrivateKey(url);
     }
 
 
