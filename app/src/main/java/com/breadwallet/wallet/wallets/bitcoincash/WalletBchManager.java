@@ -249,7 +249,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             }
         });
 
-
         return true;
     }
 
