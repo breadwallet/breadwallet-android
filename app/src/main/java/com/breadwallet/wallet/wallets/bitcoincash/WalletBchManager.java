@@ -57,6 +57,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnSyncStopped;
+import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
@@ -120,6 +121,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     private List<OnBalanceChangedListener> balanceListeners = new ArrayList<>();
     private List<OnTxStatusUpdatedListener> txStatusUpdatedListeners = new ArrayList<>();
     private List<OnSyncStopped> syncStoppedListeners = new ArrayList<>();
+    private List<OnTxListModified> txModifiedListeners = new ArrayList<>();
 
     public static WalletBchManager getInstance(Context app) {
         if (instance == null) {
@@ -476,6 +478,12 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     public void addSyncStoppedListener(OnSyncStopped list) {
         if (list != null && !syncStoppedListeners.contains(list))
             syncStoppedListeners.add(list);
+    }
+
+    @Override
+    public void addTxListModifiedListener(OnTxListModified list) {
+        if (list != null && !txModifiedListeners.contains(list))
+            txModifiedListeners.add(list);
     }
 
 
