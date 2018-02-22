@@ -25,8 +25,8 @@
         android:layout_below="@id/tx_date"
         android:textSize="14sp"
         android:singleLine="true"
-        android:maxLength="10"
         android:ellipsize="end"
+        android:textColor="@color/settings_chevron_right"
         android:layout_marginTop="-5dp"
         android:layout_alignLeft="@id/tx_date"
         android:layout_width="wrap_content"
@@ -42,6 +42,23 @@
         app:customTFont="CircularPro-Bold.otf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
+
+    <ProgressBar
+        android:id="@+id/send_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_below="@id/tx_date"
+        android:layout_alignParentLeft="true"
+        android:indeterminate="false"
+        android:layout_marginLeft="12dp"
+        android:max="100"
+        android:layout_marginTop="10dp"
+        android:progressBackgroundTint="#552196f3"
+        android:progress="25"
+        android:progressDrawable="@drawable/wallet_sync_progress_bar"
+        android:progressTint="#4b77f3"
+        android:visibility="invisible"
+        android:layout_width="40dp"
+        android:layout_height="5dp" />
 
     <View
         android:layout_width="match_parent"
