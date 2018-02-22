@@ -39,6 +39,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
@@ -51,7 +52,7 @@ import java.math.BigDecimal;
  * (BTC, BCH, ETH)
  */
 
-public class WalletActivity extends BRActivity implements InternetManager.ConnectionReceiverListener {
+public class WalletActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, OnTxListModified {
     private static final String TAG = WalletActivity.class.getName();
     BRText mCurrencyTitle;
     BRText mCurrencyPriceUsd;
@@ -200,6 +201,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 //            BRSharedPrefs.putCurrentWalletIso(WalletActivity.this, "BTC");
 //        }
 
+
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -209,6 +211,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     private void updateUi() {
+        Log.e(TAG, "updateUi: ");
         final BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
         if (wallet == null) {
             Log.e(TAG, "updateUi: wallet is null");
@@ -341,6 +344,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 });
             }
         });
+        final BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        wallet.addTxListModifiedListener(this);
 
     }
 
@@ -379,5 +384,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 barFlipper.setDisplayedChild(2);
             SyncManager.getInstance().stopSyncingProgressThread();
         }
+    }
+
+    @Override
+    public void txListModified(String hash) {
+        updateUi();
     }
 }
