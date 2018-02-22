@@ -29,6 +29,7 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -200,6 +201,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         String txAction;
         if(received){
             txAction = "Received";
+            convertView.transactionAmount.setTextColor(mContext.getResources().getColor(R.color.transaction_amount_received_color, null));
         }
         else{
 
@@ -212,8 +214,18 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         long transactionAmount = item.getAmount();
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived());
         String iso = BRSharedPrefs.getPreferredFiatIso(mContext);
+<<<<<<< HEAD
         convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, iso, WalletsMaster.getInstance(mContext).getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
 
+=======
+
+        if(received) {
+            convertView.transactionAmount.setText(CurrencyUtils.getFormattedCurrencyString(mContext, iso, WalletsMaster.getInstance(mContext).getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
+        }else{
+            convertView.transactionAmount.setText("-"+CurrencyUtils.getFormattedCurrencyString(mContext, iso, WalletsMaster.getInstance(mContext).getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
+
+        }
+>>>>>>> Change color of received tx amount
 
         //convertView.sentReceived.setText(received ? mContext.getString(R.string.TransactionDetails_received, "") : mContext.getString(R.string.TransactionDetails_sent, ""));
         //convertView.toFrom.setText(received ? String.format(mContext.getString(R.string.TransactionDetails_from), "") : String.format(mContext.getString(R.string.TransactionDetails_to), ""));
@@ -303,7 +315,13 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * 1000;
         CharSequence timeSpan = BRDateUtil.getCustomSpan(new Date(timeStamp));
 
-        convertView.transactionDate.setText(timeSpan);
+        Log.d(TAG, "Tx timestamp final -> " + timeStamp);
+        Log.d(TAG, "Tx timestamp original -> " + item.getTimeStamp());
+
+        String shortDate = BRDateUtil.getShortDate(timeStamp);
+
+
+        convertView.transactionDate.setText(shortDate);
 
     }
 
