@@ -29,6 +29,7 @@ import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -198,12 +199,21 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         String txAction;
         if (received) {
-            txAction = "received via " + item.getFrom()[0];
+            txAction = "received via 2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF" + item.getFrom()[0];
             convertView.transactionAmount.setTextColor(mContext.getResources().getColor(R.color.transaction_amount_received_color, null));
+            Log.d(TAG, "Address FROM -> " + item.getFrom()[0]);
+            Log.d(TAG, "Address array -> " + Arrays.toString(item.getFrom()));
+
+
         } else {
 
-            txAction = "sent to " + item.getTo()[0];
+            txAction = "sent to 2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF" + item.getTo()[0];
+            Log.d(TAG, "Address TO -> " + item.getTo()[0]);
+            Log.d(TAG, "Address array -> " + Arrays.toString(item.getFrom()));
+
+
         }
+
 
         convertView.transactionDetail.setText(txAction);
 

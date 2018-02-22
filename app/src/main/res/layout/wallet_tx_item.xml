@@ -26,10 +26,11 @@
         android:textSize="14sp"
         android:maxLines="1"
         android:ellipsize="end"
+        android:maxLength="25"
         android:textColor="@color/settings_chevron_right"
         android:layout_marginTop="-5dp"
         android:layout_alignLeft="@id/tx_date"
-        android:layout_width="100dp"
+        android:layout_width="130dp"
         android:layout_height="wrap_content" />
 
     <com.breadwallet.presenter.customviews.BRText
