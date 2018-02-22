@@ -5,7 +5,6 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
-import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -19,33 +18,26 @@ import com.breadwallet.core.BRCoreMerkleBlock;
 import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWalletManager;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.PeerEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
-import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRNotificationManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
-import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.sqlite.TransactionStorageManager;
@@ -58,14 +50,9 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnSyncStopped;
+import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
-import com.breadwallet.wallet.wallets.exceptions.AmountSmallerThanMinException;
-import com.breadwallet.wallet.wallets.exceptions.FeeNeedsAdjust;
-import com.breadwallet.wallet.wallets.exceptions.FeeOutOfDate;
-import com.breadwallet.wallet.wallets.exceptions.InsufficientFundsException;
-import com.breadwallet.wallet.wallets.exceptions.SomethingWentWrong;
-import com.breadwallet.wallet.wallets.exceptions.SpendingNotAllowed;
 import com.google.firebase.crash.FirebaseCrash;
 
 import org.json.JSONException;
@@ -119,6 +106,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     private List<OnBalanceChangedListener> balanceListeners = new ArrayList<>();
     private List<OnTxStatusUpdatedListener> txStatusUpdatedListeners = new ArrayList<>();
     private List<OnSyncStopped> syncStoppedListeners = new ArrayList<>();
+    private List<OnTxListModified> txModifiedListeners = new ArrayList<>();
 
     public static WalletBitcoinManager getInstance(Context app) {
         if (instance == null) {
@@ -476,6 +464,12 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     public void addSyncStoppedListener(OnSyncStopped list) {
         if (list != null && !syncStoppedListeners.contains(list))
             syncStoppedListeners.add(list);
+    }
+
+    @Override
+    public void addTxListModifiedListener(OnTxListModified list) {
+        if (list != null && !txModifiedListeners.contains(list))
+            txModifiedListeners.add(list);
     }
 
 

@@ -68,6 +68,8 @@ public interface BaseWalletManager {
 
     void addSyncStoppedListener(OnSyncStopped list);
 
+    void addTxListModifiedListener(OnTxListModified list);
+
     //get a list of all the transactions sorted by timestamp
     BRCoreTransaction[] getTransactions();
 
