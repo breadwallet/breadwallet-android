@@ -70,10 +70,11 @@ public class BRDateUtil {
     }
 
     public static String getShortDate(long timestamp) {
-        long millTimestamp = timestamp * 1000;
+        //long millTimestamp = timestamp * 1000;
 
         Calendar calendar = Calendar.getInstance();
-        calendar.setTimeInMillis(millTimestamp);
+        calendar.setTimeInMillis(timestamp);
+        Log.d("BRDateUtil", "Timestamp -> " + timestamp);
 
         String dateString = new SimpleDateFormat("MMM dd", Locale.getDefault()).format(calendar.getTimeInMillis());
         Log.d("BRDateUtil", "Transaction date string -> " + dateString);

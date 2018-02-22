@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
@@ -210,18 +211,14 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         long transactionAmount = item.getAmount();
         long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived());
         String iso = BRSharedPrefs.getPreferredFiatIso(mContext);
-<<<<<<< HEAD
-        convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, iso, WalletsMaster.getInstance(mContext).getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
 
-=======
 
         if (received) {
-            convertView.transactionAmount.setText(CurrencyUtils.getFormattedCurrencyString(mContext, iso, WalletsMaster.getInstance(mContext).getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
+            convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, iso, WalletsMaster.getInstance(mContext).getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
         } else {
-            convertView.transactionAmount.setText("-" + CurrencyUtils.getFormattedCurrencyString(mContext, iso, WalletsMaster.getInstance(mContext).getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
+            convertView.transactionAmount.setText("-" + CurrencyUtils.getFormattedAmount(mContext, iso, WalletsMaster.getInstance(mContext).getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
 
         }
->>>>>>> Change color of received tx amount
 
         //convertView.sentReceived.setText(received ? mContext.getString(R.string.TransactionDetails_received, "") : mContext.getString(R.string.TransactionDetails_sent, ""));
         //convertView.toFrom.setText(received ? String.format(mContext.getString(R.string.TransactionDetails_from), "") : String.format(mContext.getString(R.string.TransactionDetails_to), ""));
@@ -304,7 +301,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         String amountText = CurrencyUtils.getFormattedAmount(mContext, iso, isCryptoPreferred ?
                 new BigDecimal(satoshisAmount) : wallet.getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount)));
 
-        convertView.amount.setText(amountText);
+        convertView.transactionAmount.setText(amountText);
 
 
         //if it's 0 we use the current time.
