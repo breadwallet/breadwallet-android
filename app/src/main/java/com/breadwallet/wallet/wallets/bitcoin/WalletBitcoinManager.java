@@ -205,7 +205,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     @Override
     public List<TxUiHolder> getTxUiHolders() {
         BRCoreTransaction txs[] = getWallet().getTransactions();
-        Log.e(TAG, "getTxUiHolders: txs:" + txs.length);
+//        Log.e(TAG, "getTxUiHolders: txs:" + txs.length);
         if (txs == null || txs.length <= 0) return null;
         List<TxUiHolder> uiTxs = new ArrayList<>();
         for (BRCoreTransaction tx : txs) {
@@ -500,6 +500,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         super.balanceChanged(balance);
         Context app = BreadApp.getBreadContext();
         setCashedBalance(app, balance);
+        for (OnTxListModified list : txModifiedListeners)
+            if (list != null) list.txListModified(null);
 
     }
 
@@ -508,6 +510,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         super.txStatusUpdate();
         for (OnTxStatusUpdatedListener listener : txStatusUpdatedListeners)
             if (listener != null) listener.onTxStatusUpdated();
+        for (OnTxListModified list : txModifiedListeners)
+            if (list != null) list.txListModified(null);
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -518,6 +522,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                 BRSharedPrefs.putLastBlockHeight(ctx, getIso(ctx), (int) blockHeight);
             }
         });
+
 
     }
 
@@ -656,6 +661,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             TransactionStorageManager.putTransaction(ctx, getInstance(ctx), new BRTransactionEntity(transaction.serialize(), transaction.getBlockHeight(), transaction.getTimestamp(), transaction.getReverseHash(), getIso(ctx)));
         else
             Log.e(TAG, "onTxAdded: ctx is null!");
+        for (OnTxListModified list : txModifiedListeners)
+            if (list != null) list.txListModified(transaction.getReverseHash());
     }
 
     @Override
@@ -678,6 +685,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         } else {
             Log.e(TAG, "onTxDeleted: Failed! ctx is null");
         }
+        for (OnTxListModified list : txModifiedListeners)
+            if (list != null) list.txListModified(hash);
     }
 
     @Override
@@ -691,6 +700,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         } else {
             Log.e(TAG, "onTxUpdated: Failed, ctx is null");
         }
+        for (OnTxListModified list : txModifiedListeners)
+            if (list != null) list.txListModified(hash);
     }
 
 
