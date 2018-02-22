@@ -3,10 +3,8 @@ package com.breadwallet.tools.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,15 +19,14 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.threads.BRExecutor;
-import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.BRDateUtil;
+import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -199,13 +196,12 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         //convertView.mainLayout.setBackgroundResource(getResourceByPos(position));
 
         String txAction;
-        if(received){
-            txAction = "Received";
+        if (received) {
+            txAction = "received via " + item.getFrom()[0];
             convertView.transactionAmount.setTextColor(mContext.getResources().getColor(R.color.transaction_amount_received_color, null));
-        }
-        else{
+        } else {
 
-            txAction = "Sent";
+            txAction = "sent to " + item.getTo()[0];
         }
 
         convertView.transactionDetail.setText(txAction);
@@ -219,10 +215,10 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
 =======
 
-        if(received) {
+        if (received) {
             convertView.transactionAmount.setText(CurrencyUtils.getFormattedCurrencyString(mContext, iso, WalletsMaster.getInstance(mContext).getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
-        }else{
-            convertView.transactionAmount.setText("-"+CurrencyUtils.getFormattedCurrencyString(mContext, iso, WalletsMaster.getInstance(mContext).getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
+        } else {
+            convertView.transactionAmount.setText("-" + CurrencyUtils.getFormattedCurrencyString(mContext, iso, WalletsMaster.getInstance(mContext).getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
 
         }
 >>>>>>> Change color of received tx amount
@@ -300,7 +296,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
 
         //if (!item.isValid())
-            //convertView.status.setText(mContext.getString(R.string.Transaction_invalid));
+        //convertView.status.setText(mContext.getString(R.string.Transaction_invalid));
 
 
         boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
@@ -459,6 +455,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         public BRText title;
         public BRText description;
         public ImageButton close;
+        public ProgressBar sendProgress;
 
         public PromptHolder(View view) {
             super(view);
@@ -467,6 +464,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             title = (BRText) view.findViewById(R.id.info_title);
             description = (BRText) view.findViewById(R.id.info_description);
             close = (ImageButton) view.findViewById(R.id.info_close_button);
+            sendProgress = view.findViewById(R.id.send_progress);
+
         }
     }
 
