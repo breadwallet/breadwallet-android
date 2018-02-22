@@ -514,6 +514,8 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         super.balanceChanged(balance);
         Context app = BreadApp.getBreadContext();
         setCashedBalance(app, balance);
+        for (OnTxListModified list : txModifiedListeners)
+            if (list != null) list.txListModified(null);
 
     }
 
@@ -532,6 +534,8 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
                 BRSharedPrefs.putLastBlockHeight(ctx, getIso(ctx), (int) blockHeight);
             }
         });
+        for (OnTxListModified list : txModifiedListeners)
+            if (list != null) list.txListModified(null);
 
     }
 
@@ -666,6 +670,8 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             TransactionStorageManager.putTransaction(ctx, getInstance(ctx), new BRTransactionEntity(transaction.serialize(), transaction.getBlockHeight(), transaction.getTimestamp(), transaction.getReverseHash(), getIso(ctx)));
         else
             Log.e(TAG, "onTxAdded: ctx is null!");
+        for (OnTxListModified list : txModifiedListeners)
+            if (list != null) list.txListModified(transaction.getReverseHash());
     }
 
     @Override
@@ -680,6 +686,8 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         } else {
             Log.e(TAG, "onTxDeleted: Failed! ctx is null");
         }
+        for (OnTxListModified list : txModifiedListeners)
+            if (list != null) list.txListModified(hash);
     }
 
     @Override
@@ -693,6 +701,8 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         } else {
             Log.e(TAG, "onTxUpdated: Failed, ctx is null");
         }
+        for (OnTxListModified list : txModifiedListeners)
+            if (list != null) list.txListModified(hash);
     }
 
 }
