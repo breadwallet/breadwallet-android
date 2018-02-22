@@ -64,6 +64,7 @@ public class BreadApp extends Application {
     public static AtomicInteger activityCounter = new AtomicInteger();
     public static long backgroundedTime;
     public static boolean appInBackground;
+    private static Context mContext;
 
     public static final boolean IS_ALPHA = false;
 
@@ -80,6 +81,7 @@ public class BreadApp extends Application {
             FirebaseCrash.setCrashCollectionEnabled(false);
 //            FirebaseCrash.report(new RuntimeException("test with new json file"));
         }
+        mContext = this;
 
         if (!Utils.isEmulatorOrDebug(this) && IS_ALPHA)
             throw new RuntimeException("can't be alpha for release");
@@ -125,7 +127,10 @@ public class BreadApp extends Application {
     }
 
     public static Context getBreadContext() {
-        return currentActivity == null ? SyncReceiver.app : currentActivity;
+        Context app = currentActivity;
+        if (app == null) app = SyncReceiver.app;
+        if (app == null) app = mContext;
+        return app;
     }
 
     public static void setBreadContext(Activity app) {

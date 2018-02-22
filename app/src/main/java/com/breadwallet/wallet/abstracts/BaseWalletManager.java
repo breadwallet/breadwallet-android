@@ -53,6 +53,9 @@ public interface BaseWalletManager {
     //get the core wallet
     BRCoreWallet getWallet();
 
+    //get the core wallet
+    int getForkId();
+
     //get the core peerManager
     BRCorePeerManager getPeerManager();
 

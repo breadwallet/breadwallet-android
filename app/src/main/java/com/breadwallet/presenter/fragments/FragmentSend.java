@@ -684,7 +684,7 @@ public class FragmentSend extends Fragment {
 
         //Balance depending on the selected ISO
         long fee;
-        if (smallestAmount.longValue() == 0) {
+        if (smallestAmount.longValue() <= 0) {
             fee = 0;
         } else {
             BRCoreAddress coreAddress = new BRCoreAddress(addressEdit.getText().toString());

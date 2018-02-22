@@ -192,16 +192,15 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             fee = obj.getLong("fee_per_kb");
             economyFee = obj.getLong("fee_per_kb_economy");
             Log.e(TAG, "updateFee: " + getIso(app) + ":" + fee + "|" + economyFee);
-            BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app, getIso(app));
 
-            if (fee != 0 && fee < wallet.getWallet().getMaxFeePerKb()) {
+            if (fee != 0 && fee < getWallet().getMaxFeePerKb()) {
                 BRSharedPrefs.putFeePerKb(app, getIso(app), fee);
-                wallet.getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app, getIso(app)) ? fee : economyFee);
+                getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app, getIso(app)) ? fee : economyFee);
                 BRSharedPrefs.putFeeTime(app, getIso(app), System.currentTimeMillis()); //store the time of the last successful fee fetch
             } else {
                 FirebaseCrash.report(new NullPointerException("Fee is weird:" + fee));
             }
-            if (economyFee != 0 && economyFee < wallet.getWallet().getMaxFeePerKb()) {
+            if (economyFee != 0 && economyFee < getWallet().getMaxFeePerKb()) {
                 BRSharedPrefs.putEconomyFeePerKb(app, getIso(app), economyFee);
             } else {
                 FirebaseCrash.report(new NullPointerException("Economy fee is weird:" + economyFee));
@@ -240,7 +239,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
                 getPeerManager().connect();
 
             }
@@ -456,6 +454,11 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         return fiatAmount.divide(new BigDecimal(rate), 8, ROUNDING_MODE).multiply(new BigDecimal("100000000"));
     }
 
+
+    @Override
+    public int getForkId() {
+        return super.getForkId();
+    }
 
     @Override
     public void addBalanceChangedListener(OnBalanceChangedListener listener) {
