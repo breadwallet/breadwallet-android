@@ -20,6 +20,7 @@ import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
@@ -68,6 +69,8 @@ public class CryptoUriParser {
             return false;
         }
 
+        if (ImportPrivKeyTask.trySweepWallet(app, url, walletManager)) return true;
+
         Map<String, String> attr = new HashMap<>();
         URI uri = null;
         try {
@@ -81,8 +84,6 @@ public class CryptoUriParser {
         BREventManager.getInstance().pushEvent("send.handleURL", attr);
 
         RequestObject requestObject = parseRequest(url);
-
-        if (ImportPrivKeyTask.trySweepWallet(app, url, walletManager)) return true;
 
         if (requestObject == null) {
             if (app != null) {
@@ -115,12 +116,13 @@ public class CryptoUriParser {
     }
 
     public static boolean isBitcoinUrl(Context app, String url) {
+        if (Utils.isNullOrEmpty(url)) return false;
+        if (BRCoreKey.isValidBitcoinBIP38Key(url) || BRCoreKey.isValidBitcoinPrivateKey(url))
+            return true;
         RequestObject requestObject = parseRequest(url);
         // return true if the request is valid url and has param: r or param: address
         // return true if it is a valid bitcoinPrivKey
-        return (requestObject != null && (requestObject.r != null || requestObject.address != null))
-                || BRCoreKey.isValidBitcoinBIP38Key(url)
-                || BRCoreKey.isValidBitcoinPrivateKey(url);
+        return (requestObject != null && (requestObject.r != null || requestObject.address != null));
     }
 
 
