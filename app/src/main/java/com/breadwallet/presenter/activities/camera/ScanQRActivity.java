@@ -174,6 +174,7 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
     public void onQRCodeRead(final String text, PointF[] points) {
 
         if (handlingCode) return;
+        Log.e(TAG, "onQRCodeRead: " + text);
         if (CryptoUriParser.isBitcoinUrl(this, text) || BRBitId.isBitId(text)) {
             runOnUiThread(new Runnable() {
                 @Override

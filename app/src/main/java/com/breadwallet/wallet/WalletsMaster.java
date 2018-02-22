@@ -83,7 +83,7 @@ public class WalletsMaster {
 
     //return the needed wallet for the iso
     public BaseWalletManager getWalletByIso(Context app, String iso) {
-        Log.d(TAG, "getWalletByIso() Getting wallet by ISO -> " + iso);
+//        Log.d(TAG, "getWalletByIso() Getting wallet by ISO -> " + iso);
         if (Utils.isNullOrEmpty(iso)) return null;
         if (iso.equalsIgnoreCase("BTC"))
             return WalletBitcoinManager.getInstance(app);
@@ -296,6 +296,5 @@ public class WalletsMaster {
 
         }
     }
-
 
 }

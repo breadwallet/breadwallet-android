@@ -146,27 +146,34 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                     @Override
                     public void run() {
 
+                        if (mTransaction == null) {
+                            app.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
+                                            app.getString(R.string.Import_Error_notValid), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                                                @Override
+                                                public void onClick(BRDialogView brDialogView) {
+                                                    brDialogView.dismissWithAnimation();
+                                                }
+                                            }, null, null, 0);
+                                }
+                            });
+                            return;
+                        }
+
                         BRCoreKey signingKey = new BRCoreKey(key);
 
-//                        boolean b = walletManager.getWallet().signTransaction(mTransaction, signingKey);
-//                        walletManager.getWallet().
-                        //todo continue when signing bug is fixed
+                        mTransaction.sign(signingKey);
 
-//                        if (!b) {
-//                            app.runOnUiThread(new Runnable() {
-//                                @Override
-//                                public void run() {
-//                                    BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
-//                                            app.getString(R.string.Import_Error_notValid), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-//                                                @Override
-//                                                public void onClick(BRDialogView brDialogView) {
-//                                                    brDialogView.dismissWithAnimation();
-//                                                }
-//                                            }, null, null, 0);
-//                                }
-//                            });
-//
-//                        }
+                        if (!mTransaction.isSigned()) {
+                            String err = "transaction is not signed";
+                            Log.e(TAG, "run: " + err);
+                            BRReportsManager.reportBug(new IllegalArgumentException(err));
+                            return;
+                        }
+
+                        walletManager.getPeerManager().publishTransaction(mTransaction);
                     }
                 });
 

@@ -356,7 +356,6 @@ public class SendManager {
                             @Override
                             public void run() {
                                 BRAnimator.killAllFragments((Activity) ctx);
-                                BRAnimator.startBreadIfNotStarted((Activity) ctx);
                             }
                         });
 
