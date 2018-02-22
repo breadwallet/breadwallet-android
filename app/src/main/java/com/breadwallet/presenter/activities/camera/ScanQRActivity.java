@@ -176,17 +176,22 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
         if (handlingCode) return;
         Log.e(TAG, "onQRCodeRead: " + text);
         if (CryptoUriParser.isBitcoinUrl(this, text) || BRBitId.isBitId(text)) {
+            Log.e(TAG, "onQRCodeRead: is bitcoin url");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    lastUpdated = System.currentTimeMillis();
-                    cameraGuide.setImageResource(R.drawable.cameraguide);
-                    descriptionText.setText("");
                     handlingCode = true;
-                    Intent returnIntent = new Intent();
-                    returnIntent.putExtra("result", text);
-                    setResult(Activity.RESULT_OK, returnIntent);
-                    finish();
+                    try {
+                        lastUpdated = System.currentTimeMillis();
+                        cameraGuide.setImageResource(R.drawable.cameraguide);
+                        descriptionText.setText("");
+                        Intent returnIntent = new Intent();
+                        returnIntent.putExtra("result", text);
+                        setResult(Activity.RESULT_OK, returnIntent);
+                        finish();
+                    } finally {
+                        handlingCode = false;
+                    }
 
                 }
             });
