@@ -118,6 +118,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             //long time = 1519021629;
             //long time = System.currentTimeMillis();
 
+
             instance = new WalletBitcoinManager(app, pubKey, BuildConfig.BITCOIN_TESTNET ? BRCoreChainParams.testnetChainParams : BRCoreChainParams.mainnetChainParams, time);
         }
         return instance;
