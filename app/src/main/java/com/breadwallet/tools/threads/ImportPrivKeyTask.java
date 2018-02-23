@@ -139,7 +139,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         String fee = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), new BigDecimal(walletManager.getWallet().getTransactionFee(mTransaction)));
 
         String message = String.format(app.getString(R.string.Import_confirm), amount, fee);
-        String posButton = String.format("%s (%s)", amount, fee);
+        String posButton = String.format("%s (%s)", amount, Math.abs(fee));
         BRDialog.showCustomDialog(app, "", message, posButton, app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {
