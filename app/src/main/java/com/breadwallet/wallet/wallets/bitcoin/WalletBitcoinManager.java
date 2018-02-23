@@ -113,8 +113,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             byte[] rawPubKey = BRKeyStore.getMasterPublicKey(app);
             if (Utils.isNullOrEmpty(rawPubKey)) return null;
             BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
-            //long time = BRKeyStore.getWalletCreationTime(app);
-            long time = 1517955529;
+            long time = BRKeyStore.getWalletCreationTime(app);
+//            if (Utils.isEmulatorOrDebug(app)) time = 1517955529;
 
             instance = new WalletBitcoinManager(app, pubKey, BuildConfig.BITCOIN_TESTNET ? BRCoreChainParams.testnetChainParams : BRCoreChainParams.mainnetChainParams, time);
         }
@@ -609,9 +609,11 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     public void syncStopped(String error) {
         Log.d(TAG, "syncStopped: " + error);
         Context app = BreadApp.getBreadContext();
-        BRSharedPrefs.putAllowSpend(app, getIso(app), true);
+        if (Utils.isNullOrEmpty(error))
+            BRSharedPrefs.putAllowSpend(app, getIso(app), true);
         for (OnSyncStopped list : syncStoppedListeners)
             if (list != null) list.syncStopped(error);
+
     }
 
     @Override
@@ -701,8 +703,6 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         for (OnTxListModified list : txModifiedListeners)
             if (list != null) list.txListModified(hash);
     }
-
-
 
 
 }

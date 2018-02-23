@@ -15,6 +15,7 @@
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.BIND_JOB_SERVICE"/>
+    <uses-permission android:name="android.permission.SET_DEBUG_APP"/>
 
     <!-- Allows unlocking your device and activating its screen so UI tests can succeed -->
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
@@ -216,16 +217,9 @@
             android:screenOrientation="portrait"/>
 
         <activity
-            android:name=".presenter.activities.CurrencyActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait">
-
-        </activity>
-        <activity
             android:name=".presenter.activities.CurrencySettingsActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait">
-
 
         </activity>
 
