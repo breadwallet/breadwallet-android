@@ -319,9 +319,9 @@ public class BRSharedPrefs {
     }
 
     public static String getCurrentWalletIso(Context activity) {
-        Log.d(TAG, "getCurrentWalletIso() Activity -> " + activity.getClass().getSimpleName());
+//        Log.d(TAG, "getCurrentWalletIso() Activity -> " + activity.getClass().getSimpleName());
         SharedPreferences prefs = activity.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
-        Log.d(TAG, "Getting current wallet ISO -> " + prefs.getString("currentWalletIso", "BTC"));
+//        Log.d(TAG, "Getting current wallet ISO -> " + prefs.getString("currentWalletIso", "BTC"));
         return prefs.getString("currentWalletIso", "BTC");
     }
 

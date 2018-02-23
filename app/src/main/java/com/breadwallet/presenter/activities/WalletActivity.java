@@ -20,7 +20,6 @@ import android.widget.LinearLayout;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
-import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
@@ -34,7 +33,7 @@ import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.tools.threads.BRExecutor;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -217,16 +216,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             Log.e(TAG, "updateUi: wallet is null");
             return;
         }
-//        Log.e(TAG, "updateUi: " + wallet.getIso(this));
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                if (wallet.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Disconnected) {
-                    wallet.getPeerManager().connect();
-                    Log.e(TAG, "run: core connecting");
-                }
-            }
-        });
 
         if (wallet.getUiConfiguration().buyVisible) {
             mBuyButton.setVisibility(View.VISIBLE);
@@ -329,7 +318,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         super.onResume();
 
         app = this;
-        updateUi();
 
         TxManager.getInstance().onResume(this);
 
@@ -346,6 +334,20 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         });
         final BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
         wallet.addTxListModifiedListener(this);
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                long balance = wallet.getWallet().getBalance();
+                wallet.setCashedBalance(app, balance);
+                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateUi();
+                    }
+                });
+
+            }
+        });
 
     }
 
@@ -388,6 +390,12 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     @Override
     public void txListModified(String hash) {
-        updateUi();
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                updateUi();
+            }
+        });
+
     }
 }

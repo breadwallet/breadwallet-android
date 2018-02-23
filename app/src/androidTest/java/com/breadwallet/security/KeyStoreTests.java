@@ -7,14 +7,12 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.breadwallet.presenter.activities.settings.TestActivity;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.threads.BRExecutor;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import java.io.File;
 
 import static com.breadwallet.tools.security.BRKeyStore.aliasObjectMap;
 

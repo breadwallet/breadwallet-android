@@ -1,4 +1,4 @@
-package com.breadwallet.tools.threads;
+package com.breadwallet.tools.threads.executor;
 
 import android.util.Log;
 
@@ -51,7 +51,7 @@ public class BRExecutor implements RejectedExecutionHandler {
     * thread pool executor for light weight background tasks
     */
     private final ThreadPoolExecutor mForLightWeightBackgroundTasks;
-//    /*
+    //    /*
 //    * thread pool executor for serialized tasks (one at the time)
 //    */
 //    private final ThreadPoolExecutor mForSerializedTasks;
@@ -90,7 +90,7 @@ public class BRExecutor implements RejectedExecutionHandler {
         mForBackgroundTasks = new ThreadPoolExecutor(
                 NUMBER_OF_CORES * 4,
                 NUMBER_OF_CORES * 16,
-                60L,
+                300,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>(),
                 backgroundPriorityThreadFactory,
@@ -100,8 +100,8 @@ public class BRExecutor implements RejectedExecutionHandler {
         // setting the thread pool executor for mForLightWeightBackgroundTasks;
         mForLightWeightBackgroundTasks = new ThreadPoolExecutor(
                 NUMBER_OF_CORES * 16,
-                NUMBER_OF_CORES *64,
-                5L,
+                NUMBER_OF_CORES * 64,
+                60,
                 TimeUnit.SECONDS,
                 new LinkedBlockingQueue<Runnable>(),
                 backgroundPriorityThreadFactory,

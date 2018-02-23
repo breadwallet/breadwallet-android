@@ -12,14 +12,6 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.InputWordsActivity;
 import com.breadwallet.presenter.activities.SetPinActivity;
-import com.breadwallet.presenter.activities.intro.IntroActivity;
-import com.breadwallet.presenter.activities.intro.RecoverActivity;
-import com.breadwallet.presenter.activities.intro.WriteDownActivity;
-import com.breadwallet.tools.manager.InternetManager;
-import com.breadwallet.tools.manager.BRApiManager;
-import com.breadwallet.tools.security.AuthManager;
-import com.breadwallet.tools.threads.BRExecutor;
-import com.platform.HTTPServer;
 
 import java.util.List;
 
