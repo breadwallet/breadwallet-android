@@ -61,10 +61,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
     @Override
     public void onBindViewHolder(final WalletItemViewHolder holder, int position) {
-
-        //syncList.put(holder, false);
-
-        mSyncList.add(new Pair(holder, false));
+        Log.d(TAG, "onBindViewHolder");
 
         final BaseWalletManager wallet = mWalletList.get(position);
         String name = wallet.getName(mContext);
@@ -81,8 +78,9 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         holder.mWalletBalanceCurrency.setText(cryptoBalance);
         holder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
         holder.mSyncing.setVisibility(View.INVISIBLE);
-        holder.mWalletBalanceCurrency.setVisibility(View.INVISIBLE);
-        holder.mWait.setVisibility(View.VISIBLE);
+        holder.mWalletBalanceCurrency.setVisibility(View.VISIBLE);
+        holder.mWalletBalanceCurrency.setText(cryptoBalance);
+        holder.mWait.setVisibility(View.INVISIBLE);
 
 
         if (wallet.getIso(mContext).equalsIgnoreCase(WalletBitcoinManager.getInstance(mContext).getIso(mContext))) {
