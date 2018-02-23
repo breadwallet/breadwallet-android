@@ -1,4 +1,6 @@
-package com.breadwallet.tools.threads;
+package com.breadwallet.tools.threads.executor;
+
+import java.util.concurrent.ThreadFactory;
 
 /**
  * BreadWallet
@@ -24,33 +26,28 @@ package com.breadwallet.tools.threads;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-/**
- * Priority levels
- */
-public enum Priority {
-    /**
-     * NOTE: DO NOT CHANGE ORDERING OF THOSE CONSTANTS UNDER ANY CIRCUMSTANCES.
-     * Doing so will make ordering incorrect.
-     */
+public class PriorityThreadFactory implements ThreadFactory {
 
-    /**
-     * Lowest priority level. Used for prefetches of data.
-     */
-    LOW,
+    private final int mThreadPriority;
 
-    /**
-     * Medium priority level. Used for warming of data that might soon get visible.
-     */
-    MEDIUM,
+    public PriorityThreadFactory(int threadPriority) {
+        mThreadPriority = threadPriority;
+    }
 
-    /**
-     * Highest priority level. Used for data that are currently visible on screen.
-     */
-    HIGH,
+    @Override
+    public Thread newThread(final Runnable runnable) {
+        Runnable wrapperRunnable = new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    android.os.Process.setThreadPriority(mThreadPriority);
+                } catch (Throwable t) {
 
-    /**
-     * Highest priority level. Used for data that are required instantly(mainly for emergency).
-     */
-    IMMEDIATE;
+                }
+                runnable.run();
+            }
+        };
+        return new Thread(wrapperRunnable);
+    }
 
 }

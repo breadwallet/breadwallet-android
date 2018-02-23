@@ -14,7 +14,7 @@ import android.widget.EditText;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.tools.manager.TxManager;
-import com.breadwallet.tools.threads.BRExecutor;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 
 /**
  * BreadWallet

@@ -7,7 +7,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.tools.threads.BRExecutor;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.platform.interfaces.Middleware;
 import com.platform.interfaces.Plugin;

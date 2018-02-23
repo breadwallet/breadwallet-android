@@ -8,7 +8,7 @@ import android.text.SpannableString;
 import android.util.Log;
 
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.tools.threads.BRExecutor;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 
 /**
  * BreadWallet

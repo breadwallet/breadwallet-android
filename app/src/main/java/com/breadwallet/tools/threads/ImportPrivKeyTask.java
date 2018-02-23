@@ -26,6 +26,7 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
@@ -195,7 +196,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         if (jsonString == null || jsonString.isEmpty()) return null;
         BaseWalletManager walletManager = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
         if (walletManager == null) {
-            String err = "createTx: wallet is null for: " + iso;
+            String err = "createSweepingTx: wallet is null for: " + iso;
             BRReportsManager.reportBug(new NullPointerException(err));
             Log.e(TAG, err);
             return null;
@@ -215,17 +216,26 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                 byte[] scriptPubKey = TypesConverter.hexToBytes(obj.getString("scriptPubKey"));
                 long amount = obj.getLong("satoshis");
                 totalAmount += amount;
-                transaction.addInput(new BRCoreTransactionInput(txid, vout, amount, scriptPubKey, null, -1));
+                BRCoreTransactionInput in = new BRCoreTransactionInput(txid, vout, amount, scriptPubKey, new byte[]{}, -1);
+                transaction.addInput(in);
             }
 
             BRCoreAddress address = walletManager.getReceiveAddress(app);
 
             transaction.addOutput(new BRCoreTransactionOutput(0, address.getPubKeyScript()));
             long fee = walletManager.getWallet().getFeeForTransactionSize(transaction.getSize());
-            Log.e(TAG, "createTx: fee: " + fee);
-            Log.e(TAG, "createTx: totalAmount: " + totalAmount);
-            transaction.getOutputs()[0].setAmount(totalAmount - fee);
-            Log.e(TAG, "createTx: txAmount:" + walletManager.getWallet().getTransactionAmount(transaction));
+            Log.e(TAG, "createSweepingTx: fee: " + fee);
+            Log.e(TAG, "createSweepingTx: totalAmount: " + totalAmount);
+            BRCoreTransactionOutput out = transaction.getOutputs()[0];
+            out.setAmount(totalAmount - fee);
+            transaction.addOutput(out);
+//            for (BRCoreTransactionInput in : transaction.getInputs()) {
+//                Log.e(TAG, "createSweepingTx: in:" + in.getAmount());
+//            }
+//            for (BRCoreTransactionOutput out : transaction.getOutputs()) {
+//                Log.e(TAG, "createSweepingTx: out:" + out.getAmount());
+//            }
+            Log.e(TAG, "createSweepingTx: txAmount:" + walletManager.getWallet().getTransactionAmount(transaction));
             return transaction;
         } catch (JSONException e) {
             e.printStackTrace();

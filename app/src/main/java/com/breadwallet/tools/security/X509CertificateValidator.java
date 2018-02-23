@@ -2,7 +2,7 @@ package com.breadwallet.tools.security;
 
 import android.util.Log;
 
-import com.breadwallet.presenter.entities.PaymentRequestWrapper;
+import com.breadwallet.core.BRCorePaymentProtocolRequest;
 import com.breadwallet.exceptions.CertificateChainNotFound;
 
 import java.io.IOException;
@@ -56,7 +56,7 @@ public class X509CertificateValidator {
     public static final String ROOT_CERTS_DIR = "/system/etc/security/cacerts";
 
     public static String certificateValidation(List<X509Certificate> certList,
-                                                PaymentRequestWrapper paymentRequest)
+                                                BRCorePaymentProtocolRequest paymentRequest)
             throws KeyStoreException, CertificateChainNotFound {
 
         String result = null;
@@ -80,7 +80,7 @@ public class X509CertificateValidator {
             PublicKey publicKey = certListArray[0].getPublicKey();
             Signature signature = Signature.getInstance(certList.get(0).getSigAlgName());
             signature.initVerify(publicKey);
-            signature.update(paymentRequest.signature);
+            signature.update(paymentRequest.getSignature());
             signature.initVerify(publicKey);
             result = certList.get(0).getSubjectX500Principal().getName();
 //            Log.e(TAG,"result cn getName(): " + result);
