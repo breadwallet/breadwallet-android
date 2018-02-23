@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
@@ -72,6 +73,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private ImageButton mSwap;
     private ConstraintLayout toolBarConstraintLayout;
 
+
+    private BRText mSyncing;
+    private ProgressBar mSyncingProgressBar;
     private BaseWalletManager mWallet;
 
 //    private String mDefaultTextPrimary;
@@ -105,6 +109,11 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         toolBarConstraintLayout = findViewById(R.id.bread_toolbar);
         mSwap = findViewById(R.id.swap);
         mBalanceLabel = findViewById(R.id.balance_label);
+        mSyncing = findViewById(R.id.syncing);
+        mSyncingProgressBar = findViewById(R.id.sync_progress);
+
+        mSyncing.setVisibility(View.INVISIBLE);
+        mSyncingProgressBar.setVisibility(View.INVISIBLE);
 
         setUpBarFlipper();
 
@@ -350,6 +359,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         });
         final BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
         wallet.addTxListModifiedListener(this);
+
+        //SyncManager syncManager = SyncManager.getInstance();
+        //syncManager.se
 
     }
 
