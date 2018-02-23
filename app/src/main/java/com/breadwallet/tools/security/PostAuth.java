@@ -19,7 +19,6 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.threads.PaymentProtocolPostPaymentTask;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -257,7 +256,7 @@ public class PostAuth {
             public void run() {
                 byte[] txHash = WalletsMaster.getInstance(app).getCurrentWallet(app).signAndPublishTransaction(mPaymentProtocolTx, rawSeed);
                 if (Utils.isNullOrEmpty(txHash)) throw new NullPointerException("txHash is null!");
-                PaymentProtocolPostPaymentTask.sent = true;
+//                PaymentProtocolPostPaymentTask.sent = true;
                 Arrays.fill(rawSeed, (byte) 0);
                 mPaymentProtocolTx = null;
             }
