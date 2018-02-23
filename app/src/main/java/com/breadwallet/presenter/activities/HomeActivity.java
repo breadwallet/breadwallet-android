@@ -201,7 +201,7 @@ public class HomeActivity extends BRActivity {
                                 }
 
                                 final View view = mWalletRecycler.getChildAt(1);
-                                startSyncManager(wallet, view);
+                                startSyncManager(mWallets.get(1), view);
                             }
                         });
 
