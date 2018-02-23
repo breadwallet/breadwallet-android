@@ -1,16 +1,13 @@
 package com.breadwallet.tools.manager;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-import android.widget.ProgressBar;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.listeners.SyncReceiver;
-import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.util.concurrent.TimeUnit;
@@ -46,19 +43,31 @@ public class SyncManager {
     private static final long SYNC_PERIOD = TimeUnit.HOURS.toMillis(24);
     private static SyncProgressTask syncTask;
     public boolean running;
-    //    private final Object lock = new Object();
-    private ProgressBar mProgressBar;
 
-    public static SyncManager getInstance() {
-        if (instance == null) instance = new SyncManager();
+    private BaseWalletManager mWallet;
+    private SyncListener mListener;
+
+    public static SyncManager getInstance(BaseWalletManager wallet) {
+        if (instance == null) instance = new SyncManager(wallet);
         return instance;
     }
 
-    private SyncManager() {
+    private SyncManager(BaseWalletManager wallet) {
+        this.mWallet = wallet;
     }
 
-    public void setProgressBar(ProgressBar progressBar) {
-        this.mProgressBar = progressBar;
+
+    public interface SyncListener {
+
+        void onSyncProgressUpdate(double progress);
+
+        void onSyncFinished();
+
+        void onSyncError();
+    }
+
+    public void setListener(SyncListener listener) {
+        this.mListener = listener;
     }
 
 
@@ -115,7 +124,7 @@ public class SyncManager {
     private class SyncProgressTask extends Thread {
         public double progressStatus = 0;
         private Context app;
-        private BaseWalletManager mWallet;
+        //private BaseWalletManager mWallet;
 
         public SyncProgressTask() {
             progressStatus = 0;
@@ -126,54 +135,32 @@ public class SyncManager {
             if (running) return;
             try {
                 app = BreadApp.getBreadContext();
-                mWallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
                 progressStatus = 0;
                 running = true;
                 Log.d(TAG, "run: starting: " + progressStatus);
 
-                if (app != null) {
-                    final long lastBlockTimeStamp = mWallet.getPeerManager().getLastBlockTimestamp() * 1000;
-                    ((Activity) app).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            //if (TxManager.getInstance().syncingHolder != null)
-                            mProgressBar.setProgress((int) (progressStatus * 100));
-                            //if (TxManager.getInstance().syncingHolder != null)
-                            //  TxManager.getInstance().syncingHolder.date.setText(Utils.formatTimeStamp(lastBlockTimeStamp, "MMM. dd, yyyy  ha"));
-                        }
-                    });
-                }
 
                 while (running) {
                     if (app != null) {
-                        long startHeight = BRSharedPrefs.getStartHeight(app, BRSharedPrefs.getCurrentWalletIso(app));
+                        long startHeight = BRSharedPrefs.getStartHeight(app, mWallet.getIso(app));
                         progressStatus = mWallet.getPeerManager().getSyncProgress(startHeight);
+                        mListener.onSyncProgressUpdate(progressStatus);
 //                    Log.e(TAG, "run: progressStatus: " + progressStatus);
                         if (progressStatus == 1) {
+                            mListener.onSyncFinished();
                             running = false;
-                            continue;
+                            break;
                         }
-                        final long lastBlockTimeStamp = mWallet.getPeerManager().getLastBlockTimestamp() * 1000;
-//                        Log.e(TAG, "run: changing the progress to: " + progressStatus + ": " + Thread.currentThread().getName());
-                        ((Activity) app).runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
 
-//                                if (TxManager.getInstance().currentPrompt != PromptManager.PromptItem.SYNCING) {
-//                                    Log.e(TAG, "run: currentPrompt != SYNCING, showPrompt(SYNCING) ....");
-//                                    TxManager.getInstance().showPrompt(app, PromptManager.PromptItem.SYNCING);
-//                                }
-
-                                //if (TxManager.getInstance().syncingHolder != null)
-                                mProgressBar.setProgress((int) (progressStatus * 100));
-                                //if (TxManager.getInstance().syncingHolder != null)
-                                //  TxManager.getInstance().syncingHolder.date.setText(Utils.formatTimeStamp(lastBlockTimeStamp, "MMM. dd, yyyy  ha"));
-                            }
-                        });
 
                     } else {
                         Log.e(TAG, "run: app is null!!!");
 
+                    }
+
+                    if (progressStatus == 1) {
+                        running = false;
+                        break;
                     }
 
                     try {
@@ -184,21 +171,11 @@ public class SyncManager {
 
                 }
 
-                mProgressBar.setProgress(100);
-                Log.d(TAG, "run: SyncProgress task finished:" + Thread.currentThread().getName());
+
             } finally {
-                if (progressStatus != 1) {
-                    throw new RuntimeException("didn't finish");
-                }
                 running = false;
                 progressStatus = 0;
-                if (app != null)
-                    ((Activity) app).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            //TxManager.getInstance().hidePrompt(app, PromptManager.PromptItem.SYNCING);
-                        }
-                    });
+
             }
 
         }
