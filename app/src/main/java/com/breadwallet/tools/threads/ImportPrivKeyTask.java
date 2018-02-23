@@ -32,6 +32,7 @@ import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -134,12 +135,16 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
         final BaseWalletManager walletManager = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
 
-        //bits, BTCs..
-        String amount = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), new BigDecimal(walletManager.getWallet().getTransactionAmount(mTransaction)));
-        String fee = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), new BigDecimal(walletManager.getWallet().getTransactionFee(mTransaction)));
+        BigDecimal bigAmount = new BigDecimal(walletManager.getWallet().getTransactionAmount(mTransaction));
+        BigDecimal bigFee = new BigDecimal(walletManager.getWallet().getTransactionFee(mTransaction));
 
+        BigDecimal bigAmountFiat = walletManager.getFiatForSmallestCrypto(app, bigAmount);
+
+        //bits, BTCs..
+        String amount = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), bigAmount);
+        String fee = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), bigFee.abs());
         String message = String.format(app.getString(R.string.Import_confirm), amount, fee);
-        String posButton = String.format("%s (%s)", amount, Math.abs(fee));
+        String posButton = String.format("%s (%s)", amount, bigAmountFiat);
         BRDialog.showCustomDialog(app, "", message, posButton, app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {
