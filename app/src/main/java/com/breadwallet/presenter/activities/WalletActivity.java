@@ -71,6 +71,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private ImageButton mSwap;
     private ConstraintLayout toolBarConstraintLayout;
 
+    private BaseWalletManager mWallet;
+
 //    private String mDefaultTextPrimary;
 //    private String mDefaultTextSecondary;
 
@@ -131,9 +133,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             }
         });
 
-        final BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
-        Log.d(TAG, "Current wallet ISO -> " + wallet.getIso(this));
-        if (wallet.getIso(this).equalsIgnoreCase("BTC")) {
+        mWallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        Log.d(TAG, "Current wallet ISO -> " + mWallet.getIso(this));
+        if (mWallet.getIso(this).equalsIgnoreCase("BTC")) {
 
             mBuyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -147,7 +149,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 }
             });
 
-        } else if (wallet.getIso(this).equalsIgnoreCase("BCH")) {
+        } else if (mWallet.getIso(this).equalsIgnoreCase("BCH")) {
             mBuyButton.setVisibility(View.GONE);
 
             LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
@@ -204,7 +206,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                wallet.connectWallet(WalletActivity.this);
+                mWallet.connectWallet(WalletActivity.this);
             }
         });
     }
@@ -371,7 +373,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                                     BRSharedPrefs.getCurrentWalletIso(WalletActivity.this)));
 //                    Log.e(TAG, "run: " + progress);
                     if (progress < 1 && progress > 0) {
-                        SyncManager.getInstance().startSyncingProgressThread();
+                        SyncManager.getInstance(mWallet).startSyncingProgressThread();
                     }
                 }
             });
@@ -379,7 +381,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         } else {
             if (barFlipper != null)
                 barFlipper.setDisplayedChild(2);
-            SyncManager.getInstance().stopSyncingProgressThread();
+            SyncManager.getInstance(mWallet).stopSyncingProgressThread();
         }
     }
 }
