@@ -18,6 +18,7 @@ import com.breadwallet.core.BRCoreMerkleBlock;
 import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWalletManager;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
@@ -599,17 +600,34 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public void syncStarted() {
         Log.d(TAG, "syncStarted: ");
+        final Context app = BreadApp.getBreadContext();
+        if (Utils.isEmulatorOrDebug(app))
+            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(app, "syncStarted " + getIso(app), Toast.LENGTH_LONG).show();
+                }
+            });
+
     }
 
 
     @Override
-    public void syncStopped(String error) {
+    public void syncStopped(final String error) {
         Log.d(TAG, "syncStopped: " + error);
-        Context app = BreadApp.getBreadContext();
+        final Context app = BreadApp.getBreadContext();
         if (Utils.isNullOrEmpty(error))
             BRSharedPrefs.putAllowSpend(app, getIso(app), true);
         for (OnSyncStopped list : syncStoppedListeners)
             if (list != null) list.syncStopped(error);
+        if (Utils.isEmulatorOrDebug(app))
+            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(app, "SyncStopped " + getIso(app) + " err(" + error + ") ", Toast.LENGTH_LONG).show();
+                }
+            });
+
     }
 
     @Override

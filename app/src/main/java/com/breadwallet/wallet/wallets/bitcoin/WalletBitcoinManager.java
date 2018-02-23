@@ -602,17 +602,32 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     @Override
     public void syncStarted() {
         Log.d(TAG, "syncStarted: ");
+        final Context app = BreadApp.getBreadContext();
+        if (Utils.isEmulatorOrDebug(app))
+            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(app, "syncStarted " + getIso(app), Toast.LENGTH_LONG).show();
+                }
+            });
+
     }
 
-
     @Override
-    public void syncStopped(String error) {
+    public void syncStopped(final String error) {
         Log.d(TAG, "syncStopped: " + error);
-        Context app = BreadApp.getBreadContext();
+        final Context app = BreadApp.getBreadContext();
         if (Utils.isNullOrEmpty(error))
             BRSharedPrefs.putAllowSpend(app, getIso(app), true);
         for (OnSyncStopped list : syncStoppedListeners)
             if (list != null) list.syncStopped(error);
+        if (Utils.isEmulatorOrDebug(app))
+            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(app, "SyncStopped " + getIso(app) + " err(" + error + ") ", Toast.LENGTH_LONG).show();
+                }
+            });
 
     }
 
