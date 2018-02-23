@@ -51,6 +51,11 @@ public class HomeActivity extends BRActivity {
     private static final String TAG = "HomeActivity";
     private Integer mCurrentlySyncingWalletPos;
     private ArrayList<BaseWalletManager> mWallets;
+    private Boolean isRunning = true;
+    private boolean isFinished;
+
+    private Handler progressHandler;
+    private Runnable progressRunnable;
 
     public static HomeActivity getApp() {
         return app;
@@ -130,18 +135,19 @@ public class HomeActivity extends BRActivity {
         final onSyncCompletedListener syncListener = new onSyncCompletedListener() {
             @Override
             public void onSyncCompleted(int pos) {
-                Log.d(TAG, "onSyncCompleted()");
+                Log.d(TAG, "onSyncCompleted(), pos " + pos);
+
+                progressHandler.removeCallbacksAndMessages(null);
+                mWallets.get(pos).getPeerManager().disconnect();
 
                 // After finished syncing current wallet, start syncing next wallet
                 if (mCurrentlySyncingWalletPos == 0) {
                     syncWallet(mWallets.get(1), mWalletRecycler.getChildAt(1), this);
-                    mWallets.get(0).getPeerManager().disconnect();
-                    Log.d(TAG, "Finished syncing, syncing " + mWallets.get(1).getIso(HomeActivity.this) + " next");
-                } else if (mCurrentlySyncingWalletPos >= 1) {
-                    syncWallet(mWallets.get(0), mWalletRecycler.getChildAt(0), this);
-                    mWallets.get(0).getPeerManager().disconnect();
-                    Log.d(TAG, "Finished syncing, syncing " + mWallets.get(0).getIso(HomeActivity.this) + " next");
+                    Log.d(TAG, "Finished syncing, syncing wallet at position 1 " + mWallets.get(1).getIso(HomeActivity.this) + " next");
+                } else if (mCurrentlySyncingWalletPos == 1) {
 
+                    syncWallet(mWallets.get(0), mWalletRecycler.getChildAt(0), this);
+                    Log.d(TAG, "Finished syncing, syncing wallet at position 0" + mWallets.get(0).getIso(HomeActivity.this) + " next");
 
                 }
             }
@@ -186,13 +192,16 @@ public class HomeActivity extends BRActivity {
         void onSyncCompleted(int currentSyncPosition);
     }
 
-    private void syncWallet(final BaseWalletManager wallet, final View holder, final onSyncCompletedListener listener) {
+    private void syncWallet(final BaseWalletManager wallet, final View view, final onSyncCompletedListener listener) {
 
-        final ProgressBar syncProgressBar = holder.findViewById(R.id.sync_progress);
-        final BRText syncText = holder.findViewById(R.id.syncing);
-        final BRText waitText = holder.findViewById(R.id.wait_syncing);
-        final BRText walletBalanceUsd = holder.findViewById(R.id.wallet_balance_usd);
-        final BRText walletBalanceCurrency = holder.findViewById(R.id.wallet_balance_currency);
+        Log.d(TAG, "syncWallet");
+
+
+        final ProgressBar syncProgressBar = view.findViewById(R.id.sync_progress);
+        final BRText syncText = view.findViewById(R.id.syncing);
+        final BRText waitText = view.findViewById(R.id.wait_syncing);
+        final BRText walletBalanceUsd = view.findViewById(R.id.wallet_balance_usd);
+        final BRText walletBalanceCurrency = view.findViewById(R.id.wallet_balance_currency);
 
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
@@ -204,10 +213,11 @@ public class HomeActivity extends BRActivity {
             }
         });
 
-        final Handler progressHandler = new Handler();
-        Runnable progressRunnable = new Runnable() {
+        progressHandler = new Handler();
+        progressRunnable = new Runnable() {
             @Override
             public void run() {
+
                 Log.d(TAG, "progressRunnable running!");
                 final double syncProgress = wallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(HomeActivity.this, wallet.getIso(HomeActivity.this)));
 
@@ -215,6 +225,7 @@ public class HomeActivity extends BRActivity {
                 progressHandler.post(new Runnable() {
                     @Override
                     public void run() {
+
 
                         // SYNCING
                         if (syncProgress > 0.0 && syncProgress < 1.0) {
@@ -225,6 +236,7 @@ public class HomeActivity extends BRActivity {
                             syncProgressBar.setVisibility(View.VISIBLE);
                             syncText.setVisibility(View.VISIBLE);
                             syncText.setText("Syncing ");
+                            walletBalanceCurrency.setVisibility(View.INVISIBLE);
                             syncProgressBar.setProgress(progress);
                             waitText.setVisibility(View.INVISIBLE);
                         }
@@ -234,17 +246,16 @@ public class HomeActivity extends BRActivity {
                         else if (syncProgress <= 0.0) {
                             Log.d(TAG, "Sync progress -> " + syncProgress);
                             syncProgressBar.setVisibility(View.INVISIBLE);
-                            //holder.mSyncing.setText("Waiting to Sync");
                             syncText.setVisibility(View.INVISIBLE);
                             waitText.setVisibility(View.VISIBLE);
                             syncProgressBar.setVisibility(View.INVISIBLE);
-                            syncProgressBar.setProgress(0);
+                            walletBalanceCurrency.setVisibility(View.INVISIBLE);
                             Log.d(TAG, "Wallet ISO  -> " + wallet.getIso(HomeActivity.this));
                             Log.d(TAG, "Sync status NOT SYNCING");
 
                             RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                             params.addRule(RelativeLayout.ALIGN_LEFT, walletBalanceUsd.getId());
-                            syncText.setLayoutParams(params);
+                            waitText.setLayoutParams(params);
 
 
                         }
@@ -263,33 +274,24 @@ public class HomeActivity extends BRActivity {
                             Log.d(TAG, "Wallet ISO  -> " + wallet.getIso(HomeActivity.this));
                             Log.d(TAG, "Sync status FINISHED");
 
-                            progressHandler.removeCallbacks(this);
-                            progressHandler.removeMessages(0);
-
-
-                            // After finished syncing current wallet, start syncing next wallet
-                            /*if (mCurrentlySyncingWalletPos == 0) {
-                                syncWallet(mWallets.get(1), mWalletRecycler.getChildAt(1));
-                                wallet.getPeerManager().disconnect();
-                                Log.d(TAG, "Finished syncing, syncing " + mWallets.get(1).getIso(HomeActivity.this) + " next");
-                            } else if (mCurrentlySyncingWalletPos >= 1) {
-                                syncWallet(mWallets.get(0), mWalletRecycler.getChildAt(0));
-                                wallet.getPeerManager().disconnect();
-                                Log.d(TAG, "Finished syncing, syncing " + mWallets.get(0).getIso(HomeActivity.this) + " next");
-
-
-                            }*/
-
 
                             listener.onSyncCompleted(mCurrentlySyncingWalletPos);
+
+                            progressHandler.removeCallbacksAndMessages(null);
+
+
+
 
                         }
                     }
                 });
 
+
                 progressHandler.postDelayed(this, 500);
 
+
             }
+
         };
 
         progressHandler.postDelayed(progressRunnable, 500);
@@ -300,7 +302,7 @@ public class HomeActivity extends BRActivity {
     protected void onResume() {
         super.onResume();
         app = this;
-        //BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, "BCH");
+        //BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, "");
         updateUi();
         CurrencyDataSource.getInstance(this).addOnDataChangedListener(new CurrencyDataSource.OnDataChanged() {
             @Override
