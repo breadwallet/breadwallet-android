@@ -49,7 +49,8 @@
         android:layout_below="@id/wallet_balance_usd"
         android:layout_alignParentRight="true"
         android:layout_marginRight="50dp"
-        android:textSize="12sp"
+        android:textSize="10sp"
+        android:layout_marginTop="4dp"
         app:customTFont="CircularPro-Bold.otf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
@@ -59,8 +60,10 @@
         android:text="Waiting to Sync"
         android:textColor="#88ffffff"
         android:layout_below="@id/wallet_balance_usd"
-        android:layout_alignLeft="@id/wallet_balance_usd"
-        android:textSize="12sp"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="4dp"
+        android:textSize="10sp"
         app:customTFont="CircularPro-Bold.otf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

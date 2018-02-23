@@ -24,7 +24,6 @@ import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Created by byfieldj on 1/31/18.
@@ -38,6 +37,8 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     private ArrayList<BaseWalletManager> mWalletList;
 
     private ArrayList<Pair<WalletItemViewHolder, Boolean>> mSyncList = new ArrayList<>();
+
+    private Integer mSyncingWalletPos;
 
 
     public WalletListAdapter(Context context, ArrayList<BaseWalletManager> walletList) {
@@ -91,136 +92,18 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
         }
 
-        String lastUsedWalletIso = BRSharedPrefs.getCurrentWalletIso(mContext);
-
-        BRConnectivityStatus connectivityChecker = new BRConnectivityStatus(mContext);
-
-        int connectionStatus = connectivityChecker.isMobileDataOrWifiConnected();
-
-        Log.d(TAG, "Current wallet ISO -> " + iso + ", last used wallet ISO -> " + lastUsedWalletIso);
-        Log.d(TAG, "Connection status -> " + connectionStatus);
-
-
-        // Mobile or Wifi is ON, sync the last used wallet
-        if (iso.equals(lastUsedWalletIso)) {
-            Log.d(TAG, "Current wallet is last used, Connection Status -> " + connectionStatus);
-            if (connectionStatus == BRConnectivityStatus.MOBILE_ON || connectionStatus == BRConnectivityStatus.WIFI_ON || connectionStatus == BRConnectivityStatus.MOBILE_WIFI_ON) {
-
-                syncWallet(wallet, holder);
-
-                //SyncManager syncManager = SyncManager.getInstance();
-                //syncManager.setProgressBar(holder.mSyncingProgressBar);
-                //syncManager.startSyncingProgressThread();
-
-            }
-        } else {
-
-        }
-
 
     }
 
-    private void syncWallet(final BaseWalletManager wallet, final WalletItemViewHolder holder) {
-
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                if (wallet.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Disconnected) {
-                    wallet.getPeerManager().connect();
-                    Log.e(TAG, "run: core connecting");
-                }
-            }
-        });
-
-        final Handler progressHandler = new Handler();
-        Runnable progressRunnable = new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "progressRunnable running!");
-                final double syncProgress = wallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mContext, wallet.getIso(mContext)));
-
-
-                progressHandler.post(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        // SYNCING
-                        if (syncProgress > 0.0 && syncProgress < 1.0) {
-                            int progress = (int) (syncProgress * 100);
-                            Log.d(TAG, "Sync progress -> " + syncProgress);
-                            Log.d(TAG, "Wallet ISO  -> " + wallet.getIso(mContext));
-                            Log.d(TAG, "Sync status SYNCING");
-                            holder.mSyncingProgressBar.setVisibility(View.VISIBLE);
-                            holder.mSyncing.setVisibility(View.VISIBLE);
-                            holder.mSyncing.setText("Syncing ");
-                            holder.mSyncingProgressBar.setProgress(progress);
-                            holder.mWait.setVisibility(View.INVISIBLE);
-                        }
-
-
-                        // HAS NOT STARTED SYNCING
-                        else if (syncProgress <= 0.0) {
-                            Log.d(TAG, "Sync progress -> " + syncProgress);
-                            holder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
-                            //holder.mSyncing.setText("Waiting to Sync");
-                            holder.mSyncing.setVisibility(View.INVISIBLE);
-                            holder.mWait.setVisibility(View.VISIBLE);
-                            holder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
-                            holder.mSyncingProgressBar.setProgress(0);
-                            Log.d(TAG, "Wallet ISO  -> " + wallet.getIso(mContext));
-                            Log.d(TAG, "Sync status NOT SYNCING");
-
-                            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                            params.addRule(RelativeLayout.ALIGN_LEFT, holder.mWalletBalanceUSD.getId());
-                            holder.mSyncing.setLayoutParams(params);
-
-
-                        }
-
-                        // FINISHED SYNCING
-                        else if (syncProgress >= 1) {
-                            Log.d(TAG, "Sync progress -> " + syncProgress);
-                            holder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
-                            holder.mSyncing.setVisibility(View.INVISIBLE);
-                            holder.mWait.setVisibility(View.INVISIBLE);
-                            holder.mWalletBalanceCurrency.setVisibility(View.VISIBLE);
-                            holder.mSyncingProgressBar.setProgress(100);
-
-                            long balance = BRSharedPrefs.getCachedBalance(mContext, wallet.getIso(mContext));
-                            holder.mWalletBalanceCurrency.setText(BRSharedPrefs.getCurrentWalletIso(mContext) + String.valueOf(balance));
-                            Log.d(TAG, "Wallet ISO  -> " + wallet.getIso(mContext));
-                            Log.d(TAG, "Sync status FINISHED");
-
-                            // Update this cell as already being synced
-                            mSyncList.add(new Pair(holder, true));
-
-                            // Once the currently used wallet is finished syncing, start
-                            // syncing the next one on the list
-                            int currentPosition = mWalletList.indexOf(wallet);
-
-                            WalletItemViewHolder nextWalletHolder = mSyncList.get(currentPosition + 1).first;
-
-                            syncWallet(mWalletList.get(currentPosition + 1), nextWalletHolder);
-
-                            progressHandler.removeCallbacks(this);
-
-
-
-                        }
-                    }
-                });
-
-                progressHandler.postDelayed(this, 500);
-
-            }
-        };
-
-        progressHandler.postDelayed(progressRunnable, 500);
-
+    public ArrayList<BaseWalletManager> getWalletList() {
+        return mWalletList;
     }
+
+
 
     @Override
     public int getItemCount() {
+        Log.d(TAG, "Wallet list size -> " + mWalletList.size());
         return mWalletList.size();
     }
 
