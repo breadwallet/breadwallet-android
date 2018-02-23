@@ -113,7 +113,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             byte[] rawPubKey = BRKeyStore.getMasterPublicKey(app);
             if (Utils.isNullOrEmpty(rawPubKey)) return null;
             BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
-            long time = BRKeyStore.getWalletCreationTime(app);
+            //long time = BRKeyStore.getWalletCreationTime(app);
+            long time = 1517955529;
 
             instance = new WalletBitcoinManager(app, pubKey, BuildConfig.BITCOIN_TESTNET ? BRCoreChainParams.testnetChainParams : BRCoreChainParams.mainnetChainParams, time);
         }
@@ -486,6 +487,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                                         ((Activity) app).getFragmentManager().popBackStack();
                                 }
                             });
+
             }
         });
 
@@ -699,6 +701,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         for (OnTxListModified list : txModifiedListeners)
             if (list != null) list.txListModified(hash);
     }
+
+
 
 
 }

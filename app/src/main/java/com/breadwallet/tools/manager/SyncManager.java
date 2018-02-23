@@ -1,13 +1,16 @@
 package com.breadwallet.tools.manager;
 
+import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.ProgressBar;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.listeners.SyncReceiver;
+import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.util.concurrent.TimeUnit;
@@ -43,7 +46,8 @@ public class SyncManager {
     private static final long SYNC_PERIOD = TimeUnit.HOURS.toMillis(24);
     private static SyncProgressTask syncTask;
     public boolean running;
-//    private final Object lock = new Object();
+    //    private final Object lock = new Object();
+    private ProgressBar mProgressBar;
 
     public static SyncManager getInstance() {
         if (instance == null) instance = new SyncManager();
@@ -52,6 +56,11 @@ public class SyncManager {
 
     private SyncManager() {
     }
+
+    public void setProgressBar(ProgressBar progressBar) {
+        this.mProgressBar = progressBar;
+    }
+
 
     private void createAlarm(Context app, long time) {
         AlarmManager alarmManager = (AlarmManager) app.getSystemService(Context.ALARM_SERVICE);
@@ -115,8 +124,85 @@ public class SyncManager {
         @Override
         public void run() {
             if (running) return;
+            try {
+                app = BreadApp.getBreadContext();
+                mWallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
+                progressStatus = 0;
+                running = true;
+                Log.d(TAG, "run: starting: " + progressStatus);
+
+                if (app != null) {
+                    final long lastBlockTimeStamp = mWallet.getPeerManager().getLastBlockTimestamp() * 1000;
+                    ((Activity) app).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //if (TxManager.getInstance().syncingHolder != null)
+                            mProgressBar.setProgress((int) (progressStatus * 100));
+                            //if (TxManager.getInstance().syncingHolder != null)
+                            //  TxManager.getInstance().syncingHolder.date.setText(Utils.formatTimeStamp(lastBlockTimeStamp, "MMM. dd, yyyy  ha"));
+                        }
+                    });
+                }
+
+                while (running) {
+                    if (app != null) {
+                        long startHeight = BRSharedPrefs.getStartHeight(app, BRSharedPrefs.getCurrentWalletIso(app));
+                        progressStatus = mWallet.getPeerManager().getSyncProgress(startHeight);
+//                    Log.e(TAG, "run: progressStatus: " + progressStatus);
+                        if (progressStatus == 1) {
+                            running = false;
+                            continue;
+                        }
+                        final long lastBlockTimeStamp = mWallet.getPeerManager().getLastBlockTimestamp() * 1000;
+//                        Log.e(TAG, "run: changing the progress to: " + progressStatus + ": " + Thread.currentThread().getName());
+                        ((Activity) app).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+
+//                                if (TxManager.getInstance().currentPrompt != PromptManager.PromptItem.SYNCING) {
+//                                    Log.e(TAG, "run: currentPrompt != SYNCING, showPrompt(SYNCING) ....");
+//                                    TxManager.getInstance().showPrompt(app, PromptManager.PromptItem.SYNCING);
+//                                }
+
+                                //if (TxManager.getInstance().syncingHolder != null)
+                                mProgressBar.setProgress((int) (progressStatus * 100));
+                                //if (TxManager.getInstance().syncingHolder != null)
+                                //  TxManager.getInstance().syncingHolder.date.setText(Utils.formatTimeStamp(lastBlockTimeStamp, "MMM. dd, yyyy  ha"));
+                            }
+                        });
+
+                    } else {
+                        Log.e(TAG, "run: app is null!!!");
+
+                    }
+
+                    try {
+                        Thread.sleep(500);
+                    } catch (InterruptedException e) {
+                        Log.e(TAG, "run: Thread.sleep was Interrupted:" + Thread.currentThread().getName(), e);
+                    }
+
+                }
+
+                Log.d(TAG, "run: SyncProgress task finished:" + Thread.currentThread().getName());
+            } finally {
+//                if (progressStatus != 1) {
+//                    throw new RuntimeException("didn't finish");
+//                }
+                running = false;
+                progressStatus = 0;
+                if (app != null)
+                    ((Activity) app).runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            //TxManager.getInstance().hidePrompt(app, PromptManager.PromptItem.SYNCING);
+                        }
+                    });
+            }
 
         }
-    }
 
+    }
 }
+
+
