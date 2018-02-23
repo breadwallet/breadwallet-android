@@ -62,7 +62,7 @@
         android:layout_below="@id/wallet_balance_usd"
         android:layout_alignParentRight="true"
         android:layout_marginRight="15dp"
-        android:layout_marginTop="4dp"
+
         android:textSize="10sp"
         app:customTFont="CircularPro-Bold.otf"
         android:layout_width="wrap_content"
