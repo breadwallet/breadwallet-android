@@ -99,12 +99,11 @@ public class SettingsActivity extends BRActivity {
                     ImageButton chevronRight = v.findViewById(R.id.chevron_right);
                     leaveArrow.setVisibility(View.VISIBLE);
                     chevronRight.setVisibility(View.INVISIBLE);
-                }
-                else if(position == 9){
+                } else if (position == 9) {
                     boolean shareData = BRSharedPrefs.getShareData(SettingsActivity.this);
-                    if(shareData){
+                    if (shareData) {
                         addon.setText("ON");
-                    }else{
+                    } else {
                         addon.setText("OFF");
 
                     }
