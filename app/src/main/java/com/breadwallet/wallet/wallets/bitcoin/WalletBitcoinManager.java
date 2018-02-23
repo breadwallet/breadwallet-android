@@ -114,7 +114,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             if (Utils.isNullOrEmpty(rawPubKey)) return null;
             BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
             long time = BRKeyStore.getWalletCreationTime(app);
-//            if (Utils.isEmulatorOrDebug(app)) time = 1517955529;
+            if (Utils.isEmulatorOrDebug(app)) time = 1517955529;
 
             instance = new WalletBitcoinManager(app, pubKey, BuildConfig.BITCOIN_TESTNET ? BRCoreChainParams.testnetChainParams : BRCoreChainParams.mainnetChainParams, time);
         }
