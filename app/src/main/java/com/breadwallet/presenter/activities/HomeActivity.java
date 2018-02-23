@@ -128,7 +128,7 @@ public class HomeActivity extends BRActivity {
         int connectionStatus = connectivityChecker.isMobileDataOrWifiConnected();
 
 
-        // Mobile or Wifi is ON, sync the last used wallet
+        // Get a list of all the wallets currently in the adapter
         mWallets = mAdapter.getWalletList();
 
         for (final BaseWalletManager wallet : mWallets) {
@@ -144,12 +144,13 @@ public class HomeActivity extends BRActivity {
                 mCurrentlySyncingWalletPos = walletPosition;
 
                 Log.d(TAG, "Current wallet is last used, Connection Status -> " + connectionStatus);
+
+                // Connect to the last-used wallet and begin syncing it
                 if (connectionStatus == BRConnectivityStatus.MOBILE_ON || connectionStatus == BRConnectivityStatus.WIFI_ON || connectionStatus == BRConnectivityStatus.MOBILE_WIFI_ON) {
 
                     mWalletRecycler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            //syncWallet(wallet, mWalletRecycler.getChildAt(walletPosition), syncListener, new Handler());
                             BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
                                 @Override
                                 public void run() {
@@ -189,6 +190,9 @@ public class HomeActivity extends BRActivity {
                 Log.d(TAG, "onSyncFinished");
                 syncManager.stopSyncingProgressThread();
 
+
+                // TODO: Just for testing, try to sync wallet in position 1 on list
+                // After the first one finishes
                 mWalletRecycler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
@@ -221,6 +225,7 @@ public class HomeActivity extends BRActivity {
     }
 
 
+    // Updates the syncing view of a particular item in the RecyclerView
     private void updateSyncUi(final BaseWalletManager wallet, final View view, final double syncProgress) {
 
         runOnUiThread(new Runnable() {
