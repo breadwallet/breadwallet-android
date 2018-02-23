@@ -106,6 +106,10 @@ public class SyncManager {
 
     }
 
+    public synchronized boolean isRunning(){
+        return running;
+    }
+
     public synchronized void stopSyncingProgressThread() {
         Log.d(TAG, "stopSyncingProgressThread");
         final Context ctx = BreadApp.getBreadContext();
@@ -117,6 +121,7 @@ public class SyncManager {
             if (syncTask != null) {
                 syncTask.interrupt();
                 syncTask = null;
+                running = false;
             }
         } catch (Exception ex) {
             ex.printStackTrace();
