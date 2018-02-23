@@ -127,6 +127,26 @@ public class HomeActivity extends BRActivity {
 
         int connectionStatus = connectivityChecker.isMobileDataOrWifiConnected();
 
+        final onSyncCompletedListener syncListener = new onSyncCompletedListener() {
+            @Override
+            public void onSyncCompleted(int pos) {
+                Log.d(TAG, "onSyncCompleted()");
+
+                // After finished syncing current wallet, start syncing next wallet
+                if (mCurrentlySyncingWalletPos == 0) {
+                    syncWallet(mWallets.get(1), mWalletRecycler.getChildAt(1), this);
+                    mWallets.get(0).getPeerManager().disconnect();
+                    Log.d(TAG, "Finished syncing, syncing " + mWallets.get(1).getIso(HomeActivity.this) + " next");
+                } else if (mCurrentlySyncingWalletPos >= 1) {
+                    syncWallet(mWallets.get(0), mWalletRecycler.getChildAt(0), this);
+                    mWallets.get(0).getPeerManager().disconnect();
+                    Log.d(TAG, "Finished syncing, syncing " + mWallets.get(0).getIso(HomeActivity.this) + " next");
+
+
+                }
+            }
+        };
+
 
         // Mobile or Wifi is ON, sync the last used wallet
         mWallets = mAdapter.getWalletList();
@@ -149,7 +169,7 @@ public class HomeActivity extends BRActivity {
                     mWalletRecycler.postDelayed(new Runnable() {
                         @Override
                         public void run() {
-                            syncWallet(wallet, mWalletRecycler.getChildAt(walletPosition));
+                            syncWallet(wallet, mWalletRecycler.getChildAt(walletPosition), syncListener);
 
                         }
                     }, 50);
@@ -161,7 +181,12 @@ public class HomeActivity extends BRActivity {
 
     }
 
-    private void syncWallet(final BaseWalletManager wallet, final View holder) {
+    private interface onSyncCompletedListener {
+
+        void onSyncCompleted(int currentSyncPosition);
+    }
+
+    private void syncWallet(final BaseWalletManager wallet, final View holder, final onSyncCompletedListener listener) {
 
         final ProgressBar syncProgressBar = holder.findViewById(R.id.sync_progress);
         final BRText syncText = holder.findViewById(R.id.syncing);
@@ -243,7 +268,7 @@ public class HomeActivity extends BRActivity {
 
 
                             // After finished syncing current wallet, start syncing next wallet
-                            if (mCurrentlySyncingWalletPos == 0) {
+                            /*if (mCurrentlySyncingWalletPos == 0) {
                                 syncWallet(mWallets.get(1), mWalletRecycler.getChildAt(1));
                                 wallet.getPeerManager().disconnect();
                                 Log.d(TAG, "Finished syncing, syncing " + mWallets.get(1).getIso(HomeActivity.this) + " next");
@@ -253,11 +278,10 @@ public class HomeActivity extends BRActivity {
                                 Log.d(TAG, "Finished syncing, syncing " + mWallets.get(0).getIso(HomeActivity.this) + " next");
 
 
-                            }
+                            }*/
 
 
-
-
+                            listener.onSyncCompleted(mCurrentlySyncingWalletPos);
 
                         }
                     }
@@ -276,7 +300,7 @@ public class HomeActivity extends BRActivity {
     protected void onResume() {
         super.onResume();
         app = this;
-        BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, "BCH");
+        //BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, "BCH");
         updateUi();
         CurrencyDataSource.getInstance(this).addOnDataChangedListener(new CurrencyDataSource.OnDataChanged() {
             @Override
@@ -290,7 +314,6 @@ public class HomeActivity extends BRActivity {
 
             }
         });
-
 
 
     }
