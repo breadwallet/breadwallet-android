@@ -113,8 +113,8 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             byte[] rawPubKey = BRKeyStore.getMasterPublicKey(app);
             if (Utils.isNullOrEmpty(rawPubKey)) return null;
             BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
-            //long time = BRKeyStore.getWalletCreationTime(app);
-            long time = 1517955529;
+            long time = BRKeyStore.getWalletCreationTime(app);
+//            if (Utils.isEmulatorOrDebug(app)) time = 1517955529;
 
             instance = new WalletBchManager(app, pubKey, BuildConfig.BITCOIN_TESTNET ? BRCoreChainParams.testnetBcashChainParams : BRCoreChainParams.mainnetBcashChainParams, time);
         }
@@ -606,7 +606,8 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     public void syncStopped(String error) {
         Log.d(TAG, "syncStopped: " + error);
         Context app = BreadApp.getBreadContext();
-        BRSharedPrefs.putAllowSpend(app, getIso(app), true);
+        if (Utils.isNullOrEmpty(error))
+            BRSharedPrefs.putAllowSpend(app, getIso(app), true);
         for (OnSyncStopped list : syncStoppedListeners)
             if (list != null) list.syncStopped(error);
     }
