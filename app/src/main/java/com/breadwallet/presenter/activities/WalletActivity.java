@@ -30,7 +30,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
-import com.breadwallet.tools.manager.SyncManager;
+//import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -376,16 +376,16 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                             .getSyncProgress(BRSharedPrefs.getStartHeight(WalletActivity.this,
                                     BRSharedPrefs.getCurrentWalletIso(WalletActivity.this)));
 //                    Log.e(TAG, "run: " + progress);
-                    if (progress < 1 && progress > 0) {
-                        SyncManager.getInstance().startSyncingProgressThread();
-                    }
+//                    if (progress < 1 && progress > 0) {
+//                        SyncManager.getInstance().startSyncingProgressThread();
+//                    }
                 }
             });
 
         } else {
             if (barFlipper != null)
                 barFlipper.setDisplayedChild(2);
-            SyncManager.getInstance().stopSyncingProgressThread();
+//            SyncManager.getInstance().stopSyncingProgressThread();
         }
     }
 

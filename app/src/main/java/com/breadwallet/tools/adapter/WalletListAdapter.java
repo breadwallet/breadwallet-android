@@ -16,7 +16,6 @@ import com.breadwallet.R;
 import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConnectivityStatus;
 import com.breadwallet.tools.util.CurrencyUtils;
@@ -24,7 +23,6 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Map;
@@ -107,24 +105,26 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         Log.d(TAG, "Connection status -> " + connectionStatus);
 
 
-        // Mobile or Wifi is ON, sync the last used wallet
-        if (iso.equals(lastUsedWalletIso)) {
-            Log.d(TAG, "Current wallet is last used, Connection Status -> " + connectionStatus);
-            if (connectionStatus == BRConnectivityStatus.MOBILE_ON || connectionStatus == BRConnectivityStatus.WIFI_ON || connectionStatus == BRConnectivityStatus.MOBILE_WIFI_ON) {
+//        // Mobile or Wifi is ON, sync the last used wallet
+//        if (iso.equals(lastUsedWalletIso)) {
+//            Log.d(TAG, "Current wallet is last used, Connection Status -> " + connectionStatus);
+//            if (connectionStatus == BRConnectivityStatus.MOBILE_ON || connectionStatus == BRConnectivityStatus.WIFI_ON || connectionStatus == BRConnectivityStatus.MOBILE_WIFI_ON) {
+//
+//                //syncWallet(wallet, holder);
+//
+//
+//            } else {
+//                Log.e(TAG, "onBindViewHolder: Can't connect, connectivity status: " + connectionStatus);
+//            }
+//        } else {
+//
+//        }
 
-                //syncWallet(wallet, holder);
+    }
 
-                SyncManager syncManager = SyncManager.getInstance();
-                syncManager.setProgressBar(holder.mSyncingProgressBar);
-                syncManager.startSyncingProgressThread();
-
-            } else {
-                Log.e(TAG, "onBindViewHolder: Can't connect, connectivity status: " + connectionStatus);
-            }
-        } else {
-
-        }
-
+    public void stopObserving() {
+        if (mProgressTask != null)
+            mProgressTask.interrupt();
     }
 
     public void startObserving() {
@@ -185,43 +185,10 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             while (mRunning) {
                 final double syncProgress = mCurrentWallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mContext, mCurrentWallet.getIso(mContext)));
 
-                // SYNCING
                 new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-                        if (mCurrentWalletSyncing.viewHolder == null) {
-                            Log.e(TAG, "run: should not happen but ok, ignore it.");
-                            return;
-                        }
-                        if (syncProgress > 0.0 && syncProgress < 1.0) {
-                            int progress = (int) (syncProgress * 100);
-                            Log.d(TAG, "ISO: " + mCurrentWallet.getIso(mContext) + " (" + progress + "%)");
-                            mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setVisibility(View.VISIBLE);
-                            mCurrentWalletSyncing.viewHolder.mSyncing.setText("Syncing ");
-                            mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setProgress(progress);
-                        }
-
-
-                        // HAS NOT STARTED SYNCING
-                        else if (syncProgress == 0.0) {
-                            Log.d(TAG, "ISO: " + mCurrentWallet.getIso(mContext) + " (0%)");
-                            mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
-                            mCurrentWalletSyncing.viewHolder.mSyncing.setText("Waiting to Sync");
-                            mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setProgress(0);
-                        }
-
-                        // FINISHED SYNCING
-                        else if (syncProgress == 1.0) {
-                            Log.d(TAG, "ISO: " + mCurrentWallet.getIso(mContext) + " (100%)");
-                            mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
-                            mCurrentWalletSyncing.viewHolder.mSyncing.setVisibility(View.INVISIBLE);
-                            mCurrentWalletSyncing.viewHolder.mWalletBalanceCurrency.setVisibility(View.VISIBLE);
-                            mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setProgress(100);
-                            //start from beginning
-                            mRunning = false;
-                            startObserving();
-
-                        }
+                        mRunning = updateUi(mCurrentWallet, syncProgress);
 
                     }
                 });
@@ -230,11 +197,54 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                     Thread.sleep(DELAY_MILLIS);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            mRunning = updateUi(mCurrentWallet, syncProgress);
+                        }
+                    });
                 }
 
             }
 
         }
+    }
+
+    private boolean updateUi(BaseWalletManager currentWallet, double syncProgress) {
+        if (mCurrentWalletSyncing == null || mCurrentWalletSyncing.viewHolder == null) {
+            Log.e(TAG, "run: should not happen but ok, ignore it.");
+            return false;
+        }
+        if (syncProgress > 0.0 && syncProgress < 1.0) {
+            int progress = (int) (syncProgress * 100);
+            Log.d(TAG, "ISO: " + currentWallet.getIso(mContext) + " (" + progress + "%)");
+            mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setVisibility(View.VISIBLE);
+            mCurrentWalletSyncing.viewHolder.mSyncing.setText("Syncing ");
+            mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setProgress(progress);
+        }
+
+
+        // HAS NOT STARTED SYNCING
+        else if (syncProgress == 0.0) {
+            Log.d(TAG, "ISO: " + currentWallet.getIso(mContext) + " (0%)");
+            mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
+            mCurrentWalletSyncing.viewHolder.mSyncing.setText("Waiting to Sync");
+            mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setProgress(0);
+        }
+
+        // FINISHED SYNCING
+        else if (syncProgress == 1.0) {
+            Log.d(TAG, "ISO: " + currentWallet.getIso(mContext) + " (100%)");
+            mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
+            mCurrentWalletSyncing.viewHolder.mSyncing.setVisibility(View.INVISIBLE);
+            mCurrentWalletSyncing.viewHolder.mWalletBalanceCurrency.setVisibility(View.VISIBLE);
+            mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setProgress(100);
+            //start from beginning
+            startObserving();
+            return false;
+
+        }
+        return true;
     }
 
     //return the next wallet that is not connected or null if all are connected

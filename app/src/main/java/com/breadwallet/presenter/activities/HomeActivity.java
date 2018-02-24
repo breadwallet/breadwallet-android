@@ -56,7 +56,6 @@ public class HomeActivity extends BRActivity {
         return app;
     }
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -140,7 +139,7 @@ public class HomeActivity extends BRActivity {
             public void run() {
                 mAdapter.startObserving();
             }
-        }, 1000);
+        }, 500);
 
         InternetManager.addConnectionListener(new InternetManager.ConnectionReceiverListener() {
             @Override
@@ -165,6 +164,13 @@ public class HomeActivity extends BRActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        mAdapter.stopObserving();
+
     }
 
     private void updateUi() {
