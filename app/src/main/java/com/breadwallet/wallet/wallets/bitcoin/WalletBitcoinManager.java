@@ -5,6 +5,7 @@ import android.content.Context;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -100,6 +101,9 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     private static WalletBitcoinManager instance;
     private WalletUiConfiguration uiConfig;
+
+    private int mSyncRetryCount = 0;
+    private static final int SYNC_MAX_RETRY = 3;
 
     private boolean isInitiatingWallet;
 
@@ -521,7 +525,6 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             }
         });
 
-
     }
 
     @Override
@@ -628,6 +631,31 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                     Toast.makeText(app, "SyncStopped " + getIso(app) + " err(" + error + ") ", Toast.LENGTH_LONG).show();
                 }
             });
+
+        if (!Utils.isNullOrEmpty(error)) {
+            if (mSyncRetryCount < SYNC_MAX_RETRY) {
+                Log.e(TAG, "syncStopped: Retrying: " + mSyncRetryCount);
+                //Retry
+                mSyncRetryCount++;
+                BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        getPeerManager().connect();
+                    }
+                });
+
+            } else {
+                //Give up
+                Log.e(TAG, "syncStopped: Giving up: " + mSyncRetryCount);
+                mSyncRetryCount = 0;
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(app, "Syncing failed, retried " + SYNC_MAX_RETRY + " times.", Toast.LENGTH_LONG).show();
+                    }
+                });
+            }
+        }
 
     }
 

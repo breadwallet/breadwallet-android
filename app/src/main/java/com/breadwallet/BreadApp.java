@@ -6,8 +6,10 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.IntentFilter;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.util.Log;
 import android.view.Display;
@@ -15,6 +17,7 @@ import android.view.WindowManager;
 
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.listeners.SyncReceiver;
+import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.util.Utils;
 import com.google.firebase.crash.FirebaseCrash;
 
@@ -102,6 +105,8 @@ public class BreadApp extends Application {
         int DISPLAY_WIDTH_PX = size.x;
         DISPLAY_HEIGHT_PX = size.y;
         mFingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
+
+        registerReceiver(InternetManager.getInstance(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
 //        addOnBackgroundedListener(new OnAppBackgrounded() {
 //            @Override

@@ -102,6 +102,9 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     private static WalletBchManager instance;
     private WalletUiConfiguration uiConfig;
 
+    private int mSyncRetryCount = 0;
+    private static final int SYNC_MAX_RETRY = 3;
+
     private boolean isInitiatingWallet;
 
     private List<OnBalanceChangedListener> balanceListeners = new ArrayList<>();
@@ -627,6 +630,25 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
                     Toast.makeText(app, "SyncStopped " + getIso(app) + " err(" + error + ") ", Toast.LENGTH_LONG).show();
                 }
             });
+        if (!Utils.isNullOrEmpty(error)) {
+            if (mSyncRetryCount < SYNC_MAX_RETRY) {
+                Log.e(TAG, "syncStopped: Retrying: " + mSyncRetryCount);
+                //Retry
+                mSyncRetryCount++;
+                BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        getPeerManager().connect();
+                    }
+                });
+
+            } else {
+                //Give up
+                Log.e(TAG, "syncStopped: Giving up: " + mSyncRetryCount);
+                mSyncRetryCount = 0;
+                Toast.makeText(app, "Syncing failed, retried " + SYNC_MAX_RETRY + " times.", Toast.LENGTH_LONG).show();
+            }
+        }
 
     }
 

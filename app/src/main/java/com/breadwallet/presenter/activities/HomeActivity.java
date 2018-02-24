@@ -2,6 +2,7 @@ package com.breadwallet.presenter.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -19,9 +20,11 @@ import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
@@ -36,12 +39,16 @@ import java.util.ArrayList;
 
 public class HomeActivity extends BRActivity {
 
+    private static final String TAG = HomeActivity.class.getSimpleName();
+
     private RecyclerView mWalletRecycler;
     private WalletListAdapter mAdapter;
     private BRText mFiatTotal;
     private RelativeLayout mSettings;
     private RelativeLayout mSecurity;
     private RelativeLayout mSupport;
+
+    private TestLogger logger;
 
     private static HomeActivity app;
 
@@ -60,6 +67,12 @@ public class HomeActivity extends BRActivity {
         ArrayList<BaseWalletManager> walletList = new ArrayList<>();
 
         walletList.addAll(WalletsMaster.getInstance(this).getAllWallets());
+
+        if (Utils.isEmulatorOrDebug(this)) {
+            if (logger != null) logger.interrupt();
+            logger = new TestLogger();
+            logger.start();
+        }
 
         mWalletRecycler = findViewById(R.id.rv_wallet_list);
         mFiatTotal = findViewById(R.id.total_assets_usd);
@@ -121,13 +134,20 @@ public class HomeActivity extends BRActivity {
     protected void onResume() {
         super.onResume();
         app = this;
-        //BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, "");
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+
+        new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                BaseWalletManager walletManager = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                if (walletManager.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Disconnected) {
-                    walletManager.connectWallet(app);
+                mAdapter.startObserving();
+            }
+        }, 1000);
+
+        InternetManager.addConnectionListener(new InternetManager.ConnectionReceiverListener() {
+            @Override
+            public void onConnectionChanged(boolean isConnected) {
+                Log.e(TAG, "onConnectionChanged: " + isConnected);
+                if (isConnected) {
+                    mAdapter.startObserving();
                 }
             }
         });
@@ -151,6 +171,43 @@ public class HomeActivity extends BRActivity {
         BigDecimal fiatTotalAmount = WalletsMaster.getInstance(this).getAgregatedFiatBalance(this);
         mFiatTotal.setText(CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), fiatTotalAmount));
         mAdapter.notifyDataSetChanged();
+    }
+
+    class TestLogger extends Thread {
+        private static final String TAG = "TestLogger";
+
+        @Override
+        public void run() {
+            super.run();
+
+            while (true) {
+                StringBuilder builder = new StringBuilder();
+                for (BaseWalletManager w : WalletsMaster.getInstance(HomeActivity.this).getAllWallets()) {
+                    builder.append(w.getIso(HomeActivity.this));
+                    String connectionStatus = "";
+                    if (w.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Connected)
+                        connectionStatus = "Connected";
+                    else if (w.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Disconnected)
+                        connectionStatus = "Disconnected";
+                    else if (w.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Connecting)
+                        connectionStatus = "Connecting";
+
+                    double progress = w.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(HomeActivity.this, w.getIso(HomeActivity.this)));
+
+                    builder.append(" - " + connectionStatus + " (" + progress + "), ");
+
+                }
+
+                Log.e(TAG, "testLog: " + builder.toString());
+
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
     }
 
 }

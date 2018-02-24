@@ -3,6 +3,7 @@ package com.breadwallet.tools.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,11 +20,14 @@ import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConnectivityStatus;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
+import java.lang.reflect.Array;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by byfieldj on 1/31/18.
@@ -34,14 +38,21 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     public static final String TAG = WalletListAdapter.class.getName();
 
     private final Context mContext;
-    private ArrayList<BaseWalletManager> mWalletList;
-    private String currentlySyncingWallet;
-    private int currentlySyncingWalletPosition;
+    private ArrayList<WalletItem> mWalletItems;
+    private WalletItem mCurrentWalletSyncing;
+    private ProgressTask mProgressTask;
+
+//    private String currentlySyncingWallet;
+//    private int currentlySyncingWalletPosition;
 
 
     public WalletListAdapter(Context context, ArrayList<BaseWalletManager> walletList) {
         this.mContext = context;
-        this.mWalletList = walletList;
+        mWalletItems = new ArrayList<>();
+        for (BaseWalletManager w : walletList) {
+            this.mWalletItems.add(new WalletItem(w, null));
+        }
+
     }
 
     @Override
@@ -54,13 +65,14 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     }
 
     public BaseWalletManager getItemAt(int pos) {
-        return mWalletList.get(pos);
+        return mWalletItems.get(pos).walletManager;
     }
 
     @Override
     public void onBindViewHolder(final WalletItemViewHolder holder, int position) {
 
-        final BaseWalletManager wallet = mWalletList.get(position);
+        final BaseWalletManager wallet = mWalletItems.get(position).walletManager;
+        mWalletItems.get(position).viewHolder = holder;
         String name = wallet.getName(mContext);
         String exchangeRate = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), new BigDecimal(wallet.getFiatExchangeRate(mContext)));
         String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), new BigDecimal(wallet.getFiatBalance(mContext)));
@@ -83,7 +95,6 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             holder.mParent.setBackground(mContext.getResources().getDrawable(R.drawable.btc_card_shape, null));
         } else {
             holder.mParent.setBackground(mContext.getResources().getDrawable(R.drawable.bch_card_shape, null));
-
         }
 
         String lastUsedWalletIso = BRSharedPrefs.getCurrentWalletIso(mContext);
@@ -107,88 +118,150 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                 syncManager.setProgressBar(holder.mSyncingProgressBar);
                 syncManager.startSyncingProgressThread();
 
+            } else {
+                Log.e(TAG, "onBindViewHolder: Can't connect, connectivity status: " + connectionStatus);
             }
         } else {
 
         }
 
-
     }
 
-    private void syncWallet(final BaseWalletManager wallet, final WalletItemViewHolder holder) {
-
+    public void startObserving() {
+        Log.e(TAG, "startObserving..");
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                if (wallet.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Disconnected) {
-                    wallet.getPeerManager().connect();
-                    Log.e(TAG, "run: core connecting");
+                mCurrentWalletSyncing = getNextWalletToSync();
+                if (mCurrentWalletSyncing == null) {
+                    Log.e(TAG, "startObserving: all wallets synced.");
+                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (WalletItem item : mWalletItems) {
+                                item.viewHolder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
+                                item.viewHolder.mSyncing.setVisibility(View.INVISIBLE);
+                                item.viewHolder.mWalletBalanceCurrency.setVisibility(View.VISIBLE);
+                                item.viewHolder.mSyncingProgressBar.setProgress(100);
+                            }
+                        }
+                    });
+
+                    return;
                 }
+
+                final BaseWalletManager currentWallet = mCurrentWalletSyncing.walletManager;
+                //update the appropriate viewHolder
+                for (WalletItem w : mWalletItems) {
+                    if (w.walletManager.getIso(mContext).equalsIgnoreCase(mCurrentWalletSyncing.walletManager.getIso(mContext))) {
+                        mCurrentWalletSyncing.viewHolder = w.viewHolder;
+                        break;
+                    }
+                }
+                Log.e(TAG, "startObserving: connecting: " + mCurrentWalletSyncing.walletManager.getIso(mContext));
+                currentWallet.connectWallet(mContext);
+
+                if (mProgressTask != null) mProgressTask.interrupt();
+                mProgressTask = new ProgressTask(currentWallet);
+                mProgressTask.start();
+
             }
         });
 
-        final Handler progressHandler = new Handler();
-        Runnable progressRunnable = new Runnable() {
-            @Override
-            public void run() {
-                Log.d(TAG, "progressRunnable running!");
-                final double syncProgress = wallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mContext, wallet.getIso(mContext)));
+    }
 
+    class ProgressTask extends Thread {
 
-                progressHandler.post(new Runnable() {
+        private BaseWalletManager mCurrentWallet;
+        private boolean mRunning = true;
+        private static final int DELAY_MILLIS = 500;
+
+        public ProgressTask(BaseWalletManager currentWallet) {
+            mCurrentWallet = currentWallet;
+        }
+
+        @Override
+        public void run() {
+            while (mRunning) {
+                final double syncProgress = mCurrentWallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mContext, mCurrentWallet.getIso(mContext)));
+
+                // SYNCING
+                new Handler(Looper.getMainLooper()).post(new Runnable() {
                     @Override
                     public void run() {
-
-                        // SYNCING
+                        if (mCurrentWalletSyncing.viewHolder == null) {
+                            Log.e(TAG, "run: should not happen but ok, ignore it.");
+                            return;
+                        }
                         if (syncProgress > 0.0 && syncProgress < 1.0) {
                             int progress = (int) (syncProgress * 100);
-                            Log.d(TAG, "Sync progress -> " + syncProgress);
-                            Log.d(TAG, "Wallet ISO  -> " + wallet.getIso(mContext));
-                            Log.d(TAG, "Sync status SYNCING");
-                            holder.mSyncingProgressBar.setVisibility(View.VISIBLE);
-                            holder.mSyncing.setText("Syncing ");
-                            holder.mSyncingProgressBar.setProgress(progress);
+                            Log.d(TAG, "ISO: " + mCurrentWallet.getIso(mContext) + " (" + progress + "%)");
+                            mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setVisibility(View.VISIBLE);
+                            mCurrentWalletSyncing.viewHolder.mSyncing.setText("Syncing ");
+                            mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setProgress(progress);
                         }
 
 
                         // HAS NOT STARTED SYNCING
                         else if (syncProgress == 0.0) {
-                            Log.d(TAG, "Sync progress -> " + syncProgress);
-                            holder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
-                            holder.mSyncing.setText("Waiting to Sync");
-                            holder.mSyncingProgressBar.setProgress(0);
-                            Log.d(TAG, "Wallet ISO  -> " + wallet.getIso(mContext));
-                            Log.d(TAG, "Sync status NOT SYNCING");
+                            Log.d(TAG, "ISO: " + mCurrentWallet.getIso(mContext) + " (0%)");
+                            mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
+                            mCurrentWalletSyncing.viewHolder.mSyncing.setText("Waiting to Sync");
+                            mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setProgress(0);
                         }
 
                         // FINISHED SYNCING
                         else if (syncProgress == 1.0) {
-                            Log.d(TAG, "Sync progress -> " + syncProgress);
-                            holder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
-                            holder.mSyncing.setVisibility(View.INVISIBLE);
-                            holder.mWalletBalanceCurrency.setVisibility(View.VISIBLE);
-                            holder.mSyncingProgressBar.setProgress(100);
-                            Log.d(TAG, "Wallet ISO  -> " + wallet.getIso(mContext));
-                            Log.d(TAG, "Sync status FINISHED");
-                            progressHandler.removeCallbacks(this);
-
+                            Log.d(TAG, "ISO: " + mCurrentWallet.getIso(mContext) + " (100%)");
+                            mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
+                            mCurrentWalletSyncing.viewHolder.mSyncing.setVisibility(View.INVISIBLE);
+                            mCurrentWalletSyncing.viewHolder.mWalletBalanceCurrency.setVisibility(View.VISIBLE);
+                            mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setProgress(100);
+                            //start from beginning
+                            mRunning = false;
+                            startObserving();
 
                         }
+
                     }
                 });
 
-                progressHandler.postDelayed(this, 500);
+                try {
+                    Thread.sleep(DELAY_MILLIS);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
 
             }
-        };
 
-        progressHandler.postDelayed(progressRunnable, 500);
-
+        }
     }
+
+    //return the next wallet that is not connected or null if all are connected
+    private WalletItem getNextWalletToSync() {
+        BaseWalletManager currentWallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
+        if (currentWallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mContext, currentWallet.getIso(mContext))) == 1)
+            currentWallet = null;
+
+        for (WalletItem w : mWalletItems) {
+            if (currentWallet == null) {
+                if (w.walletManager.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mContext, w.walletManager.getIso(mContext))) < 1 ||
+                        w.walletManager.getPeerManager().getConnectStatus() != BRCorePeer.ConnectStatus.Connected) {
+                    w.walletManager.getPeerManager().connect();
+                    return w;
+                }
+            } else {
+                if (w.walletManager.getIso(mContext).equalsIgnoreCase(currentWallet.getIso(mContext)))
+                    return w;
+            }
+        }
+        return null;
+    }
+
 
     @Override
     public int getItemCount() {
-        return mWalletList.size();
+        return mWalletItems.size();
     }
 
     public class WalletItemViewHolder extends RecyclerView.ViewHolder {
@@ -211,6 +284,16 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             mParent = view.findViewById(R.id.wallet_card);
             mSyncing = view.findViewById(R.id.syncing);
             mSyncingProgressBar = view.findViewById(R.id.sync_progress);
+        }
+    }
+
+    private class WalletItem {
+        public BaseWalletManager walletManager;
+        public WalletItemViewHolder viewHolder;
+
+        public WalletItem(BaseWalletManager walletManager, WalletItemViewHolder viewHolder) {
+            this.walletManager = walletManager;
+            this.viewHolder = viewHolder;
         }
     }
 }
