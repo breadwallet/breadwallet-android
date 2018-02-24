@@ -83,9 +83,9 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         holder.mTradePrice.setText(exchangeRate);
         holder.mWalletBalanceUSD.setText(fiatBalance);
         holder.mWalletBalanceCurrency.setText(cryptoBalance);
-        holder.mSyncingProgressBar.setVisibility(View.VISIBLE);
-        holder.mSyncing.setText("Waiting to Sync");
-        holder.mWalletBalanceCurrency.setVisibility(View.INVISIBLE);
+        holder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
+        holder.mSyncing.setVisibility(View.INVISIBLE);
+//        holder.mWalletBalanceCurrency.setVisibility(View.INVISIBLE);
 
         // TODO : Align the "waiting to sync" text with the balance USD
 
@@ -220,6 +220,8 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             Log.d(TAG, "ISO: " + currentWallet.getIso(mContext) + " (" + progress + "%)");
             mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setVisibility(View.VISIBLE);
             mCurrentWalletSyncing.viewHolder.mSyncing.setText("Syncing ");
+            mCurrentWalletSyncing.viewHolder.mSyncing.setVisibility(View.VISIBLE);
+            mCurrentWalletSyncing.viewHolder.mWalletBalanceCurrency.setVisibility(View.INVISIBLE);
             mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setProgress(progress);
         }
 
@@ -230,6 +232,8 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setVisibility(View.INVISIBLE);
             mCurrentWalletSyncing.viewHolder.mSyncing.setText("Waiting to Sync");
             mCurrentWalletSyncing.viewHolder.mSyncingProgressBar.setProgress(0);
+            mCurrentWalletSyncing.viewHolder.mSyncing.setVisibility(View.VISIBLE);
+            mCurrentWalletSyncing.viewHolder.mWalletBalanceCurrency.setVisibility(View.INVISIBLE);
         }
 
         // FINISHED SYNCING
