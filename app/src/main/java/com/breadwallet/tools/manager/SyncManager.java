@@ -106,7 +106,7 @@ public class SyncManager {
 
     }
 
-    public synchronized boolean isRunning(){
+    public synchronized boolean isRunning() {
         return running;
     }
 
@@ -155,8 +155,12 @@ public class SyncManager {
                         progressStatus = mWallet.getPeerManager().getSyncProgress(startHeight);
 //                    Log.e(TAG, "run: progressStatus: " + progressStatus);
                         if (progressStatus == 1) {
+                            mListener.onSyncFinished();
                             running = false;
-                            continue;
+                            break;
+                        } else if (progressStatus > 0 && progressStatus < 1.0) {
+                            mListener.onSyncProgressUpdate(progressStatus);
+
                         }
                         final long lastBlockTimeStamp = mWallet.getPeerManager().getLastBlockTimestamp() * 1000;
 //                        Log.e(TAG, "run: changing the progress to: " + progressStatus + ": " + Thread.currentThread().getName());
@@ -167,10 +171,10 @@ public class SyncManager {
 
                     }
 
-                    if (progressStatus == 1) {
-                        running = false;
-                        break;
-                    }
+//                    if (progressStatus == 1) {
+//                        running = false;
+//                        break;
+//                    }
 
                     try {
                         Thread.sleep(500);

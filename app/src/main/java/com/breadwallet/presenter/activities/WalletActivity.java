@@ -10,7 +10,6 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.transition.TransitionManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
@@ -360,8 +359,46 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         final BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
         wallet.addTxListModifiedListener(this);
 
-        //SyncManager syncManager = SyncManager.getInstance();
-        //syncManager.se
+        final SyncManager syncManager = SyncManager.getInstance(mWallet);
+        syncManager.setListener(new SyncManager.SyncListener() {
+            @Override
+            public void onSyncProgressUpdate(final double progress) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mSyncingProgressBar.setVisibility(View.VISIBLE);
+                        mSyncingProgressBar.setProgress((int) (progress * 100));
+                        mSyncing.setVisibility(View.VISIBLE);
+                        mBalanceLabel.setVisibility(View.INVISIBLE);
+                    }
+                });
+
+            }
+
+            @Override
+            public void onSyncFinished() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        mBalanceLabel.setVisibility(View.VISIBLE);
+                        mSyncing.setVisibility(View.INVISIBLE);
+                        mSyncingProgressBar.setVisibility(View.INVISIBLE);
+                        syncManager.stopSyncingProgressThread();
+                    }
+                });
+
+
+            }
+
+            @Override
+            public void onSyncError() {
+
+            }
+        });
+
+        //if(!syncManager.isRunning()) {
+        //  syncManager.startSyncingProgressThread();
+        //}
 
     }
 

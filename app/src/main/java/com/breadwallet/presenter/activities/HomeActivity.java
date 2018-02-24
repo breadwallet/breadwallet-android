@@ -193,7 +193,7 @@ public class HomeActivity extends BRActivity {
 
                 // TODO: Just for testing, try to sync wallet in position 1 on list
                 // After the first one finishes
-                mWalletRecycler.postDelayed(new Runnable() {
+                /*mWalletRecycler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
@@ -211,7 +211,7 @@ public class HomeActivity extends BRActivity {
 
 
                     }
-                }, 50);
+                }, 50);*/
 
             }
 
