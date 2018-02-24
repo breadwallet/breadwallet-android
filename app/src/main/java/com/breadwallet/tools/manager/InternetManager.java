@@ -70,7 +70,7 @@ public class InternetManager extends BroadcastReceiver {
             NetworkInfo networkInfo = intent.getParcelableExtra(ConnectivityManager.EXTRA_NETWORK_INFO);
             if (networkInfo != null && networkInfo.getDetailedState() == NetworkInfo.DetailedState.CONNECTED) {
                 connected = true;
-                WalletsMaster.getInstance(context).getCurrentWallet(context).getPeerManager().connect();
+//                WalletsMaster.getInstance(context).getCurrentWallet(context).getPeerManager().connect();
                 Log.e(TAG, "onReceive: core connecting");
             } else if (networkInfo != null && networkInfo.getDetailedState() == NetworkInfo.DetailedState.DISCONNECTED) {
 
