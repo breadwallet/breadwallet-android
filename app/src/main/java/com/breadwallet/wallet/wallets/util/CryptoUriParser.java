@@ -5,15 +5,16 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.SendManager;
@@ -59,6 +60,10 @@ import java.util.Map;
 public class CryptoUriParser {
     private static final String TAG = CryptoUriParser.class.getName();
     private static final Object lockObject = new Object();
+
+
+    public static final String BTC_SCHEME = "bitcoin";
+    public static final String BCH_SCHEME = BuildConfig.BITCOIN_TESTNET ? "bchtest" : "bitcoincash";
 
     public static synchronized boolean processRequest(Context app, String url, BaseWalletManager walletManager) {
         if (url == null) {
@@ -115,7 +120,7 @@ public class CryptoUriParser {
         CryptoRequest requestObject = parseRequest(url);
         // return true if the request is valid url and has param: r or param: address
         // return true if it is a valid bitcoinPrivKey
-        return (requestObject != null && (requestObject.r != null || requestObject.address != null));
+        return (requestObject != null && (requestObject.isPaymentProtocol() || requestObject.hasAddress()));
     }
 
 
@@ -136,9 +141,9 @@ public class CryptoUriParser {
 
         u = Uri.parse(scheme + "://" + schemeSpecific);
 
-        if (scheme.equalsIgnoreCase("bitcoin")) {
+        if (scheme != null && scheme.equalsIgnoreCase(BTC_SCHEME)) {
             obj.iso = "BTC";
-        } else if (scheme.equalsIgnoreCase("bitcoincash")) {
+        } else if (scheme != null && scheme.equalsIgnoreCase(BCH_SCHEME)) {
             obj.iso = "BCH";
         } else {
             Log.e(TAG, "parseRequest: unknown scheme: " + scheme);
@@ -165,7 +170,7 @@ public class CryptoUriParser {
             if (keyValue[0].trim().equals("amount")) {
                 try {
                     BigDecimal bigDecimal = new BigDecimal(keyValue[1].trim());
-                    obj.amount = bigDecimal.multiply(new BigDecimal("100000000")).toString();
+                    obj.amount = bigDecimal.multiply(new BigDecimal("100000000"));
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
@@ -209,9 +214,19 @@ public class CryptoUriParser {
         if (requestObject == null || requestObject.address == null || requestObject.address.isEmpty())
             return false;
         BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
-        String amount = requestObject.amount;
+        if (requestObject.iso != null && !requestObject.iso.equalsIgnoreCase(wallet.getIso(ctx))) {
 
-        if (amount == null || amount.isEmpty() || new BigDecimal(amount).doubleValue() == 0) {
+            BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), "Not a valid " + wallet.getName(ctx) + " address", app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                @Override
+                public void onClick(BRDialogView brDialogView) {
+                    brDialogView.dismiss();
+                }
+            }, null, null, 0);
+            return true; //true since it's a crypto url but different iso than the currently chosen one
+        }
+//        String amount = requestObject.amount;
+
+        if (requestObject.amount == null || requestObject.amount.doubleValue() == 0) {
             app.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -220,8 +235,18 @@ public class CryptoUriParser {
             });
         } else {
             BRAnimator.killAllFragments(app);
-            BRCoreTransaction tx = wallet.getWallet().createTransaction(new BigDecimal(amount).longValue(), new BRCoreAddress(requestObject.address));
-            SendManager.sendTransaction(app, new PaymentItem(tx, null, false, null), wallet);
+            BRCoreTransaction tx = wallet.getWallet().createTransaction(requestObject.amount.longValue(), new BRCoreAddress(requestObject.address));
+            if (tx == null) {
+                BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), "Insufficient amount for transaction", app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        brDialogView.dismiss();
+                    }
+                }, null, null, 0);
+                return true;
+            }
+            requestObject.tx = tx;
+            SendManager.sendTransaction(app, requestObject, wallet);
         }
 
         return true;

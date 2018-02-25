@@ -16,7 +16,7 @@ import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
-import com.breadwallet.presenter.entities.PaymentItem;
+import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -59,7 +59,7 @@ public class PostAuth {
     public static final String TAG = PostAuth.class.getName();
 
     private String phraseForKeyStore;
-    public PaymentItem paymentItem;
+    public CryptoRequest mCryptoRequest;
     public static boolean isStuckWithAuthLoop;
 
     private BRCoreTransaction mPaymentProtocolTx;
@@ -206,19 +206,19 @@ public class PostAuth {
         if (rawPhrase.length < 10) return;
         try {
             if (rawPhrase.length != 0) {
-                if (paymentItem != null && paymentItem.tx != null) {
+                if (mCryptoRequest != null && mCryptoRequest.tx != null) {
 
-                    byte[] txHash = walletManager.getCurrentWallet(app).signAndPublishTransaction(paymentItem.tx, rawPhrase);
+                    byte[] txHash = walletManager.getCurrentWallet(app).signAndPublishTransaction(mCryptoRequest.tx, rawPhrase);
                     if (Utils.isNullOrEmpty(txHash)) {
                         Log.e(TAG, "onPublishTxAuth: publishSerializedTransaction returned FALSE");
                         //todo fix this
 //                        WalletsMaster.getInstance().offerToChangeTheAmount(app, new PaymentItem(paymentRequest.addresses, paymentItem.serializedTx, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
                     } else {
                         TxMetaData txMetaData = new TxMetaData();
-                        txMetaData.comment = paymentItem.comment;
+                        txMetaData.comment = mCryptoRequest.comment;
                         KVStoreManager.getInstance().putTxMetaData(app, txMetaData, txHash);
                     }
-                    paymentItem = null;
+                    mCryptoRequest = null;
                 } else {
                     throw new NullPointerException("payment item is null");
                 }
@@ -269,8 +269,8 @@ public class PostAuth {
     }
 
 
-    public void setPaymentItem(PaymentItem item) {
-        this.paymentItem = item;
+    public void setPaymentItem(CryptoRequest cryptoRequest) {
+        this.mCryptoRequest = cryptoRequest;
     }
 
     public void setTmpPaymentRequestTx(BRCoreTransaction tx) {

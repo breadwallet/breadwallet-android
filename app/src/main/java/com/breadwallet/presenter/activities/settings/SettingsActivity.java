@@ -194,7 +194,8 @@ public class SettingsActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, CurrencySettingsActivity.class);
-                intent.putExtra(CurrencySettingsActivity.EXTRA_CURRENCY, "btc");
+                intent.putExtra(CurrencySettingsActivity.EXTRA_CURRENCY, "BTC");
+                BRSharedPrefs.putCurrentWalletIso(app, "BTC"); //change the current wallet to the one they enter settings to
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
@@ -204,7 +205,8 @@ public class SettingsActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, CurrencySettingsActivity.class);
-                intent.putExtra(CurrencySettingsActivity.EXTRA_CURRENCY, "bch");
+                intent.putExtra(CurrencySettingsActivity.EXTRA_CURRENCY, "BCH");
+                BRSharedPrefs.putCurrentWalletIso(app, "BCH");//change the current wallet to the one they enter settings to
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
