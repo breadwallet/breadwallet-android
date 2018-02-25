@@ -632,6 +632,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                 }
             });
 
+        Log.e(TAG, "syncStopped: peerManager:" + getPeerManager().toString());
+
         if (!Utils.isNullOrEmpty(error)) {
             if (mSyncRetryCount < SYNC_MAX_RETRY) {
                 Log.e(TAG, "syncStopped: Retrying: " + mSyncRetryCount);

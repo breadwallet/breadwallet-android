@@ -47,6 +47,8 @@ public class SyncManager {
     private static final String TAG = SyncManager.class.getName();
     private static SyncManager instance;
     private static final long SYNC_PERIOD = TimeUnit.HOURS.toMillis(24);
+
+    //todo refactor this task to have a list of unique tasks (multiple UI syncing)
     private static SyncProgressTask syncTask;
     public boolean running;
     private BaseWalletManager mWallet;
@@ -73,13 +75,13 @@ public class SyncManager {
         createAlarm(app, System.currentTimeMillis() + SYNC_PERIOD);
     }
 
-    public void stopSyncing() {
+    public synchronized void stopSyncing() {
         if (syncTask != null) syncTask.interrupt();
         running = false;
         syncTask = null;
     }
 
-    public void startSyncing(Context app, BaseWalletManager walletManager, OnProgressUpdate listener) {
+    public synchronized void startSyncing(Context app, BaseWalletManager walletManager, OnProgressUpdate listener) {
         mWallet = walletManager;
         if (syncTask != null) syncTask.interrupt();
         syncTask = new SyncProgressTask(app, walletManager, listener);
