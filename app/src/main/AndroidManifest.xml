@@ -88,7 +88,6 @@
         <activity
             android:name=".presenter.activities.SetPinActivity"
             android:launchMode="singleTask"
-
             android:screenOrientation="portrait"/>
 
         <activity

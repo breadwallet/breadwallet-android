@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.breadwallet.presenter.activities.settings.TestActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.presenter.entities.RequestObject;
+import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.wallet.wallets.util.CryptoUriParser;
@@ -80,7 +80,7 @@ public class WalletTests {
     @Test
     public void paymentRequestTest() throws InvalidAlgorithmParameterException {
 
-        RequestObject obj = CryptoUriParser.parseRequest("n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
+        CryptoRequest obj = CryptoUriParser.parseRequest("n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
         assertEquals("n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi", obj.address);
 
 //        r = [BRPaymentRequest requestWithString:@"1BTCorgHwCg6u2YSAWKgS17qUad6kHmtQ"];
