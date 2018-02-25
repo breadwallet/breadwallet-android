@@ -16,7 +16,9 @@ import com.breadwallet.core.BRCoreChainParams;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.BRCoreMerkleBlock;
 import com.breadwallet.core.BRCorePeer;
+import com.breadwallet.core.BRCorePeerManager;
 import com.breadwallet.core.BRCoreTransaction;
+import com.breadwallet.core.BRCoreWallet;
 import com.breadwallet.core.BRCoreWalletManager;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRToast;
@@ -62,6 +64,8 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
@@ -111,6 +115,8 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     private List<OnTxStatusUpdatedListener> txStatusUpdatedListeners = new ArrayList<>();
     private List<OnSyncStopped> syncStoppedListeners = new ArrayList<>();
     private List<OnTxListModified> txModifiedListeners = new ArrayList<>();
+
+    private Executor listenerExecutor = Executors.newSingleThreadExecutor();
 
     public static WalletBchManager getInstance(Context app) {
         if (instance == null) {
@@ -164,6 +170,19 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     }
 
+    @Override
+    protected BRCoreWallet.Listener createWalletListener() {
+        return new BRCoreWalletManager.WrappedExecutorWalletListener(
+                super.createWalletListener(),
+                listenerExecutor);
+    }
+
+    @Override
+    protected BRCorePeerManager.Listener createPeerManagerListener() {
+        return new BRCoreWalletManager.WrappedExecutorPeerManagerListener(
+                super.createPeerManagerListener(),
+                listenerExecutor);
+    }
 
     @Override
     public BRCoreTransaction[] getTransactions() {
