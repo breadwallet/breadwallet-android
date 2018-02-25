@@ -189,7 +189,7 @@ public class HomeActivity extends BRActivity {
             while (true) {
                 StringBuilder builder = new StringBuilder();
                 for (BaseWalletManager w : WalletsMaster.getInstance(HomeActivity.this).getAllWallets()) {
-                    builder.append(w.getIso(HomeActivity.this));
+                    builder.append("   " +w.getIso(HomeActivity.this));
                     String connectionStatus = "";
                     if (w.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Connected)
                         connectionStatus = "Connected";
@@ -200,7 +200,7 @@ public class HomeActivity extends BRActivity {
 
                     double progress = w.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(HomeActivity.this, w.getIso(HomeActivity.this)));
 
-                    builder.append(" - " + connectionStatus + " (" + progress + "), ");
+                    builder.append(" - " + connectionStatus + " " + progress * 100 + "%     ");
 
                 }
 

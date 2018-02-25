@@ -84,13 +84,43 @@
                     android:id="@+id/balance_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="16dp"
-                    android:paddingTop="100dp"
+                    android:layout_marginEnd="8dp"
                     android:text="@string/CurrencyBalance"
                     android:textColor="@color/currency_subheading_color"
                     android:textSize="14sp"
                     app:customTFont="CircularPro-Book.otf"
+                    app:layout_constraintBottom_toTopOf="@+id/balance_primary"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintRight_toRightOf="parent"/>
+
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/syncing_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:text="Syncing"
+                    android:textColor="#88ffffff"
+                    android:textSize="10sp"
+                    app:customTFont="CircularPro-Bold.otf"
+                    app:layout_constraintBottom_toBottomOf="@+id/sync_progress"
+                    app:layout_constraintEnd_toStartOf="@+id/sync_progress"
+                    app:layout_constraintTop_toTopOf="@+id/sync_progress"/>
+
+                <ProgressBar
+                    android:id="@+id/sync_progress"
+                    style="?android:attr/progressBarStyleHorizontal"
+                    android:layout_width="30dp"
+                    android:layout_height="5dp"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginEnd="8dp"
+                    android:indeterminate="false"
+                    android:max="100"
+                    android:progress="0"
+                    android:progressBackgroundTint="#88ffffff"
+                    android:progressTint="#ffffff"
+                    app:layout_constraintBottom_toTopOf="@+id/balance_primary"
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
 
                 <com.breadwallet.presenter.customviews.BRText
@@ -129,8 +159,8 @@
                     android:text="1.56739 BTC"
                     android:textColor="@color/currency_subheading_color"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintRight_toLeftOf="@id/swap"
                     app:layout_constraintEnd_toStartOf="@id/swap"
+                    app:layout_constraintRight_toLeftOf="@id/swap"
                     app:layout_constraintVertical_bias="0.492"/>
 
 
@@ -142,7 +172,7 @@
                     android:layout_marginEnd="16dp"
                     android:background="@drawable/ic_search_white_24dp"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent" />
+                    app:layout_constraintEnd_toEndOf="parent"/>
 
 
             </android.support.constraint.ConstraintLayout>
@@ -181,8 +211,8 @@
         android:id="@+id/recycler_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/tool_bar_flipper"
         android:layout_above="@+id/bottom_toolbar_layout1"
+        android:layout_below="@+id/tool_bar_flipper"
         android:animateLayoutChanges="true"
         android:orientation="vertical">
 
@@ -193,9 +223,9 @@
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
             android:clipToPadding="false"
-            android:paddingStart="8dp"
-            android:paddingEnd="8dp"
             android:paddingBottom="8dp"
+            android:paddingEnd="8dp"
+            android:paddingStart="8dp"
             android:paddingTop="16dp"
             />
 
