@@ -35,7 +35,6 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
 import com.breadwallet.presenter.customviews.BRText;
-import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
@@ -448,7 +447,7 @@ public class FragmentSend extends Fragment {
                 }
 
                 if (allFilled) {
-                    PaymentItem item = new PaymentItem(tx, null, false, comment);
+                    CryptoRequest item = new CryptoRequest(tx, null, false, comment, addressString, cryptoAmount);
                     SendManager.sendTransaction(getActivity(), item, wallet);
                 }
             }
@@ -536,6 +535,7 @@ public class FragmentSend extends Fragment {
         }, null, null, 0);
         BRClipboardManager.putClipboard(getActivity(), "");
     }
+
     private void sayInvalidClipboardData() {
         BRDialog.showCustomDialog(getActivity(), getString(R.string.Send_invalidAddressMessage), getResources().getString(R.string.Send_invalidAddressTitle), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
             @Override
@@ -554,7 +554,8 @@ public class FragmentSend extends Fragment {
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                observer.removeOnGlobalLayoutListener(this);
+                if (observer.isAlive())
+                    observer.removeOnGlobalLayoutListener(this);
                 BRAnimator.animateBackgroundDim(backgroundLayout, false);
                 BRAnimator.animateSignalSlide(signalLayout, false, new BRAnimator.OnSlideAnimationEnd() {
                     @Override
@@ -569,7 +570,7 @@ public class FragmentSend extends Fragment {
                             commentEdit.setText(mCryptoRequest.message);
                         }
                         if (mCryptoRequest.amount != null) {
-                            BigDecimal satoshiAmount = new BigDecimal(mCryptoRequest.amount).multiply(new BigDecimal(100000000));
+                            BigDecimal satoshiAmount = mCryptoRequest.amount.multiply(new BigDecimal(100000000));
                             amountBuilder = new StringBuilder(master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), satoshiAmount).toPlainString());
                             updateText();
                         }

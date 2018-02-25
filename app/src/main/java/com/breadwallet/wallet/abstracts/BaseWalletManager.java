@@ -3,15 +3,11 @@ package com.breadwallet.wallet.abstracts;
 import android.content.Context;
 
 import com.breadwallet.core.BRCoreAddress;
-import com.breadwallet.core.BRCoreChainParams;
-import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.BRCoreMerkleBlock;
 import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.core.BRCorePeerManager;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWallet;
-import com.breadwallet.core.BRCoreWalletManager;
-import com.breadwallet.presenter.entities.PaymentItem;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
 
