@@ -4,6 +4,7 @@ import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -195,7 +196,23 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         TxManager.getInstance().init(this);
 
+    }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        //since we have one instance of activity at all times, this is needed to know when a new intent called upon this activity
+        handleUrlClickIfNeeded(intent);
+    }
+
+    private void handleUrlClickIfNeeded(Intent intent) {
+        String action = intent.getAction();
+        Uri data = intent.getData();
+        if (data != null && !data.toString().isEmpty()) {
+            //handle external click with crypto scheme
+
+
+        }
     }
 
     private void updateUi() {
@@ -362,6 +379,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 return true;
             }
         });
+
+        handleUrlClickIfNeeded(getIntent());
 
     }
 
