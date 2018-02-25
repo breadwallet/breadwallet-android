@@ -42,6 +42,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
+import com.breadwallet.wallet.wallets.util.CryptoUriParser;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
@@ -210,7 +211,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         Uri data = intent.getData();
         if (data != null && !data.toString().isEmpty()) {
             //handle external click with crypto scheme
-
+            CryptoUriParser.processRequest(this, data.toString(), WalletsMaster.getInstance(this).getCurrentWallet(this));
 
         }
     }

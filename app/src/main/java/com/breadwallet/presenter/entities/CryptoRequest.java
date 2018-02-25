@@ -26,8 +26,9 @@ package com.breadwallet.presenter.entities;
  * THE SOFTWARE.
  */
 
-public class RequestObject {
-    public static final String TAG = RequestObject.class.getName();
+public class CryptoRequest {
+    public static final String TAG = CryptoRequest.class.getName();
+    public String iso;
     public String address;
     public String r;
     public String amount;
