@@ -147,7 +147,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 setTexts((TxHolder) holder, position);
                 break;
             case promptType:
-                setPrompt((PromptHolder) holder);
+                //setPrompt((PromptHolder) holder);
                 break;
         }
 
@@ -155,16 +155,16 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0 && TxManager.getInstance().currentPrompt != null) {
-            return promptType;
-        } else {
+        //if (position == 0 && TxManager.getInstance().currentPrompt != null) {
+          //  return promptType;
+        //} else {
             return txType;
-        }
+        //}
     }
 
     @Override
     public int getItemCount() {
-        return TxManager.getInstance().currentPrompt == null ? itemFeed.size() : itemFeed.size() + 1;
+        return itemFeed.size();
     }
 
     private void setTexts(final TxHolder convertView, int position) {
@@ -328,7 +328,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     }
 
-    private void setPrompt(final PromptHolder prompt) {
+   /* private void setPrompt(final PromptHolder prompt) {
         Log.d(TAG, "setPrompt: " + TxManager.getInstance().promptInfo.title);
         if (TxManager.getInstance().promptInfo == null) {
             throw new RuntimeException("can't happen, showing prompt with null PromptInfo");
@@ -339,7 +339,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         prompt.title.setText(TxManager.getInstance().promptInfo.title);
         prompt.description.setText(TxManager.getInstance().promptInfo.description);
 
-    }
+    }*/
 
     private int getResourceByPos(int pos) {
         if (TxManager.getInstance().currentPrompt != null) pos--;

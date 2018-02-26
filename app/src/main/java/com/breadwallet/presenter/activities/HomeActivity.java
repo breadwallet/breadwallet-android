@@ -2,8 +2,8 @@ package com.breadwallet.presenter.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,11 +17,14 @@ import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
+import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.PromptManager;
 import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.BRExecutor;
@@ -52,6 +55,13 @@ public class HomeActivity extends BRActivity {
     private static final String TAG = "HomeActivity";
     private Integer mCurrentlySyncingWalletPos;
     private ArrayList<BaseWalletManager> mWallets;
+
+    private CardView mPromptCard;
+    private BRButton mDismissButton;
+    private BRButton mContinueButton;
+    private BRText mPromptTitle;
+    private BRText mPromptDescription;
+
     public static HomeActivity getApp() {
         return app;
     }
@@ -74,6 +84,15 @@ public class HomeActivity extends BRActivity {
         mSettings = findViewById(R.id.settings_row);
         mSecurity = findViewById(R.id.security_row);
         mSupport = findViewById(R.id.support_row);
+        mPromptCard = findViewById(R.id.prompt_card);
+        mDismissButton = findViewById(R.id.dismiss_button);
+        mContinueButton = findViewById(R.id.continue_button);
+        mPromptTitle = findViewById(R.id.prompt_title);
+        mPromptDescription = findViewById(R.id.prompt_description);
+
+        mPromptCard.setVisibility(View.GONE);
+        mDismissButton.setColor(getColor(R.color.light_gray));
+        mContinueButton.setColor(getColor(R.color.dark_blue));
 
         mAdapter = new WalletListAdapter(this, walletList);
 
@@ -173,7 +192,38 @@ public class HomeActivity extends BRActivity {
             }
         }
 
+        setPromptIfAvailable();
 
+
+    }
+
+    private void setPromptIfAvailable() {
+
+        final PromptManager.PromptItem promptItem = PromptManager.getInstance().nextPrompt(HomeActivity.this);
+        PromptManager.PromptInfo promptInfo = PromptManager.getInstance().promptInfo(HomeActivity.this, promptItem);
+
+        if (promptItem != null && promptInfo != null) {
+
+            mPromptTitle.setText(promptInfo.title);
+            mPromptDescription.setText(promptInfo.description);
+
+            mPromptCard.setVisibility(View.VISIBLE);
+            mDismissButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mPromptCard.setVisibility(View.GONE);
+
+                    // Log prompt dismissed event
+                    BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(promptItem) + ".dismissed");
+
+                    if (promptItem == PromptManager.PromptItem.SHARE_DATA) {
+                        BRSharedPrefs.putShareDataDismissed(app, true);
+                    }
+                }
+            });
+
+            mContinueButton.setOnClickListener(promptInfo.listener);
+        }
     }
 
     private void startSyncManager(final BaseWalletManager wallet, final View view) {

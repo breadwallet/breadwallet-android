@@ -63,7 +63,7 @@
 
     <View
         android:layout_width="match_parent"
-        android:background="@color/gray"
+        android:background="@color/light_gray"
         android:layout_alignParentBottom="true"
         android:layout_height="1px"/>
 
