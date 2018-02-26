@@ -159,25 +159,25 @@ public class FragmentTransactionItem extends Fragment {
         //get the tx amount
         BigDecimal txAmount = new BigDecimal(item.getAmount()).abs();
         //see if it was sent
-        boolean sent = item.getReceived() - item.getSent() < 0;
-        WalletsMaster master = WalletsMaster.getInstance(getActivity());
+        boolean sent = Math.abs(item.getReceived()) - Math.abs(item.getSent()) < 0;
+        BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
         //calculated and formatted amount for iso
-        String amountWithFee = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), txAmount));
-        String amount = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), item.getFee() == -1 ? txAmount : txAmount.subtract(new BigDecimal(item.getFee()))));
+        String amountWithFee = CurrencyUtils.getFormattedAmount(getActivity(), iso, wm.getFiatForSmallestCrypto(getActivity(), txAmount));
+        String amount = CurrencyUtils.getFormattedAmount(getActivity(), iso, wm.getFiatForSmallestCrypto(getActivity(), item.getFee() == -1 ? txAmount : txAmount.subtract(new BigDecimal(item.getFee()))));
         //calculated and formatted fee for iso
-        String fee = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(item.getFee())));
+        String fee = CurrencyUtils.getFormattedAmount(getActivity(), iso, wm.getFiatForSmallestCrypto(getActivity(), new BigDecimal(item.getFee())));
         //description (Sent $24.32 ....)
         Spannable descriptionString = sent ? new SpannableString(String.format(getString(R.string.TransactionDetails_sent), amountWithFee)) : new SpannableString(String.format(getString(R.string.TransactionDetails_received), amount));
 
-        String startingBalance = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(sent ? item.getBalanceAfterTx() + txAmount.longValue() : item.getBalanceAfterTx() - txAmount.longValue())));
-        String endingBalance = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(item.getBalanceAfterTx())));
+        String startingBalance = CurrencyUtils.getFormattedAmount(getActivity(), iso, wm.getFiatForSmallestCrypto(getActivity(), new BigDecimal(sent ? item.getBalanceAfterTx() + txAmount.longValue() : item.getBalanceAfterTx() - txAmount.longValue())));
+        String endingBalance = CurrencyUtils.getFormattedAmount(getActivity(), iso, wm.getFiatForSmallestCrypto(getActivity(), new BigDecimal(item.getBalanceAfterTx())));
         String commentString = item.metaData == null || item.metaData.comment == null ? "" : item.metaData.comment;
         String sb = String.format(getString(R.string.Transaction_starting), startingBalance);
         String eb = String.format(getString(R.string.Transaction_ending), endingBalance);
         String amountString = String.format("%s %s\n\n%s\n%s", amount, item.getFee() == -1 ? "" : String.format(getString(R.string.Transaction_fee), fee), sb, eb);
         if (sent) amountString = "-" + amountString;
-        String addr = item.getTo()[0];
-        String toFrom = sent ? String.format(getString(R.string.TransactionDetails_to), addr) : String.format(getString(R.string.TransactionDetails_from), addr);
+        String addr = wm.decorateAddress(getActivity(), item.getTo()[0]);
+        String toFrom = String.format(getString(sent ? R.string.TransactionDetails_to : R.string.TransactionDetails_from), addr);
 
         mTxHash.setText(item.getTxHashHexReversed());
 
@@ -245,7 +245,7 @@ public class FragmentTransactionItem extends Fragment {
     private int getLevel(TxUiHolder item) {
         BaseWalletManager wallet = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
         int blockHeight = item.getBlockHeight();
-        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(getContext(),wallet.getIso(getActivity())) - blockHeight + 1;
+        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(getContext(), wallet.getIso(getActivity())) - blockHeight + 1;
         int level;
         if (confirms <= 0) {
             long relayCount = wallet.getPeerManager().getRelayCount(item.getTxHash());

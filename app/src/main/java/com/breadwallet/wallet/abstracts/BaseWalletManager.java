@@ -104,6 +104,9 @@ public interface BaseWalletManager {
     //decorate an address to a particular currency, if needed (like BCH address format)
     String decorateAddress(Context app, String addr);
 
+    //convert to raw address to a particular currency, if needed (like BCH address format)
+    String undecorateAddress(Context app, String addr);
+
     //get the number of decimal places to use for this currency
     int getMaxDecimalPlaces(Context app);
 

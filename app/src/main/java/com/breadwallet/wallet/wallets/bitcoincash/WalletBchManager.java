@@ -53,6 +53,7 @@ import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
+import com.breadwallet.wallet.wallets.util.CryptoUriParser;
 import com.google.firebase.crash.FirebaseCrash;
 
 import org.json.JSONException;
@@ -293,6 +294,19 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public String decorateAddress(Context app, String addr) {
+        if (Utils.isNullOrEmpty(addr)) return null;
+        String full = BRCoreAddress.bcashEncodeBitcoin(addr);
+        if (Utils.isNullOrEmpty(full)) return null;
+        String decorated = full.split(":")[1]; //bitcoincash:q254dsfd....
+        return Utils.isNullOrEmpty(decorated) ? null : decorated;
+    }
+
+    @Override
+    public String undecorateAddress(Context app, String addr) {
+        if (Utils.isNullOrEmpty(addr)) return null;
+        if (!addr.contains(":")) {
+            addr = getScheme(app) + ":" + addr; // add the scheme if only the address is passed
+        }
         return BRCoreAddress.bcashDecodeBitcoin(addr);
     }
 

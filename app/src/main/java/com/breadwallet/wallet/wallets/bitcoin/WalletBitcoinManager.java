@@ -295,6 +295,11 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
+    public String undecorateAddress(Context app, String addr) {
+        return addr; //no need to undecorate
+    }
+
+    @Override
     public int getMaxDecimalPlaces(Context app) {
         int unit = BRSharedPrefs.getCryptoDenomination(app, getIso(app));
         switch (unit) {

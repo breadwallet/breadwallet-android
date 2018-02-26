@@ -43,18 +43,6 @@
             app:layout_constraintTop_toTopOf="@+id/sent_received"/>
 
         <com.breadwallet.presenter.customviews.BRText
-            android:id="@+id/to_from"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="8dp"
-            android:text="to"
-            android:textColor="@color/almost_black"
-            app:customTFont="CircularPro-Book.otf"
-            app:layout_constraintLeft_toLeftOf="@+id/sent_received"
-            app:layout_constraintTop_toBottomOf="@+id/sent_received"/>
-
-        <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/account"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -67,11 +55,10 @@
             android:text="account"
             android:textColor="@color/almost_black"
             app:customTFont="CircularPro-Bold.otf"
-            app:layout_constraintBottom_toBottomOf="@+id/to_from"
+            app:layout_constraintLeft_toLeftOf="@+id/sent_received"
+            app:layout_constraintTop_toBottomOf="@+id/sent_received"
             app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintLeft_toRightOf="@+id/to_from"
             app:layout_constraintRight_toLeftOf="@+id/timestamp"
-            app:layout_constraintTop_toTopOf="@+id/to_from"
             app:layout_constraintVertical_bias="0.0"/>
 
 
@@ -125,7 +112,7 @@
             android:textColor="@color/almost_black"
             app:customTFont="CircularPro-Book.otf"
             app:layout_constraintLeft_toLeftOf="@+id/sent_received"
-            app:layout_constraintTop_toBottomOf="@+id/to_from"/>
+            app:layout_constraintTop_toBottomOf="@+id/account"/>
 
         <ImageView
             android:id="@+id/arrow_icon"
