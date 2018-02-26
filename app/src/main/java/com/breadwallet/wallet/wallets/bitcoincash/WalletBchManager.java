@@ -60,6 +60,9 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
@@ -210,7 +213,8 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         BRCoreTransaction txs[] = getWallet().getTransactions();
         if (txs == null || txs.length <= 0) return null;
         List<TxUiHolder> uiTxs = new ArrayList<>();
-        for (BRCoreTransaction tx : txs) {
+        for (int i = txs.length - 1; i >= 0; i--) { //revere order
+            BRCoreTransaction tx = txs[i];
             uiTxs.add(new TxUiHolder(tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
                     tx.getReverseHash(), getWallet().getTransactionAmountSent(tx),
                     getWallet().getTransactionAmountReceived(tx), getWallet().getTransactionFee(tx),
@@ -218,6 +222,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
                     getWallet().getBalanceAfterTransaction(tx), (int) tx.getSize(),
                     getWallet().getTransactionAmount(tx), getWallet().transactionIsValid(tx)));
         }
+
         return uiTxs;
     }
 
@@ -628,7 +633,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             if (list != null) list.syncStarted();
 
     }
-
 
     @Override
     public void syncStopped(final String error) {
