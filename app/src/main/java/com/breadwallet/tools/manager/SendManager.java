@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.R;
+import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
@@ -380,7 +381,7 @@ public class SendManager {
         if (request.cn != null && request.cn.length() != 0) {
             certified = true;
         }
-        receiver = walletManager.getWallet().getTransactionAddress(request.tx).stringify();
+        receiver = walletManager.decorateAddress(ctx, walletManager.getWallet().getTransactionAddress(request.tx).stringify());
         if (certified) {
             receiver = "certified: " + request.cn + "\n";
         }

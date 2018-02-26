@@ -83,7 +83,7 @@ public class CryptoUriParser {
             }
             return false;
         }
-        if (requestObject.r != null) {
+        if (requestObject.isPaymentProtocol()) {
             return tryPaymentRequest(requestObject);
         } else if (requestObject.address != null) {
             return tryCryptoUrl(requestObject, app);

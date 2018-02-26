@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -178,7 +179,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             ConstraintSet set = new ConstraintSet();
             set.clone(convertView.constraintLayout);
             int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, mContext.getResources().getDisplayMetrics());
-            set.connect(R.id.status, ConstraintSet.TOP, convertView.toFrom.getId(), ConstraintSet.BOTTOM, px);
+            set.connect(R.id.status, ConstraintSet.TOP, convertView.account.getId(), ConstraintSet.BOTTOM, px);
             // Apply the changes
             set.applyTo(convertView.constraintLayout);
         } else {
@@ -197,10 +198,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         convertView.arrowIcon.setImageResource(received ? R.drawable.arrow_down_bold_circle : R.drawable.arrow_up_bold_circle);
         convertView.mainLayout.setBackgroundResource(getResourceByPos(position));
         convertView.sentReceived.setText(received ? mContext.getString(R.string.TransactionDetails_received, "") : mContext.getString(R.string.TransactionDetails_sent, ""));
-        convertView.toFrom.setText(received ? String.format(mContext.getString(R.string.TransactionDetails_from), "") : String.format(mContext.getString(R.string.TransactionDetails_to), ""));
-//        final String addr = position == 1? "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v" : "35SwXe97aPRUsoaUTH1Dr3SB7JptH39pDZ"; //testing
-        final String addr = item.getTo()[0];
-        convertView.account.setText(addr);
+        final String addr = wallet.decorateAddress(mContext, item.getTo()[0]); //destination address, either our address (received at) or receivers (sent to)
+        convertView.account.setText(String.format(mContext.getString(received ? R.string.TransactionDetails_from : R.string.TransactionDetails_to), addr));
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext, wallet.getIso(mContext)) - blockHeight + 1;
 
@@ -384,7 +383,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         public ConstraintLayout constraintLayout;
         public TextView sentReceived;
         public TextView amount;
-        public TextView toFrom;
         public TextView account;
         public TextView status;
         public TextView status_2;
@@ -398,7 +396,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             constraintLayout = (ConstraintLayout) view.findViewById(R.id.constraintLayout);
             sentReceived = (TextView) view.findViewById(R.id.sent_received);
             amount = (TextView) view.findViewById(R.id.amount);
-            toFrom = (TextView) view.findViewById(R.id.to_from);
             account = (TextView) view.findViewById(R.id.account);
             status = (TextView) view.findViewById(R.id.status);
             status_2 = (TextView) view.findViewById(R.id.status_2);
