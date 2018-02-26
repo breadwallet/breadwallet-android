@@ -18,7 +18,6 @@ import com.breadwallet.core.BRCoreMerkleBlock;
 import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWalletManager;
-import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
@@ -49,7 +48,7 @@ import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.abstracts.OnSyncStopped;
+import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
@@ -93,7 +92,9 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     private static final String TAG = WalletBitcoinManager.class.getName();
 
+
     private static String ISO = "BCH";
+    public static final String BCH_SCHEME = BuildConfig.BITCOIN_TESTNET ? "bchtest" : "bitcoincash";
 
     private static final String mName = "BitcoinCash";
 
@@ -109,7 +110,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     private List<OnBalanceChangedListener> balanceListeners = new ArrayList<>();
     private List<OnTxStatusUpdatedListener> txStatusUpdatedListeners = new ArrayList<>();
-    private List<OnSyncStopped> syncStoppedListeners = new ArrayList<>();
+    private List<SyncListener> syncListeners = new ArrayList<>();
     private List<OnTxListModified> txModifiedListeners = new ArrayList<>();
 
     public static WalletBchManager getInstance(Context app) {
@@ -266,6 +267,11 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     @Override
+    public String getScheme(Context app) {
+        return BCH_SCHEME;
+    }
+
+    @Override
     public String getName(Context app) {
         return mName;
     }
@@ -278,6 +284,11 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public BRCoreAddress getReceiveAddress(Context app) {
         return getWallet().getReceiveAddress();
+    }
+
+    @Override
+    public String decorateAddress(Context app, String addr) {
+        return BRCoreAddress.bcashDecodeBitcoin(addr);
     }
 
     @Override
@@ -464,10 +475,11 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     @Override
-    public void addSyncStoppedListener(OnSyncStopped list) {
-        if (list != null && !syncStoppedListeners.contains(list))
-            syncStoppedListeners.add(list);
+    public void addSyncListeners(SyncListener list) {
+        if (list != null && !syncListeners.contains(list))
+            syncListeners.add(list);
     }
+
 
     @Override
     public void addTxListModifiedListener(OnTxListModified list) {
@@ -611,6 +623,8 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
                     Toast.makeText(app, "syncStarted " + getIso(app), Toast.LENGTH_LONG).show();
                 }
             });
+        for (SyncListener list : syncListeners)
+            if (list != null) list.syncStarted();
 
     }
 
@@ -621,7 +635,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         final Context app = BreadApp.getBreadContext();
         if (Utils.isNullOrEmpty(error))
             BRSharedPrefs.putAllowSpend(app, getIso(app), true);
-        for (OnSyncStopped list : syncStoppedListeners)
+        for (SyncListener list : syncListeners)
             if (list != null) list.syncStopped(error);
         if (Utils.isEmulatorOrDebug(app))
             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {

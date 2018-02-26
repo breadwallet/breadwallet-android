@@ -61,10 +61,6 @@ public class CryptoUriParser {
     private static final String TAG = CryptoUriParser.class.getName();
     private static final Object lockObject = new Object();
 
-
-    public static final String BTC_SCHEME = "bitcoin";
-    public static final String BCH_SCHEME = BuildConfig.BITCOIN_TESTNET ? "bchtest" : "bitcoincash";
-
     public static synchronized boolean processRequest(Context app, String url, BaseWalletManager walletManager) {
         if (url == null) {
             Log.e(TAG, "processRequest: url is null");
@@ -73,7 +69,7 @@ public class CryptoUriParser {
 
         if (ImportPrivKeyTask.trySweepWallet(app, url, walletManager)) return true;
 
-        CryptoRequest requestObject = parseRequest(url);
+        CryptoRequest requestObject = parseRequest(app, url);
 
         if (requestObject == null) {
             if (app != null) {
@@ -113,18 +109,20 @@ public class CryptoUriParser {
         BREventManager.getInstance().pushEvent("send.handleURL", attr);
     }
 
-    public static boolean isBitcoinUrl(Context app, String url) {
+    public static boolean isCryptoUrl(Context app, String url) {
         if (Utils.isNullOrEmpty(url)) return false;
         if (BRCoreKey.isValidBitcoinBIP38Key(url) || BRCoreKey.isValidBitcoinPrivateKey(url))
             return true;
-        CryptoRequest requestObject = parseRequest(url);
+        else
+            Log.e(TAG, "isCryptoUrl: NO");
+        CryptoRequest requestObject = parseRequest(app, url);
         // return true if the request is valid url and has param: r or param: address
         // return true if it is a valid bitcoinPrivKey
         return (requestObject != null && (requestObject.isPaymentProtocol() || requestObject.hasAddress()));
     }
 
 
-    public static CryptoRequest parseRequest(String str) {
+    public static CryptoRequest parseRequest(Context app, String str) {
         if (str == null || str.isEmpty()) return null;
         CryptoRequest obj = new CryptoRequest();
 
@@ -132,6 +130,12 @@ public class CryptoUriParser {
 
         Uri u = Uri.parse(tmp);
         String scheme = u.getScheme();
+        BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+
+        if (scheme == null) {
+            scheme = wm.getScheme(app);
+            obj.iso = wm.getIso(app);
+        }
 
         String schemeSpecific = u.getSchemeSpecificPart();
         if (schemeSpecific.startsWith("//")) {
@@ -140,15 +144,6 @@ public class CryptoUriParser {
         }
 
         u = Uri.parse(scheme + "://" + schemeSpecific);
-
-        if (scheme != null && scheme.equalsIgnoreCase(BTC_SCHEME)) {
-            obj.iso = "BTC";
-        } else if (scheme != null && scheme.equalsIgnoreCase(BCH_SCHEME)) {
-            obj.iso = "BCH";
-        } else {
-            Log.e(TAG, "parseRequest: unknown scheme: " + scheme);
-            return null;
-        }
 
         pushUrlEvent(u);
 

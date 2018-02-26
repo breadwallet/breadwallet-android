@@ -179,6 +179,7 @@ public class HomeActivity extends BRActivity {
         mAdapter.notifyDataSetChanged();
     }
 
+    //test logger
     class TestLogger extends Thread {
         private static final String TAG = "TestLogger";
 

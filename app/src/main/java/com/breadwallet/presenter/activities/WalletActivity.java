@@ -42,6 +42,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
+import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.wallets.util.CryptoUriParser;
 import com.platform.HTTPServer;
 
@@ -361,6 +362,32 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             @Override
             public void run() {
                 wallet.connectWallet(WalletActivity.this);
+            }
+        });
+
+        wallet.addSyncListeners(new SyncListener() {
+            @Override
+            public void syncStopped(String err) {
+
+            }
+
+            @Override
+            public void syncStarted() {
+                SyncManager.getInstance().startSyncing(WalletActivity.this, wallet, new SyncManager.OnProgressUpdate() {
+                    @Override
+                    public boolean onProgressUpdated(double progress) {
+                        if (progress == 1) {
+                            mProgressBar.setVisibility(View.GONE);
+                            mProgressLabel.setVisibility(View.GONE);
+                            mBalanceLabel.setVisibility(View.VISIBLE);
+                            return false;
+                        }
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        mProgressLabel.setVisibility(View.VISIBLE);
+                        mBalanceLabel.setVisibility(View.INVISIBLE);
+                        return true;
+                    }
+                });
             }
         });
 

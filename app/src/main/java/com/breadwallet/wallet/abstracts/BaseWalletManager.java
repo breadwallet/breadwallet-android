@@ -62,7 +62,7 @@ public interface BaseWalletManager {
 
     void addTxStatusUpdatedListener(OnTxStatusUpdatedListener list);
 
-    void addSyncStoppedListener(OnSyncStopped list);
+    void addSyncListeners(SyncListener list);
 
     void addTxListModifiedListener(OnTxListModified list);
 
@@ -89,6 +89,9 @@ public interface BaseWalletManager {
     //get the currency denomination e.g. Bitcoin - BTC, Ether - ETH
     String getIso(Context app);
 
+    //get the currency scheme (bitcoin or bitcoincash)
+    String getScheme(Context app);
+
     //get the currency name e.g. Bitcoin
     String getName(Context app);
 
@@ -97,6 +100,9 @@ public interface BaseWalletManager {
 
     //get the wallet's receive address
     BRCoreAddress getReceiveAddress(Context app);
+
+    //decorate an address to a particular currency, if needed (like BCH address format)
+    String decorateAddress(Context app, String addr);
 
     //get the number of decimal places to use for this currency
     int getMaxDecimalPlaces(Context app);
@@ -140,7 +146,6 @@ public interface BaseWalletManager {
     void savePeers(boolean replace, BRCorePeer[] peers);
 
     boolean networkIsReachable();
-
 
     /**
      * @param balance - the balance to be saved in the smallest unit.(e.g. cents, satoshis)
