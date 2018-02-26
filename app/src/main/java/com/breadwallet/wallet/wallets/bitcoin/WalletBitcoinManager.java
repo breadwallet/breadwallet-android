@@ -209,16 +209,18 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     @Override
     public List<TxUiHolder> getTxUiHolders() {
         BRCoreTransaction txs[] = getWallet().getTransactions();
-//        Log.e(TAG, "getTxUiHolders: txs:" + txs.length);
         if (txs == null || txs.length <= 0) return null;
         List<TxUiHolder> uiTxs = new ArrayList<>();
-        for (BRCoreTransaction tx : txs) {
+        for (int i = txs.length - 1; i >= 0; i--) { //revere order
+            BRCoreTransaction tx = txs[i];
             uiTxs.add(new TxUiHolder(tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
                     tx.getReverseHash(), getWallet().getTransactionAmountSent(tx),
-                    getWallet().getTransactionAmountReceived(tx), getWallet().getTransactionFee(tx), tx.getOutputAddresses(), tx.getInputAddresses(),
+                    getWallet().getTransactionAmountReceived(tx), getWallet().getTransactionFee(tx),
+                    tx.getOutputAddresses(), tx.getInputAddresses(),
                     getWallet().getBalanceAfterTransaction(tx), (int) tx.getSize(),
                     getWallet().getTransactionAmount(tx), getWallet().transactionIsValid(tx)));
         }
+
         return uiTxs;
     }
 
