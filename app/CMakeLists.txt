@@ -32,6 +32,8 @@ add_library( # The name of the library.
              src/main/jni/breadwallet-core/BRArray.h
              src/main/jni/breadwallet-core/BRBase58.c
              src/main/jni/breadwallet-core/BRBase58.h
+             src/main/jni/breadwallet-core/BRBech32.c
+             src/main/jni/breadwallet-core/BRBech32.h
              src/main/jni/breadwallet-core/BRBIP32Sequence.c
              src/main/jni/breadwallet-core/BRBIP32Sequence.h
              src/main/jni/breadwallet-core/BRBIP38Key.c
@@ -65,35 +67,58 @@ add_library( # The name of the library.
              src/main/jni/breadwallet-core/bcash/BRBCashAddr.c
              src/main/jni/breadwallet-core/bcash/BRBCashAddr.h
              src/main/jni/breadwallet-core/bcash/BRBCashParams.h
-                                        # Core JNI files
-                                        src/main/jni/breadwallet-core/Java/BRCoreJni.h
-                                        src/main/jni/breadwallet-core/Java/BRCoreJni.c
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreJniReference.c
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreJniReference.h
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreAddress.c
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreAddress.h
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreChainParams.c
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreChainParams.h
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCorePeer.c
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCorePeer.h
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreMasterPubKey.c
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreMasterPubKey.h
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreKey.h
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreKey.c
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreMerkleBlock.c
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreMerkleBlock.h
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCorePeerManager.c
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCorePeerManager.h
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreTransaction.c
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreTransaction.h
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreTransactionInput.c
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreTransactionInput.h
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreTransactionOutput.c
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreTransactionOutput.h
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCorePaymentProtocol.c
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCorePaymentProtocol.h
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreWallet.c
-                                        src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreWallet.h
+
+             # Ethereum
+             src/main/jni/breadwallet-core/ethereum/BREthereum.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumEther.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumEther.c
+             src/main/jni/breadwallet-core/ethereum/BREthereumGas.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumGas.c
+             src/main/jni/breadwallet-core/ethereum/BREthereumAccount.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumAccount.c
+             src/main/jni/breadwallet-core/ethereum/BREthereumTransaction.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumTransaction.c
+             src/main/jni/breadwallet-core/ethereum/BREthereumHolding.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumHolding.c
+             src/main/jni/breadwallet-core/ethereum/BREthereumWallet.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumWallet.c
+
+             # Ethereum RLP
+             src/main/jni/breadwallet-core/ethereum/rlp/BRRlp.h
+             src/main/jni/breadwallet-core/ethereum/rlp/BRRlpSerializer.h
+             src/main/jni/breadwallet-core/ethereum/rlp/BRRlpSerializer.c
+             src/main/jni/breadwallet-core/ethereum/rlp/BRRlpCoder.h
+             src/main/jni/breadwallet-core/ethereum/rlp/BRRlpCoder.c
+
+             # Core JNI files
+             src/main/jni/breadwallet-core/Java/BRCoreJni.h
+             src/main/jni/breadwallet-core/Java/BRCoreJni.c
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreJniReference.c
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreJniReference.h
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreAddress.c
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreAddress.h
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreChainParams.c
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreChainParams.h
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCorePeer.c
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCorePeer.h
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreMasterPubKey.c
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreMasterPubKey.h
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreKey.h
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreKey.c
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreMerkleBlock.c
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreMerkleBlock.h
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCorePeerManager.c
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCorePeerManager.h
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreTransaction.c
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreTransaction.h
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreTransactionInput.c
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreTransactionInput.h
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreTransactionOutput.c
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreTransactionOutput.h
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCorePaymentProtocol.c
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCorePaymentProtocol.h
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreWallet.c
+             src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreWallet.h
              )
 
 include_directories(src/main/jni/breadwallet-core/bcash)
