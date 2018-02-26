@@ -75,6 +75,7 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
 
                 <data android:scheme="bitcoin"/>
+                <data android:scheme="bread"/>
                 <data android:scheme="bitcoincash"/>
                 <data android:scheme="bchtest"/>
             </intent-filter>
