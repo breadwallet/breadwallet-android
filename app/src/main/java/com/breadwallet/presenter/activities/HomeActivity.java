@@ -88,7 +88,7 @@ public class HomeActivity extends BRActivity {
         mWalletRecycler.addOnItemTouchListener(new RecyclerItemClickListener(this, mWalletRecycler, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
-                if (position >= mAdapter.getItemCount()) return;
+                if (position >= mAdapter.getItemCount() || position < 0) return;
                 BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, mAdapter.getItemAt(position).getIso(HomeActivity.this));
 //                Log.d("HomeActivity", "Saving current wallet ISO as " + mAdapter.getItemAt(position).getIso(HomeActivity.this));
 
@@ -189,7 +189,7 @@ public class HomeActivity extends BRActivity {
             while (true) {
                 StringBuilder builder = new StringBuilder();
                 for (BaseWalletManager w : WalletsMaster.getInstance(HomeActivity.this).getAllWallets()) {
-                    builder.append("   " +w.getIso(HomeActivity.this));
+                    builder.append("   " + w.getIso(HomeActivity.this));
                     String connectionStatus = "";
                     if (w.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Connected)
                         connectionStatus = "Connected";
