@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                xmlns:tools="http://schemas.android.com/tools"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:animateLayoutChanges="true"
-                android:background="@color/extra_light_blue_background"
-                android:clipToPadding="false"
-                android:descendantFocusability="beforeDescendants"
-                android:filterTouchesWhenObscured="true"
-                android:fitsSystemWindows="true"
-                android:focusableInTouchMode="true"
-                android:orientation="vertical"
-                tools:context="com.breadwallet.presenter.activities.HomeActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/extra_light_blue_background"
+    android:clipToPadding="false"
+    android:descendantFocusability="beforeDescendants"
+    android:filterTouchesWhenObscured="true"
+    android:fitsSystemWindows="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    tools:context="com.breadwallet.presenter.activities.HomeActivity">
 
     <ImageView
         android:layout_width="80dp"
@@ -21,7 +21,7 @@
         android:layout_centerHorizontal="true"
         android:layout_marginStart="16dp"
         android:layout_marginTop="60dp"
-        android:background="@drawable/brd_logo_gradient"/>
+        android:background="@drawable/brd_logo_gradient" />
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/total_assets_label"
@@ -32,7 +32,7 @@
         android:layout_marginTop="40dp"
         android:text="@string/TotalAssets"
         android:textColor="@color/total_assets_label_color"
-        app:customTFont="CircularPro-Book.otf"/>
+        app:customTFont="CircularPro-Book.otf" />
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/total_assets_usd"
@@ -44,7 +44,96 @@
         android:text="$42,895.47"
         android:textColor="@color/total_assets_usd_color"
         android:textSize="28sp"
-        app:customTFont="CircularPro-Bold.otf"/>
+        app:customTFont="CircularPro-Bold.otf" />
+
+
+    <android.support.v7.widget.CardView
+        android:id="@+id/prompt_card"
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_below="@id/total_assets_usd"
+        app:cardCornerRadius="4dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.breadwallet.presenter.customviews.BRText
+                android:id="@+id/prompt_title"
+                android:textColor="@color/almost_black"
+                android:textSize="18sp"
+                android:text="Paper Key - Action Required!"
+                app:customTFont="CircularPro-Bold.otf"
+                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.breadwallet.presenter.customviews.BRText
+                android:id="@+id/prompt_description"
+                android:layout_below="@id/prompt_title"
+                android:text="Your Paper Key must be saved in case you ever loose your phone."
+                android:layout_marginTop="6dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+
+            <LinearLayout
+                android:id="@+id/button_container"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:layout_below="@id/prompt_description"
+                android:weightSum="2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+            <com.breadwallet.presenter.customviews.BRButton
+                android:id="@+id/dismiss_button"
+                app:buttonType="4"
+                app:customTFont="CircularPro-Bold.otf"
+                app:hasShadow="false"
+                app:isBreadButton="true"
+                android:layout_alignParentBottom="true"
+                android:layout_marginBottom="16dp"
+                android:background="@color/light_gray"
+                android:layout_weight="1"
+                android:textColor="@color/white"
+                android:text="Dismiss"
+                android:layout_marginRight="8dp"
+                android:layout_width="10dp"
+                android:layout_height="60dp" />
+
+            <com.breadwallet.presenter.customviews.BRButton
+                android:id="@+id/continue_button"
+                app:buttonType="4"
+                app:customTFont="CircularPro-Bold.otf"
+                app:hasShadow="false"
+                app:isBreadButton="true"
+                android:layout_alignParentBottom="true"
+                android:layout_toRightOf="@id/dismiss_button"
+                android:layout_marginBottom="16dp"
+                android:text="Continue"
+                android:background="@color/dark_blue"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:layout_width="10dp"
+                android:layout_height="60dp" />
+
+            </LinearLayout>
+
+
+
+        </RelativeLayout>
+
+
+    </android.support.v7.widget.CardView>
 
 
     <com.breadwallet.presenter.customviews.BRText
@@ -52,11 +141,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/total_assets_usd"
+        android:layout_below="@id/prompt_card"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="0dp"
-        android:text="@string/Portfolio"
-        android:textColor="#788f9e"/>
+        android:layout_marginTop="30dp"
+        android:text="@string/Wallets"
+        android:textColor="#788f9e" />
 
 
     <android.support.v7.widget.RecyclerView
@@ -66,7 +155,7 @@
         android:layout_below="@id/portfolio_label"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:layout_marginTop="@dimen/activity_vertical_margin">
+        android:layout_marginTop="8dp">
 
     </android.support.v7.widget.RecyclerView>
 
@@ -91,7 +180,7 @@
             android:text="Bitcoin"
             android:textColor="@color/white"
             android:textSize="18sp"
-            app:customTFont="CircularPro-Book.otf"/>
+            app:customTFont="CircularPro-Book.otf" />
 
         <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/bitcoin_price"
@@ -102,7 +191,7 @@
             android:text="$16904.34 +2.75%"
             android:textColor="@color/currency_subheading_color"
             android:textSize="18sp"
-            app:customTFont="CircularPro-Book.otf"/>
+            app:customTFont="CircularPro-Book.otf" />
 
         <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/bitcoin_holding_usd"
@@ -115,7 +204,7 @@
             android:text="$35,499.11"
             android:textColor="@color/white"
             android:textSize="18sp"
-            app:customTFont="CircularPro-Book.otf"/>
+            app:customTFont="CircularPro-Book.otf" />
 
         <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/bitcoin_holding"
@@ -127,7 +216,7 @@
             android:text="2.1 BTC"
             android:textColor="@color/currency_subheading_color"
             android:textSize="18sp"
-            app:customTFont="CircularPro-Book.otf"/>
+            app:customTFont="CircularPro-Book.otf" />
 
 
     </RelativeLayout>
@@ -154,7 +243,7 @@
             android:text="BitcoinCash"
             android:textColor="@color/white"
             android:textSize="18sp"
-            app:customTFont="CircularPro-Book.otf"/>
+            app:customTFont="CircularPro-Book.otf" />
 
         <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/bch_price"
@@ -165,7 +254,7 @@
             android:text="$2665.41  +2.75%"
             android:textColor="@color/currency_subheading_color"
             android:textSize="18sp"
-            app:customTFont="CircularPro-Book.otf"/>
+            app:customTFont="CircularPro-Book.otf" />
 
         <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/bch_holding_usd"
@@ -178,7 +267,7 @@
             android:text="$6,796.80"
             android:textColor="@color/white"
             android:textSize="18sp"
-            app:customTFont="CircularPro-Book.otf"/>
+            app:customTFont="CircularPro-Book.otf" />
 
         <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/bch_holding"
@@ -190,7 +279,7 @@
             android:text="2.55 BCH"
             android:textColor="@color/currency_subheading_color"
             android:textSize="18sp"
-            app:customTFont="CircularPro-Book.otf"/>
+            app:customTFont="CircularPro-Book.otf" />
 
 
     </RelativeLayout>
@@ -204,7 +293,7 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginTop="16dp"
         android:text="@string/Admin"
-        android:textColor="#788f9e"/>
+        android:textColor="#788f9e" />
 
 
     <RelativeLayout
@@ -231,7 +320,7 @@
             android:focusable="false"
             android:paddingBottom="4dp"
             android:text="@string/MenuButton.settings"
-            app:customTFont="CircularPro-Book.otf"/>
+            app:customTFont="CircularPro-Book.otf" />
 
 
         <ImageButton
@@ -243,7 +332,7 @@
             android:layout_marginRight="16dp"
             android:background="@drawable/ic_chevron_right"
             android:clickable="false"
-            android:focusable="false"/>
+            android:focusable="false" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -270,7 +359,7 @@
             android:focusable="false"
             android:paddingBottom="4dp"
             android:text="@string/MenuButton.security"
-            app:customTFont="CircularPro-Book.otf"/>
+            app:customTFont="CircularPro-Book.otf" />
 
 
         <ImageButton
@@ -282,7 +371,7 @@
             android:layout_marginRight="16dp"
             android:background="@drawable/ic_chevron_right"
             android:clickable="false"
-            android:focusable="false"/>
+            android:focusable="false" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -309,7 +398,7 @@
             android:focusable="false"
             android:paddingBottom="4dp"
             android:text="@string/MenuButton.support"
-            app:customTFont="CircularPro-Book.otf"/>
+            app:customTFont="CircularPro-Book.otf" />
 
 
         <ImageButton
@@ -321,7 +410,7 @@
             android:layout_marginRight="16dp"
             android:background="@drawable/ic_chevron_right"
             android:clickable="false"
-            android:focusable="false"/>
+            android:focusable="false" />
     </RelativeLayout>
 
 

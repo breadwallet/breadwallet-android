@@ -28,7 +28,7 @@ import java.util.List;
 
 
 /**
- * BreadWallet
+ * BreadWalletP
  * <p/>
  * Created by Mihail Gutan on <mihail@breadwallet.com> 7/19/17.
  * Copyright (c) 2017 breadwallet LLC
