@@ -410,7 +410,7 @@ public class FragmentSend extends Fragment {
                 //is the chosen ISO a crypto (could be a fiat currency)
                 boolean isIsoCrypto = master.isIsoCrypto(getActivity(), selectedIso);
 
-                BigDecimal cryptoAmount = isIsoCrypto ? wallet.getSmallestCryptoForCrypto(getActivity(), rawAmount) : wallet.getSmallestCryptoForFiat(getActivity(), rawAmount);
+                BigDecimal cryptoAmount = isIsoCrypto ? wallet.getSmallestCryptoForCrypto(getActivity(), rawAmount) : wallet.getSmallestCryptoForFiat(getActivity(), rawAmount.multiply(new BigDecimal(100))); //get cents out of dollars
                 BRCoreAddress address = new BRCoreAddress(addressString);
                 Activity app = getActivity();
                 if (address.stringify().isEmpty() || !address.isValid()) {
@@ -735,7 +735,7 @@ public class FragmentSend extends Fragment {
         if (balanceForISO == null) balanceForISO = new BigDecimal(0);
 
         //format the fee to the selected ISO
-        String aproxFee = CurrencyUtils.getFormattedAmount(app, selectedIso, feeForISO);
+        String formattedFee = CurrencyUtils.getFormattedAmount(app, selectedIso, feeForISO);
 //        Log.e(TAG, "updateText: aproxFee:" + aproxFee);
 
         boolean isOverTheBalance = smallestAmount.doubleValue() > balanceForISO.doubleValue();
@@ -754,7 +754,7 @@ public class FragmentSend extends Fragment {
         }
         balanceString = String.format(getString(R.string.Send_balance), formattedBalance);
         balanceText.setText(String.format("%s", balanceString));
-        feeText.setText(String.format(getString(R.string.Send_fee), aproxFee));
+        feeText.setText(String.format(getString(R.string.Send_fee), formattedFee));
         amountLayout.requestLayout();
     }
 

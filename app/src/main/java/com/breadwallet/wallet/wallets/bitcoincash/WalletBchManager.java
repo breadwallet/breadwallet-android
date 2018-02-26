@@ -614,6 +614,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public void syncStarted() {
+        super.syncStarted();
         Log.d(TAG, "syncStarted: ");
         final Context app = BreadApp.getBreadContext();
         if (Utils.isEmulatorOrDebug(app))
@@ -631,6 +632,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public void syncStopped(final String error) {
+        super.syncStopped(error);
         Log.d(TAG, "syncStopped: " + error);
         final Context app = BreadApp.getBreadContext();
         if (Utils.isNullOrEmpty(error))
@@ -668,6 +670,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public void onTxAdded(BRCoreTransaction transaction) {
+        super.onTxAdded(transaction);
         final Context ctx = BreadApp.getBreadContext();
         final WalletsMaster master = WalletsMaster.getInstance(ctx);
         final long amount = getWallet().getTransactionAmount(transaction);
@@ -716,7 +719,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public void onTxDeleted(String hash, int notifyUser, int recommendRescan) {
-
+        super.onTxDeleted(hash, notifyUser, recommendRescan);
         Log.e(TAG, "onTxDeleted: " + String.format("hash: %s, notifyUser: %d, recommendRescan: %d", hash, notifyUser, recommendRescan));
         final Context ctx = BreadApp.getBreadContext();
         if (ctx != null) {
