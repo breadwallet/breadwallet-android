@@ -287,7 +287,7 @@ public class FragmentSend extends Fragment {
                     return;
                 }
 
-                CryptoRequest obj = parseRequest(bitcoinUrl);
+                CryptoRequest obj = parseRequest(getActivity(), bitcoinUrl);
 
                 if (obj == null || obj.address == null) {
                     sayClipboardEmpty();
@@ -729,7 +729,7 @@ public class FragmentSend extends Fragment {
 
 //        Log.e(TAG, "updateText: fee:" + fee);
         //get the fee for iso (in cents, satoshis..)
-        BigDecimal feeForISO = isIsoCrypto ? wallet.getSmallestCryptoForCrypto(app, new BigDecimal(fee)) : wallet.getFiatForSmallestCrypto(app, new BigDecimal(fee));
+        BigDecimal feeForISO = isIsoCrypto ? new BigDecimal(fee) : wallet.getFiatForSmallestCrypto(app, new BigDecimal(fee));
 //        Log.e(TAG, "updateText: feeForISO:" + feeForISO);
 
         if (balanceForISO == null) balanceForISO = new BigDecimal(0);

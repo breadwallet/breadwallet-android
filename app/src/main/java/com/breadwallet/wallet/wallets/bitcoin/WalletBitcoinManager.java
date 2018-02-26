@@ -50,7 +50,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
-import com.breadwallet.wallet.abstracts.OnSyncStopped;
+import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
@@ -96,6 +96,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     private static String ISO = "BTC";
 
     private static final String mName = "Bitcoin";
+    public static final String BTC_SCHEME = "bitcoin";
+
 
     public static final long MAX_BTC = 21000000;
 
@@ -109,7 +111,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     private List<OnBalanceChangedListener> balanceListeners = new ArrayList<>();
     private List<OnTxStatusUpdatedListener> txStatusUpdatedListeners = new ArrayList<>();
-    private List<OnSyncStopped> syncStoppedListeners = new ArrayList<>();
+    private List<SyncListener> syncListeners = new ArrayList<>();
     private List<OnTxListModified> txModifiedListeners = new ArrayList<>();
 
     public static WalletBitcoinManager getInstance(Context app) {
@@ -266,6 +268,11 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
+    public String getScheme(Context app) {
+        return BTC_SCHEME;
+    }
+
+    @Override
     public String getName(Context app) {
         return mName;
     }
@@ -278,6 +285,11 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     @Override
     public BRCoreAddress getReceiveAddress(Context app) {
         return getWallet().getReceiveAddress();
+    }
+
+    @Override
+    public String decorateAddress(Context app, String addr) {
+        return addr; // no need to decorate
     }
 
     @Override
@@ -463,9 +475,9 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public void addSyncStoppedListener(OnSyncStopped list) {
-        if (list != null && !syncStoppedListeners.contains(list))
-            syncStoppedListeners.add(list);
+    public void addSyncListeners(SyncListener list) {
+        if (list != null && !syncListeners.contains(list))
+            syncListeners.add(list);
     }
 
     @Override
@@ -614,6 +626,9 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                 }
             });
 
+        for (SyncListener list : syncListeners)
+            if (list != null) list.syncStarted();
+
     }
 
     @Override
@@ -622,7 +637,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         final Context app = BreadApp.getBreadContext();
         if (Utils.isNullOrEmpty(error))
             BRSharedPrefs.putAllowSpend(app, getIso(app), true);
-        for (OnSyncStopped list : syncStoppedListeners)
+        for (SyncListener list : syncListeners)
             if (list != null) list.syncStopped(error);
         if (Utils.isEmulatorOrDebug(app))
             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {

@@ -24,7 +24,9 @@ package com.breadwallet.wallet.abstracts;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public interface OnSyncStopped {
+public interface SyncListener {
 
     void syncStopped(String err);
+
+    void syncStarted();
 }

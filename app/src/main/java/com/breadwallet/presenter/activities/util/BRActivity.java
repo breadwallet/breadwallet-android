@@ -177,7 +177,7 @@ public class BRActivity extends Activity {
                                 e.printStackTrace();
                             }
                             String result = data.getStringExtra("result");
-                            if (CryptoUriParser.isBitcoinUrl(BRActivity.this, result))
+                            if (CryptoUriParser.isCryptoUrl(BRActivity.this, result))
                                 CryptoUriParser.processRequest(BRActivity.this, result,
                                         WalletsMaster.getInstance(BRActivity.this).getCurrentWallet(BRActivity.this));
                             else if (BRBitId.isBitId(result))

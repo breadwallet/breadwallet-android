@@ -139,7 +139,6 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
     }
 
-
     private boolean updateUi(WalletItem currentWallet, double syncProgress) {
         if (mCurrentWalletSyncing == null || mCurrentWalletSyncing.walletManager == null) {
             Log.e(TAG, "run: should not happen but ok, ignore it.");
