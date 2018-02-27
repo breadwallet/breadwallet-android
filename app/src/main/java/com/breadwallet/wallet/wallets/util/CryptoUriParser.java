@@ -114,7 +114,7 @@ public class CryptoUriParser {
         if (BRCoreKey.isValidBitcoinBIP38Key(url) || BRCoreKey.isValidBitcoinPrivateKey(url))
             return true;
         else
-            Log.e(TAG, "isCryptoUrl: NO");
+            Log.e(TAG, "isCryptoUrl: not a private key");
         CryptoRequest requestObject = parseRequest(app, url);
         // return true if the request is valid url and has param: r or param: address
         // return true if it is a valid bitcoinPrivKey
