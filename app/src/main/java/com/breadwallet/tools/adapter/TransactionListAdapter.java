@@ -199,7 +199,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         String txAction;
         if (received) {
-            txAction = "received via 2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF" + item.getFrom()[0];
+            txAction = "received via " + item.getFrom()[0];
             convertView.transactionAmount.setTextColor(mContext.getResources().getColor(R.color.transaction_amount_received_color, null));
             Log.d(TAG, "Address FROM -> " + item.getFrom()[0]);
             Log.d(TAG, "Address array -> " + Arrays.toString(item.getFrom()));
@@ -207,7 +207,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         } else {
 
-            txAction = "sent to 2N8hwP1WmJrFF5QWABn38y63uYLhnJYJYTF" + item.getTo()[0];
+            txAction = "sent to " + item.getTo()[0];
             Log.d(TAG, "Address TO -> " + item.getTo()[0]);
             Log.d(TAG, "Address array -> " + Arrays.toString(item.getFrom()));
 

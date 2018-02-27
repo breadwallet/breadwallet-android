@@ -113,8 +113,9 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             byte[] rawPubKey = BRKeyStore.getMasterPublicKey(app);
             if (Utils.isNullOrEmpty(rawPubKey)) return null;
             BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
+            long time = 1519169865;
             //long time = BRKeyStore.getWalletCreationTime(app);
-            long time = 1517955529;
+            //long time = 1517955529;
             //long time = 1519021629;
             //long time = System.currentTimeMillis();
 
