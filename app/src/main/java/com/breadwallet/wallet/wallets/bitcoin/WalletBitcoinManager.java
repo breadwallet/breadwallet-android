@@ -346,7 +346,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         if (Utils.isNullOrEmpty(address.stringify())) {
             Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
         }
-        BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso(app));
+        BRSharedPrefs.putReceiveAddress(app, decorateAddress(app, address.stringify()), getIso(app));
 
     }
 
@@ -616,7 +616,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         BRCorePeer arr[] = new BRCorePeer[peers.size()];
         for (int i = 0; i < peers.size(); i++) {
             BRPeerEntity ent = peers.get(i);
-            arr[i] = new BRCorePeer(ent.getAddress(), ent.getPort(), ent.getTimeStamp());
+            arr[i] = new BRCorePeer(ent.getAddress(), TypesConverter.bytesToInt(ent.getPort()), TypesConverter.byteArray2long(ent.getTimeStamp()));
         }
         return arr;
     }
