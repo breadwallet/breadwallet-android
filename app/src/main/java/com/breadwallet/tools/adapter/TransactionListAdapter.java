@@ -169,7 +169,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     private void setTexts(final TxHolder convertView, int position) {
         BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
-        TxUiHolder item = itemFeed.get(TxManager.getInstance().currentPrompt == null ? position : position - 1);
+        TxUiHolder item = itemFeed.get(position);
         item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
         //String commentString = (item.metaData == null || item.metaData.comment == null) ? "" : item.metaData.comment;
         //convertView.comment.setText(commentString);

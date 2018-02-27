@@ -38,6 +38,7 @@ import com.breadwallet.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.presenter.fragments.FragmentSupport;
 import com.breadwallet.presenter.fragments.FragmentTransactionDetails;
+import com.breadwallet.presenter.fragments.FragmentTxDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.BRExecutor;
@@ -230,6 +231,22 @@ public class BRAnimator {
                 .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                 .add(android.R.id.content, fragmentTransactionDetails, FragmentTransactionDetails.class.getName())
                 .addToBackStack(FragmentTransactionDetails.class.getName()).commit();
+
+    }
+
+    public static void showTransactionDetails(Activity app, TxUiHolder item, int position){
+
+        FragmentTxDetails txDetails = (FragmentTxDetails) app.getFragmentManager().findFragmentByTag(FragmentTxDetails.class.getName());
+
+        if(txDetails != null && txDetails.isAdded()){
+            Log.e(TAG, "showTransactionDetails: Already showing");
+
+            return;
+        }
+
+        txDetails = new FragmentTxDetails();
+        txDetails.setTransaction(item);
+        txDetails.show(app.getFragmentManager(), "txDetails");
 
     }
 
