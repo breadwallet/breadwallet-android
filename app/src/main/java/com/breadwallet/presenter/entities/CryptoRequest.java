@@ -37,7 +37,7 @@ import java.math.BigDecimal;
 
 public class CryptoRequest {
     public static final String TAG = CryptoRequest.class.getName();
-    public String iso;
+    public String iso = "BTC"; //make it default
     public String address;
     public String r;
     public BigDecimal amount;
