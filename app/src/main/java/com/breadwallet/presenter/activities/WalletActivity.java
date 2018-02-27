@@ -56,7 +56,7 @@ import java.math.BigDecimal;
  * (BTC, BCH, ETH)
  */
 
-public class WalletActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, OnTxListModified {
+public class WalletActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, OnTxListModified, SyncManager.OnProgressUpdate {
     private static final String TAG = WalletActivity.class.getName();
     BRText mCurrencyTitle;
     BRText mCurrencyPriceUsd;
@@ -373,41 +373,12 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             @Override
             public void syncStarted() {
-                SyncManager.getInstance().startSyncing(WalletActivity.this, wallet, new SyncManager.OnProgressUpdate() {
-                    @Override
-                    public boolean onProgressUpdated(double progress) {
-                        if (progress == 1) {
-                            mProgressBar.setVisibility(View.GONE);
-                            mProgressLabel.setVisibility(View.GONE);
-                            mBalanceLabel.setVisibility(View.VISIBLE);
-                            return false;
-                        }
-                        mProgressBar.setVisibility(View.VISIBLE);
-                        mProgressLabel.setVisibility(View.VISIBLE);
-                        mBalanceLabel.setVisibility(View.INVISIBLE);
-                        return true;
-                    }
-                });
+                SyncManager.getInstance().startSyncing(WalletActivity.this, wallet, WalletActivity.this);
             }
         });
 
         //todo stop syncing the other one (even tho it sounds stupid)
-        SyncManager.getInstance().startSyncing(this, wallet, new SyncManager.OnProgressUpdate() {
-            @Override
-            public boolean onProgressUpdated(double progress) {
-                mProgressBar.setProgress((int) (progress * 100));
-                if (progress == 1) {
-                    mProgressBar.setVisibility(View.GONE);
-                    mProgressLabel.setVisibility(View.GONE);
-                    mBalanceLabel.setVisibility(View.VISIBLE);
-                    return false;
-                }
-                mProgressBar.setVisibility(View.VISIBLE);
-                mProgressLabel.setVisibility(View.VISIBLE);
-                mBalanceLabel.setVisibility(View.INVISIBLE);
-                return true;
-            }
-        });
+        SyncManager.getInstance().startSyncing(this, wallet, this);
 
         handleUrlClickIfNeeded(getIntent());
 
@@ -429,17 +400,17 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 if (barFlipper.getDisplayedChild() == 2)
                     barFlipper.setDisplayedChild(0);
             }
+            final BaseWalletManager wm = WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this);
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    final double progress = WalletsMaster.getInstance(WalletActivity.this)
-                            .getCurrentWallet(WalletActivity.this).getPeerManager()
+                    final double progress = wm.getPeerManager()
                             .getSyncProgress(BRSharedPrefs.getStartHeight(WalletActivity.this,
                                     BRSharedPrefs.getCurrentWalletIso(WalletActivity.this)));
 //                    Log.e(TAG, "run: " + progress);
-//                    if (progress < 1 && progress > 0) {
-//                        SyncManager.getInstance().startSyncingProgressThread();
-//                    }
+                    if (progress < 1 && progress > 0) {
+                        SyncManager.getInstance().startSyncing(WalletActivity.this, wm, WalletActivity.this);
+                    }
                 }
             });
 
@@ -459,5 +430,20 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             }
         });
 
+    }
+
+    @Override
+    public boolean onProgressUpdated(double progress) {
+        mProgressBar.setProgress((int) (progress * 100));
+        if (progress == 1) {
+            mProgressBar.setVisibility(View.GONE);
+            mProgressLabel.setVisibility(View.GONE);
+            mBalanceLabel.setVisibility(View.VISIBLE);
+            return false;
+        }
+        mProgressBar.setVisibility(View.VISIBLE);
+        mProgressLabel.setVisibility(View.VISIBLE);
+        mBalanceLabel.setVisibility(View.INVISIBLE);
+        return true;
     }
 }
