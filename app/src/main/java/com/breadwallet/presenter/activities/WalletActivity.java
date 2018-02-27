@@ -170,6 +170,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                onBackPressed();
                 finish();
             }
         });
@@ -418,6 +419,16 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             if (barFlipper != null)
                 barFlipper.setDisplayedChild(2);
 //            SyncManager.getInstance().stopSyncingProgressThread();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, HomeActivity.class);
+        startActivity(intent);
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
+        if (!isDestroyed()) {
+            finish();
         }
     }
 
