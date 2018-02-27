@@ -357,7 +357,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         if (Utils.isNullOrEmpty(address.stringify())) {
             Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
         }
-        BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso(app));
+        BRSharedPrefs.putReceiveAddress(app, decorateAddress(app, address.stringify()), getIso(app));
 
     }
 
@@ -620,13 +620,13 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BRCorePeer[] loadPeers() {
-        Context app = BreadApp.getBreadContext();
+        Context app = BreadApp.getBreadContext(); //todo fix broken implementation
         List<BRPeerEntity> peers = PeerDataSource.getInstance(app).getAllPeers(app, this);
         if (peers == null || peers.size() == 0) return new BRCorePeer[0];
         BRCorePeer arr[] = new BRCorePeer[peers.size()];
         for (int i = 0; i < peers.size(); i++) {
             BRPeerEntity ent = peers.get(i);
-            arr[i] = new BRCorePeer(ent.getAddress(), ent.getPort(), ent.getTimeStamp());
+            arr[i] = new BRCorePeer(ent.getAddress(), TypesConverter.bytesToInt(ent.getPort()), TypesConverter.byteArray2long(ent.getTimeStamp()));
         }
         return arr;
     }
