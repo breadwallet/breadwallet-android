@@ -4,6 +4,7 @@ import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -17,6 +18,7 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
@@ -31,6 +33,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
 //import com.breadwallet.tools.manager.SyncManager;
+import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -39,6 +42,8 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
+import com.breadwallet.wallet.abstracts.SyncListener;
+import com.breadwallet.wallet.wallets.util.CryptoUriParser;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
@@ -63,6 +68,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     BRButton mReceiveButton;
     BRButton mBuyButton;
     BRText mBalanceLabel;
+    BRText mProgressLabel;
+    ProgressBar mProgressBar;
 
     public ViewFlipper barFlipper;
     private BRSearchBar searchBar;
@@ -101,6 +108,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         toolBarConstraintLayout = findViewById(R.id.bread_toolbar);
         mSwap = findViewById(R.id.swap);
         mBalanceLabel = findViewById(R.id.balance_label);
+        mProgressLabel = findViewById(R.id.syncing_label);
+        mProgressBar = findViewById(R.id.sync_progress);
 
         setUpBarFlipper();
 
@@ -187,26 +196,25 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             }
         });
 
-//        t1Size = 28;
-//        t2Size = 14;
-
-//        mDefaultTextPrimary = mBalancePrimary.getText().toString();
-//        mDefaultTextSecondary = mBalanceSecondary.getText().toString();
-
         TxManager.getInstance().init(this);
 
-//        // Store the default wallet as BTC in SharedPreferences when the user is first taken to their wallet
-//        if (BRSharedPrefs.getCurrentWalletIso(this).isEmpty() || BRSharedPrefs.getCurrentWalletIso(this) == null) {
-//            BRSharedPrefs.putCurrentWalletIso(WalletActivity.this, "BTC");
-//        }
+    }
 
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        //since we have one instance of activity at all times, this is needed to know when a new intent called upon this activity
+        handleUrlClickIfNeeded(intent);
+    }
 
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                wallet.connectWallet(WalletActivity.this);
-            }
-        });
+    private void handleUrlClickIfNeeded(Intent intent) {
+        String action = intent.getAction();
+        Uri data = intent.getData();
+        if (data != null && !data.toString().isEmpty()) {
+            //handle external click with crypto scheme
+            CryptoUriParser.processRequest(this, data.toString(), WalletsMaster.getInstance(this).getCurrentWallet(this));
+
+        }
     }
 
     private void updateUi() {
@@ -349,6 +357,58 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             }
         });
+
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                wallet.connectWallet(WalletActivity.this);
+            }
+        });
+
+        wallet.addSyncListeners(new SyncListener() {
+            @Override
+            public void syncStopped(String err) {
+
+            }
+
+            @Override
+            public void syncStarted() {
+                SyncManager.getInstance().startSyncing(WalletActivity.this, wallet, new SyncManager.OnProgressUpdate() {
+                    @Override
+                    public boolean onProgressUpdated(double progress) {
+                        if (progress == 1) {
+                            mProgressBar.setVisibility(View.GONE);
+                            mProgressLabel.setVisibility(View.GONE);
+                            mBalanceLabel.setVisibility(View.VISIBLE);
+                            return false;
+                        }
+                        mProgressBar.setVisibility(View.VISIBLE);
+                        mProgressLabel.setVisibility(View.VISIBLE);
+                        mBalanceLabel.setVisibility(View.INVISIBLE);
+                        return true;
+                    }
+                });
+            }
+        });
+
+        //todo stop syncing the other one (even tho it sounds stupid)
+        SyncManager.getInstance().startSyncing(this, wallet, new SyncManager.OnProgressUpdate() {
+            @Override
+            public boolean onProgressUpdated(double progress) {
+                if (progress == 1) {
+                    mProgressBar.setVisibility(View.GONE);
+                    mProgressLabel.setVisibility(View.GONE);
+                    mBalanceLabel.setVisibility(View.VISIBLE);
+                    return false;
+                }
+                mProgressBar.setVisibility(View.VISIBLE);
+                mProgressLabel.setVisibility(View.VISIBLE);
+                mBalanceLabel.setVisibility(View.INVISIBLE);
+                return true;
+            }
+        });
+
+        handleUrlClickIfNeeded(getIntent());
 
     }
 

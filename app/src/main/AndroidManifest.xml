@@ -75,6 +75,8 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
 
                 <data android:scheme="bitcoin"/>
+                <data android:scheme="bitcoincash"/>
+                <data android:scheme="bchtest"/>
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH"/>
@@ -87,7 +89,6 @@
         <activity
             android:name=".presenter.activities.SetPinActivity"
             android:launchMode="singleTask"
-
             android:screenOrientation="portrait"/>
 
         <activity

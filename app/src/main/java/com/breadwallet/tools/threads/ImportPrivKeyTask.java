@@ -20,6 +20,7 @@ import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreTransactionInput;
 import com.breadwallet.core.BRCoreTransactionOutput;
+import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.tools.animation.BRDialog;
@@ -88,6 +89,9 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             Log.e(TAG, "ImportPrivKeyTask:doInBackground: failed: " + iso + "|" + app);
             return null;
         }
+
+        BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+
         BRCoreKey coreKey = new BRCoreKey();
         coreKey.setPrivKey(key);
         String tmpAddress = coreKey.address();
@@ -98,15 +102,17 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             return null;
         }
 
-        if (!iso.equalsIgnoreCase("BTC") && iso.equalsIgnoreCase("BCH")) {
+        if (!iso.equalsIgnoreCase("BTC") && !iso.equalsIgnoreCase("BCH")) {
             String err = "doInBackground: Can't happen, uknown iso: " + iso;
             BRReportsManager.reportBug(new NullPointerException(err));
             Log.e(TAG, err);
             return null;
         }
 
+        String decoratedAddress = wm.decorateAddress(app, tmpAddress);
+
         //automatically uses testnet if x-testnet is true
-        String fullUrl = String.format("https://%s/q/addr/%s/utxo?currency=%s", BreadApp.HOST, tmpAddress, iso);
+        String fullUrl = String.format("https://%s/q/addr/%s/utxo?currency=%s", BreadApp.HOST, decoratedAddress, iso);
         mTransaction = createSweepingTx(app, fullUrl);
         if (mTransaction == null) {
             app.runOnUiThread(new Runnable() {
@@ -224,6 +230,8 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                 BRCoreTransactionInput in = new BRCoreTransactionInput(txid, vout, amount, scriptPubKey, new byte[]{}, -1);
                 transaction.addInput(in);
             }
+
+            if (totalAmount <= 0) return null;
 
             BRCoreAddress address = walletManager.getReceiveAddress(app);
 

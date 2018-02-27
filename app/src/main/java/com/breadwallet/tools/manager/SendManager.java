@@ -7,7 +7,7 @@ import android.util.Log;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.entities.PaymentItem;
+import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
@@ -62,7 +62,7 @@ public class SendManager {
     private static boolean sending;
     private final static long FEE_EXPIRATION_MILLIS = 72 * 60 * 60 * 1000L;
 
-    public static boolean sendTransaction(final Context app, final PaymentItem payment, final BaseWalletManager walletManager) {
+    public static boolean sendTransaction(final Context app, final CryptoRequest payment, final BaseWalletManager walletManager) {
         //array in order to be able to modify the first element from an inner block (can't be final)
         final String[] errTitle = {null};
         final String[] errMessage = {null};
@@ -189,7 +189,7 @@ public class SendManager {
      * Try transaction and throw appropriate exceptions if something was wrong
      * BLOCKS
      */
-    private static void tryPay(final Context app, final PaymentItem paymentRequest, final BaseWalletManager walletManager) throws InsufficientFundsException,
+    private static void tryPay(final Context app, final CryptoRequest paymentRequest, final BaseWalletManager walletManager) throws InsufficientFundsException,
             AmountSmallerThanMinException, SpendingNotAllowed, FeeNeedsAdjust, SomethingWentWrong {
         if (paymentRequest == null || paymentRequest.tx == null) {
             Log.e(TAG, "tryPay: ERROR: paymentRequest: " + paymentRequest);
@@ -262,7 +262,7 @@ public class SendManager {
 
     }
 
-    private static void showAdjustFee(final Activity app, PaymentItem item, BaseWalletManager walletManager) {
+    private static void showAdjustFee(final Activity app, CryptoRequest item, BaseWalletManager walletManager) {
         WalletsMaster m = WalletsMaster.getInstance(app);
         long maxAmountDouble = walletManager.getWallet().getMaxOutputAmount();
         if (maxAmountDouble == -1) {
@@ -297,7 +297,7 @@ public class SendManager {
     }
 
 
-    private static void confirmPay(final Context ctx, final PaymentItem request, final BaseWalletManager walletManager) {
+    private static void confirmPay(final Context ctx, final CryptoRequest request, final BaseWalletManager walletManager) {
         if (ctx == null) {
             Log.e(TAG, "confirmPay: context is null");
             return;
@@ -373,7 +373,7 @@ public class SendManager {
     }
 
 
-    private static String createConfirmation(Context ctx, PaymentItem request, final BaseWalletManager walletManager) {
+    private static String createConfirmation(Context ctx, CryptoRequest request, final BaseWalletManager walletManager) {
 
         String receiver;
         boolean certified = false;

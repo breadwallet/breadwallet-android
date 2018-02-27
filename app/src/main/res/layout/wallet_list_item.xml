@@ -43,7 +43,7 @@
         app:customTFont="CircularPro-Book.otf" />
 
     <com.breadwallet.presenter.customviews.BRText
-        android:id="@+id/syncing"
+        android:id="@+id/syncing_label"
         android:text="Syncing"
         android:textColor="#88ffffff"
         android:layout_below="@id/wallet_balance_usd"
