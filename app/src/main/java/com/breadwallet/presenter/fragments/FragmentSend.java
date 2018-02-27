@@ -35,8 +35,7 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
 import com.breadwallet.presenter.customviews.BRText;
-import com.breadwallet.presenter.entities.PaymentItem;
-import com.breadwallet.presenter.entities.RequestObject;
+import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SlideDetector;
@@ -46,7 +45,6 @@ import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.util.CryptoUriParser;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
@@ -119,6 +117,7 @@ public class FragmentSend extends Fragment {
     private static String savedIso;
     private static String savedAmount;
 
+    private CryptoRequest mCryptoRequest;
     private boolean ignoreCleanup;
 
     @Override
@@ -278,25 +277,28 @@ public class FragmentSend extends Fragment {
             }
         });
 
-//        commentEdit.addTextChangedListener(new BRTextWatcher());
-//        addressEdit.addTextChangedListener(new BRTextWatcher());
-
         paste.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 String bitcoinUrl = BRClipboardManager.getClipboard(getActivity());
                 if (Utils.isNullOrEmpty(bitcoinUrl) || !isInputValid(bitcoinUrl)) {
-                    showClipboardError();
+                    sayClipboardEmpty();
                     return;
                 }
 
-                RequestObject obj = parseRequest(bitcoinUrl);
+                CryptoRequest obj = parseRequest(getActivity(), bitcoinUrl);
 
                 if (obj == null || obj.address == null) {
-                    showClipboardError();
+                    sayClipboardEmpty();
                     return;
                 }
+
+                if (obj.iso != null && !obj.iso.equalsIgnoreCase(WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).getIso(getActivity()))) {
+                    sayInvalidClipboardData(); //invalid if the screen is Bitcoin and scanning BitcoinCash for instance
+                    return;
+                }
+
                 final BRCoreAddress address = new BRCoreAddress(obj.address);
                 final WalletsMaster wm = WalletsMaster.getInstance(getActivity());
 
@@ -356,7 +358,7 @@ public class FragmentSend extends Fragment {
                     });
 
                 } else {
-                    showClipboardError();
+                    sayInvalidClipboardData();
                 }
 
             }
@@ -408,7 +410,7 @@ public class FragmentSend extends Fragment {
                 //is the chosen ISO a crypto (could be a fiat currency)
                 boolean isIsoCrypto = master.isIsoCrypto(getActivity(), selectedIso);
 
-                BigDecimal cryptoAmount = isIsoCrypto ? wallet.getSmallestCryptoForCrypto(getActivity(), rawAmount) : wallet.getSmallestCryptoForFiat(getActivity(), rawAmount);
+                BigDecimal cryptoAmount = isIsoCrypto ? wallet.getSmallestCryptoForCrypto(getActivity(), rawAmount) : wallet.getSmallestCryptoForFiat(getActivity(), rawAmount.multiply(new BigDecimal(100))); //get cents out of dollars
                 BRCoreAddress address = new BRCoreAddress(addressString);
                 Activity app = getActivity();
                 if (address.stringify().isEmpty() || !address.isValid()) {
@@ -445,7 +447,7 @@ public class FragmentSend extends Fragment {
                 }
 
                 if (allFilled) {
-                    PaymentItem item = new PaymentItem(tx, null, false, comment);
+                    CryptoRequest item = new CryptoRequest(tx, null, false, comment, addressString, cryptoAmount);
                     SendManager.sendTransaction(getActivity(), item, wallet);
                 }
             }
@@ -524,8 +526,18 @@ public class FragmentSend extends Fragment {
         }
     }
 
-    private void showClipboardError() {
+    private void sayClipboardEmpty() {
         BRDialog.showCustomDialog(getActivity(), getString(R.string.Send_emptyPasteboard), getResources().getString(R.string.Send_invalidAddressTitle), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+            @Override
+            public void onClick(BRDialogView brDialogView) {
+                brDialogView.dismiss();
+            }
+        }, null, null, 0);
+        BRClipboardManager.putClipboard(getActivity(), "");
+    }
+
+    private void sayInvalidClipboardData() {
+        BRDialog.showCustomDialog(getActivity(), getString(R.string.Send_invalidAddressMessage), getResources().getString(R.string.Send_invalidAddressTitle), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {
                 brDialogView.dismiss();
@@ -542,14 +554,27 @@ public class FragmentSend extends Fragment {
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                observer.removeGlobalOnLayoutListener(this);
+                if (observer.isAlive())
+                    observer.removeOnGlobalLayoutListener(this);
                 BRAnimator.animateBackgroundDim(backgroundLayout, false);
                 BRAnimator.animateSignalSlide(signalLayout, false, new BRAnimator.OnSlideAnimationEnd() {
                     @Override
                     public void onAnimationEnd() {
-                        Bundle bundle = getArguments();
-                        if (bundle != null && bundle.getString("url") != null)
-                            setUrl(bundle.getString("url"));
+                        if (mCryptoRequest == null) return;
+
+                        WalletsMaster master = WalletsMaster.getInstance(getActivity());
+                        if (mCryptoRequest.address != null && addressEdit != null) {
+                            addressEdit.setText(mCryptoRequest.address.trim());
+                        }
+                        if (mCryptoRequest.message != null && commentEdit != null) {
+                            commentEdit.setText(mCryptoRequest.message);
+                        }
+                        if (mCryptoRequest.amount != null) {
+                            BigDecimal satoshiAmount = mCryptoRequest.amount.multiply(new BigDecimal(100000000));
+                            amountBuilder = new StringBuilder(master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), satoshiAmount).toPlainString());
+                            updateText();
+                        }
+                        mCryptoRequest = null; //consumed
                     }
                 });
             }
@@ -704,13 +729,13 @@ public class FragmentSend extends Fragment {
 
 //        Log.e(TAG, "updateText: fee:" + fee);
         //get the fee for iso (in cents, satoshis..)
-        BigDecimal feeForISO = isIsoCrypto ? wallet.getSmallestCryptoForCrypto(app, new BigDecimal(fee)) : wallet.getFiatForSmallestCrypto(app, new BigDecimal(fee));
+        BigDecimal feeForISO = isIsoCrypto ? new BigDecimal(fee) : wallet.getFiatForSmallestCrypto(app, new BigDecimal(fee));
 //        Log.e(TAG, "updateText: feeForISO:" + feeForISO);
 
         if (balanceForISO == null) balanceForISO = new BigDecimal(0);
 
         //format the fee to the selected ISO
-        String aproxFee = CurrencyUtils.getFormattedAmount(app, selectedIso, feeForISO);
+        String formattedFee = CurrencyUtils.getFormattedAmount(app, selectedIso, feeForISO);
 //        Log.e(TAG, "updateText: aproxFee:" + aproxFee);
 
         boolean isOverTheBalance = smallestAmount.doubleValue() > balanceForISO.doubleValue();
@@ -729,26 +754,12 @@ public class FragmentSend extends Fragment {
         }
         balanceString = String.format(getString(R.string.Send_balance), formattedBalance);
         balanceText.setText(String.format("%s", balanceString));
-        feeText.setText(String.format(getString(R.string.Send_fee), aproxFee));
+        feeText.setText(String.format(getString(R.string.Send_fee), formattedFee));
         amountLayout.requestLayout();
     }
 
-    public void setUrl(String url) {
-        RequestObject obj = CryptoUriParser.parseRequest(url);
-        WalletsMaster master = WalletsMaster.getInstance(getActivity());
-        if (obj == null) return;
-        if (obj.address != null && addressEdit != null) {
-            addressEdit.setText(obj.address.trim());
-        }
-        if (obj.message != null && commentEdit != null) {
-            commentEdit.setText(obj.message);
-        }
-        if (obj.amount != null) {
-            BigDecimal satoshiAmount = new BigDecimal(obj.amount).multiply(new BigDecimal(100000000));
-            amountBuilder = new StringBuilder(master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), satoshiAmount).toPlainString());
-            updateText();
-
-        }
+    public void setCryptoObject(CryptoRequest obj) {
+        mCryptoRequest = obj;
     }
 
     private void showFeeSelectionButtons(boolean b) {

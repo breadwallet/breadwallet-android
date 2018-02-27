@@ -52,7 +52,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
-import com.breadwallet.wallet.abstracts.OnSyncStopped;
+import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
@@ -100,6 +100,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     private static String ISO = "BTC";
 
     private static final String mName = "Bitcoin";
+    public static final String BTC_SCHEME = "bitcoin";
+
 
     public static final long MAX_BTC = 21000000;
 
@@ -113,7 +115,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     private List<OnBalanceChangedListener> balanceListeners = new ArrayList<>();
     private List<OnTxStatusUpdatedListener> txStatusUpdatedListeners = new ArrayList<>();
-    private List<OnSyncStopped> syncStoppedListeners = new ArrayList<>();
+    private List<SyncListener> syncListeners = new ArrayList<>();
     private List<OnTxListModified> txModifiedListeners = new ArrayList<>();
 
     private Executor listenerExecutor = Executors.newSingleThreadExecutor();
@@ -124,7 +126,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             if (Utils.isNullOrEmpty(rawPubKey)) return null;
             BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
             long time = BRKeyStore.getWalletCreationTime(app);
-            if (Utils.isEmulatorOrDebug(app)) time = 1517955529;
+//            if (Utils.isEmulatorOrDebug(app)) time = 1517955529;
 
             instance = new WalletBitcoinManager(app, pubKey, BuildConfig.BITCOIN_TESTNET ? BRCoreChainParams.testnetChainParams : BRCoreChainParams.mainnetChainParams, time);
         }
@@ -286,6 +288,11 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
+    public String getScheme(Context app) {
+        return BTC_SCHEME;
+    }
+
+    @Override
     public String getName(Context app) {
         return mName;
     }
@@ -298,6 +305,11 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     @Override
     public BRCoreAddress getReceiveAddress(Context app) {
         return getWallet().getReceiveAddress();
+    }
+
+    @Override
+    public String decorateAddress(Context app, String addr) {
+        return addr; // no need to decorate
     }
 
     @Override
@@ -483,9 +495,9 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public void addSyncStoppedListener(OnSyncStopped list) {
-        if (list != null && !syncStoppedListeners.contains(list))
-            syncStoppedListeners.add(list);
+    public void addSyncListeners(SyncListener list) {
+        if (list != null && !syncListeners.contains(list))
+            syncListeners.add(list);
     }
 
     @Override
@@ -624,6 +636,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     @Override
     public void syncStarted() {
+        super.syncStarted();
         Log.d(TAG, "syncStarted: ");
         final Context app = BreadApp.getBreadContext();
         if (Utils.isEmulatorOrDebug(app))
@@ -634,15 +647,19 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                 }
             });
 
+        for (SyncListener list : syncListeners)
+            if (list != null) list.syncStarted();
+
     }
 
     @Override
     public void syncStopped(final String error) {
+        super.syncStopped(error);
         Log.d(TAG, "syncStopped: " + error);
         final Context app = BreadApp.getBreadContext();
         if (Utils.isNullOrEmpty(error))
             BRSharedPrefs.putAllowSpend(app, getIso(app), true);
-        for (OnSyncStopped list : syncStoppedListeners)
+        for (SyncListener list : syncListeners)
             if (list != null) list.syncStopped(error);
         if (Utils.isEmulatorOrDebug(app))
             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
@@ -651,6 +668,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                     Toast.makeText(app, "SyncStopped " + getIso(app) + " err(" + error + ") ", Toast.LENGTH_LONG).show();
                 }
             });
+
+        Log.e(TAG, "syncStopped: peerManager:" + getPeerManager().toString());
 
         if (!Utils.isNullOrEmpty(error)) {
             if (mSyncRetryCount < SYNC_MAX_RETRY) {
@@ -681,6 +700,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     @Override
     public void onTxAdded(BRCoreTransaction transaction) {
+        super.onTxAdded(transaction);
         final Context ctx = BreadApp.getBreadContext();
         final WalletsMaster master = WalletsMaster.getInstance(ctx);
         final long amount = getWallet().getTransactionAmount(transaction);
@@ -730,7 +750,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     @Override
     public void onTxDeleted(final String hash, int notifyUser, int recommendRescan) {
-
+        super.onTxDeleted(hash, notifyUser, recommendRescan);
         Log.e(TAG, "onTxDeleted: " + String.format("hash: %s, notifyUser: %d, recommendRescan: %d", hash, notifyUser, recommendRescan));
         final Context ctx = BreadApp.getBreadContext();
         if (ctx != null) {

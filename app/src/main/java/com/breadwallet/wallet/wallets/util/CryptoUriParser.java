@@ -5,15 +5,16 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.entities.PaymentItem;
-import com.breadwallet.presenter.entities.RequestObject;
+import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.SendManager;
@@ -23,12 +24,9 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,19 +69,7 @@ public class CryptoUriParser {
 
         if (ImportPrivKeyTask.trySweepWallet(app, url, walletManager)) return true;
 
-        Map<String, String> attr = new HashMap<>();
-        URI uri = null;
-        try {
-            uri = new URI(url);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-        attr.put("scheme", uri == null ? "null" : uri.getScheme());
-        attr.put("host", uri == null ? "null" : uri.getHost());
-        attr.put("path", uri == null ? "null" : uri.getPath());
-        BREventManager.getInstance().pushEvent("send.handleURL", attr);
-
-        RequestObject requestObject = parseRequest(url);
+        CryptoRequest requestObject = parseRequest(app, url);
 
         if (requestObject == null) {
             if (app != null) {
@@ -100,7 +86,7 @@ public class CryptoUriParser {
         if (requestObject.r != null) {
             return tryPaymentRequest(requestObject);
         } else if (requestObject.address != null) {
-            return tryBitcoinURL(url, app);
+            return tryCryptoUrl(requestObject, app);
         } else {
             if (app != null) {
                 BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
@@ -115,38 +101,53 @@ public class CryptoUriParser {
         }
     }
 
-    public static boolean isBitcoinUrl(Context app, String url) {
+    private static void pushUrlEvent(Uri u) {
+        Map<String, String> attr = new HashMap<>();
+        attr.put("scheme", u == null ? "null" : u.getScheme());
+        attr.put("host", u == null ? "null" : u.getHost());
+        attr.put("path", u == null ? "null" : u.getPath());
+        BREventManager.getInstance().pushEvent("send.handleURL", attr);
+    }
+
+    public static boolean isCryptoUrl(Context app, String url) {
         if (Utils.isNullOrEmpty(url)) return false;
         if (BRCoreKey.isValidBitcoinBIP38Key(url) || BRCoreKey.isValidBitcoinPrivateKey(url))
             return true;
-        RequestObject requestObject = parseRequest(url);
+        else
+            Log.e(TAG, "isCryptoUrl: NO");
+        CryptoRequest requestObject = parseRequest(app, url);
         // return true if the request is valid url and has param: r or param: address
         // return true if it is a valid bitcoinPrivKey
-        return (requestObject != null && (requestObject.r != null || requestObject.address != null));
+        return (requestObject != null && (requestObject.isPaymentProtocol() || requestObject.hasAddress()));
     }
 
 
-    public static RequestObject parseRequest(String str) {
+    public static CryptoRequest parseRequest(Context app, String str) {
         if (str == null || str.isEmpty()) return null;
-        RequestObject obj = new RequestObject();
+        CryptoRequest obj = new CryptoRequest();
 
         String tmp = str.trim().replaceAll("\n", "").replaceAll(" ", "%20");
 
-        if (!tmp.startsWith("bitcoin://")) {
-            if (!tmp.startsWith("bitcoin:"))
-                tmp = "bitcoin://".concat(tmp);
-            else
-                tmp = tmp.replace("bitcoin:", "bitcoin://");
-        }
-        URI uri;
-        try {
-            uri = URI.create(tmp);
-        } catch (IllegalArgumentException ex) {
-            Log.e(TAG, "parseRequest: ", ex);
-            return null;
+        Uri u = Uri.parse(tmp);
+        String scheme = u.getScheme();
+        BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+
+        if (scheme == null) {
+            scheme = wm.getScheme(app);
+            obj.iso = wm.getIso(app);
         }
 
-        String host = uri.getHost();
+        String schemeSpecific = u.getSchemeSpecificPart();
+        if (schemeSpecific.startsWith("//")) {
+            // Fix invalid bitcoin uri
+            schemeSpecific = schemeSpecific.substring(2);
+        }
+
+        u = Uri.parse(scheme + "://" + schemeSpecific);
+
+        pushUrlEvent(u);
+
+        String host = u.getHost();
         if (host != null) {
             String addrs = host.trim();
 
@@ -154,7 +155,7 @@ public class CryptoUriParser {
                 obj.address = addrs;
             }
         }
-        String query = uri.getQuery();
+        String query = u.getQuery();
         if (query == null) return obj;
         String[] params = query.split("&");
         for (String s : params) {
@@ -164,7 +165,7 @@ public class CryptoUriParser {
             if (keyValue[0].trim().equals("amount")) {
                 try {
                     BigDecimal bigDecimal = new BigDecimal(keyValue[1].trim());
-                    obj.amount = bigDecimal.multiply(new BigDecimal("100000000")).toString();
+                    obj.amount = bigDecimal.multiply(new BigDecimal("100000000"));
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
@@ -181,7 +182,7 @@ public class CryptoUriParser {
         return obj;
     }
 
-    private static boolean tryPaymentRequest(RequestObject requestObject) {
+    private static boolean tryPaymentRequest(CryptoRequest requestObject) {
         String theURL = null;
         String url = requestObject.r;
         synchronized (lockObject) {
@@ -196,32 +197,51 @@ public class CryptoUriParser {
         return true;
     }
 
-    private static boolean tryBitcoinURL(final String url, final Context ctx) {
+    private static boolean tryCryptoUrl(final CryptoRequest requestObject, final Context ctx) {
         final Activity app;
         if (ctx instanceof Activity) {
             app = (Activity) ctx;
         } else {
-            Log.e(TAG, "tryBitcoinURL: " + "app isn't activity: " + ctx.getClass().getSimpleName());
+            Log.e(TAG, "tryCryptoUrl: " + "app isn't activity: " + ctx.getClass().getSimpleName());
             BRReportsManager.reportBug(new NullPointerException("app isn't activity: " + ctx.getClass().getSimpleName()));
             return false;
         }
-        RequestObject requestObject = parseRequest(url);
         if (requestObject == null || requestObject.address == null || requestObject.address.isEmpty())
             return false;
         BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
-        String amount = requestObject.amount;
+        if (requestObject.iso != null && !requestObject.iso.equalsIgnoreCase(wallet.getIso(ctx))) {
 
-        if (amount == null || amount.isEmpty() || new BigDecimal(amount).doubleValue() == 0) {
+            BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), "Not a valid " + wallet.getName(ctx) + " address", app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                @Override
+                public void onClick(BRDialogView brDialogView) {
+                    brDialogView.dismiss();
+                }
+            }, null, null, 0);
+            return true; //true since it's a crypto url but different iso than the currently chosen one
+        }
+//        String amount = requestObject.amount;
+
+        if (requestObject.amount == null || requestObject.amount.doubleValue() == 0) {
             app.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    BRAnimator.showSendFragment(app, url);
+                    BRAnimator.showSendFragment(app, requestObject);
                 }
             });
         } else {
             BRAnimator.killAllFragments(app);
-            BRCoreTransaction tx = wallet.getWallet().createTransaction(new BigDecimal(amount).longValue(), new BRCoreAddress(requestObject.address));
-            SendManager.sendTransaction(app, new PaymentItem(tx, null, false, null), wallet);
+            BRCoreTransaction tx = wallet.getWallet().createTransaction(requestObject.amount.longValue(), new BRCoreAddress(requestObject.address));
+            if (tx == null) {
+                BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), "Insufficient amount for transaction", app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        brDialogView.dismiss();
+                    }
+                }, null, null, 0);
+                return true;
+            }
+            requestObject.tx = tx;
+            SendManager.sendTransaction(app, requestObject, wallet);
         }
 
         return true;

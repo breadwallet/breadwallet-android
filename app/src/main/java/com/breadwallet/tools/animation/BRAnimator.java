@@ -29,6 +29,7 @@ import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.fragments.FragmentGreetings;
 import com.breadwallet.presenter.fragments.FragmentMenu;
@@ -132,22 +133,20 @@ public class BRAnimator {
         }
     }
 
-    public static void showSendFragment(Activity app, final String bitcoinUrl) {
+    public static void showSendFragment(Activity app, final CryptoRequest request) {
         if (app == null) {
             Log.e(TAG, "showSendFragment: app is null");
             return;
         }
         FragmentSend fragmentSend = (FragmentSend) app.getFragmentManager().findFragmentByTag(FragmentSend.class.getName());
         if (fragmentSend != null && fragmentSend.isAdded()) {
-            fragmentSend.setUrl(bitcoinUrl);
+            fragmentSend.setCryptoObject(request);
             return;
         }
         try {
             fragmentSend = new FragmentSend();
-            if (bitcoinUrl != null && !bitcoinUrl.isEmpty()) {
-                Bundle bundle = new Bundle();
-                bundle.putString("url", bitcoinUrl);
-                fragmentSend.setArguments(bundle);
+            if (request != null && !request.address.isEmpty()) {
+                fragmentSend.setCryptoObject(request);
             }
             app.getFragmentManager().beginTransaction()
                     .setCustomAnimations(0, 0, 0, R.animator.plain_300)
