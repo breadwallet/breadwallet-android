@@ -143,7 +143,12 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         final BaseWalletManager walletManager = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
 
         BigDecimal bigAmount = new BigDecimal(walletManager.getWallet().getTransactionAmount(mTransaction));
-        BigDecimal bigFee = new BigDecimal(walletManager.getWallet().getTransactionFee(mTransaction));
+        BigDecimal bigFee = new BigDecimal(0);
+
+        for (BRCoreTransactionInput in : mTransaction.getInputs())
+            bigFee = bigFee.add(new BigDecimal(in.getAmount()));
+        for (BRCoreTransactionOutput out : mTransaction.getOutputs())
+            bigFee = bigFee.subtract(new BigDecimal(out.getAmount()));
 
         String formattedFiatAmount = CurrencyUtils.getFormattedAmount(app, BRSharedPrefs.getPreferredFiatIso(app), walletManager.getFiatForSmallestCrypto(app, bigAmount));
 
@@ -233,7 +238,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             }
 
             if (totalAmount <= 0) return null;
-
+//
             BRCoreAddress address = walletManager.getReceiveAddress(app);
 
             BRCoreKey signingKey = new BRCoreKey(key);
@@ -243,6 +248,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             Log.e(TAG, "createSweepingTx: totalAmount: " + totalAmount);
             transaction.addOutput(new BRCoreTransactionOutput(totalAmount - fee, address.getPubKeyScript()));
             Log.e(TAG, "createSweepingTx: txAmount:" + walletManager.getWallet().getTransactionAmount(transaction));
+            Log.e(TAG, "createSweepingTx: fee:" + walletManager.getWallet().getTransactionFee(transaction));
             return transaction;
         } catch (JSONException e) {
             e.printStackTrace();
