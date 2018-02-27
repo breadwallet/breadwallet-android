@@ -4,7 +4,7 @@
     android:id="@+id/tx_details_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minWidth="360dp"
+    android:minWidth="350dp"
     app:cardCornerRadius="8dp">
 
     <RelativeLayout
@@ -26,11 +26,11 @@
 
         <ImageButton
             android:id="@+id/close_button"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="16dp"
-            android:layout_marginTop="12dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_above="@+id/tx_amount"
+            android:layout_alignEnd="@id/tx_date"
+            android:layout_marginRight="18dp"
             android:background="@drawable/ic_close_black_24dp" />
 
 
@@ -90,9 +90,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@id/divider1"
-            android:layout_marginRight="32dp"
-
             android:layout_marginTop="14dp"
+            android:paddingEnd="20dp"
             android:text="Yesterday at 12:53 PM"
             app:customTFont="CircularPro-Book.otf" />
 
@@ -124,8 +123,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@id/divider2"
-            android:layout_marginRight="16dp"
             android:layout_marginTop="14dp"
+            android:paddingEnd="20dp"
             android:text="5e5b59a69cee6fc73af7682ffd97bf0c87a6"
             android:textSize="12sp"
             app:customTFont="CircularPro-Book.otf" />
@@ -158,8 +157,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@id/divider3"
-            android:layout_marginRight="16dp"
             android:layout_marginTop="22dp"
+            android:paddingEnd="20dp"
             android:text="Sample transaction memo would go here."
             android:textSize="10sp"
             app:customTFont="CircularPro-Book.otf" />

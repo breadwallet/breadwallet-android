@@ -2,14 +2,15 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.Dialog;
 import android.app.DialogFragment;
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRText;
@@ -17,6 +18,7 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 
 import java.math.BigDecimal;
@@ -111,62 +113,78 @@ public class FragmentTxDetails extends DialogFragment {
             }
         });
 
+        updateUi();
         return rootView;
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
     }
 
     public void setTransaction(TxUiHolder item) {
 
         this.mTransaction = item;
 
-        updateUi();
     }
 
     private void updateUi() {
 
         // Set mTransction fields
-        String currentIso = BRSharedPrefs.getCurrentWalletIso(getActivity());
+        if (mTransaction != null) {
 
-        BigDecimal txAmount = new BigDecimal(mTransaction.getAmount()).abs();
+            if (!mTransaction.isValid()) {
+                mTxStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
+            }
+            String currentIso = BRSharedPrefs.getCurrentWalletIso(getActivity());
+            WalletsMaster master = WalletsMaster.getInstance(getActivity());
+            String iso = BRSharedPrefs.isCryptoPreferred(getActivity()) ? currentIso : BRSharedPrefs.getPreferredFiatIso(getContext());
 
-        boolean sent = mTransaction.getReceived() - mTransaction.getSent() < 0;
 
-        WalletsMaster master = WalletsMaster.getInstance(getActivity());
-        String iso = BRSharedPrefs.isCryptoPreferred(getActivity()) ? currentIso : BRSharedPrefs.getPreferredFiatIso(getContext());
 
-        String amountWithFee = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), txAmount));
+            BigDecimal txAmount = new BigDecimal(mTransaction.getAmount()).abs();
+            String formattedAmount = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), mTransaction.getFee() == -1 ? txAmount : txAmount.subtract(new BigDecimal(mTransaction.getFee()))));
 
-        String startingBalance = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(sent ? mTransaction.getBalanceAfterTx() + txAmount.longValue() : mTransaction.getBalanceAfterTx() - txAmount.longValue())));
-        mStartingBalance.setText(startingBalance);
+            boolean sent = mTransaction.getReceived() - mTransaction.getSent() < 0;
 
-        String endingBalance = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(mTransaction.getBalanceAfterTx())));
-        mEndingBalance.setText(endingBalance);
 
-        if(sent){
-            mTxAction.setText("Sent");
-            mToFrom.setText("To " + mTransaction.getTo()[0]);
-        }else{
-            mTxAction.setText("Received");
-            mToFrom.setText("From " + mTransaction.getFrom()[0]);
+            String amountWithFee = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), txAmount));
+
+            String startingBalance = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(sent ? mTransaction.getBalanceAfterTx() + txAmount.longValue() : mTransaction.getBalanceAfterTx() - txAmount.longValue())));
+            mStartingBalance.setText(startingBalance);
+
+            String endingBalance = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(mTransaction.getBalanceAfterTx())));
+            mEndingBalance.setText(endingBalance);
+
+            if (sent) {
+                mTxAction.setText("Sent");
+                mToFrom.setText("To " + mTransaction.getTo()[0]);
+            } else {
+                mTxAction.setText("Received");
+                mToFrom.setText("From " + mTransaction.getFrom()[0]);
+            }
+
+            mTxAmount.setText(formattedAmount + iso.toUpperCase());
+
+            mTxDate.setText(BRDateUtil.getShortDate(mTransaction.getTimeStamp() * 1000));
+            mTransactionId.setText(mTransaction.getTxHashHexReversed());
+            mConfirmedInBlock.setText("" + mTransaction.getBlockHeight());
+        } else {
+
+            Toast.makeText(getContext(), "Error getting transaction data", Toast.LENGTH_SHORT).show();
         }
-
-        mTxAmount.setText(txAmount + iso.toUpperCase());
-
-        mTxDate.setText(BRDateUtil.getShortDate(mTransaction.getTimeStamp()));
-        mTransactionId.setText(mTransaction.getTxHashHexReversed());
-        mConfirmedInBlock.setText("" + mTransaction.getBlockHeight());
-
-
-
-
-
-
-
 
 
     }
 
     @Override
     public void onResume() {
+
+//        ViewGroup.LayoutParams params = getDialog().getWindow().getAttributes();
+//        params.width = Utils.getPixelsFromDps(getContext(), 350);
+//        params.height = RelativeLayout.LayoutParams.WRAP_CONTENT;
+//        getDialog().getWindow().setAttributes((android.view.WindowManager.LayoutParams) params);
+
         super.onResume();
 
         //getDialog().getWindow().setLayout(Utils.getPixelsFromDps(getContext(), 400),Utils.getPixelsFromDps(getContext(), 350));
