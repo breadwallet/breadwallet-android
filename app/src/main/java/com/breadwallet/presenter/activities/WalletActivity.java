@@ -395,6 +395,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         SyncManager.getInstance().startSyncing(this, wallet, new SyncManager.OnProgressUpdate() {
             @Override
             public boolean onProgressUpdated(double progress) {
+                mProgressBar.setProgress((int) (progress * 100));
                 if (progress == 1) {
                     mProgressBar.setVisibility(View.GONE);
                     mProgressLabel.setVisibility(View.GONE);
