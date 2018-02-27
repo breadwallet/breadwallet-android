@@ -72,9 +72,11 @@ public class TxManager {
                 txList, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
-                if (currentPrompt == null || position > 0)
-                    BRAnimator.showTransactionPager(app, adapter.getItems(), currentPrompt == null ? position : position - 1);
-                else {
+
+                BRAnimator.showTransactionDetails(app, adapter.getItems().get(position), position);
+                //if (currentPrompt == null || position > 0)
+                  //  BRAnimator.showTransactionPager(app, adapter.getItems(), currentPrompt == null ? position : position - 1);
+                /*else {
                     //clicked on the  x (close)
                     if (x > view.getWidth() - 150 && y < 150) {
                         view.animate().setDuration(150).translationX(BRActivity.screenParametersPoint.x).setListener(new AnimatorListenerAdapter() {
@@ -93,7 +95,7 @@ public class TxManager {
                             info.listener.onClick(view);
                         currentPrompt = null;
                     }
-                }
+                }*/
             }
 
             @Override

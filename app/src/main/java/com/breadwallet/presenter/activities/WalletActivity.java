@@ -45,6 +45,9 @@ import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
 
+import static com.breadwallet.tools.animation.BRAnimator.t1Size;
+import static com.breadwallet.tools.animation.BRAnimator.t2Size;
+
 /**
  * Created by byfieldj on 1/16/18.
  * <p>
@@ -289,49 +292,90 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         BRSharedPrefs.setIsCryptoPreferred(this, b);
     }
 
-    private void setPriceTags(final boolean btcPreferred, boolean animate) {
-        //mBalanceSecondary.setTextSize(!btcPreferred ? t1Size : t2Size);
-        //mBalancePrimary.setTextSize(!btcPreferred ? t2Size : t1Size);
+    private void setPriceTags(final boolean cryptoPreferred, boolean animate) {
+        //mBalanceSecondary.setTextSize(!cryptoPreferred ? t1Size : t2Size);
+        //mBalancePrimary.setTextSize(!cryptoPreferred ? t2Size : t1Size);
         ConstraintSet set = new ConstraintSet();
         set.clone(toolBarConstraintLayout);
         if (animate)
             TransitionManager.beginDelayedTransition(toolBarConstraintLayout);
         int px8 = Utils.getPixelsFromDps(this, 8);
-        int px16 = Utils.getPixelsFromDps(this, 14);
+        int px16 = Utils.getPixelsFromDps(this, 16);
+//
+//        //align first item to parent right
+//        set.connect(!cryptoPreferred ? R.id.balance_secondary : R.id.balance_primary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, px16);
+//        //align swap symbol after the first item
+//        set.connect(R.id.swap, ConstraintSet.START, !cryptoPreferred ? R.id.balance_secondary : R.id.balance_primary, ConstraintSet.START, px8);
+//        //align second item after swap symbol
+//        set.connect(!cryptoPreferred ? R.id.balance_secondary : R.id.balance_primary, ConstraintSet.START, mSwap.getId(), ConstraintSet.END, px8);
+//
+        if (cryptoPreferred) {
 
-        //align first item to parent right
-        set.connect(!btcPreferred ? R.id.balance_secondary : R.id.balance_primary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, px16);
-        //align swap symbol after the first item
-        set.connect(R.id.swap, ConstraintSet.START, !btcPreferred ? mBalanceSecondary.getId() : mBalancePrimary.getId(), ConstraintSet.END, px8);
-        //align second item after swap symbol
-        set.connect(!btcPreferred ? R.id.balance_primary : R.id.balance_secondary, ConstraintSet.START, mSwap.getId(), ConstraintSet.END, px8);
+            // Align crypto balance to the right parent
+            set.connect(R.id.balance_secondary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, px8);
+            set.connect(R.id.balance_secondary, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, -px8);
 
-        //set.connect(R.id.balance_secondary, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px8);
-        //set.connect(R.id.balance_primary, ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px8);
+            // Align swap icon to left of crypto balance
+            set.connect(R.id.swap, ConstraintSet.END, R.id.balance_secondary, ConstraintSet.START, px8);
+
+            // Align usd balance to left of swap icon
+            set.connect(R.id.balance_primary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
+            Log.d(TAG, "CryptoPreferred " + cryptoPreferred);
+
+            mBalanceSecondary.setTextSize(t1Size);
+            mBalancePrimary.setTextSize(t2Size);
+
+            set.applyTo(toolBarConstraintLayout);
+
+        } else {
+
+            // Align usd balance to right of parent
+            set.connect(R.id.balance_primary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, px8);
 
 
-        if (!btcPreferred) {
-            mBalanceSecondary.setTextColor(getResources().getColor(R.color.white, null));
-            mBalancePrimary.setTextColor(getResources().getColor(R.color.currency_subheading_color, null));
+
+            // Align swap icon to left of usd balance
+            set.connect(R.id.swap, ConstraintSet.END, R.id.balance_primary, ConstraintSet.START, px8);
+
+
+            // Align primary currency to the left of swap icon
+            set.connect(R.id.balance_secondary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
+
+
+            Log.d(TAG, "CryptoPreferred " + cryptoPreferred);
+
+            mBalanceSecondary.setTextSize(t2Size);
+            mBalancePrimary.setTextSize(t1Size);
+
+
+            set.applyTo(toolBarConstraintLayout);
+
+
+        }
+
+
+        if (!cryptoPreferred) {
+            mBalanceSecondary.setTextColor(getResources().getColor(R.color.currency_subheading_color, null));
+            mBalancePrimary.setTextColor(getResources().getColor(R.color.white, null));
             mBalanceSecondary.setTypeface(FontManager.get(this, "CircularPro-Bold.otf"));
 
         } else {
-            mBalanceSecondary.setTextColor(getResources().getColor(R.color.currency_subheading_color, null));
-            mBalancePrimary.setTextColor(getResources().getColor(R.color.white, null));
+            mBalanceSecondary.setTextColor(getResources().getColor(R.color.white, null));
+            mBalancePrimary.setTextColor(getResources().getColor(R.color.currency_subheading_color, null));
             mBalanceSecondary.setTypeface(FontManager.get(this, "CircularPro-Book.otf"));
 
 
         }
 
         // Apply the changes
-        set.applyTo(toolBarConstraintLayout);
+        //set.applyTo(toolBarConstraintLayout);
 
 
         new Handler().postDelayed(
                 new Runnable() {
                     @Override
                     public void run() {
-                        updateUi();
+                        //updateUi();
                     }
                 }, toolBarConstraintLayout.getLayoutTransition().getDuration(LayoutTransition.CHANGE_APPEARING));
     }
@@ -356,10 +400,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 });
             }
         });
-        final BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
-        wallet.addTxListModifiedListener(this);
+        //final BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        //wallet.addTxListModifiedListener(this);
 
-        final SyncManager syncManager = SyncManager.getInstance(mWallet);
+        /*final SyncManager syncManager = SyncManager.getInstance(mWallet);
         syncManager.setListener(new SyncManager.SyncListener() {
             @Override
             public void onSyncProgressUpdate(final double progress) {
@@ -398,7 +442,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         //if(!syncManager.isRunning()) {
         //  syncManager.startSyncingProgressThread();
-        //}
+        //}*/
 
     }
 

@@ -1,0 +1,176 @@
+package com.breadwallet.presenter.fragments;
+
+import android.app.Dialog;
+import android.app.DialogFragment;
+import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.text.format.DateUtils;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.RelativeLayout;
+
+import com.breadwallet.R;
+import com.breadwallet.presenter.customviews.BRText;
+import com.breadwallet.presenter.entities.TxUiHolder;
+import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.util.BRDateUtil;
+import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.wallet.WalletsMaster;
+
+import java.math.BigDecimal;
+
+/**
+ * Created by byfieldj on 2/26/18.
+ * <p>
+ * Reusable dialog fragment that display details about a particular transaction
+ */
+
+public class FragmentTxDetails extends DialogFragment {
+
+    private static final String EXTRA_TX_ITEM = "tx_item";
+
+    private TxUiHolder mTransaction;
+
+    private BRText mTxAction;
+    private BRText mTxAmount;
+    private BRText mPriceStamp;
+    private BRText mTxStatus;
+    private BRText mTxDate;
+    private BRText mToFrom;
+    private BRText mToFromAddress;
+    private BRText mMemoText;
+
+    private BRText mStartingBalance;
+    private BRText mEndingBalance;
+    private BRText mExchangeRate;
+    private BRText mConfirmedInBlock;
+    private BRText mTransactionId;
+    private BRText mShowHide;
+
+    private ImageButton mCloseButton;
+    private RelativeLayout mDetailsContainer;
+
+    boolean mDetailsShowing = false;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setStyle(STYLE_NO_TITLE, 0);
+
+    }
+
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        return super.onCreateDialog(savedInstanceState);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
+
+        View rootView = inflater.inflate(R.layout.transaction_details, container, false);
+
+        mTxAction = rootView.findViewById(R.id.tx_action);
+        mTxAmount = rootView.findViewById(R.id.tx_amount);
+        mPriceStamp = rootView.findViewById(R.id.tx_price_stamp);
+        mTxStatus = rootView.findViewById(R.id.tx_status);
+        mTxDate = rootView.findViewById(R.id.tx_date);
+        mToFrom = rootView.findViewById(R.id.tx_to_from);
+        mToFromAddress = rootView.findViewById(R.id.tx_to_from_address);
+        mMemoText = rootView.findViewById(R.id.memo);
+        mStartingBalance = rootView.findViewById(R.id.tx_starting_balance);
+        mEndingBalance = rootView.findViewById(R.id.tx_ending_balance);
+        mExchangeRate = rootView.findViewById(R.id.exchange_rate);
+        mConfirmedInBlock = rootView.findViewById(R.id.confirmed_in_block_number);
+        mTransactionId = rootView.findViewById(R.id.transaction_id);
+        mShowHide = rootView.findViewById(R.id.show_hide_details);
+        mDetailsContainer = rootView.findViewById(R.id.details_container);
+        mCloseButton = rootView.findViewById(R.id.close_button);
+
+        mCloseButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dismiss();
+            }
+        });
+
+        mShowHide.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (!mDetailsShowing) {
+                    mDetailsContainer.setVisibility(View.VISIBLE);
+                    mDetailsShowing = true;
+                    mShowHide.setText("Hide Details");
+                } else {
+                    mDetailsContainer.setVisibility(View.GONE);
+                    mDetailsShowing = false;
+                    mShowHide.setText("Show Details");
+                }
+            }
+        });
+
+        return rootView;
+    }
+
+    public void setTransaction(TxUiHolder item) {
+
+        this.mTransaction = item;
+
+        updateUi();
+    }
+
+    private void updateUi() {
+
+        // Set mTransction fields
+        String currentIso = BRSharedPrefs.getCurrentWalletIso(getActivity());
+
+        BigDecimal txAmount = new BigDecimal(mTransaction.getAmount()).abs();
+
+        boolean sent = mTransaction.getReceived() - mTransaction.getSent() < 0;
+
+        WalletsMaster master = WalletsMaster.getInstance(getActivity());
+        String iso = BRSharedPrefs.isCryptoPreferred(getActivity()) ? currentIso : BRSharedPrefs.getPreferredFiatIso(getContext());
+
+        String amountWithFee = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), txAmount));
+
+        String startingBalance = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(sent ? mTransaction.getBalanceAfterTx() + txAmount.longValue() : mTransaction.getBalanceAfterTx() - txAmount.longValue())));
+        mStartingBalance.setText(startingBalance);
+
+        String endingBalance = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(mTransaction.getBalanceAfterTx())));
+        mEndingBalance.setText(endingBalance);
+
+        if(sent){
+            mTxAction.setText("Sent");
+            mToFrom.setText("To " + mTransaction.getTo()[0]);
+        }else{
+            mTxAction.setText("Received");
+            mToFrom.setText("From " + mTransaction.getFrom()[0]);
+        }
+
+        mTxAmount.setText(txAmount + iso.toUpperCase());
+
+        mTxDate.setText(BRDateUtil.getShortDate(mTransaction.getTimeStamp()));
+        mTransactionId.setText(mTransaction.getTxHashHexReversed());
+        mConfirmedInBlock.setText("" + mTransaction.getBlockHeight());
+
+
+
+
+
+
+
+
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        //getDialog().getWindow().setLayout(Utils.getPixelsFromDps(getContext(), 400),Utils.getPixelsFromDps(getContext(), 350));
+
+
+    }
+}
