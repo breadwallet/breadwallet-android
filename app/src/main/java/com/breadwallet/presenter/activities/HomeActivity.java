@@ -61,7 +61,6 @@ public class HomeActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        WalletsMaster.getInstance(HomeActivity.this).initWallets(HomeActivity.this);
 
         ArrayList<BaseWalletManager> walletList = new ArrayList<>();
 
@@ -94,6 +93,7 @@ public class HomeActivity extends BRActivity {
 
                 Intent newIntent = new Intent(HomeActivity.this, WalletActivity.class);
                 startActivity(newIntent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
 
             @Override
@@ -125,6 +125,7 @@ public class HomeActivity extends BRActivity {
                 BRAnimator.showSupportFragment(HomeActivity.this, null);
             }
         });
+
 
 
     }

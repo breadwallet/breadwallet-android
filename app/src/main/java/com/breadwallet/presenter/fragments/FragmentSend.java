@@ -117,7 +117,6 @@ public class FragmentSend extends Fragment {
     private static String savedIso;
     private static String savedAmount;
 
-    private CryptoRequest mCryptoRequest;
     private boolean ignoreCleanup;
 
     @Override
@@ -560,27 +559,14 @@ public class FragmentSend extends Fragment {
                 BRAnimator.animateSignalSlide(signalLayout, false, new BRAnimator.OnSlideAnimationEnd() {
                     @Override
                     public void onAnimationEnd() {
-                        if (mCryptoRequest == null) return;
 
-                        WalletsMaster master = WalletsMaster.getInstance(getActivity());
-                        if (mCryptoRequest.address != null && addressEdit != null) {
-                            addressEdit.setText(mCryptoRequest.address.trim());
-                        }
-                        if (mCryptoRequest.message != null && commentEdit != null) {
-                            commentEdit.setText(mCryptoRequest.message);
-                        }
-                        if (mCryptoRequest.amount != null) {
-                            BigDecimal satoshiAmount = mCryptoRequest.amount.multiply(new BigDecimal(100000000));
-                            amountBuilder = new StringBuilder(master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), satoshiAmount).toPlainString());
-                            updateText();
-                        }
-                        mCryptoRequest = null; //consumed
                     }
                 });
             }
         });
 
     }
+
 
     @Override
     public void onStop() {
@@ -668,6 +654,7 @@ public class FragmentSend extends Fragment {
     private void updateText() {
         Activity app = getActivity();
         if (app == null) return;
+
         String tmpAmount = amountBuilder.toString();
         setAmount();
         WalletsMaster master = WalletsMaster.getInstance(app);
@@ -758,8 +745,27 @@ public class FragmentSend extends Fragment {
         amountLayout.requestLayout();
     }
 
-    public void setCryptoObject(CryptoRequest obj) {
-        mCryptoRequest = obj;
+    public void setCryptoObject(final CryptoRequest obj) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                if (obj == null) return;
+                WalletsMaster master = WalletsMaster.getInstance(getActivity());
+                if (obj.address != null && addressEdit != null) {
+                    addressEdit.setText(obj.address.trim());
+                }
+                if (obj.message != null && commentEdit != null) {
+                    commentEdit.setText(obj.message);
+                }
+                if (obj.amount != null) {
+                    BigDecimal satoshiAmount = obj.amount.multiply(new BigDecimal(100000000));
+                    amountBuilder = new StringBuilder(master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), satoshiAmount).toPlainString());
+                    updateText();
+                }
+            }
+        }, 1000);
+
+
     }
 
     private void showFeeSelectionButtons(boolean b) {
