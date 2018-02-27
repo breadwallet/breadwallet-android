@@ -73,6 +73,7 @@ public class BRActivity extends Activity {
     protected void onResume() {
         init(this);
         super.onResume();
+        BreadApp.backgroundedTime = 0;
 
     }
 
