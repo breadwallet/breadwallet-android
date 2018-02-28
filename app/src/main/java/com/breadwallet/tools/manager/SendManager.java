@@ -373,7 +373,6 @@ public class SendManager {
 
     }
 
-
     private static String createConfirmation(Context ctx, CryptoRequest request, final BaseWalletManager walletManager) {
 
         String receiver;
@@ -381,7 +380,7 @@ public class SendManager {
         if (request.cn != null && request.cn.length() != 0) {
             certified = true;
         }
-        receiver = walletManager.decorateAddress(ctx, walletManager.getWallet().getTransactionAddress(request.tx).stringify());
+        receiver = walletManager.decorateAddress(ctx, request.address);
         if (certified) {
             receiver = "certified: " + request.cn + "\n";
         }
@@ -425,7 +424,7 @@ public class SendManager {
                 + ctx.getString(R.string.Confirmation_amountLabel) + " " + formattedCryptoAmount + " (" + formattedAmount + ")"
                 + "\n" + ctx.getString(R.string.Confirmation_feeLabel) + " " + formatterCryptoFee + " (" + formattedFee + ")"
                 + "\n" + ctx.getString(R.string.Confirmation_totalLabel) + " " + formatterCryptoTotal + " (" + formattedTotal + ")"
-                + (request.comment == null ? "" : "\n\n" + request.comment);
+                + (request.message == null ? "" : "\n\n" + request.message);
     }
 
 }

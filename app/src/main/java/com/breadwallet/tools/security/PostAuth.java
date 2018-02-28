@@ -215,7 +215,7 @@ public class PostAuth {
 //                        WalletsMaster.getInstance().offerToChangeTheAmount(app, new PaymentItem(paymentRequest.addresses, paymentItem.serializedTx, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
                     } else {
                         TxMetaData txMetaData = new TxMetaData();
-                        txMetaData.comment = mCryptoRequest.comment;
+                        txMetaData.comment = mCryptoRequest.message;
                         KVStoreManager.getInstance().putTxMetaData(app, txMetaData, txHash);
                     }
                     mCryptoRequest = null;

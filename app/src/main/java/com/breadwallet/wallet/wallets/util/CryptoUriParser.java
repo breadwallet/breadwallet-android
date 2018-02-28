@@ -140,6 +140,13 @@ public class CryptoUriParser {
         if (scheme == null) {
             scheme = wm.getScheme(app);
             obj.iso = wm.getIso(app);
+        } else {
+            for (BaseWalletManager walletManager : WalletsMaster.getInstance(app).getAllWallets()) {
+                if (scheme.equalsIgnoreCase(walletManager.getScheme(app))) {
+                    obj.iso = walletManager.getIso(app);
+                    break;
+                }
+            }
         }
 
         String schemeSpecific = u.getSchemeSpecificPart();
