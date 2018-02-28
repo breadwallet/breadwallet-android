@@ -42,7 +42,7 @@
         app:customTFont="CircularPro-Bold.otf"/>
 
     <com.breadwallet.presenter.customviews.BRText
-        android:id="@+id/syncing"
+        android:id="@+id/syncing_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentRight="true"
@@ -53,20 +53,6 @@
         android:textColor="#88ffffff"
         android:textSize="10sp"
         app:customTFont="CircularPro-Bold.otf"/>
-
-    <com.breadwallet.presenter.customviews.BRText
-        android:id="@+id/wait_syncing"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_below="@id/wallet_balance_usd"
-        android:layout_marginRight="15dp"
-
-        android:text="Waiting to Sync"
-        android:textColor="#88ffffff"
-        android:textSize="10sp"
-        app:customTFont="CircularPro-Bold.otf"/>
-
 
     <ProgressBar
         android:id="@+id/sync_progress"
@@ -94,6 +80,5 @@
         android:textColor="@color/currency_subheading_color"
         android:textSize="18sp"
         app:customTFont="CircularPro-Book.otf"/>
-
 
 </RelativeLayout>
