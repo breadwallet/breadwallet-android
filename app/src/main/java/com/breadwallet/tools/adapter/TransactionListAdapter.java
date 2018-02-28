@@ -97,7 +97,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 //        if (mds == null) mds = new HashMap<>();
 //        boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size() && BRSharedPrefs.getAllowSpend(mContext);
         this.itemFeed = items;
-        Collections.reverse(items);
         this.backUpFeed = items;
 //        if (updateMetadata)
 //            updateMetadata();

@@ -2,8 +2,13 @@ package com.breadwallet.tools.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
+import android.graphics.drawable.ShapeDrawable;
 import android.os.Handler;
 import android.os.Looper;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -87,12 +92,10 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
         // TODO : Align the "waiting to sync" text with the balance USD
 
-        if (iso.equalsIgnoreCase(WalletBitcoinManager.getInstance(mContext).getIso(mContext))) {
-            holder.mParent.setBackground(mContext.getResources().getDrawable(R.drawable.btc_card_shape, null));
-        } else {
-            holder.mParent.setBackground(mContext.getResources().getDrawable(R.drawable.bch_card_shape, null));
-        }
+        Drawable drawable = mContext.getResources().getDrawable(R.drawable.crypto_card_shape, null);
+        ((GradientDrawable) drawable).setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
 
+        holder.mParent.setBackground(drawable);
 
     }
 
