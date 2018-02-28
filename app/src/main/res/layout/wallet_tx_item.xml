@@ -45,7 +45,7 @@
         app:customTFont="CircularPro-Bold.otf" />
 
     <ProgressBar
-        android:id="@+id/send_progress"
+        android:id="@+id/tx_progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="40dp"
         android:layout_height="5dp"
@@ -55,26 +55,24 @@
         android:layout_marginLeft="12dp"
         android:indeterminate="false"
         android:max="100"
-        android:progress="25"
+        android:progress="0"
         android:progressBackgroundTint="#552196f3"
         android:progressDrawable="@drawable/wallet_sync_progress_bar"
         android:progressTint="#4b77f3"
-        android:visibility="invisible"
-         />
+        android:visibility="invisible" />
 
-    <com.breadwallet.presenter.customviews.BRButton
+    <Button
         android:id="@+id/tx_failed_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="46dp"
+        android:layout_height="22dp"
         android:layout_centerVertical="true"
         android:layout_marginLeft="12dp"
-        app:buttonType="4"
-        android:textColor="@color/white"
-        android:background="@color/transaction_failed_button_color"
-        app:customTFont="CircularPro-Bold.otf"
-        app:hasShadow="false"
-        app:isBreadButton="true"
-        android:text="failed" />
+        android:text="failed"
+        android:textSize="11sp"
+        android:visibility="invisible"
+        android:textStyle="bold"
+        android:background="@drawable/tx_failed_indicator"
+        android:textColor="@color/white" />
 
     <View
         android:layout_width="match_parent"
