@@ -8,20 +8,19 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.BRDateUtil;
+import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -136,11 +135,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         // inflate the layout
         LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-        if (viewType == txType)
-            return new TxHolder(inflater.inflate(txResId, parent, false));
-        else if (viewType == promptType)
-            return new PromptHolder(inflater.inflate(promptResId, parent, false));
-        return null;
+        return new TxHolder(inflater.inflate(txResId, parent, false));
     }
 
     @Override
@@ -159,9 +154,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public int getItemViewType(int position) {
         //if (position == 0 && TxManager.getInstance().currentPrompt != null) {
-          //  return promptType;
+        //  return promptType;
         //} else {
-            return txType;
+        return txType;
         //}
     }
 
@@ -198,13 +193,12 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
 
 
-        // Show the tx memo/comment only if one is available
-        /*if(memo != null && !memo.isEmpty()){
-            convertView.transactionDetail.setText(memo);
+        // If this transaction failed, show the "FAILED" indicator in the cell
+        if (!item.isValid()) {
+            showTransactionFailed(convertView);
         }
-        else {
-            convertView.transactionDetail.setText(txAction);
-        }*/
+
+
 
         // Set transaction amount
         long transactionAmount = item.getAmount();
@@ -312,6 +306,17 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     }
 
+    private void showTransactionFailed(TxHolder holder) {
+
+        holder.transactionDate.setVisibility(View.INVISIBLE);
+
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.addRule(RelativeLayout.RIGHT_OF, holder.transactionFailed.getId());
+        params.setMargins(8, 0, 0, 0);
+        params.addRule(RelativeLayout.CENTER_VERTICAL, holder.transactionFailed.getId());
+        holder.transactionDetail.setLayoutParams(params);
+    }
+
     private int getResourceByPos(int pos) {
         if (TxManager.getInstance().currentPrompt != null) pos--;
         if (itemFeed != null && itemFeed.size() == 1) {
@@ -405,27 +410,21 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         public BRText transactionDate;
         public BRText transactionAmount;
         public BRText transactionDetail;
+        public BRButton transactionFailed;
+
 
         public TxHolder(View view) {
             super(view);
-            /*mainLayout = (RelativeLayout) view.findViewById(R.id.main_layout);
-            constraintLayout = (ConstraintLayout) view.findViewById(R.id.constraintLayout);
-            sentReceived = (TextView) view.findViewById(R.id.sent_received);
-            amount = (TextView) view.findViewById(R.id.amount);
-            account = (TextView) view.findViewById(R.id.account);
-            status = (TextView) view.findViewById(R.id.status);
-            status_2 = (TextView) view.findViewById(R.id.status_2);
-            timestamp = (TextView) view.findViewById(R.id.timestamp);
-            comment = (TextView) view.findViewById(R.id.comment);
-            arrowIcon = (ImageView) view.findViewById(R.id.arrow_icon);*/
 
             transactionDate = view.findViewById(R.id.tx_date);
             transactionAmount = view.findViewById(R.id.tx_amount);
             transactionDetail = view.findViewById(R.id.tx_description);
+            transactionFailed = view.findViewById(R.id.tx_failed_button);
+
         }
     }
 
-    public class PromptHolder extends RecyclerView.ViewHolder {
+   /* public class PromptHolder extends RecyclerView.ViewHolder {
         public RelativeLayout mainLayout;
         public ConstraintLayout constraintLayout;
         public BRText title;
@@ -443,7 +442,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             sendProgress = view.findViewById(R.id.send_progress);
 
         }
-    }
+    }*/
 
 
 }

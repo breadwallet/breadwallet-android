@@ -285,8 +285,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             // Align usd balance to left of swap icon
             set.connect(R.id.balance_primary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
-            mBalancePrimary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 8));
-            mSwap.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 2));
+
+            mBalancePrimary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, 6));
+            mBalanceSecondary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, 4));
+            mSwap.setPadding(0,0,0, Utils.getPixelsFromDps(this, 2));
 
             Log.d(TAG, "CryptoPreferred " + cryptoPreferred);
 
@@ -297,7 +299,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         }
 
-        // FIAT on LEFT
+        // CRYPTO on LEFT
         else {
 
             // Align primary to right of parent
@@ -309,8 +311,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             // Align secondary currency to the left of swap icon
             set.connect(R.id.balance_secondary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
-            mBalancePrimary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 2));
-            mSwap.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 2));
+
+            mBalancePrimary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, 2));
+            mBalanceSecondary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, 8));
+            mSwap.setPadding(0,0,0, Utils.getPixelsFromDps(this, 2));
 
             //mBalancePrimary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, -4));
 
