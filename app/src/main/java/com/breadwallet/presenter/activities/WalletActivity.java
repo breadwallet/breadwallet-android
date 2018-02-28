@@ -45,6 +45,8 @@ import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
 
+import okhttp3.internal.Util;
+
 import static com.breadwallet.tools.animation.BRAnimator.t1Size;
 import static com.breadwallet.tools.animation.BRAnimator.t2Size;
 
@@ -309,6 +311,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 //        //align second item after swap symbol
 //        set.connect(!cryptoPreferred ? R.id.balance_secondary : R.id.balance_primary, ConstraintSet.START, mSwap.getId(), ConstraintSet.END, px8);
 //
+
+        // CRYPTO on RIGHT
         if (cryptoPreferred) {
 
             // Align crypto balance to the right parent
@@ -320,6 +324,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             // Align usd balance to left of swap icon
             set.connect(R.id.balance_primary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
+            mBalancePrimary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, 8));
+            mSwap.setPadding(0,0,0, Utils.getPixelsFromDps(this, 2));
+
             Log.d(TAG, "CryptoPreferred " + cryptoPreferred);
 
             mBalanceSecondary.setTextSize(t1Size);
@@ -327,19 +334,26 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             set.applyTo(toolBarConstraintLayout);
 
-        } else {
+        }
 
-            // Align usd balance to right of parent
+        // FIAT on LEFT
+        else {
+
+            // Align primary to right of parent
             set.connect(R.id.balance_primary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, px8);
-
 
 
             // Align swap icon to left of usd balance
             set.connect(R.id.swap, ConstraintSet.END, R.id.balance_primary, ConstraintSet.START, px8);
 
 
-            // Align primary currency to the left of swap icon
+            // Align secondary currency to the left of swap icon
             set.connect(R.id.balance_secondary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
+            mBalancePrimary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, 2));
+            mSwap.setPadding(0,0,0, Utils.getPixelsFromDps(this, 2));
+
+            //mBalancePrimary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, -4));
+
 
 
             Log.d(TAG, "CryptoPreferred " + cryptoPreferred);
@@ -362,7 +376,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         } else {
             mBalanceSecondary.setTextColor(getResources().getColor(R.color.white, null));
             mBalancePrimary.setTextColor(getResources().getColor(R.color.currency_subheading_color, null));
-            mBalanceSecondary.setTypeface(FontManager.get(this, "CircularPro-Book.otf"));
+            mBalanceSecondary.setTypeface(FontManager.get(this, "CircularPro-Bold.otf"));
 
 
         }

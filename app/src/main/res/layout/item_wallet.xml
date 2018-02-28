@@ -16,7 +16,7 @@ android:background="@drawable/btc_card_shape">
     android:layout_marginTop="16sp"
     android:textColor="@color/white"
     android:textSize="18sp"
-    app:customTFont="CircularPro-Book.otf" />
+    app:customTFont="CircularPro-Bold.otf" />
 
 <com.breadwallet.presenter.customviews.BRText
     android:id="@+id/wallet_trade_price"
@@ -39,7 +39,7 @@ android:background="@drawable/btc_card_shape">
     android:textColor="@color/white"
     android:text="$12.00"
     android:textSize="18sp"
-    app:customTFont="CircularPro-Book.otf" />
+    app:customTFont="CircularPro-Bold.otf" />
 
 <com.breadwallet.presenter.customviews.BRText
     android:id="@+id/syncing"
