@@ -195,11 +195,14 @@ public class FragmentTxDetails extends DialogFragment {
 //
 //                mTxAmount.setText(formattedAmount + iso.toUpperCase());
 //            } else {
-            formattedAmount = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getCryptoForFiat(getActivity(), new BigDecimal(mTransaction.getAmount())));
+            formattedAmount = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getCryptoForFiat(getActivity(), new BigDecimal(sent ? mTransaction.getSent() : mTransaction.getReceived())));
 
-            if (sent)
-                formattedAmount = "-" + formattedAmount;
+
             mTxAmount.setText(formattedAmount);
+
+            if(!sent){
+                mTxAmount.setTextColor(getContext().getColor(R.color.transaction_amount_received_color));
+            }
             //}
 
             // Set the transaction date
