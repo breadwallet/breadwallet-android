@@ -121,6 +121,7 @@
                     android:max="100"
                     android:progress="0"
                     android:progressBackgroundTint="#88ffffff"
+                    android:progressDrawable="@drawable/wallet_sync_progress_bar"
                     android:progressTint="#ffffff"
                     app:layout_constraintEnd_toEndOf="parent"/>
 
