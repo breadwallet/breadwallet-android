@@ -5,7 +5,7 @@
                 android:layout_height="84dp"
                 android:layout_below="@id/portfolio_label"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
-                android:background="@drawable/btc_card_shape">
+                android:background="@drawable/crypto_card_shape">
 
 
     <com.breadwallet.presenter.customviews.BRText
