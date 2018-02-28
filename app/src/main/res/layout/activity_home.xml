@@ -54,7 +54,7 @@
         <android.support.v7.widget.CardView
             android:id="@+id/prompt_card"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="160dp"
             android:layout_below="@id/total_assets_usd"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
@@ -94,10 +94,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/prompt_description"
-                    android:layout_marginBottom="16dp"
+                    android:layout_alignParentBottom="true"
                     android:layout_marginLeft="16dp"
                     android:layout_marginRight="16dp"
-                    android:layout_marginTop="22dp"
+                    android:layout_marginTop="14dp"
                     android:weightSum="2">
 
                     <com.breadwallet.presenter.customviews.BRButton
