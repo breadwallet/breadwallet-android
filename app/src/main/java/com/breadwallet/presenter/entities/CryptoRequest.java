@@ -48,15 +48,14 @@ public class CryptoRequest {
     public BRCoreTransaction tx;
     public String cn;
     public boolean isAmountRequested;
-    public String comment;
 
-    public CryptoRequest(BRCoreTransaction tx, String certificationName, boolean isAmountRequested, String comment, String address, BigDecimal amount) {
+    public CryptoRequest(BRCoreTransaction tx, String certificationName, boolean isAmountRequested, String message, String address, BigDecimal amount) {
         this.isAmountRequested = isAmountRequested;
         this.tx = tx;
         this.cn = certificationName;
-        this.comment = comment;
         this.address = address;
         this.amount = amount;
+        this.message = message;
     }
 
     public CryptoRequest() {
