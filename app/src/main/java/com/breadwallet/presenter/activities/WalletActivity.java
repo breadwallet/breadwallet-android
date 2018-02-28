@@ -81,14 +81,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private ConstraintLayout toolBarConstraintLayout;
 
 
-    private BRText mSyncing;
-    private ProgressBar mSyncingProgressBar;
-    private BaseWalletManager mWallet;
-
-//    private String mDefaultTextPrimary;
-//    private String mDefaultTextSecondary;
-
-
     private static WalletActivity app;
 
     public static WalletActivity getApp() {
@@ -125,7 +117,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mBalancePrimary.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);//make it the size it should be after animation to get the X
         mBalanceSecondary.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);//make it the size it should be after animation to get the X
 
-
         BRAnimator.init(this);
         mBalancePrimary.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);//make it the size it should be after animation to get the X
         mBalanceSecondary.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);//make it the size it should be after animation to get the X
@@ -147,9 +138,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             }
         });
 
-        mWallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
-        Log.d(TAG, "Current wallet ISO -> " + mWallet.getIso(this));
-        if (mWallet.getIso(this).equalsIgnoreCase("BTC")) {
+        BaseWalletManager wm = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        Log.d(TAG, "Current wallet ISO -> " + wm.getIso(this));
+        if (wm.getIso(this).equalsIgnoreCase("BTC")) {
 
             mBuyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -163,7 +154,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 }
             });
 
-        } else if (mWallet.getIso(this).equalsIgnoreCase("BCH")) {
+        } else if (wm.getIso(this).equalsIgnoreCase("BCH")) {
             mBuyButton.setVisibility(View.GONE);
 
             LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
@@ -217,7 +208,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     private void handleUrlClickIfNeeded(Intent intent) {
-        String action = intent.getAction();
         Uri data = intent.getData();
         if (data != null && !data.toString().isEmpty()) {
             //handle external click with crypto scheme
@@ -341,7 +331,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             set.applyTo(toolBarConstraintLayout);
 
-
         }
 
 
@@ -357,10 +346,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
 
         }
-
-        // Apply the changes
-        //set.applyTo(toolBarConstraintLayout);
-
 
         new Handler().postDelayed(
                 new Runnable() {

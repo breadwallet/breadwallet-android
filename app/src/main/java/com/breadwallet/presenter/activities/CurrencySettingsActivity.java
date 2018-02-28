@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -25,10 +26,6 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 public class CurrencySettingsActivity extends BRActivity {
 
-    public static final String EXTRA_CURRENCY = "currency";
-
-    private String mIso;
-
     private BRText mTitle;
     private ImageButton mBackButton;
     private RelativeLayout mRescanBlockchainRow;
@@ -52,6 +49,8 @@ public class CurrencySettingsActivity extends BRActivity {
             }
         });
 
+        final Activity app = this;
+        final BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
 
         mRescanBlockchainRow.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,9 +66,10 @@ public class CurrencySettingsActivity extends BRActivity {
                                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                                     @Override
                                     public void run() {
-                                        BRSharedPrefs.putStartHeight(CurrencySettingsActivity.this, mIso, 0);
-                                        BRSharedPrefs.putAllowSpend(CurrencySettingsActivity.this, mIso, false);
-                                        WalletsMaster.getInstance(CurrencySettingsActivity.this).getWalletByIso(CurrencySettingsActivity.this, mIso).getPeerManager().rescan();
+
+                                        BRSharedPrefs.putStartHeight(CurrencySettingsActivity.this, wm.getIso(app), 0);
+                                        BRSharedPrefs.putAllowSpend(CurrencySettingsActivity.this, wm.getIso(app), false);
+                                        WalletsMaster.getInstance(CurrencySettingsActivity.this).getWalletByIso(CurrencySettingsActivity.this, wm.getIso(app)).getPeerManager().rescan();
                                         BRAnimator.startBreadActivity(CurrencySettingsActivity.this, false);
 
                                     }
@@ -128,10 +128,7 @@ public class CurrencySettingsActivity extends BRActivity {
             }
         });
 
-        mIso = getIntent().getStringExtra(EXTRA_CURRENCY);
 
-        BaseWalletManager walletManager = WalletsMaster.getInstance(this).getCurrentWallet(this);
-
-        mTitle.setText(walletManager.getName(this) + "Settings");
+        mTitle.setText(String.format("%s Settings", wm.getName(this)));
     }
 }
