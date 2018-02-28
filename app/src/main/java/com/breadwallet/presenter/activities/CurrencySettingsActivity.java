@@ -16,8 +16,8 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
-
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 /**
  * Created by byfieldj on 2/5/18.
@@ -25,8 +25,6 @@ import com.breadwallet.wallet.WalletsMaster;
 
 public class CurrencySettingsActivity extends BRActivity {
 
-    public static final String EXTRA_CURRENCY_BTC = "btc";
-    public static final String EXTRA_CURRENCY_BCH = "bch";
     public static final String EXTRA_CURRENCY = "currency";
 
     private String mIso;
@@ -132,11 +130,8 @@ public class CurrencySettingsActivity extends BRActivity {
 
         mIso = getIntent().getStringExtra(EXTRA_CURRENCY);
 
-        if (mIso.equals(EXTRA_CURRENCY_BTC)) {
-            mTitle.setText("Bitcoin Settings");
+        BaseWalletManager walletManager = WalletsMaster.getInstance(this).getCurrentWallet(this);
 
-        } else if (mIso.equals(EXTRA_CURRENCY_BCH)) {
-            mTitle.setText("BitcoinCash Settings");
-        }
+        mTitle.setText(walletManager.getName(this) + "Settings");
     }
 }

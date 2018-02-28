@@ -544,6 +544,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             }
         });
 
+
     }
 
     @Override

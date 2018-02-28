@@ -765,7 +765,6 @@ public class FragmentSend extends Fragment {
             }
         }, 1000);
 
-
     }
 
     private void showFeeSelectionButtons(boolean b) {

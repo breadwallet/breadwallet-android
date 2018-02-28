@@ -5,7 +5,6 @@ import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.R;
-import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
