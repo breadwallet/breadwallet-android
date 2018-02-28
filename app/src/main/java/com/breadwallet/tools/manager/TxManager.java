@@ -107,7 +107,7 @@ public class TxManager {
             adapter = new TransactionListAdapter(app, null);
         txList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        setupSwipe(app);
+        //setupSwipe(app);
     }
 
     private TxManager() {
@@ -198,7 +198,7 @@ public class TxManager {
         });
     }
 
-    private void setupSwipe(final Activity app) {
+    /*private void setupSwipe(final Activity app) {
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
 
             @Override
@@ -221,7 +221,7 @@ public class TxManager {
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(txList);
-    }
+    }*/
 
 
     private class CustomLinearLayoutManager extends LinearLayoutManager {

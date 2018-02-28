@@ -153,13 +153,13 @@
 
         <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/memo"
-            android:layout_width="wrap_content"
+            android:layout_width="130dp"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@id/divider3"
             android:layout_marginTop="10dp"
-            android:layout_marginLeft="120dp"
             android:layout_marginRight="20dp"
+            android:paddingRight="20dp"
             android:text="Sample transaction memo would go here. Some things are truly better left unsaid"
             android:textSize="10sp"
             app:customTFont="CircularPro-Book.otf" />

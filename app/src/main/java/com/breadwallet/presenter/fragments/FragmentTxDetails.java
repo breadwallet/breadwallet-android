@@ -143,6 +143,7 @@ public class FragmentTxDetails extends DialogFragment {
             String formattedAmount;
             String startingBalance;
             String endingBalance;
+            String exchangeRateFormatted;
 
 
             if (!mTransaction.isValid()) {
@@ -215,6 +216,9 @@ public class FragmentTxDetails extends DialogFragment {
                     Log.d(TAG, "Comment is null");
                     mMemoText.setText("");
                 }
+
+                exchangeRateFormatted = CurrencyUtils.getFormattedAmount(getActivity(), currentIso, new BigDecimal(txMetaData.exchangeRate));
+                mExchangeRate.setText(exchangeRateFormatted);
             } else {
                 Log.d(TAG, "TxMetaData is null");
                 mMemoText.setText("");
