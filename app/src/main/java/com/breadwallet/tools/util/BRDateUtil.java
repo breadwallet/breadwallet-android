@@ -88,7 +88,7 @@ public class BRDateUtil {
         calendar.setTimeInMillis(timestamp);
         Log.d("BRDateUtil", "Timestamp -> " + timestamp);
 
-        String dateString = new SimpleDateFormat("MMMM dd, YYYY, hh:mm", Locale.getDefault()).format(calendar.getTimeInMillis());
+        String dateString = new SimpleDateFormat("MMMM dd, yyyy, hh:mm a", Locale.getDefault()).format(calendar.getTimeInMillis());
         Log.d("BRDateUtil", "Transaction date string -> " + dateString);
 
         return dateString;
