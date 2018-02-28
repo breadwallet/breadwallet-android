@@ -171,6 +171,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
         TxUiHolder item = itemFeed.get(position);
         item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
+
+        //String memo = item.metaData.comment;
         //String commentString = (item.metaData == null || item.metaData.comment == null) ? "" : item.metaData.comment;
         //convertView.comment.setText(commentString);
        /* if (commentString.isEmpty()) {
@@ -215,7 +217,13 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
 
 
-        convertView.transactionDetail.setText(txAction);
+        // Show the tx memo/comment only if one is available
+        /*if(memo != null && !memo.isEmpty()){
+            convertView.transactionDetail.setText(memo);
+        }
+        else {
+            convertView.transactionDetail.setText(txAction);
+        }*/
 
         // Set transaction amount
         long transactionAmount = item.getAmount();

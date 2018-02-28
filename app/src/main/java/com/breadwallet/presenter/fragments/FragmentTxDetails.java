@@ -5,6 +5,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +19,6 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 
 import java.math.BigDecimal;
@@ -32,6 +32,7 @@ import java.math.BigDecimal;
 public class FragmentTxDetails extends DialogFragment {
 
     private static final String EXTRA_TX_ITEM = "tx_item";
+    private static final String TAG = "FragmentTxDetails";
 
     private TxUiHolder mTransaction;
 
@@ -133,6 +134,10 @@ public class FragmentTxDetails extends DialogFragment {
         // Set mTransction fields
         if (mTransaction != null) {
 
+            boolean cryptoPreferred = BRSharedPrefs.isCryptoPreferred(getActivity());
+            boolean sent = mTransaction.getReceived() - mTransaction.getSent() < 0;
+
+
             if (!mTransaction.isValid()) {
                 mTxStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             }
@@ -141,20 +146,36 @@ public class FragmentTxDetails extends DialogFragment {
             String iso = BRSharedPrefs.isCryptoPreferred(getActivity()) ? currentIso : BRSharedPrefs.getPreferredFiatIso(getContext());
 
 
-
             BigDecimal txAmount = new BigDecimal(mTransaction.getAmount()).abs();
-            String formattedAmount = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), mTransaction.getFee() == -1 ? txAmount : txAmount.subtract(new BigDecimal(mTransaction.getFee()))));
+            long satoshisAmount = sent ? mTransaction.getSent() : mTransaction.getReceived();
+            Log.d(TAG, "Satoshis Amount -> " + satoshisAmount);
+            //String formattedAmount = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), mTransaction.getFee() == -1 ? txAmount : txAmount.subtract(new BigDecimal(mTransaction.getFee()))));
 
-            boolean sent = mTransaction.getReceived() - mTransaction.getSent() < 0;
+
+            //String formattedAmount = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(mTransaction.getAmount())));
+            String formattedAmount;
 
 
-            String amountWithFee = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), txAmount));
+            String startingBalance;
+            String endingBalance;
 
-            String startingBalance = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(sent ? mTransaction.getBalanceAfterTx() + txAmount.longValue() : mTransaction.getBalanceAfterTx() - txAmount.longValue())));
-            mStartingBalance.setText(startingBalance);
+            if (!cryptoPreferred) {
+                startingBalance = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(sent ? mTransaction.getBalanceAfterTx() + txAmount.longValue() + mTransaction.getFee() : mTransaction.getBalanceAfterTx() - txAmount.longValue())));
+                mStartingBalance.setText(startingBalance);
+            } else {
+                startingBalance = CurrencyUtils.getFormattedAmount(getActivity(), iso, new BigDecimal(sent ? mTransaction.getBalanceAfterTx() + txAmount.longValue() - mTransaction.getFee() : mTransaction.getBalanceAfterTx() - txAmount.longValue()));
+                mStartingBalance.setText(startingBalance);
+            }
 
-            String endingBalance = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(mTransaction.getBalanceAfterTx())));
-            mEndingBalance.setText(endingBalance);
+            if (!cryptoPreferred) {
+                endingBalance = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(mTransaction.getBalanceAfterTx())));
+                mEndingBalance.setText(endingBalance);
+            } else {
+
+                endingBalance = CurrencyUtils.getFormattedAmount(getActivity(), iso, new BigDecimal(mTransaction.getBalanceAfterTx()));
+                mEndingBalance.setText(endingBalance);
+            }
+
 
             if (sent) {
                 mTxAction.setText("Sent");
@@ -164,10 +185,30 @@ public class FragmentTxDetails extends DialogFragment {
                 mToFrom.setText("From " + mTransaction.getFrom()[0]);
             }
 
-            mTxAmount.setText(formattedAmount + iso.toUpperCase());
 
+//            // Set the transaction amount at the top of the dialog
+//            if (!cryptoPreferred) {
+//                formattedAmount = CurrencyUtils.getFormattedAmount(getActivity(), iso, new BigDecimal(mTransaction.getAmount()));
+//
+//                if(sent)
+//                    formattedAmount = "-" + formattedAmount;
+//
+//                mTxAmount.setText(formattedAmount + iso.toUpperCase());
+//            } else {
+            formattedAmount = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getCryptoForFiat(getActivity(), new BigDecimal(mTransaction.getAmount())));
+
+            if (sent)
+                formattedAmount = "-" + formattedAmount;
+            mTxAmount.setText(formattedAmount);
+            //}
+
+            // Set the transaction date
             mTxDate.setText(BRDateUtil.getShortDate(mTransaction.getTimeStamp() * 1000));
+
+            // Set the transaction id
             mTransactionId.setText(mTransaction.getTxHashHexReversed());
+
+            // Set the transaction block number
             mConfirmedInBlock.setText("" + mTransaction.getBlockHeight());
         } else {
 

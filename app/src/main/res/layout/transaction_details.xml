@@ -55,7 +55,7 @@
             android:layout_below="@id/tx_amount"
             android:layout_centerHorizontal="true"
             android:layout_marginLeft="30dp"
-            android:text="$1,305.31 when sent $1,370.58 now."
+            android:text="0 when sent 0 now."
 
             android:textColor="@color/settings_chevron_right"
             app:customTFont="CircularPro-Book.otf" />
@@ -200,7 +200,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="14dp"
                 android:layout_marginTop="14dp"
-                android:text="$1,436"
+                android:text=""
                 app:customTFont="CircularPro-Book.otf" />
 
 
@@ -233,7 +233,7 @@
                 android:layout_below="@id/divider4"
                 android:layout_marginRight="14dp"
                 android:layout_marginTop="14dp"
-                android:text="$1,964"
+                android:text=""
                 app:customTFont="CircularPro-Book.otf" />
 
 
@@ -266,7 +266,7 @@
                 android:layout_below="@id/divider5"
                 android:layout_marginRight="14dp"
                 android:layout_marginTop="14dp"
-                android:text="$14,938"
+                android:text="Exchange rate at time"
                 app:customTFont="CircularPro-Book.otf" />
 
             <View
@@ -323,14 +323,17 @@
 
             <com.breadwallet.presenter.customviews.BRText
                 android:id="@+id/transaction_id"
-                android:layout_width="wrap_content"
+                android:layout_width="100dp"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_below="@id/divider7"
                 android:layout_marginRight="14dp"
                 android:layout_marginTop="14dp"
+                android:ellipsize="middle"
+                android:singleLine="true"
+                android:maxLength="30"
                 android:text="TiAYuGxTyUDhzQG9hV2Jsd"
-                android:textSize="10sp"
+                android:textSize="12sp"
                 app:customTFont="CircularPro-Book.otf" />
 
 
