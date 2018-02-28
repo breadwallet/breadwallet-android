@@ -125,7 +125,7 @@
             android:layout_below="@id/divider2"
             android:layout_marginTop="14dp"
             android:paddingEnd="20dp"
-            android:text="5e5b59a69cee6fc73af7682ffd97bf0c87a6"
+            android:text=""
             android:textSize="12sp"
             app:customTFont="CircularPro-Book.otf" />
 
