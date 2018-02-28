@@ -30,6 +30,7 @@ import com.platform.tools.KVStoreManager;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -96,9 +97,12 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 //        if (mds == null) mds = new HashMap<>();
 //        boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size() && BRSharedPrefs.getAllowSpend(mContext);
         this.itemFeed = items;
+        Collections.reverse(items);
         this.backUpFeed = items;
 //        if (updateMetadata)
 //            updateMetadata();
+
+
     }
 
     public void updateData() {
@@ -175,29 +179,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         //String memo = item.metaData.comment;
         //String commentString = (item.metaData == null || item.metaData.comment == null) ? "" : item.metaData.comment;
         //convertView.comment.setText(commentString);
-       /* if (commentString.isEmpty()) {
-            convertView.constraintLayout.removeView(convertView.comment);
-            ConstraintSet set = new ConstraintSet();
-            set.clone(convertView.constraintLayout);
-            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, mContext.getResources().getDisplayMetrics());
-            set.connect(R.id.status, ConstraintSet.TOP, convertView.account.getId(), ConstraintSet.BOTTOM, px);
-            // Apply the changes
-            set.applyTo(convertView.constraintLayout);
-        } else {
-            if (convertView.constraintLayout.indexOfChild(convertView.comment) == -1)
-                convertView.constraintLayout.addView(convertView.comment);
-            ConstraintSet set = new ConstraintSet();
-            set.clone(convertView.constraintLayout);
-            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, mContext.getResources().getDisplayMetrics());
-            set.connect(R.id.status, ConstraintSet.TOP, convertView.comment.getId(), ConstraintSet.BOTTOM, px);
-            // Apply the changes
-            set.applyTo(convertView.constraintLayout);
-            convertView.comment.requestLayout();
-        }*/
 
         boolean received = item.getSent() == 0;
-        //convertView.arrowIcon.setImageResource(received ? R.drawable.arrow_down_bold_circle : R.drawable.arrow_up_bold_circle);
-        //convertView.mainLayout.setBackgroundResource(getResourceByPos(position));
 
         String txAction;
         if (received) {
@@ -208,7 +191,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
 
         } else {
-
             txAction = "sent to " + item.getTo()[0];
             Log.d(TAG, "Address TO -> " + item.getTo()[0]);
             Log.d(TAG, "Address array -> " + Arrays.toString(item.getFrom()));
@@ -238,11 +220,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         }
 
-        //convertView.sentReceived.setText(received ? mContext.getString(R.string.TransactionDetails_received, "") : mContext.getString(R.string.TransactionDetails_sent, ""));
-        //convertView.toFrom.setText(received ? String.format(mContext.getString(R.string.TransactionDetails_from), "") : String.format(mContext.getString(R.string.TransactionDetails_to), ""));
-//        final String addr = position == 1? "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v" : "35SwXe97aPRUsoaUTH1Dr3SB7JptH39pDZ"; //testing
-        final String addr = item.getTo()[0];
-        //convertView.account.setText(addr);
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext, wallet.getIso(mContext)) - blockHeight + 1;
 
@@ -335,19 +312,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         convertView.transactionDate.setText(shortDate);
 
     }
-
-   /* private void setPrompt(final PromptHolder prompt) {
-        Log.d(TAG, "setPrompt: " + TxManager.getInstance().promptInfo.title);
-        if (TxManager.getInstance().promptInfo == null) {
-            throw new RuntimeException("can't happen, showing prompt with null PromptInfo");
-        }
-
-        prompt.mainLayout.setOnClickListener(TxManager.getInstance().promptInfo.listener);
-        prompt.mainLayout.setBackgroundResource(R.drawable.tx_rounded);
-        prompt.title.setText(TxManager.getInstance().promptInfo.title);
-        prompt.description.setText(TxManager.getInstance().promptInfo.description);
-
-    }*/
 
     private int getResourceByPos(int pos) {
         if (TxManager.getInstance().currentPrompt != null) pos--;
