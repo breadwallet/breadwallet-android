@@ -160,8 +160,6 @@ public class FragmentTxDetails extends DialogFragment {
             Log.d(TAG, "Satoshis Amount -> " + satoshisAmount);
 
 
-
-
             if (!cryptoPreferred) {
                 startingBalance = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(sent ? mTransaction.getBalanceAfterTx() + txAmount.longValue() + mTransaction.getFee() : mTransaction.getBalanceAfterTx() - txAmount.longValue())));
                 mStartingBalance.setText(startingBalance);
@@ -217,7 +215,7 @@ public class FragmentTxDetails extends DialogFragment {
                     mMemoText.setText("");
                 }
 
-                exchangeRateFormatted = CurrencyUtils.getFormattedAmount(getActivity(), currentIso, new BigDecimal(txMetaData.exchangeRate));
+                exchangeRateFormatted = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(txMetaData.exchangeRate)));
                 mExchangeRate.setText(exchangeRateFormatted);
             } else {
                 Log.d(TAG, "TxMetaData is null");
