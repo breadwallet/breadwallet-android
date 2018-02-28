@@ -189,24 +189,12 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             Log.d(TAG, "Address FROM -> " + item.getFrom()[0]);
             Log.d(TAG, "Address array -> " + Arrays.toString(item.getFrom()));
 
-            if (!commentString.isEmpty()) {
-                convertView.transactionDetail.setText(commentString);
-            } else {
-                convertView.transactionDetail.setText(txAction);
-            }
-
 
         } else {
             txAction = "sent to " + item.getTo()[0];
             Log.d(TAG, "Address TO -> " + item.getTo()[0]);
             Log.d(TAG, "Address array -> " + Arrays.toString(item.getFrom()));
 
-            if (!commentString.isEmpty()) {
-                convertView.transactionDetail.setText(commentString);
-            } else {
-                convertView.transactionDetail.setText(txAction);
-
-            }
 
         }
 
@@ -261,18 +249,18 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             case 1:
                 percentage = "20%";
                 if (!received)
-                    convertView.transactionDetail.setText("sending to " + item.getTo()[0]);
+                    txAction = "sending to " + item.getTo()[0];
                 else
-                    convertView.transactionDetail.setText("receiving via " + item.getTo()[0]);
+                    txAction = "receiving via " + item.getTo()[0];
 
                 showTransactionProgress(convertView, 20);
                 break;
             case 2:
                 percentage = "40%";
                 if (!received)
-                    convertView.transactionDetail.setText("sending to " + item.getTo()[0]);
+                    txAction = "sending to " + item.getTo()[0];
                 else
-                    convertView.transactionDetail.setText("receiving via " + item.getTo()[0]);
+                    txAction = "receiving via " + item.getTo()[0];
 
                 showTransactionProgress(convertView, 40);
                 availableForSpend = true;
@@ -280,9 +268,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             case 3:
                 percentage = "60%";
                 if (!received)
-                    convertView.transactionDetail.setText("sending to " + item.getTo()[0]);
+                    txAction = "sending to " + item.getTo()[0];
                 else
-                    convertView.transactionDetail.setText("receiving via " + item.getTo()[0]);
+                    txAction = "receiving via " + item.getTo()[0];
 
                 showTransactionProgress(convertView, 60);
                 availableForSpend = true;
@@ -290,9 +278,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             case 4:
                 percentage = "80%";
                 if (!received)
-                    convertView.transactionDetail.setText("sending to " + item.getTo()[0]);
+                    txAction = "sending to " + item.getTo()[0];
                 else
-                    convertView.transactionDetail.setText("receiving via " + item.getTo()[0]);
+                    txAction = "receiving via " + item.getTo()[0];
 
                 showTransactionProgress(convertView, 80);
                 availableForSpend = true;
@@ -300,9 +288,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             case 5:
                 percentage = "100%";
                 if (!received)
-                    convertView.transactionDetail.setText("sending to " + item.getTo()[0]);
+                    txAction = "sent to " + item.getTo()[0];
                 else
-                    convertView.transactionDetail.setText("received via " + item.getTo()[0]);
+                    txAction = "received via " + item.getTo()[0];
 
                 showTransactionProgress(convertView, 100);
                 availableForSpend = true;
@@ -317,6 +305,13 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             convertView.transactionAmount.setText(amountText);
         } else {
             convertView.transactionAmount.setText("-" + amountText);
+
+        }
+
+        if (!commentString.isEmpty()) {
+            convertView.transactionDetail.setText(commentString);
+        } else {
+            convertView.transactionDetail.setText(txAction);
 
         }
 
