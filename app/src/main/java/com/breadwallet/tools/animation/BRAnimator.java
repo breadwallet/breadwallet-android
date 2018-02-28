@@ -38,7 +38,6 @@ import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.presenter.fragments.FragmentSupport;
-import com.breadwallet.presenter.fragments.FragmentTransactionDetails;
 import com.breadwallet.presenter.fragments.FragmentTxDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -207,29 +206,29 @@ public class BRAnimator {
 
     }
 
-    public static void showTransactionPager(Activity app, List<TxUiHolder> items, int position) {
-        if (app == null) {
-            Log.e(TAG, "showSendFragment: app is null");
-            return;
-        }
-        FragmentTransactionDetails fragmentTransactionDetails = (FragmentTransactionDetails) app.getFragmentManager().findFragmentByTag(FragmentTransactionDetails.class.getName());
-        if (fragmentTransactionDetails != null && fragmentTransactionDetails.isAdded()) {
-            fragmentTransactionDetails.setItems(items);
-            Log.e(TAG, "showTransactionPager: Already showing");
-            return;
-        }
-        fragmentTransactionDetails = new FragmentTransactionDetails();
-        fragmentTransactionDetails.setItems(items);
-        Bundle bundle = new Bundle();
-        bundle.putInt("pos", position);
-        fragmentTransactionDetails.setArguments(bundle);
-
-        app.getFragmentManager().beginTransaction()
-                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                .add(android.R.id.content, fragmentTransactionDetails, FragmentTransactionDetails.class.getName())
-                .addToBackStack(FragmentTransactionDetails.class.getName()).commit();
-
-    }
+//    public static void showTransactionPager(Activity app, List<TxUiHolder> items, int position) {
+//        if (app == null) {
+//            Log.e(TAG, "showSendFragment: app is null");
+//            return;
+//        }
+//        FragmentTransactionDetails fragmentTransactionDetails = (FragmentTransactionDetails) app.getFragmentManager().findFragmentByTag(FragmentTransactionDetails.class.getName());
+//        if (fragmentTransactionDetails != null && fragmentTransactionDetails.isAdded()) {
+//            fragmentTransactionDetails.setItems(items);
+//            Log.e(TAG, "showTransactionPager: Already showing");
+//            return;
+//        }
+//        fragmentTransactionDetails = new FragmentTransactionDetails();
+//        fragmentTransactionDetails.setItems(items);
+//        Bundle bundle = new Bundle();
+//        bundle.putInt("pos", position);
+//        fragmentTransactionDetails.setArguments(bundle);
+//
+//        app.getFragmentManager().beginTransaction()
+//                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
+//                .add(android.R.id.content, fragmentTransactionDetails, FragmentTransactionDetails.class.getName())
+//                .addToBackStack(FragmentTransactionDetails.class.getName()).commit();
+//
+//    }
 
     public static void showTransactionDetails(Activity app, TxUiHolder item, int position){
 

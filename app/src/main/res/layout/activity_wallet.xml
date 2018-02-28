@@ -84,12 +84,14 @@
                     android:id="@+id/balance_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginEnd="16dp"
                     android:text="@string/CurrencyBalance"
                     android:textColor="@color/currency_subheading_color"
                     android:textSize="14sp"
                     android:visibility="visible"
                     app:customTFont="CircularPro-Book.otf"
+                    app:layout_constraintBottom_toTopOf="@+id/balance_primary"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintRight_toRightOf="parent"/>
 
                 <com.breadwallet.presenter.customviews.BRText
