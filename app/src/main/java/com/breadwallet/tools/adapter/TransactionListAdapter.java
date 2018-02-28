@@ -3,20 +3,18 @@ package com.breadwallet.tools.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -31,6 +29,7 @@ import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -78,7 +77,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 //    private boolean updatingMetadata;
 
     public TransactionListAdapter(Context mContext, List<TxUiHolder> items) {
-        this.txResId = R.layout.tx_item;
+        this.txResId = R.layout.wallet_tx_item;
         this.promptResId = R.layout.prompt_item;
         this.mContext = mContext;
         items = new ArrayList<>();
@@ -148,7 +147,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 setTexts((TxHolder) holder, position);
                 break;
             case promptType:
-                setPrompt((PromptHolder) holder);
+                //setPrompt((PromptHolder) holder);
                 break;
         }
 
@@ -156,25 +155,27 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemViewType(int position) {
-        if (position == 0 && TxManager.getInstance().currentPrompt != null) {
-            return promptType;
-        } else {
+        //if (position == 0 && TxManager.getInstance().currentPrompt != null) {
+          //  return promptType;
+        //} else {
             return txType;
-        }
+        //}
     }
 
     @Override
     public int getItemCount() {
-        return TxManager.getInstance().currentPrompt == null ? itemFeed.size() : itemFeed.size() + 1;
+        return itemFeed.size();
     }
 
     private void setTexts(final TxHolder convertView, int position) {
         BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
-        TxUiHolder item = itemFeed.get(TxManager.getInstance().currentPrompt == null ? position : position - 1);
+        TxUiHolder item = itemFeed.get(position);
         item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
-        String commentString = (item.metaData == null || item.metaData.comment == null) ? "" : item.metaData.comment;
-        convertView.comment.setText(commentString);
-        if (commentString.isEmpty()) {
+
+        //String memo = item.metaData.comment;
+        //String commentString = (item.metaData == null || item.metaData.comment == null) ? "" : item.metaData.comment;
+        //convertView.comment.setText(commentString);
+       /* if (commentString.isEmpty()) {
             convertView.constraintLayout.removeView(convertView.comment);
             ConstraintSet set = new ConstraintSet();
             set.clone(convertView.constraintLayout);
@@ -192,14 +193,56 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             // Apply the changes
             set.applyTo(convertView.constraintLayout);
             convertView.comment.requestLayout();
-        }
+        }*/
 
         boolean received = item.getSent() == 0;
-        convertView.arrowIcon.setImageResource(received ? R.drawable.arrow_down_bold_circle : R.drawable.arrow_up_bold_circle);
-        convertView.mainLayout.setBackgroundResource(getResourceByPos(position));
-        convertView.sentReceived.setText(received ? mContext.getString(R.string.TransactionDetails_received, "") : mContext.getString(R.string.TransactionDetails_sent, ""));
-        final String addr = wallet.decorateAddress(mContext, item.getTo()[0]); //destination address, either our address (received at) or receivers (sent to)
-        convertView.account.setText(String.format(mContext.getString(received ? R.string.TransactionDetails_from : R.string.TransactionDetails_to), addr));
+        //convertView.arrowIcon.setImageResource(received ? R.drawable.arrow_down_bold_circle : R.drawable.arrow_up_bold_circle);
+        //convertView.mainLayout.setBackgroundResource(getResourceByPos(position));
+
+        String txAction;
+        if (received) {
+            txAction = "received via " + item.getFrom()[0];
+            convertView.transactionAmount.setTextColor(mContext.getResources().getColor(R.color.transaction_amount_received_color, null));
+            Log.d(TAG, "Address FROM -> " + item.getFrom()[0]);
+            Log.d(TAG, "Address array -> " + Arrays.toString(item.getFrom()));
+
+
+        } else {
+
+            txAction = "sent to " + item.getTo()[0];
+            Log.d(TAG, "Address TO -> " + item.getTo()[0]);
+            Log.d(TAG, "Address array -> " + Arrays.toString(item.getFrom()));
+
+
+        }
+
+
+        // Show the tx memo/comment only if one is available
+        /*if(memo != null && !memo.isEmpty()){
+            convertView.transactionDetail.setText(memo);
+        }
+        else {
+            convertView.transactionDetail.setText(txAction);
+        }*/
+
+        // Set transaction amount
+        long transactionAmount = item.getAmount();
+        long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived());
+        String iso = BRSharedPrefs.getPreferredFiatIso(mContext);
+
+
+        if (received) {
+            convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, iso, WalletsMaster.getInstance(mContext).getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
+        } else {
+            convertView.transactionAmount.setText("-" + CurrencyUtils.getFormattedAmount(mContext, iso, WalletsMaster.getInstance(mContext).getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
+
+        }
+
+        //convertView.sentReceived.setText(received ? mContext.getString(R.string.TransactionDetails_received, "") : mContext.getString(R.string.TransactionDetails_sent, ""));
+        //convertView.toFrom.setText(received ? String.format(mContext.getString(R.string.TransactionDetails_from), "") : String.format(mContext.getString(R.string.TransactionDetails_to), ""));
+//        final String addr = position == 1? "1HB5XMLmzFVj8ALj6mfBsbifRoD4miY36v" : "35SwXe97aPRUsoaUTH1Dr3SB7JptH39pDZ"; //testing
+        final String addr = item.getTo()[0];
+        //convertView.account.setText(addr);
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext, wallet.getIso(mContext)) - blockHeight + 1;
 
@@ -250,44 +293,50 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 break;
         }
         if (availableForSpend && received) {
-            convertView.status_2.setText(mContext.getString(R.string.Transaction_available));
+            //convertView.status_2.setText(mContext.getString(R.string.Transaction_available));
         } else {
-            convertView.constraintLayout.removeView(convertView.status_2);
-            ConstraintSet set = new ConstraintSet();
-            set.clone(convertView.constraintLayout);
-            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, mContext.getResources().getDisplayMetrics());
-
-            set.connect(R.id.status, ConstraintSet.BOTTOM, convertView.constraintLayout.getId(), ConstraintSet.BOTTOM, px);
-            // Apply the changes
-            set.applyTo(convertView.constraintLayout);
+            //convertView.constraintLayout.removeView(convertView.status_2);
+            //ConstraintSet set = new ConstraintSet();
+//            set.clone(convertView.constraintLayout);
+//            int px = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, mContext.getResources().getDisplayMetrics());
+//
+//            set.connect(R.id.status, ConstraintSet.BOTTOM, convertView.constraintLayout.getId(), ConstraintSet.BOTTOM, px);
+//            // Apply the changes
+//            set.applyTo(convertView.constraintLayout);
         }
         if (level == 6) {
-            convertView.status.setText(mContext.getString(R.string.Transaction_complete));
+            //convertView.status.setText(mContext.getString(R.string.Transaction_complete));
         } else {
-            convertView.status.setText(String.format("%s - %s", sentReceived, percentage));
+            //convertView.status.setText(String.format("%s - %s", sentReceived, percentage));
         }
 
-        if (!item.isValid())
-            convertView.status.setText(mContext.getString(R.string.Transaction_invalid));
+        //if (!item.isValid())
+        //convertView.status.setText(mContext.getString(R.string.Transaction_invalid));
 
-        long satoshisAmount = item.getAmount();
 
         boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
-        String iso = isCryptoPreferred ? wallet.getIso(mContext) : BRSharedPrefs.getPreferredFiatIso(mContext);
+        //iso = isCryptoPreferred ? wallet.getIso(mContext) : BRSharedPrefs.getPreferredFiatIso(mContext);
         String amountText = CurrencyUtils.getFormattedAmount(mContext, iso, isCryptoPreferred ?
                 new BigDecimal(satoshisAmount) : wallet.getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount)));
 
-        convertView.amount.setText(amountText);
+        convertView.transactionAmount.setText(amountText);
+
 
         //if it's 0 we use the current time.
         long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * 1000;
         CharSequence timeSpan = BRDateUtil.getCustomSpan(new Date(timeStamp));
 
-        convertView.timestamp.setText(timeSpan);
+        Log.d(TAG, "Tx timestamp final -> " + timeStamp);
+        Log.d(TAG, "Tx timestamp original -> " + item.getTimeStamp());
+
+        String shortDate = BRDateUtil.getShortDate(timeStamp);
+
+
+        convertView.transactionDate.setText(shortDate);
 
     }
 
-    private void setPrompt(final PromptHolder prompt) {
+   /* private void setPrompt(final PromptHolder prompt) {
         Log.d(TAG, "setPrompt: " + TxManager.getInstance().promptInfo.title);
         if (TxManager.getInstance().promptInfo == null) {
             throw new RuntimeException("can't happen, showing prompt with null PromptInfo");
@@ -298,7 +347,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         prompt.title.setText(TxManager.getInstance().promptInfo.title);
         prompt.description.setText(TxManager.getInstance().promptInfo.description);
 
-    }
+    }*/
 
     private int getResourceByPos(int pos) {
         if (TxManager.getInstance().currentPrompt != null) pos--;
@@ -390,9 +439,13 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         public TextView comment;
         public ImageView arrowIcon;
 
+        public BRText transactionDate;
+        public BRText transactionAmount;
+        public BRText transactionDetail;
+
         public TxHolder(View view) {
             super(view);
-            mainLayout = (RelativeLayout) view.findViewById(R.id.main_layout);
+            /*mainLayout = (RelativeLayout) view.findViewById(R.id.main_layout);
             constraintLayout = (ConstraintLayout) view.findViewById(R.id.constraintLayout);
             sentReceived = (TextView) view.findViewById(R.id.sent_received);
             amount = (TextView) view.findViewById(R.id.amount);
@@ -401,7 +454,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             status_2 = (TextView) view.findViewById(R.id.status_2);
             timestamp = (TextView) view.findViewById(R.id.timestamp);
             comment = (TextView) view.findViewById(R.id.comment);
-            arrowIcon = (ImageView) view.findViewById(R.id.arrow_icon);
+            arrowIcon = (ImageView) view.findViewById(R.id.arrow_icon);*/
+
+            transactionDate = view.findViewById(R.id.tx_date);
+            transactionAmount = view.findViewById(R.id.tx_amount);
+            transactionDetail = view.findViewById(R.id.tx_description);
         }
     }
 
@@ -411,6 +468,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         public BRText title;
         public BRText description;
         public ImageButton close;
+        public ProgressBar sendProgress;
 
         public PromptHolder(View view) {
             super(view);
@@ -419,6 +477,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             title = (BRText) view.findViewById(R.id.info_title);
             description = (BRText) view.findViewById(R.id.info_description);
             close = (ImageButton) view.findViewById(R.id.info_close_button);
+            sendProgress = view.findViewById(R.id.send_progress);
+
         }
     }
 

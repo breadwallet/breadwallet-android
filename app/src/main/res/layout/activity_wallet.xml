@@ -88,9 +88,8 @@
                     android:text="@string/CurrencyBalance"
                     android:textColor="@color/currency_subheading_color"
                     android:textSize="14sp"
+                    android:visibility="visible"
                     app:customTFont="CircularPro-Book.otf"
-                    app:layout_constraintBottom_toTopOf="@+id/balance_primary"
-                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintRight_toRightOf="parent"/>
 
                 <com.breadwallet.presenter.customviews.BRText
@@ -180,30 +179,26 @@
 
         </android.support.v7.widget.Toolbar>
 
-        <com.breadwallet.presenter.customviews.BRSearchBar
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/search_bar"
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:background="@drawable/bread_gradient"
-            android:contentInsetLeft="0dp"
-            android:contentInsetStart="0dp"
-            app:contentInsetLeft="0dp"
-            app:contentInsetStart="0dp">
-        </com.breadwallet.presenter.customviews.BRSearchBar>
+        <com.breadwallet.presenter.customviews.BRSearchBar xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                           android:id="@+id/search_bar"
+                                                           android:layout_width="match_parent"
+                                                           android:layout_height="160dp"
+                                                           android:background="@drawable/bread_gradient"
+                                                           android:contentInsetLeft="0dp"
+                                                           android:contentInsetStart="0dp"
+                                                           app:contentInsetLeft="0dp"
+                                                           app:contentInsetStart="0dp"/>
 
-        <com.breadwallet.presenter.customviews.BRNotificationBar
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/notification_bar"
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:background="@drawable/bread_gradient"
-            android:contentInsetLeft="0dp"
-            android:contentInsetStart="0dp"
-            app:breadText="No internet connection found.\nCheck your connection and try again."
-            app:contentInsetLeft="0dp"
-            app:contentInsetStart="0dp">
-        </com.breadwallet.presenter.customviews.BRNotificationBar>
+        <com.breadwallet.presenter.customviews.BRNotificationBar xmlns:app="http://schemas.android.com/apk/res-auto"
+                                                                 android:id="@+id/notification_bar"
+                                                                 android:layout_width="match_parent"
+                                                                 android:layout_height="160dp"
+                                                                 android:background="@drawable/bread_gradient"
+                                                                 android:contentInsetLeft="0dp"
+                                                                 android:contentInsetStart="0dp"
+                                                                 app:breadText="No internet connection found.\nCheck your connection and try again."
+                                                                 app:contentInsetLeft="0dp"
+                                                                 app:contentInsetStart="0dp"/>
 
     </ViewFlipper>
 
@@ -220,13 +215,7 @@
             android:id="@+id/tx_list"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
             android:clipToPadding="false"
-            android:paddingBottom="8dp"
-            android:paddingEnd="8dp"
-            android:paddingStart="8dp"
-            android:paddingTop="16dp"
             />
 
     </LinearLayout>
