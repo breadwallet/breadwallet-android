@@ -42,7 +42,13 @@ public class CurrencyUtils {
     public static final String TAG = CurrencyUtils.class.getName();
 
 
-    // amount is the smallest denomination currency (e.g. cents or satoshis)
+    /**
+     *
+     * @param app - the Context
+     * @param iso - the iso for the currency we want to format the amount for
+     * @param amount - the smallest denomination currency (e.g. dollars or satoshis)
+     * @return - the formatted amount e.g. $535.50 or b5000
+     */
     public static String getFormattedAmount(Context app, String iso, BigDecimal amount) {
         if (amount == null) return "---"; //to be able to detect in a bug
 //        Log.e(TAG, "amount: " + amount);
@@ -65,7 +71,6 @@ public class CurrencyUtils {
             try {
                 currency = Currency.getInstance(iso);
                 symbol = currency.getSymbol();
-                amount = amount.divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE);
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }

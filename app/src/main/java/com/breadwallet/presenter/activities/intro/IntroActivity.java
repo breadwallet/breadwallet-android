@@ -4,6 +4,7 @@ package com.breadwallet.presenter.activities.intro;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -11,6 +12,7 @@ import android.widget.ImageButton;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.SetPinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
@@ -26,6 +28,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.platform.APIClient;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 
 /**
@@ -92,6 +95,7 @@ public class IntroActivity extends BRActivity implements Serializable {
             }
         });
 
+
         if (!BuildConfig.DEBUG && BRKeyStore.AUTH_DURATION_SEC != 300) {
             Log.e(TAG, "onCreate: BRKeyStore.AUTH_DURATION_SEC != 300");
             BRReportsManager.reportBug(new RuntimeException("AUTH_DURATION_SEC should be 300"), true);
@@ -104,6 +108,7 @@ public class IntroActivity extends BRActivity implements Serializable {
             Utils.printPhoneSpecs();
 
         byte[] masterPubKey = BRKeyStore.getMasterPublicKey(this);
+
         boolean isFirstAddressCorrect = false;
         if (masterPubKey != null && masterPubKey.length != 0) {
             isFirstAddressCorrect = SmartValidator.checkFirstAddress(this, masterPubKey);

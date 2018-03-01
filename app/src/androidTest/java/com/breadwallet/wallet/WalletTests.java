@@ -6,11 +6,15 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
+import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.presenter.activities.settings.TestActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoincash.WalletBchManager;
 import com.breadwallet.wallet.wallets.util.CryptoUriParser;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
@@ -64,9 +68,18 @@ public class WalletTests {
     @Rule
     public ActivityTestRule<TestActivity> mActivityRule = new ActivityTestRule<>(TestActivity.class);
 
+
+    // Test Wallets
+    BaseWalletManager mBtcWallet;
+    BaseWalletManager mBchWallet;
+
     @Before
     public void setUp() {
         Log.e(TAG, "setUp: ");
+        BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey("cat circle quick rotate arena primary walnut mask record smile violin state".getBytes(), true);
+        BRKeyStore.putMasterPublicKey(pubKey.serialize(), mActivityRule.getActivity());
+        mBtcWallet = WalletBitcoinManager.getInstance(mActivityRule.getActivity());
+        mBchWallet = WalletBchManager.getInstance(mActivityRule.getActivity());
     }
 
     @After
@@ -75,6 +88,11 @@ public class WalletTests {
 
     static {
         System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
+    }
+
+    public void exchangeTests(){
+        long satoshis = 50000000;
+        //todo finish tests
     }
 
     @Test

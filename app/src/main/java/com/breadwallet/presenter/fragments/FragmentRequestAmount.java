@@ -455,7 +455,7 @@ public class FragmentRequestAmount extends Fragment {
             if (isCrypto) {
                 amount = master.getCurrentWallet(getActivity()).getSmallestCryptoForCrypto(getActivity(), bigAmount).longValue();
             } else {
-                amount = master.getCurrentWallet(getActivity()).getSmallestCryptoForFiat(getActivity(), bigAmount.multiply(new BigDecimal(100))).longValue();
+                amount = master.getCurrentWallet(getActivity()).getSmallestCryptoForFiat(getActivity(), bigAmount).longValue();
             }
 
             //todo assume bitcoin and bitcoin cash for now, hardcoded bitcoin QR
