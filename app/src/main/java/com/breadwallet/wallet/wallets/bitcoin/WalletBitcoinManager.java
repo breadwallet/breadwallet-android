@@ -386,15 +386,15 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public long getFiatExchangeRate(Context app) {
+    public BigDecimal getFiatExchangeRate(Context app) {
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, this, BRSharedPrefs.getPreferredFiatIso(app));
-        return ent == null ? 0 : (long) ent.rate; //dollars
+        return new BigDecimal(ent == null ? 0 : (long) ent.rate); //dollars
     }
 
     @Override
-    public long getFiatBalance(Context app) {
+    public BigDecimal getFiatBalance(Context app) {
         BigDecimal bal = getFiatForSmallestCrypto(app, new BigDecimal(getCachedBalance(app)));
-        return bal == null ? 0 : bal.longValue();
+        return new BigDecimal(bal == null ? 0 : bal.longValue());
     }
 
     @Override

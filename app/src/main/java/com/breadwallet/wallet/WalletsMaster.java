@@ -97,11 +97,11 @@ public class WalletsMaster {
 
     //get the total fiat balance held in all the wallets in the smallest unit (e.g. cents)
     public BigDecimal getAggregatedFiatBalance(Context app) {
-        long totalBalance = 0;
+        BigDecimal totalBalance = new BigDecimal(0);
         for (BaseWalletManager wallet : mWallets) {
-            totalBalance += wallet.getFiatBalance(app);
+            totalBalance = totalBalance.add(wallet.getFiatBalance(app));
         }
-        return new BigDecimal(totalBalance);
+        return totalBalance;
     }
 
     public synchronized boolean generateRandomSeed(final Context ctx) {

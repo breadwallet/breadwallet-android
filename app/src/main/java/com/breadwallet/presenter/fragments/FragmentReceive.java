@@ -312,7 +312,7 @@ public class FragmentReceive extends Fragment {
         BRClipboardManager.putClipboard(app, mAddress.getText().toString());
         //copy the legacy for testing purposes (testnet faucet money receiving)
         if (Utils.isEmulatorOrDebug(app))
-            BRClipboardManager.putClipboard(app, WalletsMaster.getInstance(app).getCurrentWallet(app).decorateAddress(app, mAddress.getText().toString()));
+            BRClipboardManager.putClipboard(app, WalletsMaster.getInstance(app).getCurrentWallet(app).undecorateAddress(app, mAddress.getText().toString()));
 
         showCopiedLayout(true);
     }

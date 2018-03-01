@@ -43,6 +43,8 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.SyncListener;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.wallet.wallets.bitcoincash.WalletBchManager;
 import com.breadwallet.wallet.wallets.util.CryptoUriParser;
 import com.platform.HTTPServer;
 
@@ -176,6 +178,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         TxManager.getInstance().init(this);
 
         updateUi();
+//        exchangeTest();
 
     }
 
@@ -232,8 +235,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 //        String fiatIso = BRSharedPrefs.getPreferredFiatIso(this);
 //        CurrencyEntity ent = CurrencyDataSource.getInstance(this).getCurrencyByCode(this, wallet, fiatIso);
 
-        String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(wallet.getFiatExchangeRate(this)));
-        String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(wallet.getFiatBalance(this)));
+        String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatExchangeRate(this));
+        String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatBalance(this));
         String cryptoBalance = CurrencyUtils.getFormattedAmount(this, wallet.getIso(this), new BigDecimal(wallet.getCachedBalance(this)));
 
         mCurrencyTitle.setText(wallet.getName(this));
@@ -447,6 +450,25 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 barFlipper.setDisplayedChild(2);
         }
     }
+
+//    private void exchangeTest() {
+//        WalletBitcoinManager walletBitcoinManager = WalletBitcoinManager.getInstance(this);
+//        WalletBchManager walletBchManager = WalletBchManager.getInstance(this);
+//
+//        BigDecimal satoshis = new BigDecimal(50000000);
+//        BigDecimal fiat = new BigDecimal(15000);
+//
+//        Log.e(TAG, "exchangeTest: walletBitcoinManager.getFiatForSmallestCrypto:" + walletBitcoinManager.getFiatForSmallestCrypto(this, satoshis).toPlainString());
+//        Log.e(TAG, "exchangeTest: walletBitcoinManager.getFiatExchangeRate:" + walletBitcoinManager.getFiatExchangeRate(this).toPlainString());
+//        Log.e(TAG, "exchangeTest: walletBitcoinManager.getCryptoForFiat:" + walletBitcoinManager.getCryptoForFiat(this, fiat).toPlainString());
+//        Log.e(TAG, "exchangeTest: walletBitcoinManager.getSmallestCryptoForFiat:" + walletBitcoinManager.getSmallestCryptoForFiat(this, fiat).toPlainString());
+//
+//        Log.e(TAG, "exchangeTest: walletBchManager.getFiatForSmallestCrypto:" + walletBchManager.getFiatForSmallestCrypto(this, satoshis).toPlainString());
+//        Log.e(TAG, "exchangeTest: walletBchManager.getFiatExchangeRate:" + walletBchManager.getFiatExchangeRate(this).toPlainString());
+//        Log.e(TAG, "exchangeTest: walletBchManager.getCryptoForFiat:" + walletBchManager.getCryptoForFiat(this, fiat).toPlainString());
+//        Log.e(TAG, "exchangeTest: walletBchManager.getSmallestCryptoForFiat:" + walletBchManager.getSmallestCryptoForFiat(this, fiat).toPlainString());
+//
+//    }
 
     @Override
     public void onBackPressed() {

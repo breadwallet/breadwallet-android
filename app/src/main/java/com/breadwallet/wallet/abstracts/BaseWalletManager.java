@@ -166,12 +166,12 @@ public interface BaseWalletManager {
     /**
      * @return - the wallet's currency exchange rate in the user's favorite fiat currency (e.g. dollars)
      */
-    long getFiatExchangeRate(Context app);
+    BigDecimal getFiatExchangeRate(Context app);
 
     /**
      * @return - the total balance amount in the user's favorite fiat currency (e.g. dollars)
      */
-    long getFiatBalance(Context app);
+    BigDecimal getFiatBalance(Context app);
 
     /**
      * @param amount - the smallest denomination amount in current wallet's crypto (e.g. Satoshis)
