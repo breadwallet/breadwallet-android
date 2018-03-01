@@ -390,7 +390,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public long getFiatExchangeRate(Context app) {
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, this, BRSharedPrefs.getPreferredFiatIso(app));
-        return ent == null ? 0 : (long) (ent.rate * 100); //cents
+        return ent == null ? 0 : (long) ent.rate; //dollars
     }
 
     @Override
@@ -408,18 +408,17 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         double rate = ent.rate;
         //get crypto amount
         BigDecimal cryptoAmount = amount.divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE);
-        return cryptoAmount.multiply(new BigDecimal(rate)).multiply(new BigDecimal(100));
+        return cryptoAmount.multiply(new BigDecimal(rate));
     }
 
     @Override
-    public BigDecimal getCryptoForFiat(Context app, BigDecimal amount) {
-        if (amount.doubleValue() == 0) return amount;
+    public BigDecimal getCryptoForFiat(Context app, BigDecimal fiatAmount) {
+        if (fiatAmount.doubleValue() == 0) return fiatAmount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, this, iso);
         if (ent == null) return null;
         double rate = ent.rate;
         //convert c to $.
-        BigDecimal fiatAmount = amount.divide(new BigDecimal(100), ROUNDING_MODE);
         int unit = BRSharedPrefs.getCryptoDenomination(app, getIso(app));
         BigDecimal result = new BigDecimal(0);
         switch (unit) {
@@ -486,8 +485,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         }
         double rate = ent.rate;
         //convert c to $.
-        BigDecimal fiatAmount = amount.divide(new BigDecimal(100), ROUNDING_MODE);
-        return fiatAmount.divide(new BigDecimal(rate), 8, ROUNDING_MODE).multiply(new BigDecimal("100000000"));
+        return amount.divide(new BigDecimal(rate), 8, ROUNDING_MODE).multiply(new BigDecimal("100000000"));
     }
 
 
