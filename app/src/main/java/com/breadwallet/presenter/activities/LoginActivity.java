@@ -87,8 +87,6 @@ public class LoginActivity extends BRActivity {
             return;
         }
 
-        WalletsMaster.getInstance(this).initWallets(this);
-
         if (BRKeyStore.getPinCode(this).length() == 4) pinLimit = 4;
 
         keyboard = (BRKeyboard) findViewById(R.id.brkeyboard);

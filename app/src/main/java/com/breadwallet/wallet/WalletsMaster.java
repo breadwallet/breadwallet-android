@@ -66,11 +66,10 @@ public class WalletsMaster {
 
     private List<BaseWalletManager> mWallets = new ArrayList<>();
 
-
     private WalletsMaster(Context app) {
     }
 
-    public static WalletsMaster getInstance(Context app) {
+    public synchronized static WalletsMaster getInstance(Context app) {
         if (instance == null) {
             instance = new WalletsMaster(app);
         }
@@ -97,7 +96,7 @@ public class WalletsMaster {
     }
 
     //get the total fiat balance held in all the wallets in the smallest unit (e.g. cents)
-    public BigDecimal getAgregatedFiatBalance(Context app) {
+    public BigDecimal getAggregatedFiatBalance(Context app) {
         long totalBalance = 0;
         for (BaseWalletManager wallet : mWallets) {
             totalBalance += wallet.getFiatBalance(app);
@@ -226,7 +225,6 @@ public class WalletsMaster {
 
     }
 
-
     public void wipeWalletButKeystore(final Context ctx) {
         Log.d(TAG, "wipeWalletButKeystore");
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -237,17 +235,14 @@ public class WalletsMaster {
                     wallet.getPeerManager().dispose();
                     wallet.wipeData(ctx);
                 }
-
             }
         });
-
     }
 
     public void wipeAll(Context app) {
         wipeKeyStore(app);
         wipeWalletButKeystore(app);
     }
-
 
     public void refreshBalances(Context app) {
         for (BaseWalletManager wallet : mWallets) {

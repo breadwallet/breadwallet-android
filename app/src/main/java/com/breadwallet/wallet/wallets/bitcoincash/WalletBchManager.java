@@ -119,10 +119,13 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     private Executor listenerExecutor = Executors.newSingleThreadExecutor();
 
-    public static WalletBchManager getInstance(Context app) {
+    public synchronized static WalletBchManager getInstance(Context app) {
         if (instance == null) {
             byte[] rawPubKey = BRKeyStore.getMasterPublicKey(app);
-            if (Utils.isNullOrEmpty(rawPubKey)) return null;
+            if (Utils.isNullOrEmpty(rawPubKey)) {
+                Log.e(TAG, "getInstance: rawPubKey is null");
+                return null;
+            }
             BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
             long time = BRKeyStore.getWalletCreationTime(app);
 //            if (Utils.isEmulatorOrDebug(app)) time = 1517955529;
@@ -310,18 +313,13 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public String decorateAddress(Context app, String addr) {
         if (Utils.isNullOrEmpty(addr)) return null;
-        String full = BRCoreAddress.bcashEncodeBitcoin(addr);
-        if (Utils.isNullOrEmpty(full)) return null;
-        String decorated = full.split(":")[1]; //bitcoincash:q254dsfd....
-        return Utils.isNullOrEmpty(decorated) ? null : decorated;
+        String result = BRCoreAddress.bcashEncodeBitcoin(addr);
+        return Utils.isNullOrEmpty(result) ? null : result;
     }
 
     @Override
     public String undecorateAddress(Context app, String addr) {
         if (Utils.isNullOrEmpty(addr)) return null;
-        if (!addr.contains(":")) {
-            addr = getScheme(app) + ":" + addr; // add the scheme if only the address is passed
-        }
         return BRCoreAddress.bcashDecodeBitcoin(addr);
     }
 
@@ -371,8 +369,9 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         BRCoreAddress address = getReceiveAddress(app);
         if (Utils.isNullOrEmpty(address.stringify())) {
             Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
+            return;
         }
-        BRSharedPrefs.putReceiveAddress(app, decorateAddress(app, address.stringify()), getIso(app));
+        BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso(app));
 
     }
 
@@ -626,7 +625,9 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         List<BRMerkleBlockEntity> blocks = MerkleBlockDataSource.getInstance(app).getAllMerkleBlocks(app, this);
         if (blocks == null || blocks.size() == 0) return new BRCoreMerkleBlock[0];
         BRCoreMerkleBlock arr[] = new BRCoreMerkleBlock[blocks.size()];
+
         for (int i = 0; i < blocks.size(); i++) {
+
             BRMerkleBlockEntity ent = blocks.get(i);
             arr[i] = new BRCoreMerkleBlock(ent.getBuff(), ent.getBlockHeight());
         }

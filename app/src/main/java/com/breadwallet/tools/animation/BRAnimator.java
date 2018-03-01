@@ -26,6 +26,7 @@ import android.view.animation.OvershootInterpolator;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.LoginActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
+import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -399,7 +400,7 @@ public class BRAnimator {
     public static void startBreadActivity(Activity from, boolean auth) {
         if (from == null) return;
         Log.e(TAG, "startBreadActivity: " + from.getClass().getName());
-        Class toStart = auth ? LoginActivity.class : HomeActivity.class;
+        Class toStart = auth ? LoginActivity.class : WalletActivity.class;
         Intent intent = new Intent(from, toStart);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         from.startActivity(intent);

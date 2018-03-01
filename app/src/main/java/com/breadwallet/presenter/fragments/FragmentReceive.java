@@ -3,6 +3,7 @@ package com.breadwallet.presenter.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -71,7 +72,7 @@ public class FragmentReceive extends Fragment {
     public ImageView mQrImage;
     public LinearLayout backgroundLayout;
     public LinearLayout signalLayout;
-    private String receiveAddress;
+    private String mReceiveAddress;
     private View separator;
     private BRButton shareButton;
     private Button shareEmail;
@@ -151,8 +152,9 @@ public class FragmentReceive extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                String bitcoinUri = CryptoUriParser.createBitcoinUrl(receiveAddress, 0, null, null, null);
-                QRUtils.share("mailto:", getActivity(), bitcoinUri);
+                BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+                Uri cryptoUri = CryptoUriParser.createBitcoinUrl(getActivity(), walletManager, walletManager.decorateAddress(getActivity(), mReceiveAddress), 0, null, null, null);
+                QRUtils.share("mailto:", getActivity(), cryptoUri.toString());
 
             }
         });
@@ -160,8 +162,9 @@ public class FragmentReceive extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                String bitcoinUri = CryptoUriParser.createBitcoinUrl(receiveAddress, 0, null, null, null);
-                QRUtils.share("sms:", getActivity(), bitcoinUri);
+                BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+                Uri cryptoUri = CryptoUriParser.createBitcoinUrl(getActivity(), walletManager, walletManager.decorateAddress(getActivity(), mReceiveAddress), 0, null, null, null);
+                QRUtils.share("sms:", getActivity(), cryptoUri.toString());
             }
         });
         shareButton.setOnClickListener(new View.OnClickListener() {
@@ -184,7 +187,7 @@ public class FragmentReceive extends Fragment {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 Activity app = getActivity();
-                app.onBackPressed();
+                app.getFragmentManager().popBackStack();
                 BRAnimator.showRequestFragment(app);
 
             }
@@ -289,9 +292,10 @@ public class FragmentReceive extends Fragment {
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        receiveAddress = BRSharedPrefs.getReceiveAddress(ctx, wallet.getIso(ctx));
-                        mAddress.setText(receiveAddress);
-                        boolean generated = QRUtils.generateQR(ctx, wallet.getScheme(ctx) + ":" + receiveAddress, mQrImage);
+                        mReceiveAddress = BRSharedPrefs.getReceiveAddress(ctx, wallet.getIso(ctx));
+//                        Uri cryptoUrl = CryptoUriParser.createBitcoinUrl(ctx, wallet, mReceiveAddress, 0, null, null, null);
+                        mAddress.setText(wallet.decorateAddress(ctx, mReceiveAddress));
+                        boolean generated = QRUtils.generateQR(ctx, mReceiveAddress, mQrImage);
                         if (!generated)
                             throw new RuntimeException("failed to generate qr image for address");
                     }
@@ -302,7 +306,7 @@ public class FragmentReceive extends Fragment {
     }
 
     private void copyText() {
-        BRClipboardManager.putClipboard(getContext(), mAddress.getText().toString());
+        BRClipboardManager.putClipboard(getActivity(), mAddress.getText().toString());
         showCopiedLayout(true);
     }
 
