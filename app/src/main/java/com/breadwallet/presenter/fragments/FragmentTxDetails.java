@@ -19,6 +19,7 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
@@ -238,6 +239,11 @@ public class FragmentTxDetails extends DialogFragment {
             Toast.makeText(getContext(), "Error getting transaction data", Toast.LENGTH_SHORT).show();
         }
 
+        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        params.setMargins(0,0,0, Utils.getPixelsFromDps(getContext(), 12));
+        params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
+        mShowHide.setLayoutParams(params);
 
     }
 
