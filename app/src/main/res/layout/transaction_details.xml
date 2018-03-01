@@ -267,7 +267,7 @@
                 android:layout_below="@id/divider5"
                 android:layout_marginRight="14dp"
                 android:layout_marginTop="14dp"
-                android:text="Exchange rate at time"
+                android:text=""
                 app:customTFont="CircularPro-Book.otf" />
 
             <View
