@@ -260,12 +260,16 @@ public class CryptoUriParser {
 
     }
 
-    public static String createBitcoinUrl(String address, long satoshiAmount, String label, String message, String rURL) {
-
+    public static Uri createBitcoinUrl(Context app, BaseWalletManager wm, String addr, long satoshiAmount, String label, String message, String rURL) {
         Uri.Builder builder = new Uri.Builder();
-        builder = builder.scheme("bitcoin");
-        if (address != null && !address.isEmpty())
-            builder = builder.appendPath(address);
+        String walletScheme = wm.getScheme(app);
+        String cleanAddress = addr;
+        if (addr.contains(":")) {
+            cleanAddress = addr.split(":")[1];
+        }
+        builder = builder.scheme(walletScheme);
+        if (!Utils.isNullOrEmpty(cleanAddress))
+            builder = builder.appendPath(cleanAddress);
         if (satoshiAmount != 0)
             builder = builder.appendQueryParameter("amount", new BigDecimal(satoshiAmount).divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString());
         if (label != null && !label.isEmpty())
@@ -275,9 +279,8 @@ public class CryptoUriParser {
         if (rURL != null && !rURL.isEmpty())
             builder = builder.appendQueryParameter("r", rURL);
 
-        return builder.build().toString().replaceFirst("/", "");
+        return Uri.parse(builder.build().toString().replace("/", ""));
 
     }
-
 
 }

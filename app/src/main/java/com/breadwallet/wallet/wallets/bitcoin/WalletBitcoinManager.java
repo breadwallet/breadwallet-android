@@ -123,7 +123,10 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     public static WalletBitcoinManager getInstance(Context app) {
         if (instance == null) {
             byte[] rawPubKey = BRKeyStore.getMasterPublicKey(app);
-            if (Utils.isNullOrEmpty(rawPubKey)) return null;
+            if (Utils.isNullOrEmpty(rawPubKey)) {
+                Log.e(TAG, "getInstance: rawPubKey is null");
+                return null;
+            }
             BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
             long time = BRKeyStore.getWalletCreationTime(app);
 //            if (Utils.isEmulatorOrDebug(app)) time = 1517955529;
@@ -366,7 +369,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         if (Utils.isNullOrEmpty(address.stringify())) {
             Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
         }
-        BRSharedPrefs.putReceiveAddress(app, decorateAddress(app, address.stringify()), getIso(app));
+        BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso(app));
 
     }
 
@@ -570,6 +573,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     @Override
     public void saveBlocks(boolean replace, BRCoreMerkleBlock[] blocks) {
         super.saveBlocks(replace, blocks);
+
         Context app = BreadApp.getBreadContext();
         if (app == null) return;
         if (replace) MerkleBlockDataSource.getInstance(app).deleteAllBlocks(app, this);

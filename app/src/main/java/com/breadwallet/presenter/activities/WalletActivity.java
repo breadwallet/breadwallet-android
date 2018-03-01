@@ -142,31 +142,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         BaseWalletManager wm = WalletsMaster.getInstance(this).getCurrentWallet(this);
         Log.d(TAG, "Current wallet ISO -> " + wm.getIso(this));
-        if (wm.getIso(this).equalsIgnoreCase("BTC")) {
-
-            mBuyButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-
-                    Intent intent = new Intent(WalletActivity.this, WebViewActivity.class);
-                    intent.putExtra("url", HTTPServer.URL_BUY);
-                    Activity app = WalletActivity.this;
-                    app.startActivity(intent);
-                    app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
-                }
-            });
-
-        } else if (wm.getIso(this).equalsIgnoreCase("BCH")) {
-            mBuyButton.setVisibility(View.GONE);
-
-            LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    1.5f
-            );
-            mSendButton.setLayoutParams(param);
-            mReceiveButton.setLayoutParams(param);
-        }
 
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -199,6 +174,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         });
 
         TxManager.getInstance().init(this);
+
+        updateUi();
 
     }
 
@@ -251,8 +228,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             mBuyButton.setLayoutParams(param);
         }
 
-        String fiatIso = BRSharedPrefs.getPreferredFiatIso(this);
-        CurrencyEntity ent = CurrencyDataSource.getInstance(this).getCurrencyByCode(this, wallet, fiatIso);
+
+//        String fiatIso = BRSharedPrefs.getPreferredFiatIso(this);
+//        CurrencyEntity ent = CurrencyDataSource.getInstance(this).getCurrencyByCode(this, wallet, fiatIso);
 
         String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(wallet.getFiatExchangeRate(this)));
         String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(wallet.getFiatBalance(this)));
@@ -264,6 +242,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mBalanceSecondary.setText(cryptoBalance);
         mToolbar.setBackgroundColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
         mSendButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
+        mBuyButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
         mReceiveButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
 
         TxManager.getInstance().updateTxList(WalletActivity.this);
@@ -306,8 +285,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             // Align usd balance to left of swap icon
             set.connect(R.id.balance_primary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
-            mBalancePrimary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, 8));
-            mSwap.setPadding(0,0,0, Utils.getPixelsFromDps(this, 2));
+            mBalancePrimary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 8));
+            mSwap.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 2));
 
             Log.d(TAG, "CryptoPreferred " + cryptoPreferred);
 
@@ -330,11 +309,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             // Align secondary currency to the left of swap icon
             set.connect(R.id.balance_secondary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
-            mBalancePrimary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, 2));
-            mSwap.setPadding(0,0,0, Utils.getPixelsFromDps(this, 2));
+            mBalancePrimary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 2));
+            mSwap.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 2));
 
             //mBalancePrimary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, -4));
-
 
 
             Log.d(TAG, "CryptoPreferred " + cryptoPreferred);
@@ -375,6 +353,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         super.onResume();
 
         app = this;
+
+        WalletsMaster.getInstance(app).initWallets(app);
 
         TxManager.getInstance().onResume(this);
 
