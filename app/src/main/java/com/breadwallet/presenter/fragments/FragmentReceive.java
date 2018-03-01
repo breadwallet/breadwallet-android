@@ -39,6 +39,8 @@ import static com.breadwallet.tools.animation.BRAnimator.animateBackgroundDim;
 import static com.breadwallet.tools.animation.BRAnimator.animateSignalSlide;
 import static com.platform.HTTPServer.URL_SUPPORT;
 
+
+
 /**
  * BreadWallet
  * <p>
@@ -86,6 +88,7 @@ public class FragmentReceive extends Fragment {
     private Handler copyCloseHandler = new Handler();
     private BRKeyboard keyboard;
     private View separator2;
+    private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 3;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -155,6 +158,7 @@ public class FragmentReceive extends Fragment {
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 Uri cryptoUri = CryptoUriParser.createBitcoinUrl(getActivity(), walletManager, walletManager.decorateAddress(getActivity(), mReceiveAddress), 0, null, null, null);
                 QRUtils.share("mailto:", getActivity(), cryptoUri.toString());
+
 
             }
         });
