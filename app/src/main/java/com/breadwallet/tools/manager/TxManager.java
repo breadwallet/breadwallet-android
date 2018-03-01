@@ -73,7 +73,8 @@ public class TxManager {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
 
-                BRAnimator.showTransactionDetails(app, adapter.getItems().get(position), position);
+                TxUiHolder item = adapter.getItems().get(position);
+                BRAnimator.showTransactionDetails(app, item, position);
                 //if (currentPrompt == null || position > 0)
                   //  BRAnimator.showTransactionPager(app, adapter.getItems(), currentPrompt == null ? position : position - 1);
                 /*else {
