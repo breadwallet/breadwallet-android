@@ -20,6 +20,7 @@ import android.widget.TextView;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
+import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
@@ -30,6 +31,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRUtils;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
@@ -306,7 +308,12 @@ public class FragmentReceive extends Fragment {
     }
 
     private void copyText() {
-        BRClipboardManager.putClipboard(getActivity(), mAddress.getText().toString());
+        Activity app = getActivity();
+        BRClipboardManager.putClipboard(app, mAddress.getText().toString());
+        //copy the legacy for testing purposes (testnet faucet money receiving)
+        if (Utils.isEmulatorOrDebug(app))
+            BRClipboardManager.putClipboard(app, WalletsMaster.getInstance(app).getCurrentWallet(app).decorateAddress(app, mAddress.getText().toString()));
+
         showCopiedLayout(true);
     }
 
