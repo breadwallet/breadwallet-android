@@ -13,6 +13,7 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreChainParams;
+import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.BRCoreMerkleBlock;
 import com.breadwallet.core.BRCorePeer;
@@ -744,7 +745,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             });
         }
         if (ctx != null)
-            TransactionStorageManager.putTransaction(ctx, getInstance(ctx), new BRTransactionEntity(transaction.serialize(), transaction.getBlockHeight(), transaction.getTimestamp(), transaction.getReverseHash(), getIso(ctx)));
+            TransactionStorageManager.putTransaction(ctx, getInstance(ctx), new BRTransactionEntity(transaction.serialize(), transaction.getBlockHeight(), transaction.getTimestamp(), BRCoreKey.encodeHex(transaction.getHash()), getIso(ctx)));
         else
             Log.e(TAG, "onTxAdded: ctx is null!");
         for (OnTxListModified list : txModifiedListeners)
