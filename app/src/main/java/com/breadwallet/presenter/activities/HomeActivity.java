@@ -69,8 +69,8 @@ public class HomeActivity extends BRActivity {
 
         if (Utils.isEmulatorOrDebug(this)) {
             if (logger != null) logger.interrupt();
-            logger = new TestLogger();
-            logger.start();
+//            logger = new TestLogger(); //Sync logger
+//            logger.start();
         }
 
         mWalletRecycler = findViewById(R.id.rv_wallet_list);

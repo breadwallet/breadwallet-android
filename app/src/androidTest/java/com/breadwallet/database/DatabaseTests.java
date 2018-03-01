@@ -6,18 +6,22 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
+import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
+import com.breadwallet.presenter.activities.settings.TestActivity;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.bitcoincash.WalletBchManager;
@@ -70,14 +74,18 @@ public class DatabaseTests {
     BaseWalletManager mBtcWallet;
     BaseWalletManager mBchWallet;
 
+    static {
+        System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
+    }
+
     @Rule
-    public ActivityTestRule<IntroActivity> mActivityRule = new ActivityTestRule<>(IntroActivity.class);
+    public ActivityTestRule<TestActivity> mActivityRule = new ActivityTestRule<>(TestActivity.class);
 
     @Before
     public void setUp() {
         Log.e(TAG, "setUp: ");
-
-
+        BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey("cat circle quick rotate arena primary walnut mask record smile violin state".getBytes(), true);
+        BRKeyStore.putMasterPublicKey(pubKey.serialize(), mActivityRule.getActivity());
         mBtcWallet = WalletBitcoinManager.getInstance(mActivityRule.getActivity());
         mBchWallet = WalletBchManager.getInstance(mActivityRule.getActivity());
     }
@@ -104,15 +112,31 @@ public class DatabaseTests {
 
         // Test BCH Transaction insert
         BtcBchTransactionDataStore bchInsert = BtcBchTransactionDataStore.getInstance(app);
-        tds.putTransaction(app, mBchWallet, new BRTransactionEntity(new byte[0], 4321, 5674123, "some hash", mBchWallet.getIso(app)));
+        tds.putTransaction(app, mBchWallet, new BRTransactionEntity("some bytes".getBytes(), 4321, 5674123, "some hash", mBchWallet.getIso(app)));
         List<BRTransactionEntity> bchTxs = bchInsert.getAllTransactions(app, mBchWallet);
         Assert.assertNotNull(bchTxs);
         Assert.assertEquals(bchTxs.size(), 1);
-        Assert.assertArrayEquals(bchTxs.get(0).getBuff(), new byte[0]);
+        Assert.assertArrayEquals(bchTxs.get(0).getBuff(), "some bytes".getBytes());
         Assert.assertEquals(bchTxs.get(0).getBlockheight(), 4321);
         Assert.assertEquals(bchTxs.get(0).getTimestamp(), 5674123);
         Assert.assertEquals(bchTxs.get(0).getTxHash(), "some hash");
-        Assert.assertEquals(bchTxs.get(0).getTxISO(), "bch");
+        Assert.assertEquals(bchTxs.get(0).getTxISO().toLowerCase(), "BCH".toLowerCase());
+
+        //Test BCH transaction update
+        BRTransactionEntity toUpdate = bchTxs.get(0);
+        Assert.assertNotNull(toUpdate);
+        toUpdate.setBlockheight(8123);
+        toUpdate.setTimestamp(9382312);
+        boolean b = bchInsert.updateTransaction(app, mBchWallet, toUpdate);
+        Assert.assertTrue(b);
+        bchTxs = bchInsert.getAllTransactions(app, mBchWallet);
+        Assert.assertNotNull(bchTxs);
+        Assert.assertEquals(bchTxs.size(), 1);
+        Assert.assertArrayEquals(bchTxs.get(0).getBuff(), "some bytes".getBytes());
+        Assert.assertEquals(bchTxs.get(0).getBlockheight(), 8123);
+        Assert.assertEquals(bchTxs.get(0).getTimestamp(), 9382312);
+        Assert.assertEquals(bchTxs.get(0).getTxHash(), "some hash");
+        Assert.assertEquals(bchTxs.get(0).getTxISO().toLowerCase(), "bch");
 
 
         MerkleBlockDataSource mds = MerkleBlockDataSource.getInstance(mActivityRule.getActivity());
@@ -169,7 +193,6 @@ public class DatabaseTests {
     }
 
     private class InsertionThread extends Thread {
-
 
         @Override
         public void run() {

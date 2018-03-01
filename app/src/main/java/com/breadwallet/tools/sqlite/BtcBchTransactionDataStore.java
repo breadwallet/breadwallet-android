@@ -32,6 +32,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.breadwallet.presenter.entities.BRTransactionEntity;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -69,6 +70,7 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
 
     public BRTransactionEntity putTransaction(Context app, BaseWalletManager wallet, BRTransactionEntity transactionEntity) {
 
+        Log.e(TAG, "putTransaction: " + transactionEntity.getTxISO() + ":" + transactionEntity.getTxHash() + ", b:" + transactionEntity.getBlockheight() + ", t:" + transactionEntity.getTimestamp());
         Cursor cursor = null;
         try {
             database = openDatabase();
@@ -90,6 +92,7 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
 //            for (OnTxAdded listener : listeners) {
 //                if (listener != null) listener.onTxAdded("BTC");
 //            }
+            printTest(app, wallet);
             return transactionEntity1;
         } catch (Exception ex) {
             BRReportsManager.reportBug(ex);
@@ -144,6 +147,8 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
     }
 
     public boolean updateTransaction(Context app, BaseWalletManager wallet, BRTransactionEntity tx) {
+        Log.e(TAG, "updateTransaction: " + tx.getTxISO() + ":" + tx.getTxHash() + ", b:" + tx.getBlockheight() + ", t:" + tx.getTimestamp());
+
         try {
             database = openDatabase();
             ContentValues args = new ContentValues();
@@ -151,9 +156,12 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
             args.put(BRSQLiteHelper.TX_TIME_STAMP, tx.getTimestamp());
 
 //            Log.e(TAG, "updateTransaction: size before updating: " + getAllTransactions().size());
-            database.update(BRSQLiteHelper.TX_TABLE_NAME, args, "_id=? AND " + BRSQLiteHelper.TX_ISO + "=?", new String[]{tx.getTxHash(), wallet.getIso(app)});
+            int r = database.update(BRSQLiteHelper.TX_TABLE_NAME, args, "_id=? AND " + BRSQLiteHelper.TX_ISO + "=?", new String[]{tx.getTxHash(), wallet.getIso(app)});
 //            Log.e(TAG, "updateTransaction: size after updating: " + getAllTransactions().size());
-            Log.e(TAG, "transaction updated with id: " + tx.getTxHash());
+            if (r > 0)
+                Log.e(TAG, "transaction updated with id: " + tx.getTxHash());
+            else Log.e(TAG, "updateTransaction: Warning: r:" + r);
+            printTest(app, wallet);
             return true;
         } finally {
             closeDatabase();
@@ -193,5 +201,27 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
 
 //        }
 //        Log.d("Database open counter: " , String.valueOf(mOpenCounter.get()));
+    }
+
+    private void printTest(Context app, BaseWalletManager walletManager) {
+        Cursor cursor = null;
+        try {
+            database = openDatabase();
+            StringBuilder builder = new StringBuilder();
+
+            cursor = database.query(BRSQLiteHelper.TX_TABLE_NAME,
+                    allColumns, null, null, null, null, null);
+            builder.append("Total: " + cursor.getCount() + "\n");
+            cursor.moveToFirst();
+            if (!cursor.isAfterLast()) {
+                BRTransactionEntity ent = cursorToTransaction(app, walletManager, cursor);
+                builder.append("ISO:" + ent.getTxISO() + ", Hash:" + ent.getTxHash() + ", blockHeight:" + ent.getBlockheight() + ", timeStamp:" + ent.getTimestamp() + "\n");
+            }
+            Log.e(TAG, "printTest: " + builder.toString());
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
     }
 }

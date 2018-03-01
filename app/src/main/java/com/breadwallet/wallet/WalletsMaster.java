@@ -231,10 +231,9 @@ public class WalletsMaster {
             @Override
             public void run() {
                 for (BaseWalletManager wallet : mWallets) {
-                    wallet.getWallet().dispose();
-                    wallet.getPeerManager().dispose();
                     wallet.wipeData(ctx);
                 }
+//                wipeAll(ctx);
             }
         });
     }
