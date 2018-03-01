@@ -182,13 +182,11 @@ public class FragmentTxDetails extends DialogFragment {
             if (sent) {
                 mTxAction.setText("Sent");
                 mToFrom.setText("To ");
-                mToFromAddress.setText(mTransaction.getTo()[0]);
             } else {
                 mTxAction.setText("Received");
                 mToFrom.setText("Via ");
-                mToFromAddress.setText(mTransaction.getFrom()[0]);
             }
-
+            mToFromAddress.setText(mTransaction.getTo()[0]);
 
             formattedAmount = CurrencyUtils.getFormattedAmount(getActivity(), currentIso, master.getCurrentWallet(getActivity()).getCryptoForFiat(getActivity(), new BigDecimal(sent ? mTransaction.getSent() : mTransaction.getReceived())));
             mTxAmount.setText(formattedAmount);
