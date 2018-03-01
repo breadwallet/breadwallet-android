@@ -214,6 +214,7 @@ public class FragmentTxDetails extends DialogFragment {
                     mMemoText.setText("");
                 }
 
+                // TODO: Need to check if exchange rate is properly stored in TxMetaData
                 exchangeRateFormatted = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(txMetaData.exchangeRate)));
                 mExchangeRate.setText(exchangeRateFormatted);
             } else {
