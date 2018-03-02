@@ -3,13 +3,8 @@ package com.breadwallet.presenter.fragments;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
-import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.text.Spannable;
-import android.text.SpannableStringBuilder;
-import android.text.Spanned;
-import android.text.style.TypefaceSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,7 +22,6 @@ import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.util.CustomTypefaceSpan;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.entities.TxMetaData;
@@ -203,24 +197,8 @@ public class FragmentTxDetails extends DialogFragment {
             mTxAmount.setText(formattedAmount);
 
 
-            String whenSent = " when sent ";
-            String now = " now";
             amountWhenSent = CurrencyUtils.getFormattedAmount(getActivity(), BRSharedPrefs.getPreferredFiatIso(getContext()), master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(sent ? mTransaction.getSent() : mTransaction.getReceived())));
             amountNow = CurrencyUtils.getFormattedAmount(getActivity(), BRSharedPrefs.getPreferredFiatIso(getContext()), master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(sent ? mTransaction.getSent() : mTransaction.getReceived())));
-
-            /*String finalString = amountWhenSent + whenSent;
-
-            // Make the amount when sent, and amount now values CircularPro-Bold Typeface
-            Typeface cirularProTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "fonts/CircularPro-Bold.otf");
-            TypefaceSpan customTypefaceSpan = new CustomTypefaceSpan("", cirularProTypeFace);
-
-            SpannableStringBuilder tx1 = new SpannableStringBuilder();
-            //tx1.setSpan(customTypefaceSpan, 0, finalString.indexOf(amountWhenSent) + amountWhenSent.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
-
-            tx1.append(amountWhenSent, customTypefaceSpan, Spanned.SPAN_INCLUSIVE_INCLUSIVE).append(whenSent).append(amountNow, customTypefaceSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE).append(now);
-
-            //SpannableStringBuilder tx2 = new SpannableStringBuilder(amountNow);
-            //tx1.setSpan(customTypefaceSpan, finalString.indexOf(amountNow), finalString.indexOf(amountNow) + amountNow.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);*/
 
             mAmountWhenSent.setText(amountWhenSent);
             mAmountNow.setText(amountNow);
