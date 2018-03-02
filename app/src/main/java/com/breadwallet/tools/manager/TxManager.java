@@ -73,7 +73,8 @@ public class TxManager {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
 
-                BRAnimator.showTransactionDetails(app, adapter.getItems().get(position), position);
+                TxUiHolder item = adapter.getItems().get(position);
+                BRAnimator.showTransactionDetails(app, item, position);
                 //if (currentPrompt == null || position > 0)
                   //  BRAnimator.showTransactionPager(app, adapter.getItems(), currentPrompt == null ? position : position - 1);
                 /*else {
@@ -107,7 +108,7 @@ public class TxManager {
             adapter = new TransactionListAdapter(app, null);
         txList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        setupSwipe(app);
+        //setupSwipe(app);
     }
 
     private TxManager() {
@@ -197,7 +198,7 @@ public class TxManager {
         });
     }
 
-    private void setupSwipe(final Activity app) {
+    /*private void setupSwipe(final Activity app) {
         ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
 
             @Override
@@ -220,7 +221,7 @@ public class TxManager {
         };
         ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
         itemTouchHelper.attachToRecyclerView(txList);
-    }
+    }*/
 
 
     private class CustomLinearLayoutManager extends LinearLayoutManager {

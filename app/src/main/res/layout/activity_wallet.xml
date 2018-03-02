@@ -90,7 +90,8 @@
                     android:textSize="14sp"
                     android:visibility="visible"
                     app:customTFont="CircularPro-Book.otf"
-                    app:layout_constraintBottom_toTopOf="@+id/balance_primary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:layout_marginBottom="44dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintRight_toRightOf="parent"/>
 
@@ -115,14 +116,15 @@
                     android:visibility="gone"
                     android:layout_height="5dp"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginBottom="8dp"
+                    android:layout_marginBottom="52dp"
                     android:layout_marginEnd="8dp"
                     android:indeterminate="false"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     android:max="100"
                     android:progress="0"
                     android:progressBackgroundTint="#88ffffff"
+                    android:progressDrawable="@drawable/wallet_sync_progress_bar"
                     android:progressTint="#ffffff"
-                    app:layout_constraintBottom_toTopOf="@+id/balance_primary"
                     app:layout_constraintEnd_toEndOf="parent"/>
 
 
@@ -143,9 +145,9 @@
 
                 <ImageButton
                     android:id="@+id/swap"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="12dp"
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_marginBottom="13dp"
                     android:background="@drawable/ic_swap_horizontal"
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:layout_marginRight="8dp"
@@ -158,6 +160,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="28dp"
+                    android:layout_marginEnd="8dp"
                     android:paddingBottom="10dp"
                     android:paddingTop="18dp"
                     android:text="1.56739 BTC"
