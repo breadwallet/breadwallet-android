@@ -37,11 +37,13 @@ public class CurrencyEntity implements Serializable {
     public String code;
     public String name;
     public float rate;
+    public String iso;
 
-    public CurrencyEntity(String code, String name, float rate) {
+    public CurrencyEntity(String code, String name, float rate, String iso) {
         this.code = code;
         this.name = name;
         this.rate = rate;
+        this.iso = iso;
     }
 
     public CurrencyEntity() {

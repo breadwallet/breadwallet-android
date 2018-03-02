@@ -404,7 +404,9 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         if (amount.doubleValue() == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, this, iso);
-        if (ent == null) return null;
+        if (ent == null) {
+            return null;
+        }
         double rate = ent.rate;
         //get crypto amount
         BigDecimal cryptoAmount = amount.divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE);

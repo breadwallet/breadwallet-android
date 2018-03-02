@@ -20,10 +20,13 @@ import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.BRBitId;
 import com.platform.tools.KVStoreManager;
@@ -194,7 +197,7 @@ public class PostAuth {
     public void onPublishTxAuth(final Context app, boolean authAsked) {
         if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
 
-        final WalletsMaster walletManager = WalletsMaster.getInstance(app);
+        final BaseWalletManager walletManager = WalletsMaster.getInstance(app).getCurrentWallet(app);
         byte[] rawPhrase;
         try {
             rawPhrase = BRKeyStore.getPhrase(app, BRConstants.PAY_REQUEST_CODE);
@@ -210,7 +213,7 @@ public class PostAuth {
             if (rawPhrase.length != 0) {
                 if (mCryptoRequest != null && mCryptoRequest.tx != null) {
 
-                    byte[] txHash = walletManager.getCurrentWallet(app).signAndPublishTransaction(mCryptoRequest.tx, rawPhrase);
+                    byte[] txHash = walletManager.signAndPublishTransaction(mCryptoRequest.tx, rawPhrase);
                     if (Utils.isNullOrEmpty(txHash)) {
                         Log.e(TAG, "onPublishTxAuth: signAndPublishTransaction returned an empty txHash");
                         BRDialog.showSimpleDialog(app, "Send failed", "signAndPublishTransaction failed");
@@ -219,6 +222,10 @@ public class PostAuth {
                     } else {
                         TxMetaData txMetaData = new TxMetaData();
                         txMetaData.comment = mCryptoRequest.message;
+                        txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
+                        txMetaData.exchangeRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, walletManager, txMetaData.exchangeCurrency).rate;
+                        //todo finish this
+//                        txMetaData.
                         KVStoreManager.getInstance().putTxMetaData(app, txMetaData, txHash);
                     }
                     mCryptoRequest = null;

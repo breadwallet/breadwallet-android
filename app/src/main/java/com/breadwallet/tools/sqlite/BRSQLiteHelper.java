@@ -145,6 +145,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     }
 
     private void migrateDatabases(SQLiteDatabase db) {
+        //todo fix migration, when migrating, currencies get overriden BTC with BCH (weird right?)
         db.execSQL("ALTER TABLE " + MB_TABLE_NAME + " ADD COLUMN " + MB_ISO + " text DEFAULT 'BTC'");
         db.execSQL("ALTER TABLE " + TX_TABLE_NAME + " ADD COLUMN " + TX_ISO + " text DEFAULT 'BTC'");
         db.execSQL("ALTER TABLE " + CURRENCY_TABLE_NAME + " ADD COLUMN " + CURRENCY_ISO + " text DEFAULT 'BTC'");

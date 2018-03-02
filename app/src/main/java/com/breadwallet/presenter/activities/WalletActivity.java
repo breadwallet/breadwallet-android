@@ -233,7 +233,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
 
 //        String fiatIso = BRSharedPrefs.getPreferredFiatIso(this);
-//        CurrencyEntity ent = CurrencyDataSource.getInstance(this).getCurrencyByCode(this, wallet, fiatIso);
 
         String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatExchangeRate(this));
         String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatBalance(this));
@@ -344,7 +343,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 new Runnable() {
                     @Override
                     public void run() {
-                        //updateUi();
+                        updateUi();
                     }
                 }, toolBarConstraintLayout.getLayoutTransition().getDuration(LayoutTransition.CHANGE_APPEARING));
     }
