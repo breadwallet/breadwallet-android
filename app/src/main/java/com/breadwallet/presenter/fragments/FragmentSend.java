@@ -684,6 +684,7 @@ public class FragmentSend extends Fragment {
 
         //wallet's balance for the selected ISO
         BigDecimal isoBalance = isIsoCrypto ? wallet.getCryptoForSmallestCrypto(app, new BigDecimal(curBalance)) : wallet.getFiatForSmallestCrypto(app, new BigDecimal(curBalance));
+        if (isoBalance == null) isoBalance = new BigDecimal(0);
 
         long fee;
         if (cryptoAmount.longValue() <= 0) {

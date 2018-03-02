@@ -92,7 +92,6 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
 //            for (OnTxAdded listener : listeners) {
 //                if (listener != null) listener.onTxAdded("BTC");
 //            }
-            printTest(app, wallet);
             return transactionEntity1;
         } catch (Exception ex) {
             BRReportsManager.reportBug(ex);
@@ -138,6 +137,7 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
             closeDatabase();
             if (cursor != null)
                 cursor.close();
+            printTest(app, wallet);
         }
         return transactions;
     }
@@ -161,7 +161,7 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
             if (r > 0)
                 Log.e(TAG, "transaction updated with id: " + tx.getTxHash());
             else Log.e(TAG, "updateTransaction: Warning: r:" + r);
-            printTest(app, wallet);
+
             return true;
         } finally {
             closeDatabase();

@@ -17,6 +17,7 @@ import com.breadwallet.presenter.activities.PaperKeyProveActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.CryptoRequest;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -211,7 +212,8 @@ public class PostAuth {
 
                     byte[] txHash = walletManager.getCurrentWallet(app).signAndPublishTransaction(mCryptoRequest.tx, rawPhrase);
                     if (Utils.isNullOrEmpty(txHash)) {
-                        Log.e(TAG, "onPublishTxAuth: publishSerializedTransaction returned FALSE");
+                        Log.e(TAG, "onPublishTxAuth: signAndPublishTransaction returned an empty txHash");
+                        BRDialog.showSimpleDialog(app, "Send failed", "signAndPublishTransaction failed");
                         //todo fix this
 //                        WalletsMaster.getInstance().offerToChangeTheAmount(app, new PaymentItem(paymentRequest.addresses, paymentItem.serializedTx, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
                     } else {

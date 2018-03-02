@@ -61,7 +61,7 @@ public class HomeActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        WalletsMaster.getInstance(app).initWallets(app);
+        WalletsMaster.getInstance(this).initWallets(this);
 
         ArrayList<BaseWalletManager> walletList = new ArrayList<>();
 

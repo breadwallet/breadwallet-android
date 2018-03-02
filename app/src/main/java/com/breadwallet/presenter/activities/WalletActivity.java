@@ -408,7 +408,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             }
         });
 
-        //todo stop syncing the other one (even tho it sounds stupid)
         SyncManager.getInstance().startSyncing(this, wallet, this);
 
         handleUrlClickIfNeeded(getIntent());

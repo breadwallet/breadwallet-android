@@ -13,9 +13,11 @@ import android.widget.ProgressBar;
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.listeners.SyncReceiver;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -83,6 +85,19 @@ public class SyncManager {
 
     public synchronized void startSyncing(Context app, BaseWalletManager walletManager, OnProgressUpdate listener) {
         mWallet = walletManager;
+
+        //disconnect all other wallets
+        List<BaseWalletManager> wallets = WalletsMaster.getInstance(app).getAllWallets();
+        for (final BaseWalletManager w : wallets) {
+            if (!w.getIso(app).equalsIgnoreCase(walletManager.getIso(app)))
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        w.getPeerManager().disconnect();
+                    }
+                });
+
+        }
         if (syncTask != null) syncTask.interrupt();
         syncTask = new SyncProgressTask(app, walletManager, listener);
         syncTask.start();
