@@ -48,15 +48,47 @@
             app:customTFont="CircularPro-Book.otf" />
 
 
+
         <com.breadwallet.presenter.customviews.BRText
-            android:id="@+id/tx_price_stamp"
+            android:id="@+id/tx_amount_when_sent"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tx_amount"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="30dp"
-            android:text="0 when sent 0 now."
+            android:layout_marginLeft="70dp"
+            android:text="X"
+            android:textColor="@color/settings_chevron_right"
+            app:customTFont="CircularPro-Bold.otf" />
 
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/tx_when_sent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tx_amount"
+            android:layout_marginLeft="2dp"
+            android:layout_toRightOf="@id/tx_amount_when_sent"
+            android:text=" when sent"
+            android:textColor="@color/settings_chevron_right"
+            app:customTFont="CircularPro-Book.otf" />
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/tx_amount_now"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tx_amount"
+            android:layout_marginLeft="2dp"
+            android:layout_toRightOf="@id/tx_when_sent"
+            android:text="X"
+            android:textColor="@color/settings_chevron_right"
+            app:customTFont="CircularPro-Bold.otf" />
+
+        <com.breadwallet.presenter.customviews.BRText
+            android:id="@+id/tx_now"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tx_amount"
+            android:layout_marginLeft="2dp"
+            android:layout_toRightOf="@id/tx_amount_now"
+            android:text=" now"
             android:textColor="@color/settings_chevron_right"
             app:customTFont="CircularPro-Book.otf" />
 
@@ -65,7 +97,7 @@
             android:id="@+id/divider1"
             android:layout_width="match_parent"
             android:layout_height="1px"
-            android:layout_below="@id/tx_price_stamp"
+            android:layout_below="@id/tx_amount_when_sent"
             android:layout_marginTop="14dp"
             android:background="@color/light_gray" />
 
@@ -157,8 +189,8 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_below="@id/divider3"
-            android:layout_marginTop="10dp"
             android:layout_marginRight="20dp"
+            android:layout_marginTop="10dp"
             android:paddingRight="20dp"
             android:text="Sample transaction memo would go here. Some things are truly better left unsaid"
             android:textSize="10sp"
@@ -331,8 +363,8 @@
                 android:layout_marginRight="14dp"
                 android:layout_marginTop="14dp"
                 android:ellipsize="middle"
-                android:singleLine="true"
                 android:maxLength="30"
+                android:singleLine="true"
                 android:text="TiAYuGxTyUDhzQG9hV2Jsd"
                 android:textSize="12sp"
                 app:customTFont="CircularPro-Book.otf" />

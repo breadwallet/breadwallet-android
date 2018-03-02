@@ -3,8 +3,13 @@ package com.breadwallet.presenter.fragments;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.text.style.TypefaceSpan;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +20,16 @@ import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRText;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.util.Utils;
+import com.breadwallet.tools.util.CustomTypefaceSpan;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
 
@@ -41,7 +50,6 @@ public class FragmentTxDetails extends DialogFragment {
 
     private BRText mTxAction;
     private BRText mTxAmount;
-    private BRText mPriceStamp;
     private BRText mTxStatus;
     private BRText mTxDate;
     private BRText mToFrom;
@@ -54,6 +62,8 @@ public class FragmentTxDetails extends DialogFragment {
     private BRText mConfirmedInBlock;
     private BRText mTransactionId;
     private BRText mShowHide;
+    private BRText mAmountWhenSent;
+    private BRText mAmountNow;
 
     private ImageButton mCloseButton;
     private RelativeLayout mDetailsContainer;
@@ -80,7 +90,6 @@ public class FragmentTxDetails extends DialogFragment {
 
         mTxAction = rootView.findViewById(R.id.tx_action);
         mTxAmount = rootView.findViewById(R.id.tx_amount);
-        mPriceStamp = rootView.findViewById(R.id.tx_price_stamp);
         mTxStatus = rootView.findViewById(R.id.tx_status);
         mTxDate = rootView.findViewById(R.id.tx_date);
         mToFrom = rootView.findViewById(R.id.tx_to_from);
@@ -94,6 +103,8 @@ public class FragmentTxDetails extends DialogFragment {
         mShowHide = rootView.findViewById(R.id.show_hide_details);
         mDetailsContainer = rootView.findViewById(R.id.details_container);
         mCloseButton = rootView.findViewById(R.id.close_button);
+        mAmountWhenSent = rootView.findViewById(R.id.tx_amount_when_sent);
+        mAmountNow = rootView.findViewById(R.id.tx_amount_now);
 
         mCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -191,8 +202,28 @@ public class FragmentTxDetails extends DialogFragment {
             formattedAmount = CurrencyUtils.getFormattedAmount(getActivity(), currentIso, master.getCurrentWallet(getActivity()).getCryptoForFiat(getActivity(), new BigDecimal(sent ? mTransaction.getSent() : mTransaction.getReceived())));
             mTxAmount.setText(formattedAmount);
 
-            amountNow = CurrencyUtils.getFormattedAmount(getActivity(), iso, master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(sent ? mTransaction.getSent() : mTransaction.getReceived())));
-            mPriceStamp.setText("X when sent " + amountNow + " now");
+
+            String whenSent = " when sent ";
+            String now = " now";
+            amountWhenSent = CurrencyUtils.getFormattedAmount(getActivity(), BRSharedPrefs.getPreferredFiatIso(getContext()), master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(sent ? mTransaction.getSent() : mTransaction.getReceived())));
+            amountNow = CurrencyUtils.getFormattedAmount(getActivity(), BRSharedPrefs.getPreferredFiatIso(getContext()), master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), new BigDecimal(sent ? mTransaction.getSent() : mTransaction.getReceived())));
+
+            /*String finalString = amountWhenSent + whenSent;
+
+            // Make the amount when sent, and amount now values CircularPro-Bold Typeface
+            Typeface cirularProTypeFace = Typeface.createFromAsset(getActivity().getAssets(), "fonts/CircularPro-Bold.otf");
+            TypefaceSpan customTypefaceSpan = new CustomTypefaceSpan("", cirularProTypeFace);
+
+            SpannableStringBuilder tx1 = new SpannableStringBuilder();
+            //tx1.setSpan(customTypefaceSpan, 0, finalString.indexOf(amountWhenSent) + amountWhenSent.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
+
+            tx1.append(amountWhenSent, customTypefaceSpan, Spanned.SPAN_INCLUSIVE_INCLUSIVE).append(whenSent).append(amountNow, customTypefaceSpan, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE).append(now);
+
+            //SpannableStringBuilder tx2 = new SpannableStringBuilder(amountNow);
+            //tx1.setSpan(customTypefaceSpan, finalString.indexOf(amountNow), finalString.indexOf(amountNow) + amountNow.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);*/
+
+            mAmountWhenSent.setText(amountWhenSent);
+            mAmountNow.setText(amountNow);
 
 
             if (!sent) {
@@ -237,6 +268,17 @@ public class FragmentTxDetails extends DialogFragment {
 
             Toast.makeText(getContext(), "Error getting transaction data", Toast.LENGTH_SHORT).show();
         }
+
+
+    }
+
+    private BigDecimal getHistoricalTxAmount(BaseWalletManager wallet, String iso, BigDecimal amount) {
+        CurrencyEntity ent = CurrencyDataSource.getInstance(getContext()).getCurrencyByCode(getContext(), wallet, iso);
+        if (ent == null) return null;
+        double rate = ent.rate;
+        //get crypto amount (since the rate is in BTC not satoshis)
+        BigDecimal cryptoAmount = amount.divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE);
+        return cryptoAmount.multiply(new BigDecimal(rate));
 
 
     }
