@@ -51,6 +51,7 @@ public class CurrencyUtils {
      */
     public static String getFormattedAmount(Context app, String iso, BigDecimal amount) {
         if (amount == null) return "---"; //to be able to detect in a bug
+        if (iso == null) return "???"; //to be able to detect in a bug
 //        Log.e(TAG, "amount: " + amount);
         DecimalFormat currencyFormat;
 

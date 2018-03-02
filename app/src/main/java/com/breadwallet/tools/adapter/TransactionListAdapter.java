@@ -178,43 +178,24 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             }
         }
 
-
         boolean received = item.getSent() == 0;
 
-        String txAction;
-        if (received) {
-            txAction = "received via " + item.getFrom()[0];
+        String txAction = String.format("%s %s", (received ? "received via " : "sent to "), item.getTo()[0]);
+        if (received)
             convertView.transactionAmount.setTextColor(mContext.getResources().getColor(R.color.transaction_amount_received_color, null));
-            Log.d(TAG, "Address FROM -> " + item.getFrom()[0]);
-            Log.d(TAG, "Address array -> " + Arrays.toString(item.getFrom()));
-
-
-        } else {
-            txAction = "sent to " + item.getTo()[0];
-            Log.d(TAG, "Address TO -> " + item.getTo()[0]);
-            Log.d(TAG, "Address array -> " + Arrays.toString(item.getFrom()));
-
-
-        }
-
 
         // If this transaction failed, show the "FAILED" indicator in the cell
-        if (!item.isValid()) {
+        if (!item.isValid())
             showTransactionFailed(convertView, item, received);
-        }
 
+        long satAm = received ? item.getReceived() : (item.getSent() - item.getReceived());
+        BigDecimal cryptoAmount = received ? new BigDecimal(satAm) : new BigDecimal(satAm).negate();
+        boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
+        String preferredIso = isCryptoPreferred ? wallet.getIso(mContext) : BRSharedPrefs.getPreferredFiatIso(mContext);
 
-        long transactionAmount = item.getAmount();
-        long satoshisAmount = received ? item.getReceived() : (item.getSent() - item.getReceived());
-        String iso = BRSharedPrefs.getPreferredFiatIso(mContext);
+        BigDecimal amount = isCryptoPreferred ? cryptoAmount : wallet.getFiatForSmallestCrypto(mContext, cryptoAmount);
 
-        // Set the transaction amount
-        if (received) {
-            convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, iso, WalletsMaster.getInstance(mContext).getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
-        } else {
-
-            convertView.transactionAmount.setText("-" + CurrencyUtils.getFormattedAmount(mContext, iso, WalletsMaster.getInstance(mContext).getCurrentWallet(mContext).getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount))));
-        }
+        convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, preferredIso, amount));
 
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext, wallet.getIso(mContext)) - blockHeight + 1;
@@ -238,92 +219,67 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             else
                 level = 6;
         }
-        boolean availableForSpend = false;
-        String sentReceived = received ? "Receiving" : "Sending";
-        String percentage = "";
         switch (level) {
             case 0:
-                percentage = "0%";
+//                percentage = "0%";
                 break;
             case 1:
-                percentage = "20%";
-                if (!received)
-                    txAction = "sending to " + item.getTo()[0];
-                else
-                    txAction = "receiving via " + item.getTo()[0];
+//                percentage = "20%";
+//                if (!received)
+//                    txAction = "sending to " + item.getTo()[0];
+//                else
+//                    txAction = "receiving via " + item.getTo()[0];
 
                 showTransactionProgress(convertView, 20);
                 break;
             case 2:
-                percentage = "40%";
-                if (!received)
-                    txAction = "sending to " + item.getTo()[0];
-                else
-                    txAction = "receiving via " + item.getTo()[0];
+//                percentage = "40%";
+//                if (!received)
+//                    txAction = "sending to " + item.getTo()[0];
+//                else
+//                    txAction = "receiving via " + item.getTo()[0];
 
                 showTransactionProgress(convertView, 40);
-                availableForSpend = true;
+//                availableForSpend = true;
                 break;
             case 3:
-                percentage = "60%";
-                if (!received)
-                    txAction = "sending to " + item.getTo()[0];
-                else
-                    txAction = "receiving via " + item.getTo()[0];
+//                percentage = "60%";
+//                if (!received)
+//                    txAction = "sending to " + item.getTo()[0];
+//                else
+//                    txAction = "receiving via " + item.getTo()[0];
 
                 showTransactionProgress(convertView, 60);
-                availableForSpend = true;
+//                availableForSpend = true;
                 break;
             case 4:
-                percentage = "80%";
+//                percentage = "80%";
                 if (!received)
                     txAction = "sending to " + item.getTo()[0];
                 else
                     txAction = "receiving via " + item.getTo()[0];
 
                 showTransactionProgress(convertView, 80);
-                availableForSpend = true;
+//                availableForSpend = true;
                 break;
             case 5:
-                percentage = "100%";
+//                percentage = "100%";
                 if (!received)
                     txAction = "sent to " + item.getTo()[0];
                 else
                     txAction = "received via " + item.getTo()[0];
 
                 showTransactionProgress(convertView, 100);
-                availableForSpend = true;
+//                availableForSpend = true;
                 break;
         }
 
-        boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
-        String amountText = CurrencyUtils.getFormattedAmount(mContext, iso, isCryptoPreferred ?
-                new BigDecimal(satoshisAmount) : wallet.getFiatForSmallestCrypto(mContext, new BigDecimal(satoshisAmount)));
-
-        if (received) {
-            convertView.transactionAmount.setText(amountText);
-        } else {
-            convertView.transactionAmount.setText("-" + amountText);
-
-        }
-
-        if (!commentString.isEmpty()) {
-            convertView.transactionDetail.setText(commentString);
-        } else {
-            convertView.transactionDetail.setText(txAction);
-
-        }
-
+        convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : txAction);
 
         //if it's 0 we use the current time.
         long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * 1000;
-        CharSequence timeSpan = BRDateUtil.getCustomSpan(new Date(timeStamp));
-
-        Log.d(TAG, "Tx timestamp final -> " + timeStamp);
-        Log.d(TAG, "Tx timestamp original -> " + item.getTimeStamp());
 
         String shortDate = BRDateUtil.getShortDate(timeStamp);
-
 
         convertView.transactionDate.setText(shortDate);
 

@@ -34,6 +34,7 @@ import android.util.Log;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.util.ArrayList;
@@ -79,8 +80,14 @@ public class CurrencyDataSource implements BRDataSourceInterface {
             database = openDatabase();
             database.beginTransaction();
             String iso = walletManager.getIso(app);
+            int failed = 0;
             for (CurrencyEntity c : currencyEntities) {
                 ContentValues values = new ContentValues();
+
+                if (Utils.isNullOrEmpty(c.code) || Utils.isNullOrEmpty(c.name) || c.rate <= 0) {
+                    failed++;
+                    continue;
+                }
                 values.put(BRSQLiteHelper.CURRENCY_CODE, c.code);
                 values.put(BRSQLiteHelper.CURRENCY_NAME, c.name);
                 values.put(BRSQLiteHelper.CURRENCY_RATE, c.rate);
@@ -88,6 +95,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
                 database.insertWithOnConflict(BRSQLiteHelper.CURRENCY_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
             }
+            if (failed != 0) Log.e(TAG, "putCurrencies: failed:" + failed);
             database.setTransactionSuccessful();
             for (OnDataChanged list : onDataChangedListeners) if (list != null) list.onChanged();
         } catch (Exception ex) {
@@ -118,8 +126,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         try {
             database = openDatabase();
 
-            cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
-                    allColumns, BRSQLiteHelper.CURRENCY_ISO + " = ?", new String[]{walletManager.getIso(app)}, null, null, "\'" + BRSQLiteHelper.CURRENCY_CODE + "\'");
+            cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME, allColumns, BRSQLiteHelper.CURRENCY_ISO + " = ? COLLATE NOCASE", new String[]{walletManager.getIso(app)}, null, null, "\'" + BRSQLiteHelper.CURRENCY_CODE + "\'");
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
@@ -133,7 +140,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
                 cursor.close();
             closeDatabase();
         }
-
+        Log.e(TAG, "getAllCurrencies: size:" + currencies.size());
         return currencies;
     }
 
@@ -144,7 +151,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
             database = openDatabase();
 
             cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
-                    allColumns, BRSQLiteHelper.CURRENCY_ISO + " = ?", new String[]{walletManager.getIso(app)},
+                    allColumns, BRSQLiteHelper.CURRENCY_ISO + " = ? COLLATE NOCASE", new String[]{walletManager.getIso(app)},
                     null, null, null);
 
             cursor.moveToFirst();
@@ -165,26 +172,26 @@ public class CurrencyDataSource implements BRDataSourceInterface {
 
     public CurrencyEntity getCurrencyByCode(Context app, BaseWalletManager walletManager, String code) {
         Cursor cursor = null;
+        CurrencyEntity result = null;
         try {
             database = openDatabase();
-
 //            printTest();
-
+//            Log.e(TAG, "getCurrencyByCode: code: " + code + ", iso: " + walletManager.getIso(app));
             cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
-                    allColumns, BRSQLiteHelper.CURRENCY_CODE + " = ? AND " + BRSQLiteHelper.CURRENCY_ISO + " = ?",
+                    allColumns, BRSQLiteHelper.CURRENCY_CODE + " = ? AND " + BRSQLiteHelper.CURRENCY_ISO + " = ? COLLATE NOCASE",
                     new String[]{code, walletManager.getIso(app)}, null, null, null);
 
-            cursor.moveToFirst();
+            cursor.moveToNext();
             if (!cursor.isAfterLast()) {
-                return cursorToCurrency(cursor);
+                result = cursorToCurrency(cursor);
             }
+            Log.e(TAG, "getCurrencyByCode: result: " + result);
+            return result;
         } finally {
             if (cursor != null)
                 cursor.close();
             closeDatabase();
         }
-
-        return null;
     }
 
     private void printTest() {
@@ -197,9 +204,10 @@ public class CurrencyDataSource implements BRDataSourceInterface {
                     allColumns, null, null, null, null, null);
             builder.append("Total: " + cursor.getCount() + "\n");
             cursor.moveToFirst();
-            if (!cursor.isAfterLast()) {
+            while (!cursor.isAfterLast()) {
                 CurrencyEntity ent = cursorToCurrency(cursor);
-                builder.append("Name:" + ent.name + ", code:" + ent.code + ", rate:" + ent.rate + "\n");
+                builder.append("Name: " + ent.name + ", code: " + ent.code + ", rate: " + ent.rate + ", iso: " + ent.iso + "\n");
+                cursor.moveToNext();
             }
             Log.e(TAG, "printTest: " + builder.toString());
         } finally {
@@ -210,7 +218,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
     }
 
     private CurrencyEntity cursorToCurrency(Cursor cursor) {
-        return new CurrencyEntity(cursor.getString(0), cursor.getString(1), cursor.getFloat(2));
+        return new CurrencyEntity(cursor.getString(0), cursor.getString(1), cursor.getFloat(2), cursor.getString(3));
     }
 
     @Override

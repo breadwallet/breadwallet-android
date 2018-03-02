@@ -107,23 +107,24 @@ public class BRApiManager {
 //                        Log.e(TAG,"selectedISO: " + selectedISO);
                         if (tmp.code.equalsIgnoreCase(selectedISO)) {
 //                            Log.e(TAG, "theIso : " + theIso);
-//                                Log.e(TAG, "Putting the shit in the shared preffs");
+//                                Log.e(TAG, "Putting the shit in the shared prefs");
                             BRSharedPrefs.putPreferredFiatIso(context, tmp.code);
-                            BRSharedPrefs.putCurrencyListPosition(context, i - 1);
                         }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
                     set.add(tmp);
                 }
+
             } else {
                 Log.e(TAG, "getCurrencies: failed to get currencies, response string: " + arr);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        List tempList = new ArrayList<>(set);
-        Collections.reverse(tempList);
+//        List tempList = new ArrayList<>(set);
+//        Collections.reverse(tempList);
+        Log.e(TAG, "getCurrencies: " + set.size());
         return new LinkedHashSet<>(set);
     }
 
@@ -157,12 +158,11 @@ public class BRApiManager {
         //set a new Timer
         if (timer != null) return;
         timer = new Timer();
-
+        Log.e(TAG, "startTimer: started...");
         //initialize the TimerTask's job
         initializeTimerTask(context);
 
-        //schedule the timer, after the first 5000ms the TimerTask will run every 10000ms
-        timer.schedule(timerTask, 0, 60000); //
+        timer.schedule(timerTask, 1000, 60000);
     }
 
     public void stopTimerTask() {
@@ -172,7 +172,6 @@ public class BRApiManager {
             timer = null;
         }
     }
-
 
     public static JSONArray fetchRates(Activity app, BaseWalletManager walletManager) {
         String url = "https://" + BreadApp.HOST + "/rates?currency=" + walletManager.getIso(app);

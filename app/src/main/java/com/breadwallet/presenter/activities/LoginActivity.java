@@ -207,6 +207,7 @@ public class LoginActivity extends BRActivity {
         super.onResume();
         updateDots();
 
+        WalletsMaster.getInstance(this).initWallets(this);
         appVisible = true;
         app = this;
         inputAllowed = true;
