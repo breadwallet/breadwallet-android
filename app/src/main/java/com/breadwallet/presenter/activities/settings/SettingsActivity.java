@@ -160,9 +160,9 @@ public class SettingsActivity extends BRActivity {
         items.add(new BRSettingsItem(getString(R.string.Settings_wipe), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, WipeActivity.class);
+                Intent intent = new Intent(SettingsActivity.this, UnlinkActivity.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false));
 
@@ -174,7 +174,7 @@ public class SettingsActivity extends BRActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, UpdatePinActivity.class);
                 startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.empty_300);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false));
 

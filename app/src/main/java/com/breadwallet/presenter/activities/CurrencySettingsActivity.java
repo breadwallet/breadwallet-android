@@ -131,4 +131,10 @@ public class CurrencySettingsActivity extends BRActivity {
 
         mTitle.setText(String.format("%s Settings", wm.getName(this)));
     }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
+    }
 }

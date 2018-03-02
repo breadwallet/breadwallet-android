@@ -83,22 +83,14 @@ public class SyncManager {
         syncTask = null;
     }
 
-    public synchronized void startSyncing(Context app, BaseWalletManager walletManager, OnProgressUpdate listener) {
+    public synchronized void startSyncing(final Context app, BaseWalletManager walletManager, OnProgressUpdate listener) {
         mWallet = walletManager;
 
-        //disconnect all other wallets
-        List<BaseWalletManager> wallets = WalletsMaster.getInstance(app).getAllWallets();
-        for (final BaseWalletManager w : wallets) {
-            if (!w.getIso(app).equalsIgnoreCase(walletManager.getIso(app)))
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        w.getPeerManager().disconnect();
-                    }
-                });
-
+        if (syncTask != null && syncTask.mRunning) {
+            Log.e(TAG, "startSyncing: already running");
+            return;
         }
-        if (syncTask != null) syncTask.interrupt();
+
         syncTask = new SyncProgressTask(app, walletManager, listener);
         syncTask.start();
     }
@@ -115,10 +107,12 @@ public class SyncManager {
             mCurrentWallet = currentWallet;
             mListener = listener;
             mApp = app;
+            mRunning = true;
         }
 
         @Override
         public void run() {
+            Log.e(TAG, "SyncProgressTask: started: " + Thread.currentThread());
             while (mRunning) {
                 final double syncProgress = mCurrentWallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mApp, mCurrentWallet.getIso(mApp)));
 
@@ -144,6 +138,7 @@ public class SyncManager {
                 }
 
             }
+            Log.e(TAG, "SyncProgressTask: done: " + Thread.currentThread());
 
         }
     }

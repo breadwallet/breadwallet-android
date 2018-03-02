@@ -43,6 +43,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     private ArrayList<WalletItem> mWalletItems;
     private WalletItem mCurrentWalletSyncing;
     private SyncManager mSyncManager;
+    private boolean mObesrverIsStarting;
 
 
     public WalletListAdapter(Context context, ArrayList<BaseWalletManager> walletList) {
@@ -105,37 +106,43 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     }
 
     public void startObserving() {
+        if (mObesrverIsStarting) return;
+        mObesrverIsStarting = true;
         Log.e(TAG, "startObserving..");
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                mCurrentWalletSyncing = getNextWalletToSync();
-                if (mCurrentWalletSyncing == null) {
-                    Log.e(TAG, "startObserving: all wallets synced.");
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
-                        @Override
-                        public void run() {
-                            for (WalletItem item : mWalletItems) {
+                try {
+                    mCurrentWalletSyncing = getNextWalletToSync();
+                    if (mCurrentWalletSyncing == null) {
+                        Log.e(TAG, "startObserving: all wallets synced:" + Thread.currentThread());
+                        new Handler(Looper.getMainLooper()).post(new Runnable() {
+                            @Override
+                            public void run() {
+                                for (WalletItem item : mWalletItems) {
 
-                                item.updateData(false, false, true, 100, "Done");
-                                notifyDataSetChanged();
+                                    item.updateData(false, false, true, 100, "Done");
+                                    notifyDataSetChanged();
 
+                                }
                             }
+                        });
+
+                        return;
+                    }
+
+                    Log.e(TAG, "startObserving: connecting: " + mCurrentWalletSyncing.walletManager.getIso(mContext));
+                    mCurrentWalletSyncing.walletManager.connectWallet(mContext);
+                    mSyncManager = SyncManager.getInstance();
+                    mSyncManager.startSyncing(mContext, mCurrentWalletSyncing.walletManager, new SyncManager.OnProgressUpdate() {
+                        @Override
+                        public boolean onProgressUpdated(double progress) {
+                            return updateUi(mCurrentWalletSyncing, progress);
                         }
                     });
-
-                    return;
+                } finally {
+                    mObesrverIsStarting = false;
                 }
-
-                Log.e(TAG, "startObserving: connecting: " + mCurrentWalletSyncing.walletManager.getIso(mContext));
-                mCurrentWalletSyncing.walletManager.connectWallet(mContext);
-                mSyncManager = SyncManager.getInstance();
-                mSyncManager.startSyncing(mContext, mCurrentWalletSyncing.walletManager, new SyncManager.OnProgressUpdate() {
-                    @Override
-                    public boolean onProgressUpdated(double progress) {
-                        return updateUi(mCurrentWalletSyncing, progress);
-                    }
-                });
 
             }
         });
