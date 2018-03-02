@@ -177,6 +177,12 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         updateUi();
 
+        boolean cryptoPreferred = BRSharedPrefs.isCryptoPreferred(this);
+
+        if(cryptoPreferred){
+            swap();
+        }
+
     }
 
     @Override
@@ -246,6 +252,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mReceiveButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
 
         TxManager.getInstance().updateTxList(WalletActivity.this);
+
+
     }
 
     private void swap() {
