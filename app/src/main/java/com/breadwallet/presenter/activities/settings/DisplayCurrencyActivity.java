@@ -110,7 +110,6 @@ public class DisplayCurrencyActivity extends BRActivity {
                 final String selectedCurrency = currencyItemText.getText().toString();
                 String iso = selectedCurrency.substring(0, 3);
                 BRSharedPrefs.putPreferredFiatIso(DisplayCurrencyActivity.this, iso);
-                BRSharedPrefs.putCurrencyListPosition(DisplayCurrencyActivity.this, position);
 
                 updateExchangeRate();
 
@@ -191,7 +190,7 @@ public class DisplayCurrencyActivity extends BRActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
 
-            final int tmp = BRSharedPrefs.getCurrencyListPosition(mContext);
+            final String oldIso = BRSharedPrefs.getPreferredFiatIso(mContext);
             if (convertView == null) {
                 // inflate the layout
                 LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
@@ -209,7 +208,7 @@ public class DisplayCurrencyActivity extends BRActivity {
             textViewItem.setText(c == null ? iso : String.format("%s (%s)", iso, c.getSymbol()));
             ImageView checkMark = convertView.findViewById(R.id.currency_checkmark);
 
-            if (position == tmp) {
+            if (iso.equalsIgnoreCase(oldIso)) {
                 checkMark.setVisibility(View.VISIBLE);
             } else {
                 checkMark.setVisibility(View.GONE);

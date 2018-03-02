@@ -78,28 +78,25 @@ public class SyncManager {
     }
 
     public synchronized void stopSyncing() {
-        if (syncTask != null) syncTask.interrupt();
-        running = false;
-        syncTask = null;
+        if (syncTask != null) {
+            syncTask.interrupt();
+        }
     }
 
     public synchronized void startSyncing(final Context app, BaseWalletManager walletManager, OnProgressUpdate listener) {
         mWallet = walletManager;
 
-        if (syncTask != null && syncTask.mRunning) {
-            Log.e(TAG, "startSyncing: already running");
-            return;
-        }
+        if (syncTask != null) syncTask.interrupt();
 
         syncTask = new SyncProgressTask(app, walletManager, listener);
         syncTask.start();
+
     }
 
     class SyncProgressTask extends Thread {
 
         private BaseWalletManager mCurrentWallet;
         private OnProgressUpdate mListener;
-        private boolean mRunning = true;
         private static final int DELAY_MILLIS = 500;
         private Context mApp;
 
@@ -107,44 +104,42 @@ public class SyncManager {
             mCurrentWallet = currentWallet;
             mListener = listener;
             mApp = app;
-            mRunning = true;
         }
 
         @Override
         public void run() {
-            Log.e(TAG, "SyncProgressTask: started: " + Thread.currentThread());
-            while (mRunning) {
-                final double syncProgress = mCurrentWallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mApp, mCurrentWallet.getIso(mApp)));
-
-                new Handler(Looper.getMainLooper()).post(new Runnable() {
-                    @Override
-                    public void run() {
-                        if (mListener != null)
-                            mRunning = mListener.onProgressUpdated(syncProgress);
-                    }
-                });
-
-                try {
-                    Thread.sleep(DELAY_MILLIS);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                    new Handler(Looper.getMainLooper()).post(new Runnable() {
+//            Log.e(TAG, "SyncProgressTask: started: " + Thread.currentThread());
+            try {
+                while (!isInterrupted()) {
+                    final double syncProgress = mCurrentWallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mApp, mCurrentWallet.getIso(mApp)));
+                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                         @Override
                         public void run() {
                             if (mListener != null)
-                                mRunning = mListener.onProgressUpdated(syncProgress);
+                                if (!mListener.onProgressUpdated(syncProgress)) interrupt();
                         }
                     });
+                    Thread.sleep(DELAY_MILLIS);
                 }
-
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                final double syncProgress = mCurrentWallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mApp, mCurrentWallet.getIso(mApp)));
+                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (mListener != null)
+                            if (!mListener.onProgressUpdated(syncProgress)) interrupt();
+                    }
+                });
+            } finally {
+                syncTask = null;
+//                Log.e(TAG, "SyncProgressTask: done: " + Thread.currentThread());
             }
-            Log.e(TAG, "SyncProgressTask: done: " + Thread.currentThread());
 
         }
     }
 
     public interface OnProgressUpdate {
-
         //get the progressUpdate and return true if you want to continue or false if it's done syncing
         boolean onProgressUpdated(double progress);
     }

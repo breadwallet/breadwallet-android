@@ -209,7 +209,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             JSONObject obj = new JSONObject(jsonString);
             fee = obj.getLong("fee_per_kb");
             economyFee = obj.getLong("fee_per_kb_economy");
-            Log.e(TAG, "updateFee: " + getIso(app) + ":" + fee + "|" + economyFee);
+//            Log.e(TAG, "updateFee: " + getIso(app) + ":" + fee + "|" + economyFee);
 
             if (fee != 0 && fee < getWallet().getMaxFeePerKb()) {
                 BRSharedPrefs.putFeePerKb(app, getIso(app), fee);

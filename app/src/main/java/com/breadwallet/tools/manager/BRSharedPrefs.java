@@ -131,18 +131,6 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static int getCurrencyListPosition(Context context) {
-        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
-        return settings.getInt(BRConstants.POSITION, 0);
-    }
-
-    public static void putCurrencyListPosition(Context context, int lastItemsPosition) {
-        SharedPreferences settings = context.getSharedPreferences(BRConstants.PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putInt(BRConstants.POSITION, lastItemsPosition);
-        editor.apply();
-    }
-
     public static String getReceiveAddress(Context context, String iso) {
         SharedPreferences prefs = context.getSharedPreferences(BRConstants.PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString(BRConstants.RECEIVE_ADDRESS, "");

@@ -189,7 +189,6 @@ public class TxManager {
     }
 
     public void updateCard(final Context app) {
-        Log.e(TAG, "updateCard: ");
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
