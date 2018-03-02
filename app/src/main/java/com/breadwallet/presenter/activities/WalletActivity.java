@@ -503,13 +503,13 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             mProgressBar.setVisibility(View.GONE);
             mProgressLabel.setVisibility(View.GONE);
             mBalanceLabel.setVisibility(View.VISIBLE);
-            Log.e(TAG, "onProgressUpdated: DONE");
+            mProgressBar.invalidate();
             return false;
         }
-        Log.e(TAG, "onProgressUpdated: " + progress);
         mProgressBar.setVisibility(View.VISIBLE);
         mProgressLabel.setVisibility(View.VISIBLE);
         mBalanceLabel.setVisibility(View.GONE);
+        mProgressBar.invalidate();
         return true;
     }
 

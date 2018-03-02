@@ -95,8 +95,7 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  */
 public class WalletBchManager extends BRCoreWalletManager implements BaseWalletManager {
 
-    private static final String TAG = WalletBitcoinManager.class.getName();
-
+    private static final String TAG = WalletBchManager.class.getName();
 
     private static String ISO = "BCH";
     public static final String BCH_SCHEME = BuildConfig.BITCOIN_TESTNET ? "bchtest" : "bitcoincash";
