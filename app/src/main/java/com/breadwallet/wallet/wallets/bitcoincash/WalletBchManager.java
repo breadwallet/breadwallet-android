@@ -635,7 +635,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BRCorePeer[] loadPeers() {
-        Context app = BreadApp.getBreadContext(); //todo fix broken implementation
+        Context app = BreadApp.getBreadContext();
         List<BRPeerEntity> peers = PeerDataSource.getInstance(app).getAllPeers(app, this);
         if (peers == null || peers.size() == 0) return new BRCorePeer[0];
         BRCorePeer arr[] = new BRCorePeer[peers.size()];

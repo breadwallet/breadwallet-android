@@ -44,7 +44,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     }
 
     private static final String DATABASE_NAME = "breadwallet.db";
-    private static final int DATABASE_VERSION = 15;
+    private static final int DATABASE_VERSION = 13;
 
     /**
      * MerkleBlock table
@@ -96,7 +96,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             PEER_ADDRESS + " blob," +
             PEER_PORT + " blob," +
             PEER_TIMESTAMP + " blob," +
-            PEER_ISO + "  text);";
+            PEER_ISO + "  text default 'BTC');";
     /**
      * Currency table
      */
@@ -127,13 +127,27 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-        Log.e(TAG, "Upgrading database from version " + oldVersion + " to " + newVersion + ", which will destroy all old data");
-        db.execSQL("DROP TABLE IF EXISTS " + MB_TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + TX_TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + CURRENCY_TABLE_NAME);
-//        db.execSQL("PRAGMA journal_mode=WAL;");
-        onCreate(db);
 
+        if (oldVersion == 12 && newVersion == 13) {
+            migrateDatabases(db);
+            //drop peers table due to multiple changes
+            db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME);
+        } else {
+            //drop everything
+            db.execSQL("DROP TABLE IF EXISTS " + MB_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + TX_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME);
+            db.execSQL("DROP TABLE IF EXISTS " + CURRENCY_TABLE_NAME);
+//            db.execSQL("PRAGMA journal_mode=WAL;");
+        }
+        //recreate if needed
+        onCreate(db);
     }
+
+    private void migrateDatabases(SQLiteDatabase db) {
+        db.execSQL("ALTER TABLE " + MB_TABLE_NAME + " ADD COLUMN " + MB_ISO + " text DEFAULT 'BTC'");
+        db.execSQL("ALTER TABLE " + TX_TABLE_NAME + " ADD COLUMN " + TX_ISO + " text DEFAULT 'BTC'");
+        db.execSQL("ALTER TABLE " + CURRENCY_TABLE_NAME + " ADD COLUMN " + CURRENCY_ISO + " text DEFAULT 'BTC'");
+    }
+
 }

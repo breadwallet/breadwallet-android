@@ -458,7 +458,6 @@ public class FragmentRequestAmount extends Fragment {
                 amount = master.getCurrentWallet(getActivity()).getSmallestCryptoForFiat(getActivity(), bigAmount).longValue();
             }
 
-            //todo assume bitcoin and bitcoin cash for now, hardcoded bitcoin QR
             String am = new BigDecimal(amount).divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString();
             amountArg = "?amount=" + am;
         }

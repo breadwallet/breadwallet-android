@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.text.SpannableString;
 import android.util.Log;
 
+import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 
@@ -67,6 +68,15 @@ public class BRDialog {
             }
         });
 
+    }
+
+    public static void showSimpleDialog(@NonNull final Context app, @NonNull final String title, @NonNull final String message) {
+        showCustomDialog(app, title, message, app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+            @Override
+            public void onClick(BRDialogView brDialogView) {
+                brDialogView.dismissWithAnimation();
+            }
+        }, null, null, 0);
     }
 
     //same but with a SpannableString as message to be able to click on a portion of the text with a listener
