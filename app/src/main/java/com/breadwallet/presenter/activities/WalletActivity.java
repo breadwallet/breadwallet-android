@@ -22,6 +22,7 @@ import android.widget.ProgressBar;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
+import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
@@ -199,7 +200,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     private void updateUi() {
-        Log.e(TAG, "updateUi: ");
         final BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
         if (wallet == null) {
             Log.e(TAG, "updateUi: wallet is null");
@@ -339,7 +339,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             mBalancePrimary.setTextColor(getResources().getColor(R.color.currency_subheading_color, null));
             mBalanceSecondary.setTypeface(FontManager.get(this, "CircularPro-Bold.otf"));
 
-
         }
 
         new Handler().postDelayed(
@@ -392,7 +391,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                wallet.connectWallet(WalletActivity.this);
+                if (wallet.getPeerManager().getConnectStatus() != BRCorePeer.ConnectStatus.Connected)
+                    wallet.connectWallet(WalletActivity.this);
             }
         });
 
@@ -412,6 +412,12 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         handleUrlClickIfNeeded(getIntent());
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        SyncManager.getInstance().stopSyncing();
     }
 
     private void setUpBarFlipper() {
@@ -497,11 +503,13 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             mProgressBar.setVisibility(View.GONE);
             mProgressLabel.setVisibility(View.GONE);
             mBalanceLabel.setVisibility(View.VISIBLE);
+            Log.e(TAG, "onProgressUpdated: DONE");
             return false;
         }
+        Log.e(TAG, "onProgressUpdated: " + progress);
         mProgressBar.setVisibility(View.VISIBLE);
         mProgressLabel.setVisibility(View.VISIBLE);
-        mBalanceLabel.setVisibility(View.INVISIBLE);
+        mBalanceLabel.setVisibility(View.GONE);
         return true;
     }
 

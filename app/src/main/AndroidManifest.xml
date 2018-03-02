@@ -97,7 +97,7 @@
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".presenter.activities.settings.WipeActivity"
+            android:name=".presenter.activities.settings.UnlinkActivity"
             android:launchMode="singleTask"
 
             android:screenOrientation="portrait"/>
