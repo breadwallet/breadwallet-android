@@ -15,7 +15,7 @@
         android:layout_marginLeft="16sp"
         android:layout_marginTop="16sp"
         android:textColor="@color/white"
-        android:textSize="18sp"
+        android:textSize="20sp"
         app:customTFont="CircularPro-Bold.otf"/>
 
     <com.breadwallet.presenter.customviews.BRText
@@ -25,7 +25,7 @@
         android:layout_below="@id/wallet_name"
         android:layout_marginLeft="16sp"
         android:textColor="@color/currency_subheading_color"
-        android:textSize="18sp"
+        android:textSize="20sp"
         app:customTFont="CircularPro-Book.otf"/>
 
     <com.breadwallet.presenter.customviews.BRText
@@ -38,7 +38,7 @@
         android:layout_marginTop="16sp"
         android:text="$12.00"
         android:textColor="@color/white"
-        android:textSize="18sp"
+        android:textSize="20sp"
         app:customTFont="CircularPro-Bold.otf"/>
 
     <com.breadwallet.presenter.customviews.BRText
@@ -78,7 +78,7 @@
         android:layout_below="@id/wallet_balance_usd"
         android:layout_marginRight="16sp"
         android:textColor="@color/currency_subheading_color"
-        android:textSize="18sp"
+        android:textSize="20sp"
         app:customTFont="CircularPro-Book.otf"/>
 
 </RelativeLayout>

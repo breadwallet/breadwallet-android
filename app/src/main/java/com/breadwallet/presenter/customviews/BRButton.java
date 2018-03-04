@@ -218,6 +218,11 @@ public class BRButton extends Button {
 
     }
 
+    public void setHasShadow(boolean hasShadow){
+        this.hasShadow = hasShadow;
+        invalidate();
+    }
+
     public void setColor(int color){
         bPaint.setColor(color);
 

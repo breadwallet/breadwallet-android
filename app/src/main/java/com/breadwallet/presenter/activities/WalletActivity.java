@@ -27,12 +27,10 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BRText;
-import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
-//import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
@@ -48,10 +46,10 @@ import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
 
-import okhttp3.internal.Util;
-
 import static com.breadwallet.tools.animation.BRAnimator.t1Size;
 import static com.breadwallet.tools.animation.BRAnimator.t2Size;
+
+//import com.breadwallet.tools.manager.SyncManager;
 
 /**
  * Created by byfieldj on 1/16/18.
@@ -124,6 +122,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mBalanceSecondary.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);//make it the size it should be after animation to get the X
 
 
+        mSendButton.setHasShadow(false);
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -132,6 +131,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             }
         });
 
+        mSendButton.setHasShadow(false);
         mReceiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -179,7 +179,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         boolean cryptoPreferred = BRSharedPrefs.isCryptoPreferred(this);
 
-        if(cryptoPreferred){
+        if (cryptoPreferred) {
             swap();
         }
 
@@ -210,6 +210,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         }
 
         if (wallet.getUiConfiguration().buyVisible) {
+            mBuyButton.setHasShadow(false);
             mBuyButton.setVisibility(View.VISIBLE);
             mBuyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -294,9 +295,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             // Align usd balance to left of swap icon
             set.connect(R.id.balance_primary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
 
-            mBalancePrimary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, 6));
-            mBalanceSecondary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, 4));
-            mSwap.setPadding(0,0,0, Utils.getPixelsFromDps(this, 2));
+            mBalancePrimary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 6));
+            mBalanceSecondary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 14));
+            mSwap.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 2));
 
             Log.d(TAG, "CryptoPreferred " + cryptoPreferred);
 
@@ -320,9 +321,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             // Align secondary currency to the left of swap icon
             set.connect(R.id.balance_secondary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
 
-            mBalancePrimary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, 2));
-            mBalanceSecondary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, 8));
-            mSwap.setPadding(0,0,0, Utils.getPixelsFromDps(this, 2));
+            mBalancePrimary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 2));
+            mBalanceSecondary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 18));
+            mSwap.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 2));
 
             //mBalancePrimary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, -4));
 

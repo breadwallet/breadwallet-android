@@ -59,8 +59,8 @@
 
                 <ImageButton
                     android:id="@+id/back_icon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="28dp"
                     android:background="@drawable/ic_chevron_left_white_24dp"
@@ -72,7 +72,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="$16,904.34 per BTC"
-                    android:textColor="@color/currency_subheading_color"
+                    android:textColor="@color/trans_white"
                     android:textSize="@dimen/sub_header"
                     app:customTFont="CircularPro-Book.otf"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -84,14 +84,14 @@
                     android:id="@+id/balance_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginEnd="15dp"
                     android:text="@string/CurrencyBalance"
-                    android:textColor="@color/currency_subheading_color"
+                    android:textColor="@color/trans_white"
                     android:textSize="14sp"
                     android:visibility="visible"
                     app:customTFont="CircularPro-Book.otf"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    android:layout_marginBottom="44dp"
+                    android:layout_marginBottom="54dp"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintRight_toRightOf="parent"/>
 
@@ -101,9 +101,9 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:text="Syncing"
-                    android:textColor="#88ffffff"
+                    android:textColor="@color/trans_white"
                     android:textSize="10sp"
-                    app:customTFont="CircularPro-Bold.otf"
+                    app:customTFont="CircularPro-Book.otf"
                     app:layout_constraintBottom_toBottomOf="@+id/sync_progress"
                     app:layout_constraintEnd_toStartOf="@+id/sync_progress"
                     app:layout_constraintTop_toTopOf="@+id/sync_progress"/>
@@ -112,10 +112,10 @@
                     android:id="@+id/sync_progress"
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="30dp"
-                    android:layout_height="5dp"
+                    android:layout_height="3dp"
                     android:layout_alignParentEnd="true"
-                    android:layout_marginBottom="52dp"
-                    android:layout_marginEnd="8dp"
+                    android:layout_marginBottom="62dp"
+                    android:layout_marginEnd="15dp"
                     android:indeterminate="false"
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:max="100"
@@ -130,7 +130,7 @@
                     android:id="@+id/balance_primary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="4dp"
+                    android:layout_marginBottom="14dp"
                     android:layout_marginEnd="16dp"
                     android:text="$26,495.69"
                     android:textColor="@color/white"
@@ -145,7 +145,7 @@
                     android:id="@+id/swap"
                     android:layout_width="14dp"
                     android:layout_height="14dp"
-                    android:layout_marginBottom="13dp"
+                    android:layout_marginBottom="23dp"
                     android:background="@drawable/ic_swap_horizontal"
                     app:layout_constraintBottom_toBottomOf="parent"
                     android:layout_marginRight="8dp"
@@ -159,10 +159,10 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="28dp"
                     android:layout_marginEnd="8dp"
-                    android:paddingBottom="10dp"
+                    android:paddingBottom="20dp"
                     android:paddingTop="18dp"
                     android:text="1.56739 BTC"
-                    android:textColor="@color/currency_subheading_color"
+                    android:textColor="@color/trans_white"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@id/swap"
                     app:layout_constraintRight_toLeftOf="@id/swap"
@@ -173,8 +173,8 @@
                     android:id="@+id/search_icon"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="92dp"
-                    android:layout_marginEnd="16dp"
+                    android:layout_marginBottom="102dp"
+                    android:layout_marginEnd="30dp"
                     android:background="@drawable/ic_search_white_24dp"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"/>
@@ -226,6 +226,12 @@
 
     </LinearLayout>
 
+    <View
+        android:background="@color/light_gray"
+        android:layout_above="@id/bottom_toolbar_layout1"
+        android:layout_width="match_parent"
+        android:layout_height="1px"/>
+
 
     <LinearLayout
         android:id="@+id/bottom_toolbar_layout1"
@@ -234,7 +240,7 @@
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
         android:background="@color/extra_light_blue_background"
-        android:elevation="9dp"
+        android:elevation="0dp"
         android:orientation="horizontal"
         android:weightSum="3">
 
@@ -242,7 +248,7 @@
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/send_button"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="55dp"
             android:layout_gravity="center_vertical"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="16dp"
@@ -262,7 +268,7 @@
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/receive_button"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="55dp"
             android:layout_gravity="center_vertical"
             android:layout_marginBottom="16dp"
             android:layout_marginRight="16dp"
@@ -280,7 +286,7 @@
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/buy_button"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="55dp"
             android:layout_gravity="center_vertical"
             android:layout_marginBottom="16dp"
             android:layout_marginRight="16dp"
