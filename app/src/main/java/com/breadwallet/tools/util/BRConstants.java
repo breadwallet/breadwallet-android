@@ -64,43 +64,15 @@ public class BRConstants {
     public static final int REQUEST_IMAGE_CAPTURE = 203;
 
     public static final String CANARY_STRING = "canary";
-    public static final String FIRST_ADDRESS = "firstAddress";
-    public static final String SECURE_TIME_PREFS = "secureTime";
-    public static final String PHRASE_WARNING_TIME = "phraseWarningTime";
-    public static final String EXCHANGE_RATES = "exchangeRates";
-    public static final String FEE_KB_PREFS = "feeKb";
-    public static final String ECONOMY_FEE_KB_PREFS = "EconomyFeeKb";
+//    public static final String FIRST_ADDRESS = "firstAddress";
+//    public static final String SECURE_TIME_PREFS = "secureTime";
+//    public static final String FEE_KB_PREFS = "feeKb";
+//    public static final String ECONOMY_FEE_KB_PREFS = "EconomyFeeKb";
     public static final String LITTLE_CIRCLE = "\u2022";
     public static String SUPPORT_EMAIL = "support@breadwallet.com";
 
     public static final int ONE_BITCOIN = 100000000;
     public static final int HUNDRED_BITS = 10000000;
-
-//    /**
-//     * WalletsMaster
-//     */
-//    public static final long TX_FEE_PER_KB = 5000;
-//    public static final long DEFAULT_FEE_PER_KB = (TX_FEE_PER_KB * 1000 + 190) / 191;
-//    public static final long MAX_FEE_PER_KB = (100100 * 1000 + 190) / 191;
-
-    /**
-     * BRSharedPrefs
-     */
-    public static final String PREFS_NAME = "MyPrefsFile";
-    public static final String RECEIVE_ADDRESS = "receive_address";
-    public static final String WALLET_NAME = "wallet_name";
-//    public static final String START_HEIGHT = "startHeight";
-    public static final String LAST_BLOCK_HEIGHT = "lastBlockHeight";
-    public static final String TIPS_SHOWN = "tipsShown";
-    public static final String CURRENT_UNIT = "currencyUnit";
-    public static final String CURRENT_CURRENCY = "currentCurrency";
-    public static final String POSITION = "position";
-    public static final String RATE = "rate";
-    public static final String PHRASE_WRITTEN = "phraseWritten";
-    public static final String LIMIT_PREFS = "fingerprintLimit";
-//    public static final String ALLOW_SPEND = "allowSpend";
-    public static final String USER_ID = "userId";
-    public static final String GEO_PERMISSIONS_REQUESTED = "geoPermissionsRequested";
 
     /**
      * Currency units

@@ -421,7 +421,9 @@
   <!-- Balance: $4.00 -->
   <string name="Send.balance">Balance: %1$s</string>
   <!-- Instructions how to allow the camera access for the app -->
-  <string name="Send.cameraUnavailabeMessage.android">Allow camera access in \"Settings\" &gt; \"Apps\" &gt; \"Bread\" &gt; \"Permissions\"</string>
+  <string name="Send.cameraUnavailabeMessage.android">Allow camera access in \"Settings\" &gt; \"Apps\" &gt; \"BRD\" &gt; \"Permissions\"</string>
+  <string name="Simplex.allowFileSystemAccess">Please allow Storage permission in \"Settings\" &gt; \"Apps\" &gt; \"BRD\" &gt; \"Permissions\"</string>
+
   <!-- Permission required to access camera -->
   <string name="Send.cameraUnavailabeTitle.android">Bread is not allowed to access the camera</string>
   <!-- Camera not allowed message -->
@@ -480,14 +482,26 @@
   <string name="Settings.advancedTitle">Advanced Settings</string>
   <!-- i.e. the currency which will be displayed -->
   <string name="Settings.currency">Display Currency</string>
+  <string name="Settings.currencySettings">Currency Settings</string>
+  <string name="Settings.bitcoin">Bitcoin</string>
+  <string name="Settings.bitcoinCash">BitcoinCash</string>
+  <string name="Settings.other">Other</string>
+  <string name="Settings.aboutBread">About Bread</string>
+
+
+
+
+
   <!-- Join Early access label -->
   <string name="Settings.earlyAccess">Join Early Access</string>
   <!-- Are you enjoying bread alert message body -->
   <string name="Settings.enjoying">Are you enjoying Bread?</string>
   <!-- Import wallet label -->
   <string name="Settings.importTitle">Import Wallet</string>
-  <!-- Manage settings section header -->
-  <string name="Settings.manage">Manage</string>
+  <!-- Preferences settings section header -->
+  <string name="Settings.preferences">Preferences</string>
+  <!-- Preferences "Update Pin" section -->
+  <string name="Settings.updatePin">Update Pin</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">Notifications</string>
   <!-- Leave review button label -->
@@ -734,4 +748,19 @@
   <string name="WritePaperPhrase.previous">Previous</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d of %2$d</string>
+  <!-- Currency labels -->
+  <string name="CurrencyBitcoin">Bitcoin</string>
+  <string name="CurrencyBitcoinCash">BitcoinCash</string>
+  <string name="CurrencyBalance">Balance</string>
+  <string name="CurrencyBuy">Buy</string>
+  <string name="CurrencySend">Send</string>
+  <string name="CurrencyReceive">Receive</string>
+  <string name="TotalAssets">total assets</string>
+  <string name="Portfolio">Portfolio</string>
+  <string name="Wallets">Wallets</string>
+  <string name="Admin">Admin</string>
+
+
+
+
 </resources>
