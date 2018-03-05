@@ -342,7 +342,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         if (!cryptoPreferred) {
             mBalanceSecondary.setTextColor(getResources().getColor(R.color.currency_subheading_color, null));
             mBalancePrimary.setTextColor(getResources().getColor(R.color.white, null));
-            mBalanceSecondary.setTypeface(FontManager.get(this, "CircularPro-Bold.otf"));
+            mBalanceSecondary.setTypeface(FontManager.get(this, "CircularPro-Book.otf"));
 
         } else {
             mBalanceSecondary.setTextColor(getResources().getColor(R.color.white, null));
