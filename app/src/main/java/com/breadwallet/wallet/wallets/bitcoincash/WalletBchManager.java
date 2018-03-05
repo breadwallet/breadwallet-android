@@ -179,15 +179,13 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     protected BRCoreWallet.Listener createWalletListener() {
         return new BRCoreWalletManager.WrappedExecutorWalletListener(
-                super.createWalletListener(),
-                listenerExecutor);
+                super.createWalletListener(), listenerExecutor);
     }
 
     @Override
     protected BRCorePeerManager.Listener createPeerManagerListener() {
         return new BRCoreWalletManager.WrappedExecutorPeerManagerListener(
-                super.createPeerManagerListener(),
-                listenerExecutor);
+                super.createPeerManagerListener(), listenerExecutor);
     }
 
     @Override

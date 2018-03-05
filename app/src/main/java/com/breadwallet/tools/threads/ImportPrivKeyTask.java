@@ -243,11 +243,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             BRCoreKey signingKey = new BRCoreKey(key);
 
             long fee = walletManager.getWallet().getFeeForTransactionSize(transaction.getSize() + 34 + (signingKey.getPubKey().length - 33) * transaction.getInputs().length);
-            Log.e(TAG, "createSweepingTx: fee: " + fee);
-            Log.e(TAG, "createSweepingTx: totalAmount: " + totalAmount);
             transaction.addOutput(new BRCoreTransactionOutput(totalAmount - fee, address.getPubKeyScript()));
-            Log.e(TAG, "createSweepingTx: txAmount:" + walletManager.getWallet().getTransactionAmount(transaction));
-            Log.e(TAG, "createSweepingTx: fee:" + walletManager.getWallet().getTransactionFee(transaction));
             return transaction;
         } catch (JSONException e) {
             e.printStackTrace();
