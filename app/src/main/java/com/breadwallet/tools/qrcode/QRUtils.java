@@ -13,6 +13,7 @@ import android.view.Display;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.breadwallet.wallet.WalletsMaster;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -55,7 +56,6 @@ import static android.graphics.Color.WHITE;
  */
 public class QRUtils {
     private static final String TAG = QRUtils.class.getName();
-
 
 
     public static Bitmap encodeAsBitmap(String content, int dimension) {
@@ -171,7 +171,7 @@ public class QRUtils {
         } else {
             intent.setAction(Intent.ACTION_SEND);
             intent.setType("image/*");
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Bitcoin Address");
+            intent.putExtra(Intent.EXTRA_SUBJECT, WalletsMaster.getInstance(app).getCurrentWallet(app).getName(app) + " Address");
             intent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             if (uri != null) {
