@@ -49,24 +49,25 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     /**
      * MerkleBlock table
      */
-    public static final String MB_TABLE_NAME = "merkleBlockTable";
+    public static final String MB_TABLE_NAME_OLD = "merkleBlockTable";
+    public static final String MB_TABLE_NAME = "merkleBlockTable_v2";
+    public static final String MB_COLUMN_ID = "_id";
     public static final String MB_BUFF = "merkleBlockBuff";
     public static final String MB_HEIGHT = "merkleBlockHeight";
     public static final String MB_ISO = "merkleBlockIso";
 
-    public static final String MB_COLUMN_ID = "_id";
-
     private static final String MB_DATABASE_CREATE = "create table if not exists " + MB_TABLE_NAME + "(" +
             MB_COLUMN_ID + " integer primary key autoincrement, " +
             MB_BUFF + " blob, " +
-            MB_ISO + " text, " +
+            MB_ISO + " text DEFAULT 'BTC' , " +
             MB_HEIGHT + " integer);";
 
     /**
      * Transaction table
      */
 
-    public static final String TX_TABLE_NAME = "transactionTable";
+    public static final String TX_TABLE_NAME_OLD = "transactionTable";
+    public static final String TX_TABLE_NAME = "transactionTable_v2";
     public static final String TX_COLUMN_ID = "_id";
     public static final String TX_BUFF = "transactionBuff";
     public static final String TX_BLOCK_HEIGHT = "transactionBlockHeight";
@@ -78,13 +79,14 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             TX_BUFF + " blob, " +
             TX_BLOCK_HEIGHT + " integer, " +
             TX_TIME_STAMP + " integer, " +
-            TX_ISO + " text );";
+            TX_ISO + " text DEFAULT 'BTC' );";
 
     /**
      * Peer table
      */
 
-    public static final String PEER_TABLE_NAME = "peerTable";
+    public static final String PEER_TABLE_NAME_OLD = "peerTable";
+    public static final String PEER_TABLE_NAME = "peerTable_v2";
     public static final String PEER_COLUMN_ID = "_id";
     public static final String PEER_ADDRESS = "peerAddress";
     public static final String PEER_PORT = "peerPort";
@@ -101,7 +103,8 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
      * Currency table
      */
 
-    public static final String CURRENCY_TABLE_NAME = "currencyTable";
+    public static final String CURRENCY_TABLE_NAME_OLD = "currencyTable";
+    public static final String CURRENCY_TABLE_NAME = "currencyTable_v2";
     public static final String CURRENCY_CODE = "code";
     public static final String CURRENCY_NAME = "name";
     public static final String CURRENCY_RATE = "rate";
@@ -111,7 +114,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             CURRENCY_CODE + " text," +
             CURRENCY_NAME + " text," +
             CURRENCY_RATE + " integer," +
-            CURRENCY_ISO + " text, " +
+            CURRENCY_ISO + " text DEFAULT 'BTC', " +
             "PRIMARY KEY (" + CURRENCY_CODE + ", " + CURRENCY_ISO + ")" +
             ");";
 
@@ -129,26 +132,40 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
         if (oldVersion == 12 && newVersion == 13) {
-            migrateDatabases(db);
             //drop peers table due to multiple changes
-            db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME);
+            onCreate(db); //create new db tables
+            migrateDatabases(db);
         } else {
-            //drop everything
-            db.execSQL("DROP TABLE IF EXISTS " + MB_TABLE_NAME);
-            db.execSQL("DROP TABLE IF EXISTS " + TX_TABLE_NAME);
-            db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME);
-            db.execSQL("DROP TABLE IF EXISTS " + CURRENCY_TABLE_NAME);
+            //drop everything maybe?
+//            db.execSQL("DROP TABLE IF EXISTS " + MB_TABLE_NAME);
+//            db.execSQL("DROP TABLE IF EXISTS " + TX_TABLE_NAME);
+//            db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME);
+//            db.execSQL("DROP TABLE IF EXISTS " + CURRENCY_TABLE_NAME);
 //            db.execSQL("PRAGMA journal_mode=WAL;");
         }
         //recreate if needed
-        onCreate(db);
+
     }
 
     private void migrateDatabases(SQLiteDatabase db) {
-        //todo fix migration, when migrating, currencies get overriden BTC with BCH (weird right?)
-        db.execSQL("ALTER TABLE " + MB_TABLE_NAME + " ADD COLUMN " + MB_ISO + " text DEFAULT 'BTC'");
-        db.execSQL("ALTER TABLE " + TX_TABLE_NAME + " ADD COLUMN " + TX_ISO + " text DEFAULT 'BTC'");
-        db.execSQL("ALTER TABLE " + CURRENCY_TABLE_NAME + " ADD COLUMN " + CURRENCY_ISO + " text DEFAULT 'BTC'");
+        db.beginTransaction();
+        try {
+            db.execSQL("INSERT INTO " + MB_TABLE_NAME + " (_id, merkleBlockBuff, merkleBlockHeight) SELECT _id, merkleBlockBuff, merkleBlockHeight FROM " + MB_TABLE_NAME_OLD);
+            db.execSQL("INSERT INTO " + TX_TABLE_NAME + " (_id, transactionBuff, transactionBlockHeight, transactionTimeStamp) SELECT _id, transactionBuff, transactionBlockHeight, transactionTimeStamp FROM " + TX_TABLE_NAME_OLD);
+            db.execSQL("INSERT INTO " + PEER_TABLE_NAME + " (_id, peerAddress, peerPort, peerTimestamp) SELECT _id, peerAddress, peerPort, peerTimestamp FROM " + PEER_TABLE_NAME_OLD);
+            db.execSQL("INSERT INTO " + CURRENCY_TABLE_NAME + " (code, name, rate) SELECT code, name, rate FROM " + CURRENCY_TABLE_NAME_OLD);
+
+            db.execSQL("DROP TABLE " + MB_TABLE_NAME_OLD);
+            db.execSQL("DROP TABLE " + TX_TABLE_NAME_OLD);
+            db.execSQL("DROP TABLE " + PEER_TABLE_NAME_OLD);
+            db.execSQL("DROP TABLE " + CURRENCY_TABLE_NAME_OLD);
+
+            db.setTransactionSuccessful();
+            Log.e(TAG, "migrateDatabases: SUCCESS");
+        } finally {
+            Log.e(TAG, "migrateDatabases: ENDED");
+            db.endTransaction();
+        }
     }
 
 }
