@@ -214,7 +214,7 @@ public class FragmentRequestAmount extends Fragment {
                 showKeyboard(false);
                 BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 long amount = getAmount();
-                Uri bitcoinUri = CryptoUriParser.createBitcoinUrl(getActivity(), wm, wm.decorateAddress(getActivity(), mReceiveAddress), amount, null, null, null);
+                Uri bitcoinUri = CryptoUriParser.createCryptoUrl(getActivity(), wm, wm.decorateAddress(getActivity(), mReceiveAddress), amount, null, null, null);
                 QRUtils.share("mailto:", getActivity(), bitcoinUri.toString());
 
             }
@@ -228,7 +228,7 @@ public class FragmentRequestAmount extends Fragment {
                 long amount = getAmount();
                 BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
-                Uri bitcoinUri = CryptoUriParser.createBitcoinUrl(getActivity(), wm, wm.decorateAddress(getActivity(), mReceiveAddress), amount, null, null, null);
+                Uri bitcoinUri = CryptoUriParser.createCryptoUrl(getActivity(), wm, wm.decorateAddress(getActivity(), mReceiveAddress), amount, null, null, null);
                 QRUtils.share("sms:", getActivity(), bitcoinUri.toString());
             }
         });

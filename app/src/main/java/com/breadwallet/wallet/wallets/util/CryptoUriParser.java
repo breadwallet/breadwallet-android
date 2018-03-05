@@ -260,7 +260,7 @@ public class CryptoUriParser {
 
     }
 
-    public static Uri createBitcoinUrl(Context app, BaseWalletManager wm, String addr, long satoshiAmount, String label, String message, String rURL) {
+    public static Uri createCryptoUrl(Context app, BaseWalletManager wm, String addr, long satoshiAmount, String label, String message, String rURL) {
         Uri.Builder builder = new Uri.Builder();
         String walletScheme = wm.getScheme(app);
         String cleanAddress = addr;
