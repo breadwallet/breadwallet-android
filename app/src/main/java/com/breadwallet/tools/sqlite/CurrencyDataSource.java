@@ -185,7 +185,6 @@ public class CurrencyDataSource implements BRDataSourceInterface {
             if (!cursor.isAfterLast()) {
                 result = cursorToCurrency(cursor);
             }
-            Log.e(TAG, "getCurrencyByCode: result: " + result);
             return result;
         } finally {
             if (cursor != null)
