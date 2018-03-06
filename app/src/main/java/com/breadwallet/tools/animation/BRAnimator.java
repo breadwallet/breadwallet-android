@@ -24,8 +24,8 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.LoginActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
+import com.breadwallet.presenter.activities.LoginActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
@@ -43,8 +43,6 @@ import com.breadwallet.presenter.fragments.FragmentTxDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
-
-import java.util.List;
 
 
 /**
