@@ -21,6 +21,7 @@ import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreTransactionInput;
 import com.breadwallet.core.BRCoreTransactionOutput;
 import com.breadwallet.presenter.activities.WalletActivity;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.tools.animation.BRDialog;
@@ -206,8 +207,15 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
     }
 
-    private BRCoreTransaction createSweepingTx(Context app, String url) {
+    private BRCoreTransaction createSweepingTx(final Context app, String url) {
         if (url == null || url.isEmpty()) return null;
+
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                BRToast.showCustomToast(app, app.getString(R.string.Import_checking), BRActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+            }
+        });
         String jsonString = BRApiManager.urlGET(app, url);
         if (jsonString == null || jsonString.isEmpty()) return null;
         BaseWalletManager walletManager = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
