@@ -135,7 +135,7 @@ public class HTTPServer {
         server = null;
     }
 
-    public boolean isStarted() {
+    public static boolean isStarted() {
         return server != null && server.isStarted();
     }
 

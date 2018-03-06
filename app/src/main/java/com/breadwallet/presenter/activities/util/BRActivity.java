@@ -212,7 +212,7 @@ public class BRActivity extends Activity {
         }
     }
 
-    public static void init(Activity app) {
+    public void init(Activity app) {
         //set status bar color
 //        ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
         InternetManager.getInstance();
@@ -225,19 +225,30 @@ public class BRActivity extends Activity {
 
         BreadApp.activityCounter.incrementAndGet();
         BreadApp.setBreadContext(app);
+
+        if (!HTTPServer.isStarted())
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    HTTPServer.startServer();
+                }
+            });
+
+        lockIfNeeded(this);
+
+    }
+
+    private void lockIfNeeded(Activity app) {
         //lock wallet if 3 minutes passed
-        if (BreadApp.backgroundedTime != 0 && (System.currentTimeMillis()
-                - BreadApp.backgroundedTime >= 180 * 1000) && !(app instanceof DisabledActivity)) {
+        if (BreadApp.backgroundedTime != 0
+                && ((System.currentTimeMillis() - BreadApp.backgroundedTime) >= 180 * 1000)
+                && !(app instanceof DisabledActivity)) {
             if (!BRKeyStore.getPinCode(app).isEmpty()) {
+                Log.e(TAG, "lockIfNeeded: " + BreadApp.backgroundedTime);
                 BRAnimator.startBreadActivity(app, true);
             }
         }
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                HTTPServer.startServer();
-            }
-        });
-        BreadApp.backgroundedTime = System.currentTimeMillis();
+
     }
+
 }
