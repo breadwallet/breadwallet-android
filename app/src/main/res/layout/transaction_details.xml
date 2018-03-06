@@ -4,8 +4,10 @@
     android:id="@+id/tx_details_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:minWidth="350dp"
-    app:cardCornerRadius="8dp">
+    android:minWidth="330dp"
+    android:layout_marginLeft="12dp"
+    android:layout_marginRight="12dp"
+    app:cardCornerRadius="4dp">
 
     <RelativeLayout
         android:id="@+id/details_parent"
@@ -26,12 +28,12 @@
 
         <ImageButton
             android:id="@+id/close_button"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
             android:layout_above="@+id/tx_amount"
             android:layout_alignEnd="@id/tx_date"
-            android:layout_marginRight="18dp"
-            android:background="@drawable/ic_close_black_24dp" />
+            android:layout_marginRight="10dp"
+            android:background="@drawable/ic_close_light_grey" />
 
 
         <com.breadwallet.presenter.customviews.BRText
@@ -54,7 +56,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/tx_amount"
-            android:layout_marginLeft="70dp"
+            android:layout_marginLeft="60dp"
             android:text="X"
             android:textColor="@color/settings_chevron_right"
             app:customTFont="CircularPro-Bold.otf" />
@@ -110,7 +112,7 @@
             android:layout_marginLeft="14dp"
             android:layout_marginTop="14dp"
             android:drawableLeft="@drawable/checkmark_circled"
-
+            android:drawablePadding="5dp"
             android:text="Complete"
             android:textColor="@color/settings_chevron_right"
             app:customTFont="CircularPro-Book.otf" />
@@ -190,7 +192,7 @@
             android:layout_alignParentRight="true"
             android:layout_below="@id/divider3"
             android:layout_marginRight="20dp"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="14dp"
             android:paddingRight="20dp"
             android:text="Sample transaction memo would go here. Some things are truly better left unsaid"
             android:textSize="10sp"
@@ -314,9 +316,9 @@
                 android:id="@+id/confirmed_in_block_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/exchange_rate"
+                android:layout_below="@id/divider6"
                 android:layout_marginLeft="14dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="14dp"
                 android:text="Confirmed in Block"
                 android:textColor="@color/settings_chevron_right"
 
@@ -328,9 +330,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
-                android:layout_below="@id/exchange_rate"
+                android:layout_below="@id/divider6"
                 android:layout_marginRight="14dp"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="14dp"
                 android:text="549293"
                 app:customTFont="CircularPro-Book.otf" />
 
@@ -360,7 +362,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentRight="true"
                 android:layout_below="@id/divider7"
-                android:layout_marginRight="14dp"
+                android:layout_marginRight="10dp"
                 android:layout_marginTop="14dp"
                 android:ellipsize="middle"
                 android:maxLength="30"

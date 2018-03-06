@@ -3,12 +3,15 @@ package com.breadwallet.presenter.fragments;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -22,6 +25,7 @@ import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.entities.TxMetaData;
@@ -114,6 +118,10 @@ public class FragmentTxDetails extends DialogFragment {
                     mDetailsContainer.setVisibility(View.VISIBLE);
                     mDetailsShowing = true;
                     mShowHide.setText("Hide Details");
+                    mShowHide.setPadding(0, 0, 0, Utils.getPixelsFromDps(getContext(), 4));
+//                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//                    params.setMargins(0,0, 0, Utils.getPixelsFromDps(getContext(), 6 ));
+//                    mShowHide.setLayoutParams(params);
                 } else {
                     mDetailsContainer.setVisibility(View.GONE);
                     mDetailsShowing = false;
@@ -121,6 +129,12 @@ public class FragmentTxDetails extends DialogFragment {
                 }
             }
         });
+
+        // Set transparent background and no title
+        if (getDialog() != null && getDialog().getWindow() != null) {
+            getDialog().getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            getDialog().getWindow().requestFeature(Window.FEATURE_NO_TITLE);
+        }
 
         updateUi();
         return rootView;

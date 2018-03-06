@@ -18,17 +18,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <com.breadwallet.presenter.customviews.BRNotificationBar
-            android:id="@+id/notification_bar"
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginLeft="0dp"
-            android:layout_marginRight="0dp"
-            android:background="@color/blue"
-            android:visibility="visible"
-            app:breadText="No internet connection found.\nCheck your connection and try again." />
+
 
 
         <RelativeLayout
@@ -440,6 +430,23 @@
 
 
         </RelativeLayout>
+
+        <com.breadwallet.presenter.customviews.BRNotificationBar
+            android:id="@+id/notification_bar"
+            android:layout_width="match_parent"
+            android:layout_height="160dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="0dp"
+            android:layout_marginRight="0dp"
+            android:layout_marginTop="4dp"
+            android:background="@color/blue"
+            android:visibility="visible"
+            android:contentInsetLeft="0dp"
+            android:contentInsetStart="0dp"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
+            app:breadText="No internet connection found.\nCheck your connection and try again." />
 
     </RelativeLayout>
 
