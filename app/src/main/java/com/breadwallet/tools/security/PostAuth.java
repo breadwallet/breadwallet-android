@@ -224,8 +224,12 @@ public class PostAuth {
                         txMetaData.comment = mCryptoRequest.message;
                         txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
                         txMetaData.exchangeRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, walletManager.getIso(app), txMetaData.exchangeCurrency).rate;
-                        //todo finish this
-//                        txMetaData.
+                        txMetaData.fee = walletManager.getWallet().getTransactionFee(mCryptoRequest.tx);
+                        txMetaData.txSize = (int) mCryptoRequest.tx.getSize();
+                        txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, walletManager.getIso(app));
+                        txMetaData.creationTime = (int) (System.currentTimeMillis() / 1000);//seconds
+                        txMetaData.deviceId = BRSharedPrefs.getDeviceId(app);
+                        txMetaData.classVersion = 1;
                         KVStoreManager.getInstance().putTxMetaData(app, txMetaData, txHash);
                     }
                     mCryptoRequest = null;
