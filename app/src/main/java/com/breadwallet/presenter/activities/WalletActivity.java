@@ -3,7 +3,9 @@ package com.breadwallet.presenter.activities;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,12 +23,14 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
+import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -82,8 +86,11 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private ImageButton mSwap;
     private ConstraintLayout toolBarConstraintLayout;
 
+    private BRNotificationBar mNotificationBar;
 
     private static WalletActivity app;
+
+    private InternetManager mConnectionReceiver;
 
     public static WalletActivity getApp() {
         return app;
@@ -112,6 +119,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mBalanceLabel = findViewById(R.id.balance_label);
         mProgressLabel = findViewById(R.id.syncing_label);
         mProgressBar = findViewById(R.id.sync_progress);
+        mNotificationBar = findViewById(R.id.notification_bar);
 
         setUpBarFlipper();
 
@@ -177,6 +185,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         TxManager.getInstance().init(this);
 
+        onConnectionChanged(InternetManager.getInstance().isConnected(this));
+
         updateUi();
 
         boolean cryptoPreferred = BRSharedPrefs.isCryptoPreferred(this);
@@ -184,6 +194,14 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         if (cryptoPreferred) {
             swap();
         }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mConnectionReceiver != null)
+        unregisterReceiver(mConnectionReceiver);
 
     }
 
@@ -241,11 +259,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             param.setMargins(Utils.getPixelsFromDps(this, 8), Utils.getPixelsFromDps(this, 8), Utils.getPixelsFromDps(this, 8) , 0);
             param2.setMargins(0, Utils.getPixelsFromDps(this, 8), Utils.getPixelsFromDps(this, 8) , 0);
 
-            // mSendButton.setHeight(Utils.getPixelsFromDps(this, 75));
-            //mReceiveButton.setHeight(Utils.getPixelsFromDps(this, 75));
             mSendButton.setLayoutParams(param);
             mReceiveButton.setLayoutParams(param2);
-            //mBuyButton.setLayoutParams(param);
             mBuyButton.setVisibility(View.GONE);
 
         }
@@ -384,6 +399,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         WalletsMaster.getInstance(app).initWallets(app);
 
+        setupNetworking();
+
         TxManager.getInstance().onResume(this);
 
         CurrencyDataSource.getInstance(this).addOnDataChangedListener(new CurrencyDataSource.OnDataChanged() {
@@ -449,12 +466,20 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         barFlipper.setDisplayedChild(0);
     }
 
+    private void setupNetworking() {
+        if (mConnectionReceiver == null) mConnectionReceiver = InternetManager.getInstance();
+        IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mConnectionReceiver, mNetworkStateFilter);
+        InternetManager.addConnectionListener(this);
+    }
+
+
     @Override
     public void onConnectionChanged(boolean isConnected) {
+        Log.d(TAG, "onConnectionChanged");
         if (isConnected) {
-            if (barFlipper != null) {
-                if (barFlipper.getDisplayedChild() == 2)
-                    barFlipper.setDisplayedChild(0);
+            if (barFlipper != null && barFlipper.getDisplayedChild() == 2) {
+               barFlipper.setDisplayedChild(0);
             }
             final BaseWalletManager wm = WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this);
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -473,6 +498,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         } else {
             if (barFlipper != null)
                 barFlipper.setDisplayedChild(2);
+
         }
     }
 
