@@ -14,13 +14,20 @@
     android:orientation="vertical"
     tools:context="com.breadwallet.presenter.activities.WalletActivity">
 
+    <LinearLayout
+        android:id="@+id/toolbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:animateLayoutChanges="true"
+        android:layout_alignParentTop="true"
+        android:elevation="8dp"
+        android:orientation="vertical">
+
 
     <ViewFlipper
         android:id="@+id/tool_bar_flipper"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         tools:context="com.breadwallet.presenter.activities.CurrencyActivity">
 
 
@@ -202,19 +209,27 @@
             android:layout_width="match_parent"
             android:layout_height="160dp"
             android:layout_alignParentTop="true"
+            android:layout_marginRight="0dp"
+            android:layout_marginLeft="0dp"
             android:background="@drawable/bread_gradient"
             android:visibility="visible"
+            android:contentInsetLeft="0dp"
+            android:contentInsetStart="0dp"
+            app:contentInsetLeft="0dp"
+            app:contentInsetStart="0dp"
             app:breadText="No internet connection found.\nCheck your connection and try again." />
 
 
     </ViewFlipper>
+
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/recycler_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_above="@+id/bottom_toolbar_layout1"
-        android:layout_below="@+id/tool_bar_flipper"
+        android:layout_below="@+id/toolbar_layout"
         android:animateLayoutChanges="true"
         android:orientation="vertical">
 
