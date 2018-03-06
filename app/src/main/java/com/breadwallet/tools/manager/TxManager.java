@@ -1,21 +1,17 @@
 package com.breadwallet.tools.manager;
 
-import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.Context;
 import android.os.Looper;
 import android.support.annotation.WorkerThread;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.WalletActivity;
-import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;

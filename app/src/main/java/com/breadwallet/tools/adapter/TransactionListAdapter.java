@@ -29,9 +29,7 @@ import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.Date;
 import java.util.List;
 
 
@@ -305,10 +303,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             startingParams.addRule(RelativeLayout.CENTER_VERTICAL);
             startingParams.setMargins(Utils.getPixelsFromDps(mContext, 16), 0, 0, 0);
             holder.transactionDetail.setLayoutParams(startingParams);
-
-
         }
     }
+
 
     private void showTransactionFailed(TxHolder holder, TxUiHolder tx, boolean received) {
 

@@ -57,7 +57,6 @@ import static android.graphics.Color.WHITE;
 public class QRUtils {
     private static final String TAG = QRUtils.class.getName();
 
-
     public static Bitmap encodeAsBitmap(String content, int dimension) {
 
         if (content == null) {

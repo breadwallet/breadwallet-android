@@ -40,6 +40,8 @@ import static com.breadwallet.tools.animation.BRAnimator.animateBackgroundDim;
 import static com.breadwallet.tools.animation.BRAnimator.animateSignalSlide;
 import static com.platform.HTTPServer.URL_SUPPORT;
 
+
+
 /**
  * BreadWallet
  * <p>

@@ -169,6 +169,28 @@ public class SettingsActivity extends BRActivity {
 
         items.add(new BRSettingsItem(getString(R.string.Settings_preferences), "", null, true));
 
+        if (AuthManager.isFingerPrintAvailableAndSetup(this)) {
+            items.add(new BRSettingsItem(getString(R.string.Settings_touchIdLimit_android), "", new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    AuthManager.getInstance().authPrompt(SettingsActivity.this, null, getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
+                        @Override
+                        public void onComplete() {
+                            Intent intent = new Intent(SettingsActivity.this, SpendLimitActivity.class);
+                            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onCancel() {
+
+                        }
+                    });
+
+                }
+            }, false));
+        }
+
         items.add(new BRSettingsItem(getString(R.string.Settings_updatePin), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -256,27 +278,7 @@ public class SettingsActivity extends BRActivity {
         }, false));
 
 
-        if (AuthManager.isFingerPrintAvailableAndSetup(this)) {
-            items.add(new BRSettingsItem(getString(R.string.Settings_touchIdLimit_android), "", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    AuthManager.getInstance().authPrompt(SettingsActivity.this, null, getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
-                        @Override
-                        public void onComplete() {
-                            Intent intent = new Intent(SettingsActivity.this, SpendLimitActivity.class);
-                            overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                            startActivity(intent);
-                        }
 
-                        @Override
-                        public void onCancel() {
-
-                        }
-                    });
-
-                }
-            }, false));
-        }
 
 
     }
