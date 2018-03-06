@@ -1,6 +1,8 @@
 package com.breadwallet.presenter.activities;
 
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -15,12 +17,14 @@ import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
+import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.CurrencyUtils;
@@ -37,7 +41,7 @@ import java.util.ArrayList;
  * Home activity that will show a list of a user's wallets
  */
 
-public class HomeActivity extends BRActivity {
+public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, SyncManager.OnProgressUpdate {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -47,10 +51,14 @@ public class HomeActivity extends BRActivity {
     private RelativeLayout mSettings;
     private RelativeLayout mSecurity;
     private RelativeLayout mSupport;
+    public BRNotificationBar mNotificationBar;
+
 
     private TestLogger logger;
 
     private static HomeActivity app;
+
+    private InternetManager mConnectionReceiver;
 
     public static HomeActivity getApp() {
         return app;
@@ -79,6 +87,7 @@ public class HomeActivity extends BRActivity {
         mSettings = findViewById(R.id.settings_row);
         mSecurity = findViewById(R.id.security_row);
         mSupport = findViewById(R.id.support_row);
+        mNotificationBar = findViewById(R.id.notification_bar);
 
         mAdapter = new WalletListAdapter(this, walletList);
 
@@ -127,8 +136,18 @@ public class HomeActivity extends BRActivity {
             }
         });
 
+        onConnectionChanged(InternetManager.getInstance().isConnected(this));
 
 
+
+
+    }
+
+    private void setupNetworking() {
+        if (mConnectionReceiver == null) mConnectionReceiver = InternetManager.getInstance();
+        IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mConnectionReceiver, mNetworkStateFilter);
+        InternetManager.addConnectionListener(this);
     }
 
     @Override
@@ -142,6 +161,9 @@ public class HomeActivity extends BRActivity {
                 mAdapter.startObserving();
             }
         }, 500);
+
+        setupNetworking();
+
 
         InternetManager.addConnectionListener(new InternetManager.ConnectionReceiverListener() {
             @Override
@@ -219,4 +241,50 @@ public class HomeActivity extends BRActivity {
         }
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mConnectionReceiver != null)
+            unregisterReceiver(mConnectionReceiver);
+    }
+
+    @Override
+    public void onConnectionChanged(boolean isConnected) {
+        Log.d(TAG, "onConnectionChanged");
+        if (isConnected) {
+            if (mNotificationBar != null) {
+                mNotificationBar.setVisibility(View.INVISIBLE);
+            }
+            final BaseWalletManager wm = WalletsMaster.getInstance(HomeActivity.this).getCurrentWallet(HomeActivity.this);
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    final double progress = wm.getPeerManager()
+                            .getSyncProgress(BRSharedPrefs.getStartHeight(HomeActivity.this,
+                                    BRSharedPrefs.getCurrentWalletIso(HomeActivity.this)));
+//                    Log.e(TAG, "run: " + progress);
+                    if (progress < 1 && progress > 0) {
+                        SyncManager.getInstance().startSyncing(HomeActivity.this, wm, HomeActivity.this);
+                    }
+                }
+            });
+
+        } else {
+            if (mNotificationBar != null)
+                mNotificationBar.setVisibility(View.VISIBLE);
+
+        }
+
+
+    }
+
+    public void closeNotificationBar() {
+        mNotificationBar.setVisibility(View.INVISIBLE);
+    }
+
+
+    @Override
+    public boolean onProgressUpdated(double progress) {
+        return false;
+    }
 }

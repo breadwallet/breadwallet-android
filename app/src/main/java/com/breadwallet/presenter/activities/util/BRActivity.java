@@ -52,6 +52,7 @@ public class BRActivity extends Activity {
     private static final String TAG = BRActivity.class.getName();
     public static final Point screenParametersPoint = new Point();
 
+
     static {
         System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
     }

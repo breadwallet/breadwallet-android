@@ -27,7 +27,7 @@
         android:layout_below="@id/tx_date"
         android:layout_marginTop="-5dp"
         android:ellipsize="end"
-        android:maxLength="25"
+        android:maxLength="20"
         android:maxLines="1"
         android:text="sent to f94c57..."
         android:textColor="@color/settings_chevron_right"

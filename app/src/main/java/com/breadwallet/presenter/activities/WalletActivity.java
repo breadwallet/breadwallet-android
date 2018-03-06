@@ -3,7 +3,9 @@ package com.breadwallet.presenter.activities;
 import android.animation.LayoutTransition;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
+import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,11 +16,14 @@ import android.support.transition.TransitionManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
@@ -26,14 +31,13 @@ import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
+import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BRText;
-import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
-//import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
@@ -51,10 +55,10 @@ import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
 
-import okhttp3.internal.Util;
-
 import static com.breadwallet.tools.animation.BRAnimator.t1Size;
 import static com.breadwallet.tools.animation.BRAnimator.t2Size;
+
+//import com.breadwallet.tools.manager.SyncManager;
 
 /**
  * Created by byfieldj on 1/16/18.
@@ -85,8 +89,11 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private ImageButton mSwap;
     private ConstraintLayout toolBarConstraintLayout;
 
+    private BRNotificationBar mNotificationBar;
 
     private static WalletActivity app;
+
+    private InternetManager mConnectionReceiver;
 
     public static WalletActivity getApp() {
         return app;
@@ -115,6 +122,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mBalanceLabel = findViewById(R.id.balance_label);
         mProgressLabel = findViewById(R.id.syncing_label);
         mProgressBar = findViewById(R.id.sync_progress);
+        mNotificationBar = findViewById(R.id.notification_bar);
 
         setUpBarFlipper();
 
@@ -127,6 +135,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mBalanceSecondary.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);//make it the size it should be after animation to get the X
 
 
+        mSendButton.setHasShadow(false);
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -135,6 +144,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             }
         });
 
+        mSendButton.setHasShadow(false);
         mReceiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -178,8 +188,24 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         TxManager.getInstance().init(this);
 
+        onConnectionChanged(InternetManager.getInstance().isConnected(this));
+
         updateUi();
 //        exchangeTest();
+
+        boolean cryptoPreferred = BRSharedPrefs.isCryptoPreferred(this);
+
+        if (cryptoPreferred) {
+            swap();
+        }
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(mConnectionReceiver != null)
+        unregisterReceiver(mConnectionReceiver);
 
     }
 
@@ -207,6 +233,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         }
 
         if (wallet.getUiConfiguration().buyVisible) {
+            mBuyButton.setHasShadow(false);
             mBuyButton.setVisibility(View.VISIBLE);
             mBuyButton.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -220,15 +247,25 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             });
 
         } else {
-            mBuyButton.setVisibility(View.GONE);
             LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    1.5f
+                   ViewGroup.LayoutParams.MATCH_PARENT,
+                    Utils.getPixelsFromDps(this, 65), 1.5f
             );
+
+            LinearLayout.LayoutParams param2 = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    Utils.getPixelsFromDps(this, 65), 1.5f
+            );
+            param.gravity = Gravity.CENTER;
+            param2.gravity = Gravity.CENTER;
+
+            param.setMargins(Utils.getPixelsFromDps(this, 8), Utils.getPixelsFromDps(this, 8), Utils.getPixelsFromDps(this, 8) , 0);
+            param2.setMargins(0, Utils.getPixelsFromDps(this, 8), Utils.getPixelsFromDps(this, 8) , 0);
+
             mSendButton.setLayoutParams(param);
-            mReceiveButton.setLayoutParams(param);
-            mBuyButton.setLayoutParams(param);
+            mReceiveButton.setLayoutParams(param2);
+            mBuyButton.setVisibility(View.GONE);
+
         }
 
 
@@ -248,6 +285,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mReceiveButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
 
         TxManager.getInstance().updateTxList(WalletActivity.this);
+
+
     }
 
     private void swap() {
@@ -287,9 +326,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             // Align usd balance to left of swap icon
             set.connect(R.id.balance_primary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
-            mBalancePrimary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, 6));
-            mBalanceSecondary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, 4));
-            mSwap.setPadding(0,0,0, Utils.getPixelsFromDps(this, 2));
+
+            mBalancePrimary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 6));
+            mBalanceSecondary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 14));
+            mSwap.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 2));
 
             Log.d(TAG, "CryptoPreferred " + cryptoPreferred);
 
@@ -312,9 +352,12 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             // Align secondary currency to the left of swap icon
             set.connect(R.id.balance_secondary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
-            mBalancePrimary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, 2));
-            mBalanceSecondary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, 8));
-            mSwap.setPadding(0,0,0, Utils.getPixelsFromDps(this, 2));
+
+            mBalancePrimary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 2));
+            mBalanceSecondary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 18));
+            mSwap.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 2));
+
+            //mBalancePrimary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, -4));
 
             Log.d(TAG, "CryptoPreferred " + cryptoPreferred);
 
@@ -330,7 +373,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         if (!cryptoPreferred) {
             mBalanceSecondary.setTextColor(getResources().getColor(R.color.currency_subheading_color, null));
             mBalancePrimary.setTextColor(getResources().getColor(R.color.white, null));
-            mBalanceSecondary.setTypeface(FontManager.get(this, "CircularPro-Bold.otf"));
+            mBalanceSecondary.setTypeface(FontManager.get(this, "CircularPro-Book.otf"));
 
         } else {
             mBalanceSecondary.setTextColor(getResources().getColor(R.color.white, null));
@@ -355,6 +398,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         app = this;
 
         WalletsMaster.getInstance(app).initWallets(app);
+
+        setupNetworking();
 
         TxManager.getInstance().onResume(this);
 
@@ -427,12 +472,20 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         barFlipper.setDisplayedChild(0);
     }
 
+    private void setupNetworking() {
+        if (mConnectionReceiver == null) mConnectionReceiver = InternetManager.getInstance();
+        IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        registerReceiver(mConnectionReceiver, mNetworkStateFilter);
+        InternetManager.addConnectionListener(this);
+    }
+
+
     @Override
     public void onConnectionChanged(boolean isConnected) {
+        Log.d(TAG, "onConnectionChanged");
         if (isConnected) {
-            if (barFlipper != null) {
-                if (barFlipper.getDisplayedChild() == 2)
-                    barFlipper.setDisplayedChild(0);
+            if (barFlipper != null && barFlipper.getDisplayedChild() == 2) {
+               barFlipper.setDisplayedChild(0);
             }
             final BaseWalletManager wm = WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this);
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -451,6 +504,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         } else {
             if (barFlipper != null)
                 barFlipper.setDisplayedChild(2);
+
         }
     }
 
