@@ -144,7 +144,7 @@ public class BRApiManager {
                                 }
                                 for (BaseWalletManager w : WalletsMaster.getInstance(context).getAllWallets()) {
                                     Set<CurrencyEntity> tmp = getCurrencies((Activity) context, w);
-                                    CurrencyDataSource.getInstance(context).putCurrencies(context, w, tmp);
+                                    CurrencyDataSource.getInstance(context).putCurrencies(context, w.getIso(context), tmp);
                                 }
                             }
                         });

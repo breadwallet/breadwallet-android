@@ -348,9 +348,9 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public void wipeData(Context app) {
-        BtcBchTransactionDataStore.getInstance(app).deleteAllTransactions(app, this);
-        MerkleBlockDataSource.getInstance(app).deleteAllBlocks(app, this);
-        PeerDataSource.getInstance(app).deleteAllPeers(app, this);
+        BtcBchTransactionDataStore.getInstance(app).deleteAllTransactions(app, getIso(app));
+        MerkleBlockDataSource.getInstance(app).deleteAllBlocks(app, getIso(app));
+        PeerDataSource.getInstance(app).deleteAllPeers(app, getIso(app));
         BRSharedPrefs.clearAllPrefs(app);
     }
 
@@ -388,7 +388,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getFiatExchangeRate(Context app) {
-        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, this, BRSharedPrefs.getPreferredFiatIso(app));
+        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), BRSharedPrefs.getPreferredFiatIso(app));
         return new BigDecimal(ent == null ? 0 : (long) ent.rate); //dollars
     }
 
@@ -402,7 +402,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount) {
         if (amount.doubleValue() == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, this, iso);
+        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
         if (ent == null) return null;
         double rate = ent.rate;
         //get crypto amount
@@ -414,7 +414,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     public BigDecimal getCryptoForFiat(Context app, BigDecimal fiatAmount) {
         if (fiatAmount.doubleValue() == 0) return fiatAmount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, this, iso);
+        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
         if (ent == null) return null;
         double rate = ent.rate;
         //convert c to $.
@@ -477,7 +477,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
         if (amount.doubleValue() == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, this, iso);
+        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
         if (ent == null) {
             Log.e(TAG, "getSmallestCryptoForFiat: no exchange rate data!");
             return amount;
@@ -575,25 +575,25 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     public void saveBlocks(boolean replace, BRCoreMerkleBlock[] blocks) {
         super.saveBlocks(replace, blocks);
         Context app = BreadApp.getBreadContext();
-        if (replace) MerkleBlockDataSource.getInstance(app).deleteAllBlocks(app, this);
+        if (replace) MerkleBlockDataSource.getInstance(app).deleteAllBlocks(app, getIso(app));
         BlockEntity[] entities = new BlockEntity[blocks.length];
         for (int i = 0; i < entities.length; i++) {
             entities[i] = new BlockEntity(blocks[i].serialize(), (int) blocks[i].getHeight());
         }
 
-        MerkleBlockDataSource.getInstance(app).putMerkleBlocks(app, this, entities);
+        MerkleBlockDataSource.getInstance(app).putMerkleBlocks(app, getIso(app), entities);
     }
 
     @Override
     public void savePeers(boolean replace, BRCorePeer[] peers) {
         super.savePeers(replace, peers);
         Context app = BreadApp.getBreadContext();
-        if (replace) PeerDataSource.getInstance(app).deleteAllPeers(app, this);
+        if (replace) PeerDataSource.getInstance(app).deleteAllPeers(app, getIso(app));
         PeerEntity[] entities = new PeerEntity[peers.length];
         for (int i = 0; i < entities.length; i++) {
             entities[i] = new PeerEntity(peers[i].getAddress(), TypesConverter.intToBytes(peers[i].getPort()), TypesConverter.long2byteArray(peers[i].getTimestamp()));
         }
-        PeerDataSource.getInstance(app).putPeers(app, this, entities);
+        PeerDataSource.getInstance(app).putPeers(app, getIso(app), entities);
 
     }
 
@@ -607,7 +607,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public BRCoreTransaction[] loadTransactions() {
         Context app = BreadApp.getBreadContext();
-        List<BRTransactionEntity> txs = BtcBchTransactionDataStore.getInstance(app).getAllTransactions(app, this);
+        List<BRTransactionEntity> txs = BtcBchTransactionDataStore.getInstance(app).getAllTransactions(app, getIso(app));
         if (txs == null || txs.size() == 0) return new BRCoreTransaction[0];
         BRCoreTransaction arr[] = new BRCoreTransaction[txs.size()];
         for (int i = 0; i < txs.size(); i++) {
@@ -620,7 +620,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public BRCoreMerkleBlock[] loadBlocks() {
         Context app = BreadApp.getBreadContext();
-        List<BRMerkleBlockEntity> blocks = MerkleBlockDataSource.getInstance(app).getAllMerkleBlocks(app, this);
+        List<BRMerkleBlockEntity> blocks = MerkleBlockDataSource.getInstance(app).getAllMerkleBlocks(app, getIso(app));
         if (blocks == null || blocks.size() == 0) return new BRCoreMerkleBlock[0];
         BRCoreMerkleBlock arr[] = new BRCoreMerkleBlock[blocks.size()];
 
@@ -635,7 +635,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public BRCorePeer[] loadPeers() {
         Context app = BreadApp.getBreadContext();
-        List<BRPeerEntity> peers = PeerDataSource.getInstance(app).getAllPeers(app, this);
+        List<BRPeerEntity> peers = PeerDataSource.getInstance(app).getAllPeers(app, getIso(app));
         if (peers == null || peers.size() == 0) return new BRCorePeer[0];
         BRCorePeer arr[] = new BRCorePeer[peers.size()];
         for (int i = 0; i < peers.size(); i++) {
@@ -731,7 +731,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
                                     }
                                 }
 
-                                if (!BreadApp.isAppInBackground(ctx) && BRSharedPrefs.getShowNotification(ctx))
+                                if (BRSharedPrefs.getShowNotification(ctx))
                                     BRNotificationManager.sendNotification((Activity) ctx, R.drawable.notification_icon, ctx.getString(R.string.app_name), strToShow, 1);
                             }
                         }
@@ -742,7 +742,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             });
         }
         if (ctx != null)
-            TransactionStorageManager.putTransaction(ctx, getInstance(ctx), new BRTransactionEntity(transaction.serialize(), transaction.getBlockHeight(), transaction.getTimestamp(), BRCoreKey.encodeHex(transaction.getHash()), getIso(ctx)));
+            TransactionStorageManager.putTransaction(ctx, getInstance(ctx).getIso(ctx), new BRTransactionEntity(transaction.serialize(), transaction.getBlockHeight(), transaction.getTimestamp(), BRCoreKey.encodeHex(transaction.getHash()), getIso(ctx)));
         else
             Log.e(TAG, "onTxAdded: ctx is null!");
         for (OnTxListModified list : txModifiedListeners)
@@ -757,7 +757,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         if (ctx != null) {
             if (notifyUser != 0)
                 BRSharedPrefs.putScanRecommended(ctx, getIso(ctx), true);
-            TransactionStorageManager.removeTransaction(ctx, this, hash);
+            TransactionStorageManager.removeTransaction(ctx, getIso(ctx), hash);
         } else {
             Log.e(TAG, "onTxDeleted: Failed! ctx is null");
         }
@@ -771,7 +771,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         Log.d(TAG, "onTxUpdated: " + String.format("hash: %s, blockHeight: %d, timestamp: %d", hash, blockHeight, timeStamp));
         Context ctx = BreadApp.getBreadContext();
         if (ctx != null) {
-            TransactionStorageManager.updateTransaction(ctx, this, new BRTransactionEntity(null, blockHeight, timeStamp, hash, getIso(ctx)));
+            TransactionStorageManager.updateTransaction(ctx, getIso(ctx), new BRTransactionEntity(null, blockHeight, timeStamp, hash, getIso(ctx)));
 
         } else {
             Log.e(TAG, "onTxUpdated: Failed, ctx is null");

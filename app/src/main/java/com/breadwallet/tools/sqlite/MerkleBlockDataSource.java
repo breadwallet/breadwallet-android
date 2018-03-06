@@ -29,19 +29,15 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class MerkleBlockDataSource implements BRDataSourceInterface {
     private static final String TAG = MerkleBlockDataSource.class.getName();
@@ -69,7 +65,7 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
-    public void putMerkleBlocks(Context app, BaseWalletManager walletManager, BlockEntity[] blockEntities) {
+    public void putMerkleBlocks(Context app, String iso, BlockEntity[] blockEntities) {
         try {
             database = openDatabase();
             database.beginTransaction();
@@ -77,7 +73,7 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
                 ContentValues values = new ContentValues();
                 values.put(BRSQLiteHelper.MB_BUFF, b.getBlockBytes());
                 values.put(BRSQLiteHelper.MB_HEIGHT, b.getBlockHeight());
-                values.put(BRSQLiteHelper.MB_ISO, walletManager.getIso(app));
+                values.put(BRSQLiteHelper.MB_ISO, iso.toUpperCase());
                 database.insert(BRSQLiteHelper.MB_TABLE_NAME, null, values);
             }
             database.setTransactionSuccessful();
@@ -91,35 +87,35 @@ public class MerkleBlockDataSource implements BRDataSourceInterface {
         }
     }
 
-    public void deleteAllBlocks(Context app, BaseWalletManager walletManager) {
+    public void deleteAllBlocks(Context app, String iso) {
         try {
             database = openDatabase();
-            database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_ISO + "=?", new String[]{walletManager.getIso(app)});
+            database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_ISO + "=?", new String[]{iso.toUpperCase()});
         } finally {
             closeDatabase();
         }
     }
 
-    public void deleteMerkleBlock(Context app, BaseWalletManager walletManager, BRMerkleBlockEntity merkleBlock) {
+    public void deleteMerkleBlock(Context app, String iso, BRMerkleBlockEntity merkleBlock) {
         try {
             database = openDatabase();
             long id = merkleBlock.getId();
             Log.e(TAG, "MerkleBlock deleted with id: " + id);
             database.delete(BRSQLiteHelper.MB_TABLE_NAME, BRSQLiteHelper.MB_COLUMN_ID
-                    + " = ? AND " + BRSQLiteHelper.MB_ISO + " = ?", new String[]{String.valueOf(id), walletManager.getIso(app)});
+                    + " = ? AND " + BRSQLiteHelper.MB_ISO + " = ?", new String[]{String.valueOf(id), iso.toUpperCase()});
         } finally {
             closeDatabase();
         }
     }
 
-    public List<BRMerkleBlockEntity> getAllMerkleBlocks(Context app, BaseWalletManager walletManager) {
+    public List<BRMerkleBlockEntity> getAllMerkleBlocks(Context app, String iso) {
         List<BRMerkleBlockEntity> merkleBlocks = new ArrayList<>();
         Cursor cursor = null;
         try {
             database = openDatabase();
 
             cursor = database.query(BRSQLiteHelper.MB_TABLE_NAME,
-                    allColumns, BRSQLiteHelper.MB_ISO + "=?", new String[]{walletManager.getIso(app)},
+                    allColumns, BRSQLiteHelper.MB_ISO + "=?", new String[]{iso.toUpperCase()},
                     null, null, null);
 
             cursor.moveToFirst();
