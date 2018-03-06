@@ -164,15 +164,15 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     private void migrateDatabases(SQLiteDatabase db) {
         db.beginTransaction();
         try {
-            db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME_OLD);//drop this table (fully refactored schema)
 
             db.execSQL("INSERT INTO " + MB_TABLE_NAME + " (_id, merkleBlockBuff, merkleBlockHeight) SELECT _id, merkleBlockBuff, merkleBlockHeight FROM " + MB_TABLE_NAME_OLD);
             db.execSQL("INSERT INTO " + TX_TABLE_NAME + " (_id, transactionBuff, transactionBlockHeight, transactionTimeStamp) SELECT _id, transactionBuff, transactionBlockHeight, transactionTimeStamp FROM " + TX_TABLE_NAME_OLD);
             db.execSQL("INSERT INTO " + CURRENCY_TABLE_NAME + " (code, name, rate) SELECT code, name, rate FROM " + CURRENCY_TABLE_NAME_OLD);
 
-            db.execSQL("DROP TABLE " + MB_TABLE_NAME_OLD);
-            db.execSQL("DROP TABLE " + TX_TABLE_NAME_OLD);
-            db.execSQL("DROP TABLE " + CURRENCY_TABLE_NAME_OLD);
+            db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME_OLD);//drop this table (fully refactored schema)
+            db.execSQL("DROP TABLE IF EXISTS " + MB_TABLE_NAME_OLD);
+            db.execSQL("DROP TABLE IF EXISTS " + TX_TABLE_NAME_OLD);
+            db.execSQL("DROP TABLE IF EXISTS " + CURRENCY_TABLE_NAME_OLD);
 
             db.setTransactionSuccessful();
             Log.e(TAG, "migrateDatabases: SUCCESS");
@@ -185,11 +185,11 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public void printTableStructures(SQLiteDatabase db, String tableName) {
         Log.e(TAG, "printTableStructures: " + tableName);
         String tableString = String.format("Table %s:\n", tableName);
-        Cursor allRows  = db.rawQuery("SELECT * FROM " + tableName, null);
-        if (allRows.moveToFirst() ){
+        Cursor allRows = db.rawQuery("SELECT * FROM " + tableName, null);
+        if (allRows.moveToFirst()) {
             String[] columnNames = allRows.getColumnNames();
             do {
-                for (String name: columnNames) {
+                for (String name : columnNames) {
                     tableString += String.format("%s: %s\n", name,
                             allRows.getString(allRows.getColumnIndex(name)));
                 }

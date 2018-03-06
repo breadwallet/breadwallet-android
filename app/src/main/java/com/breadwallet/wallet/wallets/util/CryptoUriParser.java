@@ -24,6 +24,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -118,8 +119,7 @@ public class CryptoUriParser {
         if (Utils.isNullOrEmpty(url)) return false;
         if (BRCoreKey.isValidBitcoinBIP38Key(url) || BRCoreKey.isValidBitcoinPrivateKey(url))
             return true;
-        else
-            Log.e(TAG, "isCryptoUrl: not a private key");
+
         CryptoRequest requestObject = parseRequest(app, url);
         // return true if the request is valid url and has param: r or param: address
         // return true if it is a valid bitcoinPrivKey
@@ -135,11 +135,11 @@ public class CryptoUriParser {
 
         Uri u = Uri.parse(tmp);
         String scheme = u.getScheme();
-        BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
 
         if (scheme == null) {
-            scheme = wm.getScheme(app);
-            obj.iso = wm.getIso(app);
+            scheme = WalletBitcoinManager.getInstance(app).getScheme(app);
+            obj.iso = WalletBitcoinManager.getInstance(app).getIso(app);
+
         } else {
             for (BaseWalletManager walletManager : WalletsMaster.getInstance(app).getAllWallets()) {
                 if (scheme.equalsIgnoreCase(walletManager.getScheme(app))) {
@@ -157,17 +157,20 @@ public class CryptoUriParser {
 
         u = Uri.parse(scheme + "://" + schemeSpecific);
 
-        pushUrlEvent(u);
+        BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
 
         String host = u.getHost();
         if (host != null) {
-            String addrs = host.trim();
+            String trimmedHost = host.trim();
+            String addrs = wm.undecorateAddress(app, trimmedHost);
+            Log.e(TAG, "parseRequest: addrs: " + addrs);
 
             if (new BRCoreAddress(addrs).isValid()) {
                 obj.address = addrs;
             }
         }
         String query = u.getQuery();
+        pushUrlEvent(u);
         if (query == null) return obj;
         String[] params = query.split("&");
         for (String s : params) {
