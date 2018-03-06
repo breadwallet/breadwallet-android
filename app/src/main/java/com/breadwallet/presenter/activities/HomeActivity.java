@@ -77,8 +77,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         if (Utils.isEmulatorOrDebug(this)) {
             if (logger != null) logger.interrupt();
-//            logger = new TestLogger(); //Sync logger
-//            logger.start();
+            logger = new TestLogger(); //Sync logger
+            logger.start();
         }
 
         mWalletRecycler = findViewById(R.id.rv_wallet_list);
@@ -137,9 +137,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         });
 
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
-
-
-
 
     }
 
@@ -285,6 +282,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     @Override
     public boolean onProgressUpdated(double progress) {
+        Log.e(TAG, "onProgressUpdated: " + progress);
         return false;
     }
 }
