@@ -683,7 +683,7 @@ public class FragmentSend extends Fragment {
         BigDecimal cryptoAmount = isIsoCrypto ? wallet.getSmallestCryptoForCrypto(app, inputAmount) : wallet.getSmallestCryptoForFiat(app, inputAmount);
 
         //wallet's balance for the selected ISO
-        BigDecimal isoBalance = isIsoCrypto ? wallet.getCryptoForSmallestCrypto(app, new BigDecimal(curBalance)) : wallet.getFiatForSmallestCrypto(app, new BigDecimal(curBalance));
+        BigDecimal isoBalance = isIsoCrypto ? wallet.getCryptoForSmallestCrypto(app, new BigDecimal(curBalance)) : wallet.getFiatForSmallestCrypto(app, new BigDecimal(curBalance), null);
         if (isoBalance == null) isoBalance = new BigDecimal(0);
 
         long fee;
@@ -706,7 +706,7 @@ public class FragmentSend extends Fragment {
         }
 
         //get the fee for iso (dollars, bits, BTC..)
-        BigDecimal isoFee = isIsoCrypto ? wallet.getCryptoForSmallestCrypto(app, new BigDecimal(fee)) : wallet.getFiatForSmallestCrypto(app, new BigDecimal(fee));
+        BigDecimal isoFee = isIsoCrypto ? wallet.getCryptoForSmallestCrypto(app, new BigDecimal(fee)) : wallet.getFiatForSmallestCrypto(app, new BigDecimal(fee), null);
 
         //format the fee to the selected ISO
         String formattedFee = CurrencyUtils.getFormattedAmount(app, selectedIso, isIsoCrypto ? wallet.getSmallestCryptoForCrypto(app, isoFee) : isoFee);
@@ -749,7 +749,7 @@ public class FragmentSend extends Fragment {
                 }
                 if (obj.amount != null) {
                     BigDecimal satoshiAmount = obj.amount.multiply(new BigDecimal(100000000));
-                    amountBuilder = new StringBuilder(master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), satoshiAmount).toPlainString());
+                    amountBuilder = new StringBuilder(master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), satoshiAmount, null).toPlainString());
                     updateText();
                 }
             }

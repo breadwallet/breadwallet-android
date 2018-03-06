@@ -150,7 +150,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         for (BRCoreTransactionOutput out : mTransaction.getOutputs())
             bigFee = bigFee.subtract(new BigDecimal(out.getAmount()));
 
-        String formattedFiatAmount = CurrencyUtils.getFormattedAmount(app, BRSharedPrefs.getPreferredFiatIso(app), walletManager.getFiatForSmallestCrypto(app, bigAmount));
+        String formattedFiatAmount = CurrencyUtils.getFormattedAmount(app, BRSharedPrefs.getPreferredFiatIso(app), walletManager.getFiatForSmallestCrypto(app, bigAmount, null));
 
         //bits, BTCs..
         String amount = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), bigAmount);

@@ -414,9 +414,9 @@ public class SendManager {
         String formatterCryptoFee = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), new BigDecimal(feeForTx));
         String formatterCryptoTotal = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), new BigDecimal(total));
 
-        String formattedAmount = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(amount)));
-        String formattedFee = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(feeForTx)));
-        String formattedTotal = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(total)));
+        String formattedAmount = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(amount), null));
+        String formattedFee = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(feeForTx), null));
+        String formattedTotal = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(total), null));
 
         //formatted text
         return receiver + "\n\n"

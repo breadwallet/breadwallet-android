@@ -377,9 +377,9 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 final long total = amount + fee;
 
 
-                BigDecimal bigAm = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(amount));
-                BigDecimal bigFee = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(fee));
-                BigDecimal bigTotal = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(total));
+                BigDecimal bigAm = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(amount), null);
+                BigDecimal bigFee = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(fee), null);
+                BigDecimal bigTotal = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(total), null);
                 final String message = certification + memo + finalAllAddresses.toString() + "\n\n" + "amount: " + CurrencyUtils.getFormattedAmount(app, iso, bigAm)
                         + "\nnetwork fee: +" + CurrencyUtils.getFormattedAmount(app, iso, bigFee)
                         + "\ntotal: " + CurrencyUtils.getFormattedAmount(app, iso, bigTotal);

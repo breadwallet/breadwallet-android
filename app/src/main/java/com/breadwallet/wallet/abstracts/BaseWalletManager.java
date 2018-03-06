@@ -8,6 +8,7 @@ import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.core.BRCorePeerManager;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWallet;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
 
@@ -175,10 +176,11 @@ public interface BaseWalletManager {
 
     /**
      * @param amount - the smallest denomination amount in current wallet's crypto (e.g. Satoshis)
+     * @param ent - provide a currency entity if needed
      * @return - the fiat value of the amount in crypto (e.g. dollars)
      * or null if there is no fiat exchange data from the API yet
      */
-    BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount);
+    BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount, CurrencyEntity ent);
 
     /**
      * @param amount - the amount in the user's favorite fiat currency (e.g. dollars)

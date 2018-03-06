@@ -3,15 +3,12 @@ package com.breadwallet.presenter.fragments;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
@@ -48,7 +45,6 @@ public class FragmentTxDetails extends DialogFragment {
 
     private BRText mTxAction;
     private BRText mTxAmount;
-    private BRText mPriceStamp;
     private BRText mTxStatus;
     private BRText mTxDate;
     private BRText mToFrom;
@@ -87,9 +83,11 @@ public class FragmentTxDetails extends DialogFragment {
 
         View rootView = inflater.inflate(R.layout.transaction_details, container, false);
 
+        mAmountNow = rootView.findViewById(R.id.amount_now);
+        mAmountWhenSent = rootView.findViewById(R.id.amount_when_sent);
         mTxAction = rootView.findViewById(R.id.tx_action);
         mTxAmount = rootView.findViewById(R.id.tx_amount);
-        mPriceStamp = rootView.findViewById(R.id.tx_when_sent);
+
         mTxStatus = rootView.findViewById(R.id.tx_status);
         mTxDate = rootView.findViewById(R.id.tx_date);
         mToFrom = rootView.findViewById(R.id.tx_to_from);
@@ -147,11 +145,9 @@ public class FragmentTxDetails extends DialogFragment {
         // Set mTransction fields
         if (mTransaction != null) {
 
-            boolean cryptoPreferred = BRSharedPrefs.isCryptoPreferred(getActivity());
             boolean sent = mTransaction.getSent() > 0;
             String amountWhenSent;
             String amountNow;
-            String formattedAmount;
             String exchangeRateFormatted;
 
             if (!mTransaction.isValid()) {
@@ -166,13 +162,31 @@ public class FragmentTxDetails extends DialogFragment {
 
             BigDecimal cryptoAmount = new BigDecimal(mTransaction.getAmount());
 
-            BigDecimal fiatAmount = walletManager.getFiatForSmallestCrypto(getActivity(), new BigDecimal(mTransaction.getAmount()));
+            BigDecimal fiatAmountNow = walletManager.getFiatForSmallestCrypto(getActivity(), cryptoAmount, null);
 
-            BigDecimal tmpStartingBalance = new BigDecimal(mTransaction.getBalanceAfterTx()).subtract(new BigDecimal(mTransaction.getAmount()).abs()).subtract(new BigDecimal(mTransaction.getFee()).abs());
+            BigDecimal fiatAmountWhenSent;
+            TxMetaData metaData = KVStoreManager.getInstance().getTxMetaData(getActivity(), mTransaction.getTxHash());
+            if (metaData == null || metaData.exchangeRate == 0 || Utils.isNullOrEmpty(metaData.exchangeCurrency)) {
+                fiatAmountWhenSent = new BigDecimal(0);
+                amountWhenSent = CurrencyUtils.getFormattedAmount(getActivity(), fiatIso, fiatAmountWhenSent);//always fiat amount
+            } else {
 
-            BigDecimal startingBalance = isCryptoPreferred ? tmpStartingBalance : walletManager.getFiatForSmallestCrypto(getActivity(), tmpStartingBalance);
+                CurrencyEntity ent = new CurrencyEntity(metaData.exchangeCurrency, null, (float) metaData.exchangeRate, walletManager.getIso(getActivity()));
+                fiatAmountWhenSent = walletManager.getFiatForSmallestCrypto(getActivity(), cryptoAmount, ent);
+                amountWhenSent = CurrencyUtils.getFormattedAmount(getActivity(), ent.code, fiatAmountWhenSent);//always fiat amount
 
-            BigDecimal endingBalance = isCryptoPreferred ? new BigDecimal(mTransaction.getBalanceAfterTx()) : walletManager.getFiatForSmallestCrypto(getActivity(), new BigDecimal(mTransaction.getBalanceAfterTx()));
+            }
+
+            amountNow = CurrencyUtils.getFormattedAmount(getActivity(), fiatIso, fiatAmountNow);//always fiat amount
+
+            mAmountWhenSent.setText(amountWhenSent);
+            mAmountNow.setText(amountNow);
+
+            BigDecimal tmpStartingBalance = new BigDecimal(mTransaction.getBalanceAfterTx()).subtract(cryptoAmount.abs()).subtract(new BigDecimal(mTransaction.getFee()).abs());
+
+            BigDecimal startingBalance = isCryptoPreferred ? tmpStartingBalance : walletManager.getFiatForSmallestCrypto(getActivity(), tmpStartingBalance, null);
+
+            BigDecimal endingBalance = isCryptoPreferred ? new BigDecimal(mTransaction.getBalanceAfterTx()) : walletManager.getFiatForSmallestCrypto(getActivity(), new BigDecimal(mTransaction.getBalanceAfterTx()), null);
 
             mStartingBalance.setText(CurrencyUtils.getFormattedAmount(getActivity(), iso, startingBalance));
             mEndingBalance.setText(CurrencyUtils.getFormattedAmount(getActivity(), iso, endingBalance));
@@ -182,11 +196,8 @@ public class FragmentTxDetails extends DialogFragment {
 
             mToFromAddress.setText(mTransaction.getTo()[0]); //showing only the destination address
 
-            mTxAmount.setText(CurrencyUtils.getFormattedAmount(getActivity(), walletManager.getIso(getActivity()), new BigDecimal(mTransaction.getAmount())));//this is always crypto amount
+            mTxAmount.setText(CurrencyUtils.getFormattedAmount(getActivity(), walletManager.getIso(getActivity()), cryptoAmount));//this is always crypto amount
 
-            amountNow = CurrencyUtils.getFormattedAmount(getActivity(), fiatIso, fiatAmount);//always fiat amount
-
-            mPriceStamp.setText(String.format("%s when sent %s now", "---", amountNow));
 
             if (!sent)
                 mTxAmount.setTextColor(getContext().getColor(R.color.transaction_amount_received_color));
@@ -206,9 +217,9 @@ public class FragmentTxDetails extends DialogFragment {
                     mMemoText.setText("");
                 }
 
-                String metaIso = Utils.isNullOrEmpty(txMetaData.exchangeCurrency)? "USD" : txMetaData.exchangeCurrency;
+                String metaIso = Utils.isNullOrEmpty(txMetaData.exchangeCurrency) ? "USD" : txMetaData.exchangeCurrency;
 
-                exchangeRateFormatted = CurrencyUtils.getFormattedAmount(getActivity(), metaIso, walletManager.getFiatForSmallestCrypto(getActivity(), new BigDecimal(txMetaData.exchangeRate)));
+                exchangeRateFormatted = CurrencyUtils.getFormattedAmount(getActivity(), metaIso, walletManager.getFiatForSmallestCrypto(getActivity(), new BigDecimal(txMetaData.exchangeRate), null));
                 mExchangeRate.setText(exchangeRateFormatted);
             } else {
                 Log.d(TAG, "TxMetaData is null");
@@ -232,17 +243,6 @@ public class FragmentTxDetails extends DialogFragment {
 
 
     }
-
-//    private BigDecimal getHistoricalTxAmount(BaseWalletManager wallet, String iso, BigDecimal amount) {
-//        CurrencyEntity ent = CurrencyDataSource.getInstance(getContext()).getCurrencyByCode(getContext(), wallet, iso);
-//        if (ent == null) return null;
-//        double rate = ent.rate;
-//        //get crypto amount (since the rate is in BTC not satoshis)
-//        BigDecimal cryptoAmount = amount.divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE);
-//        return cryptoAmount.multiply(new BigDecimal(rate));
-//
-//
-//    }
 
     @Override
     public void onResume() {
