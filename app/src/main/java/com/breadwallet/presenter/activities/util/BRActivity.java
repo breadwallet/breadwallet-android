@@ -67,7 +67,6 @@ public class BRActivity extends Activity {
         super.onStop();
         BreadApp.activityCounter.decrementAndGet();
         BreadApp.onStop(this);
-        BreadApp.backgroundedTime = System.currentTimeMillis();
     }
 
     @Override

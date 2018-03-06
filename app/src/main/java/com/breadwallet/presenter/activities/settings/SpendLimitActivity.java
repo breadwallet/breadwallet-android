@@ -66,6 +66,8 @@ public class SpendLimitActivity extends BRActivity {
             }
         });
 
+        final BaseWalletManager wm = WalletsMaster.getInstance(this).getCurrentWallet(this);
+
         listView = findViewById(R.id.limit_list);
         listView.setFooterDividersEnabled(true);
         adapter = new LimitAdaptor(this);
@@ -82,13 +84,11 @@ public class SpendLimitActivity extends BRActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                Log.e(TAG, "onItemClick: " + position);
-                //todo REFACTOR ALL FOR NEW LIMIT SCREEN
                 int limit = adapter.getItem(position);
+                Log.e(TAG, "limit chosen: " + limit);
                 BRKeyStore.putSpendLimit(limit, app);
-                BaseWalletManager wallet = WalletsMaster.getInstance(SpendLimitActivity.this).getCurrentWallet(SpendLimitActivity.this);
-                AuthManager.getInstance().setTotalLimit(app, wallet.getWallet().getTotalSent()
-                        + BRKeyStore.getSpendLimit(app));
+                //todo refactor, add up all wallets total limit
+                AuthManager.getInstance().setTotalLimit(app, wm.getWallet().getTotalSent() + BRKeyStore.getSpendLimit(app));
                 adapter.notifyDataSetChanged();
             }
 
