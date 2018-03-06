@@ -89,7 +89,7 @@ public class FragmentTxDetails extends DialogFragment {
 
         mTxAction = rootView.findViewById(R.id.tx_action);
         mTxAmount = rootView.findViewById(R.id.tx_amount);
-        mPriceStamp = rootView.findViewById(R.id.tx_price_stamp);
+        mPriceStamp = rootView.findViewById(R.id.tx_when_sent);
         mTxStatus = rootView.findViewById(R.id.tx_status);
         mTxDate = rootView.findViewById(R.id.tx_date);
         mToFrom = rootView.findViewById(R.id.tx_to_from);
