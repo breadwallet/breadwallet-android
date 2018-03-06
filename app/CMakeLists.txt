@@ -82,13 +82,15 @@ add_library( # The name of the library.
              src/main/jni/breadwallet-core/ethereum/BREthereumHolding.c
              src/main/jni/breadwallet-core/ethereum/BREthereumWallet.h
              src/main/jni/breadwallet-core/ethereum/BREthereumWallet.c
+             src/main/jni/breadwallet-core/ethereum/BREthereumLightNode.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumLightNode.c
 
              # Ethereum RLP
              src/main/jni/breadwallet-core/ethereum/rlp/BRRlp.h
-             src/main/jni/breadwallet-core/ethereum/rlp/BRRlpSerializer.h
-             src/main/jni/breadwallet-core/ethereum/rlp/BRRlpSerializer.c
              src/main/jni/breadwallet-core/ethereum/rlp/BRRlpCoder.h
              src/main/jni/breadwallet-core/ethereum/rlp/BRRlpCoder.c
+
+             src/main/jni/breadwallet-core/ethereum/test.c
 
              # Core JNI files
              src/main/jni/breadwallet-core/Java/BRCoreJni.h
