@@ -189,8 +189,8 @@ public class WalletTests {
         int usdRate = 12000;
 
         Set<CurrencyEntity> tmp = new HashSet<>();
-        tmp.add(new CurrencyEntity("USD", "Dollar", usdRate));
-        CurrencyDataSource.getInstance(app).putCurrencies(app, wallet, tmp);
+        tmp.add(new CurrencyEntity("USD", "Dollar", usdRate, "BTC"));
+        CurrencyDataSource.getInstance(app).putCurrencies(app, "BTC", tmp);
 
 
         BRSharedPrefs.putCryptoDenomination(app, "BTC", BRConstants.CURRENT_UNIT_BITCOINS);

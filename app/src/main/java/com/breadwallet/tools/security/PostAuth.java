@@ -223,7 +223,7 @@ public class PostAuth {
                         TxMetaData txMetaData = new TxMetaData();
                         txMetaData.comment = mCryptoRequest.message;
                         txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
-                        txMetaData.exchangeRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, walletManager, txMetaData.exchangeCurrency).rate;
+                        txMetaData.exchangeRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, walletManager.getIso(app), txMetaData.exchangeCurrency).rate;
                         //todo finish this
 //                        txMetaData.
                         KVStoreManager.getInstance().putTxMetaData(app, txMetaData, txHash);

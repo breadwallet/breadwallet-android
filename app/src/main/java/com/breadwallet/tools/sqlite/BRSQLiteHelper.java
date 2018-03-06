@@ -1,6 +1,7 @@
 package com.breadwallet.tools.sqlite;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -43,7 +44,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         return instance;
     }
 
-    private static final String DATABASE_NAME = "breadwallet.db";
+    public static final String DATABASE_NAME = "breadwallet.db";
     private static final int DATABASE_VERSION = 13;
 
     /**
@@ -56,7 +57,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String MB_HEIGHT = "merkleBlockHeight";
     public static final String MB_ISO = "merkleBlockIso";
 
-    private static final String MB_DATABASE_CREATE = "create table if not exists " + MB_TABLE_NAME + "(" +
+    private static final String MB_DATABASE_CREATE = "create table if not exists " + MB_TABLE_NAME + " (" +
             MB_COLUMN_ID + " integer primary key autoincrement, " +
             MB_BUFF + " blob, " +
             MB_ISO + " text DEFAULT 'BTC' , " +
@@ -74,7 +75,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String TX_TIME_STAMP = "transactionTimeStamp";
     public static final String TX_ISO = "transactionISO";
 
-    private static final String TX_DATABASE_CREATE = "create table if not exists " + TX_TABLE_NAME + "(" +
+    private static final String TX_DATABASE_CREATE = "create table if not exists " + TX_TABLE_NAME + " (" +
             TX_COLUMN_ID + " text, " +
             TX_BUFF + " blob, " +
             TX_BLOCK_HEIGHT + " integer, " +
@@ -93,7 +94,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String PEER_TIMESTAMP = "peerTimestamp";
     public static final String PEER_ISO = "peerIso";
 
-    private static final String PEER_DATABASE_CREATE = "create table if not exists " + PEER_TABLE_NAME + "(" +
+    private static final String PEER_DATABASE_CREATE = "create table if not exists " + PEER_TABLE_NAME + " (" +
             PEER_COLUMN_ID + " integer primary key autoincrement, " +
             PEER_ADDRESS + " blob," +
             PEER_PORT + " blob," +
@@ -110,7 +111,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     public static final String CURRENCY_RATE = "rate";
     public static final String CURRENCY_ISO = "iso";//iso for the currency of exchange (BTC, BCH, ETH)
 
-    private static final String CURRENCY_DATABASE_CREATE = "create table if not exists " + CURRENCY_TABLE_NAME + "(" +
+    private static final String CURRENCY_DATABASE_CREATE = "create table if not exists " + CURRENCY_TABLE_NAME + " (" +
             CURRENCY_CODE + " text," +
             CURRENCY_NAME + " text," +
             CURRENCY_RATE + " integer," +
@@ -121,20 +122,32 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase database) {
+        //drop peers table due to multiple changes
+
+        Log.e(TAG, "onCreate: " + MB_DATABASE_CREATE);
+        Log.e(TAG, "onCreate: " + TX_DATABASE_CREATE);
+        Log.e(TAG, "onCreate: " + PEER_DATABASE_CREATE);
+        Log.e(TAG, "onCreate: " + CURRENCY_DATABASE_CREATE);
         database.execSQL(MB_DATABASE_CREATE);
         database.execSQL(TX_DATABASE_CREATE);
         database.execSQL(PEER_DATABASE_CREATE);
         database.execSQL(CURRENCY_DATABASE_CREATE);
+
+//        printTableStructures(database, MB_TABLE_NAME);
+//        printTableStructures(database, TX_TABLE_NAME);
+//        printTableStructures(database, PEER_TABLE_NAME);
+//        printTableStructures(database, CURRENCY_TABLE_NAME);
+
 //        database.execSQL("PRAGMA journal_mode=WAL;");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        if (oldVersion == 12 && newVersion == 13) {
-            //drop peers table due to multiple changes
+        if (oldVersion < 13 && newVersion == 13) {
+
             onCreate(db); //create new db tables
-            db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME);//drop this table (fully refactored schema)
+
             migrateDatabases(db);
         } else {
             //drop everything maybe?
@@ -151,6 +164,8 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     private void migrateDatabases(SQLiteDatabase db) {
         db.beginTransaction();
         try {
+            db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME_OLD);//drop this table (fully refactored schema)
+
             db.execSQL("INSERT INTO " + MB_TABLE_NAME + " (_id, merkleBlockBuff, merkleBlockHeight) SELECT _id, merkleBlockBuff, merkleBlockHeight FROM " + MB_TABLE_NAME_OLD);
             db.execSQL("INSERT INTO " + TX_TABLE_NAME + " (_id, transactionBuff, transactionBlockHeight, transactionTimeStamp) SELECT _id, transactionBuff, transactionBlockHeight, transactionTimeStamp FROM " + TX_TABLE_NAME_OLD);
             db.execSQL("INSERT INTO " + CURRENCY_TABLE_NAME + " (code, name, rate) SELECT code, name, rate FROM " + CURRENCY_TABLE_NAME_OLD);
@@ -165,6 +180,25 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             Log.e(TAG, "migrateDatabases: ENDED");
             db.endTransaction();
         }
+    }
+
+    public void printTableStructures(SQLiteDatabase db, String tableName) {
+        Log.e(TAG, "printTableStructures: " + tableName);
+        String tableString = String.format("Table %s:\n", tableName);
+        Cursor allRows  = db.rawQuery("SELECT * FROM " + tableName, null);
+        if (allRows.moveToFirst() ){
+            String[] columnNames = allRows.getColumnNames();
+            do {
+                for (String name: columnNames) {
+                    tableString += String.format("%s: %s\n", name,
+                            allRows.getString(allRows.getColumnIndex(name)));
+                }
+                tableString += "\n";
+
+            } while (allRows.moveToNext());
+        }
+
+        Log.e(TAG, "SQL:" + tableString);
     }
 
 }
