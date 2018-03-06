@@ -394,15 +394,16 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getFiatBalance(Context app) {
-        BigDecimal bal = getFiatForSmallestCrypto(app, new BigDecimal(getCachedBalance(app)));
+        BigDecimal bal = getFiatForSmallestCrypto(app, new BigDecimal(getCachedBalance(app)), null);
         return new BigDecimal(bal == null ? 0 : bal.longValue());
     }
 
     @Override
-    public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount) {
+    public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount, CurrencyEntity ent) {
         if (amount.doubleValue() == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
+        if (ent == null)
+            ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
         if (ent == null) return null;
         double rate = ent.rate;
         //get crypto amount
@@ -711,7 +712,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
                 @Override
                 public void run() {
                     String am = CurrencyUtils.getFormattedAmount(ctx, getIso(ctx), getCryptoForSmallestCrypto(ctx, new BigDecimal(amount)));
-                    String amCur = CurrencyUtils.getFormattedAmount(ctx, BRSharedPrefs.getPreferredFiatIso(ctx), master.getCurrentWallet(ctx).getFiatForSmallestCrypto(ctx, new BigDecimal(amount)));
+                    String amCur = CurrencyUtils.getFormattedAmount(ctx, BRSharedPrefs.getPreferredFiatIso(ctx), master.getCurrentWallet(ctx).getFiatForSmallestCrypto(ctx, new BigDecimal(amount), null));
                     String formatted = String.format("%s (%s)", am, amCur);
                     final String strToShow = String.format(ctx.getString(R.string.TransactionDetails_received), formatted);
 

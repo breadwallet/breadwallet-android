@@ -34,10 +34,10 @@ public class CurrencyEntity implements Serializable {
     private static final long serialVersionUID = 7526472295622776147L;
 
     public static final String TAG = CurrencyEntity.class.getName();
-    public String code;
-    public String name;
+    public String code;//this currency code (USD, RUB)
+    public String name;//this currency name (Dollar)
     public float rate;
-    public String iso;
+    public String iso;//this wallet's iso (BTC, BCH)
 
     public CurrencyEntity(String code, String name, float rate, String iso) {
         this.code = code;

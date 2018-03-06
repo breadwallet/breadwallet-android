@@ -193,7 +193,7 @@ public class SpendLimitActivity extends BRActivity {
             BaseWalletManager walletManager = WalletBitcoinManager.getInstance(app); //use the bitcoin wallet to show the limits
             //todo REFACTOR ALL FOR NEW LIMIT SCREEN
 
-            String curAmount = CurrencyUtils.getFormattedAmount(app, BRSharedPrefs.getPreferredFiatIso(app), walletManager.getFiatForSmallestCrypto(app, new BigDecimal(item)));
+            String curAmount = CurrencyUtils.getFormattedAmount(app, BRSharedPrefs.getPreferredFiatIso(app), walletManager.getFiatForSmallestCrypto(app, new BigDecimal(item), null));
             String cryptoAmount = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), walletManager.getCryptoForSmallestCrypto(app, new BigDecimal(item)));
 
             String text = String.format(item == 0 ? app.getString(R.string.TouchIdSpendingLimit) : "%s (%s)", curAmount, cryptoAmount);
