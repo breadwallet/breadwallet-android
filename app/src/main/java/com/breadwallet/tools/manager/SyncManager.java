@@ -112,6 +112,7 @@ public class SyncManager {
             try {
                 while (!isInterrupted()) {
                     final double syncProgress = mCurrentWallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mApp, mCurrentWallet.getIso(mApp)));
+                    Log.e(TAG, "run: " + Thread.currentThread());
                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                         @Override
                         public void run() {

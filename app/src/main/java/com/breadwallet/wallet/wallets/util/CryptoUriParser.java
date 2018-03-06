@@ -162,8 +162,10 @@ public class CryptoUriParser {
         String host = u.getHost();
         if (host != null) {
             String trimmedHost = host.trim();
+            if (obj.iso.equalsIgnoreCase("bch"))
+                trimmedHost = scheme + ":" + trimmedHost; //bitcoin cash has the scheme attached to the address
             String addrs = wm.undecorateAddress(app, trimmedHost);
-            Log.e(TAG, "parseRequest: addrs: " + addrs);
+
 
             if (new BRCoreAddress(addrs).isValid()) {
                 obj.address = addrs;
