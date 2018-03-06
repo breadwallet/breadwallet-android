@@ -375,8 +375,9 @@ public class FragmentRequestAmount extends Fragment {
         } else if (key.charAt(0) == '.') {
             handleSeparatorClick();
         }
+        BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
-        boolean generated = generateQrImage(mReceiveAddress, amountEdit.getText().toString(), selectedIso);
+        boolean generated = generateQrImage(wm.decorateAddress(getActivity(), mReceiveAddress), amountEdit.getText().toString(), selectedIso);
         if (!generated) throw new RuntimeException("failed to generate qr image for address");
     }
 
@@ -442,28 +443,18 @@ public class FragmentRequestAmount extends Fragment {
     }
 
     private boolean generateQrImage(String address, String strAmount, String iso) {
-        String amountArg = "";
-        if (strAmount != null && !strAmount.isEmpty()) {
-            WalletsMaster master = WalletsMaster.getInstance(getActivity());
+        BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
-            boolean isCrypto = master.isIsoCrypto(getActivity(), iso);
+        boolean isCrypto = WalletsMaster.getInstance(getActivity()).isIsoCrypto(getActivity(), iso);
 
-            BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
+        BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
 
-            long amount;
+        long amount = isCrypto ? wm.getSmallestCryptoForCrypto(getActivity(), bigAmount).longValue() : wm.getSmallestCryptoForFiat(getActivity(), bigAmount).longValue();
 
-            if (isCrypto) {
-                amount = master.getCurrentWallet(getActivity()).getSmallestCryptoForCrypto(getActivity(), bigAmount).longValue();
-            } else {
-                amount = master.getCurrentWallet(getActivity()).getSmallestCryptoForFiat(getActivity(), bigAmount).longValue();
-            }
+        Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), wm, address, amount, null, null, null);
 
-            String am = new BigDecimal(amount).divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString();
-            amountArg = "?amount=" + am;
-        }
-        return QRUtils.generateQR(getActivity(), "bitcoin:" + address + amountArg, mQrImage);
+        return QRUtils.generateQR(getActivity(), uri.toString(), mQrImage);
     }
-
 
     private void removeCurrencySelector() {
 //        showCurrencyList(false);

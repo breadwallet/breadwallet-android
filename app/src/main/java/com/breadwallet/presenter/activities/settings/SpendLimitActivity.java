@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
@@ -87,8 +88,11 @@ public class SpendLimitActivity extends BRActivity {
                 int limit = adapter.getItem(position);
                 Log.e(TAG, "limit chosen: " + limit);
                 BRKeyStore.putSpendLimit(limit, app);
-                //todo refactor, add up all wallets total limit
-                AuthManager.getInstance().setTotalLimit(app, wm.getWallet().getTotalSent() + BRKeyStore.getSpendLimit(app));
+                long totalSent = 0;
+                List<BaseWalletManager> wallets = WalletsMaster.getInstance(app).getAllWallets();
+                for (BaseWalletManager w : wallets)
+                    totalSent += w.getTotalSent(app); //collect total total sent
+                AuthManager.getInstance().setTotalLimit(app, totalSent + BRKeyStore.getSpendLimit(app));
                 adapter.notifyDataSetChanged();
             }
 
@@ -167,7 +171,7 @@ public class SpendLimitActivity extends BRActivity {
 
         private final Context mContext;
         private final int layoutResourceId;
-        private TextView textViewItem;
+        private BRText textViewItem;
 
         public LimitAdaptor(Context mContext) {
 
@@ -188,15 +192,12 @@ public class SpendLimitActivity extends BRActivity {
             }
             // get the TextView and then set the text (item name) and tag (item ID) values
             textViewItem = convertView.findViewById(R.id.currency_item_text);
-            FontManager.overrideFonts(textViewItem);
             Integer item = getItem(position);
             BaseWalletManager walletManager = WalletBitcoinManager.getInstance(app); //use the bitcoin wallet to show the limits
-            //todo REFACTOR ALL FOR NEW LIMIT SCREEN
 
-            String curAmount = CurrencyUtils.getFormattedAmount(app, BRSharedPrefs.getPreferredFiatIso(app), walletManager.getFiatForSmallestCrypto(app, new BigDecimal(item), null));
-            String cryptoAmount = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), walletManager.getCryptoForSmallestCrypto(app, new BigDecimal(item)));
+            String cryptoAmount = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), new BigDecimal(item));
 
-            String text = String.format(item == 0 ? app.getString(R.string.TouchIdSpendingLimit) : "%s (%s)", curAmount, cryptoAmount);
+            String text = String.format(item == 0 ? app.getString(R.string.TouchIdSpendingLimit) : "%s", cryptoAmount);
             textViewItem.setText(text);
             ImageView checkMark = convertView.findViewById(R.id.currency_checkmark);
 

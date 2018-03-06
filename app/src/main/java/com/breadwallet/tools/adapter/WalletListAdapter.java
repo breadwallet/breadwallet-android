@@ -91,8 +91,6 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         holder.mSyncingLabel.setText(item.mLabelText);
         holder.mWalletBalanceCurrency.setVisibility(item.mShowBalance ? View.VISIBLE : View.INVISIBLE);
 
-        // TODO : Align the "waiting to sync" text with the balance USD
-
         Drawable drawable = mContext.getResources().getDrawable(R.drawable.crypto_card_shape, null);
         ((GradientDrawable) drawable).setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
 
@@ -156,7 +154,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         }
         if (syncProgress > 0.0 && syncProgress < 1.0) {
             int progress = (int) (syncProgress * 100);
-            Log.d(TAG, "ISO: " + currentWallet.walletManager.getIso(mContext) + " (" + progress + "%)");
+//            Log.d(TAG, "ISO: " + currentWallet.walletManager.getIso(mContext) + " (" + progress + "%)");
 
             mCurrentWalletSyncing.updateData(true, true, false, progress, "Syncing");
             notifyDataSetChanged();
@@ -164,14 +162,14 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
         // HAS NOT STARTED SYNCING
         else if (syncProgress == 0.0) {
-            Log.d(TAG, "ISO: " + currentWallet.walletManager.getIso(mContext) + " (0%)");
+//            Log.d(TAG, "ISO: " + currentWallet.walletManager.getIso(mContext) + " (0%)");
             mCurrentWalletSyncing.updateData(false, true, false, 0, "Waiting to Sync");
             notifyDataSetChanged();
         }
 
         // FINISHED SYNCING
         else if (syncProgress == 1.0) {
-            Log.d(TAG, "ISO: " + currentWallet.walletManager.getIso(mContext) + " (100%)");
+//            Log.d(TAG, "ISO: " + currentWallet.walletManager.getIso(mContext) + " (100%)");
 
             //Done should not be seen but if it is because of a bug or something, then let if be a decent explanation
             mCurrentWalletSyncing.updateData(false, false, true, 100, "Done");

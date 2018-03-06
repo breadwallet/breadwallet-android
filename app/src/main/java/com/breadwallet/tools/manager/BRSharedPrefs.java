@@ -313,6 +313,7 @@ public class BRSharedPrefs {
 
     public static void putCurrentWalletIso(Context activity, String iso) {
         Log.d(TAG, "putCurrentWalletIso(), ISO -> " + iso);
+        if(iso == null) throw new NullPointerException("cannot be null");
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("currentWalletIso", iso);

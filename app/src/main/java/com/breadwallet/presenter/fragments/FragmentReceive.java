@@ -41,7 +41,6 @@ import static com.breadwallet.tools.animation.BRAnimator.animateSignalSlide;
 import static com.platform.HTTPServer.URL_SUPPORT;
 
 
-
 /**
  * BreadWallet
  * <p>
@@ -298,9 +297,10 @@ public class FragmentReceive extends Fragment {
                     @Override
                     public void run() {
                         mReceiveAddress = BRSharedPrefs.getReceiveAddress(ctx, wallet.getIso(ctx));
-//                        Uri cryptoUrl = CryptoUriParser.createCryptoUrl(ctx, wallet, mReceiveAddress, 0, null, null, null);
-                        mAddress.setText(wallet.decorateAddress(ctx, mReceiveAddress));
-                        boolean generated = QRUtils.generateQR(ctx, mReceiveAddress, mQrImage);
+                        String decorated = wallet.decorateAddress(ctx, mReceiveAddress);
+                        mAddress.setText(decorated);
+                        Uri uri = CryptoUriParser.createCryptoUrl(ctx, wallet, decorated, 0, null, null, null);
+                        boolean generated = QRUtils.generateQR(ctx, uri.toString(), mQrImage);
                         if (!generated)
                             throw new RuntimeException("failed to generate qr image for address");
                     }
