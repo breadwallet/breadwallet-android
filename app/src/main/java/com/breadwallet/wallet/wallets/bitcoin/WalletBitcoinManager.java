@@ -725,7 +725,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                 public void run() {
                     String am = CurrencyUtils.getFormattedAmount(ctx, getIso(ctx), getCryptoForSmallestCrypto(ctx, new BigDecimal(amount)));
                     BigDecimal bigAmount = master.getCurrentWallet(ctx).getFiatForSmallestCrypto(ctx, new BigDecimal(amount));
-                    String amCur = CurrencyUtils.getFormattedAmount(ctx, BRSharedPrefs.getPreferredFiatIso(ctx), bigAmount == null ? new BigDecimal(0) : bigAmount.divide(new BigDecimal(100), 2, BRConstants.ROUNDING_MODE));
+                    String amCur = CurrencyUtils.getFormattedAmount(ctx, BRSharedPrefs.getPreferredFiatIso(ctx), bigAmount == null ? new BigDecimal(0) : bigAmount);
                     String formatted = String.format("%s (%s)", am, amCur);
                     final String strToShow = String.format(ctx.getString(R.string.TransactionDetails_received), formatted);
 
@@ -733,8 +733,9 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                         @Override
                         public void run() {
                             if (!BRToast.isToastShown()) {
-                                BRToast.showCustomToast(ctx, strToShow,
-                                        BreadApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
+                                if (Utils.isEmulatorOrDebug(ctx))
+                                    BRToast.showCustomToast(ctx, strToShow,
+                                            BreadApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
                                 AudioManager audioManager = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
                                 if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
                                     final MediaPlayer mp = MediaPlayer.create(ctx, R.raw.coinflip);
@@ -744,9 +745,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                                         Log.e(TAG, "run: ", ex);
                                     }
                                 }
-
-                                if (!BreadApp.isAppInBackground(ctx) && BRSharedPrefs.getShowNotification(ctx))
-                                    BRNotificationManager.sendNotification((Activity) ctx, R.drawable.notification_icon, ctx.getString(R.string.app_name), strToShow, 1);
+                                BRNotificationManager.sendNotification((Activity) ctx, R.drawable.notification_icon, ctx.getString(R.string.app_name), strToShow, 1);
                             }
                         }
                     }, 1000);
