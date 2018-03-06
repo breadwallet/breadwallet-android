@@ -134,6 +134,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         if (oldVersion == 12 && newVersion == 13) {
             //drop peers table due to multiple changes
             onCreate(db); //create new db tables
+            db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME);//drop this table (fully refactored schema)
             migrateDatabases(db);
         } else {
             //drop everything maybe?
@@ -152,12 +153,10 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
         try {
             db.execSQL("INSERT INTO " + MB_TABLE_NAME + " (_id, merkleBlockBuff, merkleBlockHeight) SELECT _id, merkleBlockBuff, merkleBlockHeight FROM " + MB_TABLE_NAME_OLD);
             db.execSQL("INSERT INTO " + TX_TABLE_NAME + " (_id, transactionBuff, transactionBlockHeight, transactionTimeStamp) SELECT _id, transactionBuff, transactionBlockHeight, transactionTimeStamp FROM " + TX_TABLE_NAME_OLD);
-            db.execSQL("INSERT INTO " + PEER_TABLE_NAME + " (_id, peerAddress, peerPort, peerTimestamp) SELECT _id, peerAddress, peerPort, peerTimestamp FROM " + PEER_TABLE_NAME_OLD);
             db.execSQL("INSERT INTO " + CURRENCY_TABLE_NAME + " (code, name, rate) SELECT code, name, rate FROM " + CURRENCY_TABLE_NAME_OLD);
 
             db.execSQL("DROP TABLE " + MB_TABLE_NAME_OLD);
             db.execSQL("DROP TABLE " + TX_TABLE_NAME_OLD);
-            db.execSQL("DROP TABLE " + PEER_TABLE_NAME_OLD);
             db.execSQL("DROP TABLE " + CURRENCY_TABLE_NAME_OLD);
 
             db.setTransactionSuccessful();
