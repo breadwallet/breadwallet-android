@@ -760,6 +760,14 @@
   <string name="Wallets">Wallets</string>
   <string name="Admin">Admin</string>
 
+  <!-- One-time BCH dialog -->
+  <string name="Dialog.welcomeBchTitle">BRD now supports Bitcoin Cash!</string>
+  <string name="Dialog.welcomeBchMessage">Any BCH in your wallet can be accessed through the home screen.</string>
+  <string name="Dialog.Home">Home</string>
+  <string name="Dialog.Dismiss">Dismiss</string>
+
+
+
 
 
 
