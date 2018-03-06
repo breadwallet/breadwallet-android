@@ -14,7 +14,9 @@ import android.support.transition.TransitionManager;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
+import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -224,15 +226,28 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             });
 
         } else {
-            mBuyButton.setVisibility(View.GONE);
             LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    LinearLayout.LayoutParams.WRAP_CONTENT,
-                    1.5f
+                   ViewGroup.LayoutParams.MATCH_PARENT,
+                    Utils.getPixelsFromDps(this, 65), 1.5f
             );
+
+            LinearLayout.LayoutParams param2 = new LinearLayout.LayoutParams(
+                    ViewGroup.LayoutParams.MATCH_PARENT,
+                    Utils.getPixelsFromDps(this, 65), 1.5f
+            );
+            param.gravity = Gravity.CENTER;
+            param2.gravity = Gravity.CENTER;
+
+            param.setMargins(Utils.getPixelsFromDps(this, 8), Utils.getPixelsFromDps(this, 8), Utils.getPixelsFromDps(this, 8) , 0);
+            param2.setMargins(0, Utils.getPixelsFromDps(this, 8), Utils.getPixelsFromDps(this, 8) , 0);
+
+            // mSendButton.setHeight(Utils.getPixelsFromDps(this, 75));
+            //mReceiveButton.setHeight(Utils.getPixelsFromDps(this, 75));
             mSendButton.setLayoutParams(param);
-            mReceiveButton.setLayoutParams(param);
-            mBuyButton.setLayoutParams(param);
+            mReceiveButton.setLayoutParams(param2);
+            //mBuyButton.setLayoutParams(param);
+            mBuyButton.setVisibility(View.GONE);
+
         }
 
 
