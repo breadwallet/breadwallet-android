@@ -23,7 +23,7 @@ android {
         }
         externalNativeBuild {
             cmake {
-                arguments "-DANDROID_TOOLCHAIN=clang"
+                arguments '-DANDROID_TOOLCHAIN=clang', '-DANDROID_STL=gnustl_static'
             }
         }
 
@@ -91,6 +91,7 @@ android {
     lintOptions {
         // set to true to turn off analysis progress reporting by lint
         quiet false
+
         explainIssues true
         // if true, stop the gradle build if errors are found
         abortOnError true
@@ -116,11 +117,13 @@ android {
         }
         debug {
             debuggable = true
+            jniDebuggable = true
             minifyEnabled = false
 
             ndk {
                 minifyEnabled = false
                 debuggable = true
+                jniDebuggable = true
             }
         }
 

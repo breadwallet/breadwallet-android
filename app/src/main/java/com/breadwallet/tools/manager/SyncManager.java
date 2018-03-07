@@ -53,6 +53,7 @@ public class SyncManager {
     //todo refactor this task to have a list of unique tasks (multiple UI syncing)
     private static SyncProgressTask syncTask;
     public boolean running;
+    private String mCurrentThreadName;
     private BaseWalletManager mWallet;
     //    private final Object lock = new Object();
     private ProgressBar mProgressBar;
@@ -110,9 +111,11 @@ public class SyncManager {
         public void run() {
 //            Log.e(TAG, "SyncProgressTask: started: " + Thread.currentThread());
             try {
-                while (!isInterrupted()) {
+                mCurrentThreadName = getName();
+                while (!isInterrupted() && mCurrentThreadName.equalsIgnoreCase(getName())) {
                     final double syncProgress = mCurrentWallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mApp, mCurrentWallet.getIso(mApp)));
-                    Log.e(TAG, "run: " + Thread.currentThread());
+                    if (!mCurrentThreadName.equalsIgnoreCase(getName()))
+                        Log.e(TAG, "run: WARNING: " + getName());
                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                         @Override
                         public void run() {
