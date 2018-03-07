@@ -461,5 +461,12 @@ public class BRSharedPrefs {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("bchDialogShown", shown);
+        editor.apply();
+    }
+
+    public static boolean wasBchDialogShown(Context context){
+
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean("bchDialogShown", false);
     }
 }
