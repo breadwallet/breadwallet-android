@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,9 +18,8 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
+import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
@@ -196,6 +196,31 @@ public class FragmentTxDetails extends DialogFragment {
 
             mToFromAddress.setText(mTransaction.getTo()[0]); //showing only the destination address
 
+            // Allow the to/from address to be copiable
+            mToFromAddress.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    // Get the default color based on theme
+                    final int color = mToFromAddress.getCurrentTextColor();
+
+                    mToFromAddress.setTextColor(getContext().getColor(R.color.light_gray));
+                    String address = mToFromAddress.getText().toString();
+                    BRClipboardManager.putClipboard(getContext(), address);
+                    Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_LONG).show();
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mToFromAddress.setTextColor(color);
+
+                        }
+                    }, 200);
+
+
+                }
+            });
+
             mTxAmount.setText(CurrencyUtils.getFormattedAmount(getActivity(), walletManager.getIso(getActivity()), cryptoAmount));//this is always crypto amount
 
 
@@ -232,6 +257,29 @@ public class FragmentTxDetails extends DialogFragment {
 
             // Set the transaction id
             mTransactionId.setText(mTransaction.getTxHashHexReversed());
+
+            // Allow the transaction id to be copy-able
+            mTransactionId.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    // Get the default color based on theme
+                    final int color = mTransactionId.getCurrentTextColor();
+
+                    mTransactionId.setTextColor(getContext().getColor(R.color.light_gray));
+                    String id = mTransaction.getTxHashHexReversed();
+                    BRClipboardManager.putClipboard(getContext(), id);
+                    Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_LONG).show();
+
+                    new Handler().postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            mTransactionId.setTextColor(color);
+
+                        }
+                    }, 200);
+                }
+            });
 
             // Set the transaction block number
             mConfirmedInBlock.setText(String.valueOf(mTransaction.getBlockHeight()));
