@@ -12,6 +12,7 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -120,6 +121,8 @@ public class BRDialogView extends DialogFragment {
 
         if (showHelpIcon) {
             helpButton.setVisibility(View.VISIBLE);
+
+            messageText.setPadding(0, 0,0 , Utils.getPixelsFromDps(getContext(), 16));
 
             helpButton.setOnClickListener(new View.OnClickListener() {
                 @Override
