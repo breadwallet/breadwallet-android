@@ -70,7 +70,7 @@ public class BRDialog {
 
     }
 
-    public static void showHelpDialog(@NonNull final Context app, @NonNull final String title, @NonNull final String message, @NonNull final String posButton, @NonNull final String negButton, final BRDialogView.BROnClickListener posListener, final BRDialogView.BROnClickListener negListener) {
+    public static void showHelpDialog(@NonNull final Context app, @NonNull final String title, @NonNull final String message, @NonNull final String posButton, @NonNull final String negButton, final BRDialogView.BROnClickListener posListener, final BRDialogView.BROnClickListener negListener, final BRDialogView.BROnClickListener helpListener) {
 
         if (((Activity) app).isDestroyed()) {
             Log.e(TAG, "showCustomDialog: FAILED, context is destroyed");
@@ -87,6 +87,7 @@ public class BRDialog {
                 dialog.setNegButton(negButton);
                 dialog.setPosListener(posListener);
                 dialog.setNegListener(negListener);
+                dialog.setHelpListener(helpListener);
                 dialog.showHelpIcon(true);
                 dialog.show(((Activity) app).getFragmentManager(), dialog.getClass().getName());
 

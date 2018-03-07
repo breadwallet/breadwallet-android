@@ -44,6 +44,7 @@ import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -298,6 +299,14 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 @Override
                 public void onClick(BRDialogView brDialogView) {
                     brDialogView.dismissWithAnimation();
+
+                }
+            }, new BRDialogView.BROnClickListener() {
+                @Override
+                public void onClick(BRDialogView brDialogView) {
+                    Log.d(TAG, "help clicked!");
+                    brDialogView.dismissWithAnimation();
+                    BRAnimator.showSupportFragment(WalletActivity.this, BRConstants.bchFaq);
 
                 }
             });

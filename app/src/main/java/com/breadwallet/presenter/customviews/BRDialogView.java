@@ -56,6 +56,7 @@ public class BRDialogView extends DialogFragment {
     private String negButton = "";
     private BRDialogView.BROnClickListener posListener;
     private BRDialogView.BROnClickListener negListener;
+    private BRDialogView.BROnClickListener helpListener;
     private DialogInterface.OnDismissListener dismissListener;
     private int iconRes = 0;
     private Button negativeButton;
@@ -119,6 +120,16 @@ public class BRDialogView extends DialogFragment {
 
         if (showHelpIcon) {
             helpButton.setVisibility(View.VISIBLE);
+
+            helpButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!BRAnimator.isClickAllowed()) return;
+                    if (helpListener != null)
+                        helpListener.onClick(BRDialogView.this);
+                }
+            });
+
         } else {
             helpButton.setVisibility(View.INVISIBLE);
 
@@ -175,6 +186,10 @@ public class BRDialogView extends DialogFragment {
 
     public void setNegListener(BRDialogView.BROnClickListener negListener) {
         this.negListener = negListener;
+    }
+
+    public void setHelpListener(BROnClickListener helpListener) {
+        this.helpListener = helpListener;
     }
 
     public void setDismissListener(DialogInterface.OnDismissListener dismissListener) {
