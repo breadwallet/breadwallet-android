@@ -141,6 +141,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch (holder.getItemViewType()) {
             case txType:
+                holder.setIsRecyclable(false);
                 setTexts((TxHolder) holder, position);
                 break;
             case promptType:
@@ -241,11 +242,18 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 break;
             case 5:
 
-                showTransactionProgress(convertView, 100);
+                //showTransactionProgress(convertView, 100);
                 break;
         }
 
-        convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received? "sending to " : "received via ") + item.getTo()[0]);
+        Log.d(TAG, "Level -> " + level);
+
+        if(level > 4) {
+            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? "sent to " : "received via ") + item.getTo()[0]);
+        }else{
+            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received? "sending to " : "receiving via ") + item.getTo()[0]);
+
+        }
 
         //if it's 0 we use the current time.
         long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * 1000;
@@ -261,13 +269,13 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         if (progress < 100) {
             holder.transactionProgress.setVisibility(View.VISIBLE);
-            holder.transactionDate.setVisibility(View.INVISIBLE);
+            holder.transactionDate.setVisibility(View.GONE);
             holder.transactionProgress.setProgress(progress);
 
-            RelativeLayout.LayoutParams detailParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            RelativeLayout.LayoutParams detailParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
             detailParams.addRule(RelativeLayout.RIGHT_OF, holder.transactionProgress.getId());
             detailParams.addRule(RelativeLayout.CENTER_VERTICAL);
-            detailParams.setMargins(Utils.getPixelsFromDps(mContext, 16), Utils.getPixelsFromDps(mContext, 2), 0, 0);
+            detailParams.setMargins(Utils.getPixelsFromDps(mContext, 16), Utils.getPixelsFromDps(mContext, 36), 0, 0);
             holder.transactionDetail.setLayoutParams(detailParams);
         } else {
             holder.transactionProgress.setVisibility(View.INVISIBLE);
@@ -277,6 +285,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             startingParams.addRule(RelativeLayout.CENTER_VERTICAL);
             startingParams.setMargins(Utils.getPixelsFromDps(mContext, 16), 0, 0, 0);
             holder.transactionDetail.setLayoutParams(startingParams);
+            holder.setIsRecyclable(true);
         }
     }
 
