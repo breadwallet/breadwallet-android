@@ -201,7 +201,9 @@ public class FragmentTxDetails extends DialogFragment {
                 @Override
                 public void onClick(View view) {
 
+                    // Get the default color based on theme
                     final int color = mToFromAddress.getCurrentTextColor();
+
                     mToFromAddress.setTextColor(getContext().getColor(R.color.light_gray));
                     String address = mToFromAddress.getText().toString();
                     BRClipboardManager.putClipboard(getContext(), address);
@@ -260,7 +262,10 @@ public class FragmentTxDetails extends DialogFragment {
             mTransactionId.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+
+                    // Get the default color based on theme
                     final int color = mTransactionId.getCurrentTextColor();
+
                     mTransactionId.setTextColor(getContext().getColor(R.color.light_gray));
                     String id = mTransaction.getTxHashHexReversed();
                     BRClipboardManager.putClipboard(getContext(), id);
