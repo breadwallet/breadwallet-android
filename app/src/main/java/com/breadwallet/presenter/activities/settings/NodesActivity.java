@@ -132,7 +132,7 @@ public class NodesActivity extends BRActivity {
 
     private void createDialog() {
 
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(app);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         final TextView customTitle = new TextView(this);
 
         customTitle.setGravity(Gravity.CENTER);
@@ -146,7 +146,7 @@ public class NodesActivity extends BRActivity {
         alertDialog.setCustomTitle(customTitle);
         alertDialog.setMessage(getString(R.string.NodeSelector_enterBody));
 
-        final EditText input = new EditText(app);
+        final EditText input = new EditText(this);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);

@@ -162,7 +162,7 @@ public class FragmentTxDetails extends DialogFragment {
 
             BigDecimal cryptoAmount = new BigDecimal(mTransaction.getAmount());
 
-            BigDecimal fiatAmountNow = walletManager.getFiatForSmallestCrypto(getActivity(), cryptoAmount, null);
+            BigDecimal fiatAmountNow = walletManager.getFiatForSmallestCrypto(getActivity(), cryptoAmount.abs(), null);
 
             BigDecimal fiatAmountWhenSent;
             TxMetaData metaData = KVStoreManager.getInstance().getTxMetaData(getActivity(), mTransaction.getTxHash());
@@ -172,7 +172,7 @@ public class FragmentTxDetails extends DialogFragment {
             } else {
 
                 CurrencyEntity ent = new CurrencyEntity(metaData.exchangeCurrency, null, (float) metaData.exchangeRate, walletManager.getIso(getActivity()));
-                fiatAmountWhenSent = walletManager.getFiatForSmallestCrypto(getActivity(), cryptoAmount, ent);
+                fiatAmountWhenSent = walletManager.getFiatForSmallestCrypto(getActivity(), cryptoAmount.abs(), ent);
                 amountWhenSent = CurrencyUtils.getFormattedAmount(getActivity(), ent.code, fiatAmountWhenSent);//always fiat amount
 
             }
@@ -184,9 +184,9 @@ public class FragmentTxDetails extends DialogFragment {
 
             BigDecimal tmpStartingBalance = new BigDecimal(mTransaction.getBalanceAfterTx()).subtract(cryptoAmount.abs()).subtract(new BigDecimal(mTransaction.getFee()).abs());
 
-            BigDecimal startingBalance = isCryptoPreferred ? tmpStartingBalance : walletManager.getFiatForSmallestCrypto(getActivity(), tmpStartingBalance, null);
+            BigDecimal startingBalance = isCryptoPreferred ? walletManager.getCryptoForSmallestCrypto(getActivity(), tmpStartingBalance) : walletManager.getFiatForSmallestCrypto(getActivity(), tmpStartingBalance, null);
 
-            BigDecimal endingBalance = isCryptoPreferred ? new BigDecimal(mTransaction.getBalanceAfterTx()) : walletManager.getFiatForSmallestCrypto(getActivity(), new BigDecimal(mTransaction.getBalanceAfterTx()), null);
+            BigDecimal endingBalance = isCryptoPreferred ? walletManager.getCryptoForSmallestCrypto(getActivity(), new BigDecimal(mTransaction.getBalanceAfterTx())) : walletManager.getFiatForSmallestCrypto(getActivity(), new BigDecimal(mTransaction.getBalanceAfterTx()), null);
 
             mStartingBalance.setText(CurrencyUtils.getFormattedAmount(getActivity(), iso, startingBalance));
             mEndingBalance.setText(CurrencyUtils.getFormattedAmount(getActivity(), iso, endingBalance));

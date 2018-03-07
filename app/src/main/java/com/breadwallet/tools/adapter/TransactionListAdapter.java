@@ -178,16 +178,18 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         boolean received = item.getSent() == 0;
 
-        String txAction = String.format("%s %s", (received ? "received via " : "sent to "), item.getTo()[0]);
         if (received)
             convertView.transactionAmount.setTextColor(mContext.getResources().getColor(R.color.transaction_amount_received_color, null));
+        else
+            convertView.transactionAmount.setTextColor(mContext.getResources().getColor(R.color.total_assets_usd_color, null));
+
 
         // If this transaction failed, show the "FAILED" indicator in the cell
         if (!item.isValid())
             showTransactionFailed(convertView, item, received);
 
-        long satAm = received ? item.getReceived() : (item.getSent() - item.getReceived());
-        BigDecimal cryptoAmount = received ? new BigDecimal(satAm) : new BigDecimal(satAm).negate();
+
+        BigDecimal cryptoAmount = received ? new BigDecimal(item.getReceived()).abs() : new BigDecimal(item.getSent() - item.getReceived()).abs().negate();
         boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
         String preferredIso = isCryptoPreferred ? wallet.getIso(mContext) : BRSharedPrefs.getPreferredFiatIso(mContext);
 
@@ -219,60 +221,31 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
         switch (level) {
             case 0:
-//                percentage = "0%";
+                showTransactionProgress(convertView, 0);
                 break;
             case 1:
-//                percentage = "20%";
-//                if (!received)
-//                    txAction = "sending to " + item.getTo()[0];
-//                else
-//                    txAction = "receiving via " + item.getTo()[0];
-
                 showTransactionProgress(convertView, 20);
+
                 break;
             case 2:
-//                percentage = "40%";
-//                if (!received)
-//                    txAction = "sending to " + item.getTo()[0];
-//                else
-//                    txAction = "receiving via " + item.getTo()[0];
 
                 showTransactionProgress(convertView, 40);
-//                availableForSpend = true;
                 break;
             case 3:
-//                percentage = "60%";
-//                if (!received)
-//                    txAction = "sending to " + item.getTo()[0];
-//                else
-//                    txAction = "receiving via " + item.getTo()[0];
 
                 showTransactionProgress(convertView, 60);
-//                availableForSpend = true;
                 break;
             case 4:
-//                percentage = "80%";
-                if (!received)
-                    txAction = "sending to " + item.getTo()[0];
-                else
-                    txAction = "receiving via " + item.getTo()[0];
 
                 showTransactionProgress(convertView, 80);
-//                availableForSpend = true;
                 break;
             case 5:
-//                percentage = "100%";
-                if (!received)
-                    txAction = "sent to " + item.getTo()[0];
-                else
-                    txAction = "received via " + item.getTo()[0];
 
                 showTransactionProgress(convertView, 100);
-//                availableForSpend = true;
                 break;
         }
 
-        convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : txAction);
+        convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received? "sending to " : "received via ") + item.getTo()[0]);
 
         //if it's 0 we use the current time.
         long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * 1000;
@@ -284,6 +257,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void showTransactionProgress(TxHolder holder, int progress) {
+
 
         if (progress < 100) {
             holder.transactionProgress.setVisibility(View.VISIBLE);
