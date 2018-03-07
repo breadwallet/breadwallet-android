@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="180dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+
+    <ImageButton
+        android:id="@+id/bch_dialog_help"
+        android:background="@drawable/faq_question_black"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/bch_dialog_title"
+        android:text="@string/Dialog.welcomeBchTitle"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="20dp"
+        android:textSize="18sp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/bch_dialog_message"
+        android:text="@string/Dialog.welcomeBchMessage"
+        android:layout_below="@id/bch_dialog_title"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="16dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_height="wrap_content">
+
+    <com.breadwallet.presenter.customviews.BRButton
+        android:id="@+id/dialog_home_button"
+        app:buttonType="4"
+        app:customTFont="CircularPro-Bold.otf"
+        app:hasShadow="false"
+        app:isBreadButton="true"
+        android:text="@string/Dialog.Home"
+        android:layout_weight="1"
+        android:layout_width="0dp"
+        android:layout_height="65dp" />
+
+
+        <com.breadwallet.presenter.customviews.BRButton
+            android:id="@+id/dialog_dismiss_button"
+            app:buttonType="4"
+            app:customTFont="CircularPro-Bold.otf"
+            app:hasShadow="false"
+            app:isBreadButton="true"
+            android:text="@string/Dialog.Dismiss"
+            android:layout_weight="1"
+            android:layout_width="0dp"
+            android:layout_height="65dp" />
+
+    </LinearLayout>
+
+</RelativeLayout>

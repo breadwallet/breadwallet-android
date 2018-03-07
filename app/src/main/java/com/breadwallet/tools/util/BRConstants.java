@@ -114,6 +114,7 @@ public class BRConstants {
     public static final String startView = "start-view";
     public static final String wipeWallet = "wipe-wallet";
     public static final String loopBug = "android-loop-bug";
+    public static final String bchFaq = "bitcoin-cash";
 
     private BRConstants() {
     }

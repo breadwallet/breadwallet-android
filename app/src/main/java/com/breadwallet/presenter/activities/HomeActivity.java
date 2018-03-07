@@ -17,16 +17,19 @@ import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -138,6 +141,34 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
 
+
+        if (!BRSharedPrefs.wasBchDialogShown(this)) {
+            BRDialog.showHelpDialog(this, getString(R.string.Dialog_welcomeBchTitle), getString(R.string.Dialog_welcomeBchMessage), getString(R.string.Dialog_Home), getString(R.string.Dialog_Dismiss), new BRDialogView.BROnClickListener() {
+                @Override
+                public void onClick(BRDialogView brDialogView) {
+                    brDialogView.dismissWithAnimation();
+                }
+            }, new BRDialogView.BROnClickListener() {
+
+                @Override
+                public void onClick(BRDialogView brDialogView) {
+                    brDialogView.dismissWithAnimation();
+
+                }
+            }, new BRDialogView.BROnClickListener() {
+                @Override
+                public void onClick(BRDialogView brDialogView) {
+                    Log.d(TAG, "help clicked!");
+                    brDialogView.dismissWithAnimation();
+                    BRAnimator.showSupportFragment(HomeActivity.this, BRConstants.bchFaq);
+
+                }
+            });
+
+            BRSharedPrefs.putBchDialogShown(HomeActivity.this, true);
+        }
+
+
     }
 
     private void setupNetworking() {
@@ -241,7 +272,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mConnectionReceiver != null)
+        if (mConnectionReceiver != null)
             unregisterReceiver(mConnectionReceiver);
     }
 
