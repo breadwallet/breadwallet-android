@@ -6,8 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.net.Uri;
-import android.os.Environment;
-import android.provider.MediaStore;
+import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -157,7 +156,8 @@ public class QRUtils {
 
 
         File file = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), app);
-        Uri uri = Uri.fromFile(file);
+        //Uri uri = Uri.fromFile(file);
+        Uri uri = FileProvider.getUriForFile(app, "com.breadwallet", file);
 
         Intent intent = new Intent();
         if (via.equalsIgnoreCase("sms:")) {
