@@ -3,6 +3,7 @@ package com.breadwallet.presenter.fragments;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.res.Configuration;
+import android.hardware.fingerprint.FingerprintManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -50,6 +51,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.wallets.util.CryptoUriParser;
 
 import java.math.BigDecimal;
 
@@ -281,25 +283,26 @@ public class FragmentSend extends Fragment {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 String bitcoinUrl = BRClipboardManager.getClipboard(getActivity());
-                if (Utils.isNullOrEmpty(bitcoinUrl) || !isInputValid(bitcoinUrl)) {
+                if (Utils.isNullOrEmpty(bitcoinUrl)) {
                     sayClipboardEmpty();
                     return;
                 }
+                final BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
                 CryptoRequest obj = parseRequest(getActivity(), bitcoinUrl);
 
-                if (obj == null || obj.address == null) {
-                    sayClipboardEmpty();
+                if (obj == null || Utils.isNullOrEmpty(obj.address)) {
+                    sayInvalidClipboardData();
                     return;
                 }
 
-                if (obj.iso != null && !obj.iso.equalsIgnoreCase(WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).getIso(getActivity()))) {
-                    sayInvalidClipboardData(); //invalid if the screen is Bitcoin and scanning BitcoinCash for instance
+                if (obj.iso != null && !obj.iso.equalsIgnoreCase(wm.getIso(getActivity()))) {
+                    sayInvalidAddress(); //invalid if the screen is Bitcoin and scanning BitcoinCash for instance
                     return;
                 }
 
                 final BRCoreAddress address = new BRCoreAddress(obj.address);
-                final WalletsMaster wm = WalletsMaster.getInstance(getActivity());
+
 
                 if (address.isValid()) {
                     final Activity app = getActivity();
@@ -310,8 +313,7 @@ public class FragmentSend extends Fragment {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            BaseWalletManager wallet = wm.getCurrentWallet(app);
-                            if (wallet.getWallet().containsAddress(address)) {
+                            if (wm.getWallet().containsAddress(address)) {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -325,7 +327,7 @@ public class FragmentSend extends Fragment {
                                     }
                                 });
 
-                            } else if (wallet.getWallet().addressIsUsed(address)) {
+                            } else if (wm.getWallet().addressIsUsed(address)) {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -348,7 +350,7 @@ public class FragmentSend extends Fragment {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        addressEdit.setText(address.stringify());
+                                        addressEdit.setText(wm.decorateAddress(getActivity(), address.stringify()));
 
                                     }
                                 });
@@ -400,7 +402,7 @@ public class FragmentSend extends Fragment {
                     return;
                 }
                 boolean allFilled = true;
-                String addressString = addressEdit.getText().toString();
+                String rawAddress = addressEdit.getText().toString();
                 String amountStr = amountBuilder.toString();
                 String comment = commentEdit.getText().toString();
 
@@ -410,7 +412,12 @@ public class FragmentSend extends Fragment {
                 boolean isIsoCrypto = master.isIsoCrypto(getActivity(), selectedIso);
 
                 BigDecimal cryptoAmount = isIsoCrypto ? wallet.getSmallestCryptoForCrypto(getActivity(), rawAmount) : wallet.getSmallestCryptoForFiat(getActivity(), rawAmount);
-                BRCoreAddress address = new BRCoreAddress(addressString);
+                CryptoRequest req = CryptoUriParser.parseRequest(getActivity(), rawAddress);
+                if (req == null || Utils.isNullOrEmpty(req.address)) {
+                    sayInvalidClipboardData();
+                    return;
+                }
+                BRCoreAddress address = new BRCoreAddress(req.address);
                 Activity app = getActivity();
                 if (address.stringify().isEmpty() || !address.isValid()) {
                     allFilled = false;
@@ -446,7 +453,7 @@ public class FragmentSend extends Fragment {
                 }
 
                 if (allFilled) {
-                    CryptoRequest item = new CryptoRequest(tx, null, false, comment, addressString, cryptoAmount);
+                    CryptoRequest item = new CryptoRequest(tx, null, false, comment, req.address, cryptoAmount);
                     SendManager.sendTransaction(getActivity(), item, wallet);
                 }
             }
@@ -526,7 +533,7 @@ public class FragmentSend extends Fragment {
     }
 
     private void sayClipboardEmpty() {
-        BRDialog.showCustomDialog(getActivity(), getString(R.string.Send_emptyPasteboard), getResources().getString(R.string.Send_invalidAddressTitle), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+        BRDialog.showCustomDialog(getActivity(), "", getResources().getString(R.string.Send_emptyPasteboard), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {
                 brDialogView.dismiss();
@@ -536,7 +543,27 @@ public class FragmentSend extends Fragment {
     }
 
     private void sayInvalidClipboardData() {
-        BRDialog.showCustomDialog(getActivity(), getString(R.string.Send_invalidAddressMessage), getResources().getString(R.string.Send_invalidAddressTitle), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+        BRDialog.showCustomDialog(getActivity(), "", getResources().getString(R.string.Send_invalidAddressTitle), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+            @Override
+            public void onClick(BRDialogView brDialogView) {
+                brDialogView.dismiss();
+            }
+        }, null, null, 0);
+        BRClipboardManager.putClipboard(getActivity(), "");
+    }
+
+    private void saySomethingWentWrong() {
+        BRDialog.showCustomDialog(getActivity(), "", "Something went wrong.", getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+            @Override
+            public void onClick(BRDialogView brDialogView) {
+                brDialogView.dismiss();
+            }
+        }, null, null, 0);
+        BRClipboardManager.putClipboard(getActivity(), "");
+    }
+
+    private void sayInvalidAddress() {
+        BRDialog.showCustomDialog(getActivity(), "", getResources().getString(R.string.Send_invalidAddressMessage), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {
                 brDialogView.dismiss();
@@ -740,16 +767,16 @@ public class FragmentSend extends Fragment {
             @Override
             public void run() {
                 if (obj == null) return;
-                WalletsMaster master = WalletsMaster.getInstance(getActivity());
+                BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 if (obj.address != null && addressEdit != null) {
-                    addressEdit.setText(obj.address.trim());
+                    addressEdit.setText(wm.decorateAddress(getActivity(), obj.address.trim()));
                 }
                 if (obj.message != null && commentEdit != null) {
                     commentEdit.setText(obj.message);
                 }
                 if (obj.amount != null) {
                     BigDecimal satoshiAmount = obj.amount.multiply(new BigDecimal(100000000));
-                    amountBuilder = new StringBuilder(master.getCurrentWallet(getActivity()).getFiatForSmallestCrypto(getActivity(), satoshiAmount, null).toPlainString());
+                    amountBuilder = new StringBuilder(wm.getFiatForSmallestCrypto(getActivity(), satoshiAmount, null).toPlainString());
                     updateText();
                 }
             }
@@ -804,10 +831,6 @@ public class FragmentSend extends Fragment {
         }
         warningText.requestLayout();
         updateText();
-    }
-
-    private boolean isInputValid(String input) {
-        return input.matches("[a-zA-Z0-9]*");
     }
 
     // from the link above

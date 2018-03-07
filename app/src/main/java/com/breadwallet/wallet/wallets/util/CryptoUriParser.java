@@ -149,6 +149,8 @@ public class CryptoUriParser {
             }
         }
 
+        obj.scheme = scheme;
+
         String schemeSpecific = u.getSchemeSpecificPart();
         if (schemeSpecific.startsWith("//")) {
             // Fix invalid bitcoin uri
@@ -165,7 +167,6 @@ public class CryptoUriParser {
             if (obj.iso.equalsIgnoreCase("bch"))
                 trimmedHost = scheme + ":" + trimmedHost; //bitcoin cash has the scheme attached to the address
             String addrs = wm.undecorateAddress(app, trimmedHost);
-
 
             if (new BRCoreAddress(addrs).isValid()) {
                 obj.address = addrs;
