@@ -219,7 +219,7 @@ public class FragmentTxDetails extends DialogFragment {
 
                 String metaIso = Utils.isNullOrEmpty(txMetaData.exchangeCurrency) ? "USD" : txMetaData.exchangeCurrency;
 
-                exchangeRateFormatted = CurrencyUtils.getFormattedAmount(getActivity(), metaIso, walletManager.getFiatForSmallestCrypto(getActivity(), new BigDecimal(txMetaData.exchangeRate), null));
+                exchangeRateFormatted = CurrencyUtils.getFormattedAmount(getActivity(), metaIso, new BigDecimal(txMetaData.exchangeRate));
                 mExchangeRate.setText(exchangeRateFormatted);
             } else {
                 Log.d(TAG, "TxMetaData is null");
