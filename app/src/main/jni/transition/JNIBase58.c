@@ -17,5 +17,9 @@ JNIEXPORT jstring JNICALL Java_com_jniwrappers_BRBase58_base58Encode(
     size_t base58len = BRBase58Encode(NULL, 0, (const uint8_t *) byteData, dataLen);
     char base58string[base58len];
     BRBase58Encode(base58string, base58len, (const uint8_t *) byteData, dataLen);
+
+    if (byteData != NULL)
+        (*env)->ReleaseByteArrayElements(env, data, byteData, JNI_ABORT);
+
     return (*env)->NewStringUTF(env, base58string);
 }
