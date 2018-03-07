@@ -9,6 +9,17 @@
                                              android:orientation="vertical"
     >
 
+    <ImageButton
+        android:id="@+id/help_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        android:background="@drawable/ic_help_circle"
+        android:layout_marginRight="4dp"
+        android:layout_marginTop="4dp"
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/dialog_title"
         android:layout_width="0dp"

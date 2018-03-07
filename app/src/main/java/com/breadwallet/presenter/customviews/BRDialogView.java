@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -59,11 +60,13 @@ public class BRDialogView extends DialogFragment {
     private int iconRes = 0;
     private Button negativeButton;
     private LinearLayout buttonsLayout;
+    private ImageButton helpButton;
 
     //provide the way to have clickable span in the message
     private SpannableString spanMessage;
 
     private ConstraintLayout mainLayout;
+    private boolean showHelpIcon;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -78,6 +81,7 @@ public class BRDialogView extends DialogFragment {
 //        ImageView icon = (ImageView) view.findViewById(R.id.dialog_icon);
         mainLayout = (ConstraintLayout) view.findViewById(R.id.main_layout);
         buttonsLayout = (LinearLayout) view.findViewById(R.id.linearLayout3);
+        helpButton = view.findViewById(R.id.help_icon);
 
         titleText.setText(title);
         messageText.setText(message);
@@ -112,9 +116,20 @@ public class BRDialogView extends DialogFragment {
 //            icon.setImageResource(iconRes);
 
         builder.setView(view);
+
+        if (showHelpIcon) {
+            helpButton.setVisibility(View.VISIBLE);
+        } else {
+            helpButton.setVisibility(View.INVISIBLE);
+
+        }
 //        builder.setOnDismissListener(dismissListener);
         // Create the AlertDialog object and return it
         return builder.create();
+    }
+
+    public void showHelpIcon(boolean show) {
+        this.showHelpIcon = show;
     }
 
     @Override

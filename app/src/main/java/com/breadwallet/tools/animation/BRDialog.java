@@ -70,6 +70,30 @@ public class BRDialog {
 
     }
 
+    public static void showHelpDialog(@NonNull final Context app, @NonNull final String title, @NonNull final String message, @NonNull final String posButton, @NonNull final String negButton, final BRDialogView.BROnClickListener posListener, final BRDialogView.BROnClickListener negListener) {
+
+        if (((Activity) app).isDestroyed()) {
+            Log.e(TAG, "showCustomDialog: FAILED, context is destroyed");
+            return;
+        }
+
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                dialog = new BRDialogView();
+                dialog.setTitle(title);
+                dialog.setMessage(message);
+                dialog.setPosButton(posButton);
+                dialog.setNegButton(negButton);
+                dialog.setPosListener(posListener);
+                dialog.setNegListener(negListener);
+                dialog.showHelpIcon(true);
+                dialog.show(((Activity) app).getFragmentManager(), dialog.getClass().getName());
+
+            }
+        });
+    }
+
     public static void showSimpleDialog(@NonNull final Context app, @NonNull final String title, @NonNull final String message) {
         showCustomDialog(app, title, message, app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
             @Override

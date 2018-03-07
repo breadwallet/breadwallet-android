@@ -2,6 +2,7 @@ package com.breadwallet.presenter.activities;
 
 import android.animation.LayoutTransition;
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -23,7 +24,6 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
@@ -31,10 +31,12 @@ import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
+import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
@@ -48,8 +50,6 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.SyncListener;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.breadwallet.wallet.wallets.bitcoincash.WalletBchManager;
 import com.breadwallet.wallet.wallets.util.CryptoUriParser;
 import com.platform.HTTPServer;
 
@@ -204,8 +204,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        if(mConnectionReceiver != null)
-        unregisterReceiver(mConnectionReceiver);
+        if (mConnectionReceiver != null)
+            unregisterReceiver(mConnectionReceiver);
 
     }
 
@@ -248,7 +248,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         } else {
             LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-                   ViewGroup.LayoutParams.MATCH_PARENT,
+                    ViewGroup.LayoutParams.MATCH_PARENT,
                     Utils.getPixelsFromDps(this, 65), 1.5f
             );
 
@@ -259,8 +259,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             param.gravity = Gravity.CENTER;
             param2.gravity = Gravity.CENTER;
 
-            param.setMargins(Utils.getPixelsFromDps(this, 8), Utils.getPixelsFromDps(this, 8), Utils.getPixelsFromDps(this, 8) , 0);
-            param2.setMargins(0, Utils.getPixelsFromDps(this, 8), Utils.getPixelsFromDps(this, 8) , 0);
+            param.setMargins(Utils.getPixelsFromDps(this, 8), Utils.getPixelsFromDps(this, 8), Utils.getPixelsFromDps(this, 8), 0);
+            param2.setMargins(0, Utils.getPixelsFromDps(this, 8), Utils.getPixelsFromDps(this, 8), 0);
 
             mSendButton.setLayoutParams(param);
             mReceiveButton.setLayoutParams(param2);
@@ -285,6 +285,25 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mReceiveButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
 
         TxManager.getInstance().updateTxList(WalletActivity.this);
+
+        if (!BRSharedPrefs.wasBchDialogShown(this)) {
+            BRDialog.showHelpDialog(this, getString(R.string.Dialog_welcomeBchTitle), getString(R.string.Dialog_welcomeBchMessage), getString(R.string.Dialog_Home), getString(R.string.Dialog_Dismiss), new BRDialogView.BROnClickListener() {
+                @Override
+                public void onClick(BRDialogView brDialogView) {
+                    Intent intent = new Intent(WalletActivity.this, HomeActivity.class);
+                    startActivity(intent);
+                }
+            }, new BRDialogView.BROnClickListener() {
+
+                @Override
+                public void onClick(BRDialogView brDialogView) {
+                    brDialogView.dismissWithAnimation();
+
+                }
+            });
+
+            BRSharedPrefs.putBchDialogShown(WalletActivity.this, true);
+        }
 
 
     }
@@ -485,7 +504,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         Log.d(TAG, "onConnectionChanged");
         if (isConnected) {
             if (barFlipper != null && barFlipper.getDisplayedChild() == 2) {
-               barFlipper.setDisplayedChild(0);
+                barFlipper.setDisplayedChild(0);
             }
             final BaseWalletManager wm = WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this);
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
