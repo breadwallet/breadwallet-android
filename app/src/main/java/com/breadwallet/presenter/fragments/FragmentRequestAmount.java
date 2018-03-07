@@ -472,10 +472,11 @@ public class FragmentRequestAmount extends Fragment {
     }
 
     private long getAmount() {
-        WalletsMaster master = WalletsMaster.getInstance(getActivity());
+        BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
         String strAmount = amountEdit.getText().toString();
+        boolean isIsoCrypto = WalletsMaster.getInstance(getActivity()).isIsoCrypto(getActivity(), selectedIso);
         BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
-        return master.getCurrentWallet(getActivity()).getSmallestCryptoForFiat(getActivity(), bigAmount).longValue();
+        return isIsoCrypto ? wm.getSmallestCryptoForCrypto(getActivity(), bigAmount).longValue() : wm.getSmallestCryptoForFiat(getActivity(), bigAmount).longValue();
     }
 
 
