@@ -87,6 +87,8 @@ void callback(void *info, int error) {
     (*env)->CallStaticVoidMethod(env, _walletManagerClass, mid,
                                  (*env)->NewStringUTF(env, strerror(error)),
                                  error, JtxHash);
+
+    (*env)->DeleteLocalRef(env, JtxHash);
 }
 
 static void balanceChanged(void *info, uint64_t balance) {
@@ -200,6 +202,11 @@ Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env, jobject thiz
         const char *rawString = (*env)->GetStringUTFChars(env, string, 0);
 
         wordList[i] = rawString;
+
+        wordList[i] = malloc(strlen(rawString) + 1);
+        strcpy(wordList[i], rawString);
+
+        (*env)->ReleaseStringUTFChars(env, string, rawString);
         (*env)->DeleteLocalRef(env, string);
     }
     __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "encodeSeed: %zu", sizeof(wordList));
@@ -218,6 +225,11 @@ Java_com_breadwallet_wallet_BRWalletManager_encodeSeed(JNIEnv *env, jobject thiz
 
     }
 
+    for (int i = 0; i < wordsCount; i++)
+        free(wordList[i]);
+
+    (*env)->ReleaseByteArrayElements(env, seed, byteSeed, JNI_ABORT);
+
     return bytePhrase;
 }
 
@@ -229,6 +241,8 @@ Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *env, jobject th
     jint rs = (*env)->GetJavaVM(env, &_jvmW); // cache the JavaVM pointer
     jclass peerManagerCLass = (*env)->FindClass(env, "com/breadwallet/wallet/BRWalletManager");
     _walletManagerClass = (jclass) (*env)->NewGlobalRef(env, (jobject) peerManagerCLass);
+
+    (*env)->DeleteLocalRef(env, peerManagerCLass);
 
     if (_wallet) return;
 
@@ -263,6 +277,8 @@ Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *env, jobject th
         w = BRWalletNew(NULL, 0, pubKey);
     }
 
+    (*env)->ReleaseByteArrayElements(env, bytePubKey, pubKeyBytes, JNI_ABORT);
+
     BRWalletSetCallbacks(w, NULL, balanceChanged, txAdded, txUpdated, txDeleted);
     _wallet = w;
 
@@ -276,6 +292,8 @@ Java_com_breadwallet_wallet_BRWalletManager_createWallet(JNIEnv *env, jobject th
     jmethodID mid = (*env)->GetStaticMethodID(env, clazz, "onBalanceChanged", "(J)V");
     //call java methods
     (*env)->CallStaticVoidMethod(env, clazz, mid, BRWalletBalance(_wallet));
+
+    (*env)->DeleteLocalRef(env, clazz);
 }
 
 JNIEXPORT jbyteArray
@@ -322,6 +340,7 @@ Java_com_breadwallet_wallet_BRWalletManager_putTransaction(JNIEnv *env, jobject 
 //    __android_log_print(ANDROID_LOG_ERROR, "Message from C: ", "tmpTx: %s", u256_hex_encode(tmpTx->txHash));
     _transactions[_transactionsCounter++] = tmpTx;
 
+    (*env)->ReleaseByteArrayElements(env, transaction, byteTx, JNI_ABORT);
 }
 
 JNIEXPORT void JNICALL
@@ -454,6 +473,10 @@ JNIEXPORT jobjectArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTr
         transactions_sqlite = NULL;
     }
 
+    (*env)->DeleteLocalRef(env, txClass);
+    (*env)->DeleteLocalRef(env, stringClass);
+    (*env)->DeleteLocalRef(env, txObjects);
+
     return globalTxs;
 }
 
@@ -527,6 +550,8 @@ Java_com_breadwallet_wallet_BRWalletManager_feeForTransaction(JNIEnv *env, jobje
     const char *rawAddress = (*env)->GetStringUTFChars(env, address, NULL);
     if(amount <= 0) return 0;
     BRTransaction *tx = BRWalletCreateTransaction(_wallet, (uint64_t) amount, rawAddress);
+
+    (*env)->ReleaseStringUTFChars(env, address, rawAddress);
     if (!tx) return 0;
     return (jint) BRWalletFeeForTx(_wallet, tx);
 }
@@ -548,6 +573,8 @@ Java_com_breadwallet_wallet_BRWalletManager_tryTransaction(JNIEnv *env, jobject 
 
     const char *rawAddress = (*env)->GetStringUTFChars(env, jAddress, NULL);
     BRTransaction *tx = BRWalletCreateTransaction(_wallet, (uint64_t) jAmount, rawAddress);
+
+    (*env)->ReleaseStringUTFChars(env, jAddress, rawAddress);
 
     if (!tx) return NULL;
 
@@ -584,6 +611,8 @@ Java_com_breadwallet_wallet_BRWalletManager_transactionIsVerified(JNIEnv *env, j
 
     int result = BRWalletTransactionIsVerified(_wallet, tx);
 
+    (*env)->ReleaseStringUTFChars(env, jtxHash, txHash);
+
     return (jboolean) (result ? JNI_TRUE : JNI_FALSE);
 }
 
@@ -614,6 +643,7 @@ Java_com_breadwallet_wallet_BRWalletManager_walletFreeEverything(JNIEnv *env, jo
     }
 
     if (_transactions) {
+        free(_transactions);
         _transactions = NULL;
     }
 }
@@ -642,6 +672,10 @@ Java_com_breadwallet_wallet_BRWalletManager_validateRecoveryPhrase(JNIEnv *env, 
 
     (*env)->ReleaseStringUTFChars(env, jPhrase, str);
 
+    for (int i = 0; i < wordsCount; i++) {
+        free(wordList[i]);
+    }
+
     return (jboolean) (result ? JNI_TRUE : JNI_FALSE);
 }
 
@@ -659,6 +693,8 @@ Java_com_breadwallet_wallet_BRWalletManager_getFirstAddress(JNIEnv *env, jobject
     BRBIP32PubKey(pubKey, sizeof(pubKey), mpk, 0, 0);
     BRKeySetPubKey(&key, pubKey, sizeof(pubKey));
     BRKeyAddress(&key, address.s, sizeof(address));
+
+    (*env)->ReleaseByteArrayElements(env, bytePubKey, pubKeyBytes, JNI_ABORT);
     return (*env)->NewStringUTF(env, address.s);
 }
 
@@ -672,6 +708,9 @@ Java_com_breadwallet_wallet_BRWalletManager_publishSerializedTransaction(JNIEnv 
     int txLength = (*env)->GetArrayLength(env, serializedTransaction);
     jbyte *byteTx = (*env)->GetByteArrayElements(env, serializedTransaction, 0);
     BRTransaction *tmpTx = BRTransactionParse((uint8_t *) byteTx, (size_t) txLength);
+
+    if (byteTx != NULL)
+        (*env)->ReleaseByteArrayElements(env, serializedTransaction, byteTx, JNI_ABORT);
 
     if (!tmpTx) return NULL;
 
@@ -748,6 +787,9 @@ Java_com_breadwallet_wallet_BRWalletManager_getAddressFromPrivKey(JNIEnv *env, j
     BRKeySetPrivKey(&key, rawPrivKey);
     BRKeyAddress(&key, addr.s, sizeof(addr));
 
+    if (rawPrivKey != NULL)
+        (*env)->ReleaseStringUTFChars(env, privKey, rawPrivKey);
+
     jstring result = (*env)->NewStringUTF(env, addr.s);
     return result;
 }
@@ -762,6 +804,12 @@ Java_com_breadwallet_wallet_BRWalletManager_decryptBip38Key(JNIEnv *env, jobject
     const char *rawPrivKey = (*env)->GetStringUTFChars(env, privKey, NULL);
     const char *rawPass = (*env)->GetStringUTFChars(env, pass, NULL);
     int result = BRKeySetBIP38Key(&key, rawPrivKey, rawPass);
+
+    if (rawPrivKey != NULL)
+        (*env)->ReleaseStringUTFChars(env, privKey, rawPrivKey);
+
+    if (rawPass != NULL)
+        (*env)->ReleaseStringUTFChars(env, pass, rawPass);
 
     if (result) {
         char pk[BRKeyPrivKey(&key, NULL, 0)];
@@ -801,6 +849,12 @@ Java_com_breadwallet_wallet_BRWalletManager_addInputToPrivKeyTx(JNIEnv *env, job
     BRTransactionAddInput(_privKeyTx, reversedHash, (uint32_t) vout, (uint64_t) amount,
                           (const uint8_t *) rawScript,
                           (size_t) scriptLength, NULL, 0, TXIN_SEQUENCE);
+
+    if (rawHash != NULL)
+        (*env)->ReleaseByteArrayElements(env, hash, rawHash, JNI_ABORT);
+
+    if (rawScript != NULL)
+        (*env)->ReleaseByteArrayElements(env, script, rawScript, JNI_ABORT);
 }
 
 JNIEXPORT jobject JNICALL Java_com_breadwallet_wallet_BRWalletManager_getPrivKeyObject(JNIEnv *env,
@@ -830,6 +884,8 @@ JNIEXPORT jobject JNICALL Java_com_breadwallet_wallet_BRWalletManager_getPrivKey
 
     jobject txObject = (*env)->NewObject(env, importPrivKeyClass, txObjMid, result,
                                          _privKeyBalance - fee, fee);
+
+    (*env)->DeleteLocalRef(env, importPrivKeyClass);
     return txObject;
 }
 
@@ -844,6 +900,10 @@ Java_com_breadwallet_wallet_BRWalletManager_confirmKeySweep(JNIEnv *env, jobject
     jbyte *byteTx = (*env)->GetByteArrayElements(env, tx, 0);
     BRTransaction *tmpTx = BRTransactionParse((uint8_t *) byteTx, (size_t) txLength);
     assert(tmpTx);
+
+    if (byteTx != NULL)
+        (*env)->ReleaseByteArrayElements(env, tx, byteTx, JNI_ABORT);
+
     if (!tmpTx) return JNI_FALSE;
 
     const char *rawString = (*env)->GetStringUTFChars(env, privKey, 0);
@@ -857,6 +917,8 @@ Java_com_breadwallet_wallet_BRWalletManager_confirmKeySweep(JNIEnv *env, jobject
     size_t len = BRTransactionSerialize(tmpTx, buf, sizeof(buf));
 
     BRPeerManagerPublishTx(_peerManager, tmpTx, NULL, callback);
+
+    (*env)->ReleaseStringUTFChars(env, privKey, rawString);
     return JNI_TRUE;
 }
 
@@ -869,6 +931,7 @@ Java_com_breadwallet_wallet_BRWalletManager_reverseTxHash(JNIEnv *env, jobject t
     UInt256 theHash = uint256(rawString);
     UInt256 reversedHash = UInt256Reverse(theHash);
 
+    (*env)->ReleaseStringUTFChars(env, txHash, rawString);
     return (*env)->NewStringUTF(env, u256hex(reversedHash));
 }
 
@@ -886,6 +949,8 @@ Java_com_breadwallet_wallet_BRWalletManager_txHashToHex(JNIEnv *env, jobject thi
 //    UInt256 theHash = u256_hex_decode(rawString);
 //    UInt256 reversedHash = UInt256Reverse(theHash);
 //
+    if (hash != NULL)
+        (*env)->ReleaseByteArrayElements(env, txHash, hash, JNI_ABORT);
     return (*env)->NewStringUTF(env, u256hex(reversedHash));
 }
 
@@ -904,6 +969,9 @@ Java_com_breadwallet_wallet_BRWalletManager_txHashSha256Hex(JNIEnv *env, jobject
 
 //    UInt256 reversedHash = UInt256Reverse(sha256Hash);
     char *result = u256hex(sha256Hash);
+
+    (*env)->ReleaseStringUTFChars(env, txHash, rawString);
+
     return (*env)->NewStringUTF(env, result);
 }
 
@@ -930,6 +998,9 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getAuth
 //    __android_log_print(ANDROID_LOG_DEBUG, "Message from C: ", "rawKey: %s", rawKey);
     jbyteArray result = (*env)->NewByteArray(env, (jsize) sizeof(rawKey));
     (*env)->SetByteArrayRegion(env, result, 0, (jsize) sizeof(rawKey), (jbyte *) rawKey);
+
+    if (bytesSeed != NULL)
+        (*env)->ReleaseByteArrayElements(env, seed, bytesSeed, JNI_ABORT);
     return result;
 }
 
@@ -949,6 +1020,9 @@ JNIEXPORT jstring JNICALL Java_com_breadwallet_wallet_BRWalletManager_getAuthPub
     char base58string[strLen];
     BRBase58Encode(base58string, strLen, pubKey, len);
 
+    if (bytePrivKey != NULL)
+        (*env)->ReleaseByteArrayElements(env, privkey, bytePrivKey, JNI_ABORT);
+
     return (*env)->NewStringUTF(env, base58string);
 }
 
@@ -963,6 +1037,9 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_getSeed
     BRBIP39DeriveKey(key.u8, charPhrase, NULL);
     jbyteArray result = (*env)->NewByteArray(env, (jsize) sizeof(key));
     (*env)->SetByteArrayRegion(env, result, 0, (jsize) sizeof(key), (jbyte *) &key);
+
+    if (bytePhrase != NULL)
+        (*env)->ReleaseByteArrayElements(env, phrase, bytePhrase, JNI_ABORT);
     return result;
 }
 
@@ -1007,6 +1084,9 @@ JNIEXPORT jlong JNICALL Java_com_breadwallet_wallet_BRWalletManager_getBCashBala
     jlong balance = (jlong) BRWalletBalance(w);
 //    BRWalletFree(w);
 //
+
+    if (pubKeyBytes != NULL)
+        (*env)->ReleaseByteArrayElements(env, bytePubKey, pubKeyBytes, JNI_ABORT);
     return balance;
 }
 
@@ -1019,6 +1099,9 @@ JNIEXPORT jint JNICALL Java_com_breadwallet_wallet_BRWalletManager_getTxSize(
     int txLength = (*env)->GetArrayLength(env, serializedTransaction);
     jbyte *byteTx = (*env)->GetByteArrayElements(env, serializedTransaction, 0);
     BRTransaction *tmpTx = BRTransactionParse((uint8_t *) byteTx, (size_t) txLength);
+
+    if (byteTx != NULL)
+        (*env)->ReleaseByteArrayElements(env, serializedTransaction, byteTx, JNI_ABORT);
 
     return (jint) (jlong) BRTransactionSize(tmpTx);
 }
@@ -1074,6 +1157,11 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_sweepBC
 
     BRWalletSignTransaction(_wallet, tx, 0x40, key.u8, seedSize);
     assert(BRTransactionIsSigned(tx));
+
+
+    if (rawAddress != NULL)
+        (*env)->ReleaseStringUTFChars(env, address, rawAddress);
+
     if (!tx) return NULL;
 
     size_t len = BRTransactionSerialize(tx, NULL, 0);
@@ -1085,6 +1173,11 @@ JNIEXPORT jbyteArray JNICALL Java_com_breadwallet_wallet_BRWalletManager_sweepBC
 
     (*env)->SetByteArrayRegion(env, result, 0, (jsize) len, (jbyte *) buf);
     free(buf);
+
+
+    (*env)->ReleaseByteArrayElements(env, bytePubKey, pubKeyBytes, JNI_ABORT);
+    (*env)->ReleaseByteArrayElements(env, phrase, bytePhrase, JNI_ABORT);
+
     return result;
 
 }
