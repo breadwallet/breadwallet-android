@@ -12,7 +12,9 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -55,15 +57,18 @@ public class BRDialogView extends DialogFragment {
     private String negButton = "";
     private BRDialogView.BROnClickListener posListener;
     private BRDialogView.BROnClickListener negListener;
+    private BRDialogView.BROnClickListener helpListener;
     private DialogInterface.OnDismissListener dismissListener;
     private int iconRes = 0;
     private Button negativeButton;
     private LinearLayout buttonsLayout;
+    private ImageButton helpButton;
 
     //provide the way to have clickable span in the message
     private SpannableString spanMessage;
 
     private ConstraintLayout mainLayout;
+    private boolean showHelpIcon;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -78,6 +83,7 @@ public class BRDialogView extends DialogFragment {
 //        ImageView icon = (ImageView) view.findViewById(R.id.dialog_icon);
         mainLayout = (ConstraintLayout) view.findViewById(R.id.main_layout);
         buttonsLayout = (LinearLayout) view.findViewById(R.id.linearLayout3);
+        helpButton = view.findViewById(R.id.help_icon);
 
         titleText.setText(title);
         messageText.setText(message);
@@ -112,9 +118,32 @@ public class BRDialogView extends DialogFragment {
 //            icon.setImageResource(iconRes);
 
         builder.setView(view);
+
+        if (showHelpIcon) {
+            helpButton.setVisibility(View.VISIBLE);
+
+            messageText.setPadding(0, 0,0 , Utils.getPixelsFromDps(getContext(), 16));
+
+            helpButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (!BRAnimator.isClickAllowed()) return;
+                    if (helpListener != null)
+                        helpListener.onClick(BRDialogView.this);
+                }
+            });
+
+        } else {
+            helpButton.setVisibility(View.INVISIBLE);
+
+        }
 //        builder.setOnDismissListener(dismissListener);
         // Create the AlertDialog object and return it
         return builder.create();
+    }
+
+    public void showHelpIcon(boolean show) {
+        this.showHelpIcon = show;
     }
 
     @Override
@@ -160,6 +189,10 @@ public class BRDialogView extends DialogFragment {
 
     public void setNegListener(BRDialogView.BROnClickListener negListener) {
         this.negListener = negListener;
+    }
+
+    public void setHelpListener(BROnClickListener helpListener) {
+        this.helpListener = helpListener;
     }
 
     public void setDismissListener(DialogInterface.OnDismissListener dismissListener) {
