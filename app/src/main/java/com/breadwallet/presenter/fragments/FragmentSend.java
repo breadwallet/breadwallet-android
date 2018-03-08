@@ -150,7 +150,8 @@ public class FragmentSend extends Fragment {
         regular = (BRButton) rootView.findViewById(R.id.left_button);
         economy = (BRButton) rootView.findViewById(R.id.right_button);
         close = (ImageButton) rootView.findViewById(R.id.close_button);
-        selectedIso = BRSharedPrefs.isCryptoPreferred(getActivity()) ? WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).getIso(getActivity()) : BRSharedPrefs.getPreferredFiatIso(getContext());
+        BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+        selectedIso = BRSharedPrefs.isCryptoPreferred(getActivity()) ? wm.getIso(getActivity()) : BRSharedPrefs.getPreferredFiatIso(getContext());
 
         amountBuilder = new StringBuilder(0);
         setListeners();
@@ -684,8 +685,7 @@ public class FragmentSend extends Fragment {
 
         String stringAmount = amountBuilder.toString();
         setAmount();
-        WalletsMaster master = WalletsMaster.getInstance(app);
-        BaseWalletManager wallet = master.getCurrentWallet(app);
+        BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
         String balanceString;
         if (selectedIso == null)
             selectedIso = wallet.getIso(app);
@@ -698,13 +698,7 @@ public class FragmentSend extends Fragment {
         //is the chosen ISO a crypto (could be also a fiat currency)
         boolean isIsoCrypto = WalletsMaster.getInstance(getActivity()).isIsoCrypto(getActivity(), selectedIso);
 
-        BigDecimal inputAmount;
-
-        if (Utils.isNullOrEmpty(stringAmount) || stringAmount.equalsIgnoreCase(".")) {
-            inputAmount = new BigDecimal(0);
-        } else {
-            inputAmount = new BigDecimal(stringAmount);
-        }
+        BigDecimal inputAmount = new BigDecimal(Utils.isNullOrEmpty(stringAmount) || stringAmount.equalsIgnoreCase(".") ? "0" : stringAmount);
 
         //smallest crypto e.g. satoshis
         BigDecimal cryptoAmount = isIsoCrypto ? wallet.getSmallestCryptoForCrypto(app, inputAmount) : wallet.getSmallestCryptoForFiat(app, inputAmount);
@@ -717,9 +711,13 @@ public class FragmentSend extends Fragment {
         if (cryptoAmount.longValue() <= 0) {
             fee = 0;
         } else {
-            BRCoreAddress coreAddress = new BRCoreAddress(addressEdit.getText().toString());
+            String addrString = addressEdit.getText().toString();
+            BRCoreAddress coreAddress = null;
+            if (!Utils.isNullOrEmpty(addrString)) {
+                coreAddress = new BRCoreAddress(addrString);
+            }
             BRCoreTransaction tx = null;
-            if (coreAddress.isValid()) {
+            if (coreAddress != null && coreAddress.isValid()) {
                 tx = wallet.getWallet().createTransaction(cryptoAmount.longValue(), coreAddress);
             }
 

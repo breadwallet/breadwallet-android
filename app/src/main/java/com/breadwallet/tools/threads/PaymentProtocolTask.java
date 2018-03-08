@@ -160,10 +160,9 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             StringBuilder allAddresses = new StringBuilder();
             for (BRCoreTransactionOutput output : outputs) {
                 allAddresses.append(output.getAddress()).append(", ");
-                BRCoreAddress addr = new BRCoreAddress(output.getAddress());
-                if (!addr.isValid()) {
+                if (Utils.isNullOrEmpty(output.getAddress()) || !new BRCoreAddress(output.getAddress()).isValid()) {
                     if (app != null)
-                        BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_invalidAddressTitle) + ": " + addr.stringify(), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                        BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_invalidAddressTitle) + ": " + output.getAddress(), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                             @Override
                             public void onClick(BRDialogView brDialogView) {
                                 brDialogView.dismissWithAnimation();

@@ -167,8 +167,7 @@ public class CryptoUriParser {
             if (obj.iso.equalsIgnoreCase("bch"))
                 trimmedHost = scheme + ":" + trimmedHost; //bitcoin cash has the scheme attached to the address
             String addrs = wm.undecorateAddress(app, trimmedHost);
-
-            if (new BRCoreAddress(addrs).isValid()) {
+            if (!Utils.isNullOrEmpty(addrs) && new BRCoreAddress(addrs).isValid()) {
                 obj.address = addrs;
             }
         }
@@ -248,12 +247,11 @@ public class CryptoUriParser {
             });
         } else {
             BRAnimator.killAllFragments(app);
-            BRCoreAddress address = new BRCoreAddress(requestObject.address);
-            if (!address.isValid()) {
+            if (Utils.isNullOrEmpty(requestObject.address) || !new BRCoreAddress(requestObject.address).isValid()) {
                 BRDialog.showSimpleDialog(app, app.getString(R.string.Send_invalidAddressTitle), "");
                 return true;
             }
-            BRCoreTransaction tx = wallet.getWallet().createTransaction(requestObject.amount.longValue(), address);
+            BRCoreTransaction tx = wallet.getWallet().createTransaction(requestObject.amount.longValue(), new BRCoreAddress(requestObject.address));
             if (tx == null) {
                 BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), "Insufficient amount for transaction", app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                     @Override

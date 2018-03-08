@@ -321,7 +321,9 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public String undecorateAddress(Context app, String addr) {
         if (Utils.isNullOrEmpty(addr)) return null;
-        return BRCoreAddress.bcashDecodeBitcoin(addr);
+        String result = BRCoreAddress.bcashDecodeBitcoin(addr);
+        return Utils.isNullOrEmpty(result) ? null : result;
+
     }
 
     @Override
