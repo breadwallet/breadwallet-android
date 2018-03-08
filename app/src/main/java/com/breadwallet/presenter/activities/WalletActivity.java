@@ -557,6 +557,11 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     @Override
     public void onBackPressed() {
+        int c = getFragmentManager().getBackStackEntryCount();
+        if (c > 0) {
+            super.onBackPressed();
+            return;
+        }
         Intent intent = new Intent(this, HomeActivity.class);
         startActivity(intent);
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
