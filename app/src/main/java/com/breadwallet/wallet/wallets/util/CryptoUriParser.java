@@ -248,7 +248,12 @@ public class CryptoUriParser {
             });
         } else {
             BRAnimator.killAllFragments(app);
-            BRCoreTransaction tx = wallet.getWallet().createTransaction(requestObject.amount.longValue(), new BRCoreAddress(requestObject.address));
+            BRCoreAddress address = new BRCoreAddress(requestObject.address);
+            if (!address.isValid()) {
+                BRDialog.showSimpleDialog(app, app.getString(R.string.Send_invalidAddressTitle), "");
+                return true;
+            }
+            BRCoreTransaction tx = wallet.getWallet().createTransaction(requestObject.amount.longValue(), address);
             if (tx == null) {
                 BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), "Insufficient amount for transaction", app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                     @Override
