@@ -419,7 +419,7 @@ public class FragmentSend extends Fragment {
                 }
                 BRCoreAddress address = new BRCoreAddress(req.address);
                 Activity app = getActivity();
-                if (address.stringify().isEmpty() || !address.isValid()) {
+                if (!address.isValid()) {
                     allFilled = false;
 
                     BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_noAddress), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
@@ -718,17 +718,17 @@ public class FragmentSend extends Fragment {
             fee = 0;
         } else {
             BRCoreAddress coreAddress = new BRCoreAddress(addressEdit.getText().toString());
-            if (Utils.isNullOrEmpty(coreAddress.stringify()) || !coreAddress.isValid() || wallet.getWallet().createTransaction(cryptoAmount.longValue(), coreAddress) == null) {
+            if (!coreAddress.isValid()) {
+                sayInvalidAddress();
+                return;
+            }
+            BRCoreTransaction tx = wallet.getWallet().createTransaction(cryptoAmount.longValue(), coreAddress);
+            if (tx == null) {
                 fee = wallet.getWallet().getFeeForTransactionAmount(cryptoAmount.longValue());
             } else {
-                BRCoreTransaction tx = wallet.getWallet().createTransaction(cryptoAmount.longValue(), coreAddress);
-                if (tx == null)
+                fee = wallet.getWallet().getTransactionFee(tx);
+                if (fee <= 0)
                     fee = wallet.getWallet().getFeeForTransactionAmount(cryptoAmount.longValue());
-                else {
-                    fee = wallet.getWallet().getTransactionFee(tx);
-                    if (fee == 0)
-                        fee = wallet.getWallet().getFeeForTransactionAmount(cryptoAmount.longValue());
-                }
             }
         }
 
@@ -738,7 +738,6 @@ public class FragmentSend extends Fragment {
         //format the fee to the selected ISO
         String formattedFee = CurrencyUtils.getFormattedAmount(app, selectedIso, isIsoCrypto ? wallet.getSmallestCryptoForCrypto(app, isoFee) : isoFee);
 //        Log.e(TAG, "updateText: aproxFee:" + aproxFee);
-
 
         boolean isOverTheBalance = inputAmount.doubleValue() > isoBalance.doubleValue();
         if (isOverTheBalance) {
