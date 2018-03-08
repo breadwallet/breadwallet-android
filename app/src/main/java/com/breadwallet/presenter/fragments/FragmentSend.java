@@ -718,11 +718,11 @@ public class FragmentSend extends Fragment {
             fee = 0;
         } else {
             BRCoreAddress coreAddress = new BRCoreAddress(addressEdit.getText().toString());
-            if (!coreAddress.isValid()) {
-                sayInvalidAddress();
-                return;
+            BRCoreTransaction tx = null;
+            if (coreAddress.isValid()) {
+                tx = wallet.getWallet().createTransaction(cryptoAmount.longValue(), coreAddress);
             }
-            BRCoreTransaction tx = wallet.getWallet().createTransaction(cryptoAmount.longValue(), coreAddress);
+
             if (tx == null) {
                 fee = wallet.getWallet().getFeeForTransactionAmount(cryptoAmount.longValue());
             } else {
