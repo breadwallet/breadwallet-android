@@ -44,7 +44,7 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
     // Database fields
     private SQLiteDatabase database;
     private final BRSQLiteHelper dbHelper;
-    private final String[] allColumns = {
+    public static final String[] allColumns = {
             BRSQLiteHelper.TX_COLUMN_ID,
             BRSQLiteHelper.TX_BUFF,
             BRSQLiteHelper.TX_BLOCK_HEIGHT,
@@ -140,7 +140,8 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
         return transactions;
     }
 
-    private BRTransactionEntity cursorToTransaction(Context app, String iso, Cursor cursor) {
+
+    public static BRTransactionEntity cursorToTransaction(Context app, String iso, Cursor cursor) {
         return new BRTransactionEntity(cursor.getBlob(1), cursor.getInt(2), cursor.getLong(3), cursor.getString(0), iso.toUpperCase());
     }
 
