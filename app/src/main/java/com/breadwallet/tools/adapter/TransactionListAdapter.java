@@ -76,7 +76,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 //    private boolean updatingMetadata;
 
     public TransactionListAdapter(Context mContext, List<TxUiHolder> items) {
-        this.txResId = R.layout.wallet_tx_item;
+        this.txResId = R.layout.tx_item;
         this.promptResId = R.layout.prompt_item;
         this.mContext = mContext;
         items = new ArrayList<>();

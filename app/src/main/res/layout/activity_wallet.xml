@@ -124,6 +124,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginBottom="62dp"
                         android:layout_marginEnd="15dp"
+                        android:keepScreenOn="true"
                         android:indeterminate="false"
                         android:max="100"
                         android:progress="0"

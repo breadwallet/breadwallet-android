@@ -59,6 +59,7 @@
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="30dp"
         android:layout_height="3dp"
+        android:keepScreenOn="true"
         android:layout_alignParentRight="true"
         android:layout_below="@id/wallet_balance_usd"
         android:layout_marginRight="15dp"

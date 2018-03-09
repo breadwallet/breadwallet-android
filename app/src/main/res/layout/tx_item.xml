@@ -1,129 +1,83 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                xmlns:app="http://schemas.android.com/apk/res-auto"
-                android:id="@+id/main_layout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="1dp"
-                android:elevation="4dp"
-    >
-
-    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-                                                 xmlns:app="http://schemas.android.com/apk/res-auto"
-                                                 android:id="@+id/constraintLayout"
-                                                 android:layout_width="match_parent"
-                                                 android:layout_height="match_parent"
-                                                 android:filterTouchesWhenObscured="true">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="@color/white">
 
 
-        <com.breadwallet.presenter.customviews.BRText
-            android:id="@+id/sent_received"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:text="Sent"
-            android:textColor="@color/almost_black"
-            app:customTFont="CircularPro-Book.otf"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-
-        <com.breadwallet.presenter.customviews.BRText
-            android:id="@+id/amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:text="$25"
-            android:textColor="@color/almost_black"
-            app:customTFont="CircularPro-Bold.otf"
-            app:layout_constraintBottom_toBottomOf="@+id/sent_received"
-            app:layout_constraintLeft_toRightOf="@+id/sent_received"
-            app:layout_constraintTop_toTopOf="@+id/sent_received"/>
-
-        <com.breadwallet.presenter.customviews.BRText
-            android:id="@+id/account"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="0dp"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="0dp"
-            android:ellipsize="middle"
-            android:singleLine="true"
-            android:text="account"
-            android:textColor="@color/almost_black"
-            app:customTFont="CircularPro-Bold.otf"
-            app:layout_constraintLeft_toLeftOf="@+id/sent_received"
-            app:layout_constraintTop_toBottomOf="@+id/sent_received"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintRight_toLeftOf="@+id/timestamp"
-            app:layout_constraintVertical_bias="0.0"/>
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/tx_date"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="12dp"
+        android:layout_marginTop="12dp"
+        android:text="Dec 2"
+        android:textColor="@color/total_assets_usd_color"
+        android:textSize="15sp"
+        app:customTFont="CircularPro-Book.otf" />
 
 
-        <com.breadwallet.presenter.customviews.BRText
-            android:id="@+id/status"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="8dp"
-            android:text="Completed"
-            android:textColor="@color/almost_black"
-            app:customTFont="CircularPro-Book.otf"
-            app:layout_constraintLeft_toLeftOf="@+id/sent_received"
-            app:layout_constraintTop_toBottomOf="@+id/comment"
-            />
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/tx_description"
+        android:layout_width="130dp"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/tx_date"
+        android:layout_below="@id/tx_date"
+        android:paddingBottom="4dp"
+        android:ellipsize="end"
+        android:maxLength="20"
+        android:maxLines="1"
+        android:text="sent to f94c57..."
+        android:textColor="@color/settings_chevron_right"
+        android:textSize="14sp" />
 
-        <com.breadwallet.presenter.customviews.BRText
-            android:id="@+id/status_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="8dp"
-            android:text="@string/Transaction.available"
-            android:textColor="#48F0B8"
-            app:customTFont="CircularPro-Bold.otf"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="@+id/sent_received"
-            app:layout_constraintTop_toBottomOf="@+id/status"
-            app:layout_constraintVertical_bias="0.0"/>
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/tx_amount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="12dp"
+        android:text="-$839.30"
+        android:textSize="16sp"
+        app:customTFont="CircularPro-Bold.otf"/>
 
-        <com.breadwallet.presenter.customviews.BRText
-            android:id="@+id/timestamp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_marginTop="16dp"
-            android:text="2d"
-            android:textColor="@color/light_gray"
-            app:customTFont="CircularPro-Medium.otf"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
+    <ProgressBar
+        android:id="@+id/tx_progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="40dp"
+        android:layout_height="5dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/tx_date"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="12dp"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="0"
+        android:progressBackgroundTint="#552196f3"
+        android:progressDrawable="@drawable/wallet_sync_progress_bar"
+        android:progressTint="#4b77f3"
+        android:visibility="invisible" />
 
-        <com.breadwallet.presenter.customviews.BRText
-            android:id="@+id/comment"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="0dp"
-            android:layout_marginTop="8dp"
-            android:text="For Love"
-            android:textColor="@color/almost_black"
-            app:customTFont="CircularPro-Book.otf"
-            app:layout_constraintLeft_toLeftOf="@+id/sent_received"
-            app:layout_constraintTop_toBottomOf="@+id/account"/>
+    <Button
+        android:id="@+id/tx_failed_button"
+        android:layout_width="46dp"
+        android:layout_height="22dp"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="12dp"
+        android:text="failed"
+        android:textSize="11sp"
+        android:visibility="invisible"
+        android:textStyle="bold"
+        android:background="@drawable/tx_failed_indicator"
+        android:textColor="@color/white" />
 
-        <ImageView
-            android:id="@+id/arrow_icon"
-            android:layout_width="16dp"
-            android:layout_height="16dp"
-            android:layout_marginBottom="0dp"
-            android:layout_marginEnd="4dp"
-            android:layout_marginTop="0dp"
-            app:layout_constraintBottom_toBottomOf="@+id/timestamp"
-            app:layout_constraintRight_toLeftOf="@+id/timestamp"
-            app:layout_constraintTop_toTopOf="@+id/timestamp"
-            app:srcCompat="@drawable/animated_check"/>
-    </android.support.constraint.ConstraintLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_alignParentBottom="true"
+        android:background="@color/light_gray" />
+
 </RelativeLayout>
