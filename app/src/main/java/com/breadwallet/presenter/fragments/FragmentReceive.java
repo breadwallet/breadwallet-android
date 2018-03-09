@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRKeyboard;
@@ -314,7 +315,7 @@ public class FragmentReceive extends Fragment {
         Activity app = getActivity();
         BRClipboardManager.putClipboard(app, mAddress.getText().toString());
         //copy the legacy for testing purposes (testnet faucet money receiving)
-        if (Utils.isEmulatorOrDebug(app))
+        if (Utils.isEmulatorOrDebug(app) && BuildConfig.BITCOIN_TESTNET)
             BRClipboardManager.putClipboard(app, WalletsMaster.getInstance(app).getCurrentWallet(app).undecorateAddress(app, mAddress.getText().toString()));
 
         showCopiedLayout(true);
