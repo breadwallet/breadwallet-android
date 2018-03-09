@@ -2,7 +2,6 @@ package com.breadwallet.presenter.activities;
 
 import android.animation.LayoutTransition;
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -291,21 +290,21 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             BRDialog.showHelpDialog(this, getString(R.string.Dialog_welcomeBchTitle), getString(R.string.Dialog_welcomeBchMessage), getString(R.string.Dialog_Home), getString(R.string.Dialog_Dismiss), new BRDialogView.BROnClickListener() {
                 @Override
                 public void onClick(BRDialogView brDialogView) {
-                    Intent intent = new Intent(WalletActivity.this, HomeActivity.class);
-                    startActivity(intent);
+                    brDialogView.dismiss();
+                    onBackPressed();
                 }
             }, new BRDialogView.BROnClickListener() {
 
                 @Override
                 public void onClick(BRDialogView brDialogView) {
-                    brDialogView.dismissWithAnimation();
+                    brDialogView.dismiss();
 
                 }
             }, new BRDialogView.BROnClickListener() {
                 @Override
                 public void onClick(BRDialogView brDialogView) {
                     Log.d(TAG, "help clicked!");
-                    brDialogView.dismissWithAnimation();
+                    brDialogView.dismiss();
                     BRAnimator.showSupportFragment(WalletActivity.this, BRConstants.bchFaq);
 
                 }

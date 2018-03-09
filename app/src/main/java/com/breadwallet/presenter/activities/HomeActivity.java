@@ -147,14 +147,15 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             BRDialog.showHelpDialog(this, getString(R.string.Dialog_welcomeBchTitle), getString(R.string.Dialog_welcomeBchMessage), getString(R.string.Dialog_Home), getString(R.string.Dialog_Dismiss), new BRDialogView.BROnClickListener() {
                 @Override
                 public void onClick(BRDialogView brDialogView) {
-                  brDialogView.dismissWithAnimation();
+
+                    brDialogView.dismiss();
+
                 }
             }, new BRDialogView.BROnClickListener() {
 
                 @Override
                 public void onClick(BRDialogView brDialogView) {
-                    brDialogView.dismissWithAnimation();
-
+                    getFragmentManager().popBackStack();
                 }
             }, new BRDialogView.BROnClickListener() {
                 @Override

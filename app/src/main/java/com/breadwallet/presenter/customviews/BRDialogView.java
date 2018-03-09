@@ -12,8 +12,6 @@ import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -60,7 +58,8 @@ public class BRDialogView extends DialogFragment {
     private BRDialogView.BROnClickListener helpListener;
     private DialogInterface.OnDismissListener dismissListener;
     private int iconRes = 0;
-    private Button negativeButton;
+    private BRButton negativeButton;
+    private BRButton positiveButton;
     private LinearLayout buttonsLayout;
     private ImageButton helpButton;
 
@@ -78,8 +77,8 @@ public class BRDialogView extends DialogFragment {
         View view = inflater.inflate(R.layout.bread_alert_dialog, null);
         TextView titleText = (TextView) view.findViewById(R.id.dialog_title);
         TextView messageText = (TextView) view.findViewById(R.id.dialog_text);
-        Button positiveButton = (Button) view.findViewById(R.id.pos_button);
-        negativeButton = (Button) view.findViewById(R.id.neg_button);
+        positiveButton = view.findViewById(R.id.pos_button);
+        negativeButton = view.findViewById(R.id.neg_button);
 //        ImageView icon = (ImageView) view.findViewById(R.id.dialog_icon);
         mainLayout = (ConstraintLayout) view.findViewById(R.id.main_layout);
         buttonsLayout = (LinearLayout) view.findViewById(R.id.linearLayout3);
@@ -91,6 +90,8 @@ public class BRDialogView extends DialogFragment {
             messageText.setText(spanMessage);
             messageText.setMovementMethod(LinkMovementMethod.getInstance());
         }
+
+        positiveButton.setColor(getResources().getColor(R.color.blue));
         positiveButton.setText(posButton);
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,6 +106,8 @@ public class BRDialogView extends DialogFragment {
             buttonsLayout.removeView(negativeButton);
             buttonsLayout.requestLayout();
         }
+
+        negativeButton.setColor(getResources().getColor(R.color.pin_pad_text));
         negativeButton.setText(negButton);
         negativeButton.setOnClickListener(new View.OnClickListener() {
             @Override
