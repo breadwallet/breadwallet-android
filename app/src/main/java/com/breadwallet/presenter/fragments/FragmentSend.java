@@ -44,12 +44,12 @@ import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.SendManager;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.math.BigDecimal;
 
@@ -310,7 +310,7 @@ public class FragmentSend extends Fragment {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            BaseWalletManager wallet = wm.getCurrentWallet(app);
+                            final BaseWalletManager wallet = wm.getCurrentWallet(app);
                             if (wallet.getWallet().containsAddress(address)) {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
@@ -329,7 +329,15 @@ public class FragmentSend extends Fragment {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        BRDialog.showCustomDialog(getActivity(), getString(R.string.Send_UsedAddress_firstLine), getString(R.string.Send_UsedAddress_secondLIne), "Ignore", "Cancel", new BRDialogView.BROnClickListener() {
+                                        String walletIso = wallet.getIso(getActivity());
+                                        String firstLine = "";
+
+                                        if (walletIso.equalsIgnoreCase("BTC")) {
+                                            firstLine = getString(R.string.Sendbtc_UsedAddress_firstLine);
+                                        } else if (walletIso.equalsIgnoreCase("BCH")) {
+                                            firstLine = getString(R.string.Sendbch_UsedAddress_firstLine);
+                                        }
+                                        BRDialog.showCustomDialog(getActivity(), firstLine, getString(R.string.Send_UsedAddress_secondLIne), "Ignore", "Cancel", new BRDialogView.BROnClickListener() {
                                             @Override
                                             public void onClick(BRDialogView brDialogView) {
                                                 brDialogView.dismiss();
