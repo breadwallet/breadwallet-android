@@ -182,7 +182,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
                         BRCoreKey signingKey = new BRCoreKey(key);
 
-                        mTransaction.sign(signingKey);
+                        mTransaction.sign(signingKey, walletManager.getForkId());
 
                         if (!mTransaction.isSigned()) {
                             String err = "transaction is not signed";
