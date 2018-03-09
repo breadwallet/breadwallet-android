@@ -152,7 +152,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        if (oldVersion < 13 && newVersion == 13) {
+        if (oldVersion < 13 && newVersion == 13 || newVersion == 15) {
 
             onCreate(db); //create new db tables
 
