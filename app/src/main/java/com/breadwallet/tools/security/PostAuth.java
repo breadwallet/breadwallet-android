@@ -80,7 +80,7 @@ public class PostAuth {
     }
 
     public void onCreateWalletAuth(Activity app, boolean authAsked) {
-        Log.e(TAG, "onCreateWalletAuth: " + authAsked + ", " + app.getClass().getName());
+        Log.e(TAG, "onCreateWalletAuth: " + authAsked);
         long start = System.currentTimeMillis();
         boolean success = WalletsMaster.getInstance(app).generateRandomSeed(app);
         if (success) {
