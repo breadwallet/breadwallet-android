@@ -313,7 +313,7 @@ public class BRSharedPrefs {
 
     public static void putCurrentWalletIso(Context activity, String iso) {
         Log.d(TAG, "putCurrentWalletIso(), ISO -> " + iso);
-        if(iso == null) throw new NullPointerException("cannot be null");
+        if (iso == null) throw new NullPointerException("cannot be null");
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("currentWalletIso", iso);
@@ -368,6 +368,19 @@ public class BRSharedPrefs {
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("scanRecommended_" + iso.toUpperCase(), recommended);
+        editor.apply();
+    }
+
+    public static boolean getBchPreforkSynced(Context context) {
+        SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
+        return settingsToGet.getBoolean("preforkSynced", false);
+    }
+
+    public static void putBchPreforkSynced(Context context, boolean synced) {
+        if (context == null) return;
+        SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("preforkSynced", synced);
         editor.apply();
     }
 
@@ -458,14 +471,14 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static void putBchDialogShown(Context context, boolean shown){
+    public static void putBchDialogShown(Context context, boolean shown) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean("bchDialogShown", shown);
         editor.apply();
     }
 
-    public static boolean wasBchDialogShown(Context context){
+    public static boolean wasBchDialogShown(Context context) {
 
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean("bchDialogShown", false);
