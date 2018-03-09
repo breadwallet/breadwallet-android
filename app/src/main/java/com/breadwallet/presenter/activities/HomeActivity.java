@@ -152,8 +152,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
                 @Override
                 public void onClick(BRDialogView brDialogView) {
-                    brDialogView.dismissWithAnimation();
-
+                    getFragmentManager().popBackStack();
                 }
             }, new BRDialogView.BROnClickListener() {
                 @Override
