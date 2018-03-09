@@ -129,10 +129,10 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                 return null;
             }
             BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
-            //long time = BRKeyStore.getWalletCreationTime(app);
+            long time = BRKeyStore.getWalletCreationTime(app);
 //            if (Utils.isEmulatorOrDebug(app)) time = 1517955529;
             //long time = 1519190488;
-            long time = (System.currentTimeMillis() / 1000) - 3 * 7 * 24 * 60 * 60; // 3 * 7
+//            long time = (System.currentTimeMillis() / 1000) - 3 * 7 * 24 * 60 * 60; // 3 * 7
 
             instance = new WalletBitcoinManager(app, pubKey, BuildConfig.BITCOIN_TESTNET ? BRCoreChainParams.testnetChainParams : BRCoreChainParams.mainnetChainParams, time);
         }
