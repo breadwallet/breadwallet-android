@@ -188,15 +188,15 @@ public class FragmentTxDetails extends DialogFragment {
 
             BigDecimal endingBalance = isCryptoPreferred ? walletManager.getCryptoForSmallestCrypto(getActivity(), new BigDecimal(mTransaction.getBalanceAfterTx())) : walletManager.getFiatForSmallestCrypto(getActivity(), new BigDecimal(mTransaction.getBalanceAfterTx()), null);
 
-            mStartingBalance.setText(CurrencyUtils.getFormattedAmount(getActivity(), iso, startingBalance));
-            mEndingBalance.setText(CurrencyUtils.getFormattedAmount(getActivity(), iso, endingBalance));
+            mStartingBalance.setText(CurrencyUtils.getFormattedAmount(getActivity(), iso, startingBalance.abs()));
+            mEndingBalance.setText(CurrencyUtils.getFormattedAmount(getActivity(), iso, endingBalance.abs()));
 
             mTxAction.setText(sent ? "Sent" : "Received");
             mToFrom.setText(sent ? "To " : "Via ");
 
             mToFromAddress.setText(mTransaction.getTo()[0]); //showing only the destination address
 
-            // Allow the to/from address to be copiable
+            // Allow the to/from address to be copyable
             mToFromAddress.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -252,8 +252,8 @@ public class FragmentTxDetails extends DialogFragment {
 
             }
 
-            // Set the transaction date
-            mTxDate.setText(BRDateUtil.getLongDate(mTransaction.getTimeStamp() * 1000));
+            // timestamp is 0 if it's not confirmed in a block yet so make it now
+            mTxDate.setText(BRDateUtil.getLongDate(mTransaction.getTimeStamp() == 0 ? System.currentTimeMillis() : (mTransaction.getTimeStamp() * 1000)));
 
             // Set the transaction id
             mTransactionId.setText(mTransaction.getTxHashHexReversed());
