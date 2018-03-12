@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
   <!-- App name -->
-  <string name="About.appName.android">Bread</string>
+  <string name="About.appName.android">BRD</string>
   <!-- About screen blog label -->
   <string name="About.blog">博客</string>
   <!-- About screen footer -->
