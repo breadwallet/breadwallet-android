@@ -57,7 +57,7 @@ public class BRDialogView extends DialogFragment {
     private BRDialogView.BROnClickListener negListener;
     private DialogInterface.OnDismissListener dismissListener;
     private int iconRes = 0;
-    private Button negativeButton;
+    private BRButton negativeButton;
     private LinearLayout buttonsLayout;
 
     //provide the way to have clickable span in the message
@@ -73,8 +73,8 @@ public class BRDialogView extends DialogFragment {
         View view = inflater.inflate(R.layout.bread_alert_dialog, null);
         TextView titleText = (TextView) view.findViewById(R.id.dialog_title);
         TextView messageText = (TextView) view.findViewById(R.id.dialog_text);
-        Button positiveButton = (Button) view.findViewById(R.id.pos_button);
-        negativeButton = (Button) view.findViewById(R.id.neg_button);
+        BRButton positiveButton = view.findViewById(R.id.pos_button);
+        negativeButton = view.findViewById(R.id.neg_button);
 //        ImageView icon = (ImageView) view.findViewById(R.id.dialog_icon);
         mainLayout = (ConstraintLayout) view.findViewById(R.id.main_layout);
         buttonsLayout = (LinearLayout) view.findViewById(R.id.linearLayout3);
@@ -85,6 +85,7 @@ public class BRDialogView extends DialogFragment {
             messageText.setText(spanMessage);
             messageText.setMovementMethod(LinkMovementMethod.getInstance());
         }
+        positiveButton.setHasShadow(false);
         positiveButton.setText(posButton);
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,6 +100,8 @@ public class BRDialogView extends DialogFragment {
             buttonsLayout.removeView(negativeButton);
             buttonsLayout.requestLayout();
         }
+
+        negativeButton.setHasShadow(false);
         negativeButton.setText(negButton);
         negativeButton.setOnClickListener(new View.OnClickListener() {
             @Override
