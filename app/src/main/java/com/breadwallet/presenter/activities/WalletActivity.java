@@ -2,6 +2,8 @@ package com.breadwallet.presenter.activities;
 
 import android.animation.LayoutTransition;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -54,6 +56,7 @@ import com.breadwallet.wallet.wallets.util.CryptoUriParser;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import static com.breadwallet.tools.animation.BRAnimator.t1Size;
 import static com.breadwallet.tools.animation.BRAnimator.t2Size;
@@ -313,6 +316,29 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             BRSharedPrefs.putBchDialogShown(WalletActivity.this, true);
         }
 
+
+    }
+
+    // This method checks if a screen altering app(such as Twightlight) is currently running
+    // If it is, notify the user that the BRD app will not function properly and they should
+    // disable it
+    private boolean checkIfScreenAlteringAppIsRunning(String packageName) {
+
+        // Get the Activity Manager
+        ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+
+        // Get a list of running tasks, we are only interested in the last one,
+        // the top most so we give a 1 as parameter so we only get the topmost.
+        List<ActivityManager.RunningTaskInfo> task = manager.getRunningTasks(1);
+
+        // Get the info we need for comparison.
+        ComponentName componentInfo = task.get(0).topActivity;
+
+        // Check if it matches our package name.
+        if (componentInfo.getPackageName().equals(packageName)) return true;
+
+        // If not then our app is not on the foreground.
+        return false;
 
     }
 
