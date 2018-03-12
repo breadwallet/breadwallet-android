@@ -486,11 +486,7 @@
   <string name="Settings.bitcoin">Bitcoin</string>
   <string name="Settings.bitcoinCash">BitcoinCash</string>
   <string name="Settings.other">Other</string>
-  <string name="Settings.aboutBread">About Bread</string>
-
-
-
-
+  <string name="Settings.aboutBread">About BRD</string>
 
   <!-- Join Early access label -->
   <string name="Settings.earlyAccess">Join Early Access</string>
