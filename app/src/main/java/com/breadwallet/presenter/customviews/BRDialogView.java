@@ -77,7 +77,7 @@ public class BRDialogView extends DialogFragment {
         View view = inflater.inflate(R.layout.bread_alert_dialog, null);
         TextView titleText = (TextView) view.findViewById(R.id.dialog_title);
         TextView messageText = (TextView) view.findViewById(R.id.dialog_text);
-        positiveButton = view.findViewById(R.id.pos_button);
+        BRButton positiveButton = view.findViewById(R.id.pos_button);
         negativeButton = view.findViewById(R.id.neg_button);
 //        ImageView icon = (ImageView) view.findViewById(R.id.dialog_icon);
         mainLayout = (ConstraintLayout) view.findViewById(R.id.main_layout);
@@ -90,8 +90,7 @@ public class BRDialogView extends DialogFragment {
             messageText.setText(spanMessage);
             messageText.setMovementMethod(LinkMovementMethod.getInstance());
         }
-
-        positiveButton.setColor(getResources().getColor(R.color.blue));
+        positiveButton.setHasShadow(false);
         positiveButton.setText(posButton);
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,7 +106,7 @@ public class BRDialogView extends DialogFragment {
             buttonsLayout.requestLayout();
         }
 
-        negativeButton.setColor(getResources().getColor(R.color.pin_pad_text));
+        negativeButton.setHasShadow(false);
         negativeButton.setText(negButton);
         negativeButton.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -45,13 +45,13 @@ import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.SendManager;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.wallets.util.CryptoUriParser;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.math.BigDecimal;
 
@@ -332,7 +332,15 @@ public class FragmentSend extends Fragment {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        BRDialog.showCustomDialog(getActivity(), getString(R.string.Send_UsedAddress_firstLine), getString(R.string.Send_UsedAddress_secondLIne), "Ignore", "Cancel", new BRDialogView.BROnClickListener() {
+                                        String walletIso = wm.getIso(getActivity());
+                                        String firstLine = "";
+
+                                        if (walletIso.equalsIgnoreCase("BTC")) {
+                                            firstLine = getString(R.string.Sendbtc_UsedAddress_firstLine);
+                                        } else if (walletIso.equalsIgnoreCase("BCH")) {
+                                            firstLine = getString(R.string.Sendbch_UsedAddress_firstLine);
+                                        }
+                                        BRDialog.showCustomDialog(getActivity(), firstLine, getString(R.string.Send_UsedAddress_secondLIne), "Ignore", "Cancel", new BRDialogView.BROnClickListener() {
                                             @Override
                                             public void onClick(BRDialogView brDialogView) {
                                                 brDialogView.dismiss();
