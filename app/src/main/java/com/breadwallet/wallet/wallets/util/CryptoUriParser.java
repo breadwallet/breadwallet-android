@@ -210,7 +210,7 @@ public class CryptoUriParser {
         String scheme = u.getScheme();
         if (scheme != null && scheme.equalsIgnoreCase("bread")) {
             String schemeSpecific = u.getSchemeSpecificPart();
-            if (schemeSpecific.startsWith("//")) {
+            if (schemeSpecific != null && schemeSpecific.startsWith("//")) {
                 // Fix invalid bitcoin uri
                 schemeSpecific = schemeSpecific.substring(2);
             }
