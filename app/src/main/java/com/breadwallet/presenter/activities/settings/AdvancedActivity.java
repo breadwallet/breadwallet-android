@@ -18,7 +18,6 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
-import com.breadwallet.tools.manager.BRSharedPrefs;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -44,7 +43,7 @@ public class AdvancedActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_advanced);
 
-        listView = (ListView) findViewById(R.id.settings_list);
+        listView = findViewById(R.id.settings_list);
         mBackButton = findViewById(R.id.back_button);
 
         mBackButton.setOnClickListener(new View.OnClickListener() {
@@ -55,7 +54,6 @@ public class AdvancedActivity extends BRActivity {
         });
 
     }
-
 
     public class SettingsListAdapter extends ArrayAdapter<String> {
 
@@ -86,15 +84,8 @@ public class AdvancedActivity extends BRActivity {
             }
 
             TextView title = v.findViewById(R.id.item_title);
-
-            if(position == 1) {
-                if (BRSharedPrefs.getCurrentWalletIso(AdvancedActivity.this).equals("BTC")) {
-                    title.setText("Bitcoin Nodes");
-                } else if (BRSharedPrefs.getCurrentWalletIso(AdvancedActivity.this).equals("BCH")) {
-                    title.setText("BitcoinCash Nodes");
-
-                }
-            }
+            if (position == 1)
+                title.setText("Bitcoin Nodes");
             return v;
 
         }
@@ -108,6 +99,7 @@ public class AdvancedActivity extends BRActivity {
         public int getItemViewType(int position) {
             return super.getItemViewType(position);
         }
+
     }
 
     @Override

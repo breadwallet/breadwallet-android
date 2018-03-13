@@ -58,8 +58,6 @@ import java.math.BigDecimal;
 import static com.breadwallet.tools.animation.BRAnimator.t1Size;
 import static com.breadwallet.tools.animation.BRAnimator.t2Size;
 
-//import com.breadwallet.tools.manager.SyncManager;
-
 /**
  * Created by byfieldj on 1/16/18.
  * <p>
@@ -221,7 +219,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         if (data != null && !data.toString().isEmpty()) {
             //handle external click with crypto scheme
             CryptoUriParser.processRequest(this, data.toString(), WalletsMaster.getInstance(this).getCurrentWallet(this));
-
         }
     }
 
@@ -535,24 +532,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         }
     }
 
-//    private void exchangeTest() {
-//        WalletBitcoinManager walletBitcoinManager = WalletBitcoinManager.getInstance(this);
-//        WalletBchManager walletBchManager = WalletBchManager.getInstance(this);
-//
-//        BigDecimal satoshis = new BigDecimal(50000000);
-//        BigDecimal fiat = new BigDecimal(15000);
-//
-//        Log.e(TAG, "exchangeTest: walletBitcoinManager.getFiatForSmallestCrypto:" + walletBitcoinManager.getFiatForSmallestCrypto(this, satoshis).toPlainString());
-//        Log.e(TAG, "exchangeTest: walletBitcoinManager.getFiatExchangeRate:" + walletBitcoinManager.getFiatExchangeRate(this).toPlainString());
-//        Log.e(TAG, "exchangeTest: walletBitcoinManager.getCryptoForFiat:" + walletBitcoinManager.getCryptoForFiat(this, fiat).toPlainString());
-//        Log.e(TAG, "exchangeTest: walletBitcoinManager.getSmallestCryptoForFiat:" + walletBitcoinManager.getSmallestCryptoForFiat(this, fiat).toPlainString());
-//
-//        Log.e(TAG, "exchangeTest: walletBchManager.getFiatForSmallestCrypto:" + walletBchManager.getFiatForSmallestCrypto(this, satoshis).toPlainString());
-//        Log.e(TAG, "exchangeTest: walletBchManager.getFiatExchangeRate:" + walletBchManager.getFiatExchangeRate(this).toPlainString());
-//        Log.e(TAG, "exchangeTest: walletBchManager.getCryptoForFiat:" + walletBchManager.getCryptoForFiat(this, fiat).toPlainString());
-//        Log.e(TAG, "exchangeTest: walletBchManager.getSmallestCryptoForFiat:" + walletBchManager.getSmallestCryptoForFiat(this, fiat).toPlainString());
-//
-//    }
 
     @Override
     public void onBackPressed() {
