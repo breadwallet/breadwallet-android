@@ -188,8 +188,8 @@ public class FragmentTxDetails extends DialogFragment {
 
             BigDecimal endingBalance = isCryptoPreferred ? walletManager.getCryptoForSmallestCrypto(getActivity(), new BigDecimal(mTransaction.getBalanceAfterTx())) : walletManager.getFiatForSmallestCrypto(getActivity(), new BigDecimal(mTransaction.getBalanceAfterTx()), null);
 
-            mStartingBalance.setText(CurrencyUtils.getFormattedAmount(getActivity(), iso, startingBalance.abs()));
-            mEndingBalance.setText(CurrencyUtils.getFormattedAmount(getActivity(), iso, endingBalance.abs()));
+            mStartingBalance.setText(CurrencyUtils.getFormattedAmount(getActivity(), iso, startingBalance == null ? null : startingBalance.abs()));
+            mEndingBalance.setText(CurrencyUtils.getFormattedAmount(getActivity(), iso, endingBalance == null ? null : endingBalance.abs()));
 
             mTxAction.setText(sent ? "Sent" : "Received");
             mToFrom.setText(sent ? "To " : "Via ");
