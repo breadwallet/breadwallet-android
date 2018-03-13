@@ -105,6 +105,7 @@ public class BRDialogView extends DialogFragment {
             Log.e(TAG, "onCreateDialog: removing negative button");
             buttonsLayout.removeView(negativeButton);
             buttonsLayout.requestLayout();
+
         }
 
         negativeButton.setColor(getResources().getColor(R.color.pin_pad_text));
