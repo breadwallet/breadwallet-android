@@ -28,6 +28,7 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreTransaction;
@@ -283,14 +284,20 @@ public class FragmentSend extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                String bitcoinUrl = BRClipboardManager.getClipboard(getActivity());
-                if (Utils.isNullOrEmpty(bitcoinUrl)) {
+                String theUrl = BRClipboardManager.getClipboard(getActivity());
+                if (Utils.isNullOrEmpty(theUrl)) {
                     sayClipboardEmpty();
                     return;
                 }
+
                 final BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
-                CryptoRequest obj = parseRequest(getActivity(), bitcoinUrl);
+
+                if (Utils.isEmulatorOrDebug(getActivity()) && BuildConfig.BITCOIN_TESTNET) {
+                    theUrl = wm.decorateAddress(getActivity(), theUrl);
+                }
+
+                CryptoRequest obj = parseRequest(getActivity(), theUrl);
 
                 if (obj == null || Utils.isNullOrEmpty(obj.address)) {
                     sayInvalidClipboardData();
@@ -344,7 +351,7 @@ public class FragmentSend extends Fragment {
                                             @Override
                                             public void onClick(BRDialogView brDialogView) {
                                                 brDialogView.dismiss();
-                                                addressEdit.setText(address.stringify());
+                                                addressEdit.setText(wm.decorateAddress(getActivity(), address.stringify()));
                                             }
                                         }, new BRDialogView.BROnClickListener() {
                                             @Override
@@ -359,6 +366,7 @@ public class FragmentSend extends Fragment {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
+                                        Log.e(TAG, "run: " + wm.getIso(getActivity()));
                                         addressEdit.setText(wm.decorateAddress(getActivity(), address.stringify()));
 
                                     }

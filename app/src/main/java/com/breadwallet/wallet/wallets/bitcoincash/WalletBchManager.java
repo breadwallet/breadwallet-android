@@ -131,7 +131,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             }
             BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
             long time = BRKeyStore.getWalletCreationTime(app);
-            if (!BRSharedPrefs.getBchPreforkSynced(app))
+            if (!BRSharedPrefs.getBchPreforkSynced(app) && time == 0)
                 time = BuildConfig.BITCOIN_TESTNET ? 1501597117 : 1501568580;
 //            if (Utils.isEmulatorOrDebug(app)) time = 1517955529;
             //long time = 1519190488;
