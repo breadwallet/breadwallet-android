@@ -85,13 +85,10 @@ public class CryptoRequest {
     }
 
     public boolean notEnoughForFee(Context app, BaseWalletManager walletManager) {
-        long feeForTx = walletManager.getWallet().getTransactionFee(tx);
-        if (feeForTx == 0) {
-            long maxOutput = walletManager.getWallet().getMaxOutputAmount();
-            feeForTx = walletManager.getWallet().getFeeForTransactionAmount(maxOutput);
-            return feeForTx > 0;
-        }
-        return false;
+        long maxOutput = walletManager.getWallet().getMaxOutputAmount();
+        if (maxOutput <= 0) return false;
+        long feeForTx = walletManager.getWallet().getFeeForTransactionAmount(maxOutput);
+        return feeForTx > 0;
     }
 
     public String getReceiver(BaseWalletManager walletManager) {

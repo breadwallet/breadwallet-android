@@ -456,18 +456,17 @@ public class FragmentSend extends Fragment {
                     SpringAnimator.failShakeAnimation(getActivity(), balanceText);
                     SpringAnimator.failShakeAnimation(getActivity(), feeText);
                 }
-
 //                Log.e(TAG, "before createTransaction: smallestCryptoAmount.longValue: " + cryptoAmount.longValue() + ", addrs: " + address.stringify());
                 BRCoreTransaction tx = wallet.getWallet().createTransaction(cryptoAmount.longValue(), address);
-                if (tx == null) {
-                    BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_creatTransactionError), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            brDialogView.dismissWithAnimation();
-                        }
-                    }, null, null, 0);
-                    return;
-                }
+//                if (tx == null) {
+//                    BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_creatTransactionError), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+//                        @Override
+//                        public void onClick(BRDialogView brDialogView) {
+//                            brDialogView.dismissWithAnimation();
+//                        }
+//                    }, null, null, 0);
+//                    return;
+//                }
 
                 if (allFilled) {
                     CryptoRequest item = new CryptoRequest(tx, null, false, comment, req.address, cryptoAmount);
