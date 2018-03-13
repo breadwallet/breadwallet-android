@@ -67,8 +67,6 @@ public class SpendLimitActivity extends BRActivity {
             }
         });
 
-        final BaseWalletManager wm = WalletsMaster.getInstance(this).getCurrentWallet(this);
-
         listView = findViewById(R.id.limit_list);
         listView.setFooterDividersEnabled(true);
         adapter = new LimitAdaptor(this);
