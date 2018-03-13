@@ -208,7 +208,7 @@ public class CryptoUriParser {
 
         Uri u = Uri.parse(tmp);
         String scheme = u.getScheme();
-        if (scheme.equalsIgnoreCase("bread")) {
+        if (scheme != null && scheme.equalsIgnoreCase("bread")) {
             String schemeSpecific = u.getSchemeSpecificPart();
             if (schemeSpecific.startsWith("//")) {
                 // Fix invalid bitcoin uri
