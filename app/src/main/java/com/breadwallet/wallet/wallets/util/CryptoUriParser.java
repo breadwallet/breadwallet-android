@@ -17,6 +17,7 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
@@ -69,6 +70,8 @@ public class CryptoUriParser {
         }
 
         if (ImportPrivKeyTask.trySweepWallet(app, url, walletManager)) return true;
+
+        if (tryBreadUrl(app, url)) return true; //see if it's a bread url
 
         CryptoRequest requestObject = parseRequest(app, url);
 
@@ -197,6 +200,45 @@ public class CryptoUriParser {
             }
         }
         return obj;
+    }
+
+    private static boolean tryBreadUrl(Context app, String url) {
+        if (Utils.isNullOrEmpty(url)) return false;
+        String tmp = url.trim().replaceAll("\n", "").replaceAll(" ", "%20");
+
+        Uri u = Uri.parse(tmp);
+        String scheme = u.getScheme();
+        if (scheme.equalsIgnoreCase("bread")) {
+            String schemeSpecific = u.getSchemeSpecificPart();
+            if (schemeSpecific.startsWith("//")) {
+                // Fix invalid bitcoin uri
+                schemeSpecific = schemeSpecific.substring(2);
+            }
+
+            u = Uri.parse(scheme + "://" + schemeSpecific);
+
+            BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+
+            String host = u.getHost();
+            if (Utils.isNullOrEmpty(host)) return false;
+
+            switch (host) {
+                case "scanqr":
+                    BRAnimator.openScanner((Activity) app, BRConstants.SCANNER_REQUEST);
+                    break;
+                case "addressList":
+                    //todo implement
+                    break;
+                case "address":
+                    BRClipboardManager.putClipboard(app, wm.decorateAddress(app, BRSharedPrefs.getReceiveAddress(app, wm.getIso(app))));
+
+                    break;
+            }
+
+            return true;
+        }
+        return false;
+
     }
 
     private static boolean tryPaymentRequest(CryptoRequest requestObject) {

@@ -1,6 +1,8 @@
 package com.breadwallet.presenter.activities.settings;
 
+import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -8,6 +10,7 @@ import android.os.Handler;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -24,7 +27,8 @@ import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.wallet.wallets.bitcoincash.WalletBchManager;
 
 public class NodesActivity extends BRActivity {
     private static final String TAG = NodesActivity.class.getName();
@@ -36,7 +40,7 @@ public class NodesActivity extends BRActivity {
     private int mInterval = 3000;
     private Handler mHandler;
     private boolean updatingNode;
-    private TextView nodeTitle;
+//    private TextView nodeLabel;
 
     Runnable mStatusChecker = new Runnable() {
         @Override
@@ -67,36 +71,32 @@ public class NodesActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_nodes);
 
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        ImageButton faq = findViewById(R.id.faq_button);
         faq.setVisibility(View.GONE);
 
-        nodeStatus = (TextView) findViewById(R.id.node_status);
-        trustNode = (TextView) findViewById(R.id.node_text);
-        nodeTitle = (TextView)findViewById(R.id.title);
+        BRSharedPrefs.putCurrentWalletIso(this, "BTC");
 
-        switchButton = (Button) findViewById(R.id.button_switch);
+        nodeStatus = findViewById(R.id.node_status);
+        trustNode = findViewById(R.id.node_text);
 
-        String currentWalletIso = BRSharedPrefs.getCurrentWalletIso(this);
-
-        if(currentWalletIso.equals("BCH")){
-            nodeTitle.setText("BitcoinCash Nodes");
-        }
+        switchButton = findViewById(R.id.button_switch);
         switchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                String currentIso = BRSharedPrefs.getCurrentWalletIso(NodesActivity.this);
-                if (BRSharedPrefs.getTrustNode(NodesActivity.this, currentIso).isEmpty()) {
+                final Activity app = NodesActivity.this;
+                final WalletBitcoinManager wm = WalletBitcoinManager.getInstance(NodesActivity.this);
+
+                if (BRSharedPrefs.getTrustNode(app, wm.getIso(app)).isEmpty()) {
                     createDialog();
                 } else {
                     if (!updatingNode) {
                         updatingNode = true;
-                        BRSharedPrefs.putTrustNode(NodesActivity.this, currentIso, "");
+                        BRSharedPrefs.putTrustNode(app, wm.getIso(app), "");
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
-                                BaseWalletManager wallet = WalletsMaster.getInstance(NodesActivity.this).getCurrentWallet(NodesActivity.this);
-//                                wallet.getWallet().updateFixedPeer(NodesActivity.this); //todo implement
+                                WalletsMaster.getInstance(app).updateFixedPeer(app, wm);
                                 updatingNode = false;
                                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                     @Override
@@ -119,20 +119,20 @@ public class NodesActivity extends BRActivity {
     }
 
     private void updateButtonText() {
-        BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
-        if (BRSharedPrefs.getTrustNode(this, BRSharedPrefs.getCurrentWalletIso(NodesActivity.this)).isEmpty()) {
+        WalletBitcoinManager wm = WalletBitcoinManager.getInstance(this);
+        if (BRSharedPrefs.getTrustNode(this, wm.getIso(this)).isEmpty()) {
             switchButton.setText(getString(R.string.NodeSelector_manualButton));
         } else {
             switchButton.setText(getString(R.string.NodeSelector_automaticButton));
         }
-        nodeStatus.setText(wallet.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Connected ? getString(R.string.NodeSelector_connected) : getString(R.string.NodeSelector_notConnected));
+        nodeStatus.setText(wm.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Connected ? getString(R.string.NodeSelector_connected) : getString(R.string.NodeSelector_notConnected));
         if (trustNode != null)
-            trustNode.setText(wallet.getPeerManager().getDownloadPeerName());
+            trustNode.setText(wm.getPeerManager().getCurrentPeerName());
     }
 
     private void createDialog() {
 
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(app);
         final TextView customTitle = new TextView(this);
 
         customTitle.setGravity(Gravity.CENTER);
@@ -146,7 +146,7 @@ public class NodesActivity extends BRActivity {
         alertDialog.setCustomTitle(customTitle);
         alertDialog.setMessage(getString(R.string.NodeSelector_enterBody));
 
-        final EditText input = new EditText(this);
+        final EditText input = new EditText(app);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
@@ -177,16 +177,17 @@ public class NodesActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 String str = input.getText().toString();
+                final WalletBitcoinManager wm = WalletBitcoinManager.getInstance(app);
                 if (TrustedNode.isValid(str)) {
                     mDialog.setMessage("");
-                    BRSharedPrefs.putTrustNode(app, BRSharedPrefs.getCurrentWalletIso(NodesActivity.this),str);
+                    BRSharedPrefs.putTrustNode(app, wm.getIso(app), str);
                     if (!updatingNode) {
                         updatingNode = true;
                         customTitle.setText(getString(R.string.Webview_updating));
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
-//                                BRPeerManager.getInstance().updateFixedPeer(app); //todo implement fixed peer
+                                WalletsMaster.getInstance(app).updateFixedPeer(app, wm);
                                 updatingNode = false;
                                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                     @Override
@@ -208,18 +209,28 @@ public class NodesActivity extends BRActivity {
 
                 } else {
                     customTitle.setText("Invalid Node");
+                    customTitle.setTextColor(app.getColor(R.color.warning_color));
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             customTitle.setText(getString(R.string.NodeSelector_enterTitle));
+                            customTitle.setTextColor(app.getColor(R.color.almost_black));
                         }
                     }, 1000);
                 }
                 updateButtonText();
             }
         });
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                input.requestFocus();
+                final InputMethodManager keyboard = (InputMethodManager)
+                        getSystemService(Context.INPUT_METHOD_SERVICE);
+                keyboard.showSoftInput(input, 0);
+            }
+        }, 200);
     }
-
 
     @Override
     protected void onResume() {

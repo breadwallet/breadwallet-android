@@ -79,9 +79,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         walletList.addAll(WalletsMaster.getInstance(this).getAllWallets());
 
         if (Utils.isEmulatorOrDebug(this)) {
-//            if (logger != null) logger.interrupt();
-//            logger = new TestLogger(); //Sync logger
-//            logger.start();
+            if (logger != null) logger.interrupt();
+            logger = new TestLogger(); //Sync logger
+            logger.start();
         }
 
         mWalletRecycler = findViewById(R.id.rv_wallet_list);

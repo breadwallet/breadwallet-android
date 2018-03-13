@@ -21,6 +21,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
+import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
@@ -262,6 +263,22 @@ public class WalletsMaster {
         BaseWalletManager wallet = getWalletByIso(app, BRSharedPrefs.getCurrentWalletIso(app));
         if (wallet == null) wallet = getWalletByIso(app, "BTC");
         wallet.connectWallet(app);
+    }
+
+    public void updateFixedPeer(Context app, BaseWalletManager wm) {
+        String node = BRSharedPrefs.getTrustNode(app, wm.getIso(app));
+        String host = TrustedNode.getNodeHost(node);
+        int port = TrustedNode.getNodePort(node);
+//        Log.e(TAG, "trust onClick: host:" + host);
+//        Log.e(TAG, "trust onClick: port:" + port);
+        boolean success = wm.getPeerManager().useFixedPeer(host, port);
+        if (!success) {
+            Log.e(TAG, "updateFixedPeer: Failed to updateFixedPeer with input: " + node);
+        } else {
+            Log.d(TAG, "updateFixedPeer: succeeded");
+        }
+        wm.getPeerManager().connect();
+
     }
 
     public void startTheWalletIfExists(final Activity app) {

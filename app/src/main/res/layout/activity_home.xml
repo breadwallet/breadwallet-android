@@ -329,7 +329,7 @@
                     android:focusable="false"
                     android:paddingBottom="4dp"
                     android:text="@string/MenuButton.settings"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     app:customTFont="CircularPro-Book.otf"/>
 
 
@@ -369,7 +369,7 @@
                     android:focusable="false"
                     android:paddingBottom="4dp"
                     android:text="@string/MenuButton.security"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     app:customTFont="CircularPro-Book.otf"/>
 
 
@@ -410,7 +410,7 @@
                     android:focusable="false"
                     android:paddingBottom="4dp"
                     android:text="@string/MenuButton.support"
-                    android:textSize="20sp"
+                    android:textSize="18sp"
                     app:customTFont="CircularPro-Book.otf"/>
 
 
