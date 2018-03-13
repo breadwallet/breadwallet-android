@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.R;
+import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
@@ -20,6 +21,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.exceptions.AmountSmallerThanMinException;
 import com.breadwallet.wallet.wallets.exceptions.FeeNeedsAdjust;
 import com.breadwallet.wallet.wallets.exceptions.FeeOutOfDate;
@@ -191,9 +193,9 @@ public class SendManager {
      */
     private static void tryPay(final Context app, final CryptoRequest paymentRequest, final BaseWalletManager walletManager) throws InsufficientFundsException,
             AmountSmallerThanMinException, SpendingNotAllowed, FeeNeedsAdjust, SomethingWentWrong {
-        if (paymentRequest == null || paymentRequest.tx == null) {
-            Log.e(TAG, "tryPay: ERROR: paymentRequest: " + paymentRequest);
-            String message = paymentRequest == null ? "paymentRequest is null" : "tx is null";
+        if (paymentRequest == null) {
+            Log.e(TAG, "tryPay: ERROR: paymentRequest: null");
+            String message = "paymentRequest is null";
             BRReportsManager.reportBug(new RuntimeException("paymentRequest is malformed: " + message), true);
             throw new SomethingWentWrong("wrong parameters: paymentRequest");
         }
@@ -203,8 +205,24 @@ public class SendManager {
         final long maxOutputAmount = walletManager.getWallet().getMaxOutputAmount();
 
         if (paymentRequest.tx == null) {
-            throw new SomethingWentWrong("transaction is null");
+            //not enough for fee
+            if (paymentRequest.notEnoughForFee(app, walletManager)) {
+                //weird bug when the core WalletsMaster is NULL
+                if (maxOutputAmount == -1) {
+                    BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
+                    throw new SomethingWentWrong("getMaxOutputAmount is -1, meaning _wallet is NULL");
+                }
+                // max you can spend is smaller than the min you can spend
+                if (maxOutputAmount == 0 || maxOutputAmount < minOutputAmount) {
+                    throw new InsufficientFundsException(paymentRequest.amount.longValue(), balance);
+                }
+
+                throw new FeeNeedsAdjust(paymentRequest.amount.longValue(), balance, -1);
+            } else {
+                throw new InsufficientFundsException(walletManager.getCachedBalance(app), -1);
+            }
         }
+
         // check if spending is allowed
         if (!BRSharedPrefs.getAllowSpend(app, walletManager.getIso(app))) {
             throw new SpendingNotAllowed();
@@ -220,41 +238,10 @@ public class SendManager {
             throw new InsufficientFundsException(Math.abs(walletManager.getWallet().getTransactionAmount(paymentRequest.tx)), balance);
         }
 
-        //not enough for fee
-        if (paymentRequest.notEnoughForFee(app, walletManager)) {
-            //weird bug when the core WalletsMaster is NULL
-            if (maxOutputAmount == -1) {
-                BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
-            }
-            // max you can spend is smaller than the min you can spend
-            if (maxOutputAmount == 0 || maxOutputAmount < minOutputAmount) {
-                throw new InsufficientFundsException(Math.abs(walletManager.getWallet().getTransactionAmount(paymentRequest.tx)), balance);
-            }
-
-            long feeForTx = walletManager.getWallet().getTransactionFee(paymentRequest.tx);
-            throw new FeeNeedsAdjust(Math.abs(walletManager.getWallet().getTransactionAmount(paymentRequest.tx)), balance, feeForTx);
-        }
         // payment successful
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-//                byte[] tmpTx = m.tryTransaction(paymentRequest.address, paymentRequest.amount);
-//                if (tmpTx == null) {
-//                    //something went wrong, failed to create tx
-//                    ((Activity) app).runOnUiThread(new Runnable() {
-//                        @Override
-//                        public void run() {
-//                            BRDialog.showCustomDialog(app, "", app.getString(R.string.Alerts_sendFailure), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-//                                @Override
-//                                public void onClick(BRDialogView brDialogView) {
-//                                    brDialogView.dismiss();
-//                                }
-//                            }, null, null, 0);
-//
-//                        }
-//                    });
-//                    return;
-//                }
                 PostAuth.getInstance().setPaymentItem(paymentRequest);
                 confirmPay(app, paymentRequest, walletManager);
             }
@@ -262,8 +249,8 @@ public class SendManager {
 
     }
 
-    private static void showAdjustFee(final Activity app, CryptoRequest item, BaseWalletManager walletManager) {
-        WalletsMaster m = WalletsMaster.getInstance(app);
+    private static void showAdjustFee(final Activity app, final CryptoRequest item, final BaseWalletManager walletManager) {
+        BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
         long maxAmountDouble = walletManager.getWallet().getMaxOutputAmount();
         if (maxAmountDouble == -1) {
             BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"));
@@ -277,25 +264,53 @@ public class SendManager {
                 }
             }, null, null, 0);
         } else {
-//            long fee = m.feeForTransaction(item.addresses[0], maxAmountDouble);
-//            feeForTx += (m.getBalance(app) - request.amount) % 100;
-//            BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), "Insufficient amount for transaction fee", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-//                @Override
-//                public void onClick(BRDialogView brDialogView) {
-//                    brDialogView.dismissWithAnimation();
-//                }
-//            }, null, null, 0);
-            BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), "Insufficient amount for transaction fee", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+            if (Utils.isNullOrEmpty(item.address)) throw new RuntimeException("can't happen");
+            final BRCoreTransaction tx = wm.getWallet().createTransaction(maxAmountDouble, new BRCoreAddress(item.address));
+            if (tx == null) {
+                BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), "Insufficient amount for transaction fee", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        brDialogView.dismissWithAnimation();
+                    }
+                }, null, null, 0);
+                return;
+            }
+            long fee = wm.getWallet().getTransactionFee(tx);
+            if (fee <= 0) {
+                BRReportsManager.reportBug(new RuntimeException("fee is weird:  " + fee));
+                BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), "Insufficient amount for transaction fee.", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        brDialogView.dismissWithAnimation();
+                    }
+                }, null, null, 0);
+                return;
+            }
+
+            String formattedCrypto = CurrencyUtils.getFormattedAmount(app, wm.getIso(app), new BigDecimal(maxAmountDouble).negate());
+            String formattedFiat = CurrencyUtils.getFormattedAmount(app, BRSharedPrefs.getPreferredFiatIso(app), wm.getFiatForSmallestCrypto(app, new BigDecimal(maxAmountDouble), null).negate());
+
+            String posButtonText = String.format("%s (%s)", formattedCrypto, formattedFiat);
+
+
+            BRDialog.showCustomDialog(app, "Insufficient amount for transaction fee", "Send max?", posButtonText, "No thanks", new BRDialogView.BROnClickListener() {
+                @Override
+                public void onClick(BRDialogView brDialogView) {
+                    brDialogView.dismissWithAnimation();
+                    item.tx = tx;
+                    PostAuth.getInstance().setPaymentItem(item);
+                    confirmPay(app, item, walletManager);
+
+                }
+            }, new BRDialogView.BROnClickListener() {
                 @Override
                 public void onClick(BRDialogView brDialogView) {
                     brDialogView.dismissWithAnimation();
                 }
-            }, null, null, 0);
-            //todo fix this fee adjustment
+            }, null, 0);
         }
 
     }
-
 
     private static void confirmPay(final Context ctx, final CryptoRequest request, final BaseWalletManager walletManager) {
         if (ctx == null) {
@@ -316,7 +331,6 @@ public class SendManager {
         if (Math.abs(walletManager.getWallet().getTransactionAmount(request.tx)) < minOutput) {
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.PaymentProtocol_Errors_smallTransaction),
                     CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), new BigDecimal(minOutput)));
-
 
             ((Activity) ctx).runOnUiThread(new Runnable() {
                 @Override
