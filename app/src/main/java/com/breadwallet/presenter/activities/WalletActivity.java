@@ -2,11 +2,15 @@ package com.breadwallet.presenter.activities;
 
 import android.animation.LayoutTransition;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -54,6 +58,9 @@ import com.breadwallet.wallet.wallets.util.CryptoUriParser;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static com.breadwallet.tools.animation.BRAnimator.t1Size;
 import static com.breadwallet.tools.animation.BRAnimator.t2Size;
@@ -310,6 +317,69 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             BRSharedPrefs.putBchDialogShown(WalletActivity.this, true);
         }
 
+
+        // Check if the "Twilight" screen altering app is currently running
+        if (checkIfScreenAlteringAppIsRunning("com.urbandroid.lux")) {
+
+            BRDialog.showSimpleDialog(this, getString(R.string.Dialog_screenAlteringTitle), getString(R.string.Dialog_screenAlteringMessage));
+
+
+        }
+    }
+
+    // This method checks if a screen altering app(such as Twightlight) is currently running
+    // If it is, notify the user that the BRD app will not function properly and they should
+    // disable it
+    private boolean checkIfScreenAlteringAppIsRunning(String packageName) {
+
+
+        // Use the ActivityManager API if sdk version is less than 21
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            // Get the Activity Manager
+            ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
+
+            // Get a list of running tasks, we are only interested in the last one,
+            // the top most so we give a 1 as parameter so we only get the topmost.
+            List<ActivityManager.RunningAppProcessInfo> processes = manager.getRunningAppProcesses();
+            Log.d(TAG, "Process list count -> " + processes.size());
+
+
+            for (ActivityManager.RunningAppProcessInfo processInfo : processes) {
+
+                // Get the info we need for comparison.
+                String processName = processInfo.processName;
+                Log.d(TAG, "Process package name -> " + processName);
+
+
+                // Check if it matches our package name
+                if (processName.equals(packageName)) return true;
+            }
+
+        }
+
+
+        // Use the UsageStats API for sdk versions greater than Lollipop
+        else {
+            UsageStatsManager usm = (UsageStatsManager) this.getSystemService(USAGE_STATS_SERVICE);
+            long time = System.currentTimeMillis();
+            List<UsageStats> appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000 * 1000, time);
+            if (appList != null && appList.size() > 0) {
+                SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
+                for (UsageStats usageStats : appList) {
+                    mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
+                    Log.d(TAG, "Package name -> " + usageStats.getPackageName());
+
+                    if (packageName.equalsIgnoreCase(usageStats.getPackageName())) {
+                        return true;
+                    }
+                }
+
+            }
+
+        }
+
+
+        return false;
 
     }
 

@@ -763,5 +763,7 @@
   <string name="Dialog.welcomeBchMessage">Any BCH in your wallet can be accessed through the home screen.</string>
   <string name="Dialog.Home">Home</string>
   <string name="Dialog.Dismiss">Dismiss</string>
+  <string name="Dialog.screenAlteringTitle">"Screen Altering App Detected</string>
+  <string name="Dialog.screenAlteringMessage">"BRD will not function properly unless screen altering apps(such as Twilight) are disabled. </string>
 
 </resources>
