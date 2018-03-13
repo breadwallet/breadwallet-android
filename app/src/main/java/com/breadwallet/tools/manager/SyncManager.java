@@ -1,23 +1,16 @@
 package com.breadwallet.tools.manager;
 
-import android.app.Activity;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Looper;
 import android.util.Log;
 import android.widget.ProgressBar;
 
-import com.breadwallet.BreadApp;
-import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.listeners.SyncReceiver;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
