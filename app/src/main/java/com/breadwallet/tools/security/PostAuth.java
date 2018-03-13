@@ -218,7 +218,7 @@ public class PostAuth {
                         Log.e(TAG, "onPublishTxAuth: signAndPublishTransaction returned an empty txHash");
                         BRDialog.showSimpleDialog(app, "Send failed", "signAndPublishTransaction failed");
                         //todo fix this
-//                        WalletsMaster.getInstance().offerToChangeTheAmount(app, new PaymentItem(paymentRequest.addresses, paymentItem.serializedTx, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
+//                        WalletsMaster.getInstance(app).offerToChangeTheAmount(app, new PaymentItem(paymentRequest.addresses, paymentItem.serializedTx, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
                     } else {
                         TxMetaData txMetaData = new TxMetaData();
                         txMetaData.comment = mCryptoRequest.message;
