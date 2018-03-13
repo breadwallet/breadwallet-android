@@ -471,7 +471,9 @@
   <!-- Send money to label -->
   <string name="Send.toLabel">To</string>
   <!-- Adress already used alert message - first part -->
-  <string name="Send.UsedAddress.firstLine">Bitcoin addresses are intended for single use only.</string>
+  <string name="Sendbtc.UsedAddress.firstLine">Bitcoin addresses are intended for single use only.</string>
+  <string name="Sendbch.UsedAddress.firstLine">Bitcoin Cash addresses are intended for single use only.</string>
+
   <!-- Adress already used alert message - second part -->
   <string name="Send.UsedAddress.secondLIne">Re-use reduces privacy for both you and the recipient and can result in loss if the recipient doesn\'t directly control the address.</string>
   <!-- Adress already used alert title -->
