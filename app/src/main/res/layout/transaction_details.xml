@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/tx_details_card"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:minWidth="330dp"
-    android:layout_marginLeft="12dp"
-    android:layout_marginRight="12dp"
-    app:cardCornerRadius="4dp">
+                                    xmlns:app="http://schemas.android.com/apk/res-auto"
+                                    android:id="@+id/tx_details_card"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_marginLeft="12dp"
+                                    android:layout_marginRight="12dp"
+                                    android:minWidth="330dp"
+                                    app:cardCornerRadius="4dp">
 
     <RelativeLayout
         android:id="@+id/details_parent"
@@ -145,7 +145,6 @@
             android:layout_marginLeft="14dp"
             android:layout_marginTop="14dp"
             android:text="To"
-
             android:textColor="@color/settings_chevron_right"
             app:customTFont="CircularPro-Book.otf"/>
 
@@ -153,14 +152,17 @@
             android:id="@+id/tx_to_from_address"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_below="@id/divider2"
             android:layout_marginTop="14dp"
-            android:paddingEnd="20dp"
+            android:layout_toEndOf="@+id/tx_to_from"
+            android:ellipsize="middle"
+            android:singleLine="true"
+            android:paddingEnd="16dp"
+            android:paddingStart="16dp"
             android:text=""
             android:textSize="12sp"
             app:customTFont="CircularPro-Book.otf"/>
-
 
         <View
             android:id="@+id/divider3"
@@ -358,14 +360,14 @@
                 android:id="@+id/transaction_id"
                 android:layout_width="100dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@id/transaction_id_label"
                 android:layout_below="@id/divider7"
-                android:layout_marginRight="10dp"
+                android:paddingEnd="16dp"
+                android:paddingStart="16dp"
                 android:layout_marginTop="14dp"
                 android:ellipsize="middle"
-                android:maxLength="30"
                 android:singleLine="true"
-                android:text="TiAYuGxTyUDhzQG9hV2Jsd"
                 android:textSize="12sp"
                 app:customTFont="CircularPro-Book.otf"/>
 
