@@ -35,7 +35,7 @@
         android:layout_margin="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:paddingTop="36dp"
+        android:paddingTop="26dp"
         android:textAlignment="center"
         android:textSize="18sp"
         app:customTFont="CircularPro-Bold.otf"
