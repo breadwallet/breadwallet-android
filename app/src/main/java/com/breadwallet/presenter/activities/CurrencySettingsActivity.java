@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -9,6 +10,9 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.SettingsActivity;
+import com.breadwallet.presenter.activities.settings.SyncBlockchainActivity;
+import com.breadwallet.presenter.activities.settings.UnlinkActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRText;
@@ -57,33 +61,11 @@ public class CurrencySettingsActivity extends BRActivity {
             public void onClick(View view) {
                 if (!BRAnimator.isClickAllowed()) return;
                 Log.d("CurrencySettings", "Rescan tapped!");
-                BRDialog.showCustomDialog(CurrencySettingsActivity.this, getString(R.string.ReScan_alertTitle),
-                        getString(R.string.ReScan_footer), getString(R.string.ReScan_alertAction), getString(R.string.Button_cancel),
-                        new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismissWithAnimation();
-                                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-
-                                        BRSharedPrefs.putStartHeight(CurrencySettingsActivity.this, wm.getIso(app), 0);
-                                        BRSharedPrefs.putAllowSpend(CurrencySettingsActivity.this, wm.getIso(app), false);
-                                        WalletsMaster.getInstance(CurrencySettingsActivity.this).getWalletByIso(CurrencySettingsActivity.this, wm.getIso(app)).getPeerManager().rescan();
-                                        BRAnimator.startBreadActivity(CurrencySettingsActivity.this, false);
-
-                                    }
-                                });
-                            }
-                        }, new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismissWithAnimation();
-                            }
-                        }, null, 0);
+                Intent intent = new Intent(CurrencySettingsActivity.this, SyncBlockchainActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         });
-
 
         mBackButton.setOnClickListener(new View.OnClickListener()
 

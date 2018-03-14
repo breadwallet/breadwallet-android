@@ -92,13 +92,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         if (items == null) items = new ArrayList<>();
         if (itemFeed == null) itemFeed = new ArrayList<>();
         if (backUpFeed == null) backUpFeed = new ArrayList<>();
-//        if (mds == null) mds = new HashMap<>();
-//        boolean updateMetadata = items.size() != 0 && backUpFeed.size() != items.size() && BRSharedPrefs.getAllowSpend(mContext);
         this.itemFeed = items;
         this.backUpFeed = items;
-//        if (updateMetadata)
-//            updateMetadata();
-
 
     }
 
@@ -153,11 +148,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemViewType(int position) {
-        //if (position == 0 && TxManager.getInstance().currentPrompt != null) {
-        //  return promptType;
-        //} else {
         return txType;
-        //}
     }
 
     @Override
@@ -305,20 +296,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
-    private int getResourceByPos(int pos) {
-        if (TxManager.getInstance().currentPrompt != null) pos--;
-        if (itemFeed != null && itemFeed.size() == 1) {
-            return R.drawable.tx_rounded;
-        } else if (pos == 0) {
-            return R.drawable.tx_rounded_up;
-        } else if (itemFeed != null && pos == itemFeed.size() - 1) {
-            return R.drawable.tx_rounded_down;
-        } else {
-            return R.drawable.tx_not_rounded;
-        }
-    }
-
-
     public void filterBy(String query, boolean[] switches) {
         filter(query, switches);
     }
@@ -413,26 +390,5 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         }
     }
-
-   /* public class PromptHolder extends RecyclerView.ViewHolder {
-        public RelativeLayout mainLayout;
-        public ConstraintLayout constraintLayout;
-        public BRText title;
-        public BRText description;
-        public ImageButton close;
-        public ProgressBar sendProgress;
-
-        public PromptHolder(View view) {
-            super(view);
-            mainLayout = (RelativeLayout) view.findViewById(R.id.main_layout);
-            constraintLayout = (ConstraintLayout) view.findViewById(R.id.prompt_layout);
-            title = (BRText) view.findViewById(R.id.info_title);
-            description = (BRText) view.findViewById(R.id.info_description);
-            close = (ImageButton) view.findViewById(R.id.info_close_button);
-            sendProgress = view.findViewById(R.id.send_progress);
-
-        }
-    }*/
-
 
 }

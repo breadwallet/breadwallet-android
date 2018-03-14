@@ -1,11 +1,14 @@
 package com.breadwallet.presenter.activities;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -17,6 +20,7 @@ import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BRText;
@@ -24,8 +28,10 @@ import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
+import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
+import com.breadwallet.tools.manager.PromptManager;
 import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -54,7 +60,14 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private RelativeLayout mSettings;
     private RelativeLayout mSecurity;
     private RelativeLayout mSupport;
+    private PromptManager.PromptItem mCurrentPrompt;
     public BRNotificationBar mNotificationBar;
+
+    private BRText mPromptTitle;
+    private BRText mPromptDescription;
+    private BRButton mPromptContinue;
+    private BRButton mPromptDismiss;
+    private CardView mPromptCard;
 
     private static HomeActivity app;
 
@@ -82,6 +95,12 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mSecurity = findViewById(R.id.security_row);
         mSupport = findViewById(R.id.support_row);
         mNotificationBar = findViewById(R.id.notification_bar);
+
+        mPromptCard = findViewById(R.id.prompt_card);
+        mPromptTitle = findViewById(R.id.prompt_title);
+        mPromptDescription = findViewById(R.id.prompt_description);
+        mPromptContinue = findViewById(R.id.continue_button);
+        mPromptDismiss = findViewById(R.id.dismiss_button);
 
         mAdapter = new WalletListAdapter(this, walletList);
 
@@ -158,7 +177,52 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             BRSharedPrefs.putBchDialogShown(HomeActivity.this, true);
         }
 
+        mPromptDismiss.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                hidePrompt();
+            }
+        });
 
+        mPromptContinue.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                PromptManager.PromptInfo info = PromptManager.getInstance().promptInfo(app, mCurrentPrompt);
+                if (info.listener != null)
+                    info.listener.onClick(mPromptContinue);
+                else
+                    Log.e(TAG, "Continue :" + info.title + " (FAILED)");
+            }
+        });
+
+    }
+
+    public void hidePrompt() {
+        mPromptCard.setVisibility(View.GONE);
+        Log.e(TAG, "hidePrompt: " + mCurrentPrompt);
+        if (mCurrentPrompt == PromptManager.PromptItem.SHARE_DATA) {
+            BRSharedPrefs.putShareDataDismissed(app, true);
+        }
+        if (mCurrentPrompt != null)
+            BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(mCurrentPrompt) + ".dismissed");
+        mCurrentPrompt = null;
+
+    }
+
+    private void showNextPromptIfNeeded() {
+        PromptManager.PromptItem toShow = PromptManager.getInstance().nextPrompt(this);
+        if (toShow != null) {
+            mCurrentPrompt = toShow;
+//            Log.d(TAG, "showNextPrompt: " + toShow);
+            PromptManager.PromptInfo promptInfo = PromptManager.getInstance().promptInfo(this, toShow);
+            mPromptCard.setVisibility(View.VISIBLE);
+            mPromptTitle.setText(promptInfo.title);
+            mPromptDescription.setText(promptInfo.description);
+            mPromptContinue.setOnClickListener(promptInfo.listener);
+
+        } else {
+            Log.i(TAG, "showNextPrompt: nothing to show");
+        }
     }
 
     private void setupNetworking() {
@@ -172,6 +236,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     protected void onResume() {
         super.onResume();
         app = this;
+
+        showNextPromptIfNeeded();
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -220,7 +286,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mFiatTotal.setText(CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), fiatTotalAmount));
         mAdapter.notifyDataSetChanged();
     }
-
 
 
     @Override
