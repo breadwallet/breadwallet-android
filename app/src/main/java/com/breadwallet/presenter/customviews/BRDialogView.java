@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.constraint.ConstraintSet;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
@@ -107,11 +108,10 @@ public class BRDialogView extends DialogFragment {
             buttonsLayout.removeView(negativeButton);
             buttonsLayout.requestLayout();
 
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            params.weight = 1.0f;
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.CENTER_HORIZONTAL;
+            params.weight = 1.0f;
             positiveButton.setLayoutParams(params);
-
         }
 
         negativeButton.setHasShadow(false);
@@ -132,7 +132,7 @@ public class BRDialogView extends DialogFragment {
         if (showHelpIcon) {
             helpButton.setVisibility(View.VISIBLE);
 
-            messageText.setPadding(0, 0,0 , Utils.getPixelsFromDps(getContext(), 16));
+            messageText.setPadding(0, 0, 0, Utils.getPixelsFromDps(getContext(), 16));
 
             helpButton.setOnClickListener(new View.OnClickListener() {
                 @Override
