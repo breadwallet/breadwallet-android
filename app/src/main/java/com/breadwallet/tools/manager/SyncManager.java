@@ -128,9 +128,6 @@ public class SyncManager {
                             if (!mListener.onProgressUpdated(syncProgress)) interrupt();
                     }
                 });
-            } finally {
-                syncTask = null;
-//                Log.e(TAG, "SyncProgressTask: done: " + Thread.currentThread());
             }
 
         }
