@@ -204,6 +204,14 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             swap();
         }
 
+        // Check if the "Twilight" screen altering app is currently running
+        if (checkIfScreenAlteringAppIsRunning("com.urbandroid.lux")) {
+
+            BRDialog.showSimpleDialog(this, getString(R.string.Dialog_screenAlteringTitle), getString(R.string.Dialog_screenAlteringMessage));
+
+
+        }
+
     }
 
     @Override
@@ -318,13 +326,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         }
 
 
-        // Check if the "Twilight" screen altering app is currently running
-        if (checkIfScreenAlteringAppIsRunning("com.urbandroid.lux")) {
-
-            BRDialog.showSimpleDialog(this, getString(R.string.Dialog_screenAlteringTitle), getString(R.string.Dialog_screenAlteringMessage));
-
-
-        }
     }
 
     // This method checks if a screen altering app(such as Twightlight) is currently running
@@ -344,16 +345,19 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             Log.d(TAG, "Process list count -> " + processes.size());
 
 
+            String processName = "";
             for (ActivityManager.RunningAppProcessInfo processInfo : processes) {
 
                 // Get the info we need for comparison.
-                String processName = processInfo.processName;
+                processName = processInfo.processName;
                 Log.d(TAG, "Process package name -> " + processName);
-
 
                 // Check if it matches our package name
                 if (processName.equals(packageName)) return true;
+
+
             }
+
 
         }
 
@@ -365,14 +369,19 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             List<UsageStats> appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000 * 1000, time);
             if (appList != null && appList.size() > 0) {
                 SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
+                String currentPackageName = "";
                 for (UsageStats usageStats : appList) {
                     mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
-                    Log.d(TAG, "Package name -> " + usageStats.getPackageName());
+                    currentPackageName = usageStats.getPackageName();
 
-                    if (packageName.equalsIgnoreCase(usageStats.getPackageName())) {
+
+                    if (currentPackageName.equals(packageName)) {
                         return true;
                     }
+
+
                 }
+
 
             }
 
@@ -380,7 +389,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
 
         return false;
-
     }
 
     private void swap() {
