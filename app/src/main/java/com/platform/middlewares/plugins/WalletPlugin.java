@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -61,7 +63,7 @@ public class WalletPlugin implements Plugin {
     private static Request globalBaseRequest;
 
     @Override
-    public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
+    public boolean handle(String target, final Request baseRequest, HttpServletRequest request, final HttpServletResponse response) {
         if (!target.startsWith("/_wallet")) return false;
         Activity app = (Activity) BreadApp.getBreadContext();
 
@@ -176,7 +178,110 @@ public class WalletPlugin implements Plugin {
 
             return true;
         } else if (target.startsWith("/_wallet/authenticate") && request.getMethod().equalsIgnoreCase("post")) {
+            try {
 
+                String reqBody = null;
+                try {
+                    reqBody = new String(IOUtils.toByteArray(request.getInputStream()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (Utils.isNullOrEmpty(reqBody)) {
+                    Log.e(TAG, "handle: reqBody is empty: " + target + " " + baseRequest.getMethod());
+                    return BRHTTPHelper.handleError(400, null, baseRequest, response);
+                }
+                JSONObject obj = new JSONObject(reqBody);
+                String authText = obj.getString("prompt");
+                continuation = ContinuationSupport.getContinuation(request);
+                continuation.suspend(response);
+                globalBaseRequest = baseRequest;
+                AuthManager.getInstance().authPrompt(app, authText, "", false, false, new BRAuthCompletion() {
+                    @Override
+                    public void onComplete() {
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                JSONObject obj = new JSONObject();
+                                try {
+                                    obj.put("authenticated", true);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                BRHTTPHelper.handleSuccess(200, obj.toString().getBytes(), globalBaseRequest, (HttpServletResponse) continuation.getServletResponse(), "application/json");
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                JSONObject obj = new JSONObject();
+                                try {
+                                    obj.put("authenticated", false);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                BRHTTPHelper.handleSuccess(200, obj.toString().getBytes(), baseRequest, response, "application/json");
+                            }
+                        });
+
+                    }
+                });
+
+//                try {
+//                    if (!authenticated) {
+//                        try {
+//                            ((HttpServletResponse) continuation.getServletResponse()).sendError(401);
+//                        } catch (IOException e) {
+//                            Log.e(TAG, "sendBitIdResponse: failed to send error 401: ", e);
+//                            e.printStackTrace();
+//                        }
+//                        return;
+//                    }
+//                    if (restJson == null || restJson.isNull("signature")) {
+//                        Log.e(TAG, "sendBitIdResponse: WARNING restJson is null: " + restJson);
+//                        try {
+//                            ((HttpServletResponse) continuation.getServletResponse()).sendError(500, "json malformed or null");
+//                        } catch (IOException e) {
+//                            Log.e(TAG, "sendBitIdResponse: failed to send error 401: ", e);
+//                            e.printStackTrace();
+//                        }
+//                        return;
+//                    }
+//                    if (continuation == null) {
+//                        Log.e(TAG, "sendBitIdResponse: WARNING continuation is null");
+//                        return;
+//                    }
+//
+//                    try {
+//                        continuation.getServletResponse().setContentType("application/json");
+//                        continuation.getServletResponse().setCharacterEncoding("UTF-8");
+//                        continuation.getServletResponse().getWriter().print(restJson);
+//                        Log.d(TAG, "sendBitIdResponse: finished with writing to the response: " + restJson);
+//                    } catch (Exception e) {
+//                        e.printStackTrace();
+//                        Log.e(TAG, "sendBitIdResponse Failed to send json: ", e);
+//                    }
+//                    ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
+//                } finally {
+//                    if (globalBaseRequest != null)
+//                        globalBaseRequest.setHandled(true);
+//                    if (continuation != null)
+//                        continuation.complete();
+//                    continuation = null;
+//                    globalBaseRequest = null;
+//                }
+
+
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e(TAG, "handle: Failed to parse Json request body: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(400, "failed to parse json", baseRequest, response);
+            }
         }
 
         Log.e(TAG, "handle: WALLET PLUGIN DID NOT HANDLE: " + target + " " + baseRequest.getMethod());
