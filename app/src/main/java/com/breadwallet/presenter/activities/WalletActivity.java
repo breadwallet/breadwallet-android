@@ -100,6 +100,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     private InternetManager mConnectionReceiver;
 
+    private TestLogger logger;
+
     public static WalletActivity getApp() {
         return app;
     }
@@ -128,6 +130,12 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mProgressLabel = findViewById(R.id.syncing_label);
         mProgressBar = findViewById(R.id.sync_progress);
         mNotificationBar = findViewById(R.id.notification_bar);
+
+        if (Utils.isEmulatorOrDebug(this)) {
+            if (logger != null) logger.interrupt();
+            logger = new TestLogger(); //Sync logger
+            logger.start();
+        }
 
         setUpBarFlipper();
 
@@ -644,6 +652,45 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mBalanceLabel.setVisibility(View.GONE);
         mProgressBar.invalidate();
         return true;
+    }
+
+
+    //test logger
+    class TestLogger extends Thread {
+        private static final String TAG = "TestLogger";
+
+        @Override
+        public void run() {
+            super.run();
+
+            while (true) {
+                StringBuilder builder = new StringBuilder();
+                for (BaseWalletManager w : WalletsMaster.getInstance(WalletActivity.this).getAllWallets()) {
+                    builder.append("   " + w.getIso(WalletActivity.this));
+                    String connectionStatus = "";
+                    if (w.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Connected)
+                        connectionStatus = "Connected";
+                    else if (w.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Disconnected)
+                        connectionStatus = "Disconnected";
+                    else if (w.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Connecting)
+                        connectionStatus = "Connecting";
+
+                    double progress = w.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(WalletActivity.this, w.getIso(WalletActivity.this)));
+
+                    builder.append(" - " + connectionStatus + " " + progress * 100 + "%     ");
+
+                }
+
+                Log.e(TAG, "testLog: " + builder.toString());
+
+                try {
+                    Thread.sleep(3000);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+        }
     }
 
 }

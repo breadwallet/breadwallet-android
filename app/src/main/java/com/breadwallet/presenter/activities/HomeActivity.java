@@ -56,9 +56,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private RelativeLayout mSupport;
     public BRNotificationBar mNotificationBar;
 
-
-    private TestLogger logger;
-
     private static HomeActivity app;
 
     private InternetManager mConnectionReceiver;
@@ -77,12 +74,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         ArrayList<BaseWalletManager> walletList = new ArrayList<>();
 
         walletList.addAll(WalletsMaster.getInstance(this).getAllWallets());
-
-        if (Utils.isEmulatorOrDebug(this)) {
-            if (logger != null) logger.interrupt();
-            logger = new TestLogger(); //Sync logger
-            logger.start();
-        }
 
         mWalletRecycler = findViewById(R.id.rv_wallet_list);
         mFiatTotal = findViewById(R.id.total_assets_usd);
@@ -230,43 +221,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mAdapter.notifyDataSetChanged();
     }
 
-    //test logger
-    class TestLogger extends Thread {
-        private static final String TAG = "TestLogger";
 
-        @Override
-        public void run() {
-            super.run();
-
-            while (true) {
-                StringBuilder builder = new StringBuilder();
-                for (BaseWalletManager w : WalletsMaster.getInstance(HomeActivity.this).getAllWallets()) {
-                    builder.append("   " + w.getIso(HomeActivity.this));
-                    String connectionStatus = "";
-                    if (w.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Connected)
-                        connectionStatus = "Connected";
-                    else if (w.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Disconnected)
-                        connectionStatus = "Disconnected";
-                    else if (w.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Connecting)
-                        connectionStatus = "Connecting";
-
-                    double progress = w.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(HomeActivity.this, w.getIso(HomeActivity.this)));
-
-                    builder.append(" - " + connectionStatus + " " + progress * 100 + "%     ");
-
-                }
-
-                Log.e(TAG, "testLog: " + builder.toString());
-
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        }
-    }
 
     @Override
     protected void onDestroy() {

@@ -175,6 +175,8 @@ public class WalletPlugin implements Plugin {
             }
 
             return true;
+        } else if (target.startsWith("/_wallet/authenticate") && request.getMethod().equalsIgnoreCase("post")) {
+
         }
 
         Log.e(TAG, "handle: WALLET PLUGIN DID NOT HANDLE: " + target + " " + baseRequest.getMethod());
