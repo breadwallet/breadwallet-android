@@ -179,7 +179,16 @@ public class WalletPlugin implements Plugin {
             return true;
         } else if (target.startsWith("/_wallet/authenticate") && request.getMethod().equalsIgnoreCase("post")) {
             try {
+                /**
+                 POST /_wallet/authenticate
+                 Verify that the current user is the wallet's owner.  Post a request of
 
+                 {prompt: "Promt Text!", id: "<uuidv4>" }.
+                 Get back an
+                 {
+                 "authenticated": true
+                 }
+                 */
                 String reqBody = null;
                 try {
                     reqBody = new String(IOUtils.toByteArray(request.getInputStream()));
@@ -291,7 +300,7 @@ public class WalletPlugin implements Plugin {
 
     }
 
-    private static void cleanUp(){
+    private static void cleanUp() {
         if (globalBaseRequest != null)
             globalBaseRequest.setHandled(true);
         if (continuation != null)
