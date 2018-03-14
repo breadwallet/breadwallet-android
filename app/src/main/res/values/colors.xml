@@ -77,4 +77,9 @@
     <color name="transaction_failed_button_color">#f46b41</color>
     <color name="trans_white">#70ffffff</color>
 
+
+    // Dialog button colors
+    <color name="dialog_button_positive">#4b77f3</color>
+    <color name="dialog_button_negative">#b3c0c8</color>
+
 </resources>
