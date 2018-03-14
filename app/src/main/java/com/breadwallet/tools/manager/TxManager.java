@@ -53,8 +53,6 @@ public class TxManager {
     private static TxManager instance;
     private RecyclerView txList;
     public TransactionListAdapter adapter;
-    public PromptManager.PromptItem currentPrompt;
-    public PromptManager.PromptInfo promptInfo;
 
     public static TxManager getInstance() {
         if (instance == null) instance = new TxManager();
@@ -71,28 +69,6 @@ public class TxManager {
 
                 TxUiHolder item = adapter.getItems().get(position);
                 BRAnimator.showTransactionDetails(app, item, position);
-                //if (currentPrompt == null || position > 0)
-                  //  BRAnimator.showTransactionPager(app, adapter.getItems(), currentPrompt == null ? position : position - 1);
-                /*else {
-                    //clicked on the  x (close)
-                    if (x > view.getWidth() - 150 && y < 150) {
-                        view.animate().setDuration(150).translationX(BRActivity.screenParametersPoint.x).setListener(new AnimatorListenerAdapter() {
-                            @Override
-                            public void onAnimationEnd(Animator animation) {
-                                super.onAnimationEnd(animation);
-                                hidePrompt(app, null);
-                            }
-                        });
-
-                    } else { //clicked on the prompt
-                        BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(currentPrompt) + ".trigger");
-                        PromptManager.PromptInfo info = PromptManager.getInstance().promptInfo(app, currentPrompt);
-                        hidePrompt(app, null);
-                        if (info != null)
-                            info.listener.onClick(view);
-                        currentPrompt = null;
-                    }
-                }*/
             }
 
             @Override
@@ -112,54 +88,7 @@ public class TxManager {
 
     public void onResume(final Activity app) {
         crashIfNotMain();
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        showNextPrompt(app);
-                    }
-                });
-            }
-        });
 
-    }
-
-//    public void showPrompt(Context app, PromptManager.PromptItem item) {
-//        crashIfNotMain();
-//        if (item == null) throw new RuntimeException("can't be null");
-//        BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".displayed");
-//        currentPrompt = item;
-//        updateCard(app);
-//    }
-
-    public void hidePrompt(final Context app, final PromptManager.PromptItem item) {
-        crashIfNotMain();
-        if (currentPrompt == PromptManager.PromptItem.SHARE_DATA) {
-            BRSharedPrefs.putShareDataDismissed(app, true);
-        }
-        currentPrompt = null;
-        if (txList != null && txList.getAdapter() != null)
-            txList.getAdapter().notifyItemRemoved(0);
-//        showNextPrompt(app);
-        updateCard(app);
-        if (item != null)
-            BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(item) + ".dismissed");
-
-    }
-
-    private void showNextPrompt(Context app) {
-        crashIfNotMain();
-        PromptManager.PromptItem toShow = PromptManager.getInstance().nextPrompt(app);
-        if (toShow != null) {
-//            Log.d(TAG, "showNextPrompt: " + toShow);
-            currentPrompt = toShow;
-            promptInfo = PromptManager.getInstance().promptInfo((Activity) app, currentPrompt);
-            updateCard(app);
-        } else {
-            Log.i(TAG, "showNextPrompt: nothing to show");
-        }
     }
 
     @WorkerThread
@@ -184,41 +113,6 @@ public class TxManager {
         }
 
     }
-
-    public void updateCard(final Context app) {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                updateTxList(app);
-            }
-        });
-    }
-
-    /*private void setupSwipe(final Activity app) {
-        ItemTouchHelper.SimpleCallback simpleItemTouchCallback = new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.RIGHT) {
-
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-//                Toast.makeText(BreadActivity.this, "on Move ", Toast.LENGTH_SHORT).show();
-                return false;
-            }
-
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                hidePrompt(app, null);
-                //Remove swiped item from list and notify the RecyclerView
-            }
-
-            @Override
-            public int getSwipeDirs(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder) {
-                if (!(viewHolder instanceof TransactionListAdapter.PromptHolder)) return 0;
-                return super.getSwipeDirs(recyclerView, viewHolder);
-            }
-        };
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(simpleItemTouchCallback);
-        itemTouchHelper.attachToRecyclerView(txList);
-    }*/
-
 
     private class CustomLinearLayoutManager extends LinearLayoutManager {
 

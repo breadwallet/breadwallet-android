@@ -123,7 +123,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     private Executor listenerExecutor = Executors.newSingleThreadExecutor();
 
-    public static WalletBitcoinManager getInstance(Context app) {
+    public synchronized static WalletBitcoinManager getInstance(Context app) {
         if (instance == null) {
             byte[] rawPubKey = BRKeyStore.getMasterPublicKey(app);
             if (Utils.isNullOrEmpty(rawPubKey)) {
