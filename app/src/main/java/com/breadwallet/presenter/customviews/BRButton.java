@@ -203,9 +203,9 @@ public class BRButton extends Button {
     @Override
     protected void onDraw(Canvas canvas) {
         if (isBreadButton) {
-            if(hasShadow) {
-                shadowRect.set(5, height / 4, width - 5, (int) (height * shadowOffSet));
-            }
+//            if(hasShadow) {
+//                shadowRect.set(5, height / 4, width - 5, (int) (height * shadowOffSet));
+//            }
             modifiedWidth = width - 10;
             modifiedHeight = height - height / 4 - 5;
             bRect.set(5, 5, modifiedWidth, modifiedHeight + 5);

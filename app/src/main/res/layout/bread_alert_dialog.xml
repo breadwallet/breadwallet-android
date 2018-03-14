@@ -9,12 +9,24 @@
     android:orientation="vertical">
 
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/dialog_header"
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:background="@drawable/bch_dialog_gradient"
-        android:orientation="vertical"></LinearLayout>
+        android:orientation="vertical">
+
+        <ImageButton
+            android:id="@+id/brd_logo"
+            android:background="@drawable/brd_logo_white_svg"
+            android:layout_centerInParent="true"
+            android:layout_marginTop="10dp"
+            android:layout_width="38dp"
+            android:layout_height="18dp" />
+
+
+
+    </RelativeLayout>
 
     <ImageButton
         android:id="@+id/help_icon"
@@ -23,7 +35,7 @@
         android:layout_marginRight="16dp"
         android:layout_marginTop="12dp"
         android:background="@drawable/ic_help_circle"
-        android:visibility="invisible"
+        android:visibility="visible"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/dialog_header" />
 
@@ -35,7 +47,7 @@
         android:layout_margin="16dp"
         android:layout_marginLeft="16dp"
         android:layout_marginRight="16dp"
-        android:paddingTop="36dp"
+        android:paddingTop="26dp"
         android:textAlignment="center"
         android:textSize="18sp"
         app:customTFont="CircularPro-Bold.otf"
@@ -60,7 +72,7 @@
 
     <LinearLayout
         android:id="@+id/linearLayout3"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="8dp"

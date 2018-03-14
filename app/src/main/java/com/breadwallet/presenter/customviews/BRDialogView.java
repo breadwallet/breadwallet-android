@@ -10,8 +10,10 @@ import android.support.constraint.ConstraintLayout;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -104,6 +106,11 @@ public class BRDialogView extends DialogFragment {
             Log.e(TAG, "onCreateDialog: removing negative button");
             buttonsLayout.removeView(negativeButton);
             buttonsLayout.requestLayout();
+
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            params.weight = 1.0f;
+            params.gravity = Gravity.CENTER_HORIZONTAL;
+            positiveButton.setLayoutParams(params);
 
         }
 
