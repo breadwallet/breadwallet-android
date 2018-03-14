@@ -106,12 +106,13 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     public void startObserving() {
         if (mObesrverIsStarting) return;
         mObesrverIsStarting = true;
-        Log.e(TAG, "startObserving..");
+
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 try {
                     mCurrentWalletSyncing = getNextWalletToSync();
+                    Log.e(TAG, "startObserving.." + mCurrentWalletSyncing);
                     if (mCurrentWalletSyncing == null) {
                         Log.e(TAG, "startObserving: all wallets synced:" + Thread.currentThread());
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
