@@ -208,6 +208,7 @@ public class WalletPlugin implements Plugin {
                                     e.printStackTrace();
                                 }
                                 BRHTTPHelper.handleSuccess(200, obj.toString().getBytes(), globalBaseRequest, (HttpServletResponse) continuation.getServletResponse(), "application/json");
+                                cleanUp();
                             }
                         });
                     }
@@ -224,58 +225,12 @@ public class WalletPlugin implements Plugin {
                                     e.printStackTrace();
                                 }
                                 BRHTTPHelper.handleSuccess(200, obj.toString().getBytes(), baseRequest, response, "application/json");
+                                cleanUp();
                             }
                         });
 
                     }
                 });
-
-//                try {
-//                    if (!authenticated) {
-//                        try {
-//                            ((HttpServletResponse) continuation.getServletResponse()).sendError(401);
-//                        } catch (IOException e) {
-//                            Log.e(TAG, "sendBitIdResponse: failed to send error 401: ", e);
-//                            e.printStackTrace();
-//                        }
-//                        return;
-//                    }
-//                    if (restJson == null || restJson.isNull("signature")) {
-//                        Log.e(TAG, "sendBitIdResponse: WARNING restJson is null: " + restJson);
-//                        try {
-//                            ((HttpServletResponse) continuation.getServletResponse()).sendError(500, "json malformed or null");
-//                        } catch (IOException e) {
-//                            Log.e(TAG, "sendBitIdResponse: failed to send error 401: ", e);
-//                            e.printStackTrace();
-//                        }
-//                        return;
-//                    }
-//                    if (continuation == null) {
-//                        Log.e(TAG, "sendBitIdResponse: WARNING continuation is null");
-//                        return;
-//                    }
-//
-//                    try {
-//                        continuation.getServletResponse().setContentType("application/json");
-//                        continuation.getServletResponse().setCharacterEncoding("UTF-8");
-//                        continuation.getServletResponse().getWriter().print(restJson);
-//                        Log.d(TAG, "sendBitIdResponse: finished with writing to the response: " + restJson);
-//                    } catch (Exception e) {
-//                        e.printStackTrace();
-//                        Log.e(TAG, "sendBitIdResponse Failed to send json: ", e);
-//                    }
-//                    ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
-//                } finally {
-//                    if (globalBaseRequest != null)
-//                        globalBaseRequest.setHandled(true);
-//                    if (continuation != null)
-//                        continuation.complete();
-//                    continuation = null;
-//                    globalBaseRequest = null;
-//                }
-
-
-
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -329,15 +284,19 @@ public class WalletPlugin implements Plugin {
                     }
                     ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
                 } finally {
-                    if (globalBaseRequest != null)
-                        globalBaseRequest.setHandled(true);
-                    if (continuation != null)
-                        continuation.complete();
-                    continuation = null;
-                    globalBaseRequest = null;
+                    cleanUp();
                 }
             }
         });
 
+    }
+
+    private static void cleanUp(){
+        if (globalBaseRequest != null)
+            globalBaseRequest.setHandled(true);
+        if (continuation != null)
+            continuation.complete();
+        continuation = null;
+        globalBaseRequest = null;
     }
 }
