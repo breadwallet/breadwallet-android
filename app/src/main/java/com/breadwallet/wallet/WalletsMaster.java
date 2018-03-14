@@ -267,15 +267,17 @@ public class WalletsMaster {
 
     public void updateFixedPeer(Context app, BaseWalletManager wm) {
         String node = BRSharedPrefs.getTrustNode(app, wm.getIso(app));
-        String host = TrustedNode.getNodeHost(node);
-        int port = TrustedNode.getNodePort(node);
+        if (!Utils.isNullOrEmpty(node)) {
+            String host = TrustedNode.getNodeHost(node);
+            int port = TrustedNode.getNodePort(node);
 //        Log.e(TAG, "trust onClick: host:" + host);
 //        Log.e(TAG, "trust onClick: port:" + port);
-        boolean success = wm.getPeerManager().useFixedPeer(host, port);
-        if (!success) {
-            Log.e(TAG, "updateFixedPeer: Failed to updateFixedPeer with input: " + node);
-        } else {
-            Log.d(TAG, "updateFixedPeer: succeeded");
+            boolean success = wm.getPeerManager().useFixedPeer(host, port);
+            if (!success) {
+                Log.e(TAG, "updateFixedPeer: Failed to updateFixedPeer with input: " + node);
+            } else {
+                Log.d(TAG, "updateFixedPeer: succeeded");
+            }
         }
         wm.getPeerManager().connect();
 
