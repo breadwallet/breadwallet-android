@@ -32,6 +32,8 @@ add_library( # Specifies the name of the library.
              src/main/jni/breadwallet-core/BRArray.h
              src/main/jni/breadwallet-core/BRBase58.c
              src/main/jni/breadwallet-core/BRBase58.h
+             src/main/jni/breadwallet-core/BRBech32.c
+             src/main/jni/breadwallet-core/BRBech32.h
              src/main/jni/breadwallet-core/BRBIP32Sequence.c
              src/main/jni/breadwallet-core/BRBIP32Sequence.h
              src/main/jni/breadwallet-core/BRBIP38Key.c

@@ -89,17 +89,18 @@ android {
     }
 
     lintOptions {
-        // set to true to turn off analysis progress reporting by lint
-        quiet false
-        explainIssues true
-        // if true, stop the gradle build if errors are found
-        abortOnError true
-        // if true, only report errors
-        ignoreWarnings false
-
-        checkReleaseBuilds false
-
-        disable 'MissingTranslation'
+        tasks.lint.enabled = false
+//        // set to true to turn off analysis progress reporting by lint
+//        quiet false
+//        explainIssues true
+//        // if true, stop the gradle build if errors are found
+//        abortOnError true
+//        // if true, only report errors
+//        ignoreWarnings false
+//
+//        checkReleaseBuilds false
+//
+//        disable 'MissingTranslation'
     }
 
     buildTypes {
