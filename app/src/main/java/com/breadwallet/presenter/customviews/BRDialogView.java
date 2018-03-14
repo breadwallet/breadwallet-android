@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
@@ -90,6 +91,8 @@ public class BRDialogView extends DialogFragment {
             messageText.setText(spanMessage);
             messageText.setMovementMethod(LinkMovementMethod.getInstance());
         }
+
+        positiveButton.setColor(Color.parseColor("#b3c0c8"));
         positiveButton.setHasShadow(false);
         positiveButton.setText(posButton);
         positiveButton.setOnClickListener(new View.OnClickListener() {
@@ -107,6 +110,7 @@ public class BRDialogView extends DialogFragment {
 
         }
 
+        negativeButton.setColor(Color.parseColor("#4b77f3"));
         negativeButton.setHasShadow(false);
         negativeButton.setText(negButton);
         negativeButton.setOnClickListener(new View.OnClickListener() {
