@@ -19,7 +19,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.R;
-import com.breadwallet.exceptions.BRKeystoreErrorException;
+import com.breadwallet.tools.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;

@@ -33,6 +33,7 @@ import com.breadwallet.presenter.entities.PeerEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRNotificationManager;
@@ -781,8 +782,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        //todo show a message
-                        BRToast.showCustomToast(ctx, "Transaction deleted: " + hash, BRActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                        BRDialog.showSimpleDialog(ctx, "Transaction failed!", hash);
                     }
                 });
             TransactionStorageManager.removeTransaction(ctx, getIso(ctx), hash);

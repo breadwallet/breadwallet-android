@@ -1,4 +1,4 @@
-package com.breadwallet.exceptions;
+package com.breadwallet.tools.exceptions;
 
 import java.security.GeneralSecurityException;
 
@@ -27,22 +27,22 @@ import java.security.GeneralSecurityException;
  * THE SOFTWARE.
  */
 
-public class CertificateChainNotFound extends GeneralSecurityException {
-    public static final String TAG = CertificateChainNotFound.class.getName();
+public class PaymentRequestExpiredException extends GeneralSecurityException {
+    public static final String TAG = PaymentRequestExpiredException.class.getName();
 
-    private CertificateChainNotFound() {
+    private PaymentRequestExpiredException(){
         super();
     }
 
-    public CertificateChainNotFound(String msg) {
-        super(msg);
+    public PaymentRequestExpiredException(String msg){
+        super("The request is expired!");
     }
 
-    private CertificateChainNotFound(String msg, Throwable cause) {
-        super(msg, cause);
+    private PaymentRequestExpiredException(String msg, Throwable cause){
+        super(msg,cause);
     }
 
-    private CertificateChainNotFound(Throwable cause) {
+    private PaymentRequestExpiredException(Throwable cause){
         super(cause);
     }
 
