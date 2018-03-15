@@ -13,7 +13,7 @@ import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreTransactionOutput;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.exceptions.CertificateChainNotFound;
+import com.breadwallet.tools.exceptions.CertificateChainNotFound;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRDialog;
