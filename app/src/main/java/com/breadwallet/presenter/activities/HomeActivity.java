@@ -1,9 +1,8 @@
 package com.breadwallet.presenter.activities;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -16,7 +15,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
-import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
@@ -37,7 +35,6 @@ import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
@@ -177,6 +174,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             BRSharedPrefs.putBchDialogShown(HomeActivity.this, true);
         }
 
+        mPromptDismiss.setColor(Color.parseColor("#b3c0c8"));
         mPromptDismiss.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -184,6 +182,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             }
         });
 
+        mPromptContinue.setColor(Color.parseColor("#4b77f3"));
         mPromptContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
