@@ -61,7 +61,7 @@ gradle.properties
 obj/
 crash.txt
 /captures/
-/projectFilesBackup/
+projectFilesBackup
 /publishTODO.txt
 .idea/copyright/
 /app/google-services.json
@@ -70,3 +70,4 @@ crash.txt
 fastlane/
 Release_checklist
 
+/app/.externalNativeBuild/
