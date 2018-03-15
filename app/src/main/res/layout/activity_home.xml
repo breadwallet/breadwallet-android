@@ -60,8 +60,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/total_assets_usd"
                 android:layout_marginLeft="16dp"
+                android:layout_marginTop="8dp"
                 android:layout_marginRight="16dp"
-                android:layout_marginTop="20dp"
                 android:background="@color/extra_light_blue_background"
                 android:visibility="gone"
                 app:cardCornerRadius="4dp">
@@ -75,11 +75,11 @@
                         android:id="@+id/prompt_title"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
+                        android:layout_marginStart="16dp"
                         android:layout_marginTop="16dp"
                         android:text="Paper Key - Action Required!"
                         android:textColor="@color/almost_black"
-                        android:textSize="18sp"
+                        android:textSize="16sp"
                         app:customTFont="CircularPro-Bold.otf"/>
 
                     <com.breadwallet.presenter.customviews.BRText
@@ -89,9 +89,8 @@
                         android:layout_below="@id/prompt_title"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
-                        android:layout_marginTop="6dp"
-                        android:text="Your Paper Key must be saved in case you ever loose your phone."/>
-
+                        android:text="Your Paper Key must be saved in case you ever loose your phone."
+                        android:textSize="14sp"/>
 
                     <LinearLayout
                         android:id="@+id/button_container"
@@ -102,7 +101,6 @@
                         android:layout_marginBottom="16dp"
                         android:layout_marginLeft="16dp"
                         android:layout_marginRight="16dp"
-                        android:layout_marginTop="14dp"
                         android:weightSum="2">
 
                         <com.breadwallet.presenter.customviews.BRButton
@@ -165,7 +163,7 @@
                 android:layout_below="@id/portfolio_label"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="8dp">
+                >
 
             </android.support.v7.widget.RecyclerView>
 
