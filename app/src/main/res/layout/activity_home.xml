@@ -169,130 +169,6 @@
 
             </android.support.v7.widget.RecyclerView>
 
-            <!--<RelativeLayout-->
-            <!--android:id="@+id/bitcoin_card"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="84dp"-->
-            <!--android:layout_below="@id/portfolio_label"-->
-            <!--android:layout_marginLeft="@dimen/activity_horizontal_margin"-->
-            <!--android:layout_marginRight="@dimen/activity_horizontal_margin"-->
-            <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
-            <!--android:background="@drawable/btc_card_shape"-->
-            <!--android:visibility="gone">-->
-
-
-            <!--<com.breadwallet.presenter.customviews.BRText-->
-            <!--android:id="@+id/bitcoin_label"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="16sp"-->
-            <!--android:layout_marginTop="16sp"-->
-            <!--android:text="Bitcoin"-->
-            <!--android:textColor="@color/white"-->
-            <!--android:textSize="18sp"-->
-            <!--app:customTFont="CircularPro-Book.otf"/>-->
-
-            <!--<com.breadwallet.presenter.customviews.BRText-->
-            <!--android:id="@+id/bitcoin_price"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_below="@id/bitcoin_label"-->
-            <!--android:layout_marginLeft="16sp"-->
-            <!--android:text="$16904.34 +2.75%"-->
-            <!--android:textColor="@color/currency_subheading_color"-->
-            <!--android:textSize="18sp"-->
-            <!--app:customTFont="CircularPro-Book.otf"/>-->
-
-            <!--<com.breadwallet.presenter.customviews.BRText-->
-            <!--android:id="@+id/bitcoin_holding_usd"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_marginLeft="16sp"-->
-            <!--android:layout_marginRight="16dp"-->
-            <!--android:layout_marginTop="16sp"-->
-            <!--android:text="$35,499.11"-->
-            <!--android:textColor="@color/white"-->
-            <!--android:textSize="18sp"-->
-            <!--app:customTFont="CircularPro-Book.otf"/>-->
-
-            <!--<com.breadwallet.presenter.customviews.BRText-->
-            <!--android:id="@+id/bitcoin_holding"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_below="@id/bitcoin_holding_usd"-->
-            <!--android:layout_marginRight="16sp"-->
-            <!--android:text="2.1 BTC"-->
-            <!--android:textColor="@color/currency_subheading_color"-->
-            <!--android:textSize="18sp"-->
-            <!--app:customTFont="CircularPro-Book.otf"/>-->
-
-
-            <!--</RelativeLayout>-->
-
-            <!--<RelativeLayout-->
-            <!--android:id="@+id/bitcoin_cash_card"-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="84dp"-->
-            <!--android:layout_below="@id/bitcoin_card"-->
-            <!--android:layout_marginLeft="@dimen/activity_horizontal_margin"-->
-            <!--android:layout_marginRight="@dimen/activity_horizontal_margin"-->
-            <!--android:layout_marginTop="@dimen/activity_vertical_margin"-->
-            <!--android:background="@drawable/crypto_card_shape"-->
-
-            <!--android:visibility="gone">-->
-
-
-            <!--<com.breadwallet.presenter.customviews.BRText-->
-            <!--android:id="@+id/bch_label"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="16sp"-->
-            <!--android:layout_marginTop="16sp"-->
-            <!--android:text="BitcoinCash"-->
-            <!--android:textColor="@color/white"-->
-            <!--android:textSize="18sp"-->
-            <!--app:customTFont="CircularPro-Book.otf"/>-->
-
-            <!--<com.breadwallet.presenter.customviews.BRText-->
-            <!--android:id="@+id/bch_price"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_below="@id/bch_label"-->
-            <!--android:layout_marginLeft="16sp"-->
-            <!--android:text="$2665.41  +2.75%"-->
-            <!--android:textColor="@color/currency_subheading_color"-->
-            <!--android:textSize="18sp"-->
-            <!--app:customTFont="CircularPro-Book.otf"/>-->
-
-            <!--<com.breadwallet.presenter.customviews.BRText-->
-            <!--android:id="@+id/bch_holding_usd"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_marginLeft="16sp"-->
-            <!--android:layout_marginRight="16dp"-->
-            <!--android:layout_marginTop="16sp"-->
-            <!--android:text="$6,796.80"-->
-            <!--android:textColor="@color/white"-->
-            <!--android:textSize="18sp"-->
-            <!--app:customTFont="CircularPro-Book.otf"/>-->
-
-            <!--<com.breadwallet.presenter.customviews.BRText-->
-            <!--android:id="@+id/bch_holding"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_alignParentRight="true"-->
-            <!--android:layout_below="@id/bch_holding_usd"-->
-            <!--android:layout_marginRight="16sp"-->
-            <!--android:text="2.55 BCH"-->
-            <!--android:textColor="@color/currency_subheading_color"-->
-            <!--android:textSize="18sp"-->
-            <!--app:customTFont="CircularPro-Book.otf"/>-->
-
-
-            <!--</RelativeLayout>-->
 
             <com.breadwallet.presenter.customviews.BRText
                 android:id="@+id/admin_label"
@@ -330,7 +206,7 @@
                     android:focusable="false"
                     android:paddingBottom="4dp"
                     android:text="@string/MenuButton.settings"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     app:customTFont="CircularPro-Book.otf"/>
 
 
@@ -370,7 +246,7 @@
                     android:focusable="false"
                     android:paddingBottom="4dp"
                     android:text="@string/MenuButton.security"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     app:customTFont="CircularPro-Book.otf"/>
 
 
@@ -411,7 +287,7 @@
                     android:focusable="false"
                     android:paddingBottom="4dp"
                     android:text="@string/MenuButton.support"
-                    android:textSize="18sp"
+                    android:textSize="16sp"
                     app:customTFont="CircularPro-Book.otf"/>
 
 
