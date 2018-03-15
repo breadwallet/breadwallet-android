@@ -290,7 +290,6 @@
                     android:textSize="16sp"
                     app:customTFont="CircularPro-Book.otf"/>
 
-
                 <ImageButton
                     android:id="@+id/support_arrow_right"
                     android:layout_width="wrap_content"
@@ -302,7 +301,6 @@
                     android:clickable="false"
                     android:focusable="false"/>
             </RelativeLayout>
-
 
         </RelativeLayout>
 
