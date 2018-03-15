@@ -10,6 +10,7 @@ import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.settings.ImportActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.settings.SyncBlockchainActivity;
 import com.breadwallet.presenter.activities.settings.UnlinkActivity;
@@ -49,7 +50,10 @@ public class CurrencySettingsActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.openScanner(CurrencySettingsActivity.this, BRConstants.SCANNER_REQUEST);
+
+                Intent intent = new Intent(CurrencySettingsActivity.this, ImportActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         });
 
@@ -61,6 +65,7 @@ public class CurrencySettingsActivity extends BRActivity {
             public void onClick(View view) {
                 if (!BRAnimator.isClickAllowed()) return;
                 Log.d("CurrencySettings", "Rescan tapped!");
+
                 Intent intent = new Intent(CurrencySettingsActivity.this, SyncBlockchainActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
