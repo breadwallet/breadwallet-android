@@ -630,6 +630,7 @@ public class APIClient {
             return false;
         }
         File bundleFile = new File(getBundleResource(ctx, BREAD_POINT + ".tar"));
+        Log.e(TAG, "tryExtractTar: " + bundleFile.getAbsolutePath());
         boolean result = false;
         TarArchiveInputStream debInputStream = null;
         try {
