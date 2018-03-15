@@ -95,7 +95,7 @@ public class BRDialogView extends DialogFragment {
             messageText.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
-        positiveButton.setColor(Color.parseColor("#b3c0c8"));
+        positiveButton.setColor(Color.parseColor("#4b77f3"));
         positiveButton.setHasShadow(false);
         positiveButton.setText(posButton);
         positiveButton.setOnClickListener(new View.OnClickListener() {
@@ -117,7 +117,7 @@ public class BRDialogView extends DialogFragment {
             positiveButton.setLayoutParams(params);
         }
 
-        negativeButton.setColor(Color.parseColor("#4b77f3"));
+        negativeButton.setColor(Color.parseColor("#b3c0c8"));
         negativeButton.setHasShadow(false);
         negativeButton.setText(negButton);
         negativeButton.setOnClickListener(new View.OnClickListener() {
