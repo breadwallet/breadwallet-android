@@ -175,7 +175,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         else
             convertView.transactionAmount.setTextColor(mContext.getResources().getColor(R.color.total_assets_usd_color, null));
 
-
         // If this transaction failed, show the "FAILED" indicator in the cell
         if (!item.isValid())
             showTransactionFailed(convertView, item, received);
