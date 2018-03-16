@@ -48,14 +48,15 @@ import com.breadwallet.tools.sqlite.TransactionStorageManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.SymbolUtils;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
-import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
+import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.entities.TxMetaData;
@@ -274,6 +275,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     @Override
     public String getSymbol(Context app) {
 
+        SymbolUtils symbolUtils = new SymbolUtils();
         String currencySymbolString = BRConstants.symbolBits;
         if (app != null) {
             int unit = BRSharedPrefs.getCryptoDenomination(app, getIso(app));
@@ -282,10 +284,25 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                     currencySymbolString = BRConstants.symbolBits;
                     break;
                 case BRConstants.CURRENT_UNIT_MBITS:
-                    currencySymbolString = "m" + BRConstants.symbolBitcoin;
+
+
+                    if (symbolUtils.doesDeviceSupportSymbol(BRConstants.symbolBitcoinPrimary)) {
+                        currencySymbolString = "m" + BRConstants.symbolBitcoinPrimary;
+
+                    } else {
+                        currencySymbolString = "m" + BRConstants.symbolBitcoinSecondary;
+
+                    }
                     break;
                 case BRConstants.CURRENT_UNIT_BITCOINS:
-                    currencySymbolString = BRConstants.symbolBitcoin;
+
+                    if (symbolUtils.doesDeviceSupportSymbol(BRConstants.symbolBitcoinPrimary)) {
+                        currencySymbolString = BRConstants.symbolBitcoinPrimary;
+
+                    } else {
+                        currencySymbolString = BRConstants.symbolBitcoinSecondary;
+
+                    }
                     break;
             }
         }
