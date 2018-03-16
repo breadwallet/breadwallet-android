@@ -239,10 +239,10 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         Log.d(TAG, "Level -> " + level);
 
-        if(level > 4) {
-            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? "sent to " : "received via ") + item.getTo()[0]);
-        }else{
-            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received? "sending to " : "receiving via ") + item.getTo()[0]);
+        if (level > 4) {
+            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? "sent to " : "received via ") + wallet.decorateAddress(mContext, item.getTo()[0]));
+        } else {
+            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? "sending to " : "receiving via ") + wallet.decorateAddress(mContext, item.getTo()[0]));
 
         }
 
