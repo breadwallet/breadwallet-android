@@ -308,6 +308,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 @Override
                 public void onClick(BRDialogView brDialogView) {
                     Log.d(TAG, "help clicked!");
+
                     brDialogView.dismiss();
                     BRAnimator.showSupportFragment(WalletActivity.this, BRConstants.bchFaq);
 
