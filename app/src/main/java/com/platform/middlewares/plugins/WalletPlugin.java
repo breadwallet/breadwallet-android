@@ -233,7 +233,7 @@ public class WalletPlugin implements Plugin {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                BRHTTPHelper.handleSuccess(200, obj.toString().getBytes(), baseRequest, response, "application/json");
+                                BRHTTPHelper.handleSuccess(200, obj.toString().getBytes(), globalBaseRequest, (HttpServletResponse) continuation.getServletResponse(), "application/json");
                                 cleanUp();
                             }
                         });
