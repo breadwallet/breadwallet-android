@@ -51,16 +51,15 @@
 
                     <ImageView
                         android:id="@+id/wallet_name_text"
-                        android:layout_width="128dp"
-                        android:layout_height="64dp"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="16dp"
-                        android:src="@drawable/ic_bread_logo_white"
+                        android:layout_width="67dp"
+                        android:layout_height="63dp"
+                        android:layout_marginTop="24dp"
+                        android:src="@mipmap/fakicon"
                         android:textColor="@color/white"
                         android:textSize="36sp"
                         android:textStyle="bold"
-                        app:layout_constraintLeft_toLeftOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"/>
+                        app:layout_constraintTop_toTopOf="parent"
+                        tools:layout_editor_absoluteX="0dp" />
 
 
                     <com.breadwallet.presenter.customviews.BRText
