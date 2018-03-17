@@ -3,7 +3,7 @@
   <!-- App name -->
   <string name="About.appName.android">FAKit</string>
   <!-- About screen blog label -->
-  <string name="About.blog">Blog</string>
+  <string name="About.blog">Discord</string>
   <!-- About screen footer -->
   <string name="About.footer">Made with love by FaKo. Version %1$s \u003C\u003E</string>
   <!-- Privay Policy button label -->
@@ -547,7 +547,7 @@
   <!-- Fingerprint Is Not Setup -->
   <string name="TouchIdSettings.disabledWarning.title.android">Fingerprint Authentication Not Enabled</string>
   <!-- Touch Id screen label -->
-  <string name="TouchIdSettings.label">Use your fingerprint to unlock your FAKit and send money up to a set limit.</string>
+  <string name="TouchIdSettings.label">Use your fingerprint to unlock your Bread and send money up to a set limit.</string>
   <!-- Link Text (see TouchIdSettings.customizeText) -->
   <string name="TouchIdSettings.linkText">Touch ID Spending Limit Screen</string>
   <!-- Spending Limit: b100,000 ($100) -->
@@ -695,7 +695,7 @@
   <!-- Authorize transaction with touch id message -->
   <string name="VerifyPin.touchIdMessage">Authorize this transaction</string>
   <!-- 'No wallet' warning for watch app -->
-  <string name="Watch.noWalletWarning">Open the FAKit app to set up your wallet.</string>
+  <string name="Watch.noWalletWarning">Open the FAKit iPhone app to set up your wallet.</string>
   <!-- Dismiss button label -->
   <string name="Webview.dismiss">Dismiss</string>
   <!-- Webview loading error message -->

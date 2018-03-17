@@ -52,7 +52,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
-            android:text="My FAKit"
+            android:text="My Bread"
             android:textColor="@color/almost_black"
             android:textSize="18sp"/>
 
