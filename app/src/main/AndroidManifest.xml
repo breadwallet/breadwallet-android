@@ -41,7 +41,7 @@
         android:name=".BreadApp"
         android:allowBackup="false"
         android:fullBackupContent="false"
-        android:icon="@mipmap/fakicon"
+        android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:largeHeap="true"
         android:launchMode="singleTask"
