@@ -521,7 +521,7 @@
   <!-- Argument is date -->
   <string name="StartPaperPhrase.date">You last wrote down your paper key on %1$s</string>
   <!-- Start view message -->
-  <string name="StartViewController.message">FAKit\nThe easy and secure way to use FakeCoin.</string>
+  <string name="StartViewController.message">FAKit : The easy and secure way to use FakeCoin.</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Connecting</string>
   <!-- Syncing view header text -->
