@@ -88,8 +88,19 @@ public class BRDialogView extends DialogFragment {
         buttonsLayout = (LinearLayout) view.findViewById(R.id.linearLayout3);
         helpButton = view.findViewById(R.id.help_icon);
 
+
+        // Resize the title text if it is greater than 4 lines
         titleText.setText(title);
+        if (titleText.getLineCount() > 4) {
+            titleText.setTextSize(16);
+        }
+
+
+        // Resize the message text if it is greater than 4 lines
         messageText.setText(message);
+        if (messageText.getLineCount() > 4) {
+            messageText.setTextSize(16);
+        }
         if (spanMessage != null) {
             messageText.setText(spanMessage);
             messageText.setMovementMethod(LinkMovementMethod.getInstance());
