@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
@@ -260,6 +261,13 @@ public class WalletsMaster {
     }
 
     public void initLastWallet(Context app) {
+        if (app == null) {
+            app = BreadApp.getBreadContext();
+            if (app == null) {
+                Log.e(TAG, "initLastWallet: FAILED, app is null");
+                return;
+            }
+        }
         BaseWalletManager wallet = getWalletByIso(app, BRSharedPrefs.getCurrentWalletIso(app));
         if (wallet == null) wallet = getWalletByIso(app, "BTC");
         wallet.connectWallet(app);

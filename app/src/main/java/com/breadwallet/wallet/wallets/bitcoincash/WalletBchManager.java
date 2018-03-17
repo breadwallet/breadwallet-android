@@ -201,6 +201,13 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public void updateFee(Context app) {
+        if (app == null) {
+            app = BreadApp.getBreadContext();
+            if (app == null) {
+                Log.e(TAG, "updateFee: FAILED, app is null");
+                return;
+            }
+        }
         String jsonString = BRApiManager.urlGET(app, "https://" + BreadApp.HOST + "/fee-per-kb?currency=" + getIso(app));
         if (jsonString == null || jsonString.isEmpty()) {
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
