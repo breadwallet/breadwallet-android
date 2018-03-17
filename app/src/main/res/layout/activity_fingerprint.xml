@@ -39,14 +39,14 @@
                 android:textSize="@dimen/header"
                 app:customTFont="CircularPro-Bold.otf"/>
 
-            <ImageButton
+            <!-- <ImageButton
                 android:id="@+id/faq_button"
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
                 android:layout_margin="@dimen/bread_margin"
                 android:background="@drawable/faq_question_white"
-                />
+                /> -->
 
 
         </RelativeLayout>

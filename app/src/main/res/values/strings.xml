@@ -5,7 +5,7 @@
   <!-- About screen blog label -->
   <string name="About.blog">Blog</string>
   <!-- About screen footer -->
-  <string name="About.footer">Made with love by FaKo. Version %1$s</string>
+  <string name="About.footer">Made with love by FaKo. Version %1$s \u003C\u003E</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">Privacy Policy</string>
   <!-- About screen reddit label -->
@@ -521,7 +521,7 @@
   <!-- Argument is date -->
   <string name="StartPaperPhrase.date">You last wrote down your paper key on %1$s</string>
   <!-- Start view message -->
-  <string name="StartViewController.message">The easy and secure way to use FakeCoin.</string>
+  <string name="StartViewController.message">FAKit\nThe easy and secure way to use FakeCoin.</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Connecting</string>
   <!-- Syncing view header text -->
@@ -547,7 +547,7 @@
   <!-- Fingerprint Is Not Setup -->
   <string name="TouchIdSettings.disabledWarning.title.android">Fingerprint Authentication Not Enabled</string>
   <!-- Touch Id screen label -->
-  <string name="TouchIdSettings.label">Use your fingerprint to unlock your Bread and send money up to a set limit.</string>
+  <string name="TouchIdSettings.label">Use your fingerprint to unlock your FAKit and send money up to a set limit.</string>
   <!-- Link Text (see TouchIdSettings.customizeText) -->
   <string name="TouchIdSettings.linkText">Touch ID Spending Limit Screen</string>
   <!-- Spending Limit: b100,000 ($100) -->
@@ -695,7 +695,7 @@
   <!-- Authorize transaction with touch id message -->
   <string name="VerifyPin.touchIdMessage">Authorize this transaction</string>
   <!-- 'No wallet' warning for watch app -->
-  <string name="Watch.noWalletWarning">Open the FAKit iPhone app to set up your wallet.</string>
+  <string name="Watch.noWalletWarning">Open the FAKit app to set up your wallet.</string>
   <!-- Dismiss button label -->
   <string name="Webview.dismiss">Dismiss</string>
   <!-- Webview loading error message -->

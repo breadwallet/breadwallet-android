@@ -145,7 +145,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/relativeLayout"/>
 
-    <ImageButton
+    <!-- <ImageButton
         android:id="@+id/faq_button"
         android:layout_width="@dimen/faq_dimen"
         android:layout_height="@dimen/faq_dimen"
@@ -154,6 +154,6 @@
         android:background="@drawable/faq_question_white"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        />
+        /> -->
 
 </android.support.constraint.ConstraintLayout>

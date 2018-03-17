@@ -133,7 +133,7 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"/>
 
-    <ImageButton
+    <!-- <ImageButton
         android:id="@+id/faq_button"
         android:layout_width="@dimen/faq_dimen"
         android:layout_height="@dimen/faq_dimen"
@@ -144,6 +144,6 @@
         app:layout_constraintBottom_toBottomOf="@+id/title"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/title"
-        />
+        /> -->
 
 </android.support.constraint.ConstraintLayout>
