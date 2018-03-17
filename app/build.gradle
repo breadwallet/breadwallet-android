@@ -54,7 +54,7 @@ android {
         bread {
             applicationId "com.breadwallet"
             dimension "mode"
-            resValue "string", "app_name", "bread"
+            resValue "string", "app_name", "FAKit"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
 
             externalNativeBuild {
@@ -71,7 +71,7 @@ android {
         breadTestnet {
             applicationId "com.breadtestnet"
             dimension "mode"
-            resValue "string", "app_name", "bread-testnet"
+            resValue "string", "app_name", "FAKit-testnet"
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"
 
             externalNativeBuild {
