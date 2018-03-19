@@ -213,7 +213,12 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-                BRToast.showCustomToast(app, app.getString(R.string.Import_checking), BRActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(app, app.getString(R.string.Import_checking), Toast.LENGTH_LONG  ).show();
+                    }
+                },1000);
             }
         });
         String jsonString = BRApiManager.urlGET(app, url);
@@ -235,7 +240,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
             for (int i = 0; i < length; i++) {
                 JSONObject obj = jsonArray.getJSONObject(i);
-                byte[] txid = TypesConverter.hexToBytes(obj.getString("txid"));
+                byte[] txid = TypesConverter.hexToBytesReverse(obj.getString("txid"));
                 int vout = obj.getInt("vout");
                 byte[] scriptPubKey = TypesConverter.hexToBytes(obj.getString("scriptPubKey"));
                 long amount = obj.getLong("satoshis");
