@@ -152,11 +152,12 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
-        if (oldVersion < 13 && (newVersion == 13 || newVersion == 15)) {
-
+        if (oldVersion < 13 && (newVersion >= 13)) {
+            boolean migrationNeeded = !tableExists(MB_TABLE_NAME, db);
             onCreate(db); //create new db tables
 
-            migrateDatabases(db);
+            if (migrationNeeded)
+                migrateDatabases(db);
         } else {
             //drop everything maybe?
 //            db.execSQL("DROP TABLE IF EXISTS " + MB_TABLE_NAME);
@@ -172,7 +173,6 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
     private void migrateDatabases(SQLiteDatabase db) {
         db.beginTransaction();
         try {
-
 
             db.execSQL("INSERT INTO " + MB_TABLE_NAME + " (_id, merkleBlockBuff, merkleBlockHeight) SELECT _id, merkleBlockBuff, merkleBlockHeight FROM " + MB_TABLE_NAME_OLD);
             db.execSQL("INSERT INTO " + TX_TABLE_NAME + " (_id, transactionBuff, transactionBlockHeight, transactionTimeStamp) SELECT _id, transactionBuff, transactionBlockHeight, transactionTimeStamp FROM " + TX_TABLE_NAME_OLD);
@@ -191,6 +191,19 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
             Log.e(TAG, "migrateDatabases: ENDED");
             db.endTransaction();
         }
+    }
+
+    public boolean tableExists(String tableName, SQLiteDatabase db) {
+
+        Cursor cursor = db.rawQuery("select DISTINCT tbl_name from sqlite_master where tbl_name = '" + tableName + "'", null);
+        if (cursor != null) {
+            if (cursor.getCount() > 0) {
+                cursor.close();
+                return true;
+            }
+            cursor.close();
+        }
+        return false;
     }
 
     private void copyTxsForBch(SQLiteDatabase db) {

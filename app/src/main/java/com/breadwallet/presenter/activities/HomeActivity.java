@@ -282,6 +282,10 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     private void updateUi() {
         BigDecimal fiatTotalAmount = WalletsMaster.getInstance(this).getAggregatedFiatBalance(this);
+        if(fiatTotalAmount == null) {
+            Log.e(TAG, "updateUi: fiatTotalAmount is null");
+            return;
+        }
         mFiatTotal.setText(CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), fiatTotalAmount));
         mAdapter.notifyDataSetChanged();
     }
