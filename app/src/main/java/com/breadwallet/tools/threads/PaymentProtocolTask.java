@@ -146,6 +146,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 paymentProtocolRequest = null;
                 return null;
             }
+            //todo fix certs
 //            List<X509Certificate> certList = X509CertificateValidator.getCertificateFromBytes(serializedBytes);
 //            certName = X509CertificateValidator.certificateValidation(certList, paymentProtocolRequest);
 
@@ -279,11 +280,11 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 
         final BRCoreTransaction tx = wallet.getWallet().createTransactionForOutputs(paymentProtocolRequest.getOutputs());
         if (tx == null) {
-            BRToast.showCustomToast(app, "Failed to create tx", BRActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+            BRDialog.showSimpleDialog(app, "Insufficient funds", "");
             paymentProtocolRequest = null;
             return;
         }
-        final long amount = wallet.getWallet().getTransactionAmount(tx);
+        final long amount = new BigDecimal(wallet.getWallet().getTransactionAmount(tx)).abs().longValue();
         final long fee = wallet.getWallet().getTransactionFee(tx);
 
         allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
@@ -296,10 +297,9 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-
-
+                long txAmt = new BigDecimal(wallet.getWallet().getTransactionAmount(tx)).abs().longValue();
                 double minOutput = wallet.getWallet().getMinOutputAmount();
-                if (wallet.getWallet().getTransactionAmount(tx) < minOutput) {
+                if (txAmt < minOutput) {
                     final String bitcoinMinMessage = String.format(Locale.getDefault(), app.getString(R.string.PaymentProtocol_Errors_smallTransaction),
                             BRConstants.symbolBits + new BigDecimal(minOutput).divide(new BigDecimal("100")));
                     app.runOnUiThread(new Runnable() {
