@@ -88,14 +88,16 @@ public class TxManager {
 
     public void onResume(final Activity app) {
         crashIfNotMain();
-
     }
 
     @WorkerThread
     public synchronized void updateTxList(final Context app) {
         long start = System.currentTimeMillis();
         BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
-
+        if (wallet == null) {
+            Log.e(TAG, "updateTxList: wallet is null");
+            return;
+        }
         final List<TxUiHolder> items = wallet.getTxUiHolders();
 
         long took = (System.currentTimeMillis() - start);

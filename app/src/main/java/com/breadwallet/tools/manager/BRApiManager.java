@@ -143,8 +143,9 @@ public class BRApiManager {
                                     stopTimerTask();
                                 }
                                 for (BaseWalletManager w : WalletsMaster.getInstance(context).getAllWallets()) {
+                                    String iso = w.getIso(context);
                                     Set<CurrencyEntity> tmp = getCurrencies((Activity) context, w);
-                                    CurrencyDataSource.getInstance(context).putCurrencies(context, w.getIso(context), tmp);
+                                    CurrencyDataSource.getInstance(context).putCurrencies(context, iso, tmp);
                                 }
                             }
                         });
