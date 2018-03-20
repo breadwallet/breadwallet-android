@@ -30,8 +30,8 @@ public class ImportActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_import);
 
-        scan = (Button) findViewById(R.id.scan_button);
-        close = (ImageButton) findViewById(R.id.close_button);
+        scan = findViewById(R.id.scan_button);
+        close = findViewById(R.id.close_button);
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -39,7 +39,7 @@ public class ImportActivity extends BRActivity {
             }
         });
 
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        ImageButton faq = findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,7 +78,7 @@ public class ImportActivity extends BRActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 
     @Override
@@ -90,7 +90,7 @@ public class ImportActivity extends BRActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    BRAnimator.openScanner(this,BRConstants.SCANNER_REQUEST);
+                    BRAnimator.openScanner(this, BRConstants.SCANNER_REQUEST);
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
 

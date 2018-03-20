@@ -11,6 +11,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -20,6 +21,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
@@ -36,8 +38,11 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.APIClient;
 
+
+import java.util.List;
 
 import static com.breadwallet.R.color.white;
 import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
@@ -200,6 +205,18 @@ public class LoginActivity extends BRActivity {
             }
         }, 500);
 
+        BreadApp.addOnBackgroundedListener(new BreadApp.OnAppBackgrounded() {
+            @Override
+            public void onBackgrounded() {
+                //disconnect all wallets on backgrounded
+                List<BaseWalletManager> wallets = WalletsMaster.getInstance(LoginActivity.this).getAllWallets();
+                for (BaseWalletManager w : wallets) {
+                    w.getPeerManager().disconnect();
+                }
+
+            }
+        });
+
     }
 
     @Override
@@ -207,6 +224,7 @@ public class LoginActivity extends BRActivity {
         super.onResume();
         updateDots();
 
+        WalletsMaster.getInstance(this).initWallets(this);
         appVisible = true;
         app = this;
         inputAllowed = true;
@@ -280,7 +298,7 @@ public class LoginActivity extends BRActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+                        Intent intent = new Intent(LoginActivity.this, WalletActivity.class);
                         startActivity(intent);
                         overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
                         if (!LoginActivity.this.isDestroyed()) {

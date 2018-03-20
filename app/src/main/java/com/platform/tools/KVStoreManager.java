@@ -3,10 +3,14 @@ package com.platform.tools;
 import android.content.Context;
 import android.util.Log;
 
+import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.APIClient;
 import com.platform.entities.TxMetaData;
 import com.platform.entities.WalletInfo;
@@ -352,6 +356,21 @@ public class KVStoreManager {
         } else {
             return newVal;
         }
+    }
+
+    public TxMetaData createMetadata(Context app, BaseWalletManager wm, BRCoreTransaction tx){
+        TxMetaData txMetaData = new TxMetaData();
+        txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
+        txMetaData.exchangeRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, wm.getIso(app), txMetaData.exchangeCurrency).rate;
+        txMetaData.fee = wm.getWallet().getTransactionFee(tx);
+        txMetaData.txSize = (int) tx.getSize();
+        txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, wm.getIso(app));
+        txMetaData.creationTime = (int) (System.currentTimeMillis() / 1000);//seconds
+        txMetaData.deviceId = BRSharedPrefs.getDeviceId(app);
+        txMetaData.classVersion = 1;
+
+        return txMetaData;
+
     }
 
     // -1 means no change

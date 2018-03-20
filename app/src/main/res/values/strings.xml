@@ -471,7 +471,9 @@
   <!-- Send money to label -->
   <string name="Send.toLabel">To</string>
   <!-- Adress already used alert message - first part -->
-  <string name="Send.UsedAddress.firstLine">Bitcoin addresses are intended for single use only.</string>
+  <string name="Sendbtc.UsedAddress.firstLine">Bitcoin addresses are intended for single use only.</string>
+  <string name="Sendbch.UsedAddress.firstLine">Bitcoin Cash addresses are intended for single use only.</string>
+
   <!-- Adress already used alert message - second part -->
   <string name="Send.UsedAddress.secondLIne">Re-use reduces privacy for both you and the recipient and can result in loss if the recipient doesn\'t directly control the address.</string>
   <!-- Adress already used alert title -->
@@ -479,22 +481,17 @@
   <!-- About label -->
   <string name="Settings.about">About</string>
   <!-- Advanced Settings title -->
-  <string name="Settings.advancedTitle">Advanced</string>
+  <string name="Settings.advancedTitle">Advanced Settings</string>
   <!-- i.e. the currency which will be displayed -->
   <string name="Settings.currency">Display Currency</string>
   <string name="Settings.currencySettings">Currency Settings</string>
   <string name="Settings.bitcoin">Bitcoin</string>
   <string name="Settings.bitcoinCash">BitcoinCash</string>
   <string name="Settings.other">Other</string>
-  <string name="Settings.aboutBread">About Bread</string>
-
-
-
-
-
+  <string name="Settings.aboutBread">About BRD</string>
   <!-- Join Early access label -->
   <string name="Settings.earlyAccess">Join Early Access</string>
-  <!-- Are you enjoying brd alert message body -->
+  <!-- Are you enjoying bread alert message body -->
   <string name="Settings.enjoying">Are you enjoying BRD?</string>
   <!-- Import wallet label -->
   <string name="Settings.importTitle">Import Wallet</string>
@@ -505,9 +502,9 @@
   <!-- Notifications label -->
   <string name="Settings.notifications">Notifications</string>
   <!-- Leave review button label -->
-  <string name="Settings.review">Leave a review</string>
+  <string name="Settings.review">Leave us a Review</string>
   <!-- Share anonymous data label -->
-  <string name="Settings.shareData">Share anonymous usage data</string>
+  <string name="Settings.shareData">Share Anonymous Data</string>
   <!-- Sync blockchain label -->
   <string name="Settings.sync">Sync Blockchain</string>
   <!-- Settings title -->
@@ -519,7 +516,7 @@
   <!-- Wallet Settings section header -->
   <string name="Settings.wallet">Wallet</string>
   <!-- Start or recover another wallet menu label. -->
-  <string name="Settings.wipe">Unlink from this device</string>
+  <string name="Settings.wipe">Start/Recover Another Wallet</string>
   <!-- Share data view body -->
   <string name="ShareData.body">Help improve BRD by sharing your anonymous data with us. This does not include any financial information. We respect your financial privacy.</string>
   <!-- Share data header -->
@@ -757,9 +754,16 @@
   <string name="CurrencyReceive">Receive</string>
   <string name="TotalAssets">total assets</string>
   <string name="Portfolio">Portfolio</string>
+  <string name="Wallets">Wallets</string>
   <string name="Admin">Admin</string>
 
-
+  <!-- One-time BCH dialog -->
+  <string name="Dialog.welcomeBchTitle">BRD now supports Bitcoin Cash!</string>
+  <string name="Dialog.welcomeBchMessage">Any BCH in your wallet can be accessed through the home screen.</string>
+  <string name="Dialog.Home">Home</string>
+  <string name="Dialog.Dismiss">Dismiss</string>
+  <string name="Dialog.screenAlteringTitle">"Screen Altering App Detected</string>
+  <string name="Dialog.screenAlteringMessage">"BRD will not function properly unless screen altering apps(such as Twilight) are disabled. </string>
 
 
 </resources>

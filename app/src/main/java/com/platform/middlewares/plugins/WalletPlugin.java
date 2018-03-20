@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -61,7 +63,7 @@ public class WalletPlugin implements Plugin {
     private static Request globalBaseRequest;
 
     @Override
-    public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
+    public boolean handle(String target, final Request baseRequest, HttpServletRequest request, final HttpServletResponse response) {
         if (!target.startsWith("/_wallet")) return false;
         Activity app = (Activity) BreadApp.getBreadContext();
 
@@ -78,7 +80,7 @@ public class WalletPlugin implements Plugin {
                 jsonResp.put("no_wallet", wm.noWalletForPlatform(app));
 
                 /**the current receive address*/
-                jsonResp.put("receive_address", WalletsMaster.getInstance(app).getCurrentWallet(app).getReceiveAddress(app));
+                jsonResp.put("receive_address", BRSharedPrefs.getReceiveAddress(app, "BTC"));
 
                 /**how digits after the decimal point. 2 = bits 8 = btc 6 = mbtc*/
                 jsonResp.put("btc_denomiation_digits", BRSharedPrefs.getCryptoDenomination(app, wm.getCurrentWallet(app).getIso(app)) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
@@ -175,6 +177,76 @@ public class WalletPlugin implements Plugin {
             }
 
             return true;
+        } else if (target.startsWith("/_wallet/authenticate") && request.getMethod().equalsIgnoreCase("post")) {
+            try {
+                /**
+                 POST /_wallet/authenticate
+                 Verify that the current user is the wallet's owner.  Post a request of
+
+                 {prompt: "Promt Text!", id: "<uuidv4>" }.
+                 Get back an
+                 {
+                 "authenticated": true
+                 }
+                 */
+                String reqBody = null;
+                try {
+                    reqBody = new String(IOUtils.toByteArray(request.getInputStream()));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if (Utils.isNullOrEmpty(reqBody)) {
+                    Log.e(TAG, "handle: reqBody is empty: " + target + " " + baseRequest.getMethod());
+                    return BRHTTPHelper.handleError(400, null, baseRequest, response);
+                }
+                JSONObject obj = new JSONObject(reqBody);
+                String authText = obj.getString("prompt");
+                continuation = ContinuationSupport.getContinuation(request);
+                continuation.suspend(response);
+                globalBaseRequest = baseRequest;
+                AuthManager.getInstance().authPrompt(app, authText, "", false, false, new BRAuthCompletion() {
+                    @Override
+                    public void onComplete() {
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                JSONObject obj = new JSONObject();
+                                try {
+                                    obj.put("authenticated", true);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                if (continuation != null)
+                                    BRHTTPHelper.handleSuccess(200, obj.toString().getBytes(), globalBaseRequest, (HttpServletResponse) continuation.getServletResponse(), "application/json");
+                                cleanUp();
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onCancel() {
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                JSONObject obj = new JSONObject();
+                                try {
+                                    obj.put("authenticated", false);
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                }
+                                BRHTTPHelper.handleSuccess(200, obj.toString().getBytes(), globalBaseRequest, (HttpServletResponse) continuation.getServletResponse(), "application/json");
+                                cleanUp();
+                            }
+                        });
+
+                    }
+                });
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Log.e(TAG, "handle: Failed to parse Json request body: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(400, "failed to parse json", baseRequest, response);
+            }
         }
 
         Log.e(TAG, "handle: WALLET PLUGIN DID NOT HANDLE: " + target + " " + baseRequest.getMethod());
@@ -222,15 +294,19 @@ public class WalletPlugin implements Plugin {
                     }
                     ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
                 } finally {
-                    if (globalBaseRequest != null)
-                        globalBaseRequest.setHandled(true);
-                    if (continuation != null)
-                        continuation.complete();
-                    continuation = null;
-                    globalBaseRequest = null;
+                    cleanUp();
                 }
             }
         });
 
+    }
+
+    private static void cleanUp() {
+        if (globalBaseRequest != null)
+            globalBaseRequest.setHandled(true);
+        if (continuation != null)
+            continuation.complete();
+        continuation = null;
+        globalBaseRequest = null;
     }
 }

@@ -6,11 +6,15 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
+import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.presenter.activities.settings.TestActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.presenter.entities.RequestObject;
+import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoincash.WalletBchManager;
 import com.breadwallet.wallet.wallets.util.CryptoUriParser;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
@@ -64,9 +68,18 @@ public class WalletTests {
     @Rule
     public ActivityTestRule<TestActivity> mActivityRule = new ActivityTestRule<>(TestActivity.class);
 
+
+    // Test Wallets
+    BaseWalletManager mBtcWallet;
+    BaseWalletManager mBchWallet;
+
     @Before
     public void setUp() {
         Log.e(TAG, "setUp: ");
+        BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey("cat circle quick rotate arena primary walnut mask record smile violin state".getBytes(), true);
+        BRKeyStore.putMasterPublicKey(pubKey.serialize(), mActivityRule.getActivity());
+        mBtcWallet = WalletBitcoinManager.getInstance(mActivityRule.getActivity());
+        mBchWallet = WalletBchManager.getInstance(mActivityRule.getActivity());
     }
 
     @After
@@ -77,10 +90,15 @@ public class WalletTests {
         System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
     }
 
+    public void exchangeTests(){
+        long satoshis = 50000000;
+        //todo finish tests
+    }
+
     @Test
     public void paymentRequestTest() throws InvalidAlgorithmParameterException {
-
-        RequestObject obj = CryptoUriParser.parseRequest("n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
+        Activity app = mActivityRule.getActivity();
+        CryptoRequest obj = CryptoUriParser.parseRequest(app, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
         assertEquals("n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi", obj.address);
 
 //        r = [BRPaymentRequest requestWithString:@"1BTCorgHwCg6u2YSAWKgS17qUad6kHmtQ"];
@@ -88,68 +106,68 @@ public class WalletTests {
 //        XCTAssertEqualObjects(@"bitcoin:1BTCorgHwCg6u2YSAWKgS17qUad6kHmtQ", r.string,
 //        @"[BRPaymentRequest requestWithString:]");
 
-        obj = CryptoUriParser.parseRequest("bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
+        obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
         assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
 
-        obj = CryptoUriParser.parseRequest("bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=1");
+        obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=1");
         assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
-        BigDecimal bigDecimal = new BigDecimal(obj.amount);
+        BigDecimal bigDecimal = obj.amount;
         long amountAsLong = bigDecimal.longValue();
         assertEquals(String.valueOf(amountAsLong), "100000000");
 
-        obj = CryptoUriParser.parseRequest("bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=0.00000001");
+        obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=0.00000001");
         assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
-        bigDecimal = new BigDecimal(obj.amount);
+        bigDecimal = obj.amount;
         amountAsLong = bigDecimal.longValue();
         assertEquals(String.valueOf(amountAsLong), "1");
 
-        obj = CryptoUriParser.parseRequest("bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=21000000");
+        obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=21000000");
         assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
-        bigDecimal = new BigDecimal(obj.amount);
+        bigDecimal = obj.amount;
         amountAsLong = bigDecimal.longValue();
         assertEquals(String.valueOf(amountAsLong), "2100000000000000");
 
         // test for floating point rounding issues, these values cannot be exactly represented with an IEEE 754 double
-        obj = CryptoUriParser.parseRequest("bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=20999999.99999999");
+        obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=20999999.99999999");
         assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
-        bigDecimal = new BigDecimal(obj.amount);
+        bigDecimal = obj.amount;
         amountAsLong = bigDecimal.longValue();
         assertEquals(String.valueOf(amountAsLong), "2099999999999999");
 
-        obj = CryptoUriParser.parseRequest("bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=20999999.99999995");
+        obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=20999999.99999995");
         assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
-        bigDecimal = new BigDecimal(obj.amount);
+        bigDecimal = obj.amount;
         amountAsLong = bigDecimal.longValue();
         assertEquals(String.valueOf(amountAsLong), "2099999999999995");
 
-        obj = CryptoUriParser.parseRequest("bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=0.07433");
+        obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=0.07433");
         assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
-        bigDecimal = new BigDecimal(obj.amount);
+        bigDecimal = obj.amount;
         amountAsLong = bigDecimal.longValue();
         assertEquals(String.valueOf(amountAsLong), "7433000");
 
         // invalid amount string
-        obj = CryptoUriParser.parseRequest("bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=foobar");
+        obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?amount=foobar");
         assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
         assertEquals(obj.amount, null);
 
         // test correct encoding of '&' in argument value
-        obj = CryptoUriParser.parseRequest("bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?label=foo%26bar");
+        obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?label=foo%26bar");
         assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
         assertEquals(obj.label, "foo");
 
         // test handling of ' ' in label or message
-        obj = CryptoUriParser.parseRequest("bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?label=foo bar&message=bar foo");
+        obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?label=foo bar&message=bar foo");
         assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
         assertEquals(obj.label, "foo bar");
         assertEquals(obj.message, "bar foo");
 
         // test bip73
-        obj = CryptoUriParser.parseRequest("bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?r=https://foobar.com");
+        obj = CryptoUriParser.parseRequest(app, "bitcoin:n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi?r=https://foobar.com");
         assertEquals(obj.address, "n2eMqTT929pb1RDNuqEnxdaLau1rxy3efi");
         assertEquals(obj.r, "https://foobar.com");
 
-        obj = CryptoUriParser.parseRequest("bitcoin:?r=https://foobar.com");
+        obj = CryptoUriParser.parseRequest(app, "bitcoin:?r=https://foobar.com");
         assertEquals(obj.address, null);
         assertEquals(obj.r, "https://foobar.com");
     }
@@ -171,8 +189,8 @@ public class WalletTests {
         int usdRate = 12000;
 
         Set<CurrencyEntity> tmp = new HashSet<>();
-        tmp.add(new CurrencyEntity("USD", "Dollar", usdRate));
-        CurrencyDataSource.getInstance(app).putCurrencies(app, wallet, tmp);
+        tmp.add(new CurrencyEntity("USD", "Dollar", usdRate, "BTC"));
+        CurrencyDataSource.getInstance(app).putCurrencies(app, "BTC", tmp);
 
 
         BRSharedPrefs.putCryptoDenomination(app, "BTC", BRConstants.CURRENT_UNIT_BITCOINS);

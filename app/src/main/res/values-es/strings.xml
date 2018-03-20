@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
   <!-- App name -->
-  <string name="About.appName.android">Bread</string>
+  <string name="About.appName.android">BRD</string>
   <!-- About screen blog label -->
   <string name="About.blog">Blog</string>
   <!-- About screen footer -->
@@ -24,10 +24,6 @@
   <string name="Account.loadingMessage">Cargando cartera</string>
   <!-- Default wallet name -->
   <string name="AccountHeader.defaultWalletName">Mi Bread</string>
-  <!-- Equals symbol -->
-  <string name="AccountHeader.equals">=</string>
-  <!-- Manage wallet button title -->
-  <string name="AccountHeader.manageButtonName">GESTIONAR</string>
   <!-- Third party keyboard warning -->
   <string name="Alert.customKeyboard.android">Parece que estás usando un teclado de un tercero que puede grabar lo que escribes y robar tu clave de papel. Cambia al teclado predeterminado de Android para obtener protección adicional.</string>
   <!-- Error alert title -->
@@ -148,6 +144,8 @@
   <string name="ErrorMessages.emailUnavailableMessage">Este dispositivo no está configurado para enviar correo electrónico mediante una aplicación de iOS</string>
   <!-- Email unavailable alert title -->
   <string name="ErrorMessages.emailUnavailableTitle">Correo electrónico no disponible</string>
+  <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
+  <string name="ErrorMessages.loopingLockScreen.android">Bread no se puede autenticar debido a un error de tu versión de Android. [Por favor pulsa aquí para más información]</string>
   <!-- Messaging unavailable alert title -->
   <string name="ErrorMessages.messagingUnavailableMessage">Este dispositivo no está configurado para enviar mensajes.</string>
   <!-- Messaging unavailable alert title -->

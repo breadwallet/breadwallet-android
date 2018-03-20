@@ -1,6 +1,6 @@
 package com.breadwallet.tools.util;
 
-import android.text.format.DateUtils;
+import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -67,5 +67,31 @@ public class BRDateUtil {
 
             return todate.format(date);
         }
+    }
+
+    public static String getShortDate(long timestamp) {
+        //long millTimestamp = timestamp * 1000;
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp);
+        Log.d("BRDateUtil", "Timestamp -> " + timestamp);
+
+        String dateString = new SimpleDateFormat("MMM dd", Locale.getDefault()).format(calendar.getTimeInMillis());
+        Log.d("BRDateUtil", "Transaction date string -> " + dateString);
+
+        return dateString;
+    }
+
+    public static String getLongDate(long timestamp){
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTimeInMillis(timestamp);
+        Log.d("BRDateUtil", "Timestamp -> " + timestamp);
+
+        String dateString = new SimpleDateFormat("MMMM dd, yyyy, hh:mm a", Locale.getDefault()).format(calendar.getTimeInMillis());
+        Log.d("BRDateUtil", "Transaction date string -> " + dateString);
+
+        return dateString;
+
     }
 }

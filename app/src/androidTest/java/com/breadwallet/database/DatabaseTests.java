@@ -6,18 +6,22 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
+import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
+import com.breadwallet.presenter.activities.settings.TestActivity;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.bitcoincash.WalletBchManager;
@@ -66,24 +70,40 @@ public class DatabaseTests {
     public static final String TAG = DatabaseTests.class.getName();
     final CountDownLatch signal = new CountDownLatch(1000);
 
-    // Test Wallets
-    BaseWalletManager mBtcWallet;
-    BaseWalletManager mBchWallet;
+
 
     @Rule
-    public ActivityTestRule<IntroActivity> mActivityRule = new ActivityTestRule<>(IntroActivity.class);
+    public ActivityTestRule<TestActivity> mActivityRule = new ActivityTestRule<>(TestActivity.class);
 
     @Before
     public void setUp() {
         Log.e(TAG, "setUp: ");
+//        Activity app = mActivityRule.getActivity();
+//        BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey("cat circle quick rotate arena primary walnut mask record smile violin state".getBytes(), true);
+//        BRKeyStore.putMasterPublicKey(pubKey.serialize(), app);
+        cleanUp();
 
+    }
 
-        mBtcWallet = WalletBitcoinManager.getInstance(mActivityRule.getActivity());
-        mBchWallet = WalletBchManager.getInstance(mActivityRule.getActivity());
+    private void cleanUp() {
+        Activity app = mActivityRule.getActivity();
+
+        BtcBchTransactionDataStore.getInstance(app).deleteAllTransactions(app, "BTC");
+        BtcBchTransactionDataStore.getInstance(app).deleteAllTransactions(app, "BCH");
+
+        CurrencyDataSource.getInstance(app).deleteAllCurrencies(app, "BTC");
+        CurrencyDataSource.getInstance(app).deleteAllCurrencies(app, "BCH");
+
+        MerkleBlockDataSource.getInstance(app).deleteAllBlocks(app, "BTC");
+        MerkleBlockDataSource.getInstance(app).deleteAllBlocks(app, "BCH");
+
+        PeerDataSource.getInstance(app).deleteAllPeers(app, "BTC");
+        PeerDataSource.getInstance(app).deleteAllPeers(app, "BCH");
     }
 
     @After
     public void tearDown() {
+
     }
 
     @Test
@@ -92,8 +112,8 @@ public class DatabaseTests {
         // Test BTC transaction insert
         Activity app = mActivityRule.getActivity();
         BtcBchTransactionDataStore tds = BtcBchTransactionDataStore.getInstance(app);
-        tds.putTransaction(app, mBtcWallet, new BRTransactionEntity(new byte[0], 1234, 4314123, "some hash", mBtcWallet.getIso(app)));
-        List<BRTransactionEntity> txs = tds.getAllTransactions(app, mBtcWallet);
+        tds.putTransaction(app, "BTC", new BRTransactionEntity(new byte[0], 1234, 4314123, "some hash", "BTC"));
+        List<BRTransactionEntity> txs = tds.getAllTransactions(app, "BTC");
         Assert.assertNotNull(txs);
         Assert.assertEquals(txs.size(), 1);
         Assert.assertArrayEquals(txs.get(0).getBuff(), new byte[0]);
@@ -104,28 +124,52 @@ public class DatabaseTests {
 
         // Test BCH Transaction insert
         BtcBchTransactionDataStore bchInsert = BtcBchTransactionDataStore.getInstance(app);
-        tds.putTransaction(app, mBchWallet, new BRTransactionEntity(new byte[0], 4321, 5674123, "some hash", mBchWallet.getIso(app)));
-        List<BRTransactionEntity> bchTxs = bchInsert.getAllTransactions(app, mBchWallet);
+        tds.putTransaction(app, "BCH", new BRTransactionEntity("some bytes".getBytes(), 4321, 5674123, "some hash", "BCH"));
+        List<BRTransactionEntity> bchTxs = bchInsert.getAllTransactions(app, "BCH");
         Assert.assertNotNull(bchTxs);
         Assert.assertEquals(bchTxs.size(), 1);
-        Assert.assertArrayEquals(bchTxs.get(0).getBuff(), new byte[0]);
+        Assert.assertArrayEquals(bchTxs.get(0).getBuff(), "some bytes".getBytes());
         Assert.assertEquals(bchTxs.get(0).getBlockheight(), 4321);
         Assert.assertEquals(bchTxs.get(0).getTimestamp(), 5674123);
         Assert.assertEquals(bchTxs.get(0).getTxHash(), "some hash");
-        Assert.assertEquals(bchTxs.get(0).getTxISO(), "bch");
+        Assert.assertEquals(bchTxs.get(0).getTxISO().toLowerCase(), "BCH".toLowerCase());
+
+        //Test BCH transaction update
+        BRTransactionEntity toUpdate = bchTxs.get(0);
+        Assert.assertNotNull(toUpdate);
+        toUpdate.setBlockheight(8123);
+        toUpdate.setTimestamp(9382312);
+        boolean b = bchInsert.updateTransaction(app, "BCH", toUpdate);
+        Assert.assertTrue(b);
+        bchTxs = bchInsert.getAllTransactions(app, "BCH");
+        Assert.assertNotNull(bchTxs);
+        Assert.assertEquals(bchTxs.size(), 1);
+        Assert.assertArrayEquals(bchTxs.get(0).getBuff(), "some bytes".getBytes());
+        Assert.assertEquals(bchTxs.get(0).getBlockheight(), 8123);
+        Assert.assertEquals(bchTxs.get(0).getTimestamp(), 9382312);
+        Assert.assertEquals(bchTxs.get(0).getTxHash(), "some hash");
+        Assert.assertEquals(bchTxs.get(0).getTxISO().toLowerCase(), "bch");
 
 
         MerkleBlockDataSource mds = MerkleBlockDataSource.getInstance(mActivityRule.getActivity());
-        mds.putMerkleBlocks(app, mBtcWallet, new BlockEntity[]{new BlockEntity("SOme cool stuff".getBytes(), 123343)});
-        List<BRMerkleBlockEntity> ms = mds.getAllMerkleBlocks(app, mBtcWallet);
+        mds.putMerkleBlocks(app, "BTC", new BlockEntity[]{new BlockEntity("SOme cool stuff".getBytes(), 123343)});
+        List<BRMerkleBlockEntity> ms = mds.getAllMerkleBlocks(app, "BTC");
         Assert.assertNotNull(ms);
         Assert.assertEquals(ms.size(), 1);
         Assert.assertArrayEquals(ms.get(0).getBuff(), "SOme cool stuff".getBytes());
         Assert.assertEquals(ms.get(0).getBlockHeight(), 123343);
 
+        MerkleBlockDataSource bchMds = MerkleBlockDataSource.getInstance(mActivityRule.getActivity());
+        bchMds.putMerkleBlocks(app, "BCH", new BlockEntity[]{new BlockEntity("SOme cool stuff BCH".getBytes(), 123343)});
+        List<BRMerkleBlockEntity> bchMs = bchMds.getAllMerkleBlocks(app, "BCH");
+        Assert.assertNotNull(bchMs);
+        Assert.assertEquals(bchMs.size(), 1);
+        Assert.assertArrayEquals(bchMs.get(0).getBuff(), "SOme cool stuff BCH".getBytes());
+        Assert.assertEquals(bchMs.get(0).getBlockHeight(), 123343);
+
         PeerDataSource pds = PeerDataSource.getInstance(mActivityRule.getActivity());
-        pds.putPeers(app, mBtcWallet, new PeerEntity[]{new PeerEntity("someAddress".getBytes(), "somePort".getBytes(), "someTimestamp".getBytes())});
-        List<BRPeerEntity> ps = pds.getAllPeers(app, mBtcWallet);
+        pds.putPeers(app, "BTC", new PeerEntity[]{new PeerEntity("someAddress".getBytes(), "somePort".getBytes(), "someTimestamp".getBytes())});
+        List<BRPeerEntity> ps = pds.getAllPeers(app, "BTC");
         Assert.assertNotNull(ps);
         Assert.assertEquals(ps.size(), 1);
         Assert.assertArrayEquals(ps.get(0).getAddress(), "someAddress".getBytes());
@@ -141,8 +185,8 @@ public class DatabaseTests {
         ent.name = "OmiseGo";
         ent.rate = 8.43f;
         toInsert.add(ent);
-        cds.putCurrencies(app, mBtcWallet, toInsert);
-        List<CurrencyEntity> cs = cds.getAllCurrencies(app, mBtcWallet);
+        cds.putCurrencies(app, "BTC", toInsert);
+        List<CurrencyEntity> cs = cds.getAllCurrencies(app, "BTC");
         Assert.assertNotNull(cs);
         Assert.assertEquals(cs.size(), 1);
         Assert.assertEquals(cs.get(0).name, "OmiseGo");
@@ -150,26 +194,33 @@ public class DatabaseTests {
         Assert.assertEquals(cs.get(0).rate, 8.43f, 0);
 
         // Test inserting BTC as a currency
-        CurrencyDataSource currencyDataSource = CurrencyDataSource.getInstance(mActivityRule.getActivity());
-        List<CurrencyEntity> btcToInsert = new ArrayList<>();
+        toInsert = new ArrayList<>();
+
         CurrencyEntity btcEntity = new CurrencyEntity();
-        ent.code = "BTC";
-        ent.name = "Bitcoin";
-        ent.rate = 1.0f;
-        toInsert.add(ent);
-        cds.putCurrencies(app, mBtcWallet, btcToInsert);
-        List<CurrencyEntity> currencyEntities = cds.getAllCurrencies(app, mBtcWallet);
-        Assert.assertNotNull(cs);
-        Assert.assertEquals(cs.size(), 1);
-        Assert.assertEquals(cs.get(0).name, "BTC");
-        Assert.assertEquals(cs.get(0).code, "Bitcoin");
-        Assert.assertEquals(cs.get(0).rate, 1.0f, 0);
+        btcEntity.code = "ETH";
+        btcEntity.name = "Ether";
+        btcEntity.rate = 6f;
+        toInsert.add(btcEntity);
+        cds.putCurrencies(app, "bch", toInsert);
+
+        List<CurrencyEntity> btcCurs = cds.getAllCurrencies(app, "BTC");
+        List<CurrencyEntity> bchCurs = cds.getAllCurrencies(app, "BCH");
+        Assert.assertNotNull(btcCurs);
+        Assert.assertNotNull(bchCurs);
+        Assert.assertEquals(btcCurs.size(), 1);
+        Assert.assertEquals(bchCurs.size(), 1);
+        Assert.assertEquals(bchCurs.get(0).name, "Ether");
+        Assert.assertEquals(bchCurs.get(0).code, "ETH");
+        Assert.assertEquals(bchCurs.get(0).rate, 6f, 0);
+
+        Assert.assertEquals(btcCurs.get(0).name, "OmiseGo");
+        Assert.assertEquals(btcCurs.get(0).code, "OMG");
+        Assert.assertEquals(btcCurs.get(0).rate, 8.43f, 0);
 
 
     }
 
     private class InsertionThread extends Thread {
-
 
         @Override
         public void run() {
@@ -179,8 +230,8 @@ public class DatabaseTests {
             Activity app = mActivityRule.getActivity();
             BtcBchTransactionDataStore tds = BtcBchTransactionDataStore.getInstance(app);
             BtcBchTransactionDataStore bchInsert = BtcBchTransactionDataStore.getInstance(app);
-            tds.putTransaction(app, mBchWallet, new BRTransactionEntity(new byte[0], 4321, 5674123, "some hash", mBchWallet.getIso(app)));
-            List<BRTransactionEntity> bchTxs = bchInsert.getAllTransactions(app, mBchWallet);
+            tds.putTransaction(app, "BTC", new BRTransactionEntity(new byte[0], 4321, 5674123, "some hash", "BTC"));
+            List<BRTransactionEntity> bchTxs = bchInsert.getAllTransactions(app, "BTC");
             Assert.assertNotNull(bchTxs);
             Assert.assertEquals(bchTxs.size(), 1);
             Assert.assertArrayEquals(bchTxs.get(0).getBuff(), new byte[0]);
@@ -206,18 +257,18 @@ public class DatabaseTests {
             @Override
             public void run() {
                 BtcBchTransactionDataStore tds = BtcBchTransactionDataStore.getInstance(app);
-                tds.putTransaction(app, mBtcWallet, new BRTransactionEntity(new byte[0], 1989, 00112233, "first", mBchWallet.getIso(app)));
+                tds.putTransaction(app, "BTC", new BRTransactionEntity(new byte[0], 1989, 00112233, "first", "BTC"));
                 done();
             }
         });
 
 
         BtcBchTransactionDataStore tds2 = BtcBchTransactionDataStore.getInstance(app);
-        tds2.putTransaction(app, mBtcWallet, new BRTransactionEntity(new byte[1], 1990, 11223344, "second", mBchWallet.getIso(app)));
+        tds2.putTransaction(app, "BTC", new BRTransactionEntity(new byte[1], 1990, 11223344, "second", "BTC"));
         done();
 
         BtcBchTransactionDataStore tds3 = BtcBchTransactionDataStore.getInstance(app);
-        tds3.putTransaction(app, mBtcWallet, new BRTransactionEntity(new byte[2], 1991, 22334455, "third", mBchWallet.getIso(app)));
+        tds3.putTransaction(app, "BTC", new BRTransactionEntity(new byte[2], 1991, 22334455, "third", "BTC"));
         done();
 
 
@@ -233,7 +284,7 @@ public class DatabaseTests {
                 public void run() {
 
                     BtcBchTransactionDataStore tds = BtcBchTransactionDataStore.getInstance(app);
-                    tds.putTransaction(app, mBtcWallet, new BRTransactionEntity(String.valueOf(finalI).getBytes(), finalI, finalI, String.valueOf(finalI), mBtcWallet.getIso(app)));
+                    tds.putTransaction(app, "BTC", new BRTransactionEntity(String.valueOf(finalI).getBytes(), finalI, finalI, String.valueOf(finalI), "BTC"));
                     done();
                 }
             });
@@ -245,7 +296,7 @@ public class DatabaseTests {
         }
         Log.e(TAG, "testAsynchronousInserts: Done waiting!");
         BtcBchTransactionDataStore tds = BtcBchTransactionDataStore.getInstance(app);
-        List<BRTransactionEntity> txs = tds.getAllTransactions(app, mBtcWallet);
+        List<BRTransactionEntity> txs = tds.getAllTransactions(app, "BTC");
         Assert.assertNotNull(txs);
         Assert.assertEquals(txs.size(), 1000);
 

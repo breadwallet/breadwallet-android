@@ -74,6 +74,12 @@
     <color name="admin_row_color">#e0e5e8</color>
     <color name="settings_chevron_right">#b3c0c8</color>
     <color name="transaction_amount_received_color">#4cbf2c</color>
+    <color name="transaction_failed_button_color">#f46b41</color>
+    <color name="trans_white">#70ffffff</color>
 
+
+    // Dialog button colors
+    <color name="dialog_button_positive">#4b77f3</color>
+    <color name="dialog_button_negative">#b3c0c8</color>
 
 </resources>

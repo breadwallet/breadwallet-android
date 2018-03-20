@@ -3,15 +3,12 @@ package com.breadwallet.wallet.abstracts;
 import android.content.Context;
 
 import com.breadwallet.core.BRCoreAddress;
-import com.breadwallet.core.BRCoreChainParams;
-import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.BRCoreMerkleBlock;
 import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.core.BRCorePeerManager;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWallet;
-import com.breadwallet.core.BRCoreWalletManager;
-import com.breadwallet.presenter.entities.PaymentItem;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
 
@@ -66,7 +63,7 @@ public interface BaseWalletManager {
 
     void addTxStatusUpdatedListener(OnTxStatusUpdatedListener list);
 
-    void addSyncStoppedListener(OnSyncStopped list);
+    void addSyncListeners(SyncListener list);
 
     void addTxListModifiedListener(OnTxListModified list);
 
@@ -93,6 +90,9 @@ public interface BaseWalletManager {
     //get the currency denomination e.g. Bitcoin - BTC, Ether - ETH
     String getIso(Context app);
 
+    //get the currency scheme (bitcoin or bitcoincash)
+    String getScheme(Context app);
+
     //get the currency name e.g. Bitcoin
     String getName(Context app);
 
@@ -102,13 +102,19 @@ public interface BaseWalletManager {
     //get the wallet's receive address
     BRCoreAddress getReceiveAddress(Context app);
 
+    //decorate an address to a particular currency, if needed (like BCH address format)
+    String decorateAddress(Context app, String addr);
+
+    //convert to raw address to a particular currency, if needed (like BCH address format)
+    String undecorateAddress(Context app, String addr);
+
     //get the number of decimal places to use for this currency
     int getMaxDecimalPlaces(Context app);
 
-    //get the cached balance in the smallest unit: cents, satoshis.
+    //get the cached balance in the smallest unit:  satoshis.
     long getCachedBalance(Context app);
 
-    //get the total amount sent in the smallest crypto unit: cents, satoshis.
+    //get the total amount sent in the smallest crypto unit:  satoshis.
     long getTotalSent(Context app);
 
     //wipe all wallet data
@@ -145,9 +151,8 @@ public interface BaseWalletManager {
 
     boolean networkIsReachable();
 
-
     /**
-     * @param balance - the balance to be saved in the smallest unit.(e.g. cents, satoshis)
+     * @param balance - the balance to be saved in the smallest unit.(e.g. satoshis)
      */
     void setCashedBalance(Context app, long balance);
 
@@ -160,24 +165,25 @@ public interface BaseWalletManager {
     WalletUiConfiguration getUiConfiguration();
 
     /**
-     * @return - the wallet's currency exchange rate in the smallest denomination amount in the user's favorite fiat currency (e.g. cents)
+     * @return - the wallet's currency exchange rate in the user's favorite fiat currency (e.g. dollars)
      */
-    long getFiatExchangeRate(Context app);
+    BigDecimal getFiatExchangeRate(Context app);
 
     /**
-     * @return - the total balance in the smallest denomination amount in the user's favorite fiat currency (e.g. cents)
+     * @return - the total balance amount in the user's favorite fiat currency (e.g. dollars)
      */
-    long getFiatBalance(Context app);
+    BigDecimal getFiatBalance(Context app);
 
     /**
      * @param amount - the smallest denomination amount in current wallet's crypto (e.g. Satoshis)
-     * @return - the fiat value of the amount in crypto in the smallest denomination (e.g. cents)
+     * @param ent - provide a currency entity if needed
+     * @return - the fiat value of the amount in crypto (e.g. dollars)
      * or null if there is no fiat exchange data from the API yet
      */
-    BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount);
+    BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount, CurrencyEntity ent);
 
     /**
-     * @param amount - the smallest denomination amount in the user's favorite fiat currency (e.g. cents)
+     * @param amount - the amount in the user's favorite fiat currency (e.g. dollars)
      * @return - the crypto value of the amount in the current favorite denomination (e.g. BTC, mBTC, Bits..)
      * or null if there is no fiat exchange data from the API yet
      */
@@ -196,7 +202,7 @@ public interface BaseWalletManager {
     BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount);
 
     /**
-     * @param amount - the fiat amount in the smallest denomination (e.g. cents)
+     * @param amount - the fiat amount (e.g. dollars)
      * @return - the crypto value of the amount in the smallest denomination (e.g. satothis)
      * or null if there is no fiat exchange data from the API yet
      */

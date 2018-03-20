@@ -24,11 +24,13 @@ import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.LoginActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
+import com.breadwallet.presenter.activities.LoginActivity;
+import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.fragments.FragmentGreetings;
 import com.breadwallet.presenter.fragments.FragmentMenu;
@@ -37,12 +39,10 @@ import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.presenter.fragments.FragmentSupport;
-import com.breadwallet.presenter.fragments.FragmentTransactionDetails;
+import com.breadwallet.presenter.fragments.FragmentTxDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
-
-import java.util.List;
 
 
 /**
@@ -132,22 +132,20 @@ public class BRAnimator {
         }
     }
 
-    public static void showSendFragment(Activity app, final String bitcoinUrl) {
+    public static void showSendFragment(Activity app, final CryptoRequest request) {
         if (app == null) {
             Log.e(TAG, "showSendFragment: app is null");
             return;
         }
         FragmentSend fragmentSend = (FragmentSend) app.getFragmentManager().findFragmentByTag(FragmentSend.class.getName());
         if (fragmentSend != null && fragmentSend.isAdded()) {
-            fragmentSend.setUrl(bitcoinUrl);
+            fragmentSend.setCryptoObject(request);
             return;
         }
         try {
             fragmentSend = new FragmentSend();
-            if (bitcoinUrl != null && !bitcoinUrl.isEmpty()) {
-                Bundle bundle = new Bundle();
-                bundle.putString("url", bitcoinUrl);
-                fragmentSend.setArguments(bundle);
+            if (request != null && !request.address.isEmpty()) {
+                fragmentSend.setCryptoObject(request);
             }
             app.getFragmentManager().beginTransaction()
                     .setCustomAnimations(0, 0, 0, R.animator.plain_300)
@@ -207,27 +205,43 @@ public class BRAnimator {
 
     }
 
-    public static void showTransactionPager(Activity app, List<TxUiHolder> items, int position) {
-        if (app == null) {
-            Log.e(TAG, "showSendFragment: app is null");
-            return;
-        }
-        FragmentTransactionDetails fragmentTransactionDetails = (FragmentTransactionDetails) app.getFragmentManager().findFragmentByTag(FragmentTransactionDetails.class.getName());
-        if (fragmentTransactionDetails != null && fragmentTransactionDetails.isAdded()) {
-            fragmentTransactionDetails.setItems(items);
-            Log.e(TAG, "showTransactionPager: Already showing");
-            return;
-        }
-        fragmentTransactionDetails = new FragmentTransactionDetails();
-        fragmentTransactionDetails.setItems(items);
-        Bundle bundle = new Bundle();
-        bundle.putInt("pos", position);
-        fragmentTransactionDetails.setArguments(bundle);
+//    public static void showTransactionPager(Activity app, List<TxUiHolder> items, int position) {
+//        if (app == null) {
+//            Log.e(TAG, "showSendFragment: app is null");
+//            return;
+//        }
+//        FragmentTransactionDetails fragmentTransactionDetails = (FragmentTransactionDetails) app.getFragmentManager().findFragmentByTag(FragmentTransactionDetails.class.getName());
+//        if (fragmentTransactionDetails != null && fragmentTransactionDetails.isAdded()) {
+//            fragmentTransactionDetails.setItems(items);
+//            Log.e(TAG, "showTransactionPager: Already showing");
+//            return;
+//        }
+//        fragmentTransactionDetails = new FragmentTransactionDetails();
+//        fragmentTransactionDetails.setItems(items);
+//        Bundle bundle = new Bundle();
+//        bundle.putInt("pos", position);
+//        fragmentTransactionDetails.setArguments(bundle);
+//
+//        app.getFragmentManager().beginTransaction()
+//                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
+//                .add(android.R.id.content, fragmentTransactionDetails, FragmentTransactionDetails.class.getName())
+//                .addToBackStack(FragmentTransactionDetails.class.getName()).commit();
+//
+//    }
 
-        app.getFragmentManager().beginTransaction()
-                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                .add(android.R.id.content, fragmentTransactionDetails, FragmentTransactionDetails.class.getName())
-                .addToBackStack(FragmentTransactionDetails.class.getName()).commit();
+    public static void showTransactionDetails(Activity app, TxUiHolder item, int position){
+
+        FragmentTxDetails txDetails = (FragmentTxDetails) app.getFragmentManager().findFragmentByTag(FragmentTxDetails.class.getName());
+
+        if(txDetails != null && txDetails.isAdded()){
+            Log.e(TAG, "showTransactionDetails: Already showing");
+
+            return;
+        }
+
+        txDetails = new FragmentTxDetails();
+        txDetails.setTransaction(item);
+        txDetails.show(app.getFragmentManager(), "txDetails");
 
     }
 
@@ -384,7 +398,7 @@ public class BRAnimator {
     public static void startBreadActivity(Activity from, boolean auth) {
         if (from == null) return;
         Log.e(TAG, "startBreadActivity: " + from.getClass().getName());
-        Class toStart = auth ? LoginActivity.class : HomeActivity.class;
+        Class toStart = auth ? LoginActivity.class : WalletActivity.class;
         Intent intent = new Intent(from, toStart);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         from.startActivity(intent);

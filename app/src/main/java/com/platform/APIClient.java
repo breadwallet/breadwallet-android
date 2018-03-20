@@ -333,12 +333,13 @@ public class APIClient {
         ResponseBody postReqBody = null;
         byte[] data = new byte[0];
         try {
-            OkHttpClient client = new OkHttpClient.Builder().followRedirects(false).connectTimeout(60, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
+            OkHttpClient client = new OkHttpClient.Builder().followRedirects(false).connectTimeout(10, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
 //            Log.e(TAG, "sendRequest: before executing the request: " + request.headers().toString());
             Log.d(TAG, "sendRequest: headers for : " + request.url() + "\n" + request.headers());
             String agent = Utils.getAgentString(ctx, "OkHttp/3.4.1");
 //            Log.e(TAG, "sendRequest: agent: " + agent);
             request = request.newBuilder().header("User-agent", agent).build();
+
             response = client.newCall(request).execute();
             String s = null;
             try {
@@ -629,6 +630,7 @@ public class APIClient {
             return false;
         }
         File bundleFile = new File(getBundleResource(ctx, BREAD_POINT + ".tar"));
+        Log.e(TAG, "tryExtractTar: " + bundleFile.getAbsolutePath());
         boolean result = false;
         TarArchiveInputStream debInputStream = null;
         try {

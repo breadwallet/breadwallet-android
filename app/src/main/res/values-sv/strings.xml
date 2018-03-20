@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
   <!-- App name -->
-  <string name="About.appName.android">Bread</string>
+  <string name="About.appName.android">BRD</string>
   <!-- About screen blog label -->
   <string name="About.blog">Blogg</string>
   <!-- About screen footer -->
-  <string name="About.footer">Skapad av det lokala teamet för Bread. Version %1$s</string>
+  <string name="About.footer">Skapad av det lokala teamet för BRD. Version %1$s</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">Sekretesspolicy</string>
   <!-- About screen reddit label -->
@@ -23,11 +23,7 @@
   <!-- Loading Wallet Message -->
   <string name="Account.loadingMessage">Laddar plånbok</string>
   <!-- Default wallet name -->
-  <string name="AccountHeader.defaultWalletName">Mitt Bread</string>
-  <!-- Equals symbol -->
-  <string name="AccountHeader.equals">=</string>
-  <!-- Manage wallet button title -->
-  <string name="AccountHeader.manageButtonName">HANTERA</string>
+  <string name="AccountHeader.defaultWalletName">Mitt BRD</string>
   <!-- Third party keyboard warning -->
   <string name="Alert.customKeyboard.android">Det verkar som att du använder ett tangentbord från tredje part, vilket kan registrera det du skriver och stjäla din kryptonyckel. Byt till Androids standardtangentbord för extra säkerhet.</string>
   <!-- Error alert title -->
@@ -35,7 +31,7 @@
   <!-- Keystore error -->
   <string name="Alert.keystore.generic.android">Det har uppstått ett problem med KeyStore till Android OS. Kontakta support@breadwallet.com</string>
   <!-- KeyStore error, keys are invalidated -->
-  <string name="Alert.keystore.invalidated.android">Dina krypterade Bread-uppgifter har nyligen ogiltigförklarats på grund av att Androids skärmlås inaktiverades.</string>
+  <string name="Alert.keystore.invalidated.android">Dina krypterade BRD-uppgifter har nyligen ogiltigförklarats på grund av att Androids skärmlås inaktiverades.</string>
   <!-- Keystore error title -->
   <string name="Alert.keystore.title.android">KeyStore-fel för Android</string>
   <!-- No internet alert message -->
@@ -148,6 +144,8 @@
   <string name="ErrorMessages.emailUnavailableMessage">Enheten är inte konfigurerad för att skicka e-post med post-appen i iOS.</string>
   <!-- Email unavailable alert title -->
   <string name="ErrorMessages.emailUnavailableTitle">E-posten är inte tillgänglig</string>
+  <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
+  <string name="ErrorMessages.loopingLockScreen.android">BRD kan inte verifieras på grund av en bugg i din version av Android. [Klicka här för mer information.]</string>
   <!-- Messaging unavailable alert title -->
   <string name="ErrorMessages.messagingUnavailableMessage">Denna enhet är inte konfigurerad för att skicka meddelanden.</string>
   <!-- Messaging unavailable alert title -->
@@ -189,13 +187,13 @@
   <!-- Caption for graphics -->
   <string name="Import.leftCaption">Plånbok som ska importeras</string>
   <!-- Import wallet intro screen message -->
-  <string name="Import.message">Genom att importera en plånbok överförs alla pengar från din andra plånbok till Bread genom en enda transaktion.</string>
+  <string name="Import.message">Genom att importera en plånbok överförs alla pengar från din andra plånbok till BRD genom en enda transaktion.</string>
   <!-- Enter password alert view title -->
   <string name="Import.password">Denna privata nyckel är lösenordsskyddad.</string>
   <!-- password textfield placeholder -->
   <string name="Import.passwordPlaceholder">lösenord</string>
   <!-- Caption for graphics -->
-  <string name="Import.rightCaption">Din Bread-plånbok</string>
+  <string name="Import.rightCaption">Din BRD-plånbok</string>
   <!-- Scan Private key button label -->
   <string name="Import.scan">Läs av privat nyckel</string>
   <!-- Import wallet success alert title -->
@@ -215,9 +213,9 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Ignorera</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Töm denna plånbok direkt och återupprätta den på en säker enhet.</string>
+  <string name="JailbreakWarnings.messageWithBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till BRDs nyckeldata och stjäla dina bitcoin! Töm denna plånbok direkt och återupprätta den på en säker enhet.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Använd Bread endast på en säker enhet.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till BRDs nyckeldata och stjäla dina bitcoin! Använd BRD endast på en säker enhet.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">VARNING</string>
   <!-- Wipe wallet button -->
@@ -225,7 +223,7 @@
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Platstjänster är inaktiverade.</string>
   <!-- No permissions for location services -->
-  <string name="LocationPlugin.notAuthorized">Bread har inte rätt att utnyttja platstjänster</string>
+  <string name="LocationPlugin.notAuthorized">BRD har inte rätt att utnyttja platstjänster</string>
   <!-- Wallet creation date prefix -->
   <string name="ManageWallet.creationDatePrefix">Du skapade din plånbok på %1$s</string>
   <!-- Manage wallet description text -->
@@ -303,7 +301,7 @@
   <!-- Transaction rejected prompt title -->
   <string name="Prompts.RecommendRescan.title">Transaktionen avslogs</string>
   <!-- Share data prompt body -->
-  <string name="Prompts.ShareData.body">Hjälp till att förbättra Bread genom att dela dina anonyma data med oss</string>
+  <string name="Prompts.ShareData.body">Hjälp till att förbättra BRD genom att dela dina anonyma data med oss</string>
   <!-- Share data prompt title -->
   <string name="Prompts.ShareData.title">Dela anonyma data</string>
   <!-- Enable touch ID prompt body -->
@@ -317,11 +315,11 @@
   <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
   <string name="Prompts.TouchId.usePin.android">PIN-kod</string>
   <!-- Upgrade PIN prompt body. -->
-  <string name="Prompts.UpgradePin.body">Bread har uppgraderat till att använda 6-siffrig PIN-kod. Klicka här för att uppgradera.</string>
+  <string name="Prompts.UpgradePin.body">BRD har uppgraderat till att använda 6-siffrig PIN-kod. Klicka här för att uppgradera.</string>
   <!-- Upgrade PIN prompt title. -->
   <string name="Prompts.UpgradePin.title">Uppgradera PIN-kod</string>
   <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
-  <string name="PushNotifications.body">Slå på aviseringar för att få särskilda meddelanden från Bread i framtiden.</string>
+  <string name="PushNotifications.body">Slå på aviseringar för att få särskilda meddelanden från BRD i framtiden.</string>
   <!-- Push notifications toggle switch label -->
   <string name="PushNotifications.label">Push-meddelanden</string>
   <!-- Push notifications are off label -->
@@ -351,7 +349,7 @@
   <!-- Enter paper key instruction -->
   <string name="RecoverWallet.instruction">Ange ordnyckel</string>
   <!-- Recover wallet intro -->
-  <string name="RecoverWallet.intro">Återupprätta Bread med din ordnyckel.</string>
+  <string name="RecoverWallet.intro">Återupprätta BRD med din ordnyckel.</string>
   <!-- Invalid paper key message -->
   <string name="RecoverWallet.invalid">Den ordnyckel du angav är ogiltig. Dubbelkolla varje ord och försök igen.</string>
   <!-- Previous button accessibility label -->
@@ -379,7 +377,7 @@
   <!-- extimated time -->
   <string name="ReScan.body1">20-45 minuter</string>
   <!-- Syncing explanation -->
-  <string name="ReScan.body2">Om en transaktion visar sig som klar i bitcoins nätverk men inte i Bread.</string>
+  <string name="ReScan.body2">Om en transaktion visar sig som klar i bitcoins nätverk men inte i BRD.</string>
   <!-- Syncing explanation -->
   <string name="ReScan.body3">Du får gång på gång ett meddelande som säger att din transaktion avvisades.</string>
   <!-- Start Sync button label -->
@@ -409,13 +407,13 @@
   <!-- Paper Key button title -->
   <string name="SecurityCenter.paperKeyTitle">Ordnyckel</string>
   <!-- PIN button description -->
-  <string name="SecurityCenter.pinDescription">Skyddar ditt Bread från obehöriga användare.</string>
+  <string name="SecurityCenter.pinDescription">Skyddar ditt BRD från obehöriga användare.</string>
   <!-- PIN button title -->
   <string name="SecurityCenter.pinTitle">6-siffrig PIN-kod</string>
   <!-- Security Center Title -->
   <string name="SecurityCenter.title">Säkerhetscenter</string>
   <!-- Touch ID button description -->
-  <string name="SecurityCenter.touchIdDescription">Lås enkelt upp ditt Bread och skicka pengar upp till en inställd gräns.</string>
+  <string name="SecurityCenter.touchIdDescription">Lås enkelt upp ditt BRD och skicka pengar upp till en inställd gräns.</string>
   <!-- Touch ID button title -->
   <string name="SecurityCenter.touchIdTitle">Touch ID</string>
   <!-- Security center fingerprint authentication button -->
@@ -425,13 +423,13 @@
   <!-- Balance: $4.00 -->
   <string name="Send.balance">Saldo: %1$s</string>
   <!-- Instructions how to allow the camera access for the app -->
-  <string name="Send.cameraUnavailabeMessage.android">Tillåt kameraåtkomst under Inställningar &gt; Appar &gt; Bread &gt; Behörigheter</string>
+  <string name="Send.cameraUnavailabeMessage.android">Tillåt kameraåtkomst under Inställningar &gt; Appar &gt; BRD &gt; Behörigheter</string>
   <!-- Permission required to access camera -->
-  <string name="Send.cameraUnavailabeTitle.android">Bread har inte åtkomst till kameran</string>
+  <string name="Send.cameraUnavailabeTitle.android">BRD har inte åtkomst till kameran</string>
   <!-- Camera not allowed message -->
   <string name="Send.cameraunavailableMessage">Gå till Inställningar för att ge tillgång till kameran.</string>
   <!-- Camera not allowed alert title -->
-  <string name="Send.cameraUnavailableTitle">Bread har inte tillgång till kameran</string>
+  <string name="Send.cameraUnavailableTitle">BRD har inte tillgång till kameran</string>
   <!-- Warning when sending to self. -->
   <string name="Send.containsAddress">Destinationen är din egen adress. Du kan inte skicka till dig själv.</string>
   <!-- Could not create transaction alert title -->
@@ -487,7 +485,7 @@
   <!-- Join Early access label -->
   <string name="Settings.earlyAccess">Använd Snabb tillgång</string>
   <!-- Are you enjoying bread alert message body -->
-  <string name="Settings.enjoying">Gillar du Bread?</string>
+  <string name="Settings.enjoying">Gillar du BRD?</string>
   <!-- Import wallet label -->
   <string name="Settings.importTitle">Importera plånbok</string>
   <!-- Manage settings section header -->
@@ -511,7 +509,7 @@
   <!-- Start or recover another wallet menu label. -->
   <string name="Settings.wipe">Starta/Återställ en annan plånbok</string>
   <!-- Share data view body -->
-  <string name="ShareData.body">Hjälp till att förbättra Bread genom att dela dina anonyma uppgifter med oss. Detta inbegriper inga ekonomiska uppgifter. Vi respekterar din ekonomiska sekretess.</string>
+  <string name="ShareData.body">Hjälp till att förbättra BRD genom att dela dina anonyma uppgifter med oss. Detta inbegriper inga ekonomiska uppgifter. Vi respekterar din ekonomiska sekretess.</string>
   <!-- Share data header -->
   <string name="ShareData.header">Dela uppgifter?</string>
   <!-- Share data switch label. -->
@@ -519,7 +517,7 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Skriv ner ordnyckel på nytt</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Din ordnyckel  är enda sättet att återupprätta Bread om du förlorat din telefon, blivit bestulen på den eller har uppgraderat den.\n\nVi visar dig en lista över ord som du kan skriva ner på ett papper och gömma undan.</string>
+  <string name="StartPaperPhrase.body">Din ordnyckel  är enda sättet att återupprätta BRD om du förlorat din telefon, blivit bestulen på den eller har uppgraderat den.\n\nVi visar dig en lista över ord som du kan skriva ner på ett papper och gömma undan.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Skriv ner ordnyckel</string>
   <!-- Argument is date -->
@@ -551,14 +549,14 @@
   <!-- Fingerprint Is Not Setup -->
   <string name="TouchIdSettings.disabledWarning.title.android">Fingeravtrycksautentisering har inte aktiverats</string>
   <!-- Touch Id screen label -->
-  <string name="TouchIdSettings.label">Använd ditt fingeravtryck för att låsa upp Bread och skicka pengar upp till en inställd gräns.</string>
+  <string name="TouchIdSettings.label">Använd ditt fingeravtryck för att låsa upp BRD och skicka pengar upp till en inställd gräns.</string>
   <!-- Link Text (see TouchIdSettings.customizeText) -->
   <string name="TouchIdSettings.linkText">Sida för utgiftsgräns i Touch ID</string>
   <!-- Spending Limit: b100,000 ($100) -->
   <string name="TouchIdSettings.spendingLimit">Utnyttjandegräns: %1$s (%2$s)</string>
   <!-- Touch id switch label. -->
-  <string name="TouchIdSettings.switchLabel">Aktivera Touch ID för Bread</string>
-  <!-- Enable fingerprint for this wallet called Bread -->
+  <string name="TouchIdSettings.switchLabel">Aktivera Touch ID för BRD</string>
+  <!-- Enable fingerprint for this wallet called BRD -->
   <string name="TouchIdSettings.switchLabel.android">Aktivera fingeravtrycksautentisering</string>
   <!-- Touch ID settings view title -->
   <string name="TouchIdSettings.title">Touch ID</string>
@@ -653,7 +651,7 @@
   <!-- Instruction to touch the sensor for fingerprint authentication -->
   <string name="UnlockScreen.touchIdInstructions.android">Touchsensor</string>
   <!-- TouchID prompt text -->
-  <string name="UnlockScreen.touchIdPrompt">Lås upp Bread.</string>
+  <string name="UnlockScreen.touchIdPrompt">Lås upp BRD.</string>
   <!-- Device authentication body -->
   <string name="UnlockScreen.touchIdPrompt.android">Lås upp din Android-enhet för att fortsätta.</string>
   <!-- Unlock with TouchID accessibility label -->
@@ -665,7 +663,7 @@
   <!-- Update PIN caption text -->
   <string name="UpdatePin.caption">Kom ihåg PIN-koden. Om du glömmer den, kommer du inte åt dina bitcoin.</string>
   <!-- PIN creation info. -->
-  <string name="UpdatePin.createInstruction">Din PIN-kod används för att låsa upp ditt Bread och skicka pengar</string>
+  <string name="UpdatePin.createInstruction">Din PIN-kod används för att låsa upp ditt BRD och skicka pengar</string>
   <!-- Update PIN title -->
   <string name="UpdatePin.createTitle">Ställ in PIN-kod</string>
   <!-- Update PIN title -->
@@ -699,7 +697,7 @@
   <!-- Authorize transaction with touch id message -->
   <string name="VerifyPin.touchIdMessage">Godkänn denna transaktion</string>
   <!-- 'No wallet' warning for watch app -->
-  <string name="Watch.noWalletWarning">Öppna iPhone-appen Bread för att ställa in din plånbok.</string>
+  <string name="Watch.noWalletWarning">Öppna iPhone-appen BRD för att ställa in din plånbok.</string>
   <!-- Dismiss button label -->
   <string name="Webview.dismiss">Avfärda</string>
   <!-- Webview loading error message -->
@@ -707,9 +705,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">Uppdaterar...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadplånboken har bytt namn till Bread, med ett splitter nytt utseende och några nya funktioner.\n\nOm du behöver hjälp, leta efter (?)-tecknet i det övre högra hörnet på de flesta skärmar.</string>
+  <string name="Welcome.body">Breadplånboken har bytt namn till BRD, med ett splitter nytt utseende och några nya funktioner.\n\nOm du behöver hjälp, leta efter (?)-tecknet i det övre högra hörnet på de flesta skärmar.</string>
   <!-- Top title of welcome screen -->
-  <string name="Welcome.title">Välkommen till Bread!</string>
+  <string name="Welcome.title">Välkommen till BRD!</string>
   <!-- Wipe wallet alert message -->
   <string name="WipeWallet.alertMessage">Är du säker på att du vill ta bort den här plånboken.</string>
   <!-- Wipe wallet alert title -->
