@@ -6,7 +6,8 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 
 
 /**
@@ -38,9 +39,12 @@ public class BRNotificationManager {
     public static final String TAG = BRNotificationManager.class.getName();
 
     public static void sendNotification(Activity ctx, int icon, String title, String message, int mId) {
-        if (ctx == null) return;
+        if (ctx == null) {
+            Log.e(TAG, "sendNotification: ctx is null");
+            return;
+        }
         android.support.v4.app.NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(ctx)
+                new NotificationCompat.Builder(ctx, String.valueOf(mId))
                         .setSmallIcon(icon)
                         .setContentTitle(title)
                         .setContentText(message);

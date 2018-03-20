@@ -53,7 +53,7 @@ public class BRToast {
         if (!(app instanceof Activity)) app = BreadApp.getBreadContext();
         if (app == null) return;
         if (toast == null) toast = new Toast(app);
-        if (!BreadApp.isAppInBackground(app)) return;
+        if (BreadApp.isAppInBackground(app)) return;
 
         if (customToastAvailable || !oldMessage.equals(message)) {
             oldMessage = message;

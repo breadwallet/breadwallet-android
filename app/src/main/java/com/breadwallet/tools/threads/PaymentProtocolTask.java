@@ -13,7 +13,7 @@ import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreTransactionOutput;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.exceptions.CertificateChainNotFound;
+import com.breadwallet.tools.exceptions.CertificateChainNotFound;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRDialog;
@@ -100,70 +100,14 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             }
 
             paymentProtocolRequest = new BRCorePaymentProtocolRequest(serializedBytes);
-
-//            if (paymentProtocolRequest == null) {
-//                Log.e(TAG, "paymentRequest is null!!!");
-//                BRDialog.showCustomDialog(app, "", app.getString(R.string.Send_remoteRequestError), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-//                    @Override
-//                    public void onClick(BRDialogView brDialogView) {
-//                        brDialogView.dismissWithAnimation();
-//                    }
-//                }, null, null, 0);
-//                paymentRequest = null;
-//                return null;
-//            } else
-//                if (paymentProtocolRequest.getS == PaymentRequestWrapper.INSUFFICIENT_FUNDS_ERROR) {
-//                Log.e(TAG, "insufficient amount!!!");
-//                BRDialog.showCustomDialog(app, "", app.getString(R.string.Alerts_sendFailure), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-//                    @Override
-//                    public void onClick(BRDialogView brDialogView) {
-//                        brDialogView.dismissWithAnimation();
-//                    }
-//                }, null, null, 0);
-//                paymentRequest = null;
-//                return null;
-//            } else if (paymentRequest.error == PaymentRequestWrapper.SIGNING_FAILED_ERROR) {
-//                Log.e(TAG, "failed to sign tx!!!");
-//                Log.e(TAG, "insufficient amount!!!");
-//                BRDialog.showCustomDialog(app, "", app.getString(R.string.Import_Error_signing), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-//                    @Override
-//                    public void onClick(BRDialogView brDialogView) {
-//                        brDialogView.dismissWithAnimation();
-//                    }
-//                }, null, null, 0);
-//                paymentRequest = null;
-//                return null;
-//            } else if (paymentRequest.error == PaymentRequestWrapper.REQUEST_TOO_LONG_ERROR) {
-//                Log.e(TAG, "failed to sign tx!!!");
-//                BRDialog.showCustomDialog(app, app.getString(R.string.PaymentProtocol_Errors_badPaymentRequest), "Too long", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-//                    @Override
-//                    public void onClick(BRDialogView brDialogView) {
-//                        brDialogView.dismissWithAnimation();
-//                    }
-//                }, null, null, 0);
-//                paymentRequest = null;
-//                return null;
-//            } else if (paymentRequest.error == PaymentRequestWrapper.AMOUNTS_ERROR) {
-//                Log.e(TAG, "failed to sign tx!!!");
-//                BRDialog.showCustomDialog(app, "", app.getString(R.string.PaymentProtocol_Errors_badPaymentRequest), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-//                    @Override
-//                    public void onClick(BRDialogView brDialogView) {
-//                        brDialogView.dismissWithAnimation();
-//                    }
-//                }, null, null, 0);
-//                paymentRequest = null;
-//                return null;
-//            }
-//
 //            //Logging
             BRCoreTransactionOutput[] outputs = paymentProtocolRequest.getOutputs();
             StringBuilder allAddresses = new StringBuilder();
             for (BRCoreTransactionOutput output : outputs) {
                 allAddresses.append(output.getAddress()).append(", ");
-                BRCoreAddress addr = new BRCoreAddress(output.getAddress());
-                if (!addr.isValid()) {
+                if (Utils.isNullOrEmpty(output.getAddress()) || !new BRCoreAddress(output.getAddress()).isValid()) {
                     if (app != null)
-                        BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_invalidAddressTitle) + ": " + addr.stringify(), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                        BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_invalidAddressTitle) + ": " + output.getAddress(), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                             @Override
                             public void onClick(BRDialogView brDialogView) {
                                 brDialogView.dismissWithAnimation();
@@ -181,7 +125,6 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             for (BRCoreTransactionOutput output : outputs) {
                 totalAmount += output.getAmount();
             }
-
 
             CustomLogger.logThis("Signature", String.valueOf(paymentProtocolRequest.getSignature().length),
                     "pkiType", paymentProtocolRequest.getPKIType(), "pkiData", String.valueOf(paymentProtocolRequest.getPKIData().length));
@@ -203,10 +146,12 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 paymentProtocolRequest = null;
                 return null;
             }
-            List<X509Certificate> certList = X509CertificateValidator.getCertificateFromBytes(serializedBytes);
-            certName = X509CertificateValidator.certificateValidation(certList, paymentProtocolRequest);
+            //todo fix certs
+//            List<X509Certificate> certList = X509CertificateValidator.getCertificateFromBytes(serializedBytes);
+//            certName = X509CertificateValidator.certificateValidation(certList, paymentProtocolRequest);
 
         } catch (Exception e) {
+            Log.e(TAG, "doInBackground: ", e);
             if (e instanceof java.net.UnknownHostException) {
                 if (app != null)
                     BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.PaymentProtocol_Errors_corruptedDocument), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
@@ -335,11 +280,11 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 
         final BRCoreTransaction tx = wallet.getWallet().createTransactionForOutputs(paymentProtocolRequest.getOutputs());
         if (tx == null) {
-            BRToast.showCustomToast(app, "Failed to create tx", BRActivity.screenParametersPoint.y / 2, Toast.LENGTH_LONG, 0);
+            BRDialog.showSimpleDialog(app, "Insufficient funds", "");
             paymentProtocolRequest = null;
             return;
         }
-        final long amount = wallet.getWallet().getTransactionAmount(tx);
+        final long amount = new BigDecimal(wallet.getWallet().getTransactionAmount(tx)).abs().longValue();
         final long fee = wallet.getWallet().getTransactionFee(tx);
 
         allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
@@ -352,10 +297,9 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-
-
+                long txAmt = new BigDecimal(wallet.getWallet().getTransactionAmount(tx)).abs().longValue();
                 double minOutput = wallet.getWallet().getMinOutputAmount();
-                if (wallet.getWallet().getTransactionAmount(tx) < minOutput) {
+                if (txAmt < minOutput) {
                     final String bitcoinMinMessage = String.format(Locale.getDefault(), app.getString(R.string.PaymentProtocol_Errors_smallTransaction),
                             BRConstants.symbolBits + new BigDecimal(minOutput).divide(new BigDecimal("100")));
                     app.runOnUiThread(new Runnable() {
@@ -377,9 +321,9 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 final long total = amount + fee;
 
 
-                BigDecimal bigAm = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(amount));
-                BigDecimal bigFee = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(fee));
-                BigDecimal bigTotal = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(total));
+                BigDecimal bigAm = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(amount), null);
+                BigDecimal bigFee = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(fee), null);
+                BigDecimal bigTotal = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(total), null);
                 final String message = certification + memo + finalAllAddresses.toString() + "\n\n" + "amount: " + CurrencyUtils.getFormattedAmount(app, iso, bigAm)
                         + "\nnetwork fee: +" + CurrencyUtils.getFormattedAmount(app, iso, bigFee)
                         + "\ntotal: " + CurrencyUtils.getFormattedAmount(app, iso, bigTotal);

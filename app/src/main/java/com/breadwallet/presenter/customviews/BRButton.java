@@ -205,17 +205,23 @@ public class BRButton extends Button {
         if (isBreadButton) {
             if(hasShadow) {
                 shadowRect.set(5, height / 4, width - 5, (int) (height * shadowOffSet));
+                canvas.drawBitmap(shadow, null, shadowRect, null);
+
             }
             modifiedWidth = width - 10;
             modifiedHeight = height - height / 4 - 5;
             bRect.set(5, 5, modifiedWidth, modifiedHeight + 5);
-            canvas.drawBitmap(shadow, null, shadowRect, null);
             canvas.drawRoundRect(bRect, ROUND_PIXELS, ROUND_PIXELS, bPaint);
             if (type == 2 || type == 3)
                 canvas.drawRoundRect(bRect, ROUND_PIXELS, ROUND_PIXELS, bPaintStroke);
         }
         super.onDraw(canvas);
 
+    }
+
+    public void setHasShadow(boolean hasShadow){
+        this.hasShadow = hasShadow;
+        invalidate();
     }
 
     public void setColor(int color){

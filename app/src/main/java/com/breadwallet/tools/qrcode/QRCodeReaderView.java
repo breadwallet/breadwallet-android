@@ -383,6 +383,8 @@ public class QRCodeReaderView extends SurfaceView
         protected void onPostExecute(Result result) {
             super.onPostExecute(result);
 
+
+
             final QRCodeReaderView view = viewRef.get();
 
             // Notify we found a QRCode

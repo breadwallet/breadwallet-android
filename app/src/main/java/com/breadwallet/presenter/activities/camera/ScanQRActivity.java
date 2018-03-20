@@ -19,6 +19,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.qrcode.QRCodeReaderView;
+import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.wallets.util.CryptoUriParser;
 import com.platform.tools.BRBitId;
 
@@ -172,16 +173,15 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
 
     @Override
     public void onQRCodeRead(final String text, PointF[] points) {
+        lastUpdated = System.currentTimeMillis();
         if (handlingCode) return;
-        Log.e(TAG, "onQRCodeRead: " + text);
-        if (CryptoUriParser.isBitcoinUrl(this, text) || BRBitId.isBitId(text)) {
-            Log.e(TAG, "onQRCodeRead: is bitcoin url");
-            handlingCode = true;
+        handlingCode = true;
+        if (CryptoUriParser.isCryptoUrl(this, text) || BRBitId.isBitId(text)) {
+            Log.e(TAG, "onQRCodeRead: isCrypto");
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        lastUpdated = System.currentTimeMillis();
                         cameraGuide.setImageResource(R.drawable.cameraguide);
                         descriptionText.setText("");
                         Intent returnIntent = new Intent();
@@ -195,20 +195,26 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
                 }
             });
         } else {
-//            runOnUiThread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    lastUpdated = System.currentTimeMillis();
-//                    cameraGuide.setImageResource(R.drawable.cameraguide_red);
-//                    descriptionText.setText(getString(R.string.Send_invalidAddressTitle));
-//                }
-//            });
+            Log.e(TAG, "onQRCodeRead: not a crypto url");
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        cameraGuide.setImageResource(R.drawable.cameraguide_red);
+                        lastUpdated = System.currentTimeMillis();
+                        descriptionText.setText("Not a valid " + WalletsMaster.getInstance(app).getCurrentWallet(app).getName(app) + " address");
+                    } finally {
+                        handlingCode = false;
+                    }
+                }
+            });
+
         }
 
     }
 
     private void initQRCodeReaderView() {
-        qrCodeReaderView = (QRCodeReaderView) findViewById(R.id.qrdecoderview);
+        qrCodeReaderView = findViewById(R.id.qrdecoderview);
         qrCodeReaderView.setAutofocusInterval(500L);
         qrCodeReaderView.setOnQRCodeReadListener(this);
         qrCodeReaderView.setBackCamera();

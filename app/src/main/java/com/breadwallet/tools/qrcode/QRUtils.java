@@ -6,16 +6,13 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.net.Uri;
-import android.os.Environment;
 import android.support.v4.content.FileProvider;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
-import com.breadwallet.BuildConfig;
-import com.breadwallet.R;
-import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.MultiFormatWriter;
@@ -26,13 +23,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.EnumMap;
 import java.util.Map;
 
-import static android.R.attr.path;
-import static android.R.attr.width;
 import static android.graphics.Color.BLACK;
 import static android.graphics.Color.WHITE;
 
@@ -100,6 +93,31 @@ public class QRUtils {
         return bitmap;
     }
 
+//    public void saveBitmap() {
+//        String filename;
+//        Date date = new Date(0);
+//        SimpleDateFormat sdf = new SimpleDateFormat ("yyyyMMddHHmmss");
+//        filename =  sdf.format(date);
+//
+//        try{
+//            String path = Environment.getExternalStorageDirectory().toString();
+//            OutputStream fOut = null;
+//            File file = new File(path, "/DCIM/Signatures/"+filename+".jpg");
+//            fOut = new FileOutputStream(file);
+//
+//            mBitmap.compress(Bitmap.CompressFormat.JPEG, 85, fOut);
+//            fOut.flush();
+//            fOut.close();
+//
+//            MediaStore.Images.Media.insertImage(getContentResolver()
+//                    ,file.getAbsolutePath(),file.getName(),file.getName());
+//
+//        }catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//    }
+
     public static boolean generateQR(Context ctx, String bitcoinURL, ImageView qrcode) {
         if (qrcode == null || bitcoinURL == null || bitcoinURL.isEmpty()) return false;
         WindowManager manager = (WindowManager) ctx.getSystemService(Activity.WINDOW_SERVICE);
@@ -136,8 +154,10 @@ public class QRUtils {
             return;
         }
 
-//        File file = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), app);
-//        Uri uri = Uri.fromFile(file);
+
+        File file = saveToExternalStorage(QRUtils.encodeAsBitmap(bitcoinUri, 500), app);
+        //Uri uri = Uri.fromFile(file);
+        Uri uri = FileProvider.getUriForFile(app, "com.breadwallet", file);
 
         Intent intent = new Intent();
         if (via.equalsIgnoreCase("sms:")) {
@@ -148,14 +168,19 @@ public class QRUtils {
             app.startActivity(intent);
 
         } else {
-            intent.setAction(android.content.Intent.ACTION_SEND);
-            intent.setType("plain/text");
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Bitcoin Address");
+            intent.setAction(Intent.ACTION_SEND);
+            intent.setType("image/*");
+            intent.putExtra(Intent.EXTRA_SUBJECT, WalletsMaster.getInstance(app).getCurrentWallet(app).getName(app) + " Address");
             intent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            if (uri != null) {
+                intent.putExtra(Intent.EXTRA_STREAM, uri);
+                Log.d(TAG, "Uri -> " + file.getPath());
+            } else
+                Log.d(TAG, "Bitmap uri is null!");
             app.startActivity(Intent.createChooser(intent, "Open mail app"));
         }
-//        if (uri != null)
-//            intent.putExtra(Intent.EXTRA_STREAM, uri);
+
 
     }
 
@@ -165,15 +190,16 @@ public class QRUtils {
             return null;
         }
 
+
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         String fileName = "qrcode.jpg";
 
         bitmapImage.compress(Bitmap.CompressFormat.PNG, 0, bytes);
-        File f = new File(app.getCacheDir(), fileName);
+        File f = new File(app.getExternalCacheDir(), fileName);
         f.setReadable(true, false);
         try {
             boolean a = f.createNewFile();
-            if(!a) Log.e(TAG, "saveToExternalStorage: createNewFile: failed");
+            if (!a) Log.e(TAG, "saveToExternalStorage: createNewFile: failed");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -194,4 +220,6 @@ public class QRUtils {
         }
         return f;
     }
+
+
 }

@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
   <!-- App name -->
-  <string name="About.appName.android">Bread</string>
+  <string name="About.appName.android">BRD</string>
   <!-- About screen blog label -->
   <string name="About.blog">Blogue</string>
   <!-- About screen footer -->
-  <string name="About.footer">Fait par l\'équipe mondiale de Bread. Version %1$s</string>
+  <string name="About.footer">Fait par l\'équipe mondiale de BRD. Version %1$s</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">Politique de confidentialité</string>
   <!-- About screen reddit label -->
@@ -23,11 +23,7 @@
   <!-- Loading Wallet Message -->
   <string name="Account.loadingMessage">Chargement du portefeuille</string>
   <!-- Default wallet name -->
-  <string name="AccountHeader.defaultWalletName">Mon Bread</string>
-  <!-- Equals symbol -->
-  <string name="AccountHeader.equals">=</string>
-  <!-- Manage wallet button title -->
-  <string name="AccountHeader.manageButtonName">GÉRER</string>
+  <string name="AccountHeader.defaultWalletName">Mon BRD</string>
   <!-- Third party keyboard warning -->
   <string name="Alert.customKeyboard.android">Il semble que vous utilisez un clavier tiers. Ce dernier peut enregistrer ce que vous tapez et voler votre portefeuille papier. Veuillez basculer vers le clavier Android par défaut pour plus de sécurité.</string>
   <!-- Error alert title -->
@@ -35,7 +31,7 @@
   <!-- Keystore error -->
   <string name="Alert.keystore.generic.android">Un problème est survenu avec votre keystore Android OS, veuillez contacter support@breadwallet.com</string>
   <!-- KeyStore error, keys are invalidated -->
-  <string name="Alert.keystore.invalidated.android">Vos données cryptées de Bread ont été récemment invalidées, car le verrouillage de l\'écran de votre appareil Android a été désactivé.</string>
+  <string name="Alert.keystore.invalidated.android">Vos données cryptées de BRD ont été récemment invalidées, car le verrouillage de l\'écran de votre appareil Android a été désactivé.</string>
   <!-- Keystore error title -->
   <string name="Alert.keystore.title.android">Erreur avec le KeyStore Android</string>
   <!-- No internet alert message -->
@@ -148,6 +144,8 @@
   <string name="ErrorMessages.emailUnavailableMessage">Cet appareil n\'est pas configuré pour envoyer un e-mail avec l\'application e-mail pour iOS.</string>
   <!-- Email unavailable alert title -->
   <string name="ErrorMessages.emailUnavailableTitle">E-mail non disponible</string>
+  <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
+  <string name="ErrorMessages.loopingLockScreen.android">BRD ne peut pas être authentifié en raison d\'un bogue dans votre version d\'Android. [Veuillez toucher ici pour plus d\'informations.]</string>
   <!-- Messaging unavailable alert title -->
   <string name="ErrorMessages.messagingUnavailableMessage">Cet appareil n\'est pas configuré pour envoyer des messages.</string>
   <!-- Messaging unavailable alert title -->
@@ -189,13 +187,13 @@
   <!-- Caption for graphics -->
   <string name="Import.leftCaption">Portefeuille à importer</string>
   <!-- Import wallet intro screen message -->
-  <string name="Import.message">L\'importation d\'un portefeuille transfère tout l\'argent de votre autre portefeuille vers votre portefeuille Bread avec une seule transaction.</string>
+  <string name="Import.message">L\'importation d\'un portefeuille transfère tout l\'argent de votre autre portefeuille vers votre portefeuille BRD avec une seule transaction.</string>
   <!-- Enter password alert view title -->
   <string name="Import.password">Cette clé privée est protégée par mot de passe.</string>
   <!-- password textfield placeholder -->
   <string name="Import.passwordPlaceholder">mot de passe</string>
   <!-- Caption for graphics -->
-  <string name="Import.rightCaption">Votre portefeuille de Bread</string>
+  <string name="Import.rightCaption">Votre portefeuille de BRD</string>
   <!-- Scan Private key button label -->
   <string name="Import.scan">Scanner la clé privée</string>
   <!-- Import wallet success alert title -->
@@ -215,9 +213,9 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Ignorer</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">SÉCURITÉ DU DISPOSITIF COMPROMISE\n  Toute application « évasive » peut accéder aux données du porte-clé de Bread et voler vos bitcoins ! Détruisez ce portefeuille immédiatement et restaurez-le sur un appareil sécurisé.</string>
+  <string name="JailbreakWarnings.messageWithBalance">SÉCURITÉ DU DISPOSITIF COMPROMISE\n  Toute application « évasive » peut accéder aux données du porte-clé de BRD et voler vos bitcoins ! Détruisez ce portefeuille immédiatement et restaurez-le sur un appareil sécurisé.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">SÉCURITÉ DU DISPOSITIF COMPROMISE\n  Toute application « évasive » peut accéder aux données du porte-clé de Bread et voler vos bitcoins. N\'utilisez Bread que sur un appareil non évasif.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">SÉCURITÉ DU DISPOSITIF COMPROMISE\n  Toute application « évasive » peut accéder aux données du porte-clé de BRD et voler vos bitcoins. N\'utilisez BRD que sur un appareil non évasif.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">AVERTISSEMENT</string>
   <!-- Wipe wallet button -->
@@ -225,7 +223,7 @@
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Les services de localisation sont désactivés.</string>
   <!-- No permissions for location services -->
-  <string name="LocationPlugin.notAuthorized">Bread n\'a pas l\'autorisation d\'accéder aux services de localisation.</string>
+  <string name="LocationPlugin.notAuthorized">BRD n\'a pas l\'autorisation d\'accéder aux services de localisation.</string>
   <!-- Wallet creation date prefix -->
   <string name="ManageWallet.creationDatePrefix">Vous avez créé votre portefeuille sur %1$s</string>
   <!-- Manage wallet description text -->
@@ -303,7 +301,7 @@
   <!-- Transaction rejected prompt title -->
   <string name="Prompts.RecommendRescan.title">Transaction rejetée</string>
   <!-- Share data prompt body -->
-  <string name="Prompts.ShareData.body">Aidez à améliorer Bread en partageant vos données anonymes avec nous</string>
+  <string name="Prompts.ShareData.body">Aidez à améliorer BRD en partageant vos données anonymes avec nous</string>
   <!-- Share data prompt title -->
   <string name="Prompts.ShareData.title">Partager les données anonymes</string>
   <!-- Enable touch ID prompt body -->
@@ -317,11 +315,11 @@
   <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
   <string name="Prompts.TouchId.usePin.android">PIN</string>
   <!-- Upgrade PIN prompt body. -->
-  <string name="Prompts.UpgradePin.body">Bread a été mis à niveau pour utiliser un code PIN à six chiffres. Appuyez ici pour mettre à niveau.</string>
+  <string name="Prompts.UpgradePin.body">BRD a été mis à niveau pour utiliser un code PIN à six chiffres. Appuyez ici pour mettre à niveau.</string>
   <!-- Upgrade PIN prompt title. -->
   <string name="Prompts.UpgradePin.title">Mettre à jour le code PIN</string>
   <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
-  <string name="PushNotifications.body">Activez les notifications pour recevoir des messages spéciaux de Bread à l\'avenir.</string>
+  <string name="PushNotifications.body">Activez les notifications pour recevoir des messages spéciaux de BRD à l\'avenir.</string>
   <!-- Push notifications toggle switch label -->
   <string name="PushNotifications.label">Notifications push</string>
   <!-- Push notifications are off label -->
@@ -351,7 +349,7 @@
   <!-- Enter paper key instruction -->
   <string name="RecoverWallet.instruction">Entrez la clé de papier</string>
   <!-- Recover wallet intro -->
-  <string name="RecoverWallet.intro">Récupérez votre Bread avec votre clé de papier.</string>
+  <string name="RecoverWallet.intro">Récupérez votre BRD avec votre clé de papier.</string>
   <!-- Invalid paper key message -->
   <string name="RecoverWallet.invalid">La clé de papier saisie n\'est pas valide. Revérifiez chaque mot et réessayez.</string>
   <!-- Previous button accessibility label -->
@@ -379,7 +377,7 @@
   <!-- extimated time -->
   <string name="ReScan.body1">20-45 minutes</string>
   <!-- Syncing explanation -->
-  <string name="ReScan.body2">Si une transaction apparaît comme achevée sur le réseau de bitcoin mais pas dans votre Bread.</string>
+  <string name="ReScan.body2">Si une transaction apparaît comme achevée sur le réseau de bitcoin mais pas dans votre BRD.</string>
   <!-- Syncing explanation -->
   <string name="ReScan.body3">Vous recevez de manière répétée un message d\'erreur vous informant du rejet de votre transaction.</string>
   <!-- Start Sync button label -->
@@ -409,13 +407,13 @@
   <!-- Paper Key button title -->
   <string name="SecurityCenter.paperKeyTitle">Clé de papier</string>
   <!-- PIN button description -->
-  <string name="SecurityCenter.pinDescription">Protège votre Bread contre les utilisateurs non autorisés.</string>
+  <string name="SecurityCenter.pinDescription">Protège votre BRD contre les utilisateurs non autorisés.</string>
   <!-- PIN button title -->
   <string name="SecurityCenter.pinTitle">PIN à six chiffres</string>
   <!-- Security Center Title -->
   <string name="SecurityCenter.title">Centre de sécurité</string>
   <!-- Touch ID button description -->
-  <string name="SecurityCenter.touchIdDescription">Débloquez convenablement votre Bread et envoyez de l\'argent jusqu\'à une limite définie.</string>
+  <string name="SecurityCenter.touchIdDescription">Débloquez convenablement votre BRD et envoyez de l\'argent jusqu\'à une limite définie.</string>
   <!-- Touch ID button title -->
   <string name="SecurityCenter.touchIdTitle">Touch ID</string>
   <!-- Security center fingerprint authentication button -->
@@ -425,13 +423,13 @@
   <!-- Balance: $4.00 -->
   <string name="Send.balance">Solde : %1$s</string>
   <!-- Instructions how to allow the camera access for the app -->
-  <string name="Send.cameraUnavailabeMessage.android">Autoriser l\'accès à l\'appareil photo en allant dans « Paramètres » &gt; « Apps » &gt; « Bread » &gt; « Permissions »</string>
+  <string name="Send.cameraUnavailabeMessage.android">Autoriser l\'accès à l\'appareil photo en allant dans « Paramètres » &gt; « Apps » &gt; « BRD » &gt; « Permissions »</string>
   <!-- Permission required to access camera -->
-  <string name="Send.cameraUnavailabeTitle.android">Bread n\'est pas autorisé à accéder à l\'appareil photo</string>
+  <string name="Send.cameraUnavailabeTitle.android">BRD n\'est pas autorisé à accéder à l\'appareil photo</string>
   <!-- Camera not allowed message -->
   <string name="Send.cameraunavailableMessage">Accédez à Paramètres pour autoriser l\'accès à la caméra.</string>
   <!-- Camera not allowed alert title -->
-  <string name="Send.cameraUnavailableTitle">Bread n\'est pas autorisé à accéder à la caméra</string>
+  <string name="Send.cameraUnavailableTitle">BRD n\'est pas autorisé à accéder à la caméra</string>
   <!-- Warning when sending to self. -->
   <string name="Send.containsAddress">La destination est votre propre adresse. Vous ne pouvez pas envoyer à vous même.</string>
   <!-- Could not create transaction alert title -->
@@ -487,7 +485,7 @@
   <!-- Join Early access label -->
   <string name="Settings.earlyAccess">Rejoignez l\'accès anticipé</string>
   <!-- Are you enjoying bread alert message body -->
-  <string name="Settings.enjoying">Vous aimez Bread ?</string>
+  <string name="Settings.enjoying">Vous aimez BRD ?</string>
   <!-- Import wallet label -->
   <string name="Settings.importTitle">Importer le portefeuille</string>
   <!-- Manage settings section header -->
@@ -511,7 +509,7 @@
   <!-- Start or recover another wallet menu label. -->
   <string name="Settings.wipe">Démarrer/récupérer un autre portefeuille</string>
   <!-- Share data view body -->
-  <string name="ShareData.body">Aidez à améliorer Bread en partageant vos données anonymes avec nous. Cela n\'inclut aucune information financière. Nous respectons votre confidentialité financière.</string>
+  <string name="ShareData.body">Aidez à améliorer BRD en partageant vos données anonymes avec nous. Cela n\'inclut aucune information financière. Nous respectons votre confidentialité financière.</string>
   <!-- Share data header -->
   <string name="ShareData.header">Partager les données ?</string>
   <!-- Share data switch label. -->
@@ -519,7 +517,7 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Enregistrez la clé de papier à nouveau</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Votre clé de papier est la seule façon de restaurer votre Bread si votre téléphone est perdu, volé, cassé ou mis à niveau.\n\nNous vous montrerons une liste de mots à écrire sur un morceau de papier et à garder en sécurité.</string>
+  <string name="StartPaperPhrase.body">Votre clé de papier est la seule façon de restaurer votre BRD si votre téléphone est perdu, volé, cassé ou mis à niveau.\n\nNous vous montrerons une liste de mots à écrire sur un morceau de papier et à garder en sécurité.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Écrire la clé de papier</string>
   <!-- Argument is date -->
@@ -551,14 +549,14 @@
   <!-- Fingerprint Is Not Setup -->
   <string name="TouchIdSettings.disabledWarning.title.android">L\'identification par empreinte digitale n\'est pas activée</string>
   <!-- Touch Id screen label -->
-  <string name="TouchIdSettings.label">Utilisez votre empreinte digitale pour débloquer votre Bread et envoyer de l\'argent jusqu\'à une limite définie.</string>
+  <string name="TouchIdSettings.label">Utilisez votre empreinte digitale pour débloquer votre BRD et envoyer de l\'argent jusqu\'à une limite définie.</string>
   <!-- Link Text (see TouchIdSettings.customizeText) -->
   <string name="TouchIdSettings.linkText">Écran de plafond de dépenses Touch ID</string>
   <!-- Spending Limit: b100,000 ($100) -->
   <string name="TouchIdSettings.spendingLimit">Limite de dépenses : %1$s (%2$s)</string>
   <!-- Touch id switch label. -->
-  <string name="TouchIdSettings.switchLabel">Activer Touch ID pour Bread</string>
-  <!-- Enable fingerprint for this wallet called Bread -->
+  <string name="TouchIdSettings.switchLabel">Activer Touch ID pour BRD</string>
+  <!-- Enable fingerprint for this wallet called BRD -->
   <string name="TouchIdSettings.switchLabel.android">Activer l\'identification par empreinte digitale</string>
   <!-- Touch ID settings view title -->
   <string name="TouchIdSettings.title">Touch ID</string>
@@ -653,7 +651,7 @@
   <!-- Instruction to touch the sensor for fingerprint authentication -->
   <string name="UnlockScreen.touchIdInstructions.android">Appuyez sur le capteur</string>
   <!-- TouchID prompt text -->
-  <string name="UnlockScreen.touchIdPrompt">Déverrouillez votre Bread.</string>
+  <string name="UnlockScreen.touchIdPrompt">Déverrouillez votre BRD.</string>
   <!-- Device authentication body -->
   <string name="UnlockScreen.touchIdPrompt.android">Veuillez déverrouiller votre appareil Android pour continuer.</string>
   <!-- Unlock with TouchID accessibility label -->
@@ -665,7 +663,7 @@
   <!-- Update PIN caption text -->
   <string name="UpdatePin.caption">Souvenez-vous de ce code PIN. Si vous l\'oubliez, vous ne pourrez pas accéder à votre bitcoin.</string>
   <!-- PIN creation info. -->
-  <string name="UpdatePin.createInstruction">Votre NIP sera utilisé pour débloquer votre Bread et envoyer de l\'argent.</string>
+  <string name="UpdatePin.createInstruction">Votre NIP sera utilisé pour débloquer votre BRD et envoyer de l\'argent.</string>
   <!-- Update PIN title -->
   <string name="UpdatePin.createTitle">Définir PIN</string>
   <!-- Update PIN title -->
@@ -699,7 +697,7 @@
   <!-- Authorize transaction with touch id message -->
   <string name="VerifyPin.touchIdMessage">Autoriser cette transaction</string>
   <!-- 'No wallet' warning for watch app -->
-  <string name="Watch.noWalletWarning">Ouvrez l\'application Bread pour iPhone pour configurer votre portefeuille.</string>
+  <string name="Watch.noWalletWarning">Ouvrez l\'application BRD pour iPhone pour configurer votre portefeuille.</string>
   <!-- Dismiss button label -->
   <string name="Webview.dismiss">Rejeter</string>
   <!-- Webview loading error message -->
@@ -707,9 +705,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">Mise à jour...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet revient sous le nom de Bread, avec un nouveau design et de nouvelles fonctionnalités. \n\nSi vous avez besoin d\'aide, cliquez sur le (?) en haut à droite de la plupart des écrans.</string>
+  <string name="Welcome.body">Breadwallet revient sous le nom de BRD, avec un nouveau design et de nouvelles fonctionnalités. \n\nSi vous avez besoin d\'aide, cliquez sur le (?) en haut à droite de la plupart des écrans.</string>
   <!-- Top title of welcome screen -->
-  <string name="Welcome.title">Bienvenue chez Bread !</string>
+  <string name="Welcome.title">Bienvenue chez BRD !</string>
   <!-- Wipe wallet alert message -->
   <string name="WipeWallet.alertMessage">Souhaitez-vous vraiment supprimer ce portefeuille ?</string>
   <!-- Wipe wallet alert title -->
@@ -721,9 +719,9 @@
   <!-- Enter phrase to wipe wallet instruction. -->
   <string name="WipeWallet.instruction">Soumettez la phrase de récupération de ce portefeuille pour l\'effacer et commencer à en récupérer un autre. Votre solde actuel demeure sur cette phrase.</string>
   <!-- Start wipe wallet view message -->
-  <string name="WipeWallet.startMessage">L\'ouverture ou la récupération d\'un autre portefeuille vous permet d\'accéder et de gérer différents portefeuilles Bread depuis cet appareil.</string>
+  <string name="WipeWallet.startMessage">L\'ouverture ou la récupération d\'un autre portefeuille vous permet d\'accéder et de gérer différents portefeuilles BRD depuis cet appareil.</string>
   <!-- Start wipe wallet view warning -->
-  <string name="WipeWallet.startWarning">Vous ne pourrez plus accéder à votre portefeuille Bread depuis cet appareil. Le solde restera inchangé.</string>
+  <string name="WipeWallet.startWarning">Vous ne pourrez plus accéder à votre portefeuille BRD depuis cet appareil. Le solde restera inchangé.</string>
   <!-- Wipe wallet navigation item title. -->
   <string name="WipeWallet.title">Commencer un nouveau portefeuille ou récupérer un autre portefeuille</string>
   <!-- Wipe wallet button title -->

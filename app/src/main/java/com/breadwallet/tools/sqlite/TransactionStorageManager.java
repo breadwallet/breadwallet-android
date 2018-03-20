@@ -20,15 +20,15 @@ import java.util.List;
 public class TransactionStorageManager {
     private static final String TAG = TransactionStorageManager.class.getSimpleName();
 
-    public static boolean putTransaction(Context app, BaseWalletManager wallet, BRTransactionEntity tx) {
-        if (wallet == null || tx == null || app == null) {
-            Log.e(TAG, "putTransaction: failed: " + app + "|" + wallet + "|" + tx);
+    public static boolean putTransaction(Context app, String iso, BRTransactionEntity tx) {
+        if (iso == null || tx == null || app == null) {
+            Log.e(TAG, "putTransaction: failed: " + app + "|" + iso + "|" + tx);
             return false;
 
         }
 
-        if (wallet.getIso(app).equalsIgnoreCase("btc") || wallet.getIso(app).equalsIgnoreCase("bch")) {
-            BRTransactionEntity result = BtcBchTransactionDataStore.getInstance(app).putTransaction(app, wallet, tx);
+        if (iso.equalsIgnoreCase("btc") || iso.equalsIgnoreCase("bch")) {
+            BRTransactionEntity result = BtcBchTransactionDataStore.getInstance(app).putTransaction(app, iso, tx);
             return result != null;
         }
 
@@ -37,15 +37,15 @@ public class TransactionStorageManager {
         return false;
     }
 
-    public static List<BRTransactionEntity> getTransactions(Context app, BaseWalletManager wallet) {
-        if (wallet == null || app == null) {
-            Log.e(TAG, "putTransaction: failed: " + app + "|" + wallet);
+    public static List<BRTransactionEntity> getTransactions(Context app, String iso) {
+        if (iso == null || app == null) {
+            Log.e(TAG, "putTransaction: failed: " + app + "|" + iso);
             return null;
 
         }
 
-        if (wallet.getIso(app).equalsIgnoreCase("btc") || wallet.getIso(app).equalsIgnoreCase("bch")) {
-            return BtcBchTransactionDataStore.getInstance(app).getAllTransactions(app, wallet);
+        if (iso.equalsIgnoreCase("btc") || iso.equalsIgnoreCase("bch")) {
+            return BtcBchTransactionDataStore.getInstance(app).getAllTransactions(app, iso);
         }
 
         //other wallets
@@ -53,15 +53,15 @@ public class TransactionStorageManager {
         return null;
     }
 
-    public static boolean updateTransaction(Context app, BaseWalletManager wallet, BRTransactionEntity tx) {
-        if (wallet == null || app == null) {
-            Log.e(TAG, "putTransaction: failed: " + app + "|" + wallet);
+    public static boolean updateTransaction(Context app, String iso, BRTransactionEntity tx) {
+        if (iso == null || app == null) {
+            Log.e(TAG, "putTransaction: failed: " + app + "|" + iso);
             return false;
 
         }
 
-        if (wallet.getIso(app).equalsIgnoreCase("btc") || wallet.getIso(app).equalsIgnoreCase("bch")) {
-            return BtcBchTransactionDataStore.getInstance(app).updateTransaction(app, wallet, tx);
+        if (iso.equalsIgnoreCase("btc") || iso.equalsIgnoreCase("bch")) {
+            return BtcBchTransactionDataStore.getInstance(app).updateTransaction(app, iso, tx);
 
         }
 
@@ -70,15 +70,15 @@ public class TransactionStorageManager {
         return false;
     }
 
-    public static boolean removeTransaction(Context app, BaseWalletManager wallet, String hash) {
-        if (wallet == null || app == null) {
-            Log.e(TAG, "putTransaction: failed: " + app + "|" + wallet);
+    public static boolean removeTransaction(Context app, String iso, String hash) {
+        if (iso == null || app == null) {
+            Log.e(TAG, "putTransaction: failed: " + app + "|" + iso);
             return false;
 
         }
 
-        if (wallet.getIso(app).equalsIgnoreCase("btc") || wallet.getIso(app).equalsIgnoreCase("bch")) {
-            BtcBchTransactionDataStore.getInstance(app).deleteTxByHash(app, wallet, hash);
+        if (iso.equalsIgnoreCase("btc") || iso.equalsIgnoreCase("bch")) {
+            BtcBchTransactionDataStore.getInstance(app).deleteTxByHash(app, iso, hash);
             return true;
         }
         //other wallets

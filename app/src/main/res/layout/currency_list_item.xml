@@ -21,9 +21,9 @@
         android:paddingStart="16dp"
         android:text=""
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="@color/almost_black"
+        android:textColor="@color/dark_gray"
         android:textSize="@dimen/sub_header"
-        app:customTFont="CircularPro-Bold.otf"/>
+        app:customTFont="CircularPro-Medium.otf"/>
 
     <ImageView
         android:id="@+id/currency_checkmark"

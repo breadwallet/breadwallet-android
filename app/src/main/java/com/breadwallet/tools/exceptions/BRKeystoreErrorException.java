@@ -1,4 +1,4 @@
-package com.breadwallet.exceptions;
+package com.breadwallet.tools.exceptions;
 
 /**
  * BreadWallet

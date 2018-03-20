@@ -34,7 +34,6 @@ import android.util.Log;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +44,7 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
     // Database fields
     private SQLiteDatabase database;
     private final BRSQLiteHelper dbHelper;
-    private final String[] allColumns = {
+    public static final String[] allColumns = {
             BRSQLiteHelper.TX_COLUMN_ID,
             BRSQLiteHelper.TX_BUFF,
             BRSQLiteHelper.TX_BLOCK_HEIGHT,
@@ -67,8 +66,9 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
 
     }
 
-    public BRTransactionEntity putTransaction(Context app, BaseWalletManager wallet, BRTransactionEntity transactionEntity) {
+    public BRTransactionEntity putTransaction(Context app, String iso, BRTransactionEntity transactionEntity) {
 
+        Log.e(TAG, "putTransaction: " + transactionEntity.getTxISO() + ":" + transactionEntity.getTxHash() + ", b:" + transactionEntity.getBlockheight() + ", t:" + transactionEntity.getTimestamp());
         Cursor cursor = null;
         try {
             database = openDatabase();
@@ -76,7 +76,7 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
             values.put(BRSQLiteHelper.TX_COLUMN_ID, transactionEntity.getTxHash());
             values.put(BRSQLiteHelper.TX_BUFF, transactionEntity.getBuff());
             values.put(BRSQLiteHelper.TX_BLOCK_HEIGHT, transactionEntity.getBlockheight());
-            values.put(BRSQLiteHelper.TX_ISO, wallet.getIso(app));
+            values.put(BRSQLiteHelper.TX_ISO, iso.toUpperCase());
             values.put(BRSQLiteHelper.TX_TIME_STAMP, transactionEntity.getTimestamp());
 
             database.beginTransaction();
@@ -84,7 +84,7 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
             cursor = database.query(BRSQLiteHelper.TX_TABLE_NAME,
                     allColumns, null, null, null, null, null);
             cursor.moveToFirst();
-            BRTransactionEntity transactionEntity1 = cursorToTransaction(app, wallet, cursor);
+            BRTransactionEntity transactionEntity1 = cursorToTransaction(app, iso.toUpperCase(), cursor);
 
             database.setTransactionSuccessful();
 //            for (OnTxAdded listener : listeners) {
@@ -105,28 +105,28 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
 
     }
 
-    public void deleteAllTransactions(Context app, BaseWalletManager wallet) {
+    public void deleteAllTransactions(Context app, String iso) {
         try {
             database = openDatabase();
 
-            database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_ISO + "=?", new String[]{wallet.getIso(app)});
+            database.delete(BRSQLiteHelper.TX_TABLE_NAME, BRSQLiteHelper.TX_ISO + "=?", new String[]{iso.toUpperCase()});
         } finally {
             closeDatabase();
         }
     }
 
-    public List<BRTransactionEntity> getAllTransactions(Context app, BaseWalletManager wallet) {
+    public List<BRTransactionEntity> getAllTransactions(Context app, String iso) {
         List<BRTransactionEntity> transactions = new ArrayList<>();
         Cursor cursor = null;
         try {
             database = openDatabase();
 
             cursor = database.query(BRSQLiteHelper.TX_TABLE_NAME,
-                    allColumns, BRSQLiteHelper.TX_ISO + "=?", new String[]{wallet.getIso(app)}, null, null, null);
+                    allColumns, BRSQLiteHelper.TX_ISO + "=?", new String[]{iso.toUpperCase()}, null, null, null);
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
-                BRTransactionEntity transactionEntity = cursorToTransaction(app, wallet, cursor);
+                BRTransactionEntity transactionEntity = cursorToTransaction(app, iso.toUpperCase(), cursor);
                 transactions.add(transactionEntity);
                 cursor.moveToNext();
             }
@@ -135,15 +135,19 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
             closeDatabase();
             if (cursor != null)
                 cursor.close();
+            printTest(app, iso);
         }
         return transactions;
     }
 
-    private BRTransactionEntity cursorToTransaction(Context app, BaseWalletManager wallet, Cursor cursor) {
-        return new BRTransactionEntity(cursor.getBlob(1), cursor.getInt(2), cursor.getLong(3), cursor.getString(0), wallet.getIso(app));
+
+    public static BRTransactionEntity cursorToTransaction(Context app, String iso, Cursor cursor) {
+        return new BRTransactionEntity(cursor.getBlob(1), cursor.getInt(2), cursor.getLong(3), cursor.getString(0), iso.toUpperCase());
     }
 
-    public boolean updateTransaction(Context app, BaseWalletManager wallet, BRTransactionEntity tx) {
+    public boolean updateTransaction(Context app, String iso, BRTransactionEntity tx) {
+        Log.e(TAG, "updateTransaction: " + tx.getTxISO() + ":" + tx.getTxHash() + ", b:" + tx.getBlockheight() + ", t:" + tx.getTimestamp());
+
         try {
             database = openDatabase();
             ContentValues args = new ContentValues();
@@ -151,9 +155,12 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
             args.put(BRSQLiteHelper.TX_TIME_STAMP, tx.getTimestamp());
 
 //            Log.e(TAG, "updateTransaction: size before updating: " + getAllTransactions().size());
-            database.update(BRSQLiteHelper.TX_TABLE_NAME, args, "_id=? AND " + BRSQLiteHelper.TX_ISO + "=?", new String[]{tx.getTxHash(), wallet.getIso(app)});
+            int r = database.update(BRSQLiteHelper.TX_TABLE_NAME, args, "_id=? AND " + BRSQLiteHelper.TX_ISO + "=?", new String[]{tx.getTxHash(), iso.toUpperCase()});
 //            Log.e(TAG, "updateTransaction: size after updating: " + getAllTransactions().size());
-            Log.e(TAG, "transaction updated with id: " + tx.getTxHash());
+            if (r > 0)
+                Log.e(TAG, "transaction updated with id: " + tx.getTxHash());
+            else Log.e(TAG, "updateTransaction: Warning: r:" + r);
+
             return true;
         } finally {
             closeDatabase();
@@ -161,12 +168,12 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
 
     }
 
-    public void deleteTxByHash(Context app, BaseWalletManager wallet, String hash) {
+    public void deleteTxByHash(Context app, String iso, String hash) {
         try {
             database = openDatabase();
             Log.e(TAG, "transaction deleted with id: " + hash);
             database.delete(BRSQLiteHelper.TX_TABLE_NAME,
-                    "_id=? AND " + BRSQLiteHelper.TX_ISO + "=?", new String[]{hash, wallet.getIso(app)});
+                    "_id=? AND " + BRSQLiteHelper.TX_ISO + "=?", new String[]{hash, iso.toUpperCase()});
         } finally {
             closeDatabase();
         }
@@ -193,5 +200,27 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
 
 //        }
 //        Log.d("Database open counter: " , String.valueOf(mOpenCounter.get()));
+    }
+
+    private void printTest(Context app, String iso) {
+        Cursor cursor = null;
+        try {
+            database = openDatabase();
+            StringBuilder builder = new StringBuilder();
+
+            cursor = database.query(BRSQLiteHelper.TX_TABLE_NAME,
+                    allColumns, null, null, null, null, null);
+            builder.append("Total: " + cursor.getCount() + "\n");
+            cursor.moveToFirst();
+            if (!cursor.isAfterLast()) {
+                BRTransactionEntity ent = cursorToTransaction(app, iso.toUpperCase(), cursor);
+                builder.append("ISO:" + ent.getTxISO() + ", Hash:" + ent.getTxHash() + ", blockHeight:" + ent.getBlockheight() + ", timeStamp:" + ent.getTimestamp() + "\n");
+            }
+            Log.e(TAG, "printTest: " + builder.toString());
+        } finally {
+            if (cursor != null)
+                cursor.close();
+            closeDatabase();
+        }
     }
 }

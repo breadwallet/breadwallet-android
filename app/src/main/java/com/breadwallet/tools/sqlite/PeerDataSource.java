@@ -29,10 +29,8 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
 import com.breadwallet.tools.manager.BRReportsManager;
@@ -41,7 +39,6 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class PeerDataSource implements BRDataSourceInterface {
     private static final String TAG = PeerDataSource.class.getName();
@@ -71,7 +68,7 @@ public class PeerDataSource implements BRDataSourceInterface {
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
-    public void putPeers(Context app, BaseWalletManager walletManager, PeerEntity[] peerEntities) {
+    public void putPeers(Context app, String iso, PeerEntity[] peerEntities) {
 
         try {
             database = openDatabase();
@@ -82,7 +79,7 @@ public class PeerDataSource implements BRDataSourceInterface {
                 values.put(BRSQLiteHelper.PEER_ADDRESS, p.getPeerAddress());
                 values.put(BRSQLiteHelper.PEER_PORT, p.getPeerPort());
                 values.put(BRSQLiteHelper.PEER_TIMESTAMP, p.getPeerTimeStamp());
-                values.put(BRSQLiteHelper.PEER_ISO, walletManager.getIso(app));
+                values.put(BRSQLiteHelper.PEER_ISO, iso.toUpperCase());
                 database.insert(BRSQLiteHelper.PEER_TABLE_NAME, null, values);
             }
 
@@ -98,36 +95,36 @@ public class PeerDataSource implements BRDataSourceInterface {
 
     }
 
-    public void deletePeer(Context app, BaseWalletManager walletManager, BRPeerEntity peerEntity) {
+    public void deletePeer(Context app, String iso, BRPeerEntity peerEntity) {
         try {
             database = openDatabase();
             long id = peerEntity.getId();
             Log.e(TAG, "Peer deleted with id: " + id);
             database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_COLUMN_ID
-                    + " = ? AND " + BRSQLiteHelper.PEER_ISO + " = ?", new String[]{String.valueOf(id), walletManager.getIso(app)});
+                    + " = ? AND " + BRSQLiteHelper.PEER_ISO + " = ?", new String[]{String.valueOf(id), iso.toUpperCase()});
         } finally {
             closeDatabase();
         }
 
     }
 
-    public void deleteAllPeers(Context app, BaseWalletManager walletManager) {
+    public void deleteAllPeers(Context app, String iso) {
         try {
             database = dbHelper.getWritableDatabase();
-            database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_ISO + " = ?", new String[]{walletManager.getIso(app)});
+            database.delete(BRSQLiteHelper.PEER_TABLE_NAME, BRSQLiteHelper.PEER_ISO + " = ?", new String[]{iso.toUpperCase()});
         } finally {
             closeDatabase();
         }
     }
 
-    public List<BRPeerEntity> getAllPeers(Context app, BaseWalletManager walletManager) {
+    public List<BRPeerEntity> getAllPeers(Context app, String iso) {
         List<BRPeerEntity> peers = new ArrayList<>();
         Cursor cursor = null;
         try {
             database = openDatabase();
 
             cursor = database.query(BRSQLiteHelper.PEER_TABLE_NAME,
-                    allColumns, BRSQLiteHelper.PEER_ISO + " = ?", new String[]{walletManager.getIso(app)}, null, null, null);
+                    allColumns, BRSQLiteHelper.PEER_ISO + " = ?", new String[]{iso.toUpperCase()}, null, null, null);
 
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {

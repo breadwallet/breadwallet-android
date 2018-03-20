@@ -3,4 +3,4 @@
 	url = https://github.com/bitcoin-core/secp256k1.git
 [submodule "core"]
 	path = app/src/main/jni/breadwallet-core
-	url = https://github.com/EBGToo/breadwallet-core
+	url = https://github.com/breadwallet/breadwallet-core.git

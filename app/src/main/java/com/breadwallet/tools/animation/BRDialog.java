@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.text.SpannableString;
 import android.util.Log;
 
+import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 
@@ -63,10 +64,45 @@ public class BRDialog {
                 dialog.setNegListener(negListener);
                 dialog.setDismissListener(dismissListener);
                 dialog.setIconRes(iconRes);
-                dialog.show(((Activity) app).getFragmentManager(), dialog.getClass().getName());
+                if (!((Activity) app).isDestroyed())
+                    dialog.show(((Activity) app).getFragmentManager(), dialog.getClass().getName());
             }
         });
 
+    }
+
+    public static void showHelpDialog(@NonNull final Context app, @NonNull final String title, @NonNull final String message, @NonNull final String posButton, @NonNull final String negButton, final BRDialogView.BROnClickListener posListener, final BRDialogView.BROnClickListener negListener, final BRDialogView.BROnClickListener helpListener) {
+
+        if (((Activity) app).isDestroyed()) {
+            Log.e(TAG, "showCustomDialog: FAILED, context is destroyed");
+            return;
+        }
+
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                dialog = new BRDialogView();
+                dialog.setTitle(title);
+                dialog.setMessage(message);
+                dialog.setPosButton(posButton);
+                dialog.setNegButton(negButton);
+                dialog.setPosListener(posListener);
+                dialog.setNegListener(negListener);
+                dialog.setHelpListener(helpListener);
+                dialog.showHelpIcon(true);
+                dialog.show(((Activity) app).getFragmentManager(), dialog.getClass().getName());
+
+            }
+        });
+    }
+
+    public static void showSimpleDialog(@NonNull final Context app, @NonNull final String title, @NonNull final String message) {
+        showCustomDialog(app, title, message, app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+            @Override
+            public void onClick(BRDialogView brDialogView) {
+                brDialogView.dismissWithAnimation();
+            }
+        }, null, null, 0);
     }
 
     //same but with a SpannableString as message to be able to click on a portion of the text with a listener

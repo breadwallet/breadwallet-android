@@ -61,11 +61,13 @@ gradle.properties
 obj/
 crash.txt
 /captures/
-/projectFilesBackup/
+projectFilesBackup
 /publishTODO.txt
 .idea/copyright/
 /app/google-services.json
 /.idea/markdown-navigator/
 /app/src/main/java/com/breadwallet/presenter/fragments/FragmentBreadSignal.java
-/fastlane/
 fastlane/
+Release_checklist
+
+/app/.externalNativeBuild/

@@ -26,13 +26,13 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -88,6 +88,9 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             Log.e(TAG, "ImportPrivKeyTask:doInBackground: failed: " + iso + "|" + app);
             return null;
         }
+
+        BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+
         BRCoreKey coreKey = new BRCoreKey();
         coreKey.setPrivKey(key);
         String tmpAddress = coreKey.address();
@@ -98,15 +101,17 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             return null;
         }
 
-        if (!iso.equalsIgnoreCase("BTC") && iso.equalsIgnoreCase("BCH")) {
+        if (!iso.equalsIgnoreCase("BTC") && !iso.equalsIgnoreCase("BCH")) {
             String err = "doInBackground: Can't happen, uknown iso: " + iso;
             BRReportsManager.reportBug(new NullPointerException(err));
             Log.e(TAG, err);
             return null;
         }
 
+        String decoratedAddress = wm.decorateAddress(app, tmpAddress);
+
         //automatically uses testnet if x-testnet is true
-        String fullUrl = String.format("https://%s/q/addr/%s/utxo?currency=%s", BreadApp.HOST, tmpAddress, iso);
+        String fullUrl = String.format("https://%s/q/addr/%s/utxo?currency=%s", BreadApp.HOST, decoratedAddress, iso);
         mTransaction = createSweepingTx(app, fullUrl);
         if (mTransaction == null) {
             app.runOnUiThread(new Runnable() {
@@ -136,15 +141,20 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         final BaseWalletManager walletManager = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
 
         BigDecimal bigAmount = new BigDecimal(walletManager.getWallet().getTransactionAmount(mTransaction));
-        BigDecimal bigFee = new BigDecimal(walletManager.getWallet().getTransactionFee(mTransaction));
+        BigDecimal bigFee = new BigDecimal(0);
 
-        BigDecimal bigAmountFiat = walletManager.getFiatForSmallestCrypto(app, bigAmount);
+        for (BRCoreTransactionInput in : mTransaction.getInputs())
+            bigFee = bigFee.add(new BigDecimal(in.getAmount()));
+        for (BRCoreTransactionOutput out : mTransaction.getOutputs())
+            bigFee = bigFee.subtract(new BigDecimal(out.getAmount()));
+
+        String formattedFiatAmount = CurrencyUtils.getFormattedAmount(app, BRSharedPrefs.getPreferredFiatIso(app), walletManager.getFiatForSmallestCrypto(app, bigAmount, null));
 
         //bits, BTCs..
         String amount = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), bigAmount);
         String fee = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), bigFee.abs());
         String message = String.format(app.getString(R.string.Import_confirm), amount, fee);
-        String posButton = String.format("%s (%s)", amount, bigAmountFiat);
+        String posButton = String.format("%s (%s)", amount, formattedFiatAmount);
         BRDialog.showCustomDialog(app, "", message, posButton, app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {
@@ -170,7 +180,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
                         BRCoreKey signingKey = new BRCoreKey(key);
 
-                        mTransaction.sign(signingKey);
+                        mTransaction.sign(signingKey, walletManager.getForkId());
 
                         if (!mTransaction.isSigned()) {
                             String err = "transaction is not signed";
@@ -195,8 +205,21 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
     }
 
-    private BRCoreTransaction createSweepingTx(Context app, String url) {
+    private BRCoreTransaction createSweepingTx(final Context app, String url) {
         if (url == null || url.isEmpty()) return null;
+
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                new Handler().postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(app, app.getString(R.string.Import_checking), Toast.LENGTH_LONG).show();
+                    }
+                }, 1000);
+            }
+        });
+
         String jsonString = BRApiManager.urlGET(app, url);
         if (jsonString == null || jsonString.isEmpty()) return null;
         BaseWalletManager walletManager = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
@@ -216,7 +239,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
             for (int i = 0; i < length; i++) {
                 JSONObject obj = jsonArray.getJSONObject(i);
-                byte[] txid = TypesConverter.hexToBytes(obj.getString("txid"));
+                byte[] txid = TypesConverter.hexToBytesReverse(obj.getString("txid"));
                 int vout = obj.getInt("vout");
                 byte[] scriptPubKey = TypesConverter.hexToBytes(obj.getString("scriptPubKey"));
                 long amount = obj.getLong("satoshis");
@@ -225,15 +248,14 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                 transaction.addInput(in);
             }
 
+            if (totalAmount <= 0) return null;
+//
             BRCoreAddress address = walletManager.getReceiveAddress(app);
 
             BRCoreKey signingKey = new BRCoreKey(key);
 
             long fee = walletManager.getWallet().getFeeForTransactionSize(transaction.getSize() + 34 + (signingKey.getPubKey().length - 33) * transaction.getInputs().length);
-            Log.e(TAG, "createSweepingTx: fee: " + fee);
-            Log.e(TAG, "createSweepingTx: totalAmount: " + totalAmount);
             transaction.addOutput(new BRCoreTransactionOutput(totalAmount - fee, address.getPubKeyScript()));
-            Log.e(TAG, "createSweepingTx: txAmount:" + walletManager.getWallet().getTransactionAmount(transaction));
             return transaction;
         } catch (JSONException e) {
             e.printStackTrace();

@@ -87,10 +87,10 @@ public class FragmentSupport extends Fragment {
                 Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl());
                 Log.d(TAG, "shouldOverrideUrlLoading: " + request.getMethod());
                 if (onCloseUrl != null && request.getUrl().toString().equalsIgnoreCase(onCloseUrl)) {
-                    getActivity().onBackPressed();
+                    getActivity().getFragmentManager().popBackStack();
                     onCloseUrl = null;
                 } else if (request.getUrl().toString().contains("_close")) {
-                    getActivity().onBackPressed();
+                    getActivity().getFragmentManager().popBackStack();
                 } else {
                     view.loadUrl(request.getUrl().toString());
                 }

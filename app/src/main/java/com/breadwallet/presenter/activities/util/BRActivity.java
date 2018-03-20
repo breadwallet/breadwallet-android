@@ -52,6 +52,7 @@ public class BRActivity extends Activity {
     private static final String TAG = BRActivity.class.getName();
     public static final Point screenParametersPoint = new Point();
 
+
     static {
         System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
     }
@@ -66,13 +67,13 @@ public class BRActivity extends Activity {
         super.onStop();
         BreadApp.activityCounter.decrementAndGet();
         BreadApp.onStop(this);
-        BreadApp.backgroundedTime = System.currentTimeMillis();
     }
 
     @Override
     protected void onResume() {
         init(this);
         super.onResume();
+        BreadApp.backgroundedTime = 0;
 
     }
 
@@ -177,7 +178,7 @@ public class BRActivity extends Activity {
                                 e.printStackTrace();
                             }
                             String result = data.getStringExtra("result");
-                            if (CryptoUriParser.isBitcoinUrl(BRActivity.this, result))
+                            if (CryptoUriParser.isCryptoUrl(BRActivity.this, result))
                                 CryptoUriParser.processRequest(BRActivity.this, result,
                                         WalletsMaster.getInstance(BRActivity.this).getCurrentWallet(BRActivity.this));
                             else if (BRBitId.isBitId(result))
@@ -210,7 +211,7 @@ public class BRActivity extends Activity {
         }
     }
 
-    public static void init(Activity app) {
+    public void init(Activity app) {
         //set status bar color
 //        ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
         InternetManager.getInstance();
@@ -223,19 +224,30 @@ public class BRActivity extends Activity {
 
         BreadApp.activityCounter.incrementAndGet();
         BreadApp.setBreadContext(app);
+
+        if (!HTTPServer.isStarted())
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    HTTPServer.startServer();
+                }
+            });
+
+        lockIfNeeded(this);
+
+    }
+
+    private void lockIfNeeded(Activity app) {
         //lock wallet if 3 minutes passed
-        if (BreadApp.backgroundedTime != 0 && (System.currentTimeMillis()
-                - BreadApp.backgroundedTime >= 180 * 1000) && !(app instanceof DisabledActivity)) {
+        if (BreadApp.backgroundedTime != 0
+                && ((System.currentTimeMillis() - BreadApp.backgroundedTime) >= 180 * 1000)
+                && !(app instanceof DisabledActivity)) {
             if (!BRKeyStore.getPinCode(app).isEmpty()) {
+                Log.e(TAG, "lockIfNeeded: " + BreadApp.backgroundedTime);
                 BRAnimator.startBreadActivity(app, true);
             }
         }
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                HTTPServer.startServer();
-            }
-        });
-        BreadApp.backgroundedTime = System.currentTimeMillis();
+
     }
+
 }

@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
@@ -21,6 +22,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
+import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
@@ -66,11 +68,10 @@ public class WalletsMaster {
 
     private List<BaseWalletManager> mWallets = new ArrayList<>();
 
-
     private WalletsMaster(Context app) {
     }
 
-    public static WalletsMaster getInstance(Context app) {
+    public synchronized static WalletsMaster getInstance(Context app) {
         if (instance == null) {
             instance = new WalletsMaster(app);
         }
@@ -84,7 +85,8 @@ public class WalletsMaster {
     //return the needed wallet for the iso
     public BaseWalletManager getWalletByIso(Context app, String iso) {
 //        Log.d(TAG, "getWalletByIso() Getting wallet by ISO -> " + iso);
-        if (Utils.isNullOrEmpty(iso)) return null;
+        if (Utils.isNullOrEmpty(iso))
+            throw new RuntimeException("getWalletByIso with iso = null, Cannot happen!");
         if (iso.equalsIgnoreCase("BTC"))
             return WalletBitcoinManager.getInstance(app);
         if (iso.equalsIgnoreCase("BCH")) return WalletBchManager.getInstance(app);
@@ -96,12 +98,12 @@ public class WalletsMaster {
     }
 
     //get the total fiat balance held in all the wallets in the smallest unit (e.g. cents)
-    public BigDecimal getAgregatedFiatBalance(Context app) {
-        long totalBalance = 0;
+    public BigDecimal getAggregatedFiatBalance(Context app) {
+        BigDecimal totalBalance = new BigDecimal(0);
         for (BaseWalletManager wallet : mWallets) {
-            totalBalance += wallet.getFiatBalance(app);
+            totalBalance = totalBalance.add(wallet.getFiatBalance(app));
         }
-        return new BigDecimal(totalBalance);
+        return totalBalance;
     }
 
     public synchronized boolean generateRandomSeed(final Context ctx) {
@@ -225,28 +227,23 @@ public class WalletsMaster {
 
     }
 
-
     public void wipeWalletButKeystore(final Context ctx) {
         Log.d(TAG, "wipeWalletButKeystore");
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 for (BaseWalletManager wallet : mWallets) {
-                    wallet.getWallet().dispose();
-                    wallet.getPeerManager().dispose();
                     wallet.wipeData(ctx);
                 }
-
+//                wipeAll(ctx);
             }
         });
-
     }
 
     public void wipeAll(Context app) {
         wipeKeyStore(app);
         wipeWalletButKeystore(app);
     }
-
 
     public void refreshBalances(Context app) {
         for (BaseWalletManager wallet : mWallets) {
@@ -264,9 +261,34 @@ public class WalletsMaster {
     }
 
     public void initLastWallet(Context app) {
+        if (app == null) {
+            app = BreadApp.getBreadContext();
+            if (app == null) {
+                Log.e(TAG, "initLastWallet: FAILED, app is null");
+                return;
+            }
+        }
         BaseWalletManager wallet = getWalletByIso(app, BRSharedPrefs.getCurrentWalletIso(app));
         if (wallet == null) wallet = getWalletByIso(app, "BTC");
         wallet.connectWallet(app);
+    }
+
+    public void updateFixedPeer(Context app, BaseWalletManager wm) {
+        String node = BRSharedPrefs.getTrustNode(app, wm.getIso(app));
+        if (!Utils.isNullOrEmpty(node)) {
+            String host = TrustedNode.getNodeHost(node);
+            int port = TrustedNode.getNodePort(node);
+//        Log.e(TAG, "trust onClick: host:" + host);
+//        Log.e(TAG, "trust onClick: port:" + port);
+            boolean success = wm.getPeerManager().useFixedPeer(host, port);
+            if (!success) {
+                Log.e(TAG, "updateFixedPeer: Failed to updateFixedPeer with input: " + node);
+            } else {
+                Log.d(TAG, "updateFixedPeer: succeeded");
+            }
+        }
+        wm.getPeerManager().connect();
+
     }
 
     public void startTheWalletIfExists(final Activity app) {

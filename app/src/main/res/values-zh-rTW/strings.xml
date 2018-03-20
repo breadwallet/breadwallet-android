@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
   <!-- App name -->
-  <string name="About.appName.android">Bread</string>
+  <string name="About.appName.android">BRD</string>
   <!-- About screen blog label -->
   <string name="About.blog">部落格</string>
   <!-- About screen footer -->
-  <string name="About.footer">由全球 Bread 團隊製作。版本 %1$s</string>
+  <string name="About.footer">由全球 BRD 團隊製作。版本 %1$s</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">隱私政策</string>
   <!-- About screen reddit label -->
@@ -23,11 +23,7 @@
   <!-- Loading Wallet Message -->
   <string name="Account.loadingMessage">正在載入電子錢包</string>
   <!-- Default wallet name -->
-  <string name="AccountHeader.defaultWalletName">我的 Bread</string>
-  <!-- Equals symbol -->
-  <string name="AccountHeader.equals">=</string>
-  <!-- Manage wallet button title -->
-  <string name="AccountHeader.manageButtonName">管理</string>
+  <string name="AccountHeader.defaultWalletName">我的 BRD</string>
   <!-- Third party keyboard warning -->
   <string name="Alert.customKeyboard.android">您似乎在使用第三方鍵盤，這可能會記錄您按下的鍵並竊取您的「紙鑰」。請切換至預設的 Android 鍵盤以獲得額外的保護。</string>
   <!-- Error alert title -->
@@ -35,7 +31,7 @@
   <!-- Keystore error -->
   <string name="Alert.keystore.generic.android">您的 Android OS 金鑰儲存區有問題，請聯絡 support@breadwallet.com</string>
   <!-- KeyStore error, keys are invalidated -->
-  <string name="Alert.keystore.invalidated.android">您的 Bread 加密資料最近已被判定為無效，因爲您的 Android 螢幕鎖定已被停用。</string>
+  <string name="Alert.keystore.invalidated.android">您的 BRD 加密資料最近已被判定為無效，因爲您的 Android 螢幕鎖定已被停用。</string>
   <!-- Keystore error title -->
   <string name="Alert.keystore.title.android">Android 金鑰儲存區錯誤</string>
   <!-- No internet alert message -->
@@ -148,6 +144,8 @@
   <string name="ErrorMessages.emailUnavailableMessage">本裝置並非設定來以 iOS 郵件應用程式傳送電子郵件。</string>
   <!-- Email unavailable alert title -->
   <string name="ErrorMessages.emailUnavailableTitle">無法使用電子郵件</string>
+  <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
+  <string name="ErrorMessages.loopingLockScreen.android">由於您安卓系統版本中的錯誤，因此 BRD 無法取得認證。[請點擊此瞭解更多資訊。]</string>
   <!-- Messaging unavailable alert title -->
   <string name="ErrorMessages.messagingUnavailableMessage">本裝置並非設定來傳送訊息。</string>
   <!-- Messaging unavailable alert title -->
@@ -189,13 +187,13 @@
   <!-- Caption for graphics -->
   <string name="Import.leftCaption">待匯入的電子錢包</string>
   <!-- Import wallet intro screen message -->
-  <string name="Import.message">匯入一個電子錢包會以單一交易的方式將您其它電子錢包的所有資金轉帳至您的 Bread 錢包。</string>
+  <string name="Import.message">匯入一個電子錢包會以單一交易的方式將您其它電子錢包的所有資金轉帳至您的 BRD 錢包。</string>
   <!-- Enter password alert view title -->
   <string name="Import.password">此私密金鑰受密碼保護。</string>
   <!-- password textfield placeholder -->
   <string name="Import.passwordPlaceholder">密碼</string>
   <!-- Caption for graphics -->
-  <string name="Import.rightCaption">您的 Bread 錢包</string>
+  <string name="Import.rightCaption">您的 BRD 錢包</string>
   <!-- Scan Private key button label -->
   <string name="Import.scan">掃描私密金鑰</string>
   <!-- Import wallet success alert title -->
@@ -215,9 +213,9 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">略過</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">裝置安全性遭破解\n 任何「越獄」應用程式都可以存取 Bread 的鑰匙圈資料、 竊取您的比特幣！立即抹除這個錢包，在安全的裝置上還原。</string>
+  <string name="JailbreakWarnings.messageWithBalance">裝置安全性遭破解\n 任何「越獄」應用程式都可以存取 BRD 的鑰匙圈資料、 竊取您的比特幣！立即抹除這個錢包，在安全的裝置上還原。</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">裝置安全性遭破解\n 任何「越獄」應用程式都可以存取 Bread 的鑰匙圈資料、 竊取您的比特幣。請只在未越獄的裝置上使用 Bread。</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">裝置安全性遭破解\n 任何「越獄」應用程式都可以存取 BRD 的鑰匙圈資料、 竊取您的比特幣。請只在未越獄的裝置上使用 BRD。</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">警告</string>
   <!-- Wipe wallet button -->
@@ -225,7 +223,7 @@
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">定位服務已停用。</string>
   <!-- No permissions for location services -->
-  <string name="LocationPlugin.notAuthorized">Bread 沒有存取定位服務的權限。</string>
+  <string name="LocationPlugin.notAuthorized">BRD 沒有存取定位服務的權限。</string>
   <!-- Wallet creation date prefix -->
   <string name="ManageWallet.creationDatePrefix">您在 %1$s 建立了電子錢包</string>
   <!-- Manage wallet description text -->
@@ -303,7 +301,7 @@
   <!-- Transaction rejected prompt title -->
   <string name="Prompts.RecommendRescan.title">交易被拒</string>
   <!-- Share data prompt body -->
-  <string name="Prompts.ShareData.body">和我們分享您的匿名資料來協助改善 Bread</string>
+  <string name="Prompts.ShareData.body">和我們分享您的匿名資料來協助改善 BRD</string>
   <!-- Share data prompt title -->
   <string name="Prompts.ShareData.title">分享匿名資料</string>
   <!-- Enable touch ID prompt body -->
@@ -317,11 +315,11 @@
   <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
   <string name="Prompts.TouchId.usePin.android">密碼</string>
   <!-- Upgrade PIN prompt body. -->
-  <string name="Prompts.UpgradePin.body">Bread 已經升級至 6 位數 PIN 碼。請點這裡升級。</string>
+  <string name="Prompts.UpgradePin.body">BRD 已經升級至 6 位數 PIN 碼。請點這裡升級。</string>
   <!-- Upgrade PIN prompt title. -->
   <string name="Prompts.UpgradePin.title">升級 PIN 碼</string>
   <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
-  <string name="PushNotifications.body">開啟通知，好在未來收到 Bread 的特別訊息。</string>
+  <string name="PushNotifications.body">開啟通知，好在未來收到 BRD 的特別訊息。</string>
   <!-- Push notifications toggle switch label -->
   <string name="PushNotifications.label">推播</string>
   <!-- Push notifications are off label -->
@@ -351,7 +349,7 @@
   <!-- Enter paper key instruction -->
   <string name="RecoverWallet.instruction">輸入紙本金鑰</string>
   <!-- Recover wallet intro -->
-  <string name="RecoverWallet.intro">以您的紙本金鑰復原您的 Bread</string>
+  <string name="RecoverWallet.intro">以您的紙本金鑰復原您的 BRD</string>
   <!-- Invalid paper key message -->
   <string name="RecoverWallet.invalid">紙本金鑰</string>
   <!-- Previous button accessibility label -->
@@ -379,7 +377,7 @@
   <!-- extimated time -->
   <string name="ReScan.body1">20-45 分鐘</string>
   <!-- Syncing explanation -->
-  <string name="ReScan.body2">如果交易在比特幣網上已經顯示為完成，但沒有出現在您的 Bread 上。</string>
+  <string name="ReScan.body2">如果交易在比特幣網上已經顯示為完成，但沒有出現在您的 BRD 上。</string>
   <!-- Syncing explanation -->
   <string name="ReScan.body3">你不斷收到「交易被拒」的錯誤。</string>
   <!-- Start Sync button label -->
@@ -409,13 +407,13 @@
   <!-- Paper Key button title -->
   <string name="SecurityCenter.paperKeyTitle">紙本金鑰</string>
   <!-- PIN button description -->
-  <string name="SecurityCenter.pinDescription">保護您的 Bread，防範未經授權的使用者。</string>
+  <string name="SecurityCenter.pinDescription">保護您的 BRD，防範未經授權的使用者。</string>
   <!-- PIN button title -->
   <string name="SecurityCenter.pinTitle">6 位數 PIN 碼</string>
   <!-- Security Center Title -->
   <string name="SecurityCenter.title">資訊安全中心</string>
   <!-- Touch ID button description -->
-  <string name="SecurityCenter.touchIdDescription">輕鬆解鎖您的 Bread，並在設定好的限額內寄送款項。</string>
+  <string name="SecurityCenter.touchIdDescription">輕鬆解鎖您的 BRD，並在設定好的限額內寄送款項。</string>
   <!-- Touch ID button title -->
   <string name="SecurityCenter.touchIdTitle">Touch ID</string>
   <!-- Security center fingerprint authentication button -->
@@ -425,13 +423,13 @@
   <!-- Balance: $4.00 -->
   <string name="Send.balance">餘額：%1$s</string>
   <!-- Instructions how to allow the camera access for the app -->
-  <string name="Send.cameraUnavailabeMessage.android">到「設定」 &gt; 「應用程式」 &gt; 「Bread」 &gt; 「權限」允許相機存取</string>
+  <string name="Send.cameraUnavailabeMessage.android">到「設定」 &gt; 「應用程式」 &gt; 「BRD」 &gt; 「權限」允許相機存取</string>
   <!-- Permission required to access camera -->
-  <string name="Send.cameraUnavailabeTitle.android">Bread 尚未獲准存取相機</string>
+  <string name="Send.cameraUnavailabeTitle.android">BRD 尚未獲准存取相機</string>
   <!-- Camera not allowed message -->
   <string name="Send.cameraunavailableMessage">請至「設定」允許存取相機。</string>
   <!-- Camera not allowed alert title -->
-  <string name="Send.cameraUnavailableTitle">Bread 未獲得存取相機的權限</string>
+  <string name="Send.cameraUnavailableTitle">BRD 未獲得存取相機的權限</string>
   <!-- Warning when sending to self. -->
   <string name="Send.containsAddress">目的地為您自己的地址。您不能寄送給自己。</string>
   <!-- Could not create transaction alert title -->
@@ -487,7 +485,7 @@
   <!-- Join Early access label -->
   <string name="Settings.earlyAccess">參加「先行體驗」</string>
   <!-- Are you enjoying bread alert message body -->
-  <string name="Settings.enjoying">您喜歡 Bread 嗎？</string>
+  <string name="Settings.enjoying">您喜歡 BRD 嗎？</string>
   <!-- Import wallet label -->
   <string name="Settings.importTitle">匯入電子錢包</string>
   <!-- Manage settings section header -->
@@ -511,7 +509,7 @@
   <!-- Start or recover another wallet menu label. -->
   <string name="Settings.wipe">開啟／復原其他錢包</string>
   <!-- Share data view body -->
-  <string name="ShareData.body">請跟我們分享您的匿名資料，以協助我們改善 Bread。其中不會包含財務資訊。我們尊重您的財務隱私。</string>
+  <string name="ShareData.body">請跟我們分享您的匿名資料，以協助我們改善 BRD。其中不會包含財務資訊。我們尊重您的財務隱私。</string>
   <!-- Share data header -->
   <string name="ShareData.header">分享資料？</string>
   <!-- Share data switch label. -->
@@ -519,7 +517,7 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">再寫一次紙本金鑰</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">您的手機遺失、損壞或升級時，紙本金鑰是復原\n Bread 唯一的方式。\n\n我們會向您出示一個字串，請寫在紙上並妥善保管。</string>
+  <string name="StartPaperPhrase.body">您的手機遺失、損壞或升級時，紙本金鑰是復原\n BRD 唯一的方式。\n\n我們會向您出示一個字串，請寫在紙上並妥善保管。</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">寫下紙本金鑰</string>
   <!-- Argument is date -->
@@ -551,14 +549,14 @@
   <!-- Fingerprint Is Not Setup -->
   <string name="TouchIdSettings.disabledWarning.title.android">指紋驗證並未啟用</string>
   <!-- Touch Id screen label -->
-  <string name="TouchIdSettings.label">以您的指紋解鎖 Bread，並在設定好的限額內寄送款項。</string>
+  <string name="TouchIdSettings.label">以您的指紋解鎖 BRD，並在設定好的限額內寄送款項。</string>
   <!-- Link Text (see TouchIdSettings.customizeText) -->
   <string name="TouchIdSettings.linkText">Touch ID 支出限額畫面</string>
   <!-- Spending Limit: b100,000 ($100) -->
   <string name="TouchIdSettings.spendingLimit">花費上限：%1$s（%2$s）</string>
   <!-- Touch id switch label. -->
-  <string name="TouchIdSettings.switchLabel">為 Bread 啟用 Touch ID</string>
-  <!-- Enable fingerprint for this wallet called Bread -->
+  <string name="TouchIdSettings.switchLabel">為 BRD 啟用 Touch ID</string>
+  <!-- Enable fingerprint for this wallet called BRD -->
   <string name="TouchIdSettings.switchLabel.android">指紋驗證</string>
   <!-- Touch ID settings view title -->
   <string name="TouchIdSettings.title">Touch ID</string>
@@ -653,7 +651,7 @@
   <!-- Instruction to touch the sensor for fingerprint authentication -->
   <string name="UnlockScreen.touchIdInstructions.android">觸控感測器</string>
   <!-- TouchID prompt text -->
-  <string name="UnlockScreen.touchIdPrompt">解鎖您的 Bread。</string>
+  <string name="UnlockScreen.touchIdPrompt">解鎖您的 BRD。</string>
   <!-- Device authentication body -->
   <string name="UnlockScreen.touchIdPrompt.android">請解除鎖定您的 Android 裝置來繼續。</string>
   <!-- Unlock with TouchID accessibility label -->
@@ -665,7 +663,7 @@
   <!-- Update PIN caption text -->
   <string name="UpdatePin.caption">請記住此 PIN 碼。如果忘記，會無法存取您的比特幣。</string>
   <!-- PIN creation info. -->
-  <string name="UpdatePin.createInstruction">您的 PIN 碼會用於解鎖 Bread 及送出款項。</string>
+  <string name="UpdatePin.createInstruction">您的 PIN 碼會用於解鎖 BRD 及送出款項。</string>
   <!-- Update PIN title -->
   <string name="UpdatePin.createTitle">設定 PIN 碼</string>
   <!-- Update PIN title -->
@@ -699,7 +697,7 @@
   <!-- Authorize transaction with touch id message -->
   <string name="VerifyPin.touchIdMessage">授權此交易</string>
   <!-- 'No wallet' warning for watch app -->
-  <string name="Watch.noWalletWarning">開啟 Bread iPhone 應用程式以設定您的錢包。</string>
+  <string name="Watch.noWalletWarning">開啟 BRD iPhone 應用程式以設定您的錢包。</string>
   <!-- Dismiss button label -->
   <string name="Webview.dismiss">駁回</string>
   <!-- Webview loading error message -->
@@ -707,9 +705,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">正在更新……</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet 已經改名爲 Bread，有嶄新的面貌和一些新功能。\n\n如果需要協助，就在大部分畫面的右上角尋找(?)。</string>
+  <string name="Welcome.body">Breadwallet 已經改名爲 BRD，有嶄新的面貌和一些新功能。\n\n如果需要協助，就在大部分畫面的右上角尋找(?)。</string>
   <!-- Top title of welcome screen -->
-  <string name="Welcome.title">歡迎使用 Bread！</string>
+  <string name="Welcome.title">歡迎使用 BRD！</string>
   <!-- Wipe wallet alert message -->
   <string name="WipeWallet.alertMessage">確定要刪除此錢包嗎？</string>
   <!-- Wipe wallet alert title -->
@@ -721,9 +719,9 @@
   <!-- Enter phrase to wipe wallet instruction. -->
   <string name="WipeWallet.instruction">輸入此錢包的復原短語（recovery phrase）以進行抹除，並開啟或復原其他錢包。您目前的餘額會保留在於短語。</string>
   <!-- Start wipe wallet view message -->
-  <string name="WipeWallet.startMessage">開始或復原另一個電子錢包會讓您能夠在這項裝置上存取和管理不一樣的 Bread 錢包。</string>
+  <string name="WipeWallet.startMessage">開始或復原另一個電子錢包會讓您能夠在這項裝置上存取和管理不一樣的 BRD 錢包。</string>
   <!-- Start wipe wallet view warning -->
-  <string name="WipeWallet.startWarning">您將再也無法從這項裝置存取目前的 Bread 錢包。餘額會留在片段上。</string>
+  <string name="WipeWallet.startWarning">您將再也無法從這項裝置存取目前的 BRD 錢包。餘額會留在片段上。</string>
   <!-- Wipe wallet navigation item title. -->
   <string name="WipeWallet.title">開啟或復原其他錢包</string>
   <!-- Wipe wallet button title -->

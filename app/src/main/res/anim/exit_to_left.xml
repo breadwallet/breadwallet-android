@@ -3,10 +3,10 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android"
      android:shareInterpolator="false">
     <translate
-        android:duration="300"
+        android:duration="1000"
         android:fromXDelta="0%"
         android:fromYDelta="0%"
         android:interpolator="@anim/overshoot_interpolator"
-        android:toXDelta="-100%"
+        android:toXDelta="-50%"
         android:toYDelta="0%"/>
 </set>
