@@ -421,6 +421,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getFiatBalance(Context app) {
+        if (app == null) return null;
         BigDecimal bal = getFiatForSmallestCrypto(app, new BigDecimal(getCachedBalance(app)), null);
         return new BigDecimal(bal == null ? 0 : bal.doubleValue());
     }

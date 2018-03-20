@@ -100,61 +100,6 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             }
 
             paymentProtocolRequest = new BRCorePaymentProtocolRequest(serializedBytes);
-
-//            if (paymentProtocolRequest == null) {
-//                Log.e(TAG, "paymentRequest is null!!!");
-//                BRDialog.showCustomDialog(app, "", app.getString(R.string.Send_remoteRequestError), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-//                    @Override
-//                    public void onClick(BRDialogView brDialogView) {
-//                        brDialogView.dismissWithAnimation();
-//                    }
-//                }, null, null, 0);
-//                paymentRequest = null;
-//                return null;
-//            } else
-//                if (paymentProtocolRequest.getS == PaymentRequestWrapper.INSUFFICIENT_FUNDS_ERROR) {
-//                Log.e(TAG, "insufficient amount!!!");
-//                BRDialog.showCustomDialog(app, "", app.getString(R.string.Alerts_sendFailure), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-//                    @Override
-//                    public void onClick(BRDialogView brDialogView) {
-//                        brDialogView.dismissWithAnimation();
-//                    }
-//                }, null, null, 0);
-//                paymentRequest = null;
-//                return null;
-//            } else if (paymentRequest.error == PaymentRequestWrapper.SIGNING_FAILED_ERROR) {
-//                Log.e(TAG, "failed to sign tx!!!");
-//                Log.e(TAG, "insufficient amount!!!");
-//                BRDialog.showCustomDialog(app, "", app.getString(R.string.Import_Error_signing), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-//                    @Override
-//                    public void onClick(BRDialogView brDialogView) {
-//                        brDialogView.dismissWithAnimation();
-//                    }
-//                }, null, null, 0);
-//                paymentRequest = null;
-//                return null;
-//            } else if (paymentRequest.error == PaymentRequestWrapper.REQUEST_TOO_LONG_ERROR) {
-//                Log.e(TAG, "failed to sign tx!!!");
-//                BRDialog.showCustomDialog(app, app.getString(R.string.PaymentProtocol_Errors_badPaymentRequest), "Too long", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-//                    @Override
-//                    public void onClick(BRDialogView brDialogView) {
-//                        brDialogView.dismissWithAnimation();
-//                    }
-//                }, null, null, 0);
-//                paymentRequest = null;
-//                return null;
-//            } else if (paymentRequest.error == PaymentRequestWrapper.AMOUNTS_ERROR) {
-//                Log.e(TAG, "failed to sign tx!!!");
-//                BRDialog.showCustomDialog(app, "", app.getString(R.string.PaymentProtocol_Errors_badPaymentRequest), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-//                    @Override
-//                    public void onClick(BRDialogView brDialogView) {
-//                        brDialogView.dismissWithAnimation();
-//                    }
-//                }, null, null, 0);
-//                paymentRequest = null;
-//                return null;
-//            }
-//
 //            //Logging
             BRCoreTransactionOutput[] outputs = paymentProtocolRequest.getOutputs();
             StringBuilder allAddresses = new StringBuilder();
@@ -181,7 +126,6 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 totalAmount += output.getAmount();
             }
 
-
             CustomLogger.logThis("Signature", String.valueOf(paymentProtocolRequest.getSignature().length),
                     "pkiType", paymentProtocolRequest.getPKIType(), "pkiData", String.valueOf(paymentProtocolRequest.getPKIData().length));
             CustomLogger.logThis("network", paymentProtocolRequest.getNetwork(), "time", String.valueOf(paymentProtocolRequest.getTime()),
@@ -202,10 +146,11 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 paymentProtocolRequest = null;
                 return null;
             }
-            List<X509Certificate> certList = X509CertificateValidator.getCertificateFromBytes(serializedBytes);
-            certName = X509CertificateValidator.certificateValidation(certList, paymentProtocolRequest);
+//            List<X509Certificate> certList = X509CertificateValidator.getCertificateFromBytes(serializedBytes);
+//            certName = X509CertificateValidator.certificateValidation(certList, paymentProtocolRequest);
 
         } catch (Exception e) {
+            Log.e(TAG, "doInBackground: ", e);
             if (e instanceof java.net.UnknownHostException) {
                 if (app != null)
                     BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.PaymentProtocol_Errors_corruptedDocument), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
