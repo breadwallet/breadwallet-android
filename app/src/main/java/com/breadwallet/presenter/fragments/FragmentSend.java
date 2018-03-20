@@ -778,8 +778,16 @@ public class FragmentSend extends Fragment {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                if (obj == null) return;
-                BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+                if (obj == null) {
+                    Log.e(TAG, "setCryptoObject: obj is null");
+                    return;
+                }
+                Activity app = getActivity();
+                if (app == null) {
+                    Log.e(TAG, "setCryptoObject: app is null");
+                    return;
+                }
+                BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
                 if (obj.address != null && addressEdit != null) {
                     addressEdit.setText(wm.decorateAddress(getActivity(), obj.address.trim()));
                 }
