@@ -152,10 +152,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Activity app = WalletActivity.this;
-                BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                CryptoUriParser.processRequest(WalletActivity.this, "bitcoin:?r=https://bitpay.com/i/HUsFqTFirmVtgE4PhLzcRx", wm);
-//                BRAnimator.showSendFragment(WalletActivity.this, null);
+//                Activity app = WalletActivity.this;
+//                BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+//                CryptoUriParser.processRequest(WalletActivity.this, "bitcoin:?r=https://bitpay.com/i/HUsFqTFirmVtgE4PhLzcRx", wm);
+                BRAnimator.showSendFragment(WalletActivity.this, null);
 
             }
         });
