@@ -778,7 +778,10 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                                         Log.e(TAG, "run: ", ex);
                                     }
                                 }
-                                BRNotificationManager.sendNotification((Activity) ctx, R.drawable.notification_icon, ctx.getString(R.string.app_name), strToShow, 1);
+                                if (ctx instanceof Activity && BRSharedPrefs.getShowNotification(ctx))
+                                    BRNotificationManager.sendNotification((Activity) ctx, R.drawable.notification_icon, ctx.getString(R.string.app_name), strToShow, 1);
+                                else
+                                    Log.e(TAG, "onTxAdded: ctx is not activity");
                             }
                         }
                     }, 1000);
