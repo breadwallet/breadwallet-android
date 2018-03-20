@@ -179,12 +179,13 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         if (!item.isValid())
             showTransactionFailed(convertView, item, received);
 
-
-        BigDecimal cryptoAmount = received ? new BigDecimal(item.getReceived()).abs() : new BigDecimal(item.getSent() - item.getReceived()).abs().negate();
+        BigDecimal cryptoAmount = new BigDecimal(item.getAmount());
+        Log.e(TAG, "setTexts: crypto:" + cryptoAmount);
         boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
         String preferredIso = isCryptoPreferred ? wallet.getIso(mContext) : BRSharedPrefs.getPreferredFiatIso(mContext);
 
         BigDecimal amount = isCryptoPreferred ? cryptoAmount : wallet.getFiatForSmallestCrypto(mContext, cryptoAmount, null);
+        Log.e(TAG, "setTexts: amount:" + amount);
 
         convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, preferredIso, amount));
 
@@ -279,7 +280,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
     }
 
-
     private void showTransactionFailed(TxHolder holder, TxUiHolder tx, boolean received) {
 
         holder.transactionDate.setVisibility(View.INVISIBLE);
@@ -325,11 +325,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 } else {
                     boolean willAdd = true;
                     //filter by sent and this is received
-                    if (switches[0] && (item.getSent() - item.getReceived() <= 0)) {
+                    if (switches[0] && (item.getAmount() <= 0)) {
                         willAdd = false;
                     }
                     //filter by received and this is sent
-                    if (switches[1] && (item.getSent() - item.getReceived() > 0)) {
+                    if (switches[1] && (item.getAmount() > 0)) {
                         willAdd = false;
                     }
                     BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
