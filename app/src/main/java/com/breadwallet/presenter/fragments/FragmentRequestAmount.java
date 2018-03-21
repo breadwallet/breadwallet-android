@@ -34,7 +34,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.util.CryptoUriParser;
+import com.breadwallet.wallet.util.CryptoUriParser;
 
 import java.math.BigDecimal;
 

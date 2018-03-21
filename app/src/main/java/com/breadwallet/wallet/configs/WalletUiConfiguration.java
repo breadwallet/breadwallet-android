@@ -1,9 +1,9 @@
-package com.breadwallet.wallet.wallets.exceptions;
+package com.breadwallet.wallet.configs;
 
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 1/30/18.
+ * Created by Mihail Gutan on <mihail@breadwallet.com> 1/25/18.
  * Copyright (c) 2018 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -24,10 +24,17 @@ package com.breadwallet.wallet.wallets.exceptions;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class SpendingNotAllowed extends Exception {
+public class WalletUiConfiguration {
+    public String colorHex;
+    public boolean sendVisible;
+    public boolean receiveVisible;
+    public boolean buyVisible;
 
-    public SpendingNotAllowed() {
-        super("spending is not allowed at the moment");
+    public WalletUiConfiguration(String colorHex, boolean sendVisible, boolean receiveVisible, boolean buyVisible) {
+        this.colorHex = colorHex;
+        this.sendVisible = sendVisible;
+        this.receiveVisible = receiveVisible;
+        this.buyVisible = buyVisible;
+
     }
-
 }

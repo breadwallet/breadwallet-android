@@ -1,4 +1,4 @@
-package com.breadwallet.wallet.wallets.exceptions;
+package com.breadwallet.wallet.exceptions;
 
 /**
  * BreadWallet
@@ -24,10 +24,10 @@ package com.breadwallet.wallet.wallets.exceptions;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class FeeNeedsAdjust extends Exception {
+public class InsufficientFundsException extends Exception {
 
-    public FeeNeedsAdjust(long amount, long balance, long fee) {
-        super("Balance: " + balance + " satoshis, amount: " + amount + " satoshis, fee: " + fee + " satoshis.");
+    public InsufficientFundsException(long amount, long balance) {
+        super("Balance: " + balance + " satoshis, amount: " + amount + " satoshis.");
     }
 
 }
