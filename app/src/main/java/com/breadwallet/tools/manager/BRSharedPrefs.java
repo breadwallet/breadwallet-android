@@ -67,7 +67,6 @@ public class BRSharedPrefs {
 
     }
 
-
     public static String getPreferredFiatIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
         String defIso;
@@ -479,7 +478,6 @@ public class BRSharedPrefs {
     }
 
     public static boolean wasBchDialogShown(Context context) {
-
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean("bchDialogShown", false);
     }
