@@ -66,7 +66,7 @@ add_library( # The name of the library.
              src/main/jni/breadwallet-core/bcash/BRBCashAddr.h
              src/main/jni/breadwallet-core/bcash/BRBCashParams.h
 
-             # Core JNI files
+             # Core Bitcoin and Bitcoincash JNI files
              src/main/jni/breadwallet-core/Java/BRCoreJni.h
              src/main/jni/breadwallet-core/Java/BRCoreJni.c
              src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreJniReference.c
@@ -101,6 +101,7 @@ add_library( # The name of the library.
              src/main/jni/breadwallet-core/BRBech32.h
 
              # Etherium files
+             src/main/jni/breadwallet-core/ethereum/BREthereum.h
 
              )
 
