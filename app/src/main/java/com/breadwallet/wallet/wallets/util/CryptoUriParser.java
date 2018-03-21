@@ -88,11 +88,6 @@ public class CryptoUriParser {
             return false;
         }
         if (requestObject.isPaymentProtocol()) {
-            if (!requestObject.iso.equalsIgnoreCase("BTC")) {
-                String err = "We don't support payment protocol for other currencies yet";
-                BRReportsManager.reportBug(new RuntimeException(err));
-                return false;
-            }
             return tryPaymentRequest(requestObject);
         } else if (requestObject.address != null) {
             return tryCryptoUrl(requestObject, app);
