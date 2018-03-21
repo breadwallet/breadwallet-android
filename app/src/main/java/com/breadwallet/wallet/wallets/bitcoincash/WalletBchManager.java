@@ -56,7 +56,7 @@ import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
-import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
+import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;

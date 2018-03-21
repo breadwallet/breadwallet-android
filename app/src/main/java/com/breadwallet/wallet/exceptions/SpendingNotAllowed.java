@@ -1,4 +1,4 @@
-package com.breadwallet.wallet.wallets.exceptions;
+package com.breadwallet.wallet.exceptions;
 
 /**
  * BreadWallet
@@ -24,10 +24,10 @@ package com.breadwallet.wallet.wallets.exceptions;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class AmountSmallerThanMinException extends Exception {
+public class SpendingNotAllowed extends Exception {
 
-    public AmountSmallerThanMinException(long amount, long min) {
-        super("Min: " + min + " satoshis, amount: " + amount + " satoshis.");
+    public SpendingNotAllowed() {
+        super("spending is not allowed at the moment");
     }
 
 }
