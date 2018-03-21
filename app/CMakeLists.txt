@@ -130,7 +130,7 @@ add_library( # The name of the library.
              src/main/jni/breadwallet-core/ethereum/rlp/BRRlpCoder.c
              src/main/jni/breadwallet-core/ethereum/rlp/BRRlpCoder.h
 
-             #Ethereum util
+             #Ethereum Util
              src/main/jni/breadwallet-core/ethereum/util/BRUtil.h
              src/main/jni/breadwallet-core/ethereum/util/BRUtilHex.c
              src/main/jni/breadwallet-core/ethereum/util/BRUtilHex.h
@@ -150,14 +150,13 @@ add_library( # The name of the library.
 
              )
 
-
 include_directories(src/main/jni/breadwallet-core/ethereum/rlp)
 include_directories(src/main/jni/breadwallet-core/ethereum/util)
 include_directories(src/main/jni/breadwallet-core/ethereum/Java)
 include_directories(src/main/jni/breadwallet-core/ethereum)
 include_directories(src/main/jni/breadwallet-core/bcash)
 include_directories(src/main/jni/breadwallet-core/Java)
-include_directories(src/main/jni/breadwallet-core/)
+include_directories(src/main/jni/breadwallet-core)
 include_directories(src/main/jni/breadwallet-core/secp256k1/include)
 include_directories(src/main/jni/breadwallet-core/secp256k1/src)
 include_directories(src/main/jni/breadwallet-core/secp256k1)
