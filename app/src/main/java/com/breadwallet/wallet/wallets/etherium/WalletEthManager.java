@@ -12,6 +12,10 @@ import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.core.BRCorePeerManager;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWallet;
+import com.breadwallet.core.ethereum.BREthereumAccount;
+import com.breadwallet.core.ethereum.BREthereumLightNode;
+import com.breadwallet.core.ethereum.BREthereumNetwork;
+import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
@@ -72,6 +76,14 @@ public class WalletEthManager extends BREthereumWallet implements BaseWalletMana
     private int mSyncRetryCount = 0;
     private static final int SYNC_MAX_RETRY = 3;
 
+    protected WalletEthManager(BREthereumLightNode node, long identifier, BREthereumAccount account, BREthereumNetwork network) {
+        super(node, identifier, account, network);
+    }
+
+    protected WalletEthManager(BREthereumLightNode node, long identifier, BREthereumAccount account, BREthereumNetwork network, BREthereumToken token) {
+        super(node, identifier, account, network, token);
+    }
+
 //    private boolean isInitiatingWallet;
 //
 //    private List<OnBalanceChangedListener> balanceListeners = new ArrayList<>();
@@ -101,9 +113,9 @@ public class WalletEthManager extends BREthereumWallet implements BaseWalletMana
         return instance;
     }
 
-    private WalletEthManager(final Context app, BRCoreMasterPubKey masterPubKey,
-                             BRCoreChainParams chainParams,
-                             double earliestPeerTime) {
+//    private WalletEthManager(final Context app, BRCoreMasterPubKey masterPubKey,
+//                             BRCoreChainParams chainParams,
+//                             double earliestPeerTime) {
 //        super(masterPubKey, chainParams, earliestPeerTime);
 //        if (isInitiatingWallet) return;
 //        isInitiatingWallet = true;
@@ -138,9 +150,7 @@ public class WalletEthManager extends BREthereumWallet implements BaseWalletMana
 //            isInitiatingWallet = false;
 //        }
 
-    }
-
-
+//    }
 
     @Override
     public BRCoreWallet getWallet() {
