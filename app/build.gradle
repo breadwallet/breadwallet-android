@@ -128,7 +128,13 @@ android {
         }
 
     }
-    sourceSets { main { java.srcDirs = ['src/main/java', 'src/main/jni/breadwallet-core/Java/root', 'src/main/jni/breadwallet-core/ethereum/Java/root'] } }
+    sourceSets {
+        main {
+            java.srcDirs = ['src/main/java',
+                            'src/main/jni/breadwallet-core/Java/root',
+                            'src/main/jni/breadwallet-core/ethereum/Java/root']
+        }
+    }
 }
 
 task copyResDirectoryToClasses(type: Copy) {
@@ -139,7 +145,6 @@ task copyResDirectoryToClasses(type: Copy) {
 gradle.projectsEvaluated {
     assembleDebug.dependsOn(copyResDirectoryToClasses)
 }
-
 
 //def gitUpdateModules() {
 //    ['sh', '-c', 'git submodule foreach git pull origin master'].execute().text.trim()
