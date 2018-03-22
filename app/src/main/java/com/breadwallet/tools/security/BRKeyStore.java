@@ -769,11 +769,14 @@ public class BRKeyStore {
     }
 
     public synchronized static void removeAliasAndDatas(KeyStore keyStore, String alias, Context context) {
+        if (Utils.isNullOrEmpty(alias)) return;
         try {
             keyStore.deleteEntry(alias);
+            AliasObject iv = aliasObjectMap.get(alias);
+            if (iv == null) return;
 
             BRKeyStore.destroyEncryptedData(context, alias);
-            BRKeyStore.destroyEncryptedData(context, aliasObjectMap.get(alias).ivFileName);
+            BRKeyStore.destroyEncryptedData(context, iv.ivFileName);
 
         } catch (KeyStoreException e) {
             e.printStackTrace();
