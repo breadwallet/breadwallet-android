@@ -70,16 +70,25 @@ add_library( # The name of the library.
 
              # Ethereum
              src/main/jni/breadwallet-core/ethereum/BREthereum.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumPrivate.h
              src/main/jni/breadwallet-core/ethereum/BREthereumEther.h
              src/main/jni/breadwallet-core/ethereum/BREthereumEther.c
              src/main/jni/breadwallet-core/ethereum/BREthereumGas.h
              src/main/jni/breadwallet-core/ethereum/BREthereumGas.c
              src/main/jni/breadwallet-core/ethereum/BREthereumAccount.h
              src/main/jni/breadwallet-core/ethereum/BREthereumAccount.c
+             src/main/jni/breadwallet-core/ethereum/BREthereumContract.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumContract.c
+             src/main/jni/breadwallet-core/ethereum/BREthereumToken.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumToken.c
+             src/main/jni/breadwallet-core/ethereum/BREthereumContract.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumContract.c
+             src/main/jni/breadwallet-core/ethereum/BREthereumAmount.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumAmount.c
              src/main/jni/breadwallet-core/ethereum/BREthereumTransaction.h
              src/main/jni/breadwallet-core/ethereum/BREthereumTransaction.c
-             src/main/jni/breadwallet-core/ethereum/BREthereumHolding.h
-             src/main/jni/breadwallet-core/ethereum/BREthereumHolding.c
+             src/main/jni/breadwallet-core/ethereum/BREthereumNetwork.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumNetwork.c
              src/main/jni/breadwallet-core/ethereum/BREthereumWallet.h
              src/main/jni/breadwallet-core/ethereum/BREthereumWallet.c
              src/main/jni/breadwallet-core/ethereum/BREthereumLightNode.h
@@ -90,7 +99,15 @@ add_library( # The name of the library.
              src/main/jni/breadwallet-core/ethereum/rlp/BRRlpCoder.h
              src/main/jni/breadwallet-core/ethereum/rlp/BRRlpCoder.c
 
-             src/main/jni/breadwallet-core/ethereum/test.c
+            # Ethereum UTIL
+             src/main/jni/breadwallet-core/ethereum/util/BRUtil.h
+             src/main/jni/breadwallet-core/ethereum/util/BRUtilMath.h
+             src/main/jni/breadwallet-core/ethereum/util/BRUtilMath.c
+             src/main/jni/breadwallet-core/ethereum/util/BRUtilMathParse.c
+             src/main/jni/breadwallet-core/ethereum/util/BRUtilHex.h
+             src/main/jni/breadwallet-core/ethereum/util/BRUtilHex.c
+
+#             src/main/jni/breadwallet-core/ethereum/test.c
 
              # Core JNI files
              src/main/jni/breadwallet-core/Java/BRCoreJni.h
@@ -121,8 +138,21 @@ add_library( # The name of the library.
              src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCorePaymentProtocol.h
              src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreWallet.c
              src/main/jni/breadwallet-core/Java/com_breadwallet_core_BRCoreWallet.h
-             )
 
+             # Ethereum JNI files
+             src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumLightNode.c
+             src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumLightNode.h
+             src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumToken.c
+             src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumToken.h
+             src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumNetwork.c
+             src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumNetwork.h
+             src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumWallet.c
+             src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumWallet.h
+                )
+
+include_directories(src/main/jni/breadwallet-core/ethereum/util)
+include_directories(src/main/jni/breadwallet-core/ethereum/rlp)
+include_directories(src/main/jni/breadwallet-core/ethereum)
 include_directories(src/main/jni/breadwallet-core/bcash)
 include_directories(src/main/jni/breadwallet-core/Java)
 include_directories(src/main/jni/breadwallet-core/)
