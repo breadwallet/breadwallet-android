@@ -3,9 +3,7 @@ package com.breadwallet.wallet.wallets.etherium;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.BuildConfig;
 import com.breadwallet.core.BRCoreAddress;
-import com.breadwallet.core.BRCoreChainParams;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.BRCoreMerkleBlock;
 import com.breadwallet.core.BRCorePeer;
@@ -19,10 +17,7 @@ import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
-import com.breadwallet.tools.manager.BREventManager;
-import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
@@ -30,13 +25,9 @@ import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
-import com.breadwallet.wallet.wallets.bitcoincash.WalletBchManager;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 /**
  * BreadWallet
@@ -101,6 +92,7 @@ public class WalletEthManager extends BREthereumWallet implements BaseWalletMana
                 return null;
             }
             BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
+            instance = new WalletEthManager();
 //            long time = BRKeyStore.getWalletCreationTime(app);
 //            if (!BRSharedPrefs.getBchPreforkSynced(app) && time == 0)
 //                time = BuildConfig.BITCOIN_TESTNET ? 1501597117 : 1501568580;

@@ -27,6 +27,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.bitcoincash.WalletBchManager;
+import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
@@ -258,6 +259,8 @@ public class WalletsMaster {
             mWallets.add(WalletBitcoinManager.getInstance(app));
         if (!mWallets.contains(WalletBchManager.getInstance(app)))
             mWallets.add(WalletBchManager.getInstance(app));
+        if (!mWallets.contains(WalletEthManager.getInstance(app)))
+            mWallets.add(WalletEthManager.getInstance(app));
     }
 
     public void initLastWallet(Context app) {
