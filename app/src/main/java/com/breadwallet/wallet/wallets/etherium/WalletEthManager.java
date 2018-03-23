@@ -60,7 +60,7 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletEthManager implements BaseWalletManager {
+public class WalletEthManager implements BaseWalletManager ,BREthereumLightNode.ClientJSON_RPC{
     private static final String TAG = WalletEthManager.class.getSimpleName();
 
     private static String ISO = "ETH";
@@ -75,7 +75,7 @@ public class WalletEthManager implements BaseWalletManager {
 
     private static WalletEthManager instance;
     private WalletUiConfiguration uiConfig;
-    public final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // A LOT
+    public final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // 90m ETH * 18 (WEI)
 
     private int mSyncRetryCount = 0;
     private static final int SYNC_MAX_RETRY = 3;
@@ -89,6 +89,46 @@ public class WalletEthManager implements BaseWalletManager {
 //    private List<OnTxListModified> txModifiedListeners = new ArrayList<>();
 
 //    private Executor listenerExecutor = Executors.newSingleThreadExecutor();
+
+
+    //    private WalletEthManager(final Context app, BRCoreMasterPubKey masterPubKey,
+//                             BRCoreChainParams chainParams,
+//                             double earliestPeerTime) {
+//        super(masterPubKey, chainParams, earliestPeerTime);
+//        if (isInitiatingWallet) return;
+//        isInitiatingWallet = true;
+//        try {
+//            Log.d(TAG, "connectWallet:" + Thread.currentThread().getName());
+//            if (app == null) {
+//                Log.e(TAG, "connectWallet: app is null");
+//                return;
+//            }
+//            String firstAddress = masterPubKey.getPubKeyAsCoreKey().address();
+//            BRSharedPrefs.putFirstAddress(app, firstAddress);
+//            long fee = BRSharedPrefs.getFeeRate(app, getIso(app));
+//            long economyFee = BRSharedPrefs.getEconomyFeeRate(app, getIso(app));
+//            if (fee == 0) {
+//                fee = getWallet().getDefaultFeePerKb();
+//                BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
+//            }
+//            getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app, getIso(app)) ? fee : economyFee);
+//            if (BRSharedPrefs.getStartHeight(app, getIso(app)) == 0)
+//                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        BRSharedPrefs.putStartHeight(app, getIso(app), getPeerManager().getLastBlockHeight());
+//                    }
+//                });
+//
+////            BRPeerManager.getInstance().updateFixedPeer(ctx);//todo reimplement the fixed peer
+////        balanceListeners = new ArrayList<>();
+//            uiConfig = new WalletUiConfiguration("#478559", true, true, false);
+//
+//        } finally {
+//            isInitiatingWallet = false;
+//        }
+
+//    }
 
     private WalletEthManager() {
         uiConfig = new WalletUiConfiguration("#5e70a3", true, true, false);
@@ -411,44 +451,39 @@ public class WalletEthManager implements BaseWalletManager {
         return new BigDecimal(0);
     }
 
-//    private WalletEthManager(final Context app, BRCoreMasterPubKey masterPubKey,
-//                             BRCoreChainParams chainParams,
-//                             double earliestPeerTime) {
-//        super(masterPubKey, chainParams, earliestPeerTime);
-//        if (isInitiatingWallet) return;
-//        isInitiatingWallet = true;
-//        try {
-//            Log.d(TAG, "connectWallet:" + Thread.currentThread().getName());
-//            if (app == null) {
-//                Log.e(TAG, "connectWallet: app is null");
-//                return;
-//            }
-//            String firstAddress = masterPubKey.getPubKeyAsCoreKey().address();
-//            BRSharedPrefs.putFirstAddress(app, firstAddress);
-//            long fee = BRSharedPrefs.getFeeRate(app, getIso(app));
-//            long economyFee = BRSharedPrefs.getEconomyFeeRate(app, getIso(app));
-//            if (fee == 0) {
-//                fee = getWallet().getDefaultFeePerKb();
-//                BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
-//            }
-//            getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app, getIso(app)) ? fee : economyFee);
-//            if (BRSharedPrefs.getStartHeight(app, getIso(app)) == 0)
-//                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        BRSharedPrefs.putStartHeight(app, getIso(app), getPeerManager().getLastBlockHeight());
-//                    }
-//                });
-//
-////            BRPeerManager.getInstance().updateFixedPeer(ctx);//todo reimplement the fixed peer
-////        balanceListeners = new ArrayList<>();
-//            uiConfig = new WalletUiConfiguration("#478559", true, true, false);
-//
-//        } finally {
-//            isInitiatingWallet = false;
-//        }
 
-//    }
+    /**
+     * The JSON RPC callbacks
+     * Implement JSON RPC methods synchronously
+     * */
 
+    @Override
+    public void assignNode(BREthereumLightNode node) {
 
+    }
+
+    @Override
+    public String getBalance(int id, String account) {
+        return null;
+    }
+
+    @Override
+    public String getGasPrice(int id) {
+        return null;
+    }
+
+    @Override
+    public String getGasEstimate(int id, String to, String amount, String data) {
+        return null;
+    }
+
+    @Override
+    public String submitTransaction(int id, String rawTransaction) {
+        return null;
+    }
+
+    @Override
+    public void getTransactions(int id, String account) {
+
+    }
 }
