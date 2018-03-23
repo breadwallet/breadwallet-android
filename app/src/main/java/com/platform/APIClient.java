@@ -1,6 +1,7 @@
 package com.platform;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
@@ -10,14 +11,18 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
 
@@ -43,6 +48,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -746,7 +752,7 @@ public class APIClient {
         }
     }
 
-    public void updatePlatform() {
+    public void updatePlatform(final Context app) {
         if (platformUpdating) {
             Log.e(TAG, "updatePlatform: platform already Updating!");
             return;
@@ -805,7 +811,9 @@ public class APIClient {
             @Override
             public void run() {
                 final long startTime = System.currentTimeMillis();
-                BRApiManager.updateFeePerKb(ctx);
+                for (BaseWalletManager w : WalletsMaster.getInstance(app).getAllWallets()) {
+                    w.updateFee(app);
+                }
                 long endTime = System.currentTimeMillis();
                 Log.d(TAG, "update fee: DONE in " + (endTime - startTime) + "ms");
                 itemFinished();
