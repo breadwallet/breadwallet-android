@@ -235,7 +235,7 @@ public class LoginActivity extends BRActivity {
             }
         });
         if (PLATFORM_ON)
-            APIClient.getInstance(this).updatePlatform();
+            APIClient.getInstance(this).updatePlatform(this);
     }
 
     @Override
