@@ -291,11 +291,14 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                 BRSharedPrefs.putFeeTime(app, getIso(app), System.currentTimeMillis()); //store the time of the last successful fee fetch
             } else {
                 FirebaseCrash.report(new NullPointerException("Fee is weird:" + fee));
+                Log.e(TAG, "Error: Fee is unexpected value");
+
             }
             if (economyFee.compareTo(new BigDecimal(0)) > 0) {
                 BRSharedPrefs.putEconomyFeeRate(app, getIso(app), economyFee);
             } else {
                 FirebaseCrash.report(new NullPointerException("Economy fee is weird:" + economyFee));
+                Log.e(TAG, "Error: Economy fee is unexpected value");
             }
         } catch (JSONException e) {
             Log.e(TAG, "updateFeePerKb: FAILED: " + jsonString, e);
