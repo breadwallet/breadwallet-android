@@ -309,8 +309,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    final double progress = wm.getPeerManager()
-                            .getSyncProgress(BRSharedPrefs.getStartHeight(HomeActivity.this,
+                    final double progress = wm.getSyncProgress(BRSharedPrefs.getStartHeight(HomeActivity.this,
                                     BRSharedPrefs.getCurrentWalletIso(HomeActivity.this)));
 //                    Log.e(TAG, "run: " + progress);
                     if (progress < 1 && progress > 0) {

@@ -26,9 +26,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.breadwallet.wallet.wallets.bitcoincash.WalletBchManager;
 
 public class NodesActivity extends BRActivity {
     private static final String TAG = NodesActivity.class.getName();

@@ -37,6 +37,8 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.util.CryptoUriParser;
 
+import java.math.BigDecimal;
+
 import static com.breadwallet.tools.animation.BRAnimator.animateBackgroundDim;
 import static com.breadwallet.tools.animation.BRAnimator.animateSignalSlide;
 import static com.platform.HTTPServer.URL_SUPPORT;
@@ -119,7 +121,7 @@ public class FragmentReceive extends Fragment {
 
         WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(new OnBalanceChangedListener() {
             @Override
-            public void onBalanceChanged(String iso, long newBalance) {
+            public void onBalanceChanged(String iso, BigDecimal newBalance) {
                 updateQr();
             }
         });

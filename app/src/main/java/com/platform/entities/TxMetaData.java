@@ -48,7 +48,7 @@ public class TxMetaData {
     public int classVersion;
     public int blockHeight;
     public double exchangeRate;
-    public long fee;
+    public String fee;
     public int txSize;
     public int creationTime;
 

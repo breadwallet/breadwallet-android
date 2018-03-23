@@ -137,7 +137,7 @@ public class FingerprintActivity extends BRActivity {
     private String getLimitText() {
         String iso = BRSharedPrefs.getPreferredFiatIso(this);
         //amount in satoshis
-        BigDecimal satoshis = new BigDecimal(BRKeyStore.getSpendLimit(this));
+        BigDecimal satoshis = BRKeyStore.getSpendLimit(this);
         WalletsMaster master = WalletsMaster.getInstance(this);
         //amount in BTC, mBTC or bits
         BigDecimal amount = master.getCurrentWallet(this).getFiatForSmallestCrypto(this, satoshis, null);

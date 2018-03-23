@@ -1,11 +1,11 @@
-package com.breadwallet.wallet.exceptions;
+package com.breadwallet.wallet.wallets.etherium;
 
-import java.math.BigDecimal;
+import com.breadwallet.wallet.abstracts.BaseAddress;
 
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 1/30/18.
+ * Created by Mihail Gutan on <mihail@breadwallet.com> 3/22/18.
  * Copyright (c) 2018 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,10 +26,19 @@ import java.math.BigDecimal;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class AmountSmallerThanMinException extends Exception {
+public class ETHAddress implements BaseAddress {
 
-    public AmountSmallerThanMinException(BigDecimal amount, BigDecimal min) {
-        super("Min: " + min + " satoshis, amount: " + amount + " satoshis.");
+    public ETHAddress(String address) {
+        //todo implement
     }
 
+    @Override
+    public boolean isValid() {
+        return false;
+    }
+
+    @Override
+    public String stringify() {
+        return null;
+    }
 }

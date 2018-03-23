@@ -301,7 +301,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatExchangeRate(this));
         String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatBalance(this));
-        String cryptoBalance = CurrencyUtils.getFormattedAmount(this, wallet.getIso(this), new BigDecimal(wallet.getCachedBalance(this)));
+        String cryptoBalance = CurrencyUtils.getFormattedAmount(this, wallet.getIso(this), wallet.getCachedBalance(this));
 
         mCurrencyTitle.setText(wallet.getName(this));
         mCurrencyPriceUsd.setText(String.format("%s per %s", fiatExchangeRate, wallet.getIso(this)));
@@ -538,8 +538,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                long balance = wallet.getWallet().getBalance();
-                wallet.setCashedBalance(app, balance);
+                wallet.refreshCachedBalance(app);
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -553,7 +552,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                if (wallet.getPeerManager().getConnectStatus() != BRCorePeer.ConnectStatus.Connected)
+                if (wallet.getConnectStatus() != 2)
                     wallet.connectWallet(WalletActivity.this);
             }
         });
@@ -610,8 +609,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    final double progress = wm.getPeerManager()
-                            .getSyncProgress(BRSharedPrefs.getStartHeight(WalletActivity.this,
+                    final double progress = wm.getSyncProgress(BRSharedPrefs.getStartHeight(WalletActivity.this,
                                     BRSharedPrefs.getCurrentWalletIso(WalletActivity.this)));
 //                    Log.e(TAG, "run: " + progress);
                     if (progress < 1 && progress > 0) {
@@ -685,14 +683,14 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 for (BaseWalletManager w : WalletsMaster.getInstance(WalletActivity.this).getAllWallets()) {
                     builder.append("   " + w.getIso(WalletActivity.this));
                     String connectionStatus = "";
-                    if (w.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Connected)
+                    if (w.getConnectStatus() == 2)
                         connectionStatus = "Connected";
-                    else if (w.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Disconnected)
+                    else if (w.getConnectStatus() == 0)
                         connectionStatus = "Disconnected";
-                    else if (w.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Connecting)
+                    else if (w.getConnectStatus() == 1)
                         connectionStatus = "Connecting";
 
-                    double progress = w.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(WalletActivity.this, w.getIso(WalletActivity.this)));
+                    double progress = w.getSyncProgress(BRSharedPrefs.getStartHeight(WalletActivity.this, w.getIso(WalletActivity.this)));
 
                     builder.append(" - " + connectionStatus + " " + progress * 100 + "%     ");
 

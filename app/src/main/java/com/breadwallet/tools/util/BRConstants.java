@@ -82,6 +82,7 @@ public class BRConstants {
     public static final int CURRENT_UNIT_BITCOINS = 2;
 
     public static final String symbolBits = "\u0180";
+    public static final String symbolEther = "\u039E";
     public static final String symbolBitcoinSecondary = "\u0243";
     public static final String symbolBitcoinPrimary = "\u20BF";
 

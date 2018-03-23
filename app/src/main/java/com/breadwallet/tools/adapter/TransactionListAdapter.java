@@ -194,7 +194,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         int level = 0;
         if (confirms <= 0) {
-            long relayCount = wallet.getPeerManager().getRelayCount(item.getTxHash());
+            long relayCount = wallet.getRelayCount(item.getTxHash());
             if (relayCount <= 0)
                 level = 0;
             else if (relayCount == 1)

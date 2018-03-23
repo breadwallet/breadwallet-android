@@ -10,7 +10,6 @@ import android.util.Log;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
-import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.presenter.activities.SetPinActivity;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
@@ -23,9 +22,9 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.BRBitId;
@@ -66,7 +65,7 @@ public class PostAuth {
     public CryptoRequest mCryptoRequest;
     public static boolean isStuckWithAuthLoop;
 
-    private BRCoreTransaction mPaymentProtocolTx;
+    private BaseTransaction mPaymentProtocolTx;
     private static PostAuth instance;
 
     private PostAuth() {
@@ -224,8 +223,8 @@ public class PostAuth {
                         txMetaData.comment = mCryptoRequest.message;
                         txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
                         txMetaData.exchangeRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, walletManager.getIso(app), txMetaData.exchangeCurrency).rate;
-                        txMetaData.fee = walletManager.getWallet().getTransactionFee(mCryptoRequest.tx);
-                        txMetaData.txSize = (int) mCryptoRequest.tx.getSize();
+                        txMetaData.fee = walletManager.getTxFee(mCryptoRequest.tx).toPlainString();
+                        txMetaData.txSize = mCryptoRequest.tx.getTxSize().intValue();
                         txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, walletManager.getIso(app));
                         txMetaData.creationTime = (int) (System.currentTimeMillis() / 1000);//seconds
                         txMetaData.deviceId = BRSharedPrefs.getDeviceId(app);
@@ -287,7 +286,7 @@ public class PostAuth {
         this.mCryptoRequest = cryptoRequest;
     }
 
-    public void setTmpPaymentRequestTx(BRCoreTransaction tx) {
+    public void setTmpPaymentRequestTx(BaseTransaction tx) {
         this.mPaymentProtocolTx = tx;
     }
 
