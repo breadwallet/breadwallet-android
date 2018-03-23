@@ -146,7 +146,7 @@ add_library( # The name of the library.
              src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumToken.h
              src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumNetwork.c
              src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumNetwork.h
-             src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumWallet.c
+#             src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumWallet.c
              src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumWallet.h
                 )
 
