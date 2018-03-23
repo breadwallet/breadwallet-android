@@ -284,21 +284,21 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
             JSONObject obj = new JSONObject(jsonString);
             fee = new BigDecimal(obj.getString("fee_per_kb"));
             economyFee = new BigDecimal(obj.getString("fee_per_kb_economy"));
-            Log.e(TAG, "updateFee: " + getIso(app) + ":" + fee + "|" + economyFee);
+            Log.d(TAG, "updateFee: " + getIso(app) + ":" + fee + "|" + economyFee);
 
             if (fee.compareTo(new BigDecimal(0)) > 0) {
                 BRSharedPrefs.putFeeRate(app, getIso(app), fee);
                 BRSharedPrefs.putFeeTime(app, getIso(app), System.currentTimeMillis()); //store the time of the last successful fee fetch
             } else {
                 FirebaseCrash.report(new NullPointerException("Fee is weird:" + fee));
-                Log.e(TAG, "Error: Fee is unexpected value");
+                Log.d(TAG, "Error: Fee is unexpected value");
 
             }
             if (economyFee.compareTo(new BigDecimal(0)) > 0) {
                 BRSharedPrefs.putEconomyFeeRate(app, getIso(app), economyFee);
             } else {
                 FirebaseCrash.report(new NullPointerException("Economy fee is weird:" + economyFee));
-                Log.e(TAG, "Error: Economy fee is unexpected value");
+                Log.d(TAG, "Error: Economy fee is unexpected value");
             }
         } catch (JSONException e) {
             Log.e(TAG, "updateFeePerKb: FAILED: " + jsonString, e);
