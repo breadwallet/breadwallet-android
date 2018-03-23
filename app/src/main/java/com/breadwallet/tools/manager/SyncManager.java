@@ -106,7 +106,7 @@ public class SyncManager {
             try {
                 mCurrentThreadName = getName();
                 while (!isInterrupted() && mCurrentThreadName.equalsIgnoreCase(getName())) {
-                    final double syncProgress = mCurrentWallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mApp, mCurrentWallet.getIso(mApp)));
+                    final double syncProgress = mCurrentWallet.getSyncProgress(BRSharedPrefs.getStartHeight(mApp, mCurrentWallet.getIso(mApp)));
                     if (!mCurrentThreadName.equalsIgnoreCase(getName()))
                         Log.e(TAG, "run: WARNING: " + getName());
                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
@@ -120,7 +120,7 @@ public class SyncManager {
                 }
             } catch (InterruptedException e) {
                 Log.e(TAG, "run: " + getName(), e);
-                final double syncProgress = mCurrentWallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mApp, mCurrentWallet.getIso(mApp)));
+                final double syncProgress = mCurrentWallet.getSyncProgress(BRSharedPrefs.getStartHeight(mApp, mCurrentWallet.getIso(mApp)));
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
