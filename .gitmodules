@@ -2,5 +2,5 @@
 	path = app/src/main/secp/secp256k1
 	url = https://github.com/bitcoin-core/secp256k1.git
 [submodule "core"]
-	path = app/src/main/jni/breadwallet-core
-	url = https://github.com/breadwallet/breadwallet-core.git
+	path = app/src/main/jni/weywallet-core
+	url = https://github.com/WeyCoin/WeyWallet-Core.git
