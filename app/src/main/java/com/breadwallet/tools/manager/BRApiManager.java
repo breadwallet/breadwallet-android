@@ -93,7 +93,6 @@ public class BRApiManager {
         Set<CurrencyEntity> set = new LinkedHashSet<>();
         try {
             JSONArray arr = fetchRates(context, walletManager);
-            updateFeePerKb(context);
             if (arr != null) {
                 int length = arr.length();
                 for (int i = 1; i < length; i++) {
@@ -143,6 +142,7 @@ public class BRApiManager {
                                     stopTimerTask();
                                 }
                                 for (BaseWalletManager w : WalletsMaster.getInstance(context).getAllWallets()) {
+                                    w.updateFee(context);
                                     String iso = w.getIso(context);
                                     Set<CurrencyEntity> tmp = getCurrencies((Activity) context, w);
                                     CurrencyDataSource.getInstance(context).putCurrencies(context, iso, tmp);
@@ -208,13 +208,6 @@ public class BRApiManager {
             e.printStackTrace();
         }
         return jsonArray;
-    }
-
-    public static void updateFeePerKb(Context app) {
-        WalletsMaster wm = WalletsMaster.getInstance(app);
-        for (BaseWalletManager wallet : wm.getAllWallets()) {
-            wallet.updateFee(app);
-        }
     }
 
     public static String urlGET(Context app, String myURL) {

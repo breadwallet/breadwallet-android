@@ -35,6 +35,8 @@ import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 /**
  * BreadWallet
@@ -80,15 +82,7 @@ public class WalletEthManager implements BaseWalletManager ,BREthereumLightNode.
     private int mSyncRetryCount = 0;
     private static final int SYNC_MAX_RETRY = 3;
 
-
-//    private boolean isInitiatingWallet;
-//
-//    private List<OnBalanceChangedListener> balanceListeners = new ArrayList<>();
-//    private List<OnTxStatusUpdatedListener> txStatusUpdatedListeners = new ArrayList<>();
-//    private List<SyncListener> syncListeners = new ArrayList<>();
-//    private List<OnTxListModified> txModifiedListeners = new ArrayList<>();
-
-//    private Executor listenerExecutor = Executors.newSingleThreadExecutor();
+    private Executor listenerExecutor = Executors.newSingleThreadExecutor();
 
 
     //    private WalletEthManager(final Context app, BRCoreMasterPubKey masterPubKey,
