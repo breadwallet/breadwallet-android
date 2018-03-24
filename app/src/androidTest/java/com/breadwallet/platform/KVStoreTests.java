@@ -542,7 +542,7 @@ public class KVStoreTests {
         tx.comment = "hehey !";
         tx.creationTime = 21324;
         tx.deviceId = "someDevice2324";
-        tx.fee = 234;
+        tx.fee = "234";
         tx.txSize = 23423;
         tx.exchangeCurrency = "curr";
         tx.exchangeRate = 23.4343;
@@ -591,7 +591,7 @@ public class KVStoreTests {
         tx.comment = "hehey !";
         tx.creationTime = 21324;
         tx.deviceId = "someDevice2324";
-        tx.fee = 234;
+        tx.fee = "234";
         tx.txSize = 23423;
         tx.exchangeCurrency = "curr";
         tx.exchangeRate = 23.4343;
