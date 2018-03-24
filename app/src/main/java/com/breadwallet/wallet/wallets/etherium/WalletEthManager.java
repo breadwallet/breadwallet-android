@@ -24,6 +24,7 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseAddress;
@@ -40,6 +41,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+
+import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
 /**
  * BreadWallet
@@ -80,7 +83,8 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     private static WalletEthManager instance;
     private WalletUiConfiguration uiConfig;
-    public final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // 90m ETH * 18 (WEI)
+    private final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // 90m ETH * 18 (WEI)
+    private final BigDecimal WEI_ETH = new BigDecimal("1000000000000000000"); //1ETH = 1000000000000000000 WEI
     private BREthereumWallet mWallet;
 
     private int mSyncRetryCount = 0;
@@ -383,37 +387,68 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public BigDecimal getFiatExchangeRate(Context app) {
-        return new BigDecimal(0);
+        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), BRSharedPrefs.getPreferredFiatIso(app));
+        return new BigDecimal(ent == null ? 0 : ent.rate); //dollars
     }
 
     @Override
     public BigDecimal getFiatBalance(Context app) {
-        return new BigDecimal(0);
+        if (app == null) return null;
+        BigDecimal bal = getFiatForSmallestCrypto(app, getCachedBalance(app), null);
+        return new BigDecimal(bal == null ? 0 : bal.doubleValue());
     }
 
     @Override
     public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount, CurrencyEntity ent) {
-        return new BigDecimal(0);
+        if (amount.doubleValue() == 0) return amount;
+        String iso = BRSharedPrefs.getPreferredFiatIso(app);
+        if (ent == null)
+            ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
+        if (ent == null) {
+            return null;
+        }
+        double rate = ent.rate;
+        //get crypto amount
+        BigDecimal cryptoAmount = amount.divide(WEI_ETH, 8, BRConstants.ROUNDING_MODE);
+        return cryptoAmount.multiply(new BigDecimal(rate));
     }
 
     @Override
-    public BigDecimal getCryptoForFiat(Context app, BigDecimal amount) {
-        return new BigDecimal(0);
+    public BigDecimal getCryptoForFiat(Context app, BigDecimal fiatAmount) {
+        if (fiatAmount.doubleValue() == 0) return fiatAmount;
+        String iso = BRSharedPrefs.getPreferredFiatIso(app);
+        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
+        if (ent == null) return null;
+        double rate = ent.rate;
+
+        return fiatAmount.divide(new BigDecimal(rate), 8, ROUNDING_MODE);
+
     }
 
     @Override
     public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
-        return new BigDecimal(0);
+        if (amount.doubleValue() == 0) return amount;
+        return amount.divide(WEI_ETH, 8, ROUNDING_MODE);
     }
 
     @Override
     public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
-        return new BigDecimal(0);
+        if (amount.doubleValue() == 0) return amount;
+        return amount.multiply(WEI_ETH);
     }
 
     @Override
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
-        return new BigDecimal(0);
+        if (amount.doubleValue() == 0) return amount;
+        String iso = BRSharedPrefs.getPreferredFiatIso(app);
+        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
+        if (ent == null) {
+            Log.e(TAG, "getSmallestCryptoForFiat: no exchange rate data!");
+            return amount;
+        }
+        double rate = ent.rate;
+        //convert c to $.
+        return amount.divide(new BigDecimal(rate), 8, ROUNDING_MODE).multiply(WEI_ETH);
     }
 
 
