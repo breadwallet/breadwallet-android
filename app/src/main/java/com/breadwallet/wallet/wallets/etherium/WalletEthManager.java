@@ -246,7 +246,11 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public void refreshAddress(Context app) {
-
+        BaseAddress address = getReceiveAddress(app);
+        if (Utils.isNullOrEmpty(address.stringify())) {
+            Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
+        }
+        BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso(app));
     }
 
     @Override
