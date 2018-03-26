@@ -5,20 +5,12 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
-import com.breadwallet.core.BRCoreAddress;
-import com.breadwallet.core.BRCoreChainParams;
 import com.breadwallet.core.BRCoreMasterPubKey;
-import com.breadwallet.core.BRCoreMerkleBlock;
-import com.breadwallet.core.BRCorePeer;
-import com.breadwallet.core.BRCorePeerManager;
-import com.breadwallet.core.BRCoreTransaction;
-import com.breadwallet.core.BRCoreWallet;
 import com.breadwallet.core.ethereum.BREthereumAccount;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.core.ethereum.BREthereumNetwork;
 import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumWallet;
-import com.breadwallet.core.ethereum.test.BREthereumLightNodeClientTest;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -35,10 +27,14 @@ import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
+import com.platform.JsonRpcConstants;
+import com.platform.JsonRpcRequest;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -86,6 +82,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     private final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // 90m ETH * 18 (WEI)
     private final BigDecimal WEI_ETH = new BigDecimal("1000000000000000000"); //1ETH = 1000000000000000000 WEI
     private BREthereumWallet mWallet;
+    private Context mContext;
 
     private int mSyncRetryCount = 0;
     private static final int SYNC_MAX_RETRY = 3;
@@ -104,6 +101,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
         mWallet = node.getWallet();
         mWallet.setDefaultUnit(BREthereumWallet.Unit.ETHER_WEI);
+        mContext = app;
 
         BREthereumWallet walletToken = node.createWallet(BREthereumToken.tokenBRD);
         walletToken.setDefaultUnit(BREthereumWallet.Unit.TOKEN_DECIMAL);
@@ -488,6 +486,16 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public void getTransactions(int id, String account) {
+        Log.d(TAG, "getTransactions()");
 
+        final String eth_rpc_url = BreadApp.HOST + JsonRpcConstants.ETH_RPC_ENDPOINT;
+        Log.d(TAG, "ETH RPC URL -> " + eth_rpc_url);
+
+        Map<String, String> params = new HashMap<>();
+        params.put("id", String.valueOf(id));
+        params.put("account", account);
+
+        JsonRpcRequest request = new JsonRpcRequest();
+        request.makeRpcRequest(mContext, eth_rpc_url, params);
     }
 }
