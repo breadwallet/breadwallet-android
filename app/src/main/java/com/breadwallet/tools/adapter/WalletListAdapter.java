@@ -1,14 +1,15 @@
 package com.breadwallet.tools.adapter;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
-import android.graphics.drawable.ShapeDrawable;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,12 +22,11 @@ import com.breadwallet.R;
 import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.manager.SyncManager;
+import com.breadwallet.tools.services.SyncService;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -42,9 +42,8 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     private final Context mContext;
     private ArrayList<WalletItem> mWalletItems;
     private WalletItem mCurrentWalletSyncing;
-    private SyncManager mSyncManager;
     private boolean mObesrverIsStarting;
-
+    private SyncNotificationBroadcastReceiver mSyncNotificationBroadcastReceiver;
 
     public WalletListAdapter(Context context, ArrayList<BaseWalletManager> walletList) {
         this.mContext = context;
@@ -53,6 +52,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             this.mWalletItems.add(new WalletItem(w));
         }
 
+        mSyncNotificationBroadcastReceiver = new SyncNotificationBroadcastReceiver();
     }
 
     @Override
@@ -99,13 +99,14 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     }
 
     public void stopObserving() {
-        if (mSyncManager != null)
-            mSyncManager.stopSyncing();
+        SyncService.unregisterSyncNotificationBroadcastReceiver(mContext.getApplicationContext(), mSyncNotificationBroadcastReceiver);
     }
 
     public void startObserving() {
         if (mObesrverIsStarting) return;
         mObesrverIsStarting = true;
+
+        SyncService.registerSyncNotificationBroadcastReceiver(mContext.getApplicationContext(), mSyncNotificationBroadcastReceiver);
 
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
@@ -129,16 +130,10 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
                         return;
                     }
-
-                    Log.e(TAG, "startObserving: connecting: " + mCurrentWalletSyncing.walletManager.getIso(mContext));
+                    String walletISO = mCurrentWalletSyncing.walletManager.getIso(mContext);
+                    Log.e(TAG, "startObserving: connecting: " + walletISO);
                     mCurrentWalletSyncing.walletManager.connectWallet(mContext);
-                    mSyncManager = SyncManager.getInstance();
-                    mSyncManager.startSyncing(mContext, mCurrentWalletSyncing.walletManager, new SyncManager.OnProgressUpdate() {
-                        @Override
-                        public boolean onProgressUpdated(double progress) {
-                            return updateUi(mCurrentWalletSyncing, progress);
-                        }
-                    });
+                    SyncService.startService(mContext.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, walletISO);
                 } finally {
                     mObesrverIsStarting = false;
                 }
@@ -188,8 +183,23 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     //return the next wallet that is not connected or null if all are connected
     private WalletItem getNextWalletToSync() {
         BaseWalletManager currentWallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
-        if (currentWallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mContext, currentWallet.getIso(mContext))) == 1)
+        final String currentWalletIso = currentWallet.getIso(mContext);
+        if (currentWallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mContext, currentWalletIso )) == 1) {
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    for (WalletItem item : mWalletItems) {
+                        if (currentWalletIso.equals(item.walletManager.getIso(mContext))) {
+                            item.updateData(false, false, true, 100, "Done");
+                            notifyDataSetChanged();
+                        }
+
+                    }
+                }
+            });
+
             currentWallet = null;
+        }
 
         for (WalletItem w : mWalletItems) {
             if (currentWallet == null) {
@@ -252,6 +262,32 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             mShowBalance = showBalance;
             mProgress = progress;
             mLabelText = labelText;
+        }
+    }
+
+    private class SyncNotificationBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (SyncService.ACTION_SYNC_PROGRESS_UPDATE.equals(intent.getAction())) {
+                String intentWalletISO = intent.getStringExtra(SyncService.EXTRA_WALLET_ISO);
+                double progress = intent.getDoubleExtra(SyncService.EXTRA_PROGRESS, -1);
+
+                if (mCurrentWalletSyncing == null ) {
+                    Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: mCurrentWalletSyncing is null. Wallet:" + intentWalletISO + " Progress:" + progress + " Ignored" );
+                    return;
+                }
+
+                String currentWalletISO = mCurrentWalletSyncing.walletManager.getIso(context.getApplicationContext());
+                if (currentWalletISO.equals(intentWalletISO)) {
+                    if (progress >= 0) {
+                        updateUi(mCurrentWalletSyncing, progress);
+                    } else {
+                        Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: Progress not set:" + progress);
+                    }
+                } else {
+                    Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: Wrong wallet. Expected:" + currentWalletISO + " Actual:" + intentWalletISO + " Progress:" + progress);
+                }
+            }
         }
     }
 }

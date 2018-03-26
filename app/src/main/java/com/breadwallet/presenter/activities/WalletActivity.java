@@ -5,10 +5,10 @@ import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.usage.UsageStats;
 import android.app.usage.UsageStatsManager;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -19,7 +19,6 @@ import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.transition.TransitionManager;
-import android.support.v4.graphics.BitmapCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.TypedValue;
@@ -46,8 +45,8 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
-import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.manager.TxManager;
+import com.breadwallet.tools.services.SyncService;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
@@ -76,7 +75,7 @@ import static com.breadwallet.tools.animation.BRAnimator.t2Size;
  * (BTC, BCH, ETH)
  */
 
-public class WalletActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, OnTxListModified, SyncManager.OnProgressUpdate {
+public class WalletActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, OnTxListModified {
     private static final String TAG = WalletActivity.class.getName();
     BRText mCurrencyTitle;
     BRText mCurrencyPriceUsd;
@@ -102,6 +101,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private static WalletActivity app;
 
     private InternetManager mConnectionReceiver;
+    private SyncNotificationBroadcastReceiver mSyncNotificationBroadcastReceiver;
+    private String mCurrentWalletISO;
 
     private TestLogger logger;
 
@@ -558,6 +559,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             }
         });
 
+        mCurrentWalletISO = wallet.getIso(WalletActivity.this);
+
         wallet.addSyncListeners(new SyncListener() {
             @Override
             public void syncStopped(String err) {
@@ -566,11 +569,13 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             @Override
             public void syncStarted() {
-                SyncManager.getInstance().startSyncing(WalletActivity.this, wallet, WalletActivity.this);
+                SyncService.startService(WalletActivity.this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletISO);
             }
         });
 
-        SyncManager.getInstance().startSyncing(this, wallet, this);
+        mSyncNotificationBroadcastReceiver = new SyncNotificationBroadcastReceiver();
+        SyncService.registerSyncNotificationBroadcastReceiver(WalletActivity.this.getApplicationContext(), mSyncNotificationBroadcastReceiver);
+        SyncService.startService(this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletISO);
 
         handleUrlClickIfNeeded(getIntent());
 
@@ -579,7 +584,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     @Override
     protected void onPause() {
         super.onPause();
-        SyncManager.getInstance().stopSyncing();
+        InternetManager.removeConnectionListener(this);
+        SyncService.unregisterSyncNotificationBroadcastReceiver(WalletActivity.this.getApplicationContext(), mSyncNotificationBroadcastReceiver);
     }
 
     private void setUpBarFlipper() {
@@ -598,7 +604,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         InternetManager.addConnectionListener(this);
     }
 
-
     @Override
     public void onConnectionChanged(boolean isConnected) {
         Log.d(TAG, "onConnectionChanged");
@@ -606,19 +611,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             if (barFlipper != null && barFlipper.getDisplayedChild() == 2) {
                 barFlipper.setDisplayedChild(0);
             }
-            final BaseWalletManager wm = WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this);
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    final double progress = wm.getPeerManager()
-                            .getSyncProgress(BRSharedPrefs.getStartHeight(WalletActivity.this,
-                                    BRSharedPrefs.getCurrentWalletIso(WalletActivity.this)));
-//                    Log.e(TAG, "run: " + progress);
-                    if (progress < 1 && progress > 0) {
-                        SyncManager.getInstance().startSyncing(WalletActivity.this, wm, WalletActivity.this);
-                    }
-                }
-            });
+
+            SyncService.startService(this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletISO);
 
         } else {
             if (barFlipper != null)
@@ -626,7 +620,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         }
     }
-
 
     @Override
     public void onBackPressed() {
@@ -654,23 +647,39 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     }
 
-    @Override
-    public boolean onProgressUpdated(double progress) {
+    public void updateSyncProgress(double progress) {
         mProgressBar.setProgress((int) (progress * 100));
         if (progress == 1) {
             mProgressBar.setVisibility(View.GONE);
             mProgressLabel.setVisibility(View.GONE);
             mBalanceLabel.setVisibility(View.VISIBLE);
             mProgressBar.invalidate();
-            return false;
+        } else {
+            mProgressBar.setVisibility(View.VISIBLE);
+            mProgressLabel.setVisibility(View.VISIBLE);
+            mBalanceLabel.setVisibility(View.GONE);
+            mProgressBar.invalidate();
         }
-        mProgressBar.setVisibility(View.VISIBLE);
-        mProgressLabel.setVisibility(View.VISIBLE);
-        mBalanceLabel.setVisibility(View.GONE);
-        mProgressBar.invalidate();
-        return true;
     }
 
+    private class SyncNotificationBroadcastReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (SyncService.ACTION_SYNC_PROGRESS_UPDATE.equals(intent.getAction())) {
+                String intentWalletISO = intent.getStringExtra(SyncService.EXTRA_WALLET_ISO);
+                double progress = intent.getDoubleExtra(SyncService.EXTRA_PROGRESS, -1);
+                if (mCurrentWalletISO.equals(intentWalletISO)) {
+                    if (progress >= 0) {
+                        WalletActivity.this.updateSyncProgress(progress);
+                    } else {
+                        Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: Progress not set:" + progress);
+                    }
+                } else {
+                    Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: Wrong wallet. Expected:" + mCurrentWalletISO + " Actual:" + intentWalletISO + " Progress:" + progress);
+                }
+            }
+        }
+    }
 
     //test logger
     class TestLogger extends Thread {

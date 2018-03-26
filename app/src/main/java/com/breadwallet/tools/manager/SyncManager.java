@@ -41,15 +41,15 @@ public class SyncManager {
 
     private static final String TAG = SyncManager.class.getName();
     private static SyncManager instance;
-    private static final long SYNC_PERIOD = TimeUnit.HOURS.toMillis(24);
+//    private static final long SYNC_PERIOD = TimeUnit.HOURS.toMillis(24);
 
     //todo refactor this task to have a list of unique tasks (multiple UI syncing)
     private static SyncProgressTask syncTask;
     public boolean running;
     private String mCurrentThreadName;
-    private BaseWalletManager mWallet;
+//    private BaseWalletManager mWallet;
     //    private final Object lock = new Object();
-    private ProgressBar mProgressBar;
+//    private ProgressBar mProgressBar;
 
     public static SyncManager getInstance() {
         if (instance == null) instance = new SyncManager();
@@ -59,26 +59,26 @@ public class SyncManager {
     private SyncManager() {
     }
 
-    private void createAlarm(Context app, long time) {
-        AlarmManager alarmManager = (AlarmManager) app.getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(app, SyncReceiver.class);
-        intent.setAction(SyncReceiver.SYNC_RECEIVER);//my custom string action name
-        PendingIntent pendingIntent = PendingIntent.getService(app, 1001, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        alarmManager.setWindow(AlarmManager.RTC_WAKEUP, time, time + TimeUnit.MINUTES.toMillis(1), pendingIntent);//first start will start asap
-    }
+//    private void createAlarm(Context app, long time) {
+//        AlarmManager alarmManager = (AlarmManager) app.getSystemService(Context.ALARM_SERVICE);
+//        Intent intent = new Intent(app, SyncReceiver.class);
+//        intent.setAction(SyncReceiver.SYNC_RECEIVER);//my custom string action name
+//        PendingIntent pendingIntent = PendingIntent.getService(app, 1001, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//        alarmManager.setWindow(AlarmManager.RTC_WAKEUP, time, time + TimeUnit.MINUTES.toMillis(1), pendingIntent);//first start will start asap
+//    }
 
-    public synchronized void updateAlarms(Context app) {
-        createAlarm(app, System.currentTimeMillis() + SYNC_PERIOD);
-    }
-
-    public synchronized void stopSyncing() {
-        if (syncTask != null) {
-            syncTask.interrupt();
-        }
-    }
+//    public synchronized void updateAlarms(Context app) {
+//        createAlarm(app, System.currentTimeMillis() + SYNC_PERIOD);
+//    }
+//
+//    public synchronized void stopSyncing() {
+//        if (syncTask != null) {
+//            syncTask.interrupt();
+//        }
+//    }
 
     public synchronized void startSyncing(final Context app, BaseWalletManager walletManager, OnProgressUpdate listener) {
-        mWallet = walletManager;
+//        mWallet = walletManager;
 
         if (syncTask != null) syncTask.interrupt();
 
