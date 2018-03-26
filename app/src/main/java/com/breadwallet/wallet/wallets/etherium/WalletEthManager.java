@@ -17,6 +17,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseAddress;
@@ -105,6 +106,10 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
         BREthereumWallet walletToken = node.createWallet(BREthereumToken.tokenBRD);
         walletToken.setDefaultUnit(BREthereumWallet.Unit.TOKEN_DECIMAL);
+
+
+        // Test to make sure that getTransactions fires properly
+        node.forceTransactionUpdate(mWallet);
 
     }
 
@@ -487,15 +492,23 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     @Override
     public void getTransactions(int id, String account) {
         Log.d(TAG, "getTransactions()");
+        Log.d(TAG, "account -> " + account);
 
-        final String eth_rpc_url = BreadApp.HOST + JsonRpcConstants.ETH_RPC_ENDPOINT;
+        final String eth_rpc_url = String.format(JsonRpcConstants.ETH_RPC_TX_LIST, account);
         Log.d(TAG, "ETH RPC URL -> " + eth_rpc_url);
 
-        Map<String, String> params = new HashMap<>();
+        final Map<String, String> params = new HashMap<>();
         params.put("id", String.valueOf(id));
         params.put("account", account);
 
-        JsonRpcRequest request = new JsonRpcRequest();
-        request.makeRpcRequest(mContext, eth_rpc_url, params);
+        final JsonRpcRequest request = new JsonRpcRequest();
+
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                request.makeRpcRequest(mContext, eth_rpc_url, params);
+
+            }
+        });
     }
 }
