@@ -10,6 +10,7 @@ import com.breadwallet.tools.util.Utils;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -47,6 +48,7 @@ public class JsonRpcRequest {
             while (paramIt.hasNext()) {
                 Map.Entry pair = (Map.Entry) paramIt.next();
                 postJson.put((String) pair.getKey(), pair.getValue());
+                Log.d(TAG, "Rpc params -> " + pair.getKey() + ", " + pair.getValue());
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -62,15 +64,19 @@ public class JsonRpcRequest {
                 .header("User-agent", Utils.getAgentString(app, "android/HttpURLConnection"))
                 .post(requestBody);
 
-        Iterator it = headers.entrySet().iterator();
+        /*Iterator it = headers.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             builder.header((String) pair.getKey(), (String) pair.getValue());
-        }
+        }*/
 
         Request request = builder.build();
         Response resp = APIClient.getInstance(app).sendRequest(request, true, 0);
-        Log.d(TAG, "Rpc Response -> " + resp.toString());
+        try {
+            Log.d(TAG, "Rpc Response -> " + resp.body().string());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         if (resp == null) {
             Log.e(TAG, "makeRpcRequest: " + url + ", resp is null");
