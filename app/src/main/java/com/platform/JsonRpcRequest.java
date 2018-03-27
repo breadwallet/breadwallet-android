@@ -11,10 +11,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -51,7 +49,7 @@ public class JsonRpcRequest {
 
 
         final MediaType JSON
-                = MediaType.parse("application/json; charset=utf-8");
+                = MediaType.parse("application/json");
 
         RequestBody requestBody = RequestBody.create(JSON, payload.toString());
         Log.d(TAG, "JSON params -> " + payload.toString());
@@ -71,11 +69,7 @@ public class JsonRpcRequest {
 
         String response = null;
         Request request = builder.build();
-        //Log.d(TAG, "Request body -> " + request.body().);
-        //Response resp = APIClient.getInstance(app).sendRequest(request, true, 0);
-
         Response resp = null;
-        OkHttpClient client = new OkHttpClient.Builder().followRedirects(false).connectTimeout(10, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
 
         try {
 
