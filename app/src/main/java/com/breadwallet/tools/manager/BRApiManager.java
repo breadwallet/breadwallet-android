@@ -141,12 +141,23 @@ public class BRApiManager {
                                 if (BreadApp.isAppInBackground(context)) {
                                     Log.e(TAG, "doInBackground: Stopping timer, no activity on.");
                                     stopTimerTask();
+                                    return;
                                 }
-                                for (BaseWalletManager w : WalletsMaster.getInstance(context).getAllWallets()) {
-                                    w.updateFee(context);
-                                    String iso = w.getIso(context);
-                                    Set<CurrencyEntity> tmp = getCurrencies((Activity) context, w);
-                                    CurrencyDataSource.getInstance(context).putCurrencies(context, iso, tmp);
+                                for (final BaseWalletManager w : WalletsMaster.getInstance(context).getAllWallets()) {
+                                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            w.updateFee(context);
+                                        }
+                                    });
+                                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            String iso = w.getIso(context);
+                                            Set<CurrencyEntity> tmp = getCurrencies((Activity) context, w);
+                                            CurrencyDataSource.getInstance(context).putCurrencies(context, iso, tmp);
+                                        }
+                                    });
                                 }
                             }
                         });

@@ -235,11 +235,11 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
     private class WalletItem {
         public BaseWalletManager walletManager;
-        private boolean mShowSyncing = true;
-        private boolean mShowSyncingLabel = true;
-        private boolean mShowBalance = false;
-        private int mProgress; //1 - 100%
-        private String mLabelText = "Waiting to Sync";
+        private boolean mShowSyncing = false;
+        private boolean mShowSyncingLabel = false;
+        private boolean mShowBalance = true;
+        private int mProgress = 1; //1 - 100%
+        private String mLabelText = "Done";
 
         public WalletItem(BaseWalletManager walletManager) {
             this.walletManager = walletManager;
