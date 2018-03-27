@@ -601,7 +601,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                                 for (int i = 0; i < transactionsArray.length(); i++) {
                                     JSONObject txObject = transactionsArray.getJSONObject(i);
 
-                                    //Log.d(TAG, "TxObject contains -> " + txObject.toString());
+                                    Log.d(TAG, "TxObject contains -> " + txObject.toString());
 
                                     if (txObject.has("hash")) {
                                         txHash = txObject.getString("hash");
@@ -701,7 +701,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                                     }
 
 
-                                    mNode.announceTransaction(txHash, txFrom, txTo, txContract, txValue, txGas, txGasPrice, txData, txNonce, txGasUsed, txBlockNumber, txBlockHash, txBlockConfirmations, txBlockTransactionIndex, txBlockTimestamp, txIsError);
+                                    mNode.announceTransaction(txHash, "0xbdfdad139440d2db9ba2aa3b7081c2de39291508", txTo, txContract, txValue, txGas, txGasPrice, txData, txNonce, txGasUsed, txBlockNumber, txBlockHash, txBlockConfirmations, txBlockTransactionIndex, txBlockTimestamp, txIsError);
                                 }
 
 
