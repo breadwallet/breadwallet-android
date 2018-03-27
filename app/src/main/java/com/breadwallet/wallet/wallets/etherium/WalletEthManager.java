@@ -87,6 +87,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     private final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // 90m ETH * 18 (WEI)
     private final BigDecimal WEI_ETH = new BigDecimal("1000000000000000000"); //1ETH = 1000000000000000000 WEI
     private BREthereumWallet mWallet;
+    private BREthereumLightNode node; //must be here for JNI stuff, no touchy
 
     private int mSyncRetryCount = 0;
     private static final int SYNC_MAX_RETRY = 3;
@@ -101,7 +102,6 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         String testPaperKey = "video tiger report bid suspect taxi mail argue naive layer metal surface";
         //todo change the hardcoded priv key to master pub key when done
         BREthereumLightNode node = new BREthereumLightNode.JSON_RPC(this, network, testPaperKey);
-        BREthereumAccount account = node.getAccount();
 
         mWallet = node.getWallet();
         mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
@@ -464,7 +464,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public void assignNode(BREthereumLightNode node) {
-
+        this.node = node;
     }
 
     @Override
