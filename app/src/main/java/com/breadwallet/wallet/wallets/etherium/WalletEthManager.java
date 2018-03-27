@@ -36,13 +36,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
+
+import okhttp3.Response;
 
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
@@ -119,35 +120,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
 
         // Test to make rpc call to eth_estimateGas
-        final String amount = "18000000000000000";
-        final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
-        Log.d(TAG, "Making rpc request to -> " + eth_url);
-        final JSONObject payload = new JSONObject();
-        final JSONArray params = new JSONArray();
-        params.put("0x6c0fe9f8f018e68e2f0bee94ab41b75e71df094d");
-        params.put("18000000000000000");
-
-        try {
-            payload.put("method", "eth_estimateGas");
-            payload.put("params", params);
-        }catch(JSONException e){
-            e.printStackTrace();
-        }
-
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-
-                JsonRpcRequest request = new JsonRpcRequest();
-                request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
-                    @Override
-                    public void onRpcRequestCompleted(String jsonResult) {
-
-                        Log.d(TAG, "Rpc getGasEstimate() Request response -> " + jsonResult);
-                    }
-                });
-            }
-        });
+        getGasPrice(1);
 
     }
 
@@ -510,27 +483,114 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public String getBalance(int id, String account) {
-        return null;
+        final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.ETH_ENDPOINT_GET_BALANCE;
+        Log.d(TAG, "Making rpc request to " + eth_url);
+        final JSONObject payload = new JSONObject();
+        final JSONArray params = new JSONArray();
+
+        try {
+            payload.put("method", "eth_getBalance");
+            params.put(account);
+            params.put("pending");
+            payload.put("params", params);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        final JsonRpcRequest request = new JsonRpcRequest();
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                request.makeRpcRequest(mContext, eth_url, payload, null);
+            }
+        });
+
+        String responseString = "";
+        String balance = "";
+        try {
+            Response response = request.getResponse();
+            if (response != null) {
+                responseString = response.body().string();
+
+                JSONObject responseObject = new JSONObject(responseString);
+
+                if (responseObject.has("result")) {
+                    balance = responseObject.getString("result");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException je) {
+            je.printStackTrace();
+        }
+        return balance;
     }
 
     @Override
     public String getGasPrice(int id) {
-        return null;
+
+        final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.ETH_ENDPOINT_GAS_PRICE;
+        Log.d(TAG, "Making rpc request to -> " + eth_url);
+        final JSONObject payload = new JSONObject();
+        final JSONArray params = new JSONArray();
+
+        try {
+            payload.put("method", "eth_gasPrice");
+            payload.put("params", params);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        final JsonRpcRequest request = new JsonRpcRequest();
+
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                request.makeRpcRequest(mContext, eth_url, payload, null);
+
+            }
+        });
+
+        String responseString = "";
+        String gasPrice = "";
+
+        try {
+            Response response = request.getResponse();
+
+            if (response != null) {
+                responseString = response.body().string();
+
+                JSONObject responseObject = new JSONObject(responseString);
+
+                if (responseObject.has("result")) {
+                    gasPrice = responseObject.getString("result");
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException je) {
+            je.printStackTrace();
+        }
+
+        Log.d(TAG, "gasPrice response -> " + responseString);
+        return gasPrice;
     }
 
     @Override
     public String getGasEstimate(int id, String to, final String amount, String data) {
-
 
         final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
         Log.d(TAG, "Making rpc request to -> " + eth_url);
         final JSONObject payload = new JSONObject();
         final JSONArray params = new JSONArray();
 
-        // TODO : Remove and replace with actual address and amount from current wallet
+        // TODO : Remove and replace with actual to address, data, and amount from current wallet
         params.put(to);
         params.put(amount);
         params.put(data);
+
+        final JsonRpcRequest request = new JsonRpcRequest();
+
 
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
@@ -545,17 +605,29 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                     e.printStackTrace();
                 }
 
-                JsonRpcRequest request = new JsonRpcRequest();
-                request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
-                    @Override
-                    public void onRpcRequestCompleted(String jsonResult) {
+                request.makeRpcRequest(mContext, eth_url, payload, null);
 
-                        Log.d(TAG, "Rpc Request response -> " + jsonResult);
-                    }
-                });
             }
         });
-        return null;
+
+        String gasEstimate = "";
+        try {
+            String response = request.getResponse().body().string();
+            JSONObject responseObject = new JSONObject(response);
+
+            if (responseObject.has("result")) {
+                gasEstimate = responseObject.getString("result");
+
+                return gasEstimate;
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return gasEstimate;
+
     }
 
     @Override
