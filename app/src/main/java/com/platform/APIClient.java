@@ -448,7 +448,6 @@ public class APIClient {
         String authValue = "bread " + token + ":" + signedRequest;
 //            Log.e(TAG, "sendRequest: authValue: " + authValue);
         modifiedRequest = request.newBuilder();
-        Log.d(TAG, "Rpc Auth token " + authValue);
 
         try {
             request = modifiedRequest.header("Authorization", authValue).build();
