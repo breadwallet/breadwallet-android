@@ -130,10 +130,10 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
                         return;
                     }
-                    String walletISO = mCurrentWalletSyncing.walletManager.getIso(mContext);
-                    Log.e(TAG, "startObserving: connecting: " + walletISO);
+                    String walletIso = mCurrentWalletSyncing.walletManager.getIso(mContext);
+                    Log.e(TAG, "startObserving: connecting: " + walletIso);
                     mCurrentWalletSyncing.walletManager.connectWallet(mContext);
-                    SyncService.startService(mContext.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, walletISO);
+                    SyncService.startService(mContext.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, walletIso);
                 } finally {
                     mObesrverIsStarting = false;
                 }
@@ -184,7 +184,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     private WalletItem getNextWalletToSync() {
         BaseWalletManager currentWallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
         final String currentWalletIso = currentWallet.getIso(mContext);
-        if (currentWallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mContext, currentWalletIso )) == 1) {
+        if (currentWallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mContext, currentWalletIso )) == SyncService.PROGRESS_FINISH) {
             new Handler(Looper.getMainLooper()).post(new Runnable() {
                 @Override
                 public void run() {
@@ -265,27 +265,31 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         }
     }
 
+    /**
+     * The {@link SyncNotificationBroadcastReceiver} is responsible for receiving updates from the
+     * {@link SyncService} and updating the UI accordingly.
+     */
     private class SyncNotificationBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (SyncService.ACTION_SYNC_PROGRESS_UPDATE.equals(intent.getAction())) {
-                String intentWalletISO = intent.getStringExtra(SyncService.EXTRA_WALLET_ISO);
-                double progress = intent.getDoubleExtra(SyncService.EXTRA_PROGRESS, -1);
+                String intentWalletIso = intent.getStringExtra(SyncService.EXTRA_WALLET_ISO);
+                double progress = intent.getDoubleExtra(SyncService.EXTRA_PROGRESS, SyncService.PROGRESS_NOT_DEFINTED);
 
                 if (mCurrentWalletSyncing == null ) {
-                    Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: mCurrentWalletSyncing is null. Wallet:" + intentWalletISO + " Progress:" + progress + " Ignored" );
+                    Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: mCurrentWalletSyncing is null. Wallet:" + intentWalletIso + " Progress:" + progress + " Ignored" );
                     return;
                 }
 
                 String currentWalletISO = mCurrentWalletSyncing.walletManager.getIso(context.getApplicationContext());
-                if (currentWalletISO.equals(intentWalletISO)) {
-                    if (progress >= 0) {
+                if (currentWalletISO.equals(intentWalletIso)) {
+                    if (progress >= SyncService.PROGRESS_START) {
                         updateUi(mCurrentWalletSyncing, progress);
                     } else {
                         Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: Progress not set:" + progress);
                     }
                 } else {
-                    Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: Wrong wallet. Expected:" + currentWalletISO + " Actual:" + intentWalletISO + " Progress:" + progress);
+                    Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: Wrong wallet. Expected:" + currentWalletISO + " Actual:" + intentWalletIso + " Progress:" + progress);
                 }
             }
         }

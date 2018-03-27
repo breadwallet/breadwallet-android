@@ -49,8 +49,15 @@ public class SyncService extends IntentService {
     private static final int POLLING_INTERVAL = 500; // in milliseconds
 
     /**
+     * Progress is identified as a double value between 0 and 1.
+     */
+    public static final int PROGRESS_NOT_DEFINTED = -1;
+    public static final int PROGRESS_START = 0;
+    public static final int PROGRESS_FINISH = 1;
+
+    /**
      * The {@link SyncService} is responsible for polling the native layer for wallet sync updates and
-     * posting updates to registered listeners.
+     * posting updates to registered listeners.  The actual data sync is done natively and not in Java.
      */
     public SyncService() {
         super(TAG);
@@ -99,7 +106,7 @@ public class SyncService extends IntentService {
      * @param progress The current sync progress of the specified wallet.
      * @return An intent with the specified parameters.
      */
-    private static Intent createIntent(Context context, String action, String walletIso, double progress){
+    private static Intent createIntent(Context context, String action, String walletIso, double progress) {
         return createIntent(context, action, walletIso)
                 .putExtra(EXTRA_PROGRESS, progress);
     }
@@ -128,7 +135,7 @@ public class SyncService extends IntentService {
                         BRSharedPrefs.getCurrentWalletIso(context)));
         Log.e(TAG, "startSyncPolling: Progress:" + progress + " Wallet: " + walletIso);
 
-        if (progress > 0 && progress < 1) {
+        if (progress > PROGRESS_START && progress < PROGRESS_FINISH) {
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             PendingIntent pendingIntent = PendingIntent.getService(context,
                     0, /* request code not used */
