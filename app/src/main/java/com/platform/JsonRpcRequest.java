@@ -30,6 +30,7 @@ public class JsonRpcRequest {
 
     private static final String TAG = "JsonRpcRequest";
     private JsonRpcRequestListener mRequestListener;
+    private Response mResponse;
 
     public JsonRpcRequest() {
     }
@@ -86,14 +87,19 @@ public class JsonRpcRequest {
             resp = client.newCall(request).execute();
 
 
-            mRequestListener.onRpcRequestCompleted(resp.body().string());
-
+            if(mRequestListener != null) {
+                mRequestListener.onRpcRequestCompleted(resp.body().string());
+            }
 
 
             if (resp == null) {
 
                 Log.e(TAG, "makeRpcRequest: " + url + ", resp is null");
                 return null;
+
+            }
+            else{
+                setResponse(resp);
 
             }
         } catch (IOException e) {
@@ -103,6 +109,14 @@ public class JsonRpcRequest {
 
         return resp;
 
+    }
+
+    private void setResponse(Response response){
+        this.mResponse = response;
+    }
+
+    public Response getResponse(){
+        return this.mResponse;
     }
 
 
