@@ -42,81 +42,126 @@ public class SyncService extends IntentService {
     private static final String TAG = SyncService.class.getSimpleName();
 
     public static final String ACTION_START_SYNC_PROGRESS_POLLING = "com.breadwallet.tools.services.ACTION_START_SYNC_PROGRESS_POLLING";
-//    public static final String ACTION_STOP_SYNC_POLLING = "com.breadwallet.tools.services.ACTION_STOP_SYNC_POLLING";
     public static final String ACTION_SYNC_PROGRESS_UPDATE = "com.breadwallet.tools.services.ACTION_SYNC_PROGRESS_UPDATE";
     public static final String EXTRA_WALLET_ISO = "com.breadwallet.tools.services.EXTRA_WALLET_ISO";
     public static final String EXTRA_PROGRESS = "com.breadwallet.tools.services.EXTRA_PROGRESS";
 
-    private static final int DELAY_MILLIS = 500;
+    private static final int POLLING_INTERVAL = 500; // in milliseconds
 
+    /**
+     * The {@link SyncService} is responsible for polling the native layer for wallet sync updates and
+     * posting updates to registered listeners.
+     */
     public SyncService() {
         super(TAG);
     }
 
+    /**
+     * Handles intents passed to the {@link SyncService} by creating a new worker thread to complete the work required.
+     *
+     * @param intent The intent specifying the work that needs to be completed.
+     */
     @Override
     protected void onHandleIntent(Intent intent) {
         switch (intent.getAction()) {
             case ACTION_START_SYNC_PROGRESS_POLLING:
-                String walletISO = intent.getStringExtra(EXTRA_WALLET_ISO);
-                if (walletISO != null) {
-                    startSyncPolling(SyncService.this.getApplicationContext(), walletISO);
+                String walletIso = intent.getStringExtra(EXTRA_WALLET_ISO);
+                if (walletIso != null) {
+                    startSyncPolling(SyncService.this.getApplicationContext(), walletIso);
                 }
                 break;
-//            case ACTION_STOP_SYNC_POLLING:
-//                break;
             default:
                 Log.i(TAG, "Intent not recognized.");
         }
     }
 
-    private static Intent createIntent(Context context, String action, String walletISO) {
+    /**
+     * Creates an intent with the specified parameters.
+     *
+     * @param context The context in which we are operating.
+     * @param action The action of the intent.
+     * @param walletIso The wallet ISO used to identify which wallet is going to be acted upon.
+     * @return An intent with the specified parameters.
+     */
+    private static Intent createIntent(Context context, String action, String walletIso) {
         Intent intent = new Intent(context, SyncService.class);
         intent.setAction(action)
-                .putExtra(EXTRA_WALLET_ISO, walletISO);
+                .putExtra(EXTRA_WALLET_ISO, walletIso);
         return intent;
     }
 
-    private static Intent createIntent(Context context, String action, String walletISO, double progress){
-        return createIntent(context, action, walletISO)
+    /**
+     * Creates an intent with the specified parameters.
+     *
+     * @param context The context in which we are operating.
+     * @param action The action of the intent.
+     * @param walletIso The wallet ISO used to identify which wallet is going to be acted upon.
+     * @param progress The current sync progress of the specified wallet.
+     * @return An intent with the specified parameters.
+     */
+    private static Intent createIntent(Context context, String action, String walletIso, double progress){
+        return createIntent(context, action, walletIso)
                 .putExtra(EXTRA_PROGRESS, progress);
     }
 
-    public static void startService(Context context, String action, String walletISO) {
-        context.startService(createIntent(context, action, walletISO));
+    /**
+     * Starts the sync polling service with the specified parameters.
+     *
+     * @param context The context in which we are operating.
+     * @param action The action of the intent.
+     * @param walletIso The wallet ISO used to identify which wallet is going to be acted upon.
+     */
+    public static void startService(Context context, String action, String walletIso) {
+        context.startService(createIntent(context, action, walletIso));
     }
 
-    private void startSyncPolling(Context context, String walletISO) {
-        final BaseWalletManager walletManager = WalletsMaster.getInstance(context).getWalletByIso(context, walletISO);
+    /**
+     * Starts polling the native layer for sync progress on the specified wallet.
+     *
+     * @param context The context in which we are operating.
+     * @param walletIso The wallet ISO used to identify which wallet needs to be polled for sync progress.
+     */
+    private void startSyncPolling(Context context, String walletIso) {
+        final BaseWalletManager walletManager = WalletsMaster.getInstance(context).getWalletByIso(context, walletIso);
         final double progress = walletManager.getPeerManager()
                 .getSyncProgress(BRSharedPrefs.getStartHeight(context,
                         BRSharedPrefs.getCurrentWalletIso(context)));
-        Log.e(TAG, "startSyncPolling: Progress:" + progress + " Wallet: " + walletISO);
+        Log.e(TAG, "startSyncPolling: Progress:" + progress + " Wallet: " + walletIso);
 
         if (progress > 0 && progress < 1) {
             AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
             PendingIntent pendingIntent = PendingIntent.getService(context,
                     0, /* request code not used */
-                    createIntent(context, ACTION_START_SYNC_PROGRESS_POLLING, walletISO),
+                    createIntent(context, ACTION_START_SYNC_PROGRESS_POLLING, walletIso),
                     PendingIntent.FLAG_UPDATE_CURRENT);
 
             alarmManager.set(AlarmManager.RTC,
-                    System.currentTimeMillis() + DELAY_MILLIS,
+                    System.currentTimeMillis() + POLLING_INTERVAL,
                     pendingIntent);
         }
 
         broadcastSyncProgressUpdate(context, walletManager.getIso(context), progress);
     }
 
-//        private void stopSyncProgressPolling() {
-//        sAlarmManager.cancel(sPendingIntent);
-//    }
-
+    /**
+     * Broadcasts the sync progress update to registered listeners.
+     *
+     * @param context The context in which we are operating.
+     * @param walletIso The wallet ISO used to identify which wallet is going to be acted upon.
+     * @param progress The current sync progress of the specified wallet.
+     */
     private static void broadcastSyncProgressUpdate(Context context, String walletIso, double progress) {
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
         localBroadcastManager.sendBroadcast(createIntent(context,
                 ACTION_SYNC_PROGRESS_UPDATE, walletIso, progress));
     }
 
+    /**
+     * Registers the specified listener for sync progress updates.
+     *
+     * @param context The context in which we are operating.
+     * @param broadcastReceiver The specified listener.
+     */
     public static void registerSyncNotificationBroadcastReceiver(Context context, BroadcastReceiver broadcastReceiver) {
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(ACTION_SYNC_PROGRESS_UPDATE);
@@ -125,6 +170,12 @@ public class SyncService extends IntentService {
         localBroadcastManager.registerReceiver(broadcastReceiver, intentFilter);
     }
 
+    /**
+     * Unregisters the specified listener from receiving sync progress updates.
+     *
+     * @param context The context in which we are operating.
+     * @param broadcastReceiver The specified listener.
+     */
     public static void unregisterSyncNotificationBroadcastReceiver(Context context, BroadcastReceiver broadcastReceiver) {
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
         localBroadcastManager.unregisterReceiver(broadcastReceiver);
