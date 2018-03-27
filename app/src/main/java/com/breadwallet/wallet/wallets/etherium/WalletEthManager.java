@@ -14,6 +14,8 @@ import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
+import com.breadwallet.tools.manager.BRApiManager;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -28,6 +30,10 @@ import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
+import com.google.firebase.crash.FirebaseCrash;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -237,6 +243,50 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public void updateFee(Context app) {
+
+        if (app == null) {
+            app = BreadApp.getBreadContext();
+
+            if (app == null) {
+                Log.d(TAG, "updateFee: FAILED, app is null");
+                return;
+            }
+        }
+
+        String jsonString = BRApiManager.urlGET(app, "https://" + BreadApp.HOST + "/fee-per-kb?currency=" + getIso(app));
+
+        if (jsonString == null || jsonString.isEmpty()) {
+            Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
+            return;
+        }
+
+        BigDecimal fee;
+        BigDecimal economyFee;
+        try {
+            JSONObject obj = new JSONObject(jsonString);
+            fee = new BigDecimal(obj.getString("fee_per_kb"));
+            economyFee = new BigDecimal(obj.getString("fee_per_kb_economy"));
+            Log.d(TAG, "updateFee: " + getIso(app) + ":" + fee + "|" + economyFee);
+
+            if (fee.compareTo(new BigDecimal(0)) > 0) {
+                BRSharedPrefs.putFeeRate(app, getIso(app), fee);
+                BRSharedPrefs.putFeeTime(app, getIso(app), System.currentTimeMillis()); //store the time of the last successful fee fetch
+            } else {
+                FirebaseCrash.report(new NullPointerException("Fee is weird:" + fee));
+                Log.d(TAG, "Error: Fee is unexpected value");
+
+            }
+            if (economyFee.compareTo(new BigDecimal(0)) > 0) {
+                BRSharedPrefs.putEconomyFeeRate(app, getIso(app), economyFee);
+            } else {
+                FirebaseCrash.report(new NullPointerException("Economy fee is weird:" + economyFee));
+                Log.d(TAG, "Error: Economy fee is unexpected value");
+            }
+        } catch (JSONException e) {
+            Log.e(TAG, "updateFeePerKb: FAILED: " + jsonString, e);
+            BRReportsManager.reportBug(e);
+            BRReportsManager.reportBug(new IllegalArgumentException("JSON ERR: " + jsonString));
+        }
 
     }
 
