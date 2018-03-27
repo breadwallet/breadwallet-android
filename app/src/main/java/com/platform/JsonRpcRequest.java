@@ -25,12 +25,20 @@ import okhttp3.Response;
 public class JsonRpcRequest {
 
     private static final String TAG = "JsonRpcRequest";
+    private JsonRpcRequestListener mRequestListener;
 
     public JsonRpcRequest() {
     }
 
+    public interface JsonRpcRequestListener {
 
-    public Response makeRpcRequest(Context app, String url, Map<String, String> params) {
+        void onRpcRequestCompleted(String jsonResult);
+    }
+
+
+    public Response makeRpcRequest(Context app, String url, Map<String, String> params, JsonRpcRequestListener listener) {
+
+        this.mRequestListener = listener;
 
         if (ActivityUTILS.isMainThread()) {
             Log.e(TAG, "makeRpcRequest: network on main thread");
@@ -64,23 +72,29 @@ public class JsonRpcRequest {
                 .header("User-agent", Utils.getAgentString(app, "android/HttpURLConnection"))
                 .post(requestBody);
 
-        /*Iterator it = headers.entrySet().iterator();
+        Iterator it = headers.entrySet().iterator();
         while (it.hasNext()) {
             Map.Entry pair = (Map.Entry) it.next();
             builder.header((String) pair.getKey(), (String) pair.getValue());
-        }*/
+        }
 
+        String response = null;
         Request request = builder.build();
         Response resp = APIClient.getInstance(app).sendRequest(request, true, 0);
         try {
-            Log.d(TAG, "Rpc Response -> " + resp.body().string());
+            mRequestListener.onRpcRequestCompleted(resp.body().string());
+            //Log.d(TAG, "Rpc Response -> " + resp.body().string());
+            //Log.d(TAG, "Rpc response string 1 -> " + response);
+
+
+            if (resp == null) {
+
+                Log.e(TAG, "makeRpcRequest: " + url + ", resp is null");
+                return null;
+
+            }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-        if (resp == null) {
-            Log.e(TAG, "makeRpcRequest: " + url + ", resp is null");
-            return null;
         }
 
 
