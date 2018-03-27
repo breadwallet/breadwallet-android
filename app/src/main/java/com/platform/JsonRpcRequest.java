@@ -5,10 +5,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
-import com.breadwallet.tools.util.Utils;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -30,7 +27,7 @@ public class JsonRpcRequest {
 
     private static final String TAG = "JsonRpcRequest";
     private JsonRpcRequestListener mRequestListener;
-    private Response mResponse;
+    private String mResponse;
 
     public JsonRpcRequest() {
     }
@@ -64,7 +61,6 @@ public class JsonRpcRequest {
                 .url(url)
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
-                .header("User-agent", Utils.getAgentString(app, "android/HttpURLConnection"))
                 .post(requestBody);
 
         Iterator it = headers.entrySet().iterator();
@@ -83,12 +79,14 @@ public class JsonRpcRequest {
 
         try {
 
-            request = APIClient.getInstance(app).authenticateRequest(request);
-            resp = client.newCall(request).execute();
+            resp = APIClient.getInstance(app).sendRequest(request, true, 0);
 
+            String responseString = resp.body().string();
 
-            if(mRequestListener != null) {
-                mRequestListener.onRpcRequestCompleted(resp.body().string());
+            Log.d(TAG, "RPC response - > " + responseString);
+
+            if (mRequestListener != null) {
+                mRequestListener.onRpcRequestCompleted(responseString);
             }
 
 
@@ -97,9 +95,8 @@ public class JsonRpcRequest {
                 Log.e(TAG, "makeRpcRequest: " + url + ", resp is null");
                 return null;
 
-            }
-            else{
-                setResponse(resp);
+            } else {
+                setResponseString(responseString);
 
             }
         } catch (IOException e) {
@@ -111,11 +108,11 @@ public class JsonRpcRequest {
 
     }
 
-    private void setResponse(Response response){
+    private void setResponseString(String response) {
         this.mResponse = response;
     }
 
-    public Response getResponse(){
+    public String getResponseString() {
         return this.mResponse;
     }
 

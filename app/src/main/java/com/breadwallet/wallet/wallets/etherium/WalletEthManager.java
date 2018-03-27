@@ -36,14 +36,11 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-
-import okhttp3.Response;
 
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
@@ -116,11 +113,12 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
 
         // Test to make sure that getTransactions fires properly
-        mNode.forceTransactionUpdate();
+        //mNode.forceTransactionUpdate();
 
 
         // Test to make rpc call to eth_estimateGas
-        getGasPrice(1);
+        //getGasPrice(1);
+        getBalance(1, "0xbdfdad139440d2db9ba2aa3b7081c2de39291508");
 
     }
 
@@ -483,15 +481,21 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public String getBalance(int id, String account) {
-        final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.ETH_ENDPOINT_GET_BALANCE;
+        final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
         Log.d(TAG, "Making rpc request to " + eth_url);
         final JSONObject payload = new JSONObject();
         final JSONArray params = new JSONArray();
 
+        Log.d(TAG, "Device ID - > " + BRSharedPrefs.getDeviceId(mContext));
+
+
         try {
+            String currentTime = String.valueOf(System.currentTimeMillis());
             payload.put("method", "eth_getBalance");
+            payload.put("id", 15221);
+            payload.put("jsonrpc", "2.0");
             params.put(account);
-            params.put("pending");
+            params.put("latest");
             payload.put("params", params);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -505,21 +509,19 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
             }
         });
 
-        String responseString = "";
         String balance = "";
         try {
-            Response response = request.getResponse();
-            if (response != null) {
-                responseString = response.body().string();
+            String responseString = request.getResponseString();
+            if (responseString != null) {
 
                 JSONObject responseObject = new JSONObject(responseString);
+                Log.d(TAG, "getBalance response -> " + responseObject.toString());
+
 
                 if (responseObject.has("result")) {
                     balance = responseObject.getString("result");
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (JSONException je) {
             je.printStackTrace();
         }
@@ -551,14 +553,14 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
             }
         });
 
-        String responseString = "";
         String gasPrice = "";
+        String responseString = "";
 
         try {
-            Response response = request.getResponse();
+            responseString = request.getResponseString();
 
-            if (response != null) {
-                responseString = response.body().string();
+            if (responseString != null) {
+
 
                 JSONObject responseObject = new JSONObject(responseString);
 
@@ -566,8 +568,6 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                     gasPrice = responseObject.getString("result");
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (JSONException je) {
             je.printStackTrace();
         }
@@ -612,16 +612,14 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
         String gasEstimate = "";
         try {
-            String response = request.getResponse().body().string();
-            JSONObject responseObject = new JSONObject(response);
+            String responseString = request.getResponseString();
+            JSONObject responseObject = new JSONObject(responseString);
 
             if (responseObject.has("result")) {
                 gasEstimate = responseObject.getString("result");
 
                 return gasEstimate;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
         } catch (JSONException e) {
             e.printStackTrace();
         }
