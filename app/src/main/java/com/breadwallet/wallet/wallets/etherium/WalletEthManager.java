@@ -583,6 +583,8 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                                     JSONObject txObject = transactionsArray.getJSONObject(i);
 
                                     Log.d(TAG, "TxObject contains -> " + txObject.toString());
+
+
                                 }
 
 
