@@ -193,55 +193,59 @@ public class PostAuth {
 
     }
 
-    public void onPublishTxAuth(final Context app, boolean authAsked) {
-        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
-
-        final BaseWalletManager walletManager = WalletsMaster.getInstance(app).getCurrentWallet(app);
-        byte[] rawPhrase;
-        try {
-            rawPhrase = BRKeyStore.getPhrase(app, BRConstants.PAY_REQUEST_CODE);
-        } catch (UserNotAuthenticatedException e) {
-            if (authAsked) {
-                Log.e(TAG, "onPublishTxAuth: WARNING!!!! LOOP");
-                isStuckWithAuthLoop = true;
-            }
-            return;
-        }
-        if (rawPhrase.length < 10) return;
-        try {
-            if (rawPhrase.length != 0) {
-                if (mCryptoRequest != null && mCryptoRequest.tx != null) {
-
-                    byte[] txHash = walletManager.signAndPublishTransaction(mCryptoRequest.tx, rawPhrase);
-                    if (Utils.isNullOrEmpty(txHash)) {
-                        Log.e(TAG, "onPublishTxAuth: signAndPublishTransaction returned an empty txHash");
-                        BRDialog.showSimpleDialog(app, "Send failed", "signAndPublishTransaction failed");
-                        //todo fix this
-//                        WalletsMaster.getInstance(app).offerToChangeTheAmount(app, new PaymentItem(paymentRequest.addresses, paymentItem.serializedTx, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
-                    } else {
-                        TxMetaData txMetaData = new TxMetaData();
-                        txMetaData.comment = mCryptoRequest.message;
-                        txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
-                        txMetaData.exchangeRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, walletManager.getIso(app), txMetaData.exchangeCurrency).rate;
-                        txMetaData.fee = walletManager.getTxFee(mCryptoRequest.tx).toPlainString();
-                        txMetaData.txSize = mCryptoRequest.tx.getTxSize().intValue();
-                        txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, walletManager.getIso(app));
-                        txMetaData.creationTime = (int) (System.currentTimeMillis() / 1000);//seconds
-                        txMetaData.deviceId = BRSharedPrefs.getDeviceId(app);
-                        txMetaData.classVersion = 1;
-                        KVStoreManager.getInstance().putTxMetaData(app, txMetaData, txHash);
+    public void onPublishTxAuth(final Context app, final boolean authAsked) {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                final BaseWalletManager walletManager = WalletsMaster.getInstance(app).getCurrentWallet(app);
+                byte[] rawPhrase;
+                try {
+                    rawPhrase = BRKeyStore.getPhrase(app, BRConstants.PAY_REQUEST_CODE);
+                } catch (UserNotAuthenticatedException e) {
+                    if (authAsked) {
+                        Log.e(TAG, "onPublishTxAuth: WARNING!!!! LOOP");
+                        isStuckWithAuthLoop = true;
                     }
-                    mCryptoRequest = null;
-                } else {
-                    throw new NullPointerException("payment item is null");
+                    return;
                 }
-            } else {
-                Log.e(TAG, "onPublishTxAuth: seed length is 0!");
-                return;
+                if (rawPhrase.length < 10) return;
+                try {
+                    if (rawPhrase.length != 0) {
+                        if (mCryptoRequest != null && mCryptoRequest.tx != null) {
+
+                            byte[] txHash = walletManager.signAndPublishTransaction(mCryptoRequest.tx, rawPhrase);
+                            if (Utils.isNullOrEmpty(txHash)) {
+                                Log.e(TAG, "onPublishTxAuth: signAndPublishTransaction returned an empty txHash");
+                                BRDialog.showSimpleDialog(app, "Send failed", "signAndPublishTransaction failed");
+                                //todo fix this
+//                        WalletsMaster.getInstance(app).offerToChangeTheAmount(app, new PaymentItem(paymentRequest.addresses, paymentItem.serializedTx, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
+                            } else {
+                                TxMetaData txMetaData = new TxMetaData();
+                                txMetaData.comment = mCryptoRequest.message;
+                                txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
+                                txMetaData.exchangeRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, walletManager.getIso(app), txMetaData.exchangeCurrency).rate;
+                                txMetaData.fee = walletManager.getTxFee(mCryptoRequest.tx).toPlainString();
+                                txMetaData.txSize = mCryptoRequest.tx.getTxSize().intValue();
+                                txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, walletManager.getIso(app));
+                                txMetaData.creationTime = (int) (System.currentTimeMillis() / 1000);//seconds
+                                txMetaData.deviceId = BRSharedPrefs.getDeviceId(app);
+                                txMetaData.classVersion = 1;
+                                KVStoreManager.getInstance().putTxMetaData(app, txMetaData, txHash);
+                            }
+                            mCryptoRequest = null;
+                        } else {
+                            throw new NullPointerException("payment item is null");
+                        }
+                    } else {
+                        Log.e(TAG, "onPublishTxAuth: seed length is 0!");
+                        return;
+                    }
+                } finally {
+                    Arrays.fill(rawPhrase, (byte) 0);
+                }
             }
-        } finally {
-            Arrays.fill(rawPhrase, (byte) 0);
-        }
+        });
+
 
     }
 
