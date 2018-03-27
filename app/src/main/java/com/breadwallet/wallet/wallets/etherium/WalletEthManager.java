@@ -31,6 +31,10 @@ import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.platform.JsonRpcConstants;
 import com.platform.JsonRpcRequest;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -494,7 +498,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         Log.d(TAG, "getTransactions()");
         Log.d(TAG, "account -> " + account);
 
-        final String eth_rpc_url = String.format(JsonRpcConstants.ETH_RPC_TX_LIST, account);
+        final String eth_rpc_url = String.format(JsonRpcConstants.ETH_RPC_TX_LIST, "0xbdfdad139440d2db9ba2aa3b7081c2de39291508");
         Log.d(TAG, "ETH RPC URL -> " + eth_rpc_url);
 
         final Map<String, String> params = new HashMap<>();
@@ -506,7 +510,40 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                request.makeRpcRequest(mContext, eth_rpc_url, params);
+
+
+                request.makeRpcRequest(mContext, eth_rpc_url, params, new JsonRpcRequest.JsonRpcRequestListener() {
+                    @Override
+                    public void onRpcRequestCompleted(String jsonResult) {
+                        Log.d(TAG, "Rpc response string 3 -> " + jsonResult);
+
+
+                        final String jsonRcpResponse = jsonResult;
+
+                        if (jsonRcpResponse != null) {
+                            try {
+                                // Convert response into JsonArray of transactions
+                                JSONObject transactions = new JSONObject(jsonResult);
+
+                                JSONArray transactionsArray = transactions.getJSONArray("result");
+
+                                // Iterate through the list of transactions and call node.announceTransaction()
+                                // to notify the core
+                                for(int i = 0; i < transactionsArray.length(); i++){
+                                    JSONObject txObject = transactionsArray.getJSONObject(i);
+
+                                    Log.d(TAG, "TxObject contains -> " + txObject.toString());
+                                }
+
+
+                                Log.d(TAG, "Rpc Transactions array length -> " + transactionsArray.length());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+
 
             }
         });
