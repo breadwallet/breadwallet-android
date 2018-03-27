@@ -187,13 +187,13 @@ public class WalletTests {
         BRSharedPrefs.putPreferredFiatIso(app, "USD");
 
         int btcRate = 12000;
-        int ethRate = 650;
+        float ethRate = 0.05f;
 
         Set<CurrencyEntity> tmp = new HashSet<>();
         tmp.add(new CurrencyEntity("USD", "Dollar", btcRate, "BTC"));
         CurrencyDataSource.getInstance(app).putCurrencies(app, "BTC", tmp);
         tmp = new HashSet<>();
-        tmp.add(new CurrencyEntity("USD", "Dollar", ethRate, "ETH"));
+        tmp.add(new CurrencyEntity("BTC", "Bitcoin", ethRate, "ETH"));
         CurrencyDataSource.getInstance(app).putCurrencies(app, "ETH", tmp);
 
         BRSharedPrefs.putCryptoDenomination(app, "BTC", BRConstants.CURRENT_UNIT_BITCOINS);
@@ -267,17 +267,17 @@ public class WalletTests {
         //getFiatForSmallestCrypto(..)
         val = new BigDecimal("25000000000000000000");
         res = ethWallet.getFiatForSmallestCrypto(app, val, null);
-        Assert.assertEquals(res.doubleValue(), ethRate * 25, 0); //dollars
+        Assert.assertEquals(res.doubleValue(), btcRate * ethRate * 25, 0.001); //dollars
 
         //getSmallestCryptoForFiat(..)
-        val = new BigDecimal(1300);//$1300.00 = 2ETH
+        val = new BigDecimal(ethRate).multiply(new BigDecimal(3)).multiply(new BigDecimal(btcRate));//
         res = ethWallet.getSmallestCryptoForFiat(app, val);
-        Assert.assertTrue(res.compareTo(new BigDecimal("2000000000000000000")) == 0);
+        Assert.assertTrue(res.compareTo(new BigDecimal("3000000000000000000")) == 0);
 
         //getCryptoForFiat(..)
-        val = new BigDecimal(1300);//$6000.00 = c600000
+        val = new BigDecimal(ethRate).multiply(new BigDecimal(3)).multiply(new BigDecimal(btcRate));
         res = ethWallet.getCryptoForFiat(app, val);
-        Assert.assertTrue(res.compareTo(new BigDecimal("2")) == 0);
+        Assert.assertTrue(res.compareTo(new BigDecimal("3")) == 0);
 
     }
 

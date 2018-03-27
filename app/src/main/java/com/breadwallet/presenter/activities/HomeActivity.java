@@ -247,7 +247,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         setupNetworking();
 
-
         InternetManager.addConnectionListener(new InternetManager.ConnectionReceiverListener() {
             @Override
             public void onConnectionChanged(boolean isConnected) {
