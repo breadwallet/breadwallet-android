@@ -214,11 +214,11 @@ public class PostAuth {
                         if (mCryptoRequest != null && mCryptoRequest.tx != null) {
 
                             byte[] txHash = walletManager.signAndPublishTransaction(mCryptoRequest.tx, rawPhrase);
-                            if (Utils.isNullOrEmpty(txHash)) {
+                            if (Utils.isNullOrEmpty(txHash) && !walletManager.getIso(app).equalsIgnoreCase("ETH")) {
                                 Log.e(TAG, "onPublishTxAuth: signAndPublishTransaction returned an empty txHash");
                                 BRDialog.showSimpleDialog(app, "Send failed", "signAndPublishTransaction failed");
                                 //todo fix this
-//                        WalletsMaster.getInstance(app).offerToChangeTheAmount(app, new PaymentItem(paymentRequest.addresses, paymentItem.serializedTx, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
+//                              WalletsMaster.getInstance(app).offerToChangeTheAmount(app, new PaymentItem(paymentRequest.addresses, paymentItem.serializedTx, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
                             } else {
                                 TxMetaData txMetaData = new TxMetaData();
                                 txMetaData.comment = mCryptoRequest.message;
@@ -246,7 +246,6 @@ public class PostAuth {
             }
         });
 
-
     }
 
 
@@ -272,8 +271,9 @@ public class PostAuth {
             @Override
             public void run() {
                 byte[] txHash = WalletsMaster.getInstance(app).getCurrentWallet(app).signAndPublishTransaction(mPaymentProtocolTx, rawSeed);
-                if (Utils.isNullOrEmpty(txHash)) throw new NullPointerException("txHash is null!");
-//                PaymentProtocolPostPaymentTask.sent = true;
+                if (Utils.isNullOrEmpty(txHash)) {
+                    Log.e(TAG, "run: txHash is null");
+                }
                 Arrays.fill(rawSeed, (byte) 0);
                 mPaymentProtocolTx = null;
             }

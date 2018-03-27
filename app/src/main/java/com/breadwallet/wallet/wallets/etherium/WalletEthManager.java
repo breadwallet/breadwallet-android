@@ -5,21 +5,13 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
-import com.breadwallet.core.BRCoreAddress;
-import com.breadwallet.core.BRCoreChainParams;
 import com.breadwallet.core.BRCoreMasterPubKey;
-import com.breadwallet.core.BRCoreMerkleBlock;
-import com.breadwallet.core.BRCorePeer;
-import com.breadwallet.core.BRCorePeerManager;
-import com.breadwallet.core.BRCoreTransaction;
-import com.breadwallet.core.BRCoreWallet;
-import com.breadwallet.core.ethereum.BREthereumAccount;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.core.ethereum.BREthereumNetwork;
 import com.breadwallet.core.ethereum.BREthereumToken;
+import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.core.ethereum.BREthereumWallet;
-import com.breadwallet.core.ethereum.test.BREthereumLightNodeClientTest;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -36,7 +28,6 @@ import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -90,11 +81,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     private BREthereumWallet mWallet;
     private BREthereumLightNode node; //must be here for JNI stuff, no touchy
 
-    private int mSyncRetryCount = 0;
-    private static final int SYNC_MAX_RETRY = 3;
-
     private Executor listenerExecutor = Executors.newSingleThreadExecutor();
-
 
     private WalletEthManager(final Context app, BRCoreMasterPubKey masterPubKey, BREthereumNetwork network) {
         uiConfig = new WalletUiConfiguration("#5e70a3", true, true, false);
@@ -134,8 +121,10 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public byte[] signAndPublishTransaction(BaseTransaction tx, byte[] seed) {
-        return mWallet.sign(tx, seed);
+    public byte[] signAndPublishTransaction(BaseTransaction tx, byte[] phrase) {
+        mWallet.sign((BREthereumTransaction) tx, new String(phrase));
+        mWallet.submit((BREthereumTransaction) tx);
+        return null;
     }
 
     @Override
@@ -367,12 +356,12 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public void syncStarted() {
-       //Not needed for ETH
+        //Not needed for ETH
     }
 
     @Override
     public void syncStopped(String error) {
-       //Not needed for ETH
+        //Not needed for ETH
     }
 
     @Override
@@ -403,44 +392,41 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public BigDecimal getFiatExchangeRate(Context app) {
-        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), BRSharedPrefs.getPreferredFiatIso(app));
-        BigDecimal usdData = getUsdFromBtc(app, new BigDecimal(ent.rate));
-        if (usdData == null) return null;
-        return usdData; //dollars
+        BigDecimal fiatData = getFiatForEth(app, new BigDecimal(1), BRSharedPrefs.getPreferredFiatIso(app));
+        if (fiatData == null) return null;
+        return fiatData; //dollars
     }
 
     @Override
     public BigDecimal getFiatBalance(Context app) {
         if (app == null) return null;
-        BigDecimal bal = getFiatForSmallestCrypto(app, getCachedBalance(app), null);
-        return new BigDecimal(bal == null ? 0 : bal.doubleValue());
+        return getFiatForSmallestCrypto(app, getCachedBalance(app), null);
     }
 
     @Override
     public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount, CurrencyEntity ent) {
         if (amount == null || amount.doubleValue() == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        if (ent == null)
-            ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
-        if (ent == null) {
-            return null;
+        if (ent != null) {
+            //passed in a custom CurrencyEntity
+            //get crypto amount
+            BigDecimal cryptoAmount = amount.divide(WEI_ETH, 8, BRConstants.ROUNDING_MODE);
+            //multiply by fiat rate
+            return cryptoAmount.multiply(new BigDecimal(ent.rate));
         }
-        BigDecimal usdData = getUsdFromBtc(app, new BigDecimal(ent.rate));
-        if (usdData == null) return null;
         //get crypto amount
         BigDecimal cryptoAmount = amount.divide(WEI_ETH, 8, BRConstants.ROUNDING_MODE);
-        return cryptoAmount.multiply(usdData);
+
+        BigDecimal fiatData = getFiatForEth(app, cryptoAmount, iso);
+        if (fiatData == null) return null;
+        return fiatData;
     }
 
     @Override
     public BigDecimal getCryptoForFiat(Context app, BigDecimal fiatAmount) {
         if (fiatAmount == null || fiatAmount.doubleValue() == 0) return fiatAmount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
-        if (ent == null) return null;
-        BigDecimal usdData = getUsdFromBtc(app, new BigDecimal(ent.rate));
-        if (usdData == null) return null;
-        return fiatAmount.divide(usdData, 8, ROUNDING_MODE);
+        return getEthForFiat(app, fiatAmount, iso);
 
     }
 
@@ -460,25 +446,47 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
         if (amount == null || amount.doubleValue() == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
-        if (ent == null) {
-            Log.e(TAG, "getSmallestCryptoForFiat: no exchange rate data!");
-            return amount;
-        }
-        //convert c to $.
-        BigDecimal usdData = getUsdFromBtc(app, new BigDecimal(ent.rate));
-        if (usdData == null) return null;
-        return amount.divide(getUsdFromBtc(app, usdData), 8, ROUNDING_MODE).multiply(WEI_ETH);
+        BigDecimal ethAmount = getEthForFiat(app, amount, iso);
+        if (ethAmount == null) return null;
+        return ethAmount.multiply(WEI_ETH);
     }
 
-    //pass in a btc amount and return the specified amount in USD
-    private BigDecimal getUsdFromBtc(Context app, BigDecimal btcAmount) {
-        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, "BTC", "USD");
-        if (ent == null) {
+    //pass in a eth amount and return the specified amount in fiat
+    //ETH rates are in BTC (thus this math)
+    private BigDecimal getFiatForEth(Context app, BigDecimal ethAmount, String code) {
+        //fiat rate for btc
+        CurrencyEntity btcRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
+        //Btc rate for ether
+        CurrencyEntity ethBtcRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
+        if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;
         }
-        return btcAmount.multiply(new BigDecimal(ent.rate));
+        if (ethBtcRate == null) {
+            Log.e(TAG, "getUsdFromBtc: No BTC rates for ETH");
+            return null;
+        }
+
+        return ethAmount.multiply(new BigDecimal(ethBtcRate.rate)).multiply(new BigDecimal(btcRate.rate));
+    }
+
+    //pass in a fiat amount and return the specified amount in ETH
+    //ETH rates are in BTC (thus this math)
+    private BigDecimal getEthForFiat(Context app, BigDecimal fiatAmount, String code) {
+        //fiat rate for btc
+        CurrencyEntity btcRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
+        //Btc rate for ether
+        CurrencyEntity ethBtcRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
+        if (btcRate == null) {
+            Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
+            return null;
+        }
+        if (ethBtcRate == null) {
+            Log.e(TAG, "getUsdFromBtc: No BTC rates for ETH");
+            return null;
+        }
+
+        return fiatAmount.divide(new BigDecimal(ethBtcRate.rate).multiply(new BigDecimal(btcRate.rate)), 8, BRConstants.ROUNDING_MODE);
     }
 
 
