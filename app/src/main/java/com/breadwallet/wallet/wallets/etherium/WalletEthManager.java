@@ -93,6 +93,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     private final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // 90m ETH * 18 (WEI)
     private final BigDecimal WEI_ETH = new BigDecimal("1000000000000000000"); //1ETH = 1000000000000000000 WEI
     private BREthereumWallet mWallet;
+    BREthereumLightNode mNode;
     private Context mContext;
 
     private int mSyncRetryCount = 0;
@@ -107,19 +108,19 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
         String testPaperKey = "video tiger report bid suspect taxi mail argue naive layer metal surface";
         //todo change the hardcoded priv key to master pub key when done
-        BREthereumLightNode node = new BREthereumLightNode.JSON_RPC(this, network, testPaperKey);
-        BREthereumAccount account = node.getAccount();
+        mNode = new BREthereumLightNode.JSON_RPC(this, network, testPaperKey);
+        BREthereumAccount account = mNode.getAccount();
 
-        mWallet = node.getWallet();
+        mWallet = mNode.getWallet();
         mWallet.setDefaultUnit(BREthereumWallet.Unit.ETHER_WEI);
         mContext = app;
 
-        BREthereumWallet walletToken = node.createWallet(BREthereumToken.tokenBRD);
+        BREthereumWallet walletToken = mNode.createWallet(BREthereumToken.tokenBRD);
         walletToken.setDefaultUnit(BREthereumWallet.Unit.TOKEN_DECIMAL);
 
 
         // Test to make sure that getTransactions fires properly
-        node.forceTransactionUpdate(mWallet);
+        mNode.forceTransactionUpdate(mWallet);
 
     }
 
@@ -577,14 +578,129 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
                                 JSONArray transactionsArray = transactions.getJSONArray("result");
 
+                                String txHash = "";
+                                String txTo = "";
+                                String txFrom = "";
+                                String txContract = "";
+                                String txValue = "";
+                                String txGas = "";
+                                String txGasPrice = "";
+                                String txNonce = "";
+                                String txGasUsed = "";
+                                String txBlockNumber = "";
+                                String txBlockHash = "";
+                                String txData = "";
+                                String txBlockConfirmations = "";
+                                String txBlockTransactionIndex = "";
+                                String txBlockTimestamp = "";
+                                String txIsError = "";
+
                                 // Iterate through the list of transactions and call node.announceTransaction()
                                 // to notify the core
-                                for(int i = 0; i < transactionsArray.length(); i++){
+                                for (int i = 0; i < transactionsArray.length(); i++) {
                                     JSONObject txObject = transactionsArray.getJSONObject(i);
 
-                                    Log.d(TAG, "TxObject contains -> " + txObject.toString());
+                                    //Log.d(TAG, "TxObject contains -> " + txObject.toString());
+
+                                    if (txObject.has("hash")) {
+                                        txHash = txObject.getString("hash");
+                                        Log.d(TAG, "TxObject Hash -> " + txHash);
+
+                                    }
+
+                                    if (txObject.has("to")) {
+                                        txTo = txObject.getString("to");
+                                        Log.d(TAG, "TxObject to -> " + txTo);
+
+                                    }
+
+                                    if (txObject.has("from")) {
+                                        txFrom = txObject.getString("from");
+                                        Log.d(TAG, "TxObject from -> " + txFrom);
+
+                                    }
+
+                                    if (txObject.has("contractAddress")) {
+                                        txContract = txObject.getString("contractAddress");
+                                        Log.d(TAG, "TxObject contractAddress -> " + txContract);
+
+                                    }
+
+                                    if (txObject.has("value")) {
+                                        txValue = txObject.getString("value");
+                                        Log.d(TAG, "TxObject value -> " + txValue);
+
+                                    }
+
+                                    if (txObject.has("gas")) {
+                                        txGas = txObject.getString("gas");
+                                        Log.d(TAG, "TxObject gas -> " + txGas);
 
 
+                                    }
+
+                                    if (txObject.has("gasPrice")) {
+                                        txGasPrice = txObject.getString("gasPrice");
+                                        Log.d(TAG, "TxObject gasPrice -> " + txGasPrice);
+
+                                    }
+
+                                    if (txObject.has("nonce")) {
+                                        txNonce = txObject.getString("nonce");
+                                        Log.d(TAG, "TxObject nonce -> " + txNonce);
+
+                                    }
+
+                                    if (txObject.has("gasUsed")) {
+                                        txGasUsed = txObject.getString("gasUsed");
+                                        Log.d(TAG, "TxObject gasUsed -> " + txGasUsed);
+
+                                    }
+
+                                    if (txObject.has("blockNumber")) {
+                                        txBlockNumber = txObject.getString("blockNumber");
+                                        Log.d(TAG, "TxObject blockNumber -> " + txBlockNumber);
+
+                                    }
+
+                                    if (txObject.has("blockHash")) {
+                                        txBlockHash = txObject.getString("blockHash");
+                                        Log.d(TAG, "TxObject blockHash -> " + txBlockHash);
+
+                                    }
+
+                                    if (txObject.has("input")) {
+                                        txData = txObject.getString("input");
+                                        Log.d(TAG, "TxObject input -> " + txData);
+
+                                    }
+
+                                    if (txObject.has("confirmations")) {
+                                        txBlockConfirmations = txObject.getString("confirmations");
+                                        Log.d(TAG, "TxObject confirmations -> " + txBlockConfirmations);
+
+                                    }
+
+                                    if (txObject.has("transactionIndex")) {
+                                        txBlockTransactionIndex = txObject.getString("transactionIndex");
+                                        Log.d(TAG, "TxObject transactionIndex -> " + txBlockTransactionIndex);
+
+                                    }
+
+                                    if (txObject.has("timeStamp")) {
+                                        txBlockTimestamp = txObject.getString("timeStamp");
+                                        Log.d(TAG, "TxObject blockTimestamp -> " + txBlockTimestamp);
+
+                                    }
+
+                                    if (txObject.has("isError")) {
+                                        txIsError = txObject.getString("isError");
+                                        Log.d(TAG, "TxObject isError -> " + txIsError);
+
+                                    }
+
+
+                                    mNode.announceTransaction(txHash, txFrom, txTo, txContract, txValue, txGas, txGasPrice, txData, txNonce, txGasUsed, txBlockNumber, txBlockHash, txBlockConfirmations, txBlockTransactionIndex, txBlockTimestamp, txIsError);
                                 }
 
 
