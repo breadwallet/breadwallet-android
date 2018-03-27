@@ -30,7 +30,6 @@ import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.PromptManager;
-import com.breadwallet.tools.manager.SyncManager;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
@@ -47,7 +46,7 @@ import java.util.ArrayList;
  * Home activity that will show a list of a user's wallets
  */
 
-public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, SyncManager.OnProgressUpdate {
+public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -247,17 +246,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         setupNetworking();
 
-
-        InternetManager.addConnectionListener(new InternetManager.ConnectionReceiverListener() {
-            @Override
-            public void onConnectionChanged(boolean isConnected) {
-                Log.e(TAG, "onConnectionChanged: " + isConnected);
-                if (isConnected) {
-                    mAdapter.startObserving();
-                }
-            }
-        });
-
         updateUi();
         CurrencyDataSource.getInstance(this).addOnDataChangedListener(new CurrencyDataSource.OnDataChanged() {
             @Override
@@ -276,8 +264,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     @Override
     protected void onPause() {
         super.onPause();
+        InternetManager.removeConnectionListener(this);
         mAdapter.stopObserving();
-
     }
 
     private void updateUi() {
@@ -305,37 +293,17 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             if (mNotificationBar != null) {
                 mNotificationBar.setVisibility(View.INVISIBLE);
             }
-            final BaseWalletManager wm = WalletsMaster.getInstance(HomeActivity.this).getCurrentWallet(HomeActivity.this);
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    final double progress = wm.getPeerManager()
-                            .getSyncProgress(BRSharedPrefs.getStartHeight(HomeActivity.this,
-                                    BRSharedPrefs.getCurrentWalletIso(HomeActivity.this)));
-//                    Log.e(TAG, "run: " + progress);
-                    if (progress < 1 && progress > 0) {
-                        SyncManager.getInstance().startSyncing(HomeActivity.this, wm, HomeActivity.this);
-                    }
-                }
-            });
 
+            mAdapter.startObserving();
         } else {
             if (mNotificationBar != null)
                 mNotificationBar.setVisibility(View.VISIBLE);
 
         }
 
-
     }
 
     public void closeNotificationBar() {
         mNotificationBar.setVisibility(View.INVISIBLE);
-    }
-
-
-    @Override
-    public boolean onProgressUpdated(double progress) {
-        Log.e(TAG, "onProgressUpdated: " + progress);
-        return false;
     }
 }
