@@ -102,7 +102,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     private InternetManager mConnectionReceiver;
     private SyncNotificationBroadcastReceiver mSyncNotificationBroadcastReceiver;
-    private String mCurrentWalletISO;
+    private String mCurrentWalletIso;
 
     private TestLogger logger;
 
@@ -559,7 +559,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             }
         });
 
-        mCurrentWalletISO = wallet.getIso(WalletActivity.this);
+        mCurrentWalletIso = wallet.getIso(WalletActivity.this);
 
         wallet.addSyncListeners(new SyncListener() {
             @Override
@@ -569,13 +569,13 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             @Override
             public void syncStarted() {
-                SyncService.startService(WalletActivity.this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletISO);
+                SyncService.startService(WalletActivity.this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletIso);
             }
         });
 
         mSyncNotificationBroadcastReceiver = new SyncNotificationBroadcastReceiver();
         SyncService.registerSyncNotificationBroadcastReceiver(WalletActivity.this.getApplicationContext(), mSyncNotificationBroadcastReceiver);
-        SyncService.startService(this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletISO);
+        SyncService.startService(this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletIso);
 
         handleUrlClickIfNeeded(getIntent());
 
@@ -612,7 +612,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 barFlipper.setDisplayedChild(0);
             }
 
-            SyncService.startService(this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletISO);
+            SyncService.startService(this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletIso);
 
         } else {
             if (barFlipper != null)
@@ -662,20 +662,24 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         }
     }
 
+    /**
+     * The {@link SyncNotificationBroadcastReceiver} is responsible for receiving updates from the
+     * {@link SyncService} and updating the UI accordingly.
+     */
     private class SyncNotificationBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             if (SyncService.ACTION_SYNC_PROGRESS_UPDATE.equals(intent.getAction())) {
-                String intentWalletISO = intent.getStringExtra(SyncService.EXTRA_WALLET_ISO);
-                double progress = intent.getDoubleExtra(SyncService.EXTRA_PROGRESS, -1);
-                if (mCurrentWalletISO.equals(intentWalletISO)) {
-                    if (progress >= 0) {
+                String intentWalletIso = intent.getStringExtra(SyncService.EXTRA_WALLET_ISO);
+                double progress = intent.getDoubleExtra(SyncService.EXTRA_PROGRESS, SyncService.PROGRESS_NOT_DEFINTED);
+                if (mCurrentWalletIso.equals(intentWalletIso)) {
+                    if (progress >= SyncService.PROGRESS_START) {
                         WalletActivity.this.updateSyncProgress(progress);
                     } else {
                         Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: Progress not set:" + progress);
                     }
                 } else {
-                    Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: Wrong wallet. Expected:" + mCurrentWalletISO + " Actual:" + intentWalletISO + " Progress:" + progress);
+                    Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: Wrong wallet. Expected:" + mCurrentWalletIso + " Actual:" + intentWalletIso + " Progress:" + progress);
                 }
             }
         }
