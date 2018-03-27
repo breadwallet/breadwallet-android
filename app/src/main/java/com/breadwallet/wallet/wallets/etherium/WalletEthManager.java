@@ -36,6 +36,7 @@ import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -256,7 +257,8 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public void refreshCachedBalance(Context app) {
-
+        BigDecimal balance = new BigDecimal(mWallet.getBalance());
+        BRSharedPrefs.putCachedBalance(app, ISO, balance);
     }
 
     @Override
@@ -354,15 +356,15 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         Log.e(TAG, "wipeData: ");
     }
 
-    @Override
-    public void syncStarted() {
-        Log.e(TAG, "syncStarted: ");
-    }
-
-    @Override
-    public void syncStopped(String error) {
-        Log.e(TAG, "syncStopped: " + error);
-    }
+//    @Override
+//    public void syncStarted() {
+//        Log.e(TAG, "syncStarted: ");
+//    }
+//
+//    @Override
+//    public void syncStopped(String error) {
+//        Log.e(TAG, "syncStopped: " + error);
+//    }
 
     @Override
     public boolean networkIsReachable() {
@@ -393,7 +395,9 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     @Override
     public BigDecimal getFiatExchangeRate(Context app) {
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), BRSharedPrefs.getPreferredFiatIso(app));
-        return new BigDecimal(ent == null ? 0 : ent.rate); //dollars
+        BigDecimal usdData = getUsdFromBtc(app, new BigDecimal(ent.rate));
+        if (usdData == null) return null;
+        return usdData; //dollars
     }
 
     @Override
@@ -412,10 +416,11 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         if (ent == null) {
             return null;
         }
-        double rate = ent.rate;
+        BigDecimal usdData = getUsdFromBtc(app, new BigDecimal(ent.rate));
+        if (usdData == null) return null;
         //get crypto amount
         BigDecimal cryptoAmount = amount.divide(WEI_ETH, 8, BRConstants.ROUNDING_MODE);
-        return cryptoAmount.multiply(new BigDecimal(rate));
+        return cryptoAmount.multiply(usdData);
     }
 
     @Override
@@ -424,9 +429,9 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
         if (ent == null) return null;
-        double rate = ent.rate;
-
-        return fiatAmount.divide(new BigDecimal(rate), 8, ROUNDING_MODE);
+        BigDecimal usdData = getUsdFromBtc(app, new BigDecimal(ent.rate));
+        if (usdData == null) return null;
+        return fiatAmount.divide(usdData, 8, ROUNDING_MODE);
 
     }
 
@@ -438,22 +443,33 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
-        if (amount == null ||amount.doubleValue() == 0) return amount;
+        if (amount == null || amount.doubleValue() == 0) return amount;
         return amount.multiply(WEI_ETH);
     }
 
     @Override
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
-        if (amount == null ||amount.doubleValue() == 0) return amount;
+        if (amount == null || amount.doubleValue() == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
         if (ent == null) {
             Log.e(TAG, "getSmallestCryptoForFiat: no exchange rate data!");
             return amount;
         }
-        double rate = ent.rate;
         //convert c to $.
-        return amount.divide(new BigDecimal(rate), 8, ROUNDING_MODE).multiply(WEI_ETH);
+        BigDecimal usdData = getUsdFromBtc(app, new BigDecimal(ent.rate));
+        if (usdData == null) return null;
+        return amount.divide(getUsdFromBtc(app, usdData), 8, ROUNDING_MODE).multiply(WEI_ETH);
+    }
+
+    //pass in a btc amount and return the specified amount in USD
+    private BigDecimal getUsdFromBtc(Context app, BigDecimal btcAmount) {
+        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, "BTC", "USD");
+        if (ent == null) {
+            Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
+            return null;
+        }
+        return btcAmount.multiply(new BigDecimal(ent.rate));
     }
 
 
@@ -469,22 +485,22 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public String getBalance(int id, String account) {
-        return null;
+        return "0x123f";
     }
 
     @Override
     public String getGasPrice(int id) {
-        return null;
+        return "0xffc0";
     }
 
     @Override
     public String getGasEstimate(int id, String to, String amount, String data) {
-        return null;
+        return "0x77";
     }
 
     @Override
     public String submitTransaction(int id, String rawTransaction) {
-        return null;
+        return "0x123abc456def";
     }
 
     @Override
