@@ -129,12 +129,13 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public int getForkId() {
-        return 0;
+        //No need for ETH
+        return -1;
     }
 
     @Override
     public byte[] signAndPublishTransaction(BaseTransaction tx, byte[] seed) {
-        return new byte[0];
+        return mWallet.sign(tx, seed);
     }
 
     @Override
@@ -163,42 +164,46 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public long getRelayCount(byte[] txHash) {
+        //todo implement
         return 0;
     }
 
     @Override
     public double getSyncProgress(long startHeight) {
+        //Not needed for ETH, return fully synced always
         return 1.0;
     }
 
     @Override
     public double getConnectStatus() {
+        //Not needed for ETH, return Connected always
         return 2;
     }
 
     @Override
     public void connect() {
-
+        //Not needed for ETH
     }
 
     @Override
     public void disconnect() {
-
+        //Not needed for ETH
     }
 
     @Override
     public boolean useFixedNode(String node, int port) {
+        //Not needed for ETH
         return false;
     }
 
     @Override
     public void rescan() {
-
+        //Not needed for ETH
     }
 
     @Override
     public BaseTransaction[] getTxs() {
-        return new BaseTransaction[0];
+        return (BaseTransaction[]) mWallet.getTransactions();
     }
 
     @Override
@@ -268,11 +273,13 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public boolean containsAddress(String address) {
+        //Not needed for ETH
         return false;
     }
 
     @Override
     public boolean addressIsUsed(String address) {
+        //Not needed for ETH
         return false;
     }
 
@@ -283,11 +290,13 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public boolean generateWallet(Context app) {
+        //Not needed for ETH
         return false;
     }
 
     @Override
     public boolean connectWallet(Context app) {
+        //Not needed for ETH
         return false;
     }
 
@@ -356,15 +365,15 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         Log.e(TAG, "wipeData: ");
     }
 
-//    @Override
-//    public void syncStarted() {
-//        Log.e(TAG, "syncStarted: ");
-//    }
-//
-//    @Override
-//    public void syncStopped(String error) {
-//        Log.e(TAG, "syncStopped: " + error);
-//    }
+    @Override
+    public void syncStarted() {
+       //Not needed for ETH
+    }
+
+    @Override
+    public void syncStopped(String error) {
+       //Not needed for ETH
+    }
 
     @Override
     public boolean networkIsReachable() {
