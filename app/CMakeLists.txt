@@ -70,6 +70,7 @@ add_library( # The name of the library.
 
              # Ethereum
              src/main/jni/breadwallet-core/ethereum/BREthereum.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumBase.h
              src/main/jni/breadwallet-core/ethereum/BREthereumPrivate.h
              src/main/jni/breadwallet-core/ethereum/BREthereumEther.h
              src/main/jni/breadwallet-core/ethereum/BREthereumEther.c
@@ -87,6 +88,8 @@ add_library( # The name of the library.
              src/main/jni/breadwallet-core/ethereum/BREthereumAmount.c
              src/main/jni/breadwallet-core/ethereum/BREthereumTransaction.h
              src/main/jni/breadwallet-core/ethereum/BREthereumTransaction.c
+             src/main/jni/breadwallet-core/ethereum/BREthereumBlock.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumBlock.c
              src/main/jni/breadwallet-core/ethereum/BREthereumNetwork.h
              src/main/jni/breadwallet-core/ethereum/BREthereumNetwork.c
              src/main/jni/breadwallet-core/ethereum/BREthereumWallet.h
