@@ -86,7 +86,7 @@ public class FragmentReceive extends Fragment {
     private BRLinearLayoutWithCaret shareButtonsLayout;
     private BRLinearLayoutWithCaret copiedLayout;
     private boolean shareButtonsShown = false;
-    private boolean isReceive;
+    private boolean showRequestAnAmount;
     private ImageButton close;
     private Handler copyCloseHandler = new Handler();
     private BRKeyboard keyboard;
@@ -231,7 +231,7 @@ public class FragmentReceive extends Fragment {
             signalLayout.removeView(shareButtonsLayout);
             shareButton.setType(2);
         } else {
-            signalLayout.addView(shareButtonsLayout, isReceive ? signalLayout.getChildCount() - 2 : signalLayout.getChildCount());
+            signalLayout.addView(shareButtonsLayout, showRequestAnAmount ? signalLayout.getChildCount() - 2 : signalLayout.getChildCount());
             shareButton.setType(3);
             showCopiedLayout(false);
         }
@@ -272,10 +272,12 @@ public class FragmentReceive extends Fragment {
                 animateSignalSlide(signalLayout, false, null);
             }
         });
+        BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
         Bundle extras = getArguments();
-        isReceive = extras.getBoolean("receive");
-        if (!isReceive) {
+        boolean isReceive = extras.getBoolean("receive");
+        showRequestAnAmount = isReceive && wm.getUiConfiguration().showRequestAnAmount;
+        if (!showRequestAnAmount) {
             signalLayout.removeView(separator);
             signalLayout.removeView(requestButton);
             mTitle.setText(getString(R.string.UnlockScreen_myAddress));

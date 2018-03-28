@@ -28,6 +28,8 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -78,7 +80,8 @@ public class SecurityCenterActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(app, BRConstants.securityCenter);
+                BaseWalletManager wm = WalletsMaster.getInstance(SecurityCenterActivity.this).getCurrentWallet(SecurityCenterActivity.this);
+                BRAnimator.showSupportFragment(SecurityCenterActivity.this, BRConstants.securityCenter, wm.getIso(SecurityCenterActivity.this));
             }
         });
 
