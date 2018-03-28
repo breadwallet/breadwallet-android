@@ -92,22 +92,10 @@ public class SettingsActivity extends BRActivity {
                     addon.setVisibility(View.VISIBLE);
                     addon.setText(item.addonText);
                 }
-
-
-                if (position == 10) {
-                    ImageButton leaveArrow = v.findViewById(R.id.arrow_leave);
-                    ImageButton chevronRight = v.findViewById(R.id.chevron_right);
-                    leaveArrow.setVisibility(View.VISIBLE);
-                    chevronRight.setVisibility(View.INVISIBLE);
-                } else if (position == 9) {
-                    boolean shareData = BRSharedPrefs.getShareData(SettingsActivity.this);
-                    if (shareData) {
-                        addon.setText("ON");
-                    } else {
-                        addon.setText("OFF");
-
-                    }
-                }
+                ImageButton leaveArrow = v.findViewById(R.id.arrow_leave);
+                ImageButton chevronRight = v.findViewById(R.id.chevron_right);
+                leaveArrow.setVisibility(item.showChevron ? View.INVISIBLE : View.VISIBLE);
+                chevronRight.setVisibility(item.showChevron ? View.VISIBLE : View.INVISIBLE);
 
                 v.setOnClickListener(item.listener);
 
@@ -154,7 +142,7 @@ public class SettingsActivity extends BRActivity {
 
     private void populateItems() {
 
-        items.add(new BRSettingsItem(getString(R.string.Settings_wallet), "", null, true));
+        items.add(new BRSettingsItem(getString(R.string.Settings_wallet), "", null, true, true));
 
 
         items.add(new BRSettingsItem(getString(R.string.Settings_wipe), "", new View.OnClickListener() {
@@ -164,10 +152,10 @@ public class SettingsActivity extends BRActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false));
+        }, false, true));
 
 
-        items.add(new BRSettingsItem(getString(R.string.Settings_preferences), "", null, true));
+        items.add(new BRSettingsItem(getString(R.string.Settings_preferences), "", null, true, true));
 
         if (AuthManager.isFingerPrintAvailableAndSetup(this)) {
             items.add(new BRSettingsItem(getString(R.string.Settings_touchIdLimit_android), "", new View.OnClickListener() {
@@ -188,7 +176,7 @@ public class SettingsActivity extends BRActivity {
                     });
 
                 }
-            }, false));
+            }, false, true));
         }
 
         items.add(new BRSettingsItem(getString(R.string.Settings_updatePin), "", new View.OnClickListener() {
@@ -198,7 +186,7 @@ public class SettingsActivity extends BRActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false));
+        }, false, true));
 
         items.add(new BRSettingsItem(getString(R.string.Settings_currency), BRSharedPrefs.getPreferredFiatIso(this), new View.OnClickListener() {
             @Override
@@ -207,10 +195,10 @@ public class SettingsActivity extends BRActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false));
+        }, false, true));
 
 
-        items.add(new BRSettingsItem(getString(R.string.Settings_currencySettings), "", null, true));
+        items.add(new BRSettingsItem(getString(R.string.Settings_currencySettings), "", null, true, true));
 
         items.add(new BRSettingsItem(getString(R.string.Settings_bitcoin), "", new View.OnClickListener() {
             @Override
@@ -220,7 +208,7 @@ public class SettingsActivity extends BRActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false));
+        }, false, true));
 
         items.add(new BRSettingsItem(getString(R.string.Settings_bitcoinCash), "", new View.OnClickListener() {
             @Override
@@ -230,19 +218,21 @@ public class SettingsActivity extends BRActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false));
+        }, false, true));
 
 
-        items.add(new BRSettingsItem(getString(R.string.Settings_other), "", null, true));
+        items.add(new BRSettingsItem(getString(R.string.Settings_other), "", null, true, true));
 
-        items.add(new BRSettingsItem(getString(R.string.Settings_shareData), "ON", new View.OnClickListener() {
+        String shareAddOn = BRSharedPrefs.getShareData(SettingsActivity.this) ? "ON" : "OFF";
+
+        items.add(new BRSettingsItem(getString(R.string.Settings_shareData), shareAddOn, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, ShareDataActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false));
+        }, false, true));
 
         items.add(new BRSettingsItem(getString(R.string.Settings_review), "", new View.OnClickListener() {
             @Override
@@ -257,7 +247,7 @@ public class SettingsActivity extends BRActivity {
                 }
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false));
+        }, false, false));
 
         items.add(new BRSettingsItem(getString(R.string.Settings_aboutBread), "", new View.OnClickListener() {
             @Override
@@ -266,7 +256,7 @@ public class SettingsActivity extends BRActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false));
+        }, false, true));
 
         items.add(new BRSettingsItem(getString(R.string.Settings_advancedTitle), "", new View.OnClickListener() {
             @Override
@@ -275,10 +265,7 @@ public class SettingsActivity extends BRActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false));
-
-
-
+        }, false, true));
 
 
     }

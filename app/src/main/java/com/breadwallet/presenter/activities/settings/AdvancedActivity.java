@@ -125,7 +125,7 @@ public class AdvancedActivity extends BRActivity {
 
     private void populateItems() {
 
-        items.add(new BRSettingsItem("", "", null, true));
+        items.add(new BRSettingsItem("", "", null, true, true));
 
         items.add(new BRSettingsItem(getString(R.string.NodeSelector_title), "", new View.OnClickListener() {
             @Override
@@ -135,7 +135,7 @@ public class AdvancedActivity extends BRActivity {
                 overridePendingTransition(R.anim.enter_from_right, R.anim.empty_300);
 
             }
-        }, false));
+        }, false, true));
 
     }
 
