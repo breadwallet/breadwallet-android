@@ -43,18 +43,6 @@ gradle.properties
 *.ipr
 *~
 *.swp
-.idea/.name
-.idea/workspace.xml
-.idea/libraries
-.idea/vcs.xml
-.idea/gradle.xml
-.idea/encodings.xml
-.idea/misc.xml
-.idea/modules.xml
-.idea/compiler.xml
-.idea/runConfigurations.xml
-.idea/copyright/profiles_settings.xml
-.navigation/
 
 # jniLibs files
 #NDK
@@ -63,10 +51,7 @@ crash.txt
 /captures/
 projectFilesBackup
 /publishTODO.txt
-.idea/copyright/
-/app/google-services.json
-/.idea/markdown-navigator/
-/app/src/main/java/com/breadwallet/presenter/fragments/FragmentBreadSignal.java
+/.idea/
 fastlane/
 Release_checklist
 
