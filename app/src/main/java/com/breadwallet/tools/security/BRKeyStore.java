@@ -31,6 +31,7 @@ import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
@@ -1026,7 +1027,8 @@ public class BRKeyStore {
                     @Override
                     public void run() {
                         BRDialog.hideDialog();
-                        BRAnimator.showSupportFragment((Activity) app, BRConstants.loopBug);
+                        BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+                        BRAnimator.showSupportFragment((Activity) app, BRConstants.loopBug, wm.getIso(app));
                     }
                 });
 
