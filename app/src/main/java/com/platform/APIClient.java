@@ -269,6 +269,9 @@ public class APIClient {
             obj = new JSONObject(strResponse);
             String token = obj.getString("token");
             BRKeyStore.putToken(token.getBytes(), ctx);
+            Log.d(TAG, "getToken ->" + token);
+            Log.d(TAG, "getToken, deviceId -> " + BRSharedPrefs.getDeviceId(ctx))
+;
             return token;
         } catch (JSONException e) {
             e.printStackTrace();

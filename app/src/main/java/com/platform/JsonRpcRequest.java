@@ -9,8 +9,6 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.Iterator;
-import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.Request;
@@ -45,11 +43,9 @@ public class JsonRpcRequest {
             throw new RuntimeException("network on main thread");
         }
 
-        Map<String, String> headers = BreadApp.getBreadHeaders();
-
 
         final MediaType JSON
-                = MediaType.parse("application/json");
+                = MediaType.parse("application/json; charset=utf-8");
 
         RequestBody requestBody = RequestBody.create(JSON, payload.toString());
         Log.d(TAG, "JSON params -> " + payload.toString());
@@ -61,11 +57,6 @@ public class JsonRpcRequest {
                 .header("Accept", "application/json")
                 .post(requestBody);
 
-        Iterator it = headers.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-            builder.header((String) pair.getKey(), (String) pair.getValue());
-        }
 
         String response = null;
         Request request = builder.build();
@@ -73,7 +64,7 @@ public class JsonRpcRequest {
 
         try {
 
-            resp = APIClient.getInstance(app).sendRequest(request, true, 0);
+            resp = APIClient.getInstance(BreadApp.getBreadContext()).sendRequest(request, true, 0);
 
             String responseString = resp.body().string();
 
