@@ -26,15 +26,18 @@ package com.breadwallet.wallet.configs;
  */
 public class WalletUiConfiguration {
     public String colorHex;
+
     public boolean sendVisible;
     public boolean receiveVisible;
     public boolean buyVisible;
 
-    public WalletUiConfiguration(String colorHex, boolean sendVisible, boolean receiveVisible, boolean buyVisible) {
+    public boolean showEconomyFee;
+
+    public WalletUiConfiguration(String colorHex, boolean sendVisible, boolean receiveVisible, boolean buyVisible, boolean showEconomyFee) {
         this.colorHex = colorHex;
         this.sendVisible = sendVisible;
         this.receiveVisible = receiveVisible;
         this.buyVisible = buyVisible;
-
+        this.showEconomyFee = showEconomyFee;
     }
 }
