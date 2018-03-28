@@ -35,6 +35,7 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -129,7 +130,8 @@ public class CurrencyDataSource implements BRDataSourceInterface {
             cursor.moveToFirst();
             while (!cursor.isAfterLast()) {
                 CurrencyEntity curEntity = cursorToCurrency(cursor);
-                currencies.add(curEntity);
+                if (!WalletsMaster.getInstance(app).isIsoCrypto(app, curEntity.code))
+                    currencies.add(curEntity);
                 cursor.moveToNext();
             }
             // make sure to close the cursor
