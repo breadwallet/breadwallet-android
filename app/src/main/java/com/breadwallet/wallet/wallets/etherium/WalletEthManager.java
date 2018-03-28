@@ -149,25 +149,24 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
             @Override
             public void run() {
                 request.makeRpcRequest(mContext, eth_url, payload, null);
-            }
-        });
+                String balance = "";
+                try {
+                    String responseString = request.getResponseString();
+                    if (responseString != null) {
 
-        String balance = "";
-        try {
-            String responseString = request.getResponseString();
-            if (responseString != null) {
-
-                JSONObject responseObject = new JSONObject(responseString);
-                Log.d(TAG, "getBalance response -> " + responseObject.toString());
+                        JSONObject responseObject = new JSONObject(responseString);
+                        Log.d(TAG, "getBalance response -> " + responseObject.toString());
 
 
-                if (responseObject.has("result")) {
-                    balance = responseObject.getString("result");
+                        if (responseObject.has("result")) {
+                            balance = responseObject.getString("result");
+                        }
+                    }
+                } catch (JSONException je) {
+                    je.printStackTrace();
                 }
             }
-        } catch (JSONException je) {
-            je.printStackTrace();
-        }
+        });
     }
 
     public synchronized static WalletEthManager getInstance(Context app) {
