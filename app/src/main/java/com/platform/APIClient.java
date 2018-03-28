@@ -314,6 +314,7 @@ public class APIClient {
     }
 
     public Response sendRequest(Request locRequest, boolean needsAuth, int retryCount) {
+        Log.d(TAG, "sendRequest, url -> " +locRequest.url().toString());
         if (retryCount > 1)
             throw new RuntimeException("sendRequest: Warning retryCount is: " + retryCount);
         if (ActivityUTILS.isMainThread()) {
@@ -400,7 +401,7 @@ public class APIClient {
 
         postReqBody = ResponseBody.create(null, data);
         if (needsAuth && isBreadChallenge(response)) {
-            Log.d(TAG, "sendRequest: got authentication challenge from API - will attempt to get token");
+            Log.d(TAG, "sendRequest: got authentication challenge from API - will attempt to get token, url -> " + locRequest.url().toString());
             getToken();
             if (retryCount < 1) {
                 response.close();
@@ -411,6 +412,7 @@ public class APIClient {
     }
 
     public Request authenticateRequest(Request request) {
+        Log.d(TAG, "authenticateRequest, url -> " + request.url().toString());
         Request.Builder modifiedRequest = request.newBuilder();
         String base58Body = "";
         RequestBody body = request.body();
@@ -444,6 +446,7 @@ public class APIClient {
         byte[] tokenBytes = new byte[0];
         tokenBytes = BRKeyStore.getToken(ctx);
         String token = tokenBytes == null ? "" : new String(tokenBytes);
+        Log.d(TAG, "Token from KeyStore -> " + token);
         if (token.isEmpty()) token = getToken();
         if (token == null || token.isEmpty()) {
             Log.e(TAG, "sendRequest: failed to retrieve token");
