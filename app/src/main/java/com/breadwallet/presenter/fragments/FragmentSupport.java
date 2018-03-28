@@ -137,7 +137,7 @@ public class FragmentSupport extends Fragment {
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                observer.removeGlobalOnLayoutListener(this);
+                observer.removeOnGlobalLayoutListener(this);
                 BRAnimator.animateBackgroundDim(backgroundLayout, false);
                 BRAnimator.animateSignalSlide(signalLayout, false, new BRAnimator.OnSlideAnimationEnd() {
                     @Override
