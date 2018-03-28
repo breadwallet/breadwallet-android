@@ -271,7 +271,7 @@ public class APIClient {
             BRKeyStore.putToken(token.getBytes(), ctx);
             Log.d(TAG, "getToken ->" + token);
             Log.d(TAG, "getToken, deviceId -> " + BRSharedPrefs.getDeviceId(ctx))
-;
+            ;
             return token;
         } catch (JSONException e) {
             e.printStackTrace();
@@ -314,7 +314,7 @@ public class APIClient {
     }
 
     public Response sendRequest(Request locRequest, boolean needsAuth, int retryCount) {
-        Log.d(TAG, "sendRequest, url -> " +locRequest.url().toString());
+        Log.d(TAG, "sendRequest, url -> " + locRequest.url().toString());
         if (retryCount > 1)
             throw new RuntimeException("sendRequest: Warning retryCount is: " + retryCount);
         if (ActivityUTILS.isMainThread()) {
@@ -402,7 +402,12 @@ public class APIClient {
         postReqBody = ResponseBody.create(null, data);
         if (needsAuth && isBreadChallenge(response)) {
             Log.d(TAG, "sendRequest: got authentication challenge from API - will attempt to get token, url -> " + locRequest.url().toString());
-            getToken();
+            byte[] tokenBytes = BRKeyStore.getToken(ctx);
+            String token = tokenBytes == null ? "" : new String(tokenBytes);
+            //Double check if we have the token
+            if (Utils.isNullOrEmpty(token))
+                getToken();
+
             if (retryCount < 1) {
                 response.close();
                 sendRequest(request, true, retryCount + 1);
@@ -443,8 +448,7 @@ public class APIClient {
                         + ((queryString != null && !queryString.isEmpty()) ? ("?" + queryString) : ""));
         String signedRequest = signRequest(requestString);
         if (signedRequest == null) return null;
-        byte[] tokenBytes = new byte[0];
-        tokenBytes = BRKeyStore.getToken(ctx);
+        byte[] tokenBytes = BRKeyStore.getToken(ctx);
         String token = tokenBytes == null ? "" : new String(tokenBytes);
         Log.d(TAG, "Token from KeyStore -> " + token);
         if (token.isEmpty()) token = getToken();
