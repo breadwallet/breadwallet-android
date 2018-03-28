@@ -30,6 +30,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.math.BigDecimal;
 
@@ -67,7 +68,8 @@ public class FingerprintActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(app, BRConstants.enableFingerprint);
+                BaseWalletManager wm = WalletsMaster.getInstance(FingerprintActivity.this).getCurrentWallet(FingerprintActivity.this);
+                BRAnimator.showSupportFragment(FingerprintActivity.this, BRConstants.enableFingerprint, wm.getIso(FingerprintActivity.this));
             }
         });
 

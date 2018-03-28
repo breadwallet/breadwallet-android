@@ -142,7 +142,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(HomeActivity.this, null);
+                BaseWalletManager wm = WalletsMaster.getInstance(HomeActivity.this).getCurrentWallet(HomeActivity.this);
+
+                BRAnimator.showSupportFragment(HomeActivity.this, null, wm.getIso(HomeActivity.this));
             }
         });
 
@@ -166,7 +168,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 public void onClick(BRDialogView brDialogView) {
                     Log.d(TAG, "help clicked!");
                     brDialogView.dismissWithAnimation();
-                    BRAnimator.showSupportFragment(HomeActivity.this, BRConstants.bchFaq);
+                    BaseWalletManager wm = WalletsMaster.getInstance(HomeActivity.this).getCurrentWallet(HomeActivity.this);
+                    BRAnimator.showSupportFragment(HomeActivity.this, BRConstants.bchFaq, wm.getIso(HomeActivity.this));
 
                 }
             });
@@ -281,7 +284,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     private void updateUi() {
         BigDecimal fiatTotalAmount = WalletsMaster.getInstance(this).getAggregatedFiatBalance(this);
-        if(fiatTotalAmount == null) {
+        if (fiatTotalAmount == null) {
             Log.e(TAG, "updateUi: fiatTotalAmount is null");
             return;
         }
@@ -309,7 +312,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 @Override
                 public void run() {
                     final double progress = wm.getSyncProgress(BRSharedPrefs.getStartHeight(HomeActivity.this,
-                                    BRSharedPrefs.getCurrentWalletIso(HomeActivity.this)));
+                            BRSharedPrefs.getCurrentWalletIso(HomeActivity.this)));
 //                    Log.e(TAG, "run: " + progress);
                     if (progress < 1 && progress > 0) {
                         SyncManager.getInstance().startSyncing(HomeActivity.this, wm, HomeActivity.this);
