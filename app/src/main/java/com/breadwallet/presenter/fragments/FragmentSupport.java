@@ -108,7 +108,9 @@ public class FragmentSupport extends Fragment {
         theUrl = URL_SUPPORT;
         HTTPServer.mode = HTTPServer.ServerMode.SUPPORT;
         String articleId = getArguments() == null ? null : getArguments().getString("articleId");
-        if (Utils.isNullOrEmpty(theUrl)) throw new IllegalArgumentException("No url extra!");
+        String walletIso = getArguments() == null ? null : getArguments().getString("walletIso");
+        if (Utils.isNullOrEmpty(theUrl) || Utils.isNullOrEmpty(walletIso))
+            throw new IllegalArgumentException("No articleId or walletIso extra! " + walletIso);
 
         WebSettings webSettings = webView.getSettings();
 
@@ -119,7 +121,7 @@ public class FragmentSupport extends Fragment {
         webSettings.setJavaScriptEnabled(true);
 
         if (articleId != null && !articleId.isEmpty())
-            theUrl = theUrl + "/article?slug=" + articleId;
+            theUrl = theUrl + "/article?slug=" + articleId + "&currency=" + walletIso.toLowerCase();
 
         Log.d(TAG, "onCreate: theUrl: " + theUrl + ", articleId: " + articleId);
         webView.loadUrl(theUrl);
