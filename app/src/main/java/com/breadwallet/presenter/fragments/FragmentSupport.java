@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.fragments;
 
+import android.annotation.SuppressLint;
 import android.app.Fragment;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
@@ -67,6 +68,7 @@ public class FragmentSupport extends Fragment {
     public static boolean appVisible = false;
     private String onCloseUrl;
 
+    @SuppressLint("SetJavaScriptEnabled")
     @Override
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
