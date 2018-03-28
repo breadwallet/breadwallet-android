@@ -267,7 +267,8 @@ public class APIClient {
             JSONObject obj = null;
             obj = new JSONObject(strResponse);
             String token = obj.getString("token");
-            BRKeyStore.putToken(token.getBytes(), ctx);
+            if (!Utils.isNullOrEmpty(token))
+                BRKeyStore.putToken(token.getBytes(), ctx);
             return token;
         } catch (JSONException e) {
             e.printStackTrace();
