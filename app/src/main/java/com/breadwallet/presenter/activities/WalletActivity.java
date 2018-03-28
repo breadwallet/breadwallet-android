@@ -26,7 +26,9 @@ import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.view.animation.AnimationUtils;
+import android.view.animation.TranslateAnimation;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
@@ -108,6 +110,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     public static WalletActivity getApp() {
         return app;
     }
+
+    private int mCryptoRight;
+    private int mFiatRight;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -201,7 +206,14 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mBalanceSecondary.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                swap();
+                //swap();
+
+                int toXDelta = mFiatRight - mCryptoRight;
+                TranslateAnimation animation = new TranslateAnimation(0, toXDelta, 0, 0);
+                animation.setFillAfter(true);
+                animation.setDuration(200);
+                mBalanceSecondary.startAnimation(animation);
+                mBalanceSecondary.setTextSize(t1Size);
             }
         });
 
@@ -225,6 +237,24 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
 
         }
+
+        Log.d(TAG, "Crypto X -> " + mBalanceSecondary.getLeft());
+        Log.d(TAG, "Fiat X -> " + mBalancePrimary.getLeft());
+
+        mBalanceSecondary.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                Log.d(TAG, "Crypto RIGHT -> " + mBalanceSecondary.getRight());
+                Log.d(TAG, "Fiat RIGHT -> " + mBalancePrimary.getRight());
+
+                mCryptoRight = mBalanceSecondary.getRight();
+                mFiatRight = mBalancePrimary.getRight();
+
+
+            }
+        });
+
+
 
 
 
@@ -411,7 +441,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private void swap() {
         if (!BRAnimator.isClickAllowed()) return;
         boolean b = !BRSharedPrefs.isCryptoPreferred(this);
-        setPriceTags(b, true);
+        //setPriceTags(b, true);
         BRSharedPrefs.setIsCryptoPreferred(this, b);
     }
 
@@ -446,8 +476,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             // Align usd balance to left of swap icon
             set.connect(R.id.balance_primary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
 
-            mBalancePrimary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 6));
-            mBalanceSecondary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 4));
+            //mBalancePrimary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 8));
+            mBalanceSecondary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 26));
             mSwap.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 2));
 
             Log.d(TAG, "CryptoPreferred " + cryptoPreferred);
@@ -472,8 +502,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             // Align secondary currency to the left of swap icon
             set.connect(R.id.balance_secondary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
 
-            mBalancePrimary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 2));
-            mBalanceSecondary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 4));
+            //mBalancePrimary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 8));
+            mBalanceSecondary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 26));
             mSwap.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 2));
 
             //mBalancePrimary.setPadding(0,0, 0, Utils.getPixelsFromDps(this, -4));

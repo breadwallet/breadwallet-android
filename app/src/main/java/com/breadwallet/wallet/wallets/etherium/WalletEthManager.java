@@ -14,6 +14,7 @@ import com.breadwallet.core.BRCorePeerManager;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWallet;
 import com.breadwallet.core.ethereum.BREthereumAccount;
+import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.core.ethereum.BREthereumNetwork;
 import com.breadwallet.core.ethereum.BREthereumToken;
@@ -103,10 +104,10 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         BREthereumAccount account = node.getAccount();
 
         mWallet = node.getWallet();
-        mWallet.setDefaultUnit(BREthereumWallet.Unit.ETHER_WEI);
+        mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
 
         BREthereumWallet walletToken = node.createWallet(BREthereumToken.tokenBRD);
-        walletToken.setDefaultUnit(BREthereumWallet.Unit.TOKEN_DECIMAL);
+        walletToken.setDefaultUnit(BREthereumAmount.Unit.TOKEN_DECIMAL);
 
     }
 
