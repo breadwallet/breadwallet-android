@@ -63,7 +63,8 @@ public class SpendLimitActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(app, BRConstants.fingerprintSpendingLimit);
+                BaseWalletManager wm = WalletsMaster.getInstance(SpendLimitActivity.this).getCurrentWallet(SpendLimitActivity.this);
+                BRAnimator.showSupportFragment(SpendLimitActivity.this, BRConstants.fingerprintSpendingLimit, wm.getIso(SpendLimitActivity.this));
             }
         });
 

@@ -138,8 +138,9 @@ public class FragmentRequestAmount extends Fragment {
                     Log.e(TAG, "onClick: app is null, can't start the webview with url: " + URL_SUPPORT);
                     return;
                 }
+                BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
 
-                BRAnimator.showSupportFragment(app, BRConstants.requestAmount);
+                BRAnimator.showSupportFragment(app, BRConstants.requestAmount, wm.getIso(app));
             }
         });
 
