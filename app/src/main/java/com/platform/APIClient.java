@@ -227,7 +227,7 @@ public class APIClient {
         return res;
     }
 
-    public String getToken() {
+    public synchronized String getToken() {
         if (ActivityUTILS.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
