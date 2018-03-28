@@ -237,8 +237,7 @@ public class APIClient {
             String strUtl = BASE_URL + TOKEN;
 
             JSONObject requestMessageJSON = new JSONObject();
-            String base58PubKey = null;
-            base58PubKey = BRCoreKey.getAuthPublicKeyForAPI(BRKeyStore.getAuthKey(ctx));
+            String base58PubKey = BRCoreKey.getAuthPublicKeyForAPI(BRKeyStore.getAuthKey(ctx));
             requestMessageJSON.put("pubKey", base58PubKey);
             requestMessageJSON.put("deviceID", BRSharedPrefs.getDeviceId(ctx));
 
@@ -432,8 +431,8 @@ public class APIClient {
 
         String queryString = request.url().encodedQuery();
 
-        String requestString = createRequest(request.method(), base58Body,
-                request.header("Content-Type"), request.header("Date"), request.url().encodedPath()
+        String requestString = createRequest(request.method(), base58Body, request.header("Content-Type"),
+                request.header("Date"), request.url().encodedPath()
                         + ((queryString != null && !queryString.isEmpty()) ? ("?" + queryString) : ""));
         String signedRequest = signRequest(requestString);
         if (signedRequest == null) return null;
