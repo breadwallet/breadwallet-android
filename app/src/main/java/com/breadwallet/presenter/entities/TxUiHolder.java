@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.entities;
 
-
 import com.platform.entities.TxMetaData;
 
 /**
