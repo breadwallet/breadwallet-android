@@ -113,13 +113,61 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
 
         // Test to make sure that getTransactions fires properly
-        mNode.forceTransactionUpdate();
+        //mNode.forceTransactionUpdate();
 
 
         // Test to make rpc call to eth_estimateGas
         //getGasPrice(1);
-        getBalance(1, "0xbdfdad139440d2db9ba2aa3b7081c2de39291508");
 
+        // Test to make rpc call to eth_getBalance
+        //getBalance(1, "0xbdfdad139440d2db9ba2aa3b7081c2de39291508");
+
+    }
+
+    public void testGetBalance() {
+        String account = "0xbdfdad139440d2db9ba2aa3b7081c2de39291508";
+        int id = 1;
+        final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
+        Log.d(TAG, "Making rpc request to " + eth_url);
+        final JSONObject payload = new JSONObject();
+        final JSONArray params = new JSONArray();
+
+        try {
+            String currentTime = String.valueOf(System.currentTimeMillis());
+            payload.put("jsonrpc", "2.0");
+            payload.put("method", "eth_getBalance");
+            params.put(account);
+            params.put("latest");
+            payload.put("params", params);
+            payload.put("id", id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        final JsonRpcRequest request = new JsonRpcRequest();
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                request.makeRpcRequest(mContext, eth_url, payload, null);
+            }
+        });
+
+        String balance = "";
+        try {
+            String responseString = request.getResponseString();
+            if (responseString != null) {
+
+                JSONObject responseObject = new JSONObject(responseString);
+                Log.d(TAG, "getBalance response -> " + responseObject.toString());
+
+
+                if (responseObject.has("result")) {
+                    balance = responseObject.getString("result");
+                }
+            }
+        } catch (JSONException je) {
+            je.printStackTrace();
+        }
     }
 
     public synchronized static WalletEthManager getInstance(Context app) {
@@ -488,12 +536,12 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
         try {
             String currentTime = String.valueOf(System.currentTimeMillis());
-            payload.put("method", "eth_getBalance");
-            payload.put("id", 1);
             payload.put("jsonrpc", "2.0");
+            payload.put("method", "eth_getBalance");
             params.put(account);
             params.put("latest");
             payload.put("params", params);
+            payload.put("id", id);
         } catch (JSONException e) {
             e.printStackTrace();
         }

@@ -44,20 +44,19 @@ public class JsonRpcRequest {
 
 
         final MediaType JSON
-                = MediaType.parse("application/json; charset=utf-8");
+                = MediaType.parse("application/json");
 
         RequestBody requestBody = RequestBody.create(JSON, payload.toString());
         Log.d(TAG, "JSON params -> " + payload.toString());
 
 
-        Request.Builder builder = new Request.Builder()
+        Request request = new Request.Builder()
                 .url(url)
                 .header("Content-Type", "application/json")
                 .header("Accept", "application/json")
-                .post(requestBody);
+                .post(requestBody).build();
 
 
-        Request request = builder.build();
         Response resp = null;
 
         try {
