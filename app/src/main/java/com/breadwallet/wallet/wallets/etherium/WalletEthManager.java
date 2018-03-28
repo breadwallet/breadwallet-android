@@ -90,7 +90,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     private Executor listenerExecutor = Executors.newSingleThreadExecutor();
 
     private WalletEthManager(final Context app, BRCoreMasterPubKey masterPubKey, BREthereumNetwork network) {
-        uiConfig = new WalletUiConfiguration("#5e70a3", true, true, false);
+        uiConfig = new WalletUiConfiguration("#5e70a3", true, true, false, false);
 
 
         String testPaperKey = "video tiger report bid suspect taxi mail argue naive layer metal surface";
