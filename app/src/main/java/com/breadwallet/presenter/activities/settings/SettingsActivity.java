@@ -86,9 +86,9 @@ public class SettingsActivity extends BRActivity {
                 v = inflater.inflate(settings_list_section, parent, false);
             } else {
                 v = inflater.inflate(settings_list_item, parent, false);
-                TextView addon = (TextView) v.findViewById(R.id.item_addon);
+                TextView addon = v.findViewById(R.id.item_addon);
 
-                if (!addon.getText().toString().isEmpty() && addon.getText().toString() != null) {
+                if (!addon.getText().toString().isEmpty()) {
                     addon.setVisibility(View.VISIBLE);
                     addon.setText(item.addonText);
                 }
@@ -98,12 +98,10 @@ public class SettingsActivity extends BRActivity {
                 chevronRight.setVisibility(item.showChevron ? View.VISIBLE : View.INVISIBLE);
 
                 v.setOnClickListener(item.listener);
-
             }
 
-            TextView title = (TextView) v.findViewById(R.id.item_title);
+            TextView title = v.findViewById(R.id.item_title);
             title.setText(item.title);
-
 
             return v;
 
