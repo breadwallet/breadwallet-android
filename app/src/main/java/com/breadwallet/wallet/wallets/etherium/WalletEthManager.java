@@ -113,7 +113,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
 
         // Test to make sure that getTransactions fires properly
-        //mNode.forceTransactionUpdate();
+        mNode.forceTransactionUpdate();
 
 
         // Test to make rpc call to eth_estimateGas
@@ -486,13 +486,10 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         final JSONObject payload = new JSONObject();
         final JSONArray params = new JSONArray();
 
-        Log.d(TAG, "Device ID - > " + BRSharedPrefs.getDeviceId(mContext));
-
-
         try {
             String currentTime = String.valueOf(System.currentTimeMillis());
             payload.put("method", "eth_getBalance");
-            payload.put("id", 15221);
+            payload.put("id", 1);
             payload.put("jsonrpc", "2.0");
             params.put(account);
             params.put("latest");

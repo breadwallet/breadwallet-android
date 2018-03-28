@@ -3,7 +3,6 @@ package com.platform;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 
 import org.json.JSONObject;
@@ -58,13 +57,12 @@ public class JsonRpcRequest {
                 .post(requestBody);
 
 
-        String response = null;
         Request request = builder.build();
         Response resp = null;
 
         try {
 
-            resp = APIClient.getInstance(BreadApp.getBreadContext()).sendRequest(request, true, 0);
+            resp = APIClient.getInstance(app).sendRequest(request, true, 1);
 
             String responseString = resp.body().string();
 
