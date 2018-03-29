@@ -411,6 +411,7 @@
                 android:background="@color/light_gray"/>
 
             <android.support.constraint.ConstraintLayout
+                android:id="@+id/confirmed_container"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
@@ -444,7 +445,7 @@
 
 
             <View
-                android:id="@+id/divider7"
+                android:id="@+id/confirmed_divider"
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:layout_below="@id/confirmed_in_block_label"
