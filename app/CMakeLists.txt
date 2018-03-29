@@ -144,6 +144,7 @@ add_library( # The name of the library.
 
              #Ethereum JNI files
              src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumAccount.h
+             src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumAmount.h
              src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumLightNode.c
              src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumLightNode.h
              src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumNetwork.c
