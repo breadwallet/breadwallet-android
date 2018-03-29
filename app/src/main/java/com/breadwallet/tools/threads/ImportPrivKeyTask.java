@@ -151,9 +151,9 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         BigDecimal bigAmount = walletManager.getTransactionAmount(mTransaction);
         BigDecimal bigFee = new BigDecimal(0);
 
-        for (BRCoreTransactionInput in : mTransaction.getInputs())
+        for (BRCoreTransactionInput in : mTransaction.getCoreTx().getInputs())
             bigFee = bigFee.add(new BigDecimal(in.getAmount()));
-        for (BRCoreTransactionOutput out : mTransaction.getOutputs())
+        for (BRCoreTransactionOutput out : mTransaction.getCoreTx().getOutputs())
             bigFee = bigFee.subtract(new BigDecimal(out.getAmount()));
 
         String formattedFiatAmount = CurrencyUtils.getFormattedAmount(app, BRSharedPrefs.getPreferredFiatIso(app), walletManager.getFiatForSmallestCrypto(app, bigAmount, null));
@@ -188,17 +188,17 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
                         BRCoreKey signingKey = new BRCoreKey(key);
 
-                        mTransaction.sign(signingKey, walletManager.getForkId());
+                        mTransaction.getCoreTx().sign(signingKey, walletManager.getForkId());
                         BRCorePeerManager peerManager = iso.equalsIgnoreCase("BTC") ? ((WalletBitcoinManager) walletManager).getPeerManager() : ((WalletBchManager) walletManager).getPeerManager();
 
-                        if (!mTransaction.isSigned()) {
+                        if (!mTransaction.getCoreTx().isSigned()) {
                             String err = "transaction is not signed";
                             Log.e(TAG, "run: " + err);
                             BRReportsManager.reportBug(new IllegalArgumentException(err));
                             return;
                         }
 
-                        peerManager.publishTransaction(mTransaction);
+                        peerManager.publishTransaction(mTransaction.getCoreTx());
                     }
                 });
 
@@ -265,7 +265,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
             BigDecimal fee = walletManager.getFeeForTransactionSize(new BigDecimal(transaction.getSize() + 34 + (signingKey.getPubKey().length - 33) * transaction.getInputs().length));
             transaction.addOutput(new BRCoreTransactionOutput(new BigDecimal(totalAmount).subtract(fee).longValue(), address.getPubKeyScript()));
-            return (BTCTransaction) transaction;
+            return new BTCTransaction(transaction);
         } catch (JSONException e) {
             e.printStackTrace();
         }

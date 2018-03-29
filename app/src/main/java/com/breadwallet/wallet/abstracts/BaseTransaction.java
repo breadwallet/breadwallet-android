@@ -1,5 +1,8 @@
 package com.breadwallet.wallet.abstracts;
 
+import com.breadwallet.core.BRCoreTransaction;
+import com.breadwallet.core.ethereum.BREthereumTransaction;
+
 import java.math.BigDecimal;
 
 /**
@@ -32,5 +35,9 @@ public interface BaseTransaction {
 
     //Get the standard fee rate for this type of tx
     BigDecimal getTxStandardFee();
+
+    BRCoreTransaction getCoreTx();
+
+    BREthereumTransaction getEtherTx();
 
 }
