@@ -195,9 +195,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             }
         });
 
-        // Test call to get ETH wallet balance via JSON Rpc
-        WalletEthManager ethWallet =  (WalletEthManager) WalletsMaster.getInstance(app).getWalletByIso(app, "ETH");
-        ethWallet.testGetBalance();
 
     }
 
