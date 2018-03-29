@@ -1,6 +1,7 @@
 package com.breadwallet.wallet.wallets.etherium;
 
 import android.content.Context;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -87,14 +88,20 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     private BREthereumWallet mWallet;
     private BREthereumLightNode node; //must be here for JNI stuff, no touchy
 
-    private Executor listenerExecutor = Executors.newSingleThreadExecutor();
-
     private WalletEthManager(final Context app, BRCoreMasterPubKey masterPubKey, BREthereumNetwork network) {
         uiConfig = new WalletUiConfiguration("#5e70a3", true, true, false, false, false, false);
 
+        String testPaperKey = null;
+        try {
+            testPaperKey = new String(BRKeyStore.getPhrase(app, 0));
+            Log.e(TAG, "WalletEthManager: testPaperKey: " + testPaperKey);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
 
-        String testPaperKey = "video tiger report bid suspect taxi mail argue naive layer metal surface";
         //todo change the hardcoded priv key to master pub key when done
+
+
         BREthereumLightNode node = new BREthereumLightNode.JSON_RPC(this, network, testPaperKey);
 
         mWallet = node.getWallet();
