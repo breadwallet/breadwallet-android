@@ -604,7 +604,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public void getGasEstimate(int wid, int tid, String to, String amount, String data, int rid) {
+    public void getGasEstimate(int wid, int tid, String to, String amount, String data, final int rid) {
         final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
         Log.d(TAG, "Making rpc request to -> " + eth_url);
         final JSONObject payload = new JSONObject();
