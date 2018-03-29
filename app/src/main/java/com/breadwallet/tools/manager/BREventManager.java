@@ -22,11 +22,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.platform.APIClient.BASE_URL;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import static com.platform.APIClient.BASE_URL;
 
 /**
  * BreadWallet
@@ -121,14 +122,20 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
     }
 
     private void pushToServer() {
-//        Log.d(TAG, "pushToServer");
+        Log.d(TAG, "pushToServer()");
         Context app = BreadApp.getBreadContext();
+        Log.d(TAG, "BREventManager TEST -1 -> ");
+
         if (app != null) {
+            Log.d(TAG, "BREventManager TEST 0 -> ");
+
             List<JSONArray> arrs = getEventsFromDisk(app);
             int fails = 0;
             for (JSONArray arr : arrs) {
                 JSONObject obj = new JSONObject();
                 try {
+                    Log.d(TAG, "BREventManager TEST 1 -> ");
+
                     obj.put("deviceType", 1);
                     int verCode = -1;
                     try {
@@ -151,10 +158,15 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
                             .post(requestBody).build();
                     String strResponse = null;
                     Response response = null;
+                    Log.d(TAG, "BREventManager TEST  2 -> ");
+
                     try {
+                        Log.d(TAG, "Making request to -> " + strUtl);
+
                         response = APIClient.getInstance(app).sendRequest(request, true, 0);
                         if (response != null)
                             strResponse = response.body().string();
+                        Log.d(TAG, "Events response -> " + strResponse);
                     } catch (IOException e) {
                         e.printStackTrace();
                         fails++;
@@ -206,6 +218,7 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
 
     //returns the list of JSONArray which consist of Event arrays
     private static List<JSONArray> getEventsFromDisk(Context context) {
+        Log.d(TAG, "getEventsFromDisk()");
         List<JSONArray> result = new ArrayList<>();
         File dir = new File(context.getFilesDir().getAbsolutePath() + "/events/");
         if (dir.listFiles() == null) return result;
@@ -223,6 +236,8 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
                 Log.e(TAG, "getEventsFromDisk: Unexpected directory where file is expected: " + f.getName());
             }
         }
+
+        Log.d(TAG, "getEventsFromDisk result - > " + result);
         return result;
     }
 

@@ -8,6 +8,7 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.BRCoreTransaction;
+import com.breadwallet.core.ethereum.BREthereumAccount;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.core.ethereum.BREthereumNetwork;
@@ -22,6 +23,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseAddress;
@@ -34,6 +36,10 @@ import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.google.firebase.crash.FirebaseCrash;
 
+import com.platform.JsonRpcConstants;
+import com.platform.JsonRpcRequest;
+
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -87,29 +93,52 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     private final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // 90m ETH * 18 (WEI)
     private final BigDecimal WEI_ETH = new BigDecimal("1000000000000000000"); //1ETH = 1000000000000000000 WEI
     private BREthereumWallet mWallet;
-    private BREthereumLightNode node; //must be here for JNI stuff, no touchy
+    BREthereumLightNode.JSON_RPC mNode;
+    private Context mContext;
+
+    private int mSyncRetryCount = 0;
+    private static final int SYNC_MAX_RETRY = 3;
+
+    private Executor listenerExecutor = Executors.newSingleThreadExecutor();
+
 
     private WalletEthManager(final Context app, BRCoreMasterPubKey masterPubKey, BREthereumNetwork network) {
         uiConfig = new WalletUiConfiguration("#5e70a3", true, true, false, false, false, false);
 
+        //String testPaperKey = "video tiger report bid suspect taxi mail argue naive layer metal surface";
         String testPaperKey = null;
         try {
             testPaperKey = new String(BRKeyStore.getPhrase(app, 0));
+            Log.e(TAG, "WalletEthManager: testPaperKey: " + testPaperKey);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
-
         //todo change the hardcoded priv key to master pub key when done
+        new BREthereumLightNode.JSON_RPC(this, network, testPaperKey)
+                .connect();
 
-        BREthereumLightNode node = new BREthereumLightNode.JSON_RPC(this, network, testPaperKey);
+        BREthereumAccount account = mNode.getAccount();
 
-        mWallet = node.getWallet();
+        mWallet = mNode.getWallet();
         mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
+        mContext = app;
 
-        BREthereumWallet walletToken = node.createWallet(BREthereumToken.tokenBRD);
+        BREthereumWallet walletToken = mNode.createWallet(BREthereumToken.tokenBRD);
         walletToken.setDefaultUnit(BREthereumAmount.Unit.TOKEN_DECIMAL);
 
+
+        // Test to make sure that getTransactions fires properly
+        //mNode.forceTransactionUpdate();
+
+
+        // Test to make rpc call to eth_estimateGas
+        //getGasPrice(1);
+
+        // Test to make rpc call to eth_getBalance
+        //getBalance(1, "0xbdfdad139440d2db9ba2aa3b7081c2de39291508");
+
     }
+
 
     public synchronized static WalletEthManager getInstance(Context app) {
         if (instance == null) {
@@ -566,31 +595,339 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public void assignNode(BREthereumLightNode node) {
-        this.node = node;
+        this.mNode = (BREthereumLightNode.JSON_RPC) node;
     }
 
     @Override
     public void getBalance(int wid, String address, int rid) {
+        final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
+        Log.d(TAG, "Making rpc request to " + eth_url);
+        final JSONObject payload = new JSONObject();
+        final JSONArray params = new JSONArray();
 
+        try {
+            String currentTime = String.valueOf(System.currentTimeMillis());
+            payload.put("jsonrpc", "2.0");
+            payload.put("method", "eth_getBalance");
+            params.put(address);
+            params.put("latest");
+            payload.put("params", params);
+            payload.put("id", rid);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        final JsonRpcRequest request = new JsonRpcRequest();
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                request.makeRpcRequest(mContext, eth_url, payload, null);
+            }
+        });
+
+        String balance = "0x";
+        try {
+            String responseString = request.getResponseString();
+            if (responseString != null) {
+
+                JSONObject responseObject = new JSONObject(responseString);
+                Log.d(TAG, "getBalance response -> " + responseObject.toString());
+
+
+                if (responseObject.has("result")) {
+                    balance = responseObject.getString("result");
+                }
+            }
+        } catch (JSONException je) {
+            je.printStackTrace();
+        }
+        mNode.announceBalance(wid, balance, rid);
     }
 
     @Override
     public void getGasPrice(int wid, int rid) {
 
+        final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
+        Log.d(TAG, "Making rpc request to -> " + eth_url);
+        final JSONObject payload = new JSONObject();
+        final JSONArray params = new JSONArray();
+
+        try {
+            payload.put("method", "eth_gasPrice");
+            payload.put("params", params);
+            payload.put("id", rid);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        final JsonRpcRequest request = new JsonRpcRequest();
+
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                request.makeRpcRequest(mContext, eth_url, payload, null);
+
+            }
+        });
+
+        String gasPrice = "0x";
+        String responseString = "";
+
+        try {
+            responseString = request.getResponseString();
+
+            if (responseString != null) {
+
+
+                JSONObject responseObject = new JSONObject(responseString);
+
+                if (responseObject.has("result")) {
+                    gasPrice = responseObject.getString("result");
+                }
+            }
+        } catch (JSONException je) {
+            je.printStackTrace();
+        }
+
+        Log.d(TAG, "gasPrice response -> " + responseString);
+        mNode.announceGasPrice(wid, gasPrice, rid);
     }
 
     @Override
-    public void getGasEstimate(int wid, int tid, String to, String amount, String data, int rid) {
+    public void getGasEstimate(int wid, int tid, String to, String amount, String data, final int rid) {
+        final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
+        Log.d(TAG, "Making rpc request to -> " + eth_url);
+        final JSONObject payload = new JSONObject();
+        final JSONArray params = new JSONArray();
 
+        // TODO : Remove and replace with actual to address, data, and amount from current wallet
+        params.put(to);
+        params.put(amount);
+        params.put(data);
+
+        final JsonRpcRequest request = new JsonRpcRequest();
+
+
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+
+
+                try {
+                    payload.put("method", "eth_estimateGas");
+                    payload.put("params", params);
+                    payload.put("id", rid);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                request.makeRpcRequest(mContext, eth_url, payload, null);
+
+            }
+        });
+
+        String gasEstimate = "0x";
+        try {
+            String responseString = request.getResponseString();
+            JSONObject responseObject = new JSONObject(responseString);
+
+            if (responseObject.has("result")) {
+                gasEstimate = responseObject.getString("result");
+
+                mNode.announceGasEstimate(tid, gasEstimate, rid);
+                return;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        mNode.announceGasEstimate(tid, gasEstimate, rid);
     }
 
     @Override
     public void submitTransaction(int wid, int tid, String rawTransaction, int rid) {
-
+        return;
     }
 
     @Override
-    public void getTransactions(String address, int rid) {
+    public void getTransactions(final String address, final int id) {
+        Log.d(TAG, "getTransactions()");
+        Log.d(TAG, "account -> " + address);
 
+        final String eth_rpc_url = String.format(JsonRpcConstants.ETH_RPC_TX_LIST, "0xbdfdad139440d2db9ba2aa3b7081c2de39291508");
+        Log.d(TAG, "ETH RPC URL -> " + eth_rpc_url);
+
+        final JsonRpcRequest request = new JsonRpcRequest();
+        final JSONObject payload = new JSONObject();
+        try {
+            payload.put("id", String.valueOf(id));
+            payload.put("account", address);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+
+
+                request.makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                    @Override
+                    public void onRpcRequestCompleted(String jsonResult) {
+                        Log.d(TAG, "Rpc response string 3 -> " + jsonResult);
+
+
+                        final String jsonRcpResponse = jsonResult;
+
+                        if (jsonRcpResponse != null) {
+                            try {
+                                // Convert response into JsonArray of transactions
+                                JSONObject transactions = new JSONObject(jsonResult);
+
+                                JSONArray transactionsArray = transactions.getJSONArray("result");
+
+                                String txHash = "";
+                                String txTo = "";
+                                String txFrom = "";
+                                String txContract = "";
+                                String txValue = "";
+                                String txGas = "";
+                                String txGasPrice = "";
+                                String txNonce = "";
+                                String txGasUsed = "";
+                                String txBlockNumber = "";
+                                String txBlockHash = "";
+                                String txData = "";
+                                String txBlockConfirmations = "";
+                                String txBlockTransactionIndex = "";
+                                String txBlockTimestamp = "";
+                                String txIsError = "";
+
+                                // Iterate through the list of transactions and call node.announceTransaction()
+                                // to notify the core
+                                for (int i = 0; i < transactionsArray.length(); i++) {
+                                    JSONObject txObject = transactionsArray.getJSONObject(i);
+
+                                    Log.d(TAG, "TxObject contains -> " + txObject.toString());
+
+                                    if (txObject.has("hash")) {
+                                        txHash = txObject.getString("hash");
+                                        Log.d(TAG, "TxObject Hash -> " + txHash);
+
+                                    }
+
+                                    if (txObject.has("to")) {
+                                        txTo = txObject.getString("to");
+                                        Log.d(TAG, "TxObject to -> " + txTo);
+
+                                    }
+
+                                    if (txObject.has("from")) {
+                                        txFrom = txObject.getString("from");
+                                        Log.d(TAG, "TxObject from -> " + txFrom);
+
+                                    }
+
+                                    if (txObject.has("contractAddress")) {
+                                        txContract = txObject.getString("contractAddress");
+                                        Log.d(TAG, "TxObject contractAddress -> " + txContract);
+
+                                    }
+
+                                    if (txObject.has("value")) {
+                                        txValue = txObject.getString("value");
+                                        Log.d(TAG, "TxObject value -> " + txValue);
+
+                                    }
+
+                                    if (txObject.has("gas")) {
+                                        txGas = txObject.getString("gas");
+                                        Log.d(TAG, "TxObject gas -> " + txGas);
+
+
+                                    }
+
+                                    if (txObject.has("gasPrice")) {
+                                        txGasPrice = txObject.getString("gasPrice");
+                                        Log.d(TAG, "TxObject gasPrice -> " + txGasPrice);
+
+                                    }
+
+                                    if (txObject.has("nonce")) {
+                                        txNonce = txObject.getString("nonce");
+                                        Log.d(TAG, "TxObject nonce -> " + txNonce);
+
+                                    }
+
+                                    if (txObject.has("gasUsed")) {
+                                        txGasUsed = txObject.getString("gasUsed");
+                                        Log.d(TAG, "TxObject gasUsed -> " + txGasUsed);
+
+                                    }
+
+                                    if (txObject.has("blockNumber")) {
+                                        txBlockNumber = txObject.getString("blockNumber");
+                                        Log.d(TAG, "TxObject blockNumber -> " + txBlockNumber);
+
+                                    }
+
+                                    if (txObject.has("blockHash")) {
+                                        txBlockHash = txObject.getString("blockHash");
+                                        Log.d(TAG, "TxObject blockHash -> " + txBlockHash);
+
+                                    }
+
+                                    if (txObject.has("input")) {
+                                        txData = txObject.getString("input");
+                                        Log.d(TAG, "TxObject input -> " + txData);
+
+                                    }
+
+                                    if (txObject.has("confirmations")) {
+                                        txBlockConfirmations = txObject.getString("confirmations");
+                                        Log.d(TAG, "TxObject confirmations -> " + txBlockConfirmations);
+
+                                    }
+
+                                    if (txObject.has("transactionIndex")) {
+                                        txBlockTransactionIndex = txObject.getString("transactionIndex");
+                                        Log.d(TAG, "TxObject transactionIndex -> " + txBlockTransactionIndex);
+
+                                    }
+
+                                    if (txObject.has("timeStamp")) {
+                                        txBlockTimestamp = txObject.getString("timeStamp");
+                                        Log.d(TAG, "TxObject blockTimestamp -> " + txBlockTimestamp);
+
+                                    }
+
+                                    if (txObject.has("isError")) {
+                                        txIsError = txObject.getString("isError");
+                                        Log.d(TAG, "TxObject isError -> " + txIsError);
+
+                                    }
+
+                                    String adrians = "0xbdfdad139440d2db9ba2aa3b7081c2de39291508";
+
+
+                                    mNode.announceTransaction(id, txHash,
+                                            (adrians.equalsIgnoreCase(txFrom) ? address : txFrom),
+                                            (adrians.equalsIgnoreCase(txTo) ? address : txTo),
+                                            txContract, txValue, txGas, txGasPrice, txData, txNonce, txGasUsed, txBlockNumber, txBlockHash, txBlockConfirmations, txBlockTransactionIndex, txBlockTimestamp, txIsError);
+                                }
+
+
+                                Log.d(TAG, "Rpc Transactions array length -> " + transactionsArray.length());
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+
+
+            }
+        });
     }
 }

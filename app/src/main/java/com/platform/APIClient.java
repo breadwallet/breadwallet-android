@@ -311,6 +311,7 @@ public class APIClient {
     }
 
     public Response sendRequest(Request locRequest, boolean needsAuth, int retryCount) {
+        Log.d(TAG, "sendRequest, url -> " + locRequest.url().toString());
         if (retryCount > 1)
             throw new RuntimeException("sendRequest: Warning retryCount is: " + retryCount);
         if (ActivityUTILS.isMainThread()) {
@@ -346,6 +347,7 @@ public class APIClient {
 //            Log.e(TAG, "sendRequest: agent: " + agent);
             request = request.newBuilder().header("User-agent", agent).build();
 
+            Log.d(TAG, "Making request to -> " + request.url().toString());
             response = client.newCall(request).execute();
             String s = null;
             try {
@@ -396,8 +398,13 @@ public class APIClient {
 
         postReqBody = ResponseBody.create(null, data);
         if (needsAuth && isBreadChallenge(response)) {
-            Log.d(TAG, "sendRequest: got authentication challenge from API - will attempt to get token");
-            getToken();
+            Log.d(TAG, "sendRequest: got authentication challenge from API - will attempt to get token, url -> " + locRequest.url().toString());
+            byte[] tokenBytes = BRKeyStore.getToken(ctx);
+            String token = tokenBytes == null ? "" : new String(tokenBytes);
+            //Double check if we have the token
+            if (Utils.isNullOrEmpty(token))
+                getToken();
+
             if (retryCount < 1) {
                 response.close();
                 sendRequest(request, true, retryCount + 1);
@@ -406,7 +413,8 @@ public class APIClient {
         return response.newBuilder().body(postReqBody).build();
     }
 
-    private Request authenticateRequest(Request request) {
+    public Request authenticateRequest(Request request) {
+        Log.d(TAG, "authenticateRequest, url -> " + request.url().toString());
         Request.Builder modifiedRequest = request.newBuilder();
         String base58Body = "";
         RequestBody body = request.body();
@@ -435,11 +443,12 @@ public class APIClient {
         String requestString = createRequest(request.method(), base58Body, request.header("Content-Type"),
                 request.header("Date"), request.url().encodedPath()
                         + ((queryString != null && !queryString.isEmpty()) ? ("?" + queryString) : ""));
+        Log.d(TAG, "Request string -> " + requestString);
         String signedRequest = signRequest(requestString);
         if (signedRequest == null) return null;
-        byte[] tokenBytes = new byte[0];
-        tokenBytes = BRKeyStore.getToken(ctx);
+        byte[] tokenBytes = BRKeyStore.getToken(ctx);
         String token = tokenBytes == null ? "" : new String(tokenBytes);
+        Log.d(TAG, "Token from KeyStore -> " + token);
         if (token.isEmpty()) token = getToken();
         if (token == null || token.isEmpty()) {
             Log.e(TAG, "sendRequest: failed to retrieve token");
