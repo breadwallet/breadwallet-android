@@ -7,11 +7,13 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.core.BRCoreMasterPubKey;
+import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.ethereum.BREthereumAccount;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.core.ethereum.BREthereumNetwork;
 import com.breadwallet.core.ethereum.BREthereumToken;
+import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
@@ -132,51 +134,6 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     }
 
-    /*public void testGetBalance() {
-        String walletAddress = mWallet.getAccount().getPrimaryAddress();
-        Log.d(TAG, "ETH wallet address -> " + walletAddress);
-        int id = 1;
-        final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
-        Log.d(TAG, "Making rpc request to " + eth_url);
-        final JSONObject payload = new JSONObject();
-        final JSONArray params = new JSONArray();
-
-        try {
-            String currentTime = String.valueOf(System.currentTimeMillis());
-            payload.put("jsonrpc", "2.0");
-            payload.put("method", "eth_getBalance");
-            params.put(walletAddress);
-            params.put("latest");
-            payload.put("params", params);
-            payload.put("id", id);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        final JsonRpcRequest request = new JsonRpcRequest();
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                request.makeRpcRequest(mContext, eth_url, payload, null);
-                String balance = "";
-                try {
-                    String responseString = request.getResponseString();
-                    if (responseString != null) {
-
-                        JSONObject responseObject = new JSONObject(responseString);
-                        Log.d(TAG, "getBalance response -> " + responseObject.toString());
-
-
-                        if (responseObject.has("result")) {
-                            balance = responseObject.getString("result");
-                        }
-                    }
-                } catch (JSONException je) {
-                    je.printStackTrace();
-                }
-            }
-        });
-    }*/
 
     public synchronized static WalletEthManager getInstance(Context app) {
         if (instance == null) {
@@ -329,7 +286,21 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     @Override
     public List<TxUiHolder> getTxUiHolders() {
 
-        return null;
+        BREthereumTransaction txs[] = mWallet.getTransactions();
+        if (txs == null || txs.length <= 0) return null;
+        List<TxUiHolder> uiTxs = new ArrayList<>();
+        for (int i = txs.length - 1; i >= 0; i--) { //revere order
+            BREthereumTransaction tx = txs[i];
+           /* uiTxs.add(new TxUiHolder(tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
+                    tx.getReverseHash(), getWallet().getTransactionAmountSent(tx),
+                    getWallet().getTransactionAmountReceived(tx), getWallet().getTransactionFee(tx),
+                    tx.getOutputAddresses(), tx.getInputAddresses(),
+                    getWallet().getBalanceAfterTransaction(tx), (int) tx.getSize(),
+                    getWallet().getTransactionAmount(tx), getWallet().transactionIsValid(tx)));*/
+
+
+        }
+            return null;
     }
 
     @Override
@@ -592,6 +563,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         try {
             payload.put("method", "eth_gasPrice");
             payload.put("params", params);
+            payload.put("id", id);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -630,7 +602,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public String getGasEstimate(int id, String to, final String amount, String data) {
+    public String getGasEstimate(final int id, String to, final String amount, String data) {
 
         final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
         Log.d(TAG, "Making rpc request to -> " + eth_url);
@@ -653,6 +625,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                 try {
                     payload.put("method", "eth_estimateGas");
                     payload.put("params", params);
+                    payload.put("id", id);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
