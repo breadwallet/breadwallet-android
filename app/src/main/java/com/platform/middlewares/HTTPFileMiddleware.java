@@ -52,7 +52,7 @@ import okhttp3.Response;
  */
 public class HTTPFileMiddleware implements Middleware {
     public static final String TAG = HTTPFileMiddleware.class.getName();
-    private final static String DEBUG_URL = null; //modify for testing
+    private static String DEBUG_URL = null; //modify for testing, "http://bw-platform-tests.s3-website.us-east-2.amazonaws.com" - for tests
 
     @Override
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
@@ -60,11 +60,15 @@ public class HTTPFileMiddleware implements Middleware {
         if (target.equals("/favicon.ico")) {
             return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
         }
+
         Context app = BreadApp.getBreadContext();
         if (app == null) {
             Log.e(TAG, "handle: app is null!");
             return true;
         }
+//        if (Utils.isEmulatorOrDebug(app))
+//            DEBUG_URL = "http://bw-platform-tests.s3-website.us-east-2.amazonaws.com";
+
         File temp = null;
         byte[] body = null;
         if (DEBUG_URL == null) {
@@ -127,7 +131,7 @@ public class HTTPFileMiddleware implements Middleware {
             // Range header should match format "bytes=n-n,n-n,n-n...". If not, then return 416.
             return handlePartialRequest(baseRequest, response, temp);
         } else {
-            if(body == null) {
+            if (body == null) {
                 return BRHTTPHelper.handleError(404, "not found", baseRequest, response);
             } else {
                 return BRHTTPHelper.handleSuccess(200, body, baseRequest, response, null);
