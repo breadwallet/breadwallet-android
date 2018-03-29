@@ -453,7 +453,22 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         if (isCryptoPreferred) {
             Log.d(TAG, "Showing Crypto on right");
 
-            mSwap.animate().x(mBalanceSecondary.getLeft()).setDuration(200).start();
+            mBalanceSecondary.setTextSize(t1Size);
+            mBalanceSecondary.setTextColor(getResources().getColor(R.color.white, null));
+            mBalanceSecondary.setTypeface(FontManager.get(this, "CircularPro-Bold.otf"));
+
+            mBalancePrimary.setTextSize(t2Size);
+            mBalancePrimary.setTextColor(getResources().getColor(R.color.currency_subheading_color, null));
+            mBalancePrimary.setTypeface(FontManager.get(this, "CircularPro-Book.otf"));
+
+
+
+
+            mBalanceSecondary.animate().x(mBalanceLabel.getRight() - mBalanceSecondary.getWidth()).setDuration(200).start();
+            mBalancePrimary.animate().x(mBalanceSecondary.getRight() - mBalancePrimary.getWidth()).setDuration(200).start();
+            mSwap.animate().x(mBalancePrimary.getLeft() - mSwap.getWidth()).setDuration(200).start();
+
+
 
             /*TranslateAnimation cryptoAnimation = new TranslateAnimation(0, (toXDelta - gap), 0, 0);
             cryptoAnimation.setFillAfter(true);
