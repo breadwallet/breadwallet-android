@@ -1,6 +1,7 @@
 package com.breadwallet.wallet.wallets.etherium;
 
 import android.content.Context;
+import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -99,7 +100,14 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         uiConfig = new WalletUiConfiguration("#5e70a3", true, true, false);
 
 
-        String testPaperKey = "video tiger report bid suspect taxi mail argue naive layer metal surface";
+        //String testPaperKey = "video tiger report bid suspect taxi mail argue naive layer metal surface";
+        String testPaperKey = null;
+        try {
+            testPaperKey = new String(BRKeyStore.getPhrase(app, 0));
+            Log.e(TAG, "WalletEthManager: testPaperKey: " + testPaperKey);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
         //todo change the hardcoded priv key to master pub key when done
         mNode = new BREthereumLightNode.JSON_RPC(this, network, testPaperKey);
         BREthereumAccount account = mNode.getAccount();
@@ -124,8 +132,9 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     }
 
-    public void testGetBalance() {
-        String account = "0xbdfdad139440d2db9ba2aa3b7081c2de39291508";
+    /*public void testGetBalance() {
+        String walletAddress = mWallet.getAccount().getPrimaryAddress();
+        Log.d(TAG, "ETH wallet address -> " + walletAddress);
         int id = 1;
         final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
         Log.d(TAG, "Making rpc request to " + eth_url);
@@ -136,7 +145,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
             String currentTime = String.valueOf(System.currentTimeMillis());
             payload.put("jsonrpc", "2.0");
             payload.put("method", "eth_getBalance");
-            params.put("0x407d73d8a49eeb85d32cf465507dd71d507100c1");
+            params.put(walletAddress);
             params.put("latest");
             payload.put("params", params);
             payload.put("id", id);
@@ -167,7 +176,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                 }
             }
         });
-    }
+    }*/
 
     public synchronized static WalletEthManager getInstance(Context app) {
         if (instance == null) {
