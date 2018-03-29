@@ -136,7 +136,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
             String currentTime = String.valueOf(System.currentTimeMillis());
             payload.put("jsonrpc", "2.0");
             payload.put("method", "eth_getBalance");
-            params.put(account);
+            params.put("0x407d73d8a49eeb85d32cf465507dd71d507100c1");
             params.put("latest");
             payload.put("params", params);
             payload.put("id", id);
@@ -575,7 +575,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     @Override
     public String getGasPrice(int id) {
 
-        final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.ETH_ENDPOINT_GAS_PRICE;
+        final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
         Log.d(TAG, "Making rpc request to -> " + eth_url);
         final JSONObject payload = new JSONObject();
         final JSONArray params = new JSONArray();
