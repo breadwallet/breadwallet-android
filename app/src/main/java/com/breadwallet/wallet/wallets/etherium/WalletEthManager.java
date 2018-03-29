@@ -468,27 +468,29 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public String getBalance(int id, String account) {
-        return null;
+    public void getBalance(int wid, String address, int rid) {
+
     }
 
     @Override
-    public String getGasPrice(int id) {
-        return null;
+    public void getGasPrice(int wid, int rid) {
+
     }
 
     @Override
-    public String getGasEstimate(int id, String to, String amount, String data) {
-        return null;
+    public void getGasEstimate(int wid, int tid, String to, String amount, String data, int rid) {
+
     }
 
     @Override
-    public String submitTransaction(int id, String rawTransaction) {
-        return null;
+    public void submitTransaction(int wid, int tid, String rawTransaction, int rid) {
+
     }
 
     @Override
-    public void getTransactions(int id, String account) {
+    public void getTransactions(String address, int rid) {
 
     }
+
+
 }
