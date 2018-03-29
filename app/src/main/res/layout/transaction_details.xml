@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
                                     xmlns:app="http://schemas.android.com/apk/res-auto"
+                                    xmlns:tools="http://schemas.android.com/tools"
                                     android:id="@+id/tx_details_card"
                                     android:layout_width="match_parent"
                                     android:layout_height="wrap_content"
@@ -142,7 +143,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_below="@id/divider2"
-            android:layout_marginLeft="14dp"
+            android:layout_marginStart="16dp"
             android:layout_marginTop="14dp"
             android:text="To"
             android:textColor="@color/settings_chevron_right"
@@ -178,7 +179,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/divider3"
-            android:layout_marginLeft="14dp"
+            android:layout_marginStart="14dp"
             android:layout_marginTop="14dp"
             android:text="Memo"
 
@@ -191,10 +192,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_below="@id/divider3"
-            android:paddingEnd="16dp"
-            android:gravity="end"
             android:layout_marginTop="14dp"
             android:layout_toEndOf="@id/memo_label"
+            android:gravity="end"
+            android:paddingEnd="16dp"
             android:text="Sample transaction memo would go here. Some things are truly better left unsaid"
             android:textSize="12sp"
             app:customTFont="CircularPro-Book.otf"/>
@@ -209,133 +210,237 @@
             android:background="@color/light_gray"/>
 
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/details_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/memo"
             android:layout_marginTop="14dp"
+            android:orientation="vertical"
             android:visibility="gone">
 
 
-            <com.breadwallet.presenter.customviews.BRText
-                android:id="@+id/tx_starting_balance_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="14dp"
-                android:layout_marginTop="14dp"
-                android:text="Starting Balance"
-                android:textColor="@color/settings_chevron_right"
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/gas_price_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                app:customTFont="CircularPro-Book.otf"/>
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/gas_price_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="14dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="14dp"
+                    android:text="Gas Price"
+                    android:textColor="@color/settings_chevron_right"
+                    app:customTFont="CircularPro-Book.otf"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
-            <com.breadwallet.presenter.customviews.BRText
-                android:id="@+id/tx_starting_balance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_marginRight="14dp"
-                android:layout_marginTop="14dp"
-                android:text=""
-                app:customTFont="CircularPro-Book.otf"/>
-
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/gas_price"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginEnd="16dp"
+                    android:text=""
+                    app:customTFont="CircularPro-Book.otf"
+                    app:layout_constraintBottom_toBottomOf="@+id/gas_price_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/gas_price_label"/>
+            </android.support.constraint.ConstraintLayout>
 
             <View
-                android:id="@+id/divider4"
+                android:id="@+id/gas_price_divider"
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:layout_below="@id/tx_starting_balance_label"
-                android:layout_marginTop="14dp"
+                android:layout_below="@id/exchange_rate"
                 android:background="@color/light_gray"/>
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:id="@+id/gas_limit_container"
+                android:layout_height="wrap_content">
 
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/gas_limit_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="14dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="14dp"
+                    android:text="Fee.."
+                    android:textColor="@color/settings_chevron_right"
+                    app:customTFont="CircularPro-Book.otf"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
-            <com.breadwallet.presenter.customviews.BRText
-                android:id="@+id/tx_ending_balance_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/divider4"
-                android:layout_marginLeft="14dp"
-                android:layout_marginTop="14dp"
-                android:text="Ending Balance"
-                android:textColor="@color/settings_chevron_right"
-
-                app:customTFont="CircularPro-Book.otf"/>
-
-            <com.breadwallet.presenter.customviews.BRText
-                android:id="@+id/tx_ending_balance"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_below="@id/divider4"
-                android:layout_marginRight="14dp"
-                android:layout_marginTop="14dp"
-                android:text=""
-                app:customTFont="CircularPro-Book.otf"/>
-
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/gas_limit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginEnd="16dp"
+                    android:text=""
+                    app:customTFont="CircularPro-Book.otf"
+                    app:layout_constraintBottom_toBottomOf="@+id/gas_limit_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/gas_limit_label"/>
+            </android.support.constraint.ConstraintLayout>
 
             <View
-                android:id="@+id/divider5"
+                android:id="@+id/gas_limit_divider"
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:layout_below="@id/tx_ending_balance"
-                android:layout_marginTop="14dp"
+                android:layout_below="@id/exchange_rate"
+                android:background="@color/light_gray"/>
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:id="@+id/fee_primary_container"
+                android:layout_height="wrap_content">
+
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/fee_primary_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="14dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="14dp"
+                    android:text="Fee.."
+                    android:textColor="@color/settings_chevron_right"
+                    app:customTFont="CircularPro-Book.otf"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/fee_primary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginEnd="16dp"
+                    android:text=""
+                    app:customTFont="CircularPro-Book.otf"
+                    app:layout_constraintBottom_toBottomOf="@+id/fee_primary_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/fee_primary_label"/>
+            </android.support.constraint.ConstraintLayout>
+
+            <View
+                android:id="@+id/fee_primary_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:layout_below="@id/exchange_rate"
                 android:background="@color/light_gray"/>
 
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:id="@+id/fee_secondary_container"
+                android:layout_height="wrap_content">
 
-            <com.breadwallet.presenter.customviews.BRText
-                android:id="@+id/exchange_rate_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/divider5"
-                android:layout_marginLeft="14dp"
-                android:layout_marginTop="14dp"
-                android:text="Exchange Rate at Time"
-                android:textColor="@color/settings_chevron_right"
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/fee_secondary_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="14dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="14dp"
+                    android:text="Exchange Rate at Time"
+                    android:textColor="@color/settings_chevron_right"
+                    app:customTFont="CircularPro-Book.otf"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
-                app:customTFont="CircularPro-Book.otf"/>
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/fee_secondary"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginEnd="16dp"
+                    android:text=""
+                    app:customTFont="CircularPro-Book.otf"
+                    app:layout_constraintBottom_toBottomOf="@+id/fee_secondary_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/fee_secondary_label"/>
+            </android.support.constraint.ConstraintLayout>
 
-            <com.breadwallet.presenter.customviews.BRText
-                android:id="@+id/exchange_rate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_below="@id/divider5"
-                android:layout_marginRight="14dp"
-                android:layout_marginTop="14dp"
-                android:text=""
-                app:customTFont="CircularPro-Book.otf"/>
+            <View
+                android:id="@+id/fee_secondary_divider"
+                android:layout_width="match_parent"
+                android:layout_height="1px"
+                android:background="@color/light_gray"/>
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/exchange_rate_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="14dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="14dp"
+                    android:text="Exchange Rate at Time"
+                    android:textColor="@color/settings_chevron_right"
+                    app:customTFont="CircularPro-Book.otf"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
+
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/exchange_rate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginEnd="16dp"
+                    android:text=""
+                    app:customTFont="CircularPro-Book.otf"
+                    app:layout_constraintBottom_toBottomOf="@+id/exchange_rate_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/exchange_rate_label"/>
+            </android.support.constraint.ConstraintLayout>
 
             <View
                 android:id="@+id/divider6"
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:layout_below="@id/exchange_rate"
-                android:layout_marginTop="14dp"
                 android:background="@color/light_gray"/>
 
-            <com.breadwallet.presenter.customviews.BRText
-                android:id="@+id/confirmed_in_block_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/divider6"
-                android:layout_marginLeft="14dp"
-                android:layout_marginTop="14dp"
-                android:text="Confirmed in Block"
-                android:textColor="@color/settings_chevron_right"
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-                app:customTFont="CircularPro-Book.otf"/>
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/confirmed_in_block_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="14dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="14dp"
+                    android:text="Confirmed in Block"
+                    android:textColor="@color/settings_chevron_right"
+                    app:customTFont="CircularPro-Book.otf"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/confirmed_in_block_number"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentRight="true"
+                    android:layout_marginEnd="16dp"
+                    android:text="549293"
+                    app:customTFont="CircularPro-Book.otf"
+                    app:layout_constraintBottom_toBottomOf="@+id/confirmed_in_block_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/confirmed_in_block_label"/>
 
-            <com.breadwallet.presenter.customviews.BRText
-                android:id="@+id/confirmed_in_block_number"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentRight="true"
-                android:layout_below="@id/divider6"
-                android:layout_marginRight="14dp"
-                android:layout_marginTop="14dp"
-                android:text="549293"
-                app:customTFont="CircularPro-Book.otf"/>
+            </android.support.constraint.ConstraintLayout>
 
 
             <View
@@ -343,46 +448,52 @@
                 android:layout_width="match_parent"
                 android:layout_height="1px"
                 android:layout_below="@id/confirmed_in_block_label"
-                android:layout_marginTop="14dp"
                 android:background="@color/light_gray"/>
 
-            <com.breadwallet.presenter.customviews.BRText
-                android:id="@+id/transaction_id_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/divider7"
-                android:layout_marginLeft="14dp"
-                android:layout_marginTop="14dp"
-                android:text="Transaction ID"
-                android:textColor="@color/settings_chevron_right"
-                app:customTFont="CircularPro-Book.otf"/>
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-            <com.breadwallet.presenter.customviews.BRText
-                android:id="@+id/transaction_id"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_below="@id/divider7"
-                android:layout_marginTop="14dp"
-                android:layout_toEndOf="@id/transaction_id_label"
-                android:ellipsize="middle"
-                android:paddingEnd="16dp"
-                android:paddingStart="16dp"
-                android:singleLine="true"
-                android:textSize="12sp"
-                app:customTFont="CircularPro-Book.otf"/>
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/transaction_id_label"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="14dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="14dp"
+                    android:text="Transaction ID"
+                    android:textColor="@color/settings_chevron_right"
+                    app:customTFont="CircularPro-Book.otf"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"/>
 
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/transaction_id"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="8dp"
+                    android:ellipsize="middle"
+                    android:singleLine="true"
+                    android:textSize="12sp"
+                    app:customTFont="CircularPro-Book.otf"
+                    app:layout_constraintBottom_toBottomOf="@+id/transaction_id_label"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="1.0"
+                    app:layout_constraintStart_toEndOf="@+id/transaction_id_label"
+                    app:layout_constraintTop_toTopOf="@+id/transaction_id_label"/>
+            </android.support.constraint.ConstraintLayout>
 
             <View
                 android:id="@+id/divider8"
                 android:layout_width="match_parent"
                 android:layout_height="1px"
-                android:layout_below="@id/transaction_id"
-                android:layout_marginTop="14dp"
                 android:background="@color/light_gray"/>
 
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <com.breadwallet.presenter.customviews.BRText
             android:id="@+id/show_hide_details"
@@ -390,13 +501,11 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/details_container"
             android:layout_centerHorizontal="true"
-            android:layout_marginBottom="20dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="16dp"
             android:text="Show Details"
             android:textColor="@color/blue"/>
 
-
     </RelativeLayout>
-
 
 </android.support.v7.widget.CardView>

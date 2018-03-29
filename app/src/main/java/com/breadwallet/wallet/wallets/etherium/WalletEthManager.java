@@ -7,6 +7,7 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.core.BRCoreMasterPubKey;
+import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.core.ethereum.BREthereumNetwork;
@@ -94,13 +95,11 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         String testPaperKey = null;
         try {
             testPaperKey = new String(BRKeyStore.getPhrase(app, 0));
-            Log.e(TAG, "WalletEthManager: testPaperKey: " + testPaperKey);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
 
         //todo change the hardcoded priv key to master pub key when done
-
 
         BREthereumLightNode node = new BREthereumLightNode.JSON_RPC(this, network, testPaperKey);
 
@@ -314,7 +313,20 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public List<TxUiHolder> getTxUiHolders() {
-        return null;
+        BREthereumTransaction txs[] = mWallet.getTransactions();
+        if (txs == null || txs.length <= 0) return null;
+        List<TxUiHolder> uiTxs = new ArrayList<>();
+        for (int i = txs.length - 1; i >= 0; i--) { //revere order
+            BREthereumTransaction tx = txs[i];
+            uiTxs.add(new TxUiHolder(tx, tx.getBlockTimestamp(), (int) tx.getBlockNumber(), null,
+                    null, null,
+                    null, new BigDecimal(tx.getGasUsed()).multiply(new BigDecimal(tx.getGasPrice(BREthereumAmount.Unit.ETHER_WEI))),
+                    new BigDecimal(tx.getGasPrice(BREthereumAmount.Unit.ETHER_WEI)), new BigDecimal(tx.getGasLimit()),
+                    tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
+                    new BigDecimal(tx.getAmount()), true));
+        }
+
+        return uiTxs;
     }
 
     @Override
@@ -393,7 +405,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public int getMaxDecimalPlaces(Context app) {
-        return 18;
+        return 8;
     }
 
     @Override
@@ -558,27 +570,27 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public String getBalance(int id, String account) {
-        return "0x123f";
+    public void getBalance(int wid, String address, int rid) {
+
     }
 
     @Override
-    public String getGasPrice(int id) {
-        return "0xffc0";
+    public void getGasPrice(int wid, int rid) {
+
     }
 
     @Override
-    public String getGasEstimate(int id, String to, String amount, String data) {
-        return "0x77";
+    public void getGasEstimate(int wid, int tid, String to, String amount, String data, int rid) {
+
     }
 
     @Override
-    public String submitTransaction(int id, String rawTransaction) {
-        return "0x123abc456def";
+    public void submitTransaction(int wid, int tid, String rawTransaction, int rid) {
+
     }
 
     @Override
-    public void getTransactions(int id, String account) {
+    public void getTransactions(String address, int rid) {
 
     }
 }

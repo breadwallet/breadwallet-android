@@ -8,6 +8,7 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCorePaymentProtocolRequest;
+import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreTransactionOutput;
 import com.breadwallet.core.BRCoreWallet;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -278,12 +279,13 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         }
         final BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
         BRCoreWallet coreWallet = wm.getIso(app).equalsIgnoreCase("BTC") ? ((WalletBitcoinManager) wm).getWallet() : ((WalletBchManager) wm).getWallet();
-        final BTCTransaction tx = (BTCTransaction) coreWallet.createTransactionForOutputs(paymentProtocolRequest.getOutputs());
-        if (tx == null) {
+        final BRCoreTransaction trans = coreWallet.createTransactionForOutputs(paymentProtocolRequest.getOutputs());
+        if (trans == null) {
             BRDialog.showSimpleDialog(app, "Insufficient funds", "");
             paymentProtocolRequest = null;
             return;
         }
+        final BTCTransaction tx = new BTCTransaction(trans);
         final BigDecimal amount = wm.getTransactionAmount(tx).abs();
         final BigDecimal fee = wm.getTxFee(tx);
 

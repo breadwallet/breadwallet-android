@@ -168,7 +168,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             }
         }
 
-        boolean received = item.getSent() == 0;
+        boolean received;
+        if (item.getSent() != null)
+            received = item.getSent().compareTo(new BigDecimal(0)) == 0;
+        else
+            received = !Utils.isNullOrEmpty(item.getTo());
 
         if (received)
             convertView.transactionAmount.setTextColor(mContext.getResources().getColor(R.color.transaction_amount_received_color, null));
@@ -179,7 +183,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         if (!item.isValid())
             showTransactionFailed(convertView, item, received);
 
-        BigDecimal cryptoAmount = new BigDecimal(item.getAmount());
+        BigDecimal cryptoAmount = item.getAmount();
         Log.e(TAG, "setTexts: crypto:" + cryptoAmount);
         boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
         String preferredIso = isCryptoPreferred ? wallet.getIso(mContext) : BRSharedPrefs.getPreferredFiatIso(mContext);
@@ -189,7 +193,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, preferredIso, amount));
 
-        int blockHeight = item.getBlockHeight();
+        int blockHeight = (int) item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext, wallet.getIso(mContext)) - blockHeight + 1;
 
         int level = 0;
@@ -240,9 +244,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         Log.d(TAG, "Level -> " + level);
 
         if (level > 4) {
-            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? "sent to " : "received via ") + wallet.decorateAddress(mContext, item.getTo()[0]));
+            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? "sent to " : "received via ") + wallet.decorateAddress(mContext, item.getTo()));
         } else {
-            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? "sending to " : "receiving via ") + wallet.decorateAddress(mContext, item.getTo()[0]));
+            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? "sending to " : "receiving via ") + wallet.decorateAddress(mContext, item.getTo()));
 
         }
 
@@ -291,7 +295,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         holder.transactionDetail.setLayoutParams(params);
 
         if (!received) {
-            holder.transactionDetail.setText("sending to " + tx.getTo()[0]);
+            holder.transactionDetail.setText("sending to " + tx.getTo());
         }
     }
 
@@ -317,7 +321,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         for (int i = 0; i < backUpFeed.size(); i++) {
             item = backUpFeed.get(i);
             boolean matchesHash = item.getTxHashHexReversed() != null && item.getTxHashHexReversed().contains(lowerQuery);
-            boolean matchesAddress = item.getFrom()[0].contains(lowerQuery) || item.getTo()[0].contains(lowerQuery);
+            boolean matchesAddress = item.getFrom().contains(lowerQuery) || item.getTo().contains(lowerQuery);
             boolean matchesMemo = item.metaData != null && item.metaData.comment != null && item.metaData.comment.toLowerCase().contains(lowerQuery);
             if (matchesHash || matchesAddress || matchesMemo) {
                 if (switchesON == 0) {
@@ -325,16 +329,16 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 } else {
                     boolean willAdd = true;
                     //filter by sent and this is received
-                    if (switches[0] && (item.getAmount() <= 0)) {
+                    if (switches[0] && (item.getAmount().compareTo(new BigDecimal(0)) <= 0)) {
                         willAdd = false;
                     }
                     //filter by received and this is sent
-                    if (switches[1] && (item.getAmount() > 0)) {
+                    if (switches[1] && (item.getAmount().compareTo(new BigDecimal(0)) > 0)) {
                         willAdd = false;
                     }
                     BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
 
-                    int confirms = item.getBlockHeight() ==
+                    int confirms = (int) item.getBlockHeight() ==
                             Integer.MAX_VALUE ? 0
                             : BRSharedPrefs.getLastBlockHeight(mContext, wallet.getIso(mContext)) - item.getBlockHeight() + 1;
                     //complete
