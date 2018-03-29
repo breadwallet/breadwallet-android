@@ -461,11 +461,14 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             mBalancePrimary.setTextColor(getResources().getColor(R.color.currency_subheading_color, null));
             mBalancePrimary.setTypeface(FontManager.get(this, "CircularPro-Book.otf"));
 
+            int cryptoPos = mBalanceLabel.getRight() - mBalancePrimary.getWidth();
 
+            if (isBCHWallet) {
+                cryptoPos = cryptoPos - 40;
+            }
 
-
-            mBalanceSecondary.animate().x(mBalanceLabel.getRight() - mBalanceSecondary.getWidth()).setDuration(200).start();
-            mBalancePrimary.animate().x(mBalanceSecondary.getRight() - mBalancePrimary.getWidth()).setDuration(200).start();
+            mBalanceSecondary.animate().x(cryptoPos).setDuration(200).start();
+            mBalancePrimary.animate().x(mSwap.getLeft() - mBalanceSecondary.getWidth() - mSwap.getWidth()).y(mBalanceSecondary.getBottom() + 40).setDuration(200).start();
             mSwap.animate().x(mBalancePrimary.getLeft() - mSwap.getWidth()).setDuration(200).start();
 
 
