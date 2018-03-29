@@ -77,6 +77,9 @@ public class FragmentTxDetails extends DialogFragment {
     private BRText mAmountWhenSent;
     private BRText mAmountNow;
 
+    private ConstraintLayout mConfirmedContainer;
+    private View mConfirmedDivider;
+
 
     private ImageButton mCloseButton;
     private LinearLayout mDetailsContainer;
@@ -117,6 +120,9 @@ public class FragmentTxDetails extends DialogFragment {
         mShowHide = rootView.findViewById(R.id.show_hide_details);
         mDetailsContainer = rootView.findViewById(R.id.details_container);
         mCloseButton = rootView.findViewById(R.id.close_button);
+
+        mConfirmedContainer = rootView.findViewById(R.id.confirmed_container);
+        mConfirmedDivider = rootView.findViewById(R.id.confirmed_divider);
 
         mFeePrimaryLabel = rootView.findViewById(R.id.fee_primary_label);
         mFeePrimary = rootView.findViewById(R.id.fee_primary);
@@ -213,6 +219,9 @@ public class FragmentTxDetails extends DialogFragment {
                 mFeePrimaryLabel.setText("Fee");
                 mFeeSecondaryLabel.setText("Total");
             }
+
+            if(mTransaction.getBlockHeight() == Integer.MAX_VALUE)
+                hideConfirmedView();
 
             if (!mTransaction.isValid()) {
                 mTxStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
@@ -355,6 +364,10 @@ public class FragmentTxDetails extends DialogFragment {
         mDetailsContainer.removeView(mGasLimitContainer);
         mDetailsContainer.removeView(mGasPriceDivider);
         mDetailsContainer.removeView(mGasLimitDivider);
+    }
+    private void hideConfirmedView() {
+        mDetailsContainer.removeView(mConfirmedContainer);
+        mDetailsContainer.removeView(mConfirmedDivider);
     }
 
     @Override
