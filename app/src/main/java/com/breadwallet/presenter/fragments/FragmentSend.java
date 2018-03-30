@@ -304,7 +304,7 @@ public class FragmentSend extends Fragment {
                     theUrl = wm.decorateAddress(getActivity(), theUrl);
                 }
 
-                CryptoRequest obj = parseRequest(getActivity(), theUrl);
+                final CryptoRequest obj = parseRequest(getActivity(), theUrl);
 
                 if (obj == null || Utils.isNullOrEmpty(obj.address)) {
                     sayInvalidClipboardData();
@@ -316,9 +316,8 @@ public class FragmentSend extends Fragment {
                     return;
                 }
 
-                final BaseAddress address = wm.createAddress(obj.address);
 
-                if (address.isValid()) {
+                if (wm.isAddressValid(obj.address)) {
                     final Activity app = getActivity();
                     if (app == null) {
                         Log.e(TAG, "paste onClick: app is null");
@@ -327,7 +326,7 @@ public class FragmentSend extends Fragment {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            if (wm.containsAddress(address.stringify())) {
+                            if (wm.containsAddress(obj.address)) {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -341,7 +340,7 @@ public class FragmentSend extends Fragment {
                                     }
                                 });
 
-                            } else if (wm.addressIsUsed(address.stringify())) {
+                            } else if (wm.addressIsUsed(obj.address)) {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -357,7 +356,7 @@ public class FragmentSend extends Fragment {
                                             @Override
                                             public void onClick(BRDialogView brDialogView) {
                                                 brDialogView.dismiss();
-                                                addressEdit.setText(wm.decorateAddress(getActivity(), address.stringify()));
+                                                addressEdit.setText(wm.decorateAddress(getActivity(), obj.address));
                                             }
                                         }, new BRDialogView.BROnClickListener() {
                                             @Override
@@ -373,7 +372,7 @@ public class FragmentSend extends Fragment {
                                     @Override
                                     public void run() {
                                         Log.e(TAG, "run: " + wm.getIso(getActivity()));
-                                        addressEdit.setText(wm.decorateAddress(getActivity(), address.stringify()));
+                                        addressEdit.setText(wm.decorateAddress(getActivity(), obj.address));
 
                                     }
                                 });
@@ -440,9 +439,8 @@ public class FragmentSend extends Fragment {
                     sayInvalidClipboardData();
                     return;
                 }
-                BRCoreAddress address = new BRCoreAddress(req.address);
                 Activity app = getActivity();
-                if (!address.isValid()) {
+                if (!wallet.isAddressValid(req.address)) {
                     allFilled = false;
 
                     BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_noAddress), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
@@ -463,7 +461,7 @@ public class FragmentSend extends Fragment {
                     SpringAnimator.failShakeAnimation(getActivity(), feeText);
                 }
 //                Log.e(TAG, "before createTransaction: smallestCryptoAmount.longValue: " + cryptoAmount.longValue() + ", addrs: " + address.stringify());
-                BaseTransaction tx = wallet.createTransaction(cryptoAmount, address.stringify());
+                BaseTransaction tx = wallet.createTransaction(cryptoAmount, req.address);
 //                if (tx == null) {
 //                    BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_creatTransactionError), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
 //                        @Override
@@ -733,20 +731,16 @@ public class FragmentSend extends Fragment {
             fee = new BigDecimal(0);
         } else {
             String addrString = addressEdit.getText().toString();
-            BRCoreAddress coreAddress = null;
-            if (!Utils.isNullOrEmpty(addrString)) {
-                coreAddress = new BRCoreAddress(addrString);
-            }
             BaseTransaction tx = null;
-            if (coreAddress != null && coreAddress.isValid()) {
-                tx = wallet.createTransaction(cryptoAmount, coreAddress.stringify());
+            if (wallet.isAddressValid(addrString)) {
+                tx = wallet.createTransaction(cryptoAmount, addrString);
             }
 
             if (tx == null) {
                 fee = wallet.getFeeForTxAmount(cryptoAmount);
             } else {
                 fee = wallet.getTxFee(tx);
-                if (fee.compareTo(new BigDecimal(0)) <= 0)
+                if (fee == null || fee.compareTo(new BigDecimal(0)) <= 0)
                     fee = wallet.getFeeForTxAmount(cryptoAmount);
             }
         }

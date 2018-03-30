@@ -326,7 +326,7 @@ public class SendManager {
         }
 
         //amount can't be less than the min
-        if (walletManager.getTransactionAmount(request.tx).abs().compareTo(minOutput) <= 0) {
+        if (minOutput != null && walletManager.getTransactionAmount(request.tx).abs().compareTo(minOutput) <= 0) {
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.PaymentProtocol_Errors_smallTransaction),
                     CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), minOutput));
 
@@ -401,10 +401,10 @@ public class SendManager {
         BigDecimal feeForTx = walletManager.getTxFee(request.tx);
         if (feeForTx.compareTo(new BigDecimal(0)) <= 0) {
             BigDecimal maxAmount = walletManager.getMaxOutputAmount();
-            if (maxAmount.compareTo(new BigDecimal(-1)) == 0) {
+            if (maxAmount != null && maxAmount.compareTo(new BigDecimal(-1)) == 0) {
                 BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
             }
-            if (maxAmount.compareTo(new BigDecimal(0)) == 0) {
+            if (maxAmount != null && maxAmount.compareTo(new BigDecimal(0)) == 0) {
                 BRDialog.showCustomDialog(ctx, "", ctx.getString(R.string.Alerts_sendFailure), ctx.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
@@ -414,9 +414,11 @@ public class SendManager {
 
                 return null;
             }
-            request.tx = walletManager.createTransaction(maxAmount, wallet.getTxAddress(request.tx).stringify());
-            feeForTx = walletManager.getTxFee(request.tx);
-            feeForTx = feeForTx.add(walletManager.getCachedBalance(ctx).subtract(walletManager.getTransactionAmount(request.tx).abs()));
+            if (maxAmount != null) {
+                request.tx = walletManager.createTransaction(maxAmount, wallet.getTxAddress(request.tx).stringify());
+                feeForTx = walletManager.getTxFee(request.tx);
+                feeForTx = feeForTx.add(walletManager.getCachedBalance(ctx).subtract(walletManager.getTransactionAmount(request.tx).abs()));
+            }
         }
         BigDecimal amount = walletManager.getTransactionAmount(request.tx).abs();
         final BigDecimal total = amount.add(feeForTx);

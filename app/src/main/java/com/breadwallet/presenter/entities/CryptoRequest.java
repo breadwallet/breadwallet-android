@@ -77,12 +77,12 @@ public class CryptoRequest {
         BigDecimal minAmount = walletManager.getMinOutputAmount();
         BigDecimal amount = walletManager.getTransactionAmount(tx).abs();
         Log.e(TAG, "isSmallerThanMin: " + amount);
-        return amount.compareTo(minAmount) == -1;
+        return minAmount != null && amount.compareTo(minAmount) < 0;
     }
 
     public boolean isLargerThanBalance(Context app, BaseWalletManager walletManager) {
-        return walletManager.getTransactionAmount(tx).abs().compareTo(walletManager.getCachedBalance(app)) == 1
-                && walletManager.getTransactionAmount(tx).abs().compareTo(new BigDecimal(0)) == 1;
+        return walletManager.getTransactionAmount(tx).abs().compareTo(walletManager.getCachedBalance(app)) > 0
+                && walletManager.getTransactionAmount(tx).abs().compareTo(new BigDecimal(0)) > 0;
     }
 
     public boolean notEnoughForFee(Context app, BaseWalletManager walletManager) {
