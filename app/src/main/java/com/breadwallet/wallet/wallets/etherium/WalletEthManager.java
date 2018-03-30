@@ -745,6 +745,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public void submitTransaction(int wid, int tid, String rawTransaction, int rid) {
+        //todo implement
         return;
     }
 
