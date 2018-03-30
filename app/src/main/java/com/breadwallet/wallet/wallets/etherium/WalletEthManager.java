@@ -592,7 +592,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public void getBalance(int wid, String address, int rid) {
+    public void getBalance(final int wid, String address, final int rid) {
         final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
         Log.d(TAG, "Making rpc request to " + eth_url);
         final JSONObject payload = new JSONObject();
@@ -614,31 +614,35 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                request.makeRpcRequest(mContext, eth_url, payload, null);
+                request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                    @Override
+                    public void onRpcRequestCompleted(String jsonResult) {
+                        String balance = "0x";
+                        try {
+                            if (jsonResult != null) {
+
+                                JSONObject responseObject = new JSONObject(jsonResult);
+                                Log.d(TAG, "getBalance response -> " + responseObject.toString());
+
+
+                                if (responseObject.has("result")) {
+                                    balance = responseObject.getString("result");
+                                    Log.e(TAG, "RPC:getBalance: " + balance);
+                                }
+                            }
+                        } catch (JSONException je) {
+                            je.printStackTrace();
+                        }
+                        node.announceBalance(wid, balance, rid);
+                    }
+                });
             }
         });
 
-        String balance = "0x";
-        try {
-            String responseString = request.getResponseString();
-            if (responseString != null) {
-
-                JSONObject responseObject = new JSONObject(responseString);
-                Log.d(TAG, "getBalance response -> " + responseObject.toString());
-
-
-                if (responseObject.has("result")) {
-                    balance = responseObject.getString("result");
-                }
-            }
-        } catch (JSONException je) {
-            je.printStackTrace();
-        }
-        node.announceBalance(wid, balance, rid);
     }
 
     @Override
-    public void getGasPrice(int wid, int rid) {
+    public void getGasPrice(final int wid, final int rid) {
 
         final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
         Log.d(TAG, "Making rpc request to -> " + eth_url);
@@ -658,53 +662,51 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                request.makeRpcRequest(mContext, eth_url, payload, null);
+                request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                    @Override
+                    public void onRpcRequestCompleted(String jsonResult) {
+                        String gasPrice = "0x";
+
+                        try {
+
+                            if (jsonResult != null) {
+
+                                JSONObject responseObject = new JSONObject(jsonResult);
+
+                                if (responseObject.has("result")) {
+                                    gasPrice = responseObject.getString("result");
+                                }
+                            }
+                        } catch (JSONException je) {
+                            je.printStackTrace();
+                        }
+
+                        Log.d(TAG, "gasPrice response -> " + jsonResult);
+                        node.announceGasPrice(wid, gasPrice, rid);
+                    }
+                });
 
             }
         });
 
-        String gasPrice = "0x";
-        String responseString = "";
-
-        try {
-            responseString = request.getResponseString();
-
-            if (responseString != null) {
-
-
-                JSONObject responseObject = new JSONObject(responseString);
-
-                if (responseObject.has("result")) {
-                    gasPrice = responseObject.getString("result");
-                }
-            }
-        } catch (JSONException je) {
-            je.printStackTrace();
-        }
-
-        Log.d(TAG, "gasPrice response -> " + responseString);
-        node.announceGasPrice(wid, gasPrice, rid);
     }
 
     @Override
-    public void getGasEstimate(int wid, int tid, String to, String amount, String data, final int rid) {
+    public void getGasEstimate(int wid, final int tid, String to, String amount, String data, final int rid) {
         final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
         Log.d(TAG, "Making rpc request to -> " + eth_url);
         final JSONObject payload = new JSONObject();
         final JSONArray params = new JSONArray();
 
-        // TODO : Remove and replace with actual to address, data, and amount from current wallet
         params.put(to);
         params.put(amount);
         params.put(data);
 
         final JsonRpcRequest request = new JsonRpcRequest();
 
-
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-
 
                 try {
                     payload.put("method", "eth_estimateGas");
@@ -715,27 +717,30 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                     e.printStackTrace();
                 }
 
-                request.makeRpcRequest(mContext, eth_url, payload, null);
+                request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                    @Override
+                    public void onRpcRequestCompleted(String jsonResult) {
+                        String gasEstimate = "0x";
+                        try {
+                            JSONObject responseObject = new JSONObject(jsonResult);
+
+                            if (responseObject.has("result")) {
+                                gasEstimate = responseObject.getString("result");
+
+                                node.announceGasEstimate(tid, gasEstimate, rid);
+                                return;
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        node.announceGasEstimate(tid, gasEstimate, rid);
+                    }
+                });
 
             }
         });
 
-        String gasEstimate = "0x";
-        try {
-            String responseString = request.getResponseString();
-            JSONObject responseObject = new JSONObject(responseString);
-
-            if (responseObject.has("result")) {
-                gasEstimate = responseObject.getString("result");
-
-                node.announceGasEstimate(tid, gasEstimate, rid);
-                return;
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        node.announceGasEstimate(tid, gasEstimate, rid);
     }
 
     @Override
