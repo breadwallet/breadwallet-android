@@ -23,7 +23,6 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseAddress;
@@ -593,8 +592,9 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public void getBalance(final int wid, String address, final int rid) {
+        Log.e(TAG, "getBalance: " + address);
         final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
-        Log.d(TAG, "Making rpc request to " + eth_url);
+//        Log.d(TAG, "Making rpc request to " + eth_url);
         final JSONObject payload = new JSONObject();
         final JSONArray params = new JSONArray();
 
@@ -611,31 +611,27 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         }
 
         final JsonRpcRequest request = new JsonRpcRequest();
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+        request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
             @Override
-            public void run() {
-                request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
-                    @Override
-                    public void onRpcRequestCompleted(String jsonResult) {
-                        String balance = "0x";
-                        try {
-                            if (jsonResult != null) {
+            public void onRpcRequestCompleted(String jsonResult) {
+                String balance = "0x";
+                try {
+                    if (!Utils.isNullOrEmpty(jsonResult)) {
 
-                                JSONObject responseObject = new JSONObject(jsonResult);
-                                Log.d(TAG, "getBalance response -> " + responseObject.toString());
+                        JSONObject responseObject = new JSONObject(jsonResult);
+                        Log.d(TAG, "getBalance response -> " + responseObject.toString());
 
-
-                                if (responseObject.has("result")) {
-                                    balance = responseObject.getString("result");
-                                    Log.e(TAG, "RPC:getBalance: " + balance);
-                                }
-                            }
-                        } catch (JSONException je) {
-                            je.printStackTrace();
+                        if (responseObject.has("result")) {
+                            balance = responseObject.getString("result");
+                            Log.e(TAG, "RPC:getBalance: " + balance);
                         }
-                        node.announceBalance(wid, balance, rid);
+                    } else {
+                        Log.e(TAG, "onRpcRequestCompleted: jsonResult is null");
                     }
-                });
+                } catch (JSONException je) {
+                    je.printStackTrace();
+                }
+                node.announceBalance(wid, balance, rid);
             }
         });
 
@@ -659,33 +655,27 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
         final JsonRpcRequest request = new JsonRpcRequest();
 
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+        request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
             @Override
-            public void run() {
-                request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
-                    @Override
-                    public void onRpcRequestCompleted(String jsonResult) {
-                        String gasPrice = "0x";
+            public void onRpcRequestCompleted(String jsonResult) {
+                String gasPrice = "0x";
 
-                        try {
+                try {
 
-                            if (jsonResult != null) {
+                    if (jsonResult != null) {
 
-                                JSONObject responseObject = new JSONObject(jsonResult);
+                        JSONObject responseObject = new JSONObject(jsonResult);
 
-                                if (responseObject.has("result")) {
-                                    gasPrice = responseObject.getString("result");
-                                }
-                            }
-                        } catch (JSONException je) {
-                            je.printStackTrace();
+                        if (responseObject.has("result")) {
+                            gasPrice = responseObject.getString("result");
                         }
-
-                        Log.d(TAG, "gasPrice response -> " + jsonResult);
-                        node.announceGasPrice(wid, gasPrice, rid);
                     }
-                });
+                } catch (JSONException je) {
+                    je.printStackTrace();
+                }
 
+                Log.d(TAG, "gasPrice response -> " + jsonResult);
+                node.announceGasPrice(wid, gasPrice, rid);
             }
         });
 
@@ -704,40 +694,34 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
         final JsonRpcRequest request = new JsonRpcRequest();
 
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+
+        try {
+            payload.put("method", "eth_estimateGas");
+            payload.put("params", params);
+            payload.put("id", rid);
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
             @Override
-            public void run() {
-
+            public void onRpcRequestCompleted(String jsonResult) {
+                String gasEstimate = "0x";
                 try {
-                    payload.put("method", "eth_estimateGas");
-                    payload.put("params", params);
-                    payload.put("id", rid);
+                    JSONObject responseObject = new JSONObject(jsonResult);
 
+                    if (responseObject.has("result")) {
+                        gasEstimate = responseObject.getString("result");
+
+                        node.announceGasEstimate(tid, gasEstimate, rid);
+                        return;
+                    }
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
-                    @Override
-                    public void onRpcRequestCompleted(String jsonResult) {
-                        String gasEstimate = "0x";
-                        try {
-                            JSONObject responseObject = new JSONObject(jsonResult);
-
-                            if (responseObject.has("result")) {
-                                gasEstimate = responseObject.getString("result");
-
-                                node.announceGasEstimate(tid, gasEstimate, rid);
-                                return;
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-
-                        node.announceGasEstimate(tid, gasEstimate, rid);
-                    }
-                });
-
+                node.announceGasEstimate(tid, gasEstimate, rid);
             }
         });
 
@@ -765,171 +749,163 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
             e.printStackTrace();
         }
 
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+
+        request.makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
             @Override
-            public void run() {
+            public void onRpcRequestCompleted(String jsonResult) {
+                Log.d(TAG, "Rpc response string 3 -> " + jsonResult);
 
 
-                request.makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
-                    @Override
-                    public void onRpcRequestCompleted(String jsonResult) {
-                        Log.d(TAG, "Rpc response string 3 -> " + jsonResult);
+                final String jsonRcpResponse = jsonResult;
+
+                if (jsonRcpResponse != null) {
+                    try {
+                        // Convert response into JsonArray of transactions
+                        JSONObject transactions = new JSONObject(jsonResult);
+
+                        JSONArray transactionsArray = transactions.getJSONArray("result");
+
+                        String txHash = "";
+                        String txTo = "";
+                        String txFrom = "";
+                        String txContract = "";
+                        String txValue = "";
+                        String txGas = "";
+                        String txGasPrice = "";
+                        String txNonce = "";
+                        String txGasUsed = "";
+                        String txBlockNumber = "";
+                        String txBlockHash = "";
+                        String txData = "";
+                        String txBlockConfirmations = "";
+                        String txBlockTransactionIndex = "";
+                        String txBlockTimestamp = "";
+                        String txIsError = "";
+
+                        // Iterate through the list of transactions and call node.announceTransaction()
+                        // to notify the core
+                        for (int i = 0; i < transactionsArray.length(); i++) {
+                            JSONObject txObject = transactionsArray.getJSONObject(i);
+
+                            Log.d(TAG, "TxObject contains -> " + txObject.toString());
+
+                            if (txObject.has("hash")) {
+                                txHash = txObject.getString("hash");
+                                Log.d(TAG, "TxObject Hash -> " + txHash);
+
+                            }
+
+                            if (txObject.has("to")) {
+                                txTo = txObject.getString("to");
+                                Log.d(TAG, "TxObject to -> " + txTo);
+
+                            }
+
+                            if (txObject.has("from")) {
+                                txFrom = txObject.getString("from");
+                                Log.d(TAG, "TxObject from -> " + txFrom);
+
+                            }
+
+                            if (txObject.has("contractAddress")) {
+                                txContract = txObject.getString("contractAddress");
+                                Log.d(TAG, "TxObject contractAddress -> " + txContract);
+
+                            }
+
+                            if (txObject.has("value")) {
+                                txValue = txObject.getString("value");
+                                Log.d(TAG, "TxObject value -> " + txValue);
+
+                            }
+
+                            if (txObject.has("gas")) {
+                                txGas = txObject.getString("gas");
+                                Log.d(TAG, "TxObject gas -> " + txGas);
 
 
-                        final String jsonRcpResponse = jsonResult;
+                            }
 
-                        if (jsonRcpResponse != null) {
-                            try {
-                                // Convert response into JsonArray of transactions
-                                JSONObject transactions = new JSONObject(jsonResult);
+                            if (txObject.has("gasPrice")) {
+                                txGasPrice = txObject.getString("gasPrice");
+                                Log.d(TAG, "TxObject gasPrice -> " + txGasPrice);
 
-                                JSONArray transactionsArray = transactions.getJSONArray("result");
+                            }
 
-                                String txHash = "";
-                                String txTo = "";
-                                String txFrom = "";
-                                String txContract = "";
-                                String txValue = "";
-                                String txGas = "";
-                                String txGasPrice = "";
-                                String txNonce = "";
-                                String txGasUsed = "";
-                                String txBlockNumber = "";
-                                String txBlockHash = "";
-                                String txData = "";
-                                String txBlockConfirmations = "";
-                                String txBlockTransactionIndex = "";
-                                String txBlockTimestamp = "";
-                                String txIsError = "";
+                            if (txObject.has("nonce")) {
+                                txNonce = txObject.getString("nonce");
+                                Log.d(TAG, "TxObject nonce -> " + txNonce);
 
-                                // Iterate through the list of transactions and call node.announceTransaction()
-                                // to notify the core
-                                for (int i = 0; i < transactionsArray.length(); i++) {
-                                    JSONObject txObject = transactionsArray.getJSONObject(i);
+                            }
 
-                                    Log.d(TAG, "TxObject contains -> " + txObject.toString());
+                            if (txObject.has("gasUsed")) {
+                                txGasUsed = txObject.getString("gasUsed");
+                                Log.d(TAG, "TxObject gasUsed -> " + txGasUsed);
 
-                                    if (txObject.has("hash")) {
-                                        txHash = txObject.getString("hash");
-                                        Log.d(TAG, "TxObject Hash -> " + txHash);
+                            }
 
-                                    }
+                            if (txObject.has("blockNumber")) {
+                                txBlockNumber = txObject.getString("blockNumber");
+                                Log.d(TAG, "TxObject blockNumber -> " + txBlockNumber);
 
-                                    if (txObject.has("to")) {
-                                        txTo = txObject.getString("to");
-                                        Log.d(TAG, "TxObject to -> " + txTo);
+                            }
 
-                                    }
+                            if (txObject.has("blockHash")) {
+                                txBlockHash = txObject.getString("blockHash");
+                                Log.d(TAG, "TxObject blockHash -> " + txBlockHash);
 
-                                    if (txObject.has("from")) {
-                                        txFrom = txObject.getString("from");
-                                        Log.d(TAG, "TxObject from -> " + txFrom);
+                            }
 
-                                    }
+                            if (txObject.has("input")) {
+                                txData = txObject.getString("input");
+                                Log.d(TAG, "TxObject input -> " + txData);
 
-                                    if (txObject.has("contractAddress")) {
-                                        txContract = txObject.getString("contractAddress");
-                                        Log.d(TAG, "TxObject contractAddress -> " + txContract);
+                            }
 
-                                    }
+                            if (txObject.has("confirmations")) {
+                                txBlockConfirmations = txObject.getString("confirmations");
+                                Log.d(TAG, "TxObject confirmations -> " + txBlockConfirmations);
 
-                                    if (txObject.has("value")) {
-                                        txValue = txObject.getString("value");
-                                        Log.d(TAG, "TxObject value -> " + txValue);
+                            }
 
-                                    }
+                            if (txObject.has("transactionIndex")) {
+                                txBlockTransactionIndex = txObject.getString("transactionIndex");
+                                Log.d(TAG, "TxObject transactionIndex -> " + txBlockTransactionIndex);
 
-                                    if (txObject.has("gas")) {
-                                        txGas = txObject.getString("gas");
-                                        Log.d(TAG, "TxObject gas -> " + txGas);
+                            }
 
+                            if (txObject.has("timeStamp")) {
+                                txBlockTimestamp = txObject.getString("timeStamp");
+                                Log.d(TAG, "TxObject blockTimestamp -> " + txBlockTimestamp);
 
-                                    }
+                            }
 
-                                    if (txObject.has("gasPrice")) {
-                                        txGasPrice = txObject.getString("gasPrice");
-                                        Log.d(TAG, "TxObject gasPrice -> " + txGasPrice);
+                            if (txObject.has("isError")) {
+                                txIsError = txObject.getString("isError");
+                                Log.d(TAG, "TxObject isError -> " + txIsError);
 
-                                    }
+                            }
 
-                                    if (txObject.has("nonce")) {
-                                        txNonce = txObject.getString("nonce");
-                                        Log.d(TAG, "TxObject nonce -> " + txNonce);
-
-                                    }
-
-                                    if (txObject.has("gasUsed")) {
-                                        txGasUsed = txObject.getString("gasUsed");
-                                        Log.d(TAG, "TxObject gasUsed -> " + txGasUsed);
-
-                                    }
-
-                                    if (txObject.has("blockNumber")) {
-                                        txBlockNumber = txObject.getString("blockNumber");
-                                        Log.d(TAG, "TxObject blockNumber -> " + txBlockNumber);
-
-                                    }
-
-                                    if (txObject.has("blockHash")) {
-                                        txBlockHash = txObject.getString("blockHash");
-                                        Log.d(TAG, "TxObject blockHash -> " + txBlockHash);
-
-                                    }
-
-                                    if (txObject.has("input")) {
-                                        txData = txObject.getString("input");
-                                        Log.d(TAG, "TxObject input -> " + txData);
-
-                                    }
-
-                                    if (txObject.has("confirmations")) {
-                                        txBlockConfirmations = txObject.getString("confirmations");
-                                        Log.d(TAG, "TxObject confirmations -> " + txBlockConfirmations);
-
-                                    }
-
-                                    if (txObject.has("transactionIndex")) {
-                                        txBlockTransactionIndex = txObject.getString("transactionIndex");
-                                        Log.d(TAG, "TxObject transactionIndex -> " + txBlockTransactionIndex);
-
-                                    }
-
-                                    if (txObject.has("timeStamp")) {
-                                        txBlockTimestamp = txObject.getString("timeStamp");
-                                        Log.d(TAG, "TxObject blockTimestamp -> " + txBlockTimestamp);
-
-                                    }
-
-                                    if (txObject.has("isError")) {
-                                        txIsError = txObject.getString("isError");
-                                        Log.d(TAG, "TxObject isError -> " + txIsError);
-
-                                    }
-
-
-                                    node.announceTransaction(id, txHash,
-                                            (mWallet.getAccount().getPrimaryAddress().equalsIgnoreCase(txFrom) ? address : txFrom),
-                                            (mWallet.getAccount().getPrimaryAddress().equalsIgnoreCase(txTo) ? address : txTo),
-                                            txContract, txValue, txGas, txGasPrice, txData, txNonce, txGasUsed, txBlockNumber, txBlockHash, txBlockConfirmations, txBlockTransactionIndex, txBlockTimestamp, txIsError);
-                                    Context app = BreadApp.getBreadContext();
-                                    int blockHeight = Integer.valueOf(txBlockNumber) + Integer.valueOf(txBlockConfirmations);
-                                    if (app != null && blockHeight != Integer.MAX_VALUE && blockHeight > 0) {
-                                        Log.e(TAG, "onRpcRequestCompleted: putLastBlockHeight: " + blockHeight);
-                                        BRSharedPrefs.putLastBlockHeight(app, getIso(app), blockHeight);
-                                    }
-                                }
-
-
-                                Log.d(TAG, "Rpc Transactions array length -> " + transactionsArray.length());
-                            } catch (JSONException e) {
-                                e.printStackTrace();
+                            node.announceTransaction(id, txHash,
+                                    (mWallet.getAccount().getPrimaryAddress().equalsIgnoreCase(txFrom) ? address : txFrom),
+                                    (mWallet.getAccount().getPrimaryAddress().equalsIgnoreCase(txTo) ? address : txTo),
+                                    txContract, txValue, txGas, txGasPrice, txData, txNonce, txGasUsed, txBlockNumber, txBlockHash, txBlockConfirmations, txBlockTransactionIndex, txBlockTimestamp, txIsError);
+                            Context app = BreadApp.getBreadContext();
+                            int blockHeight = Integer.valueOf(txBlockNumber) + Integer.valueOf(txBlockConfirmations);
+                            if (app != null && blockHeight != Integer.MAX_VALUE && blockHeight > 0) {
+                                Log.e(TAG, "onRpcRequestCompleted: putLastBlockHeight: " + blockHeight);
+                                BRSharedPrefs.putLastBlockHeight(app, getIso(app), blockHeight);
                             }
                         }
+
+
+                        Log.d(TAG, "Rpc Transactions array length -> " + transactionsArray.length());
+                    } catch (JSONException e) {
+                        e.printStackTrace();
                     }
-                });
-
-
+                }
             }
         });
+
     }
 }
