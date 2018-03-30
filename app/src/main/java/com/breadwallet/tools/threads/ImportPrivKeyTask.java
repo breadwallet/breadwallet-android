@@ -34,7 +34,7 @@ import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.BTCTransaction;
+import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 
@@ -74,7 +74,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
     private Activity app;
     private String key;
     private String iso;
-    private BTCTransaction mTransaction;
+    private CryptoTransaction mTransaction;
 
     public ImportPrivKeyTask(Activity activity) {
         app = activity;
@@ -214,7 +214,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
     }
 
-    private BTCTransaction createSweepingTx(final Context app, String url) {
+    private CryptoTransaction createSweepingTx(final Context app, String url) {
         if (url == null || url.isEmpty()) return null;
 
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
@@ -265,7 +265,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
             BigDecimal fee = walletManager.getFeeForTransactionSize(new BigDecimal(transaction.getSize() + 34 + (signingKey.getPubKey().length - 33) * transaction.getInputs().length));
             transaction.addOutput(new BRCoreTransactionOutput(new BigDecimal(totalAmount).subtract(fee).longValue(), address.getPubKeyScript()));
-            return new BTCTransaction(transaction);
+            return new CryptoTransaction(transaction);
         } catch (JSONException e) {
             e.printStackTrace();
         }
