@@ -33,7 +33,7 @@ public class JsonRpcRequest {
     }
 
 
-    public Response makeRpcRequest(Context app, String url, JSONObject payload, JsonRpcRequestListener listener) {
+    public synchronized Response makeRpcRequest(Context app, String url, JSONObject payload, JsonRpcRequestListener listener) {
 
         this.mRequestListener = listener;
 
