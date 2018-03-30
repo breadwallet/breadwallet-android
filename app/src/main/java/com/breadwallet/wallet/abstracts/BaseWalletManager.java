@@ -49,6 +49,8 @@ public interface BaseWalletManager {
     //get the core wallet
     int getForkId();
 
+    boolean isAddressValid(String address);
+
     @WorkerThread
         //sign and publish the tx using the seed
     byte[] signAndPublishTransaction(BaseTransaction tx, byte[] seed);

@@ -597,6 +597,11 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
+    public boolean isAddressValid(String address) {
+        return !Utils.isNullOrEmpty(address) && new BRCoreAddress(address).isValid();
+    }
+
+    @Override
     public byte[] signAndPublishTransaction(BaseTransaction tx, byte[] seed) {
         return super.signAndPublishTransaction(tx.getCoreTx(), seed);
     }

@@ -135,9 +135,11 @@ public class CryptoUriParser {
         Uri u = Uri.parse(tmp);
         String scheme = u.getScheme();
 
+        BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+
         if (scheme == null) {
-            scheme = WalletBitcoinManager.getInstance(app).getScheme(app);
-            obj.iso = WalletBitcoinManager.getInstance(app).getIso(app);
+            scheme = wm.getScheme(app);
+            obj.iso = wm.getIso(app);
 
         } else {
             for (BaseWalletManager walletManager : WalletsMaster.getInstance(app).getAllWallets()) {
@@ -158,7 +160,6 @@ public class CryptoUriParser {
 
         u = Uri.parse(scheme + "://" + schemeSpecific);
 
-        BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
 
         String host = u.getHost();
         if (host != null) {
@@ -166,7 +167,7 @@ public class CryptoUriParser {
             if (obj.iso.equalsIgnoreCase("bch"))
                 trimmedHost = scheme + ":" + trimmedHost; //bitcoin cash has the scheme attached to the address
             String addrs = wm.undecorateAddress(app, trimmedHost);
-            if (!Utils.isNullOrEmpty(addrs) && new BRCoreAddress(addrs).isValid()) {
+            if (!Utils.isNullOrEmpty(addrs) && wm.isAddressValid(addrs)) {
                 obj.address = addrs;
             }
         }
