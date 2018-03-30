@@ -929,10 +929,12 @@ public class ReplicatedKVStore {
      * validates the key. kvs can not start with a _
      */
     private boolean isKeyValid(String key) {
-        Pattern pattern = Pattern.compile(KEY_REGEX);
-        Matcher matcher = pattern.matcher(key);
-        if (matcher.find()) {
-            return true;
+        if (!Utils.isNullOrEmpty(key)) {
+            Pattern pattern = Pattern.compile(KEY_REGEX);
+            Matcher matcher = pattern.matcher(key);
+            if (matcher.find()) {
+                return true;
+            }
         }
         Log.e(TAG, "checkKey: found illegal patterns, key: " + key);
         return false;
