@@ -95,11 +95,6 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     BREthereumLightNode.JSON_RPC node;
     private Context mContext;
 
-    private int mSyncRetryCount = 0;
-    private static final int SYNC_MAX_RETRY = 3;
-
-    private Executor listenerExecutor = Executors.newSingleThreadExecutor();
-
 
     private WalletEthManager(final Context app, BRCoreMasterPubKey masterPubKey, BREthereumNetwork network) {
         uiConfig = new WalletUiConfiguration("#5e70a3", true, true, false, false, false, false);
@@ -154,9 +149,11 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public byte[] signAndPublishTransaction(BaseTransaction tx, byte[] phrase) {
-        mWallet.sign((BREthereumTransaction) tx, new String(phrase));
-        mWallet.submit((BREthereumTransaction) tx);
-        return null;
+        CryptoTransaction cryptoTransaction = (CryptoTransaction) tx;
+        mWallet.sign(cryptoTransaction.getEtherTx(), new String(phrase));
+        mWallet.submit(cryptoTransaction.getEtherTx());
+        //todo remove hardcoded temporary hash
+        return "123".getBytes();
     }
 
     @Override
@@ -760,7 +757,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                     params.put(rawTransaction);
                     payload.put("params", params);
                     payload.put("id", rid);
-                }catch(JSONException e){
+                } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
@@ -768,17 +765,17 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
 
-                        if(jsonResult != null){
+                        if (jsonResult != null) {
                             try {
                                 JSONObject responseObject = new JSONObject(jsonResult);
 
-                                if(responseObject.has("result")){
+                                if (responseObject.has("result")) {
                                     String txHash = responseObject.getString("result");
 
                                     node.announceSubmitTransaction(tid, txHash, rid);
 
                                 }
-                            }catch(JSONException e){
+                            } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }

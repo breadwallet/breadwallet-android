@@ -30,6 +30,7 @@ import com.platform.entities.TxMetaData;
 import com.platform.tools.BRBitId;
 import com.platform.tools.KVStoreManager;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 
 
@@ -214,7 +215,7 @@ public class PostAuth {
                         if (mCryptoRequest != null && mCryptoRequest.tx != null) {
 
                             byte[] txHash = walletManager.signAndPublishTransaction(mCryptoRequest.tx, rawPhrase);
-                            if (Utils.isNullOrEmpty(txHash) && !walletManager.getIso(app).equalsIgnoreCase("ETH")) {
+                            if (Utils.isNullOrEmpty(txHash)) {
                                 Log.e(TAG, "onPublishTxAuth: signAndPublishTransaction returned an empty txHash");
                                 BRDialog.showSimpleDialog(app, "Send failed", "signAndPublishTransaction failed");
                                 //todo fix this
@@ -223,7 +224,8 @@ public class PostAuth {
                                 TxMetaData txMetaData = new TxMetaData();
                                 txMetaData.comment = mCryptoRequest.message;
                                 txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
-                                txMetaData.exchangeRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, walletManager.getIso(app), txMetaData.exchangeCurrency).rate;
+                                BigDecimal fiatExchangeRate = walletManager.getFiatExchangeRate(app);
+                                txMetaData.exchangeRate = fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue();
                                 txMetaData.fee = walletManager.getTxFee(mCryptoRequest.tx).toPlainString();
                                 txMetaData.txSize = mCryptoRequest.tx.getTxSize().intValue();
                                 txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, walletManager.getIso(app));
