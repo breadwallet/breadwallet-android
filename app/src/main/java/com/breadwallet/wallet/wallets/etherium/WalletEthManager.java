@@ -744,9 +744,51 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public void submitTransaction(int wid, int tid, String rawTransaction, int rid) {
-        //todo implement
-        return;
+    public void submitTransaction(int wid, final int tid, final String rawTransaction, final int rid) {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
+                Log.d(TAG, "Making rpc request to -> " + eth_url);
+
+                JsonRpcRequest request = new JsonRpcRequest();
+                JSONObject payload = new JSONObject();
+                JSONArray params = new JSONArray();
+                try {
+                    payload.put("method", "eth_sendRawTransaction");
+                    params.put(rawTransaction);
+                    payload.put("params", params);
+                    payload.put("id", rid);
+                }catch(JSONException e){
+                    e.printStackTrace();
+                }
+
+                request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                    @Override
+                    public void onRpcRequestCompleted(String jsonResult) {
+
+                        if(jsonResult != null){
+                            try {
+                                JSONObject responseObject = new JSONObject(jsonResult);
+
+                                if(responseObject.has("result")){
+                                    String txHash = responseObject.getString("result");
+
+                                    node.announceSubmitTransaction(tid, txHash, rid);
+
+                                }
+                            }catch(JSONException e){
+                                e.printStackTrace();
+                            }
+                        }
+
+
+                    }
+                });
+
+
+            }
+        });
     }
 
     @Override
@@ -772,7 +814,6 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                 request.makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
-                        Log.d(TAG, "Rpc response string 3 -> " + jsonResult);
 
 
                         final String jsonRcpResponse = jsonResult;
