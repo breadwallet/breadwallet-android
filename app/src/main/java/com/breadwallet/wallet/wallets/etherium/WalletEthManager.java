@@ -755,6 +755,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                 JSONObject payload = new JSONObject();
                 JSONArray params = new JSONArray();
                 try {
+                    payload.put("jsonrpc", "2.0");
                     payload.put("method", "eth_sendRawTransaction");
                     params.put(rawTransaction);
                     payload.put("params", params);
