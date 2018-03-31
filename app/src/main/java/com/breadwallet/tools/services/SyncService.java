@@ -13,6 +13,7 @@ import android.util.Log;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 
 /**
  * BreadWallet
@@ -130,8 +131,7 @@ public class SyncService extends IntentService {
      */
     private void startSyncPolling(Context context, String walletIso) {
         final BaseWalletManager walletManager = WalletsMaster.getInstance(context).getWalletByIso(context, walletIso);
-        final double progress = walletManager.getPeerManager()
-                .getSyncProgress(BRSharedPrefs.getStartHeight(context,
+        final double progress = walletManager.getSyncProgress(BRSharedPrefs.getStartHeight(context,
                         BRSharedPrefs.getCurrentWalletIso(context)));
         Log.e(TAG, "startSyncPolling: Progress:" + progress + " Wallet: " + walletIso);
 
