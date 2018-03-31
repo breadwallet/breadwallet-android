@@ -64,7 +64,7 @@ public class JsonRpcRequest {
 
         try {
 
-            resp = APIClient.getInstance(BreadApp.getBreadContext()).sendRequest(request, true, 0);
+            resp = APIClient.getInstance(app).sendRequest(request, true, 0);
 
             String responseString = resp.body().string();
 
