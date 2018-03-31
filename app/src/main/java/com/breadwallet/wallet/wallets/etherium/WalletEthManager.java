@@ -316,6 +316,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public List<TxUiHolder> getTxUiHolders() {
+
         return null;
     }
 
@@ -551,8 +552,43 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public String getGasEstimate(int id, String to, String amount, String data) {
-        return "0x77";
+    public String getGasEstimate(int id, String to, final String amount, String data) {
+
+
+        final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
+        Log.d(TAG, "Making rpc request to -> " + eth_url);
+        final JSONObject payload = new JSONObject();
+        final JSONArray params = new JSONArray();
+
+        // TODO : Remove and replace with actual address and amount from current wallet
+        params.put(to);
+        params.put(amount);
+        params.put(data);
+
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+
+
+                try {
+                    payload.put("method", "eth_estimateGas");
+                    payload.put("params", params);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                JsonRpcRequest request = new JsonRpcRequest();
+                request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                    @Override
+                    public void onRpcRequestCompleted(String jsonResult) {
+
+                        Log.d(TAG, "Rpc Request response -> " + jsonResult);
+                    }
+                });
+            }
+        });
+        return null;
     }
 
     @Override
@@ -561,25 +597,28 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public void getTransactions(int id, String account) {
+    public void getTransactions(int id, final String account) {
         Log.d(TAG, "getTransactions()");
         Log.d(TAG, "account -> " + account);
 
         final String eth_rpc_url = String.format(JsonRpcConstants.ETH_RPC_TX_LIST, "0xbdfdad139440d2db9ba2aa3b7081c2de39291508");
         Log.d(TAG, "ETH RPC URL -> " + eth_rpc_url);
 
-        final Map<String, String> params = new HashMap<>();
-        params.put("id", String.valueOf(id));
-        params.put("account", account);
-
         final JsonRpcRequest request = new JsonRpcRequest();
+        final JSONObject payload = new JSONObject();
+        try {
+            payload.put("id", String.valueOf(id));
+            payload.put("account", account);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
 
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
 
 
-                request.makeRpcRequest(mContext, eth_rpc_url, params, new JsonRpcRequest.JsonRpcRequestListener() {
+                request.makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         Log.d(TAG, "Rpc response string 3 -> " + jsonResult);
@@ -715,8 +754,13 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
                                     }
 
+                                    String adrians = "0xbdfdad139440d2db9ba2aa3b7081c2de39291508";
 
-                                    mNode.announceTransaction(txHash, "0xbdfdad139440d2db9ba2aa3b7081c2de39291508", txTo, txContract, txValue, txGas, txGasPrice, txData, txNonce, txGasUsed, txBlockNumber, txBlockHash, txBlockConfirmations, txBlockTransactionIndex, txBlockTimestamp, txIsError);
+
+                                    mNode.announceTransaction(txHash,
+                                            (adrians.equalsIgnoreCase(txFrom) ? account : txFrom),
+                                            (adrians.equalsIgnoreCase(txTo) ? account : txTo),
+                                            txContract, txValue, txGas, txGasPrice, txData, txNonce, txGasUsed, txBlockNumber, txBlockHash, txBlockConfirmations, txBlockTransactionIndex, txBlockTimestamp, txIsError);
                                 }
 
 
