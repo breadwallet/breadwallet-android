@@ -443,6 +443,7 @@ public class APIClient {
         String requestString = createRequest(request.method(), base58Body,
                 request.header("Content-Type"), request.header("Date"), request.url().encodedPath()
                         + ((queryString != null && !queryString.isEmpty()) ? ("?" + queryString) : ""));
+        Log.d(TAG, "Request string -> " + requestString);
         String signedRequest = signRequest(requestString);
         if (signedRequest == null) return null;
         byte[] tokenBytes = BRKeyStore.getToken(ctx);
