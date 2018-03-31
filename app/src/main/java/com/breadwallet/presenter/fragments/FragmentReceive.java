@@ -160,7 +160,9 @@ public class FragmentReceive extends Fragment {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, walletManager.decorateAddress(getActivity(), mReceiveAddress), 0, null, null, null);
+                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
+                        walletManager.decorateAddress(getActivity(), mReceiveAddress),
+                        new BigDecimal(0), null, null, null);
                 QRUtils.share("mailto:", getActivity(), cryptoUri.toString());
 
 
@@ -171,7 +173,9 @@ public class FragmentReceive extends Fragment {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager, walletManager.decorateAddress(getActivity(), mReceiveAddress), 0, null, null, null);
+                Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
+                        walletManager.decorateAddress(getActivity(), mReceiveAddress),
+                        new BigDecimal(0), null, null, null);
                 QRUtils.share("sms:", getActivity(), cryptoUri.toString());
             }
         });
@@ -305,7 +309,7 @@ public class FragmentReceive extends Fragment {
                         mReceiveAddress = BRSharedPrefs.getReceiveAddress(ctx, wallet.getIso(ctx));
                         String decorated = wallet.decorateAddress(ctx, mReceiveAddress);
                         mAddress.setText(decorated);
-                        Uri uri = CryptoUriParser.createCryptoUrl(ctx, wallet, decorated, 0, null, null, null);
+                        Uri uri = CryptoUriParser.createCryptoUrl(ctx, wallet, decorated, new BigDecimal(0), null, null, null);
                         boolean generated = QRUtils.generateQR(ctx, uri.toString(), mQrImage);
                         if (!generated)
                             throw new RuntimeException("failed to generate qr image for address");
