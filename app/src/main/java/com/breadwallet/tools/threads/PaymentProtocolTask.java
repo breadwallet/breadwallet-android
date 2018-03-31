@@ -26,7 +26,7 @@ import com.breadwallet.tools.util.CustomLogger;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.BTCTransaction;
+import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 
@@ -285,7 +285,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             paymentProtocolRequest = null;
             return;
         }
-        final BTCTransaction tx = new BTCTransaction(trans);
+        final CryptoTransaction tx = new CryptoTransaction(trans);
         final BigDecimal amount = wm.getTransactionAmount(tx).abs();
         final BigDecimal fee = wm.getTxFee(tx);
 

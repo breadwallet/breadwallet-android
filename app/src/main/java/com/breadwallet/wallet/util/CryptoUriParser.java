@@ -286,7 +286,7 @@ public class CryptoUriParser {
             });
         } else {
             BRAnimator.killAllFragments(app);
-            if (Utils.isNullOrEmpty(requestObject.address) || !new BRCoreAddress(requestObject.address).isValid()) {
+            if (Utils.isNullOrEmpty(requestObject.address) || !wallet.isAddressValid(requestObject.address)) {
                 BRDialog.showSimpleDialog(app, app.getString(R.string.Send_invalidAddressTitle), "");
                 return true;
             }

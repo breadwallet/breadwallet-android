@@ -237,26 +237,6 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public BigDecimal getEstimatedFee(BigDecimal amount, String address) {
-        BigDecimal fee = null;
-        if (amount == null) return null;
-        if (amount.compareTo(new BigDecimal(0)) == 0) {
-            fee = new BigDecimal(0);
-        } else {
-            BaseTransaction tx = null;
-            if (isAddressValid(address)) {
-                tx = createTransaction(amount, address);
-            }
-
-            if (tx == null) {
-                fee = new BigDecimal(0);
-            }
-
-        }
-        return fee;
-    }
-
-    @Override
     public BigDecimal getFeeForTxAmount(BigDecimal amount) {
         return null;
     }
@@ -866,6 +846,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                 request.makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
+                        Log.d(TAG, "Rpc response string 3 -> " + jsonResult);
 
 
                         final String jsonRcpResponse = jsonResult;
