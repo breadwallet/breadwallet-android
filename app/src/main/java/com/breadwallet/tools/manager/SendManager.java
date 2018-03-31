@@ -318,12 +318,7 @@ public class SendManager {
 
         String message = createConfirmation(ctx, request, walletManager);
 
-        BigDecimal minOutput;
-        if (request.isAmountRequested) {
-            minOutput = walletManager.getMinOutputAmountPossible();
-        } else {
-            minOutput = walletManager.getMinOutputAmount();
-        }
+        BigDecimal minOutput = request.isAmountRequested ? walletManager.getMinOutputAmountPossible() : walletManager.getMinOutputAmount();
 
         //amount can't be less than the min
         if (minOutput != null && walletManager.getTransactionAmount(request.tx).abs().compareTo(minOutput) <= 0) {

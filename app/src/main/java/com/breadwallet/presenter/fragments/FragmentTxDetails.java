@@ -14,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import com.breadwallet.R;
@@ -315,7 +314,8 @@ public class FragmentTxDetails extends DialogFragment {
             mTxDate.setText(BRDateUtil.getLongDate(mTransaction.getTimeStamp() == 0 ? System.currentTimeMillis() : (mTransaction.getTimeStamp() * 1000)));
 
             // Set the transaction id
-            mTransactionId.setText(mTransaction.getTxHashHexReversed());
+            mTransactionId.setText(mTransaction.getHashReversed());
+            Log.e(TAG, "updateUi: " + mTransaction.getHashReversed());
 
             // Allow the transaction id to be copy-able
             mTransactionId.setOnClickListener(new View.OnClickListener() {
@@ -326,7 +326,7 @@ public class FragmentTxDetails extends DialogFragment {
                     final int color = mTransactionId.getCurrentTextColor();
 
                     mTransactionId.setTextColor(getContext().getColor(R.color.light_gray));
-                    String id = mTransaction.getTxHashHexReversed();
+                    String id = mTransaction.getHashReversed();
                     BRClipboardManager.putClipboard(getContext(), id);
                     Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_LONG).show();
 

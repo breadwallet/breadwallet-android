@@ -1,13 +1,12 @@
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main_layout"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:background="@drawable/bread_dialog_rounded"
-    android:filterTouchesWhenObscured="true"
-    android:orientation="vertical">
-
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:id="@+id/main_layout"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_gravity="center"
+              android:background="@drawable/bread_dialog_rounded"
+              android:filterTouchesWhenObscured="true"
+              android:orientation="vertical">
 
     <RelativeLayout
         android:id="@+id/dialog_header"
@@ -18,57 +17,55 @@
 
         <ImageButton
             android:id="@+id/brd_logo"
-            android:background="@drawable/brd_logo_white_svg"
+            android:layout_width="38dp"
+            android:layout_height="14dp"
             android:layout_centerInParent="true"
             android:layout_marginTop="10dp"
-            android:layout_width="38dp"
-            android:layout_height="14dp" />
+            android:background="@drawable/brd_logo_white_svg"/>
 
-
+        <ImageButton
+            android:id="@+id/help_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/ic_help_circle"
+            android:visibility="visible"
+            app:layout_constraintRight_toRightOf="parent"
+            />
 
     </RelativeLayout>
 
-    <ImageButton
-        android:id="@+id/help_icon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="12dp"
-        android:background="@drawable/ic_help_circle"
-        android:visibility="visible"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dialog_header" />
-
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/dialog_title"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal|center_vertical"
-        android:layout_margin="16dp"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:paddingTop="26dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="This is some title"
         android:textAlignment="center"
         android:textSize="18sp"
         app:customTFont="CircularPro-Bold.otf"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/dialog_header" />
-
+        app:layout_constraintTop_toBottomOf="@id/dialog_header"/>
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/dialog_text"
-        android:layout_width="0dp"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
         android:gravity="center_horizontal|center_vertical"
+        android:text="this is some message"
         android:textSize="16sp"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/dialog_title" />
-
+        app:layout_constraintTop_toBottomOf="@+id/dialog_title"/>
 
     <LinearLayout
         android:id="@+id/linearLayout3"
@@ -98,7 +95,7 @@
             app:buttonType="4"
             app:customTFont="CircularPro-Bold.otf"
             app:hasShadow="false"
-            app:isBreadButton="true" />
+            app:isBreadButton="true"/>
 
         <com.breadwallet.presenter.customviews.BRButton
             android:id="@+id/pos_button"
@@ -112,9 +109,8 @@
             app:buttonType="4"
             app:customTFont="CircularPro-Bold.otf"
             app:hasShadow="false"
-            app:isBreadButton="true" />
+            app:isBreadButton="true"/>
 
     </LinearLayout>
 
-
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>
