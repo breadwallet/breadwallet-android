@@ -226,7 +226,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         }
 
-
     }
 
     @Override
@@ -311,7 +310,13 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mBuyButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
         mReceiveButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
 
-        TxManager.getInstance().updateTxList(WalletActivity.this);
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                TxManager.getInstance().updateTxList(WalletActivity.this);
+            }
+        });
+
 
         if (!BRSharedPrefs.wasBchDialogShown(this)) {
             BRDialog.showHelpDialog(this, getString(R.string.Dialog_welcomeBchTitle), getString(R.string.Dialog_welcomeBchMessage), getString(R.string.Dialog_Home), getString(R.string.Dialog_Dismiss), new BRDialogView.BROnClickListener() {
@@ -513,7 +518,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     @Override
     protected void onResume() {
         super.onResume();
-
         app = this;
 
         WalletsMaster.getInstance(app).initWallets(app);

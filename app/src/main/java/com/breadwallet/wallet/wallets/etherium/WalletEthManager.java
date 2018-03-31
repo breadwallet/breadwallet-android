@@ -1,11 +1,13 @@
 package com.breadwallet.wallet.wallets.etherium;
 
+import android.app.Activity;
 import android.content.Context;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
+import com.breadwallet.R;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
@@ -15,6 +17,9 @@ import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
+import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
+import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -111,12 +116,11 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         new BREthereumLightNode.JSON_RPC(this, network, testPaperKey);
 
         mWallet = node.getWallet();
-        mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
         mContext = app;
-
+        mWallet.estimateGasPrice();
+        mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
         BREthereumWallet walletToken = node.createWallet(BREthereumToken.tokenBRD);
         walletToken.setDefaultUnit(BREthereumAmount.Unit.TOKEN_DECIMAL);
-
         node.connect();
 
     }
@@ -153,7 +157,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         mWallet.sign(cryptoTransaction.getEtherTx(), new String(phrase));
         mWallet.submit(cryptoTransaction.getEtherTx());
         //todo remove hardcoded temporary hash
-        return "123".getBytes();
+        return new byte[]{1};//return 1 byte array to let the callback know it's a ETH or token tx
     }
 
     @Override
@@ -332,13 +336,15 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public List<TxUiHolder> getTxUiHolders() {
+        Log.e(TAG, "getTxUiHolders: ");
         BREthereumTransaction txs[] = mWallet.getTransactions();
+        Log.e(TAG, "getTxUiHolders: done");
         if (txs == null || txs.length <= 0) return null;
         List<TxUiHolder> uiTxs = new ArrayList<>();
         for (int i = txs.length - 1; i >= 0; i--) { //revere order
             BREthereumTransaction tx = txs[i];
             uiTxs.add(new TxUiHolder(tx, tx.getBlockTimestamp(), (int) tx.getBlockNumber(), null,
-                    null, null,
+                    tx.getHash(), null,
                     null, new BigDecimal(tx.getGasUsed()).multiply(new BigDecimal(tx.getGasPrice(BREthereumAmount.Unit.ETHER_WEI))),
                     new BigDecimal(tx.getGasPrice(BREthereumAmount.Unit.ETHER_WEI)), new BigDecimal(tx.getGasLimit()),
                     tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
@@ -731,7 +737,6 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-
                         node.announceGasEstimate(tid, gasEstimate, rid);
                     }
                 });
@@ -764,26 +769,53 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                 request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
-
+                        String txHash = null;
+                        int errCode = 0;
+                        String errMessage = "";
                         if (jsonResult != null) {
                             try {
                                 JSONObject responseObject = new JSONObject(jsonResult);
-
+                                Log.e(TAG, "onRpcRequestCompleted: " + responseObject);
                                 if (responseObject.has("result")) {
-                                    String txHash = responseObject.getString("result");
-
+                                    txHash = responseObject.getString("result");
+                                    Log.e(TAG, "onRpcRequestCompleted: ");
                                     node.announceSubmitTransaction(tid, txHash, rid);
-
+                                } else if (responseObject.has("error")) {
+                                    JSONObject errObj = responseObject.getJSONObject("error");
+                                    errCode = errObj.getInt("code");
+                                    errMessage = errObj.getString("message");
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
                         }
-
+                        final String finalTxHash = txHash;
+                        final String finalErrMessage = errMessage;
+                        final int finalErrCode = errCode;
+                        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                final Context app = BreadApp.getBreadContext();
+                                if (app != null && app instanceof Activity) {
+                                    if (!Utils.isNullOrEmpty(finalTxHash)) {
+                                        Log.e(TAG, "run: finalTxHash: " + finalTxHash);
+                                        BRAnimator.showBreadSignal((Activity) app, "Success", "Transaction submitted", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
+                                            @Override
+                                            public void onComplete() {
+                                                BRAnimator.killAllFragments((Activity) app);
+                                            }
+                                        });
+                                    } else {
+                                        BRDialog.showSimpleDialog(app, "Failed", String.format("(%d) %s", finalErrCode, finalErrMessage));
+                                    }
+                                } else {
+                                    Log.e(TAG, "submitTransaction: app is null or not an activity");
+                                }
+                            }
+                        });
 
                     }
                 });
-
 
             }
         });
