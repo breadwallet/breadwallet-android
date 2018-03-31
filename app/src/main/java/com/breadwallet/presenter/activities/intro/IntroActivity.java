@@ -14,6 +14,7 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.presenter.activities.HomeActivity;
+import com.breadwallet.presenter.activities.ReEnterPinActivity;
 import com.breadwallet.presenter.activities.SetPinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -25,6 +26,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.APIClient;
 
 import java.io.Serializable;
@@ -90,7 +92,8 @@ public class IntroActivity extends BRActivity implements Serializable {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(app, BRConstants.startView);
+                BaseWalletManager wm = WalletsMaster.getInstance(IntroActivity.this).getCurrentWallet(IntroActivity.this);
+                BRAnimator.showSupportFragment(IntroActivity.this, BRConstants.startView, wm.getIso(IntroActivity.this));
             }
         });
 

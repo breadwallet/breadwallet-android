@@ -9,6 +9,7 @@ import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +28,8 @@ import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.entities.BRMenuItem;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.APIClient;
 import com.platform.HTTPServer;
 
@@ -34,6 +37,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.breadwallet.R.id.menu_listview;
+import static com.platform.HTTPServer.URL_SUPPORT;
 
 /**
  * BreadWallet
@@ -117,7 +121,14 @@ public class FragmentMenu extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(getActivity(), null);
+                Activity app = getActivity();
+                if (app == null) {
+                    Log.e(TAG, "onClick: app is null, can't start the webview with url: " + URL_SUPPORT);
+                    return;
+                }
+                BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+
+                BRAnimator.showSupportFragment(app, null, wm.getIso(app));
             }
         }));
         itemList.add(new BRMenuItem(getString(R.string.MenuButton_settings), R.drawable.ic_settings, new View.OnClickListener() {
@@ -171,7 +182,7 @@ public class FragmentMenu extends Fragment {
 
     public class MenuListAdapter extends ArrayAdapter<BRMenuItem> {
 
-//        private List<BRMenuItem> items;
+        //        private List<BRMenuItem> items;
         private Context mContext;
         private int defaultLayoutResource = R.layout.menu_list_item;
 
