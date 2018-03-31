@@ -84,7 +84,7 @@ public class CurrencyUtils {
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
         currencyFormat.setNegativeSuffix("");
-        return currencyFormat.format(amount.doubleValue());
+        return currencyFormat.format(amount);
     }
 
     public static String getSymbolByIso(Context app, String iso) {
