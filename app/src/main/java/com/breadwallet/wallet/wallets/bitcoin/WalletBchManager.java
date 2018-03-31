@@ -205,7 +205,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getTxFee(BaseTransaction tx) {
-        return new BigDecimal(getWallet().getTransactionFee((BRCoreTransaction) tx));
+        return new BigDecimal(getWallet().getTransactionFee(tx.getCoreTx()));
     }
 
     @Override
@@ -220,7 +220,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BaseAddress getTxAddress(BaseTransaction tx) {
-        return (BaseAddress) getWallet().getTransactionAddress((BRCoreTransaction) tx);
+        return (BaseAddress) getWallet().getTransactionAddress(tx.getCoreTx());
     }
 
     @Override
@@ -235,7 +235,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getTransactionAmount(BaseTransaction tx) {
-        return new BigDecimal(getWallet().getTransactionAmount((BRCoreTransaction) tx));
+        return new BigDecimal(getWallet().getTransactionAmount(tx.getCoreTx()));
     }
 
     @Override
@@ -291,12 +291,13 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         List<TxUiHolder> uiTxs = new ArrayList<>();
         for (int i = txs.length - 1; i >= 0; i--) { //revere order
             BRCoreTransaction tx = txs[i];
-            uiTxs.add(new TxUiHolder(tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
-                    tx.getReverseHash(), getWallet().getTransactionAmountSent(tx),
-                    getWallet().getTransactionAmountReceived(tx), getWallet().getTransactionFee(tx),
-                    tx.getOutputAddresses(), tx.getInputAddresses(),
-                    getWallet().getBalanceAfterTransaction(tx), (int) tx.getSize(),
-                    getWallet().getTransactionAmount(tx), getWallet().transactionIsValid(tx)));
+            Log.e(TAG, "getTxUiHolders: tx.getBlockHeight: " + tx.getBlockHeight());
+            uiTxs.add(new TxUiHolder(tx, tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
+                    tx.getReverseHash(), new BigDecimal(getWallet().getTransactionAmountSent(tx)),
+                    new BigDecimal(getWallet().getTransactionAmountReceived(tx)), new BigDecimal(getWallet().getTransactionFee(tx)),
+                    null, null, tx.getOutputAddresses()[0], tx.getInputAddresses()[0],
+                    new BigDecimal(getWallet().getBalanceAfterTransaction(tx)), (int) tx.getSize(),
+                            new BigDecimal(getWallet().getTransactionAmount(tx)), getWallet().transactionIsValid(tx)));
         }
 
         return uiTxs;
@@ -402,7 +403,8 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             Log.e(TAG, "createTransaction: can't create, address is null");
             return null;
         }
-        return (BaseTransaction) getWallet().createTransaction(amount.longValue(), new BRCoreAddress(address));
+        BRCoreTransaction tx = getWallet().createTransaction(amount.longValue(), new BRCoreAddress(address));
+        return tx == null? null : new BTCTransaction(tx);
     }
 
     @Override
@@ -599,7 +601,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public byte[] signAndPublishTransaction(BaseTransaction tx, byte[] seed) {
-        return super.signAndPublishTransaction((BRCoreTransaction) tx, seed);
+        return super.signAndPublishTransaction(tx.getCoreTx(), seed);
     }
 
     @Override
@@ -672,7 +674,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
 
-    @Override
     public void txPublished(final String error) {
         super.txPublished(error);
         final Context app = BreadApp.getBreadContext();
@@ -694,7 +695,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     }
 
-    @Override
     public void balanceChanged(long balance) {
         super.balanceChanged(balance);
         Context app = BreadApp.getBreadContext();
@@ -704,7 +704,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     }
 
-    @Override
     public void txStatusUpdate() {
         super.txStatusUpdate();
         for (OnTxStatusUpdatedListener listener : txStatusUpdatedListeners)
@@ -725,7 +724,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     }
 
-    @Override
     public void saveBlocks(boolean replace, BRCoreMerkleBlock[] blocks) {
         super.saveBlocks(replace, blocks);
 
@@ -740,7 +738,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         MerkleBlockDataSource.getInstance(app).putMerkleBlocks(app, getIso(app), entities);
     }
 
-    @Override
     public void savePeers(boolean replace, BRCorePeer[] peers) {
         super.savePeers(replace, peers);
         Context app = BreadApp.getBreadContext();
@@ -754,13 +751,11 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     }
 
-    @Override
     public boolean networkIsReachable() {
         Context app = BreadApp.getBreadContext();
         return InternetManager.getInstance().isConnected(app);
     }
 
-    @Override
     public BRCoreTransaction[] loadTransactions() {
         Context app = BreadApp.getBreadContext();
 
@@ -774,7 +769,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         return arr;
     }
 
-    @Override
     public BRCoreMerkleBlock[] loadBlocks() {
         Context app = BreadApp.getBreadContext();
         List<BRMerkleBlockEntity> blocks = MerkleBlockDataSource.getInstance(app).getAllMerkleBlocks(app, getIso(app));
@@ -787,7 +781,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         return arr;
     }
 
-    @Override
     public BRCorePeer[] loadPeers() {
         Context app = BreadApp.getBreadContext();
         List<BRPeerEntity> peers = PeerDataSource.getInstance(app).getAllPeers(app, getIso(app));
@@ -800,7 +793,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         return arr;
     }
 
-    @Override
     public void syncStarted() {
         super.syncStarted();
         Log.d(TAG, "syncStarted: ");
@@ -817,7 +809,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     }
 
-    @Override
     public void syncStopped(final String error) {
         super.syncStopped(error);
         Log.d(TAG, "syncStopped: " + error);
@@ -865,13 +856,12 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     }
 
-    @Override
     public void onTxAdded(BRCoreTransaction transaction) {
         super.onTxAdded(transaction);
         final Context ctx = BreadApp.getBreadContext();
         final WalletsMaster master = WalletsMaster.getInstance(ctx);
-
-        TxMetaData metaData = KVStoreManager.getInstance().createMetadata(ctx, this, (BaseTransaction) transaction);
+        Log.e(TAG, "onTxAdded: " + transaction.getReverseHash());
+        TxMetaData metaData = KVStoreManager.getInstance().createMetadata(ctx, this, new BTCTransaction(transaction));
         KVStoreManager.getInstance().putTxMetaData(ctx, metaData, transaction.getHash());
 
         final long amount = getWallet().getTransactionAmount(transaction);
@@ -921,7 +911,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             if (list != null) list.txListModified(transaction.getReverseHash());
     }
 
-    @Override
     public void onTxDeleted(final String hash, int notifyUser, int recommendRescan) {
         super.onTxDeleted(hash, notifyUser, recommendRescan);
         Log.e(TAG, "onTxDeleted: " + String.format("hash: %s, notifyUser: %d, recommendRescan: %d", hash, notifyUser, recommendRescan));
@@ -944,7 +933,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             if (list != null) list.txListModified(hash);
     }
 
-    @Override
     public void onTxUpdated(String hash, int blockHeight, int timeStamp) {
         super.onTxUpdated(hash, blockHeight, timeStamp);
         Log.d(TAG, "onTxUpdated: " + String.format("hash: %s, blockHeight: %d, timestamp: %d", hash, blockHeight, timeStamp));

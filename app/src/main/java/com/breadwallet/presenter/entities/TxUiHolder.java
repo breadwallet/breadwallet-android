@@ -38,21 +38,24 @@ public class TxUiHolder {
     private BigDecimal sent;
     private BigDecimal received;
     private BigDecimal fee;//satoshis or gas paid
-    private String to[];
-    private String from[];
+    private BigDecimal feeRate;//gas price
+    private BigDecimal feeLimit;//gas limit
+    private String to;
+    private String from;
     public String txReversed;
     private BigDecimal balanceAfterTx;
     private BigDecimal amount;
     private boolean isValid;
     private int txSize;
     public TxMetaData metaData;
-
+    public Object transaction;
     private TxUiHolder() {
     }
 
-    public TxUiHolder(long timeStamp, int blockHeight, byte[] hash, String txReversed, BigDecimal sent,
-                      BigDecimal received, BigDecimal fee, String to[], String from[],
+    public TxUiHolder(Object transaction, long timeStamp, int blockHeight, byte[] hash, String txReversed, BigDecimal sent,
+                      BigDecimal received, BigDecimal fee, BigDecimal feeRate, BigDecimal feeLimit, String to, String from,
                       BigDecimal balanceAfterTx, int txSize, BigDecimal amount, boolean isValid) {
+        this.transaction = transaction;
         this.timeStamp = timeStamp;
         this.blockHeight = blockHeight;
         this.txReversed = txReversed;
@@ -60,6 +63,8 @@ public class TxUiHolder {
         this.sent = sent;
         this.received = received;
         this.fee = fee;
+        this.feeRate = feeRate;
+        this.feeLimit = feeLimit;
         this.to = to;
         this.from = from;
         this.balanceAfterTx = balanceAfterTx;
@@ -80,7 +85,7 @@ public class TxUiHolder {
         return txSize;
     }
 
-    public String[] getFrom() {
+    public String getFrom() {
         return from;
     }
 
@@ -108,7 +113,7 @@ public class TxUiHolder {
         return timeStamp;
     }
 
-    public String[] getTo() {
+    public String getTo() {
         return to;
     }
 
@@ -124,4 +129,11 @@ public class TxUiHolder {
         return isValid;
     }
 
+    public BigDecimal getFeeRate() {
+        return feeRate;
+    }
+
+    public BigDecimal getFeeLimit() {
+        return feeLimit;
+    }
 }

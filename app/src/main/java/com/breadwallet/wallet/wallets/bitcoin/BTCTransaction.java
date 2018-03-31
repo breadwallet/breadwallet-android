@@ -1,6 +1,7 @@
 package com.breadwallet.wallet.wallets.bitcoin;
 
 import com.breadwallet.core.BRCoreTransaction;
+import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.wallet.abstracts.BaseTransaction;
 
 import java.math.BigDecimal;
@@ -29,15 +30,38 @@ import java.math.BigDecimal;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BTCTransaction extends BRCoreTransaction implements BaseTransaction {
+public class BTCTransaction implements BaseTransaction {
+
+    private BRCoreTransaction mCoreTx;
+    private BREthereumTransaction mEtherTx;
+
+    public BTCTransaction(Object transaction) {
+        if (transaction instanceof BRCoreTransaction) mCoreTx = (BRCoreTransaction) transaction;
+        else if (transaction instanceof BREthereumTransaction)
+            mEtherTx = (BREthereumTransaction) transaction;
+    }
 
     @Override
     public BigDecimal getTxSize() {
-        return null;
+        if (mCoreTx != null) return new BigDecimal(mCoreTx.getSize());
+        else if (mEtherTx != null) return new BigDecimal(0);
+        else return null;
     }
 
     @Override
     public BigDecimal getTxStandardFee() {
-        return null;
+        if (mCoreTx != null) return new BigDecimal(mCoreTx.getStandardFee());
+        else if (mEtherTx != null) return new BigDecimal(0);
+        else return null;
+    }
+
+    @Override
+    public BRCoreTransaction getCoreTx() {
+        return mCoreTx;
+    }
+
+    @Override
+    public BREthereumTransaction getEtherTx() {
+        return mEtherTx;
     }
 }

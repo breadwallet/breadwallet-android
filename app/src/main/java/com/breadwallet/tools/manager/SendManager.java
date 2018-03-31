@@ -398,8 +398,6 @@ public class SendManager {
 
         String iso = BRSharedPrefs.getPreferredFiatIso(ctx);
         BaseWalletManager wallet = WalletsMaster.getInstance(ctx).getCurrentWallet(ctx);
-        BigDecimal size = request.tx.getTxSize();
-        BigDecimal stdFee = request.tx.getTxStandardFee();
         BigDecimal feeForTx = walletManager.getTxFee(request.tx);
         if (feeForTx.compareTo(new BigDecimal(0)) <= 0) {
             BigDecimal maxAmount = walletManager.getMaxOutputAmount();
