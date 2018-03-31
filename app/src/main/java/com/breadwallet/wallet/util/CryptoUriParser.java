@@ -277,7 +277,7 @@ public class CryptoUriParser {
         }
 //        String amount = requestObject.amount;
 
-        if (requestObject.amount == null || requestObject.amount.doubleValue() == 0) {
+        if (requestObject.amount == null || requestObject.amount.compareTo(new BigDecimal(0)) == 0) {
             app.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -308,7 +308,7 @@ public class CryptoUriParser {
 
     }
 
-    public static Uri createCryptoUrl(Context app, BaseWalletManager wm, String addr, long satoshiAmount, String label, String message, String rURL) {
+    public static Uri createCryptoUrl(Context app, BaseWalletManager wm, String addr, BigDecimal satoshiAmount, String label, String message, String rURL) {
         Uri.Builder builder = new Uri.Builder();
         String walletScheme = wm.getScheme(app);
         String cleanAddress = addr;
@@ -318,8 +318,8 @@ public class CryptoUriParser {
         builder = builder.scheme(walletScheme);
         if (!Utils.isNullOrEmpty(cleanAddress))
             builder = builder.appendPath(cleanAddress);
-        if (satoshiAmount != 0)
-            builder = builder.appendQueryParameter("amount", new BigDecimal(satoshiAmount).divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString());
+        if (satoshiAmount.compareTo(new BigDecimal(0)) != 0)
+            builder = builder.appendQueryParameter("amount", satoshiAmount.divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString());
         if (label != null && !label.isEmpty())
             builder = builder.appendQueryParameter("label", label);
         if (message != null && !message.isEmpty())

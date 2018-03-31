@@ -50,8 +50,6 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
@@ -232,6 +230,26 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     public BigDecimal getTxFee(BaseTransaction tx) {
         return new BigDecimal(tx.getEtherTx().getGasUsed())
                 .multiply(new BigDecimal(tx.getEtherTx().getGasPrice(BREthereumAmount.Unit.ETHER_WEI)));
+    }
+
+    @Override
+    public BigDecimal getEstimatedFee(BigDecimal amount, String address) {
+        BigDecimal fee = null;
+        if (amount == null) return null;
+        if (amount.compareTo(new BigDecimal(0)) == 0) {
+            fee = new BigDecimal(0);
+        } else {
+            BaseTransaction tx = null;
+            if (isAddressValid(address)) {
+                tx = createTransaction(amount, address);
+            }
+
+            if (tx == null) {
+                fee = new BigDecimal(0);
+            }
+
+        }
+        return fee;
     }
 
     @Override
@@ -499,7 +517,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount, CurrencyEntity ent) {
-        if (amount == null || amount.doubleValue() == 0) return amount;
+        if (amount == null || amount.compareTo(new BigDecimal(0)) == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         if (ent != null) {
             //passed in a custom CurrencyEntity
@@ -518,7 +536,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public BigDecimal getCryptoForFiat(Context app, BigDecimal fiatAmount) {
-        if (fiatAmount == null || fiatAmount.doubleValue() == 0) return fiatAmount;
+        if (fiatAmount == null || fiatAmount.compareTo(new BigDecimal(0)) == 0) return fiatAmount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         return getEthForFiat(app, fiatAmount, iso);
 
@@ -526,19 +544,19 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
-        if (amount == null || amount.doubleValue() == 0) return amount;
+        if (amount == null || amount.compareTo(new BigDecimal(0)) == 0) return amount;
         return amount.divide(WEI_ETH, 8, ROUNDING_MODE);
     }
 
     @Override
     public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
-        if (amount == null || amount.doubleValue() == 0) return amount;
+        if (amount == null || amount.compareTo(new BigDecimal(0)) == 0) return amount;
         return amount.multiply(WEI_ETH);
     }
 
     @Override
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
-        if (amount == null || amount.doubleValue() == 0) return amount;
+        if (amount == null || amount.compareTo(new BigDecimal(0)) == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         BigDecimal ethAmount = getEthForFiat(app, amount, iso);
         if (ethAmount == null) return null;
@@ -778,7 +796,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                                 Log.e(TAG, "onRpcRequestCompleted: " + responseObject);
                                 if (responseObject.has("result")) {
                                     txHash = responseObject.getString("result");
-                                    Log.e(TAG, "onRpcRequestCompleted: ");
+                                    Log.e(TAG, "onRpcRequestCompleted: " + txHash);
                                     node.announceSubmitTransaction(tid, txHash, rid);
                                 } else if (responseObject.has("error")) {
                                     JSONObject errObj = responseObject.getJSONObject("error");

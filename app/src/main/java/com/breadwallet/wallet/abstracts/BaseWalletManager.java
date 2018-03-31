@@ -98,6 +98,9 @@ public interface BaseWalletManager {
     //get the transaction fee
     BigDecimal getTxFee(BaseTransaction tx);
 
+    //get the transaction fee
+    BigDecimal getEstimatedFee(BigDecimal amount, String address);
+
     //get the fee for the specific amount
     BigDecimal getFeeForTxAmount(BigDecimal amount);
 

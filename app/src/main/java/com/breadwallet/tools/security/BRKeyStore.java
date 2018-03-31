@@ -119,7 +119,8 @@ public class BRKeyStore {
     private static final String FAIL_TIMESTAMP_IV = "ivfailtimestamp";
     private static final String AUTH_KEY_IV = "ivauthkey";
     private static final String TOKEN_IV = "ivtoken";
-    private static final String PASS_TIME_IV = "passtimetoken";
+    private static final String PASS_TIME_IV = "ivpasstimetoken";
+    private static final String ETH_PUBKEY_IV = "ivethpubkey";
 
     public static final String PHRASE_ALIAS = "phrase";
     public static final String CANARY_ALIAS = "canary";
@@ -133,6 +134,7 @@ public class BRKeyStore {
     public static final String AUTH_KEY_ALIAS = "authKey";
     public static final String TOKEN_ALIAS = "token";
     public static final String PASS_TIME_ALIAS = "passTime";
+    public static final String ETH_PUBKEY_ALIAS = "ethpubkey";
 
     private static final String PHRASE_FILENAME = "my_phrase";
     private static final String CANARY_FILENAME = "my_canary";
@@ -146,6 +148,7 @@ public class BRKeyStore {
     private static final String AUTH_KEY_FILENAME = "my_auth_key";
     private static final String TOKEN_FILENAME = "my_token";
     private static final String PASS_TIME_FILENAME = "my_pass_time";
+    private static final String ETH_PUBKEY_FILENAME = "my_eth_pubkey";
     private static boolean bugMessageShowing;
 
     public static final int AUTH_DURATION_SEC = 300;
@@ -159,17 +162,16 @@ public class BRKeyStore {
         aliasObjectMap.put(WALLET_CREATION_TIME_ALIAS, new AliasObject(WALLET_CREATION_TIME_ALIAS, WALLET_CREATION_TIME_FILENAME, WALLET_CREATION_TIME_IV));
         aliasObjectMap.put(PASS_CODE_ALIAS, new AliasObject(PASS_CODE_ALIAS, PASS_CODE_FILENAME, PASS_CODE_IV));
         aliasObjectMap.put(FAIL_COUNT_ALIAS, new AliasObject(FAIL_COUNT_ALIAS, FAIL_COUNT_FILENAME, FAIL_COUNT_IV));
-        aliasObjectMap.put(FAIL_COUNT_ALIAS, new AliasObject(FAIL_COUNT_ALIAS, FAIL_COUNT_FILENAME, FAIL_COUNT_IV));
         aliasObjectMap.put(SPEND_LIMIT_ALIAS, new AliasObject(SPEND_LIMIT_ALIAS, SPEND_LIMIT_FILENAME, SPENT_LIMIT_IV));
         aliasObjectMap.put(FAIL_TIMESTAMP_ALIAS, new AliasObject(FAIL_TIMESTAMP_ALIAS, FAIL_TIMESTAMP_FILENAME, FAIL_TIMESTAMP_IV));
         aliasObjectMap.put(AUTH_KEY_ALIAS, new AliasObject(AUTH_KEY_ALIAS, AUTH_KEY_FILENAME, AUTH_KEY_IV));
         aliasObjectMap.put(TOKEN_ALIAS, new AliasObject(TOKEN_ALIAS, TOKEN_FILENAME, TOKEN_IV));
         aliasObjectMap.put(PASS_TIME_ALIAS, new AliasObject(PASS_TIME_ALIAS, PASS_TIME_FILENAME, PASS_TIME_IV));
         aliasObjectMap.put(TOTAL_LIMIT_ALIAS, new AliasObject(TOTAL_LIMIT_ALIAS, TOTAL_LIMIT_FILENAME, TOTAL_LIMIT_IV));
+        aliasObjectMap.put(ETH_PUBKEY_ALIAS, new AliasObject(ETH_PUBKEY_ALIAS, ETH_PUBKEY_FILENAME, ETH_PUBKEY_IV));
 
-        Assert.assertEquals(aliasObjectMap.size(), 12);
+        Assert.assertEquals(aliasObjectMap.size(), 13);
 
-//        Assert.assertEquals(AUTH_DURATION_SEC, 300);
     }
 
 
@@ -495,6 +497,26 @@ public class BRKeyStore {
 
     public synchronized static byte[] getMasterPublicKey(final Context context) {
         AliasObject obj = aliasObjectMap.get(PUB_KEY_ALIAS);
+        try {
+            return _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public synchronized static boolean putEthPublicKey(byte[] masterPubKey, Context context) {
+        AliasObject obj = aliasObjectMap.get(ETH_PUBKEY_ALIAS);
+        try {
+            return masterPubKey != null && masterPubKey.length != 0 && _setData(context, masterPubKey, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public synchronized static byte[] getEthPublicKey(final Context context) {
+        AliasObject obj = aliasObjectMap.get(ETH_PUBKEY_ALIAS);
         try {
             return _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
         } catch (UserNotAuthenticatedException e) {

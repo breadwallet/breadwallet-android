@@ -290,7 +290,6 @@ public class SendManager {
 
             String posButtonText = String.format("%s (%s)", formattedCrypto, formattedFiat);
 
-
             BRDialog.showCustomDialog(app, "Insufficient amount for transaction fee", "Send max?", posButtonText, "No thanks", new BRDialogView.BROnClickListener() {
                 @Override
                 public void onClick(BRDialogView brDialogView) {

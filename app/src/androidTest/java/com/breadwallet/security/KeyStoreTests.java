@@ -169,6 +169,16 @@ public class KeyStoreTests {
         Assert.assertArrayEquals(freshGet, freshGet);
     }
 
+    @Test
+    public void setGetEthPublickey() {
+        byte[] pubKey = "26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes();
+        BRKeyStore.putEthPublicKey(pubKey, mActivityRule.getActivity());
+        assertFilesExist(BRKeyStore.ETH_PUBKEY_ALIAS);
+        byte[] freshGet;
+        freshGet = BRKeyStore.getEthPublicKey(mActivityRule.getActivity());
+        Assert.assertArrayEquals(freshGet, freshGet);
+    }
+
 
     @Test
     public void setGetAuthKey() {
@@ -282,6 +292,7 @@ public class KeyStoreTests {
             e.printStackTrace();
             Assert.fail();
         }
+
         BRKeyStore.putMasterPublicKey("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
         BRKeyStore.putAuthKey("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
         BRKeyStore.putToken("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
@@ -292,6 +303,7 @@ public class KeyStoreTests {
         BRKeyStore.putSpendLimit(new BigDecimal(10000000), mActivityRule.getActivity());
         BRKeyStore.putLastPinUsedTime(1479686841, mActivityRule.getActivity());
         BRKeyStore.putTotalLimit(new BigDecimal(1479686841), mActivityRule.getActivity());
+        BRKeyStore.putEthPublicKey("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
 
         for (String a : aliasObjectMap.keySet()) {
             assertFilesExist(a);
@@ -322,13 +334,14 @@ public class KeyStoreTests {
         Assert.assertNull(phrase);
         Assert.assertEquals(null, canary);
         Assert.assertEquals(null, BRKeyStore.getMasterPublicKey(mActivityRule.getActivity()));
+        Assert.assertEquals(null, BRKeyStore.getEthPublicKey(mActivityRule.getActivity()));
         Assert.assertEquals(null, BRKeyStore.getAuthKey(mActivityRule.getActivity()));
         Assert.assertEquals(null, BRKeyStore.getToken(mActivityRule.getActivity()));
         Assert.assertEquals(0, BRKeyStore.getWalletCreationTime(mActivityRule.getActivity()));
         Assert.assertEquals("", BRKeyStore.getPinCode(mActivityRule.getActivity()));
         Assert.assertEquals(0, BRKeyStore.getFailCount(mActivityRule.getActivity()));
         Assert.assertEquals(0, BRKeyStore.getFailTimeStamp(mActivityRule.getActivity()));
-        Assert.assertEquals(0, BRKeyStore.getSpendLimit(mActivityRule.getActivity()));
+        Assert.assertEquals(new BigDecimal(0), BRKeyStore.getSpendLimit(mActivityRule.getActivity()));
         Assert.assertEquals(0, BRKeyStore.getLastPinUsedTime(mActivityRule.getActivity()));
 
     }
@@ -341,7 +354,7 @@ public class KeyStoreTests {
     @Test
     public void testKeyStoreAliasMap() {
         Assert.assertNotNull(aliasObjectMap);
-        Assert.assertEquals(aliasObjectMap.size(), 12);
+        Assert.assertEquals(aliasObjectMap.size(), 13);
     }
 
     public void assertFilesExist(String alias) {
