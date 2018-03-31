@@ -3,7 +3,6 @@ package com.platform;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 
 import org.json.JSONObject;
