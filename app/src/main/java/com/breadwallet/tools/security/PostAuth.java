@@ -221,6 +221,7 @@ public class PostAuth {
                                 //todo fix this
 //                              WalletsMaster.getInstance(app).offerToChangeTheAmount(app, new PaymentItem(paymentRequest.addresses, paymentItem.serializedTx, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
                             } else {
+                                if(txHash.length == 1) return; //return a random 1 byte hash for eth and tokens
                                 TxMetaData txMetaData = new TxMetaData();
                                 txMetaData.comment = mCryptoRequest.message;
                                 txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
@@ -233,8 +234,9 @@ public class PostAuth {
                                 txMetaData.deviceId = BRSharedPrefs.getDeviceId(app);
                                 txMetaData.classVersion = 1;
                                 KVStoreManager.getInstance().putTxMetaData(app, txMetaData, txHash);
+
                             }
-                            mCryptoRequest = null;
+
                         } else {
                             throw new NullPointerException("payment item is null");
                         }
@@ -244,12 +246,12 @@ public class PostAuth {
                     }
                 } finally {
                     Arrays.fill(rawPhrase, (byte) 0);
+                    mCryptoRequest = null;
                 }
             }
         });
 
     }
-
 
     public void onPaymentProtocolRequest(final Activity app, boolean authAsked) {
         final byte[] rawSeed;
@@ -268,7 +270,6 @@ public class PostAuth {
         }
         if (rawSeed.length < 10) return;
 
-
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -286,7 +287,6 @@ public class PostAuth {
     public void setPhraseForKeyStore(String phraseForKeyStore) {
         this.phraseForKeyStore = phraseForKeyStore;
     }
-
 
     public void setPaymentItem(CryptoRequest cryptoRequest) {
         this.mCryptoRequest = cryptoRequest;
@@ -339,6 +339,5 @@ public class PostAuth {
         }
         WalletsMaster.getInstance(app).startTheWalletIfExists(app);
     }
-
 
 }
