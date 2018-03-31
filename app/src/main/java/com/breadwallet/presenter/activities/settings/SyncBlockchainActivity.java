@@ -14,6 +14,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 
 public class SyncBlockchainActivity extends BRActivity {
@@ -41,7 +42,8 @@ public class SyncBlockchainActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(app, BRConstants.reScan);
+                BaseWalletManager wm = WalletsMaster.getInstance(SyncBlockchainActivity.this).getCurrentWallet(SyncBlockchainActivity.this);
+                BRAnimator.showSupportFragment(SyncBlockchainActivity.this, BRConstants.reScan, wm.getIso(SyncBlockchainActivity.this));
             }
         });
 

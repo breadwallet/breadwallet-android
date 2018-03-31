@@ -27,6 +27,7 @@ import com.breadwallet.tools.security.SmartValidator;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 public class InputWordsActivity extends BRActivity {
     private static final String TAG = InputWordsActivity.class.getName();
@@ -99,7 +100,8 @@ public class InputWordsActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(app, BRConstants.paperKey);
+                BaseWalletManager wm = WalletsMaster.getInstance(InputWordsActivity.this).getCurrentWallet(InputWordsActivity.this);
+                BRAnimator.showSupportFragment(InputWordsActivity.this, BRConstants.paperKey, wm.getIso(InputWordsActivity.this));
             }
         });
 

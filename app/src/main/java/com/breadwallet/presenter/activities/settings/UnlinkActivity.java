@@ -8,9 +8,12 @@ import android.widget.ImageButton;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.InputWordsActivity;
+import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 
 public class UnlinkActivity extends BRActivity {
@@ -37,7 +40,8 @@ public class UnlinkActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(app, BRConstants.wipeWallet);
+                BaseWalletManager wm = WalletsMaster.getInstance(UnlinkActivity.this).getCurrentWallet(UnlinkActivity.this);
+                BRAnimator.showSupportFragment(UnlinkActivity.this, BRConstants.wipeWallet, wm.getIso(UnlinkActivity.this));
             }
         });
 
