@@ -1,6 +1,7 @@
 package com.breadwallet.wallet.abstracts;
 
 import android.content.Context;
+import android.support.annotation.WorkerThread;
 
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreMerkleBlock;
@@ -41,23 +42,16 @@ import java.util.List;
  */
 public interface BaseWalletManager {
 
-//    public BaseWalletManager(BRCoreMasterPubKey masterPubKey,
-//                      BRCoreChainParams chainParams,
-//                      double earliestPeerTime) {
-//        super(masterPubKey, chainParams, earliestPeerTime);
-//    }
-
-    //get the core wallet
-    BRCoreWallet getWallet();
+    /**
+     * The methods that are annotated with @WorkerThread might block so can't be called in the UI Thread
+     */
 
     //get the core wallet
     int getForkId();
 
-    //get the core peerManager
-    BRCorePeerManager getPeerManager();
-
-    //sign and publish the tx using the seed
-    byte[] signAndPublishTransaction(BRCoreTransaction tx, byte[] seed);
+    @WorkerThread
+        //sign and publish the tx using the seed
+    byte[] signAndPublishTransaction(BaseTransaction tx, byte[] seed);
 
     void addBalanceChangedListener(OnBalanceChangedListener list);
 
@@ -67,21 +61,90 @@ public interface BaseWalletManager {
 
     void addTxListModifiedListener(OnTxListModified list);
 
-    //get a list of all the transactions sorted by timestamp
-    BRCoreTransaction[] getTransactions();
+    @WorkerThread
+        //get confirmation number
+    long getRelayCount(byte[] txHash);
 
+    @WorkerThread
+        //get the syncing progress
+    double getSyncProgress(long startHeight);
+
+    @WorkerThread
+        //get the connection status 0 - Disconnected, 1 - Connecting, 2 - Connected, 3 - Unknown
+    double getConnectStatus();
+
+    @WorkerThread
+        //Connect the wallet (PeerManager for Bitcoin)
+    void connect();
+
+    @WorkerThread
+        //Disconnect the wallet (PeerManager for Bitcoin)
+    void disconnect();
+
+    @WorkerThread
+        //Use a fixed favorite node to connect
+    boolean useFixedNode(String node, int port);
+
+    @WorkerThread
+        //Rescan the wallet (PeerManager for Bitcoin)
+    void rescan();
+
+    @WorkerThread
+        //get a list of all the transactions sorted by timestamp (e.g. BRCoreTransaction[] for BTC)
+    BaseTransaction[] getTxs();
+
+    //get the transaction fee
+    BigDecimal getTxFee(BaseTransaction tx);
+
+    //get the fee for the specific amount
+    BigDecimal getFeeForTxAmount(BigDecimal amount);
+
+    //get the fee for the transaction size
+    BigDecimal getFeeForTransactionSize(BigDecimal size);
+
+    //get the transaction to address
+    BaseAddress getTxAddress(BaseTransaction tx);
+
+    //get the maximum output amount possible for this wallet
+    BigDecimal getMaxOutputAmount();
+
+    //get the reasonable minimum output amount
+    BigDecimal getMinOutputAmount();
+
+    //get the transaction amount (negative if sent)
+    BigDecimal getTransactionAmount(BaseTransaction tx);
+
+    //get the reasonable minimum output amount (not smaller than dust)
+    BigDecimal getMinOutputAmountPossible();
+
+    @WorkerThread
+        //updates the fee for the current wallet (from an API)
     void updateFee(Context app);
 
     //get the core address and store it locally
     void refreshAddress(Context app);
 
+    //get the core balance and store it locally
+    void refreshCachedBalance(Context app);
+
     //get a list of all the transactions UI holders sorted by timestamp
     List<TxUiHolder> getTxUiHolders();
 
-    //generate the wallet if needed
+    //return true if this wallet owns this address
+    boolean containsAddress(String address);
+
+    //return true if this wallet already used this address
+    boolean addressIsUsed(String address);
+
+    //return the new address object
+    BaseAddress createAddress(String address);
+
+    @WorkerThread
+        //generate the wallet if needed
     boolean generateWallet(Context app);
 
-    //init the current wallet
+    @WorkerThread
+        //init the current wallet
     boolean connectWallet(Context app);
 
     //get the currency symbol e.g. Bitcoin - ₿, Ether - Ξ
@@ -99,8 +162,11 @@ public interface BaseWalletManager {
     //get the currency denomination e.g. BCH, mBCH, Bits
     String getDenomination(Context app);
 
-    //get the wallet's receive address
-    BRCoreAddress getReceiveAddress(Context app);
+    @WorkerThread
+        //get the wallet's receive address
+    BaseAddress getReceiveAddress(Context app);
+
+    BaseTransaction createTransaction(BigDecimal amount, String address);
 
     //decorate an address to a particular currency, if needed (like BCH address format)
     String decorateAddress(Context app, String addr);
@@ -112,49 +178,24 @@ public interface BaseWalletManager {
     int getMaxDecimalPlaces(Context app);
 
     //get the cached balance in the smallest unit:  satoshis.
-    long getCachedBalance(Context app);
+    BigDecimal getCachedBalance(Context app);
 
     //get the total amount sent in the smallest crypto unit:  satoshis.
-    long getTotalSent(Context app);
+    BigDecimal getTotalSent(Context app);
 
     //wipe all wallet data
     void wipeData(Context app);
-
-    //load the txs from DB
-    BRCoreTransaction[] loadTransactions();
-
-    //load the blocks from DB
-    BRCoreMerkleBlock[] loadBlocks();
-
-    //load the peers from DB
-    BRCorePeer[] loadPeers();
 
     void syncStarted();
 
     void syncStopped(String error);
 
-    void onTxAdded(BRCoreTransaction transaction);
-
-    void onTxDeleted(String hash, int notifyUser, int recommendRescan);
-
-    void onTxUpdated(String hash, int blockHeight, int timeStamp);
-
-    void txPublished(final String error);
-
-    void balanceChanged(long balance);
-
-    void txStatusUpdate();
-
-    void saveBlocks(boolean replace, BRCoreMerkleBlock[] blocks);
-
-    void savePeers(boolean replace, BRCorePeer[] peers);
-
     boolean networkIsReachable();
 
     /**
-     * @param balance - the balance to be saved in the smallest unit.(e.g. satoshis)
+     * @param balance - the balance to be saved in the smallest unit.(e.g. satoshis, wei)
      */
-    void setCashedBalance(Context app, long balance);
+    void setCachedBalance(Context app, BigDecimal balance);
 
     //return the maximum amount for this currency
     BigDecimal getMaxAmount(Context app);
@@ -176,7 +217,7 @@ public interface BaseWalletManager {
 
     /**
      * @param amount - the smallest denomination amount in current wallet's crypto (e.g. Satoshis)
-     * @param ent - provide a currency entity if needed
+     * @param ent    - provide a currency entity if needed
      * @return - the fiat value of the amount in crypto (e.g. dollars)
      * or null if there is no fiat exchange data from the API yet
      */

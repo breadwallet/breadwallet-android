@@ -9,6 +9,7 @@ import com.breadwallet.tools.util.BRConstants;
 
 import org.json.JSONArray;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Currency;
 import java.util.List;
@@ -153,39 +154,39 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static long getFeePerKb(Context context, String iso) {
+    public static BigDecimal getFeeRate(Context context, String iso) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getLong("feeKb" + iso.toUpperCase(), 0);
+        return new BigDecimal(prefs.getString("feeRate" + iso.toUpperCase(), "0"));
     }
 
-    public static void putFeePerKb(Context context, String iso, long fee) {
+    public static void putFeeRate(Context context, String iso, BigDecimal fee) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong("feeKb" + iso.toUpperCase(), fee);
+        editor.putString("feeRate" + iso.toUpperCase(), fee.toPlainString());
         editor.apply();
     }
 
-    public static long getEconomyFeePerKb(Context context, String iso) {
+    public static BigDecimal getEconomyFeeRate(Context context, String iso) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getLong("economyFeeKb" + iso.toUpperCase(), 0);
+        return new BigDecimal(prefs.getString("economyFeeRate" + iso.toUpperCase(), "0"));
     }
 
-    public static void putEconomyFeePerKb(Context context, String iso, long fee) {
+    public static void putEconomyFeeRate(Context context, String iso, BigDecimal fee) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong("economyFeeKb" + iso.toUpperCase(), fee);
+        editor.putString("economyFeeRate" + iso.toUpperCase(), fee.toPlainString());
         editor.apply();
     }
 
-    public static long getCachedBalance(Context context, String iso) {
+    public static BigDecimal getCachedBalance(Context context, String iso) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getLong("balance_" + iso.toUpperCase(), 0);
+        return new BigDecimal(prefs.getString("balance" + iso.toUpperCase(), "0"));
     }
 
-    public static void putCachedBalance(Context context, String iso, long balance) {
+    public static void putCachedBalance(Context context, String iso, BigDecimal balance) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putLong("balance_" + iso.toUpperCase(), balance);
+        editor.putString("balance" + iso.toUpperCase(), balance.toPlainString());
         editor.apply();
     }
 

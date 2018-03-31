@@ -3,18 +3,15 @@ package com.breadwallet.tools.threads;
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCorePaymentProtocolRequest;
-import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreTransactionOutput;
-import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.core.BRCoreWallet;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.exceptions.CertificateChainNotFound;
-import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -23,12 +20,14 @@ import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.security.X509CertificateValidator;
 import com.breadwallet.tools.util.BytesUtil;
 import com.breadwallet.tools.util.CustomLogger;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.BTCTransaction;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 
 import java.io.FileNotFoundException;
 import java.io.InputStream;
@@ -36,8 +35,6 @@ import java.math.BigDecimal;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
-import java.security.cert.X509Certificate;
-import java.util.List;
 import java.util.Locale;
 
 
@@ -83,6 +80,9 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             Log.e(TAG, "the uri: " + params[0]);
             URL url = new URL(params[0]);
             BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+            if (!wm.getIso(app).equalsIgnoreCase("BTC") && !wm.getIso(app).equalsIgnoreCase("BCH")) {
+                throw new RuntimeException("Can't happen, Payment protocol for: " + wm.getIso(app));
+            }
             urlConnection = (HttpURLConnection) url.openConnection();
             urlConnection.setRequestProperty("Accept", "application/" + wm.getName(app).toLowerCase() + "-paymentrequest");
             urlConnection.setConnectTimeout(3000);
@@ -271,22 +271,21 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
 
     private void continueWithThePayment(final Activity app, final String certification) {
 
-
         BRCoreTransactionOutput[] outputs = paymentProtocolRequest.getOutputs();
         StringBuilder allAddresses = new StringBuilder();
         for (BRCoreTransactionOutput output : outputs) {
             allAddresses.append(output.getAddress()).append(", ");
         }
-        final BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
-
-        final BRCoreTransaction tx = wallet.getWallet().createTransactionForOutputs(paymentProtocolRequest.getOutputs());
+        final BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+        BRCoreWallet coreWallet = wm.getIso(app).equalsIgnoreCase("BTC") ? ((WalletBitcoinManager) wm).getWallet() : ((WalletBchManager) wm).getWallet();
+        final BTCTransaction tx = (BTCTransaction) coreWallet.createTransactionForOutputs(paymentProtocolRequest.getOutputs());
         if (tx == null) {
             BRDialog.showSimpleDialog(app, "Insufficient funds", "");
             paymentProtocolRequest = null;
             return;
         }
-        final long amount = new BigDecimal(wallet.getWallet().getTransactionAmount(tx)).abs().longValue();
-        final long fee = wallet.getWallet().getTransactionFee(tx);
+        final BigDecimal amount = wm.getTransactionAmount(tx).abs();
+        final BigDecimal fee = wm.getTxFee(tx);
 
         allAddresses.delete(allAddresses.length() - 2, allAddresses.length());
 //        if (paymentProtocolRequest.getMemo() == null) paymentRequest.memo = "";
@@ -298,11 +297,11 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                long txAmt = new BigDecimal(wallet.getWallet().getTransactionAmount(tx)).abs().longValue();
-                double minOutput = wallet.getWallet().getMinOutputAmount();
-                if (txAmt < minOutput) {
+                BigDecimal txAmt = wm.getTransactionAmount(tx).abs();
+                BigDecimal minOutput = wm.getMinOutputAmount();
+                if (txAmt.compareTo(minOutput) < 0) {
                     final String bitcoinMinMessage = String.format(Locale.getDefault(), app.getString(R.string.PaymentProtocol_Errors_smallTransaction),
-                            BRConstants.symbolBits + new BigDecimal(minOutput).divide(new BigDecimal("100")));
+                            BRConstants.symbolBits + minOutput.divide(new BigDecimal("100")));
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
@@ -319,12 +318,12 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 }
                 WalletsMaster master = WalletsMaster.getInstance(app);
 
-                final long total = amount + fee;
+                final BigDecimal total = amount.add(fee);
 
 
-                BigDecimal bigAm = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(amount), null);
-                BigDecimal bigFee = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(fee), null);
-                BigDecimal bigTotal = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, new BigDecimal(total), null);
+                BigDecimal bigAm = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, amount, null);
+                BigDecimal bigFee = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, fee, null);
+                BigDecimal bigTotal = master.getCurrentWallet(app).getFiatForSmallestCrypto(app, total, null);
                 final String message = certification + memo + finalAllAddresses.toString() + "\n\n" + "amount: " + CurrencyUtils.getFormattedAmount(app, iso, bigAm)
                         + "\nnetwork fee: +" + CurrencyUtils.getFormattedAmount(app, iso, bigFee)
                         + "\ntotal: " + CurrencyUtils.getFormattedAmount(app, iso, bigTotal);

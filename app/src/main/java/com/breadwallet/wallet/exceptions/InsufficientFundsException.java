@@ -1,5 +1,7 @@
 package com.breadwallet.wallet.exceptions;
 
+import java.math.BigDecimal;
+
 /**
  * BreadWallet
  * <p/>
@@ -26,7 +28,7 @@ package com.breadwallet.wallet.exceptions;
  */
 public class InsufficientFundsException extends Exception {
 
-    public InsufficientFundsException(long amount, long balance) {
+    public InsufficientFundsException(BigDecimal amount, BigDecimal balance) {
         super("Balance: " + balance + " satoshis, amount: " + amount + " satoshis.");
     }
 

@@ -3,40 +3,27 @@ package com.breadwallet.wallet.wallets.etherium;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.BuildConfig;
-import com.breadwallet.core.BRCoreAddress;
-import com.breadwallet.core.BRCoreChainParams;
+import com.breadwallet.BreadApp;
 import com.breadwallet.core.BRCoreMasterPubKey;
-import com.breadwallet.core.BRCoreMerkleBlock;
-import com.breadwallet.core.BRCorePeer;
-import com.breadwallet.core.BRCorePeerManager;
-import com.breadwallet.core.BRCoreTransaction;
-import com.breadwallet.core.BRCoreWallet;
-import com.breadwallet.core.ethereum.BREthereumAccount;
-import com.breadwallet.core.ethereum.BREthereumLightNode;
-import com.breadwallet.core.ethereum.BREthereumNetwork;
-import com.breadwallet.core.ethereum.BREthereumToken;
-import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
-import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.manager.InternetManager;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.abstracts.BaseAddress;
+import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
-import com.breadwallet.wallet.wallets.bitcoincash.WalletBchManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 
 /**
  * BreadWallet
@@ -62,27 +49,26 @@ import java.util.concurrent.Executors;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletEthManager extends BREthereumWallet implements BaseWalletManager {
+public class WalletEthManager implements BaseWalletManager {
     private static final String TAG = WalletEthManager.class.getSimpleName();
 
     private static String ISO = "ETH";
-    public static final String BCH_SCHEME = null;
+    public static final String ETH_SCHEME = null;
 
     private static final String mName = "Etherium";
 
+    private List<OnBalanceChangedListener> balanceListeners = new ArrayList<>();
+    private List<OnTxStatusUpdatedListener> txStatusUpdatedListeners = new ArrayList<>();
+    private List<SyncListener> syncListeners = new ArrayList<>();
+    private List<OnTxListModified> txModifiedListeners = new ArrayList<>();
+
     private static WalletEthManager instance;
     private WalletUiConfiguration uiConfig;
+    public final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // A LOT
 
     private int mSyncRetryCount = 0;
     private static final int SYNC_MAX_RETRY = 3;
 
-    protected WalletEthManager(BREthereumLightNode node, long identifier, BREthereumAccount account, BREthereumNetwork network) {
-        super(node, identifier, account, network);
-    }
-
-    protected WalletEthManager(BREthereumLightNode node, long identifier, BREthereumAccount account, BREthereumNetwork network, BREthereumToken token) {
-        super(node, identifier, account, network, token);
-    }
 
 //    private boolean isInitiatingWallet;
 //
@@ -93,6 +79,10 @@ public class WalletEthManager extends BREthereumWallet implements BaseWalletMana
 
 //    private Executor listenerExecutor = Executors.newSingleThreadExecutor();
 
+    private WalletEthManager() {
+        uiConfig = new WalletUiConfiguration("#5e70a3", true, true, false);
+    }
+
     public synchronized static WalletEthManager getInstance(Context app) {
         if (instance == null) {
             byte[] rawPubKey = BRKeyStore.getMasterPublicKey(app);
@@ -100,7 +90,13 @@ public class WalletEthManager extends BREthereumWallet implements BaseWalletMana
                 Log.e(TAG, "getInstance: rawPubKey is null");
                 return null;
             }
-            BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
+//            BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
+//
+//            BREthereumLightNode node = new BREthereumLightNode.JSON_RPC(test, BREthereumNetwork.testnet);
+//            BREthereumAccount account = node.createAccount(USABLE_PAPER_KEY);
+//
+            instance = new WalletEthManager();
+
 //            long time = BRKeyStore.getWalletCreationTime(app);
 //            if (!BRSharedPrefs.getBchPreforkSynced(app) && time == 0)
 //                time = BuildConfig.BITCOIN_TESTNET ? 1501597117 : 1501568580;
@@ -113,62 +109,13 @@ public class WalletEthManager extends BREthereumWallet implements BaseWalletMana
         return instance;
     }
 
-//    private WalletEthManager(final Context app, BRCoreMasterPubKey masterPubKey,
-//                             BRCoreChainParams chainParams,
-//                             double earliestPeerTime) {
-//        super(masterPubKey, chainParams, earliestPeerTime);
-//        if (isInitiatingWallet) return;
-//        isInitiatingWallet = true;
-//        try {
-//            Log.d(TAG, "connectWallet:" + Thread.currentThread().getName());
-//            if (app == null) {
-//                Log.e(TAG, "connectWallet: app is null");
-//                return;
-//            }
-//            String firstAddress = masterPubKey.getPubKeyAsCoreKey().address();
-//            BRSharedPrefs.putFirstAddress(app, firstAddress);
-//            long fee = BRSharedPrefs.getFeePerKb(app, getIso(app));
-//            long economyFee = BRSharedPrefs.getEconomyFeePerKb(app, getIso(app));
-//            if (fee == 0) {
-//                fee = getWallet().getDefaultFeePerKb();
-//                BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
-//            }
-//            getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app, getIso(app)) ? fee : economyFee);
-//            if (BRSharedPrefs.getStartHeight(app, getIso(app)) == 0)
-//                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        BRSharedPrefs.putStartHeight(app, getIso(app), getPeerManager().getLastBlockHeight());
-//                    }
-//                });
-//
-////            BRPeerManager.getInstance().updateFixedPeer(ctx);//todo reimplement the fixed peer
-////        balanceListeners = new ArrayList<>();
-//            uiConfig = new WalletUiConfiguration("#478559", true, true, false);
-//
-//        } finally {
-//            isInitiatingWallet = false;
-//        }
-
-//    }
-
-    @Override
-    public BRCoreWallet getWallet() {
-        return null;
-    }
-
     @Override
     public int getForkId() {
         return 0;
     }
 
     @Override
-    public BRCorePeerManager getPeerManager() {
-        return null;
-    }
-
-    @Override
-    public byte[] signAndPublishTransaction(BRCoreTransaction tx, byte[] seed) {
+    public byte[] signAndPublishTransaction(BaseTransaction tx, byte[] seed) {
         return new byte[0];
     }
 
@@ -193,8 +140,83 @@ public class WalletEthManager extends BREthereumWallet implements BaseWalletMana
     }
 
     @Override
-    public BRCoreTransaction[] getTransactions() {
-        return new BRCoreTransaction[0];
+    public long getRelayCount(byte[] txHash) {
+        return 0;
+    }
+
+    @Override
+    public double getSyncProgress(long startHeight) {
+        return 1.0;
+    }
+
+    @Override
+    public double getConnectStatus() {
+        return 2;
+    }
+
+    @Override
+    public void connect() {
+
+    }
+
+    @Override
+    public void disconnect() {
+
+    }
+
+    @Override
+    public boolean useFixedNode(String node, int port) {
+        return false;
+    }
+
+    @Override
+    public void rescan() {
+
+    }
+
+    @Override
+    public BaseTransaction[] getTxs() {
+        return new BaseTransaction[0];
+    }
+
+    @Override
+    public BigDecimal getTxFee(BaseTransaction tx) {
+        return null;
+    }
+
+    @Override
+    public BigDecimal getFeeForTxAmount(BigDecimal amount) {
+        return null;
+    }
+
+    @Override
+    public BigDecimal getFeeForTransactionSize(BigDecimal size) {
+        return null;
+    }
+
+    @Override
+    public BaseAddress getTxAddress(BaseTransaction tx) {
+        return null;
+    }
+
+    @Override
+    public BigDecimal getMaxOutputAmount() {
+        return null;
+    }
+
+    @Override
+    public BigDecimal getMinOutputAmount() {
+        return null;
+    }
+
+    @Override
+    public BigDecimal getTransactionAmount(BaseTransaction tx) {
+        return null;
+    }
+
+    @Override
+    public BigDecimal getMinOutputAmountPossible() {
+        return null;
     }
 
     @Override
@@ -208,8 +230,28 @@ public class WalletEthManager extends BREthereumWallet implements BaseWalletMana
     }
 
     @Override
+    public void refreshCachedBalance(Context app) {
+
+    }
+
+    @Override
     public List<TxUiHolder> getTxUiHolders() {
         return null;
+    }
+
+    @Override
+    public boolean containsAddress(String address) {
+        return false;
+    }
+
+    @Override
+    public boolean addressIsUsed(String address) {
+        return false;
+    }
+
+    @Override
+    public BaseAddress createAddress(String address) {
+        return new ETHAddress(address);
     }
 
     @Override
@@ -224,181 +266,178 @@ public class WalletEthManager extends BREthereumWallet implements BaseWalletMana
 
     @Override
     public String getSymbol(Context app) {
-        return null;
+        return BRConstants.symbolEther;
     }
 
     @Override
     public String getIso(Context app) {
-        return null;
+        return ISO;
     }
 
     @Override
     public String getScheme(Context app) {
-        return null;
+        throw new RuntimeException("not implemented");
     }
 
     @Override
     public String getName(Context app) {
-        return null;
+        return mName;
     }
 
     @Override
     public String getDenomination(Context app) {
+        throw new RuntimeException("not implemented");
+    }
+
+    @Override
+    public BaseAddress getReceiveAddress(Context app) {
         return null;
     }
 
     @Override
-    public BRCoreAddress getReceiveAddress(Context app) {
+    public BaseTransaction createTransaction(BigDecimal amount, String address) {
         return null;
     }
 
     @Override
     public String decorateAddress(Context app, String addr) {
-        return null;
+        return addr;
     }
 
     @Override
     public String undecorateAddress(Context app, String addr) {
-        return null;
+        return addr;
     }
 
     @Override
     public int getMaxDecimalPlaces(Context app) {
-        return 0;
+        return 18;
     }
 
     @Override
-    public long getCachedBalance(Context app) {
-        return 0;
+    public BigDecimal getCachedBalance(Context app) {
+        return BRSharedPrefs.getCachedBalance(app, getIso(app));
     }
 
     @Override
-    public long getTotalSent(Context app) {
-        return 0;
+    public BigDecimal getTotalSent(Context app) {
+        return null;
     }
 
     @Override
     public void wipeData(Context app) {
-
-    }
-
-    @Override
-    public BRCoreTransaction[] loadTransactions() {
-        return new BRCoreTransaction[0];
-    }
-
-    @Override
-    public BRCoreMerkleBlock[] loadBlocks() {
-        return new BRCoreMerkleBlock[0];
-    }
-
-    @Override
-    public BRCorePeer[] loadPeers() {
-        return new BRCorePeer[0];
+        Log.e(TAG, "wipeData: ");
     }
 
     @Override
     public void syncStarted() {
-
+        Log.e(TAG, "syncStarted: ");
     }
 
     @Override
     public void syncStopped(String error) {
-
-    }
-
-    @Override
-    public void onTxAdded(BRCoreTransaction transaction) {
-
-    }
-
-    @Override
-    public void onTxDeleted(String hash, int notifyUser, int recommendRescan) {
-
-    }
-
-    @Override
-    public void onTxUpdated(String hash, int blockHeight, int timeStamp) {
-
-    }
-
-    @Override
-    public void txPublished(String error) {
-
-    }
-
-    @Override
-    public void balanceChanged(long balance) {
-
-    }
-
-    @Override
-    public void txStatusUpdate() {
-
-    }
-
-    @Override
-    public void saveBlocks(boolean replace, BRCoreMerkleBlock[] blocks) {
-
-    }
-
-    @Override
-    public void savePeers(boolean replace, BRCorePeer[] peers) {
-
+        Log.e(TAG, "syncStopped: " + error);
     }
 
     @Override
     public boolean networkIsReachable() {
-        return false;
+        Context app = BreadApp.getBreadContext();
+        return InternetManager.getInstance().isConnected(app);
     }
 
     @Override
-    public void setCashedBalance(Context app, long balance) {
+    public void setCachedBalance(Context app, BigDecimal balance) {
+        BRSharedPrefs.putCachedBalance(app, getIso(app), balance);
+        refreshAddress(app);
+        for (OnBalanceChangedListener listener : balanceListeners) {
+            if (listener != null) listener.onBalanceChanged(getIso(app), balance);
+        }
 
     }
 
     @Override
     public BigDecimal getMaxAmount(Context app) {
-        return null;
+        return MAX_ETH;
     }
 
     @Override
     public WalletUiConfiguration getUiConfiguration() {
-        return null;
+        return uiConfig;
     }
 
     @Override
     public BigDecimal getFiatExchangeRate(Context app) {
-        return null;
+        return new BigDecimal(0);
     }
 
     @Override
     public BigDecimal getFiatBalance(Context app) {
-        return null;
+        return new BigDecimal(0);
     }
 
     @Override
     public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount, CurrencyEntity ent) {
-        return null;
+        return new BigDecimal(0);
     }
 
     @Override
     public BigDecimal getCryptoForFiat(Context app, BigDecimal amount) {
-        return null;
+        return new BigDecimal(0);
     }
 
     @Override
     public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
-        return null;
+        return new BigDecimal(0);
     }
 
     @Override
     public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
-        return null;
+        return new BigDecimal(0);
     }
 
     @Override
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
-        return null;
+        return new BigDecimal(0);
     }
+
+//    private WalletEthManager(final Context app, BRCoreMasterPubKey masterPubKey,
+//                             BRCoreChainParams chainParams,
+//                             double earliestPeerTime) {
+//        super(masterPubKey, chainParams, earliestPeerTime);
+//        if (isInitiatingWallet) return;
+//        isInitiatingWallet = true;
+//        try {
+//            Log.d(TAG, "connectWallet:" + Thread.currentThread().getName());
+//            if (app == null) {
+//                Log.e(TAG, "connectWallet: app is null");
+//                return;
+//            }
+//            String firstAddress = masterPubKey.getPubKeyAsCoreKey().address();
+//            BRSharedPrefs.putFirstAddress(app, firstAddress);
+//            long fee = BRSharedPrefs.getFeeRate(app, getIso(app));
+//            long economyFee = BRSharedPrefs.getEconomyFeeRate(app, getIso(app));
+//            if (fee == 0) {
+//                fee = getWallet().getDefaultFeePerKb();
+//                BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
+//            }
+//            getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app, getIso(app)) ? fee : economyFee);
+//            if (BRSharedPrefs.getStartHeight(app, getIso(app)) == 0)
+//                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        BRSharedPrefs.putStartHeight(app, getIso(app), getPeerManager().getLastBlockHeight());
+//                    }
+//                });
+//
+////            BRPeerManager.getInstance().updateFixedPeer(ctx);//todo reimplement the fixed peer
+////        balanceListeners = new ArrayList<>();
+//            uiConfig = new WalletUiConfiguration("#478559", true, true, false);
+//
+//        } finally {
+//            isInitiatingWallet = false;
+//        }
+
+//    }
+
+
 }

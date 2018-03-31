@@ -1,5 +1,7 @@
 package com.breadwallet.wallet.abstracts;
 
+import java.math.BigDecimal;
+
 /**
  * BreadWallet
  * <p/>
@@ -26,5 +28,5 @@ package com.breadwallet.wallet.abstracts;
  */
 public interface OnBalanceChangedListener {
 
-    void onBalanceChanged(String iso, long newBalance);
+    void onBalanceChanged(String iso, BigDecimal newBalance);
 }

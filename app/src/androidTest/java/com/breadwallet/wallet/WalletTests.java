@@ -14,7 +14,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoincash.WalletBchManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;

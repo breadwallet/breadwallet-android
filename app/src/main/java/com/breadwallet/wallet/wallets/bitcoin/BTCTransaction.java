@@ -1,11 +1,14 @@
-package com.breadwallet.wallet.exceptions;
+package com.breadwallet.wallet.wallets.bitcoin;
+
+import com.breadwallet.core.BRCoreTransaction;
+import com.breadwallet.wallet.abstracts.BaseTransaction;
 
 import java.math.BigDecimal;
 
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 1/30/18.
+ * Created by Mihail Gutan on <mihail@breadwallet.com> 3/22/18.
  * Copyright (c) 2018 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,10 +29,15 @@ import java.math.BigDecimal;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class AmountSmallerThanMinException extends Exception {
+public class BTCTransaction extends BRCoreTransaction implements BaseTransaction {
 
-    public AmountSmallerThanMinException(BigDecimal amount, BigDecimal min) {
-        super("Min: " + min + " satoshis, amount: " + amount + " satoshis.");
+    @Override
+    public BigDecimal getTxSize() {
+        return null;
     }
 
+    @Override
+    public BigDecimal getTxStandardFee() {
+        return null;
+    }
 }

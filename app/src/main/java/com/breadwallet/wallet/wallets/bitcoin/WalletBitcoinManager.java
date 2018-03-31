@@ -52,6 +52,8 @@ import com.breadwallet.tools.util.SymbolUtils;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseAddress;
+import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
@@ -156,13 +158,13 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             }
             String firstAddress = masterPubKey.getPubKeyAsCoreKey().address();
             BRSharedPrefs.putFirstAddress(app, firstAddress);
-            long fee = BRSharedPrefs.getFeePerKb(app, getIso(app));
-            long economyFee = BRSharedPrefs.getEconomyFeePerKb(app, getIso(app));
-            if (fee == 0) {
-                fee = getWallet().getDefaultFeePerKb();
+            BigDecimal fee = BRSharedPrefs.getFeeRate(app, getIso(app));
+            BigDecimal economyFee = BRSharedPrefs.getEconomyFeeRate(app, getIso(app));
+            if (fee.compareTo(new BigDecimal(0)) == 0) {
+                fee = new BigDecimal(getWallet().getDefaultFeePerKb());
                 BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
             }
-            getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app, getIso(app)) ? fee : economyFee);
+            getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app, getIso(app)) ? fee.longValue() : economyFee.longValue());
             if (BRSharedPrefs.getStartHeight(app, getIso(app)) == 0)
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
@@ -197,8 +199,48 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public BRCoreTransaction[] getTransactions() {
-        return getWallet().getTransactions();
+    public BaseTransaction[] getTxs() {
+        return (BaseTransaction[]) getWallet().getTransactions();
+    }
+
+    @Override
+    public BigDecimal getTxFee(BaseTransaction tx) {
+        return new BigDecimal(getWallet().getTransactionFee((BRCoreTransaction) tx));
+    }
+
+    @Override
+    public BigDecimal getFeeForTxAmount(BigDecimal amount) {
+        return new BigDecimal(getWallet().getFeeForTransactionAmount(amount.longValue()));
+    }
+
+    @Override
+    public BigDecimal getFeeForTransactionSize(BigDecimal size) {
+        return new BigDecimal(getWallet().getFeeForTransactionSize(size.longValue()));
+    }
+
+    @Override
+    public BaseAddress getTxAddress(BaseTransaction tx) {
+        return (BaseAddress) getWallet().getTransactionAddress((BRCoreTransaction) tx);
+    }
+
+    @Override
+    public BigDecimal getMaxOutputAmount() {
+        return new BigDecimal(getWallet().getMaxOutputAmount());
+    }
+
+    @Override
+    public BigDecimal getMinOutputAmount() {
+        return new BigDecimal(getWallet().getMinOutputAmount());
+    }
+
+    @Override
+    public BigDecimal getTransactionAmount(BaseTransaction tx) {
+        return new BigDecimal(getWallet().getTransactionAmount((BRCoreTransaction) tx));
+    }
+
+    @Override
+    public BigDecimal getMinOutputAmountPossible() {
+        return new BigDecimal(BRCoreTransaction.getMinOutputAmount());
     }
 
     @Override
@@ -215,23 +257,23 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
             return;
         }
-        long fee;
-        long economyFee;
+        BigDecimal fee;
+        BigDecimal economyFee;
         try {
             JSONObject obj = new JSONObject(jsonString);
-            fee = obj.getLong("fee_per_kb");
-            economyFee = obj.getLong("fee_per_kb_economy");
-//            Log.e(TAG, "updateFee: " + getIso(app) + ":" + fee + "|" + economyFee);
+            fee = new BigDecimal(obj.getString("fee_per_kb"));
+            economyFee = new BigDecimal(obj.getString("fee_per_kb_economy"));
+            Log.e(TAG, "updateFee: " + getIso(app) + ":" + fee + "|" + economyFee);
 
-            if (fee != 0 && fee < getWallet().getMaxFeePerKb()) {
-                BRSharedPrefs.putFeePerKb(app, getIso(app), fee);
-                getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app, getIso(app)) ? fee : economyFee);
+            if (fee.compareTo(new BigDecimal(0)) > 0 && fee.compareTo(new BigDecimal(getWallet().getMaxFeePerKb())) < 0) {
+                BRSharedPrefs.putFeeRate(app, getIso(app), fee);
+                getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app, getIso(app)) ? fee.longValue() : economyFee.longValue());
                 BRSharedPrefs.putFeeTime(app, getIso(app), System.currentTimeMillis()); //store the time of the last successful fee fetch
             } else {
                 FirebaseCrash.report(new NullPointerException("Fee is weird:" + fee));
             }
-            if (economyFee != 0 && economyFee < getWallet().getMaxFeePerKb()) {
-                BRSharedPrefs.putEconomyFeePerKb(app, getIso(app), economyFee);
+            if (economyFee.compareTo(new BigDecimal(0)) > 0 && economyFee.compareTo(new BigDecimal(getWallet().getMaxFeePerKb())) < 0) {
+                BRSharedPrefs.putEconomyFeeRate(app, getIso(app), economyFee);
             } else {
                 FirebaseCrash.report(new NullPointerException("Economy fee is weird:" + economyFee));
             }
@@ -258,6 +300,21 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         }
 
         return uiTxs;
+    }
+
+    @Override
+    public boolean containsAddress(String address) {
+        return getWallet().containsAddress(new BRCoreAddress(address));
+    }
+
+    @Override
+    public boolean addressIsUsed(String address) {
+        return getWallet().addressIsUsed(new BRCoreAddress(address));
+    }
+
+    @Override
+    public BaseAddress createAddress(String address) {
+        return new BTCAddress(address);
     }
 
     @Override
@@ -337,8 +394,17 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public BRCoreAddress getReceiveAddress(Context app) {
-        return getWallet().getReceiveAddress();
+    public BaseAddress getReceiveAddress(Context app) {
+        return (BaseAddress) getWallet().getReceiveAddress();
+    }
+
+    @Override
+    public BaseTransaction createTransaction(BigDecimal amount, String address) {
+        if (Utils.isNullOrEmpty(address)) {
+            Log.e(TAG, "createTransaction: can't create, address is null");
+            return null;
+        }
+        return (BaseTransaction) getWallet().createTransaction(amount.longValue(), new BRCoreAddress(address));
     }
 
     @Override
@@ -365,13 +431,13 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public long getCachedBalance(Context app) {
+    public BigDecimal getCachedBalance(Context app) {
         return BRSharedPrefs.getCachedBalance(app, getIso(app));
     }
 
     @Override
-    public long getTotalSent(Context app) {
-        return getWallet().getTotalSent();
+    public BigDecimal getTotalSent(Context app) {
+        return new BigDecimal(getWallet().getTotalSent());
     }
 
     @Override
@@ -383,7 +449,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public void setCashedBalance(Context app, long balance) {
+    public void setCachedBalance(Context app, BigDecimal balance) {
         BRSharedPrefs.putCachedBalance(app, getIso(app), balance);
         refreshAddress(app);
         for (OnBalanceChangedListener listener : balanceListeners) {
@@ -394,12 +460,18 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     @Override
     public void refreshAddress(Context app) {
-        BRCoreAddress address = getReceiveAddress(app);
+        BRCoreAddress address = getWallet().getReceiveAddress();
         if (Utils.isNullOrEmpty(address.stringify())) {
             Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
         }
         BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso(app));
 
+    }
+
+    @Override
+    public void refreshCachedBalance(Context app) {
+        BigDecimal balance = new BigDecimal(getWallet().getBalance());
+        BRSharedPrefs.putCachedBalance(app, ISO, balance);
     }
 
     @Override
@@ -422,7 +494,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     @Override
     public BigDecimal getFiatBalance(Context app) {
         if (app == null) return null;
-        BigDecimal bal = getFiatForSmallestCrypto(app, new BigDecimal(getCachedBalance(app)), null);
+        BigDecimal bal = getFiatForSmallestCrypto(app, getCachedBalance(app), null);
         return new BigDecimal(bal == null ? 0 : bal.doubleValue());
     }
 
@@ -524,6 +596,11 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
+    public byte[] signAndPublishTransaction(BaseTransaction tx, byte[] seed) {
+        return super.signAndPublishTransaction((BRCoreTransaction) tx, seed);
+    }
+
+    @Override
     public void addBalanceChangedListener(OnBalanceChangedListener listener) {
         if (listener != null && !balanceListeners.contains(listener))
             balanceListeners.add(listener);
@@ -545,6 +622,51 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     public void addTxListModifiedListener(OnTxListModified list) {
         if (list != null && !txModifiedListeners.contains(list))
             txModifiedListeners.add(list);
+    }
+
+    @Override
+    public long getRelayCount(byte[] txHash) {
+        return getPeerManager().getRelayCount(txHash);
+    }
+
+    @Override
+    public double getSyncProgress(long startHeight) {
+        return getPeerManager().getSyncProgress(startHeight);
+    }
+
+    @Override
+    public double getConnectStatus() {
+        BRCorePeer.ConnectStatus status = getPeerManager().getConnectStatus();
+        if (status == BRCorePeer.ConnectStatus.Disconnected)
+            return 0;
+        else if (status == BRCorePeer.ConnectStatus.Connecting)
+            return 1;
+        else if (status == BRCorePeer.ConnectStatus.Connected)
+            return 2;
+        else if (status == BRCorePeer.ConnectStatus.Unknown)
+            return 3;
+        else
+            throw new IllegalArgumentException();
+    }
+
+    @Override
+    public void connect() {
+        getPeerManager().connect();
+    }
+
+    @Override
+    public void disconnect() {
+        getPeerManager().disconnect();
+    }
+
+    @Override
+    public boolean useFixedNode(String node, int port) {
+        return false;
+    }
+
+    @Override
+    public void rescan() {
+        getPeerManager().rescan();
     }
 
 
@@ -574,7 +696,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     public void balanceChanged(long balance) {
         super.balanceChanged(balance);
         Context app = BreadApp.getBreadContext();
-        setCashedBalance(app, balance);
+        setCachedBalance(app, new BigDecimal(balance));
         for (OnTxListModified list : txModifiedListeners)
             if (list != null) list.txListModified(null);
 
@@ -635,7 +757,6 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         Context app = BreadApp.getBreadContext();
         return InternetManager.getInstance().isConnected(app);
     }
-
 
     @Override
     public BRCoreTransaction[] loadTransactions() {
@@ -747,7 +868,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         final Context ctx = BreadApp.getBreadContext();
         final WalletsMaster master = WalletsMaster.getInstance(ctx);
 
-        TxMetaData metaData = KVStoreManager.getInstance().createMetadata(ctx, this, transaction);
+        TxMetaData metaData = KVStoreManager.getInstance().createMetadata(ctx, this, (BaseTransaction) transaction);
         KVStoreManager.getInstance().putTxMetaData(ctx, metaData, transaction.getHash());
 
         final long amount = getWallet().getTransactionAmount(transaction);
@@ -834,6 +955,5 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         for (OnTxListModified list : txModifiedListeners)
             if (list != null) list.txListModified(hash);
     }
-
 
 }

@@ -85,12 +85,12 @@ public class SpendLimitActivity extends BRActivity {
                                     int position, long id) {
                 int limit = adapter.getItem(position);
                 Log.e(TAG, "limit chosen: " + limit);
-                BRKeyStore.putSpendLimit(limit, app);
-                long totalSent = 0;
+                BRKeyStore.putSpendLimit(new BigDecimal(limit), app);
+                BigDecimal totalSent = new BigDecimal(0);
                 List<BaseWalletManager> wallets = WalletsMaster.getInstance(app).getAllWallets();
                 for (BaseWalletManager w : wallets)
-                    totalSent += w.getTotalSent(app); //collect total total sent
-                AuthManager.getInstance().setTotalLimit(app, totalSent + BRKeyStore.getSpendLimit(app));
+                    totalSent = totalSent.add(w.getTotalSent(app)); //collect total total sent
+                AuthManager.getInstance().setTotalLimit(app, totalSent.add(BRKeyStore.getSpendLimit(app)));
                 adapter.notifyDataSetChanged();
             }
 
@@ -127,22 +127,22 @@ public class SpendLimitActivity extends BRActivity {
         return result;
     }
 
-    private int getStepFromLimit(long limit) {
-        switch ((int) limit) {
+    private int getStepFromLimit(BigDecimal limit) {
 
-            case 0:
-                return 0;
-            case ONE_BITCOIN / 100:
-                return 1;
-            case ONE_BITCOIN / 10:
-                return 2;
-            case ONE_BITCOIN:
-                return 3;
-            case ONE_BITCOIN * 10:
-                return 4;
-            default:
-                return 2; //1 BTC Default
+        if (limit.compareTo(new BigDecimal(0)) == 0) {
+            return 0;
+        } else if (limit.compareTo(new BigDecimal(ONE_BITCOIN / 100)) == 0) {
+            return 1;
+        } else if (limit.compareTo(new BigDecimal(ONE_BITCOIN / 10)) == 0) {
+            return 2;
+        } else if (limit.compareTo(new BigDecimal(ONE_BITCOIN)) == 0) {
+            return 3;
+        } else if (limit.compareTo(new BigDecimal(ONE_BITCOIN * 10)) == 0) {
+            return 4;
+        } else {
+            return 2; //1 BTC Default
         }
+
     }
 
     @Override
@@ -182,7 +182,7 @@ public class SpendLimitActivity extends BRActivity {
         @Override
         public View getView(int position, View convertView, @NonNull ViewGroup parent) {
 
-            final long limit = BRKeyStore.getSpendLimit(app);
+            final BigDecimal limit = BRKeyStore.getSpendLimit(app);
             if (convertView == null) {
                 // inflate the layout
                 LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();

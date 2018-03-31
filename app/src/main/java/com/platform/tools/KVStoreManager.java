@@ -3,13 +3,13 @@ package com.platform.tools;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRCompressor;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.APIClient;
 import com.platform.entities.TxMetaData;
@@ -23,7 +23,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -218,7 +217,7 @@ public class KVStoreManager {
             result.blockHeight = json.getInt("bh");
             result.exchangeRate = json.getDouble("er");
             result.exchangeCurrency = json.getString("erc");
-            result.fee = json.getLong("fr");
+            result.fee = json.getString("fr");
             result.txSize = json.getInt("s");
             result.creationTime = json.getInt("c");
             result.deviceId = json.getString("dId");
@@ -283,8 +282,8 @@ public class KVStoreManager {
                 old.txSize = finalTxSize;
                 needsUpdate = true;
             }
-            long finalFee = getFinalValue(data.fee, old.fee);
-            if (finalFee != -1) {
+            String finalFee = getFinalValue(data.fee, old.fee);
+            if (finalFee != null) {
                 old.fee = finalFee;
                 needsUpdate = true;
             }
@@ -358,12 +357,12 @@ public class KVStoreManager {
         }
     }
 
-    public TxMetaData createMetadata(Context app, BaseWalletManager wm, BRCoreTransaction tx){
+    public TxMetaData createMetadata(Context app, BaseWalletManager wm, BaseTransaction tx){
         TxMetaData txMetaData = new TxMetaData();
         txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
         txMetaData.exchangeRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, wm.getIso(app), txMetaData.exchangeCurrency).rate;
-        txMetaData.fee = wm.getWallet().getTransactionFee(tx);
-        txMetaData.txSize = (int) tx.getSize();
+        txMetaData.fee = wm.getTxFee(tx).toPlainString();
+        txMetaData.txSize = tx.getTxSize().intValue();
         txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, wm.getIso(app));
         txMetaData.creationTime = (int) (System.currentTimeMillis() / 1000);//seconds
         txMetaData.deviceId = BRSharedPrefs.getDeviceId(app);

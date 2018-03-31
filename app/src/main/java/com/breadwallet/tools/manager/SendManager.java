@@ -5,8 +5,6 @@ import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.R;
-import com.breadwallet.core.BRCoreAddress;
-import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
@@ -20,6 +18,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.exceptions.AmountSmallerThanMinException;
 import com.breadwallet.wallet.exceptions.FeeNeedsAdjust;
@@ -109,10 +108,10 @@ public class SendManager {
                     errTitle[0] = app.getString(R.string.Alerts_sendFailure);
                     errMessage[0] = "Insufficient Funds";
                 } catch (AmountSmallerThanMinException e) {
-                    long minAmount = walletManager.getWallet().getMinOutputAmount();
+                    BigDecimal minAmount = walletManager.getMinOutputAmount();
                     errTitle[0] = app.getString(R.string.Alerts_sendFailure);
                     errMessage[0] = String.format(Locale.getDefault(), app.getString(R.string.PaymentProtocol_Errors_smallPayment),
-                            BRConstants.symbolBits + new BigDecimal(minAmount).divide(new BigDecimal(100), BRConstants.ROUNDING_MODE));
+                            BRConstants.symbolBits + minAmount.divide(new BigDecimal(100), BRConstants.ROUNDING_MODE));
                 } catch (SpendingNotAllowed spendingNotAllowed) {
                     ((Activity) app).runOnUiThread(new Runnable() {
                         @Override
@@ -199,26 +198,26 @@ public class SendManager {
             throw new SomethingWentWrong("wrong parameters: paymentRequest");
         }
 //        long amount = paymentRequest.amount;
-        long balance = walletManager.getCachedBalance(app);
-        long minOutputAmount = walletManager.getWallet().getMinOutputAmount();
-        final long maxOutputAmount = walletManager.getWallet().getMaxOutputAmount();
+        BigDecimal balance = walletManager.getCachedBalance(app);
+        BigDecimal minOutputAmount = walletManager.getMinOutputAmount();
+        final BigDecimal maxOutputAmount = walletManager.getMaxOutputAmount();
 
         if (paymentRequest.tx == null) {
             //not enough for fee
             if (paymentRequest.notEnoughForFee(app, walletManager)) {
                 //weird bug when the core WalletsMaster is NULL
-                if (maxOutputAmount == -1) {
+                if (maxOutputAmount.compareTo(new BigDecimal(-1)) == 0) {
                     BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
                     throw new SomethingWentWrong("getMaxOutputAmount is -1, meaning _wallet is NULL");
                 }
                 // max you can spend is smaller than the min you can spend
-                if (maxOutputAmount == 0 || maxOutputAmount < minOutputAmount) {
-                    throw new InsufficientFundsException(paymentRequest.amount.longValue(), balance);
+                if (maxOutputAmount.compareTo(new BigDecimal(0)) == 0 || maxOutputAmount.compareTo(minOutputAmount) == -1) {
+                    throw new InsufficientFundsException(paymentRequest.amount, balance);
                 }
 
-                throw new FeeNeedsAdjust(paymentRequest.amount.longValue(), balance, -1);
+                throw new FeeNeedsAdjust(paymentRequest.amount, balance, new BigDecimal(-1));
             } else {
-                throw new InsufficientFundsException(walletManager.getCachedBalance(app), -1);
+                throw new InsufficientFundsException(walletManager.getCachedBalance(app), new BigDecimal(-1));
             }
         }
 
@@ -229,12 +228,12 @@ public class SendManager {
 
         //check if amount isn't smaller than the min amount
         if (paymentRequest.isSmallerThanMin(app, walletManager)) {
-            throw new AmountSmallerThanMinException(Math.abs(walletManager.getWallet().getTransactionAmount(paymentRequest.tx)), minOutputAmount);
+            throw new AmountSmallerThanMinException(walletManager.getTransactionAmount(paymentRequest.tx), minOutputAmount);
         }
 
         //amount is larger than balance
         if (paymentRequest.isLargerThanBalance(app, walletManager)) {
-            throw new InsufficientFundsException(Math.abs(walletManager.getWallet().getTransactionAmount(paymentRequest.tx)), balance);
+            throw new InsufficientFundsException(walletManager.getTransactionAmount(paymentRequest.tx), balance);
         }
 
         // payment successful
@@ -250,12 +249,12 @@ public class SendManager {
 
     private static void showAdjustFee(final Activity app, final CryptoRequest item, final BaseWalletManager walletManager) {
         BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-        long maxAmountDouble = walletManager.getWallet().getMaxOutputAmount();
-        if (maxAmountDouble == -1) {
+        BigDecimal maxAmountDouble = walletManager.getMaxOutputAmount();
+        if (maxAmountDouble.compareTo(new BigDecimal(-1)) == 0) {
             BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"));
             return;
         }
-        if (maxAmountDouble == 0) {
+        if (maxAmountDouble.compareTo(new BigDecimal(0)) == 0) {
             BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), "Insufficient amount for transaction fee", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                 @Override
                 public void onClick(BRDialogView brDialogView) {
@@ -264,7 +263,7 @@ public class SendManager {
             }, null, null, 0);
         } else {
             if (Utils.isNullOrEmpty(item.address)) throw new RuntimeException("can't happen");
-            final BRCoreTransaction tx = wm.getWallet().createTransaction(maxAmountDouble, new BRCoreAddress(item.address));
+            final BaseTransaction tx = wm.createTransaction(maxAmountDouble, item.address);
             if (tx == null) {
                 BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), "Insufficient amount for transaction fee", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
@@ -274,8 +273,8 @@ public class SendManager {
                 }, null, null, 0);
                 return;
             }
-            long fee = wm.getWallet().getTransactionFee(tx);
-            if (fee <= 0) {
+            BigDecimal fee = wm.getTxFee(tx);
+            if (fee.compareTo(new BigDecimal(0)) <= 0) {
                 BRReportsManager.reportBug(new RuntimeException("fee is weird:  " + fee));
                 BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), "Insufficient amount for transaction fee.", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
@@ -286,8 +285,8 @@ public class SendManager {
                 return;
             }
 
-            String formattedCrypto = CurrencyUtils.getFormattedAmount(app, wm.getIso(app), new BigDecimal(maxAmountDouble).negate());
-            String formattedFiat = CurrencyUtils.getFormattedAmount(app, BRSharedPrefs.getPreferredFiatIso(app), wm.getFiatForSmallestCrypto(app, new BigDecimal(maxAmountDouble), null).negate());
+            String formattedCrypto = CurrencyUtils.getFormattedAmount(app, wm.getIso(app), maxAmountDouble.negate());
+            String formattedFiat = CurrencyUtils.getFormattedAmount(app, BRSharedPrefs.getPreferredFiatIso(app), wm.getFiatForSmallestCrypto(app, maxAmountDouble, null).negate());
 
             String posButtonText = String.format("%s (%s)", formattedCrypto, formattedFiat);
 
@@ -319,17 +318,17 @@ public class SendManager {
 
         String message = createConfirmation(ctx, request, walletManager);
 
-        double minOutput;
+        BigDecimal minOutput;
         if (request.isAmountRequested) {
-            minOutput = BRCoreTransaction.getMinOutputAmount();
+            minOutput = walletManager.getMinOutputAmountPossible();
         } else {
-            minOutput = walletManager.getWallet().getMinOutputAmount();
+            minOutput = walletManager.getMinOutputAmount();
         }
 
         //amount can't be less than the min
-        if (Math.abs(walletManager.getWallet().getTransactionAmount(request.tx)) < minOutput) {
+        if (walletManager.getTransactionAmount(request.tx).abs().compareTo(minOutput) <= 0) {
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.PaymentProtocol_Errors_smallTransaction),
-                    CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), new BigDecimal(minOutput)));
+                    CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), minOutput));
 
             ((Activity) ctx).runOnUiThread(new Runnable() {
                 @Override
@@ -347,13 +346,13 @@ public class SendManager {
         boolean forcePin = false;
 
         if (Utils.isEmulatorOrDebug(ctx)) {
-            Log.e(TAG, "confirmPay: totalSent: " + walletManager.getWallet().getTotalSent());
-            Log.e(TAG, "confirmPay: request.amount: " + walletManager.getWallet().getTransactionAmount(request.tx));
+            Log.e(TAG, "confirmPay: totalSent: " + walletManager.getTotalSent(ctx));
+            Log.e(TAG, "confirmPay: request.amount: " + walletManager.getTransactionAmount(request.tx));
             Log.e(TAG, "confirmPay: total limit: " + AuthManager.getInstance().getTotalLimit(ctx));
             Log.e(TAG, "confirmPay: limit: " + BRKeyStore.getSpendLimit(ctx));
         }
 
-        if (walletManager.getWallet().getTotalSent() + Math.abs(walletManager.getWallet().getTransactionAmount(request.tx)) > AuthManager.getInstance().getTotalLimit(ctx)) {
+        if (walletManager.getTotalSent(ctx).add(walletManager.getTransactionAmount(request.tx)).compareTo(AuthManager.getInstance().getTotalLimit(ctx)) > 0) {
             forcePin = true;
         }
 
@@ -399,15 +398,15 @@ public class SendManager {
 
         String iso = BRSharedPrefs.getPreferredFiatIso(ctx);
         BaseWalletManager wallet = WalletsMaster.getInstance(ctx).getCurrentWallet(ctx);
-        long size = request.tx.getSize();
-        long stdFee = request.tx.getStandardFee();
-        long feeForTx = walletManager.getWallet().getTransactionFee(request.tx);
-        if (feeForTx <= 0) {
-            long maxAmount = walletManager.getWallet().getMaxOutputAmount();
-            if (maxAmount == -1) {
+        BigDecimal size = request.tx.getTxSize();
+        BigDecimal stdFee = request.tx.getTxStandardFee();
+        BigDecimal feeForTx = walletManager.getTxFee(request.tx);
+        if (feeForTx.compareTo(new BigDecimal(0)) <= 0) {
+            BigDecimal maxAmount = walletManager.getMaxOutputAmount();
+            if (maxAmount.compareTo(new BigDecimal(-1)) == 0) {
                 BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
             }
-            if (maxAmount == 0) {
+            if (maxAmount.compareTo(new BigDecimal(0)) == 0) {
                 BRDialog.showCustomDialog(ctx, "", ctx.getString(R.string.Alerts_sendFailure), ctx.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
@@ -417,19 +416,19 @@ public class SendManager {
 
                 return null;
             }
-            request.tx = walletManager.getWallet().createTransaction(maxAmount, wallet.getWallet().getTransactionAddress(request.tx));
-            feeForTx = walletManager.getWallet().getTransactionFee(request.tx);
-            feeForTx += walletManager.getCachedBalance(ctx) - Math.abs(walletManager.getWallet().getTransactionAmount(request.tx));
+            request.tx = walletManager.createTransaction(maxAmount, wallet.getTxAddress(request.tx).stringify());
+            feeForTx = walletManager.getTxFee(request.tx);
+            feeForTx = feeForTx.add(walletManager.getCachedBalance(ctx).subtract(walletManager.getTransactionAmount(request.tx).abs()));
         }
-        long amount = Math.abs(walletManager.getWallet().getTransactionAmount(request.tx));
-        final long total = amount + feeForTx;
-        String formattedCryptoAmount = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), new BigDecimal(amount));
-        String formatterCryptoFee = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), new BigDecimal(feeForTx));
-        String formatterCryptoTotal = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), new BigDecimal(total));
+        BigDecimal amount = walletManager.getTransactionAmount(request.tx).abs();
+        final BigDecimal total = amount.add(feeForTx);
+        String formattedCryptoAmount = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), amount);
+        String formatterCryptoFee = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), feeForTx);
+        String formatterCryptoTotal = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), total);
 
-        String formattedAmount = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(amount), null));
-        String formattedFee = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(feeForTx), null));
-        String formattedTotal = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, new BigDecimal(total), null));
+        String formattedAmount = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, amount, null));
+        String formattedFee = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, feeForTx, null));
+        String formattedTotal = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, total, null));
 
         //formatted text
         return receiver + "\n\n"

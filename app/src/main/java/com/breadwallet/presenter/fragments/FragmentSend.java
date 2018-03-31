@@ -50,6 +50,8 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseAddress;
+import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
@@ -100,7 +102,7 @@ public class FragmentSend extends Fragment {
     private TextView balanceText;
     private TextView feeText;
     private ImageView edit;
-    private long curBalance;
+    private BigDecimal curBalance;
     private String selectedIso;
     private Button isoButton;
     private int keyboardIndex;
@@ -308,8 +310,7 @@ public class FragmentSend extends Fragment {
                     return;
                 }
 
-                final BRCoreAddress address = new BRCoreAddress(obj.address);
-
+                final BaseAddress address = wm.createAddress(obj.address);
 
                 if (address.isValid()) {
                     final Activity app = getActivity();
@@ -320,7 +321,7 @@ public class FragmentSend extends Fragment {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            if (wm.getWallet().containsAddress(address)) {
+                            if (wm.containsAddress(address.stringify())) {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -334,7 +335,7 @@ public class FragmentSend extends Fragment {
                                     }
                                 });
 
-                            } else if (wm.getWallet().addressIsUsed(address)) {
+                            } else if (wm.addressIsUsed(address.stringify())) {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
@@ -450,13 +451,13 @@ public class FragmentSend extends Fragment {
                     allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), amountEdit);
                 }
-                if (cryptoAmount.longValue() > wallet.getCachedBalance(getActivity())) {
+                if (cryptoAmount.compareTo(wallet.getCachedBalance(getActivity())) > 0) {
                     allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), balanceText);
                     SpringAnimator.failShakeAnimation(getActivity(), feeText);
                 }
 //                Log.e(TAG, "before createTransaction: smallestCryptoAmount.longValue: " + cryptoAmount.longValue() + ", addrs: " + address.stringify());
-                BRCoreTransaction tx = wallet.getWallet().createTransaction(cryptoAmount.longValue(), address);
+                BaseTransaction tx = wallet.createTransaction(cryptoAmount, address.stringify());
 //                if (tx == null) {
 //                    BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_creatTransactionError), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
 //                        @Override
@@ -718,34 +719,34 @@ public class FragmentSend extends Fragment {
         BigDecimal cryptoAmount = isIsoCrypto ? wallet.getSmallestCryptoForCrypto(app, inputAmount) : wallet.getSmallestCryptoForFiat(app, inputAmount);
 
         //wallet's balance for the selected ISO
-        BigDecimal isoBalance = isIsoCrypto ? wallet.getCryptoForSmallestCrypto(app, new BigDecimal(curBalance)) : wallet.getFiatForSmallestCrypto(app, new BigDecimal(curBalance), null);
+        BigDecimal isoBalance = isIsoCrypto ? wallet.getCryptoForSmallestCrypto(app, curBalance) : wallet.getFiatForSmallestCrypto(app, curBalance, null);
         if (isoBalance == null) isoBalance = new BigDecimal(0);
 
-        long fee;
+        BigDecimal fee;
         if (cryptoAmount.longValue() <= 0) {
-            fee = 0;
+            fee = new BigDecimal(0);
         } else {
             String addrString = addressEdit.getText().toString();
             BRCoreAddress coreAddress = null;
             if (!Utils.isNullOrEmpty(addrString)) {
                 coreAddress = new BRCoreAddress(addrString);
             }
-            BRCoreTransaction tx = null;
+            BaseTransaction tx = null;
             if (coreAddress != null && coreAddress.isValid()) {
-                tx = wallet.getWallet().createTransaction(cryptoAmount.longValue(), coreAddress);
+                tx = wallet.createTransaction(cryptoAmount, coreAddress.stringify());
             }
 
             if (tx == null) {
-                fee = wallet.getWallet().getFeeForTransactionAmount(cryptoAmount.longValue());
+                fee = wallet.getFeeForTxAmount(cryptoAmount);
             } else {
-                fee = wallet.getWallet().getTransactionFee(tx);
-                if (fee <= 0)
-                    fee = wallet.getWallet().getFeeForTransactionAmount(cryptoAmount.longValue());
+                fee = wallet.getTxFee(tx);
+                if (fee.compareTo(new BigDecimal(0)) <= 0)
+                    fee = wallet.getFeeForTxAmount(cryptoAmount);
             }
         }
 
         //get the fee for iso (dollars, bits, BTC..)
-        BigDecimal isoFee = isIsoCrypto ? wallet.getCryptoForSmallestCrypto(app, new BigDecimal(fee)) : wallet.getFiatForSmallestCrypto(app, new BigDecimal(fee), null);
+        BigDecimal isoFee = isIsoCrypto ? wallet.getCryptoForSmallestCrypto(app, fee) : wallet.getFiatForSmallestCrypto(app, fee, null);
 
         //format the fee to the selected ISO
         String formattedFee = CurrencyUtils.getFormattedAmount(app, selectedIso, isIsoCrypto ? wallet.getSmallestCryptoForCrypto(app, isoFee) : isoFee);
