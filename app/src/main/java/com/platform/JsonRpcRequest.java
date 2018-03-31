@@ -59,6 +59,7 @@ public class JsonRpcRequest {
 
 
         Response resp = null;
+        Log.d(TAG, "Request -> " + request.body());
 
         try {
 
