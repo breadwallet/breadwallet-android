@@ -19,6 +19,8 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.util.Locale;
 
@@ -50,7 +52,8 @@ public class DisabledActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(DisabledActivity.this, BRConstants.walletDisabled);
+                BaseWalletManager wm = WalletsMaster.getInstance(DisabledActivity.this).getCurrentWallet(DisabledActivity.this);
+                BRAnimator.showSupportFragment(DisabledActivity.this, BRConstants.walletDisabled, wm.getIso(DisabledActivity.this));
             }
         });
 

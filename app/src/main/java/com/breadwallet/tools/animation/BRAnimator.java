@@ -157,7 +157,7 @@ public class BRAnimator {
 
     }
 
-    public static void showSupportFragment(Activity app, String articleId) {
+    public static void showSupportFragment(Activity app, String articleId, String iso) {
         if (supportIsShowing) return;
         supportIsShowing = true;
         if (app == null) {
@@ -174,6 +174,7 @@ public class BRAnimator {
             if (articleId != null && !articleId.isEmpty()) {
                 Bundle bundle = new Bundle();
                 bundle.putString("articleId", articleId);
+                bundle.putString("walletIso", iso);
                 fragmentSupport.setArguments(bundle);
             }
             app.getFragmentManager().beginTransaction()

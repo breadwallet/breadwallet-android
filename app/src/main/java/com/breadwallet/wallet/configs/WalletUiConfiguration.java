@@ -32,12 +32,14 @@ public class WalletUiConfiguration {
     public boolean buyVisible;
 
     public boolean showEconomyFee;
+    public boolean showLiveFee;
 
-    public WalletUiConfiguration(String colorHex, boolean sendVisible, boolean receiveVisible, boolean buyVisible, boolean showEconomyFee) {
+    public WalletUiConfiguration(String colorHex, boolean sendVisible, boolean receiveVisible, boolean buyVisible, boolean showEconomyFee, boolean showLiveFee) {
         this.colorHex = colorHex;
         this.sendVisible = sendVisible;
         this.receiveVisible = receiveVisible;
         this.buyVisible = buyVisible;
         this.showEconomyFee = showEconomyFee;
+        this.showLiveFee = showLiveFee;
     }
 }
