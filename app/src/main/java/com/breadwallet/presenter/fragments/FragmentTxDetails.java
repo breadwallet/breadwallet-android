@@ -194,7 +194,7 @@ public class FragmentTxDetails extends DialogFragment {
             String iso = isCryptoPreferred ? cryptoIso : fiatIso;
 
             boolean isEth = false;
-            if (mTransaction.getReceived() != null && mTransaction.getSent() == null) isEth = true;
+            if (mTransaction.getReceived() == null && mTransaction.getSent() == null) isEth = true;
 
             boolean received = !isEth ? mTransaction.getSent().compareTo(new BigDecimal(0)) == 0 : !Utils.isNullOrEmpty(mTransaction.getTo());
 

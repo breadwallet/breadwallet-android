@@ -193,12 +193,13 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, preferredIso, amount));
 
-        int blockHeight = (int) item.getBlockHeight();
+        int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext, wallet.getIso(mContext)) - blockHeight + 1;
 
-        int level = 0;
+        int level;
         if (confirms <= 0) {
             long relayCount = wallet.getRelayCount(item.getTxHash());
+            if (relayCount == -1) relayCount = 3; //Ethereum does not have relay count
             if (relayCount <= 0)
                 level = 0;
             else if (relayCount == 1)
@@ -215,31 +216,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             else
                 level = 6;
         }
-        switch (level) {
-            case 0:
-                showTransactionProgress(convertView, 0);
-                break;
-            case 1:
-                showTransactionProgress(convertView, 20);
-
-                break;
-            case 2:
-
-                showTransactionProgress(convertView, 40);
-                break;
-            case 3:
-
-                showTransactionProgress(convertView, 60);
-                break;
-            case 4:
-
-                showTransactionProgress(convertView, 80);
-                break;
-            case 5:
-
-                //showTransactionProgress(convertView, 100);
-                break;
-        }
+        if (level > 0 && level < 5)
+            showTransactionProgress(convertView, level * 20);
 
         Log.d(TAG, "Level -> " + level);
 
