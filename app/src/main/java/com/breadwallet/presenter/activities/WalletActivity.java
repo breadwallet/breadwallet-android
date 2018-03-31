@@ -56,7 +56,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.SyncListener;
-import com.breadwallet.wallet.wallets.util.CryptoUriParser;
+import com.breadwallet.wallet.util.CryptoUriParser;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;

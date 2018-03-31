@@ -1,11 +1,10 @@
-package com.breadwallet.wallet.wallets.util;
+package com.breadwallet.wallet.util;
 
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreKey;

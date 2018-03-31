@@ -1,4 +1,4 @@
-package com.breadwallet.wallet.wallets.exceptions;
+package com.breadwallet.wallet.exceptions;
 
 /**
  * BreadWallet
@@ -24,10 +24,10 @@ package com.breadwallet.wallet.wallets.exceptions;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class FeeOutOfDate extends Exception {
+public class SomethingWentWrong extends Exception {
 
-    public FeeOutOfDate(long timestamp, long now) {
-        super("FeeOutOfDate: timestamp: " + timestamp + ",now: " + now);
+    public SomethingWentWrong(String mess) {
+        super(mess);
     }
 
 }
