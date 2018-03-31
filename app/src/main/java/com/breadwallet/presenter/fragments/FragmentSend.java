@@ -31,6 +31,7 @@ import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreTransaction;
+import com.breadwallet.core.test.BRWalletManager;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
@@ -101,7 +102,7 @@ public class FragmentSend extends Fragment {
     private EditText amountEdit;
     private TextView balanceText;
     private TextView feeText;
-    private ImageView edit;
+    private ImageView feeEdit;
     private BigDecimal curBalance;
     private String selectedIso;
     private Button isoButton;
@@ -141,7 +142,7 @@ public class FragmentSend extends Fragment {
         amountEdit = (EditText) rootView.findViewById(R.id.amount_edit);
         balanceText = (TextView) rootView.findViewById(R.id.balance_text);
         feeText = (TextView) rootView.findViewById(R.id.fee_text);
-        edit = (ImageView) rootView.findViewById(R.id.edit);
+        feeEdit = (ImageView) rootView.findViewById(R.id.edit);
         isoButton = (Button) rootView.findViewById(R.id.iso_button);
         keyboardLayout = (LinearLayout) rootView.findViewById(R.id.keyboard_layout);
         amountLayout = (ConstraintLayout) rootView.findViewById(R.id.amount_layout);
@@ -172,13 +173,14 @@ public class FragmentSend extends Fragment {
 
         showFeeSelectionButtons(feeButtonsShown);
 
-        edit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                feeButtonsShown = !feeButtonsShown;
-                showFeeSelectionButtons(feeButtonsShown);
-            }
-        });
+        if (wm.getUiConfiguration().showEconomyFee)
+            feeEdit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    feeButtonsShown = !feeButtonsShown;
+                    showFeeSelectionButtons(feeButtonsShown);
+                }
+            });
         keyboardIndex = signalLayout.indexOfChild(keyboardLayout);
 
         ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
@@ -208,6 +210,7 @@ public class FragmentSend extends Fragment {
         amountEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 showKeyboard(true);
                 if (amountLabelOn) { //only first time
                     amountLabelOn = false;
@@ -215,7 +218,8 @@ public class FragmentSend extends Fragment {
                     amountEdit.setTextSize(24);
                     balanceText.setVisibility(View.VISIBLE);
                     feeText.setVisibility(View.VISIBLE);
-                    edit.setVisibility(View.VISIBLE);
+                    if (wm.getUiConfiguration().showEconomyFee)
+                        feeEdit.setVisibility(View.VISIBLE);
                     isoText.setTextColor(getContext().getColor(R.color.almost_black));
                     isoText.setText(CurrencyUtils.getSymbolByIso(getActivity(), selectedIso));
                     isoText.setTextSize(28);
