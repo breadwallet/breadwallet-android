@@ -18,7 +18,6 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
@@ -29,7 +28,6 @@ import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 
@@ -298,7 +296,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         TxUiHolder item;
         for (int i = 0; i < backUpFeed.size(); i++) {
             item = backUpFeed.get(i);
-            boolean matchesHash = item.getTxHashHexReversed() != null && item.getTxHashHexReversed().contains(lowerQuery);
+            boolean matchesHash = item.getHashReversed() != null && item.getHashReversed().contains(lowerQuery);
             boolean matchesAddress = item.getFrom().contains(lowerQuery) || item.getTo().contains(lowerQuery);
             boolean matchesMemo = item.metaData != null && item.metaData.comment != null && item.metaData.comment.toLowerCase().contains(lowerQuery);
             if (matchesHash || matchesAddress || matchesMemo) {

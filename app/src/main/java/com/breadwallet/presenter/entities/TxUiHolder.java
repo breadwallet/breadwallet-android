@@ -93,7 +93,7 @@ public class TxUiHolder {
         return txHash;
     }
 
-    public String getTxHashHexReversed() {
+    public String getHashReversed() {
         return txReversed;
     }
 

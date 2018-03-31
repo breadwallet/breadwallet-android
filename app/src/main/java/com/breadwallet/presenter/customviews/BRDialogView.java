@@ -66,11 +66,11 @@ public class BRDialogView extends DialogFragment {
     private BRButton positiveButton;
     private LinearLayout buttonsLayout;
     private ImageButton helpButton;
+    private LinearLayout mainLayout;
 
     //provide the way to have clickable span in the message
     private SpannableString spanMessage;
 
-    private ConstraintLayout mainLayout;
     private boolean showHelpIcon;
 
     @Override
@@ -79,15 +79,20 @@ public class BRDialogView extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         LayoutInflater inflater = getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.bread_alert_dialog, null);
-        TextView titleText = (TextView) view.findViewById(R.id.dialog_title);
-        TextView messageText = (TextView) view.findViewById(R.id.dialog_text);
+        TextView titleText = view.findViewById(R.id.dialog_title);
+        TextView messageText = view.findViewById(R.id.dialog_text);
         BRButton positiveButton = view.findViewById(R.id.pos_button);
         negativeButton = view.findViewById(R.id.neg_button);
 //        ImageView icon = (ImageView) view.findViewById(R.id.dialog_icon);
-        mainLayout = (ConstraintLayout) view.findViewById(R.id.main_layout);
-        buttonsLayout = (LinearLayout) view.findViewById(R.id.linearLayout3);
+        mainLayout = view.findViewById(R.id.main_layout);
+        buttonsLayout = view.findViewById(R.id.linearLayout3);
         helpButton = view.findViewById(R.id.help_icon);
 
+        //assuming that is the last text to bet set.
+        if (Utils.isNullOrEmpty(title))
+            mainLayout.removeView(titleText);
+        if (Utils.isNullOrEmpty(message))
+            mainLayout.removeView(messageText);
 
         // Resize the title text if it is greater than 4 lines
         titleText.setText(title);
