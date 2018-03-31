@@ -315,11 +315,23 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         List<TxUiHolder> uiTxs = new ArrayList<>();
         for (int i = txs.length - 1; i >= 0; i--) { //revere order
             BRCoreTransaction tx = txs[i];
-            Log.e(TAG, "getTxUiHolders: tx.getBlockHeight: " + tx.getBlockHeight());
+            String toAddress = null;
+            //if sent
+            if (getWallet().getTransactionAmountSent(tx) > 0) {
+                toAddress = tx.getOutputAddresses()[0];
+            } else {
+                for (String to : tx.getOutputAddresses()) {
+                    if (containsAddress(to)) {
+                        toAddress = to;
+                        break;
+                    }
+                }
+            }
+            if (toAddress == null) throw new NullPointerException("Failed to retrieve toAddress");
             uiTxs.add(new TxUiHolder(tx, tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
                     tx.getReverseHash(), new BigDecimal(getWallet().getTransactionAmountSent(tx)),
-                    new BigDecimal(getWallet().getTransactionAmountReceived(tx)), new BigDecimal(getWallet().getTransactionFee(tx)),
-                    null, null, tx.getOutputAddresses()[0], tx.getInputAddresses()[0],
+                    new BigDecimal(getWallet().getTransactionAmountReceived(tx)), new BigDecimal(getWallet().getTransactionFee(tx)), null, null,
+                    toAddress, tx.getInputAddresses()[0],
                     new BigDecimal(getWallet().getBalanceAfterTransaction(tx)), (int) tx.getSize(),
                     new BigDecimal(getWallet().getTransactionAmount(tx)), getWallet().transactionIsValid(tx)));
         }
