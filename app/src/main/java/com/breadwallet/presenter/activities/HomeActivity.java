@@ -246,6 +246,16 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         setupNetworking();
 
+        InternetManager.addConnectionListener(new InternetManager.ConnectionReceiverListener() {
+            @Override
+            public void onConnectionChanged(boolean isConnected) {
+                Log.e(TAG, "onConnectionChanged: " + isConnected);
+                if (isConnected) {
+                    mAdapter.startObserving();
+                }
+            }
+        });
+
         updateUi();
         CurrencyDataSource.getInstance(this).addOnDataChangedListener(new CurrencyDataSource.OnDataChanged() {
             @Override
