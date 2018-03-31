@@ -9,8 +9,8 @@ android {
         applicationId = 'com.breadwallet'
         minSdkVersion 23
         targetSdkVersion 27
-        versionCode 211
-        versionName "211"
+        versionCode 213
+        versionName "213"
         multiDexEnabled true
 
         // Similar to other properties in the defaultConfig block,
@@ -164,8 +164,8 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:27.1.0'
     implementation 'com.android.support:cardview-v7:27.1.0'
     implementation 'com.squareup.okhttp3:okhttp:3.7.0'
-    implementation 'com.google.firebase:firebase-core:11.8.0'
-    implementation 'com.google.firebase:firebase-crash:11.8.0'
+    implementation 'com.google.firebase:firebase-core:12.0.1'
+    implementation 'com.google.firebase:firebase-crash:12.0.1'
     implementation 'io.sigpipe:jbsdiff:1.0'
     implementation 'com.google.zxing:core:3.3.0'
     implementation 'com.android.support.constraint:constraint-layout:1.0.2'
