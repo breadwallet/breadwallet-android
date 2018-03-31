@@ -329,12 +329,12 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public boolean containsAddress(String address) {
-        return getWallet().containsAddress(new BRCoreAddress(address));
+        return !Utils.isNullOrEmpty(address) && getWallet().containsAddress(new BRCoreAddress(address));
     }
 
     @Override
     public boolean addressIsUsed(String address) {
-        return getWallet().addressIsUsed(new BRCoreAddress(address));
+        return !Utils.isNullOrEmpty(address) && getWallet().addressIsUsed(new BRCoreAddress(address));
     }
 
     @Override
