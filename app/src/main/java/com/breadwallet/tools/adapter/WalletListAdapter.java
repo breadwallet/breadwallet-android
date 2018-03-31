@@ -76,7 +76,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         String name = wallet.getName(mContext);
         String exchangeRate = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatExchangeRate(mContext));
         String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatBalance(mContext));
-        String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getIso(mContext), new BigDecimal(wallet.getCachedBalance(mContext)));
+        String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getIso(mContext), wallet.getCachedBalance(mContext));
 
         final String iso = wallet.getIso(mContext);
 
@@ -183,29 +183,15 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     //return the next wallet that is not connected or null if all are connected
     private WalletItem getNextWalletToSync() {
         BaseWalletManager currentWallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
-        final String currentWalletIso = currentWallet.getIso(mContext);
-        if (currentWallet.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mContext, currentWalletIso )) == SyncService.PROGRESS_FINISH) {
-            new Handler(Looper.getMainLooper()).post(new Runnable() {
-                @Override
-                public void run() {
-                    for (WalletItem item : mWalletItems) {
-                        if (currentWalletIso.equals(item.walletManager.getIso(mContext))) {
-                            item.updateData(false, false, true, 100, "Done");
-                            notifyDataSetChanged();
-                        }
-
-                    }
-                }
-            });
-
+        if (currentWallet.getSyncProgress(BRSharedPrefs.getStartHeight(mContext, currentWallet.getIso(mContext))) == 1){
             currentWallet = null;
         }
 
         for (WalletItem w : mWalletItems) {
             if (currentWallet == null) {
-                if (w.walletManager.getPeerManager().getSyncProgress(BRSharedPrefs.getStartHeight(mContext, w.walletManager.getIso(mContext))) < 1 ||
-                        w.walletManager.getPeerManager().getConnectStatus() != BRCorePeer.ConnectStatus.Connected) {
-                    w.walletManager.getPeerManager().connect();
+                if (w.walletManager.getSyncProgress(BRSharedPrefs.getStartHeight(mContext, w.walletManager.getIso(mContext))) < 1 ||
+                        w.walletManager.getConnectStatus() != 2) {
+                    w.walletManager.connect();
                     return w;
                 }
             } else {

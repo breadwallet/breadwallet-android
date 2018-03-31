@@ -1,5 +1,7 @@
 package com.breadwallet.wallet.exceptions;
 
+import java.math.BigDecimal;
+
 /**
  * BreadWallet
  * <p/>
@@ -26,7 +28,7 @@ package com.breadwallet.wallet.exceptions;
  */
 public class FeeNeedsAdjust extends Exception {
 
-    public FeeNeedsAdjust(long amount, long balance, long fee) {
+    public FeeNeedsAdjust(BigDecimal amount, BigDecimal balance, BigDecimal fee) {
         super("Balance: " + balance + " satoshis, amount: " + amount + " satoshis, fee: " + fee + " satoshis.");
     }
 

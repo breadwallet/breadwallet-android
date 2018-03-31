@@ -17,6 +17,7 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreKey;
+import com.breadwallet.core.BRCorePeerManager;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreTransactionInput;
 import com.breadwallet.core.BRCoreTransactionOutput;
@@ -33,6 +34,9 @@ import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.BTCTransaction;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -70,7 +74,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
     private Activity app;
     private String key;
     private String iso;
-    private BRCoreTransaction mTransaction;
+    private BTCTransaction mTransaction;
 
     public ImportPrivKeyTask(Activity activity) {
         app = activity;
@@ -87,6 +91,10 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         if (Utils.isNullOrEmpty(key) || app == null || Utils.isNullOrEmpty(iso)) {
             Log.e(TAG, "ImportPrivKeyTask:doInBackground: failed: " + iso + "|" + app);
             return null;
+        }
+
+        if (!iso.equalsIgnoreCase("BTC") && !iso.equalsIgnoreCase("BCH")) {
+            throw new NullPointerException("Can't happen, iso is: " + iso);
         }
 
         BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
@@ -140,7 +148,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
         final BaseWalletManager walletManager = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
 
-        BigDecimal bigAmount = new BigDecimal(walletManager.getWallet().getTransactionAmount(mTransaction));
+        BigDecimal bigAmount = walletManager.getTransactionAmount(mTransaction);
         BigDecimal bigFee = new BigDecimal(0);
 
         for (BRCoreTransactionInput in : mTransaction.getInputs())
@@ -181,6 +189,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                         BRCoreKey signingKey = new BRCoreKey(key);
 
                         mTransaction.sign(signingKey, walletManager.getForkId());
+                        BRCorePeerManager peerManager = iso.equalsIgnoreCase("BTC") ? ((WalletBitcoinManager) walletManager).getPeerManager() : ((WalletBchManager) walletManager).getPeerManager();
 
                         if (!mTransaction.isSigned()) {
                             String err = "transaction is not signed";
@@ -189,7 +198,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
                             return;
                         }
 
-                        walletManager.getPeerManager().publishTransaction(mTransaction);
+                        peerManager.publishTransaction(mTransaction);
                     }
                 });
 
@@ -205,7 +214,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
     }
 
-    private BRCoreTransaction createSweepingTx(final Context app, String url) {
+    private BTCTransaction createSweepingTx(final Context app, String url) {
         if (url == null || url.isEmpty()) return null;
 
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
@@ -250,13 +259,13 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
             if (totalAmount <= 0) return null;
 //
-            BRCoreAddress address = walletManager.getReceiveAddress(app);
+            BRCoreAddress address = (BRCoreAddress) walletManager.getReceiveAddress(app); //cast, assuming it's BTC or BCH for now
 
             BRCoreKey signingKey = new BRCoreKey(key);
 
-            long fee = walletManager.getWallet().getFeeForTransactionSize(transaction.getSize() + 34 + (signingKey.getPubKey().length - 33) * transaction.getInputs().length);
-            transaction.addOutput(new BRCoreTransactionOutput(totalAmount - fee, address.getPubKeyScript()));
-            return transaction;
+            BigDecimal fee = walletManager.getFeeForTransactionSize(new BigDecimal(transaction.getSize() + 34 + (signingKey.getPubKey().length - 33) * transaction.getInputs().length));
+            transaction.addOutput(new BRCoreTransactionOutput(new BigDecimal(totalAmount).subtract(fee).longValue(), address.getPubKeyScript()));
+            return (BTCTransaction) transaction;
         } catch (JSONException e) {
             e.printStackTrace();
         }

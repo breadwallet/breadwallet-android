@@ -26,7 +26,7 @@ import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.breadwallet.wallet.wallets.bitcoincash.WalletBchManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
@@ -247,8 +247,7 @@ public class WalletsMaster {
 
     public void refreshBalances(Context app) {
         for (BaseWalletManager wallet : mWallets) {
-            long balance = wallet.getWallet().getBalance();
-            wallet.setCashedBalance(app, balance);
+            wallet.refreshCachedBalance(app);
         }
 
     }
@@ -280,14 +279,14 @@ public class WalletsMaster {
             int port = TrustedNode.getNodePort(node);
 //        Log.e(TAG, "trust onClick: host:" + host);
 //        Log.e(TAG, "trust onClick: port:" + port);
-            boolean success = wm.getPeerManager().useFixedPeer(host, port);
+            boolean success = wm.useFixedNode(host, port);
             if (!success) {
                 Log.e(TAG, "updateFixedPeer: Failed to updateFixedPeer with input: " + node);
             } else {
                 Log.d(TAG, "updateFixedPeer: succeeded");
             }
         }
-        wm.getPeerManager().connect();
+        wm.connect();
 
     }
 

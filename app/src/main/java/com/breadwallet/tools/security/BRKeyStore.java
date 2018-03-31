@@ -42,6 +42,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.KeyStore;
@@ -641,9 +642,9 @@ public class BRKeyStore {
         return result != null && result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
     }
 
-    public synchronized static boolean putSpendLimit(long spendLimit, Context context) {
+    public synchronized static boolean putSpendLimit(BigDecimal spendLimit, Context context) {
         AliasObject obj = aliasObjectMap.get(SPEND_LIMIT_ALIAS);
-        byte[] bytesToStore = TypesConverter.long2byteArray(spendLimit);
+        byte[] bytesToStore = spendLimit.toPlainString().getBytes();
         try {
             return bytesToStore.length != 0 && _setData(context, bytesToStore, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
         } catch (UserNotAuthenticatedException e) {
@@ -652,7 +653,7 @@ public class BRKeyStore {
         return false;
     }
 
-    public synchronized static long getSpendLimit(final Context context) {
+    public synchronized static BigDecimal getSpendLimit(final Context context) {
         AliasObject obj = aliasObjectMap.get(SPEND_LIMIT_ALIAS);
         byte[] result = null;
         try {
@@ -661,7 +662,7 @@ public class BRKeyStore {
             e.printStackTrace();
         }
 
-        return result != null && result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
+        return result != null && result.length > 0 ? new BigDecimal(new String(result)) : new BigDecimal(0);
     }
 
     public synchronized static boolean putFailTimeStamp(long spendLimit, Context context) {
@@ -699,9 +700,9 @@ public class BRKeyStore {
     }
 
     // WARNING use AuthManager to get the limit
-    public synchronized static boolean putTotalLimit(long totalLimit, Context context) {
+    public synchronized static boolean putTotalLimit(BigDecimal totalLimit, Context context) {
         AliasObject obj = aliasObjectMap.get(TOTAL_LIMIT_ALIAS);
-        byte[] bytesToStore = TypesConverter.long2byteArray(totalLimit);
+        byte[] bytesToStore = totalLimit.toPlainString().getBytes();
         try {
             return bytesToStore.length != 0 && _setData(context, bytesToStore, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
         } catch (UserNotAuthenticatedException e) {
@@ -710,9 +711,8 @@ public class BRKeyStore {
         return false;
     }
 
-
     // WARNING use AuthManager to set the limit
-    public synchronized static long getTotalLimit(final Context context) {
+    public synchronized static BigDecimal getTotalLimit(final Context context) {
         AliasObject obj = aliasObjectMap.get(TOTAL_LIMIT_ALIAS);
         byte[] result = new byte[0];
         try {
@@ -720,7 +720,7 @@ public class BRKeyStore {
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
-        return (result != null && result.length > 0) ? TypesConverter.byteArray2long(result) : 0;
+        return (result != null && result.length > 0) ? new BigDecimal(new String(result)) : new BigDecimal(0);
     }
 
     public synchronized static long getLastPinUsedTime(final Context context) {
