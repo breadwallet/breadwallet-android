@@ -14,6 +14,8 @@ import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 public class SetPinActivity extends BRActivity {
     private static final String TAG = SetPinActivity.class.getName();
@@ -51,7 +53,8 @@ public class SetPinActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(app, BRConstants.setPin);
+                BaseWalletManager wm = WalletsMaster.getInstance(SetPinActivity.this).getCurrentWallet(SetPinActivity.this);
+                BRAnimator.showSupportFragment(SetPinActivity.this, BRConstants.setPin, wm.getIso(SetPinActivity.this));
             }
         });
 

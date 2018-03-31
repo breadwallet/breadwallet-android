@@ -194,7 +194,8 @@ public class FragmentSend extends Fragment {
                     Log.e(TAG, "onClick: app is null, can't start the webview with url: " + URL_SUPPORT);
                     return;
                 }
-                BRAnimator.showSupportFragment(app, BRConstants.send);
+                BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+                BRAnimator.showSupportFragment(app, BRConstants.send, wm.getIso(app));
             }
         });
 
@@ -217,9 +218,10 @@ public class FragmentSend extends Fragment {
                     amountEdit.setHint("0");
                     amountEdit.setTextSize(24);
                     balanceText.setVisibility(View.VISIBLE);
-                    feeText.setVisibility(View.VISIBLE);
                     if (wm.getUiConfiguration().showEconomyFee)
                         feeEdit.setVisibility(View.VISIBLE);
+                    if (wm.getUiConfiguration().showLiveFee)
+                        feeText.setVisibility(View.VISIBLE);
                     isoText.setTextColor(getContext().getColor(R.color.almost_black));
                     isoText.setText(CurrencyUtils.getSymbolByIso(getActivity(), selectedIso));
                     isoText.setTextSize(28);

@@ -11,6 +11,8 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 
 public class ImportActivity extends BRActivity {
@@ -45,7 +47,8 @@ public class ImportActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(app, BRConstants.importWallet);
+                BaseWalletManager wm = WalletsMaster.getInstance(ImportActivity.this).getCurrentWallet(ImportActivity.this);
+                BRAnimator.showSupportFragment(ImportActivity.this, BRConstants.importWallet, wm.getIso(ImportActivity.this));
             }
         });
 

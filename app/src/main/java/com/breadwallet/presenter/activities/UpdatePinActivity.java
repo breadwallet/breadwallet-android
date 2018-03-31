@@ -18,6 +18,8 @@ import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 public class UpdatePinActivity extends BRActivity {
     private static final String TAG = UpdatePinActivity.class.getName();
@@ -73,7 +75,8 @@ public class UpdatePinActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showSupportFragment(app, BRConstants.setPin);
+                BaseWalletManager wm = WalletsMaster.getInstance(UpdatePinActivity.this).getCurrentWallet(UpdatePinActivity.this);
+                BRAnimator.showSupportFragment(UpdatePinActivity.this, BRConstants.setPin, wm.getIso(UpdatePinActivity.this));
             }
         });
 
