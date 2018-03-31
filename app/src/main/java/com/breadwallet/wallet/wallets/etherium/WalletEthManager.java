@@ -116,12 +116,11 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
         mContext = app;
 
-        BREthereumWallet walletToken = mNode.createWallet(BREthereumToken.tokenBRD);
+        mWallet = node.getWallet();
+        mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
+
+        BREthereumWallet walletToken = node.createWallet(BREthereumToken.tokenBRD);
         walletToken.setDefaultUnit(BREthereumAmount.Unit.TOKEN_DECIMAL);
-
-
-        // Test to make sure that getTransactions fires properly
-        mNode.forceTransactionUpdate();
 
     }
 
@@ -463,7 +462,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount, CurrencyEntity ent) {
-        if (amount.doubleValue() == 0) return amount;
+        if (amount == null || amount.doubleValue() == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         if (ent == null)
             ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
@@ -478,7 +477,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public BigDecimal getCryptoForFiat(Context app, BigDecimal fiatAmount) {
-        if (fiatAmount.doubleValue() == 0) return fiatAmount;
+        if (fiatAmount == null || fiatAmount.doubleValue() == 0) return fiatAmount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
         if (ent == null) return null;
@@ -490,19 +489,19 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
-        if (amount.doubleValue() == 0) return amount;
+        if (amount == null || amount.doubleValue() == 0) return amount;
         return amount.divide(WEI_ETH, 8, ROUNDING_MODE);
     }
 
     @Override
     public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
-        if (amount.doubleValue() == 0) return amount;
+        if (amount == null ||amount.doubleValue() == 0) return amount;
         return amount.multiply(WEI_ETH);
     }
 
     @Override
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
-        if (amount.doubleValue() == 0) return amount;
+        if (amount == null ||amount.doubleValue() == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
         if (ent == null) {
