@@ -614,23 +614,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             if (barFlipper != null && barFlipper.getDisplayedChild() == 2) {
                 barFlipper.setDisplayedChild(0);
             }
-<<<<<<< HEAD
 
             SyncService.startService(this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletIso);
-=======
-            final BaseWalletManager wm = WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this);
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    final double progress = wm.getSyncProgress(BRSharedPrefs.getStartHeight(WalletActivity.this,
-                            BRSharedPrefs.getCurrentWalletIso(WalletActivity.this)));
-//                    Log.e(TAG, "run: " + progress);
-                    if (progress < 1 && progress > 0) {
-                        SyncManager.getInstance().startSyncing(WalletActivity.this, wm, WalletActivity.this);
-                    }
-                }
-            });
->>>>>>> fix ETH converting from BTC rates and fix catched balance:
 
         } else {
             if (barFlipper != null)

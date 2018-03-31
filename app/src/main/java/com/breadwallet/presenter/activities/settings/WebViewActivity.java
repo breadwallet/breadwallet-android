@@ -713,7 +713,7 @@ public class WebViewActivity extends BRActivity {
         super.onDestroy();
 
         if (keyboardListenersAttached) {
-            mRootView.getViewTreeObserver().removeGlobalOnLayoutListener(keyboardLayoutListener);
+            mRootView.getViewTreeObserver().removeOnGlobalLayoutListener(keyboardLayoutListener);
         }
     }
 
