@@ -89,7 +89,10 @@ public class WalletsMaster {
             throw new RuntimeException("getWalletByIso with iso = null, Cannot happen!");
         if (iso.equalsIgnoreCase("BTC"))
             return WalletBitcoinManager.getInstance(app);
-        if (iso.equalsIgnoreCase("BCH")) return WalletBchManager.getInstance(app);
+        if (iso.equalsIgnoreCase("BCH"))
+            return WalletBchManager.getInstance(app);
+        if (iso.equalsIgnoreCase("ETH"))
+            return WalletEthManager.getInstance(app);
         return null;
     }
 
