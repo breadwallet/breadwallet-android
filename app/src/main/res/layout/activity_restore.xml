@@ -128,7 +128,8 @@
             android:layout_alignParentStart="true"
             android:layout_alignTop="@+id/textView2"
             android:layout_marginStart="16dp"
-            android:background="@drawable/ic_chevron_left_white_24dp"/>
+            android:background="@android:color/transparent"
+            android:src="@drawable/ic_chevron_left_white"/>
 
     </RelativeLayout>
 
