@@ -659,6 +659,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public long getRelayCount(byte[] txHash) {
+        if (Utils.isNullOrEmpty(txHash)) return 0;
         return getPeerManager().getRelayCount(txHash);
     }
 

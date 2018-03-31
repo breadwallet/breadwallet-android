@@ -429,7 +429,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             return null;
         }
         BRCoreTransaction tx = getWallet().createTransaction(amount.longValue(), new BRCoreAddress(address));
-        return tx == null? null : new CryptoTransaction(tx);
+        return tx == null ? null : new CryptoTransaction(tx);
     }
 
     @Override
@@ -656,6 +656,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     @Override
     public long getRelayCount(byte[] txHash) {
+        if (Utils.isNullOrEmpty(txHash)) return 0;
         return getPeerManager().getRelayCount(txHash);
     }
 
