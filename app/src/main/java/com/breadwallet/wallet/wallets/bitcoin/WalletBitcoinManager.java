@@ -315,10 +315,23 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         List<TxUiHolder> uiTxs = new ArrayList<>();
         for (int i = txs.length - 1; i >= 0; i--) { //revere order
             BRCoreTransaction tx = txs[i];
+            String toAddress = null;
+            //if sent
+            if (getWallet().getTransactionAmountSent(tx) > 0) {
+                toAddress = tx.getOutputAddresses()[0];
+            } else {
+                for (String to : tx.getOutputAddresses()) {
+                    if (containsAddress(to)) {
+                        toAddress = to;
+                        break;
+                    }
+                }
+            }
+            if (toAddress == null) throw new NullPointerException("Failed to retrieve toAddress");
             uiTxs.add(new TxUiHolder(tx, tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
                     tx.getReverseHash(), new BigDecimal(getWallet().getTransactionAmountSent(tx)),
                     new BigDecimal(getWallet().getTransactionAmountReceived(tx)), new BigDecimal(getWallet().getTransactionFee(tx)), null, null,
-                    tx.getOutputAddresses()[0], tx.getInputAddresses()[0],
+                    toAddress, tx.getInputAddresses()[0],
                     new BigDecimal(getWallet().getBalanceAfterTransaction(tx)), (int) tx.getSize(),
                     new BigDecimal(getWallet().getTransactionAmount(tx)), getWallet().transactionIsValid(tx)));
         }
@@ -328,12 +341,12 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     @Override
     public boolean containsAddress(String address) {
-        return getWallet().containsAddress(new BRCoreAddress(address));
+        return !Utils.isNullOrEmpty(address) && getWallet().containsAddress(new BRCoreAddress(address));
     }
 
     @Override
     public boolean addressIsUsed(String address) {
-        return getWallet().addressIsUsed(new BRCoreAddress(address));
+        return !Utils.isNullOrEmpty(address) && getWallet().addressIsUsed(new BRCoreAddress(address));
     }
 
     @Override

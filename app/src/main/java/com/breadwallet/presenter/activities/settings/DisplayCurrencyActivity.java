@@ -47,8 +47,6 @@ public class DisplayCurrencyActivity extends BRActivity {
     private static DisplayCurrencyActivity app;
     private Button leftButton;
     private Button rightButton;
-    BaseWalletManager mWalletManager;
-
 
     public static DisplayCurrencyActivity getApp() {
         return app;
@@ -74,12 +72,10 @@ public class DisplayCurrencyActivity extends BRActivity {
             }
         });
 
-        mWalletManager = WalletsMaster.getInstance(this).getCurrentWallet(this);
-
         exchangeText = findViewById(R.id.exchange_text);
         listView = findViewById(R.id.currency_list_view);
         adapter = new CurrencyListAdapter(this);
-        adapter.addAll(CurrencyDataSource.getInstance(this).getAllCurrencies(this, WalletsMaster.getInstance(this).getCurrentWallet(this).getIso(this)));
+        adapter.addAll(CurrencyDataSource.getInstance(this).getAllCurrencies(this, "BTC"));
         leftButton = findViewById(R.id.left_button);
         rightButton = findViewById(R.id.right_button);
         leftButton.setOnClickListener(new View.OnClickListener() {
@@ -107,7 +103,7 @@ public class DisplayCurrencyActivity extends BRActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
-                TextView currencyItemText = (TextView) view.findViewById(R.id.currency_item_text);
+                TextView currencyItemText = view.findViewById(R.id.currency_item_text);
                 final String selectedCurrency = currencyItemText.getText().toString();
                 String iso = selectedCurrency.substring(0, 3);
                 BRSharedPrefs.putPreferredFiatIso(DisplayCurrencyActivity.this, iso);
@@ -125,23 +121,23 @@ public class DisplayCurrencyActivity extends BRActivity {
     private void updateExchangeRate() {
         //set the rate from the last saved
         String iso = BRSharedPrefs.getPreferredFiatIso(this);
-        CurrencyEntity entity = CurrencyDataSource.getInstance(this).getCurrencyByCode(this, WalletsMaster.getInstance(this).getCurrentWallet(this).getIso(this), iso);
+        CurrencyEntity entity = CurrencyDataSource.getInstance(this).getCurrencyByCode(this, "BTC", iso);//hard code BTC for this one
         if (entity != null) {
             String formattedExchangeRate = CurrencyUtils.getFormattedAmount(DisplayCurrencyActivity.this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(entity.rate));
-            exchangeText.setText(String.format("%s = %s", CurrencyUtils.getFormattedAmount(this, mWalletManager.getIso(this), new BigDecimal(100000000)), formattedExchangeRate));
+            exchangeText.setText(String.format("%s = %s", CurrencyUtils.getFormattedAmount(this, "BTC", new BigDecimal(100000000)), formattedExchangeRate));
         }
         adapter.notifyDataSetChanged();
     }
 
     private void setButton(boolean left) {
         if (left) {
-            BRSharedPrefs.putCryptoDenomination(this, mWalletManager.getIso(this), BRConstants.CURRENT_UNIT_BITS);
+            BRSharedPrefs.putCryptoDenomination(this, "BTC", BRConstants.CURRENT_UNIT_BITS);
             leftButton.setTextColor(getColor(R.color.white));
             leftButton.setBackground(getDrawable(R.drawable.b_half_left_blue));
             rightButton.setTextColor(getColor(R.color.dark_blue));
             rightButton.setBackground(getDrawable(R.drawable.b_half_right_blue_stroke));
         } else {
-            BRSharedPrefs.putCryptoDenomination(this, mWalletManager.getIso(this), BRConstants.CURRENT_UNIT_BITCOINS);
+            BRSharedPrefs.putCryptoDenomination(this, "BTC", BRConstants.CURRENT_UNIT_BITCOINS);
             leftButton.setTextColor(getColor(R.color.dark_blue));
             leftButton.setBackground(getDrawable(R.drawable.b_half_left_blue_stroke));
             rightButton.setTextColor(getColor(R.color.white));
