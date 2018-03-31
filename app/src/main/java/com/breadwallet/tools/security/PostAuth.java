@@ -162,9 +162,8 @@ public class PostAuth {
             }
 
             if (!success) {
-                if (authAsked) {
+                if (authAsked)
                     Log.e(TAG, "onRecoverWalletAuth, !success && authAsked");
-                }
             } else {
                 if (phraseForKeyStore.length() != 0) {
                     BRSharedPrefs.putPhraseWroteDown(app, true);

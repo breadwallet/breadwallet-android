@@ -3,6 +3,8 @@ package com.breadwallet.presenter.entities;
 
 import com.platform.entities.TxMetaData;
 
+import java.math.BigDecimal;
+
 /**
  * BreadWallet
  * <p>
@@ -33,14 +35,14 @@ public class TxUiHolder {
     private long timeStamp;
     private int blockHeight;
     private byte[] txHash;
-    private long sent;
-    private long received;
-    private long fee;
+    private BigDecimal sent;
+    private BigDecimal received;
+    private BigDecimal fee;//satoshis or gas paid
     private String to[];
     private String from[];
     public String txReversed;
-    private long balanceAfterTx;
-    private long amount;
+    private BigDecimal balanceAfterTx;
+    private BigDecimal amount;
     private boolean isValid;
     private int txSize;
     public TxMetaData metaData;
@@ -48,9 +50,9 @@ public class TxUiHolder {
     private TxUiHolder() {
     }
 
-    public TxUiHolder(long timeStamp, int blockHeight, byte[] hash, String txReversed, long sent,
-                      long received, long fee, String to[], String from[],
-                      long balanceAfterTx, int txSize, long amount, boolean isValid) {
+    public TxUiHolder(long timeStamp, int blockHeight, byte[] hash, String txReversed, BigDecimal sent,
+                      BigDecimal received, BigDecimal fee, String to[], String from[],
+                      BigDecimal balanceAfterTx, int txSize, BigDecimal amount, boolean isValid) {
         this.timeStamp = timeStamp;
         this.blockHeight = blockHeight;
         this.txReversed = txReversed;
@@ -70,7 +72,7 @@ public class TxUiHolder {
         return blockHeight;
     }
 
-    public long getFee() {
+    public BigDecimal getFee() {
         return fee;
     }
 
@@ -90,11 +92,11 @@ public class TxUiHolder {
         return txReversed;
     }
 
-    public long getReceived() {
+    public BigDecimal getReceived() {
         return received;
     }
 
-    public long getSent() {
+    public BigDecimal getSent() {
         return sent;
     }
 
@@ -110,11 +112,11 @@ public class TxUiHolder {
         return to;
     }
 
-    public long getBalanceAfterTx() {
+    public BigDecimal getBalanceAfterTx() {
         return balanceAfterTx;
     }
 
-    public long getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
