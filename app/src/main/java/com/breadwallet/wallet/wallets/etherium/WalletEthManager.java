@@ -99,21 +99,27 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     private Context mContext;
 
 
-    private WalletEthManager(final Context app, BRCoreMasterPubKey masterPubKey, BREthereumNetwork network) {
+    private WalletEthManager(final Context app, BREthereumNetwork network) {
         uiConfig = new WalletUiConfiguration("#5e70a3", true, true, false, false, false, false);
 
-        //String testPaperKey = "video tiger report bid suspect taxi mail argue naive layer metal surface";
-        String testPaperKey = null;
-        try {
-            testPaperKey = new String(BRKeyStore.getPhrase(app, 0));
-            Log.e(TAG, "WalletEthManager: testPaperKey: " + testPaperKey);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
+        byte[] ethPubKey = BRKeyStore.getEthPublicKey(app);
+        if (Utils.isNullOrEmpty(ethPubKey)) {
+            Log.e(TAG, "WalletEthManager: Using the paperKey to create");
+            try {
+                String testPaperKey = new String(BRKeyStore.getPhrase(app, 0));
+                new BREthereumLightNode.JSON_RPC(this, network, testPaperKey);
+                mWallet = node.getWallet();
+                ethPubKey = mWallet.getAccount().getPrimaryAddressPublicKey();
+                BRKeyStore.putEthPublicKey(ethPubKey, app);
+            } catch (UserNotAuthenticatedException e) {
+                e.printStackTrace();
+            }
+        } else {
+            Log.e(TAG, "WalletEthManager: Using the pubkey to create");
+            new BREthereumLightNode.JSON_RPC(this, network, ethPubKey);
+            mWallet = node.getWallet();
         }
-        //todo change the hardcoded priv key to master pub key when done
-        new BREthereumLightNode.JSON_RPC(this, network, testPaperKey);
 
-        mWallet = node.getWallet();
         mContext = app;
         mWallet.estimateGasPrice();
         mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
@@ -130,9 +136,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                 Log.e(TAG, "getInstance: rawPubKey is null");
                 return null;
             }
-            BRCoreMasterPubKey pubKey = new BRCoreMasterPubKey(rawPubKey, false);
-//
-            instance = new WalletEthManager(app, pubKey, BuildConfig.BITCOIN_TESTNET ? BREthereumNetwork.testnet : BREthereumNetwork.mainnet);
+            instance = new WalletEthManager(app, BuildConfig.BITCOIN_TESTNET ? BREthereumNetwork.testnet : BREthereumNetwork.mainnet);
 
         }
         return instance;
