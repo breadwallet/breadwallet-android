@@ -18,6 +18,7 @@ import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
 
 
 import org.junit.After;
@@ -181,43 +182,45 @@ public class WalletTests {
     public void walletBitcoinTests() {
         Activity app = mActivityRule.getActivity();
 
-
-        WalletBitcoinManager wallet = WalletBitcoinManager.getInstance(app);
+        WalletBitcoinManager btcWallet = WalletBitcoinManager.getInstance(app);
 
         BRSharedPrefs.putPreferredFiatIso(app, "USD");
 
-        int usdRate = 12000;
+        int btcRate = 12000;
+        int ethRate = 650;
 
         Set<CurrencyEntity> tmp = new HashSet<>();
-        tmp.add(new CurrencyEntity("USD", "Dollar", usdRate, "BTC"));
+        tmp.add(new CurrencyEntity("USD", "Dollar", btcRate, "BTC"));
         CurrencyDataSource.getInstance(app).putCurrencies(app, "BTC", tmp);
-
+        tmp = new HashSet<>();
+        tmp.add(new CurrencyEntity("USD", "Dollar", ethRate, "ETH"));
+        CurrencyDataSource.getInstance(app).putCurrencies(app, "ETH", tmp);
 
         BRSharedPrefs.putCryptoDenomination(app, "BTC", BRConstants.CURRENT_UNIT_BITCOINS);
 
         //getCryptoForSmallestCrypto(..)
         BigDecimal val = new BigDecimal(20000);
-        BigDecimal res = wallet.getCryptoForSmallestCrypto(app, val);
+        BigDecimal res = btcWallet.getCryptoForSmallestCrypto(app, val);
         Assert.assertEquals(res.doubleValue(), new BigDecimal(0.0002).doubleValue(), 0.000000001);
 
         //getSmallestCryptoForCrypto(..)
         val = new BigDecimal(0.5);
-        res = wallet.getSmallestCryptoForCrypto(app, val);
+        res = btcWallet.getSmallestCryptoForCrypto(app, val);
         Assert.assertEquals(res.longValue(), 50000000, 0);
 
         //getFiatForSmallestCrypto(..)
-        val = wallet.getSmallestCryptoForCrypto(app, new BigDecimal(0.5));
-        res = wallet.getFiatForSmallestCrypto(app, val);
-        Assert.assertEquals(res.doubleValue(), usdRate / 2 * 100, 0); //cents, not dollars
+        val = btcWallet.getSmallestCryptoForCrypto(app, new BigDecimal(0.5));
+        res = btcWallet.getFiatForSmallestCrypto(app, val, null);
+        Assert.assertEquals(res.doubleValue(), btcRate / 2, 0); //dollars
 
         //getSmallestCryptoForFiat(..)
-        val = new BigDecimal(600000);//$6000.00 = c600000
-        res = wallet.getSmallestCryptoForFiat(app, val);
-        Assert.assertEquals(res.doubleValue(), 50000000, 0); //cents, not dollars
+        val = new BigDecimal(6000);//$6000.00 = c600000
+        res = btcWallet.getSmallestCryptoForFiat(app, val);
+        Assert.assertTrue(res.compareTo(new BigDecimal(50000000)) == 0); //dollars
 
         //getCryptoForFiat(..)
-        val = new BigDecimal(600000);//$6000.00 = c600000
-        res = wallet.getCryptoForFiat(app, val);
+        val = new BigDecimal(6000);//$6000.00 = c600000
+        res = btcWallet.getCryptoForFiat(app, val);
         Assert.assertEquals(res.doubleValue(), 0.5, 0); //dollars
 
 
@@ -225,28 +228,56 @@ public class WalletTests {
 
         //getCryptoForSmallestCrypto(..)
         val = new BigDecimal(20000);
-        res = wallet.getCryptoForSmallestCrypto(app, val);
+        res = btcWallet.getCryptoForSmallestCrypto(app, val);
         Assert.assertEquals(res.doubleValue(), new BigDecimal(200).doubleValue(), 0.000000001);
 
         //getSmallestCryptoForCrypto(..)
         val = new BigDecimal(200);
-        res = wallet.getSmallestCryptoForCrypto(app, val);
+        res = btcWallet.getSmallestCryptoForCrypto(app, val);
         Assert.assertEquals(res.longValue(), 20000, 0);
 
         //getFiatForSmallestCrypto(..)
         val = new BigDecimal(50000000);
-        res = wallet.getFiatForSmallestCrypto(app, val);
-        Assert.assertEquals(res.doubleValue(), usdRate / 2 * 100, 0); //cents, not dollars
+        res = btcWallet.getFiatForSmallestCrypto(app, val, null);
+        Assert.assertEquals(res.doubleValue(), btcRate / 2 , 0); // dollars
 
         //getSmallestCryptoForFiat(..)
-        val = new BigDecimal(600000);//$6000.00 = c600000
-        res = wallet.getSmallestCryptoForFiat(app, val);
-        Assert.assertEquals(res.doubleValue(), 50000000, 0); //cents, not dollars
+        val = new BigDecimal(6000);//$6000.00 = c600000
+        res = btcWallet.getSmallestCryptoForFiat(app, val);
+        Assert.assertEquals(res.doubleValue(), 50000000, 0); //dollars
 
         //getCryptoForFiat(..)
-        val = new BigDecimal(600000);//$6000.00 = c600000
-        res = wallet.getCryptoForFiat(app, val);
-        Assert.assertEquals(res.doubleValue(), 500000, 0); //dollars
+        val = new BigDecimal(6000);//$6000.00 = c600000
+        res = btcWallet.getCryptoForFiat(app, val);
+        Assert.assertTrue(res.compareTo(new BigDecimal(500000)) == 0); //dollars
+
+        //TEST ETH
+        WalletEthManager ethWallet = WalletEthManager.getInstance(app);
+
+        //getCryptoForSmallestCrypto(..)
+        val = new BigDecimal("25000000000000000000");
+        res = ethWallet.getCryptoForSmallestCrypto(app, val);
+        Assert.assertTrue(res.compareTo(new BigDecimal(25)) == 0);
+
+        //getSmallestCryptoForCrypto(..)
+        val = new BigDecimal(25);
+        res = ethWallet.getSmallestCryptoForCrypto(app, val);
+        Assert.assertTrue(res.toPlainString().compareTo(new BigDecimal("25000000000000000000").toPlainString()) == 0);
+
+        //getFiatForSmallestCrypto(..)
+        val = new BigDecimal("25000000000000000000");
+        res = ethWallet.getFiatForSmallestCrypto(app, val, null);
+        Assert.assertEquals(res.doubleValue(), ethRate * 25, 0); //dollars
+
+        //getSmallestCryptoForFiat(..)
+        val = new BigDecimal(1300);//$1300.00 = 2ETH
+        res = ethWallet.getSmallestCryptoForFiat(app, val);
+        Assert.assertTrue(res.compareTo(new BigDecimal("2000000000000000000")) == 0);
+
+        //getCryptoForFiat(..)
+        val = new BigDecimal(1300);//$6000.00 = c600000
+        res = ethWallet.getCryptoForFiat(app, val);
+        Assert.assertTrue(res.compareTo(new BigDecimal("2")) == 0);
 
     }
 

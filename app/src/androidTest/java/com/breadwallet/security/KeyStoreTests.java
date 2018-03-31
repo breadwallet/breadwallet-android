@@ -14,6 +14,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
+import java.math.BigDecimal;
+
 import static com.breadwallet.tools.security.BRKeyStore.aliasObjectMap;
 
 
@@ -238,12 +240,12 @@ public class KeyStoreTests {
 
     @Test
     public void setGetSpendLimit() {
-        long spendLimit = 100000;
+        BigDecimal spendLimit = new BigDecimal(1000);
         BRKeyStore.putSpendLimit(spendLimit, mActivityRule.getActivity());
         assertFilesExist(BRKeyStore.SPEND_LIMIT_ALIAS);
-        long freshGet;
-        freshGet = BRKeyStore.getSpendLimit(mActivityRule.getActivity());
-        Assert.assertEquals(freshGet, freshGet);
+        BigDecimal freshGet = BRKeyStore.getSpendLimit(mActivityRule.getActivity());
+        Assert.assertNotNull(freshGet);
+        Assert.assertTrue(freshGet.compareTo(spendLimit) == 0);
     }
 
     @Test
@@ -287,9 +289,9 @@ public class KeyStoreTests {
         BRKeyStore.putPinCode("0123", mActivityRule.getActivity());
         BRKeyStore.putFailCount(3, mActivityRule.getActivity());
         BRKeyStore.putFailTimeStamp(1479686841, mActivityRule.getActivity());
-        BRKeyStore.putSpendLimit(10000000, mActivityRule.getActivity());
+        BRKeyStore.putSpendLimit(new BigDecimal(10000000), mActivityRule.getActivity());
         BRKeyStore.putLastPinUsedTime(1479686841, mActivityRule.getActivity());
-        BRKeyStore.putTotalLimit(1479686841, mActivityRule.getActivity());
+        BRKeyStore.putTotalLimit(new BigDecimal(1479686841), mActivityRule.getActivity());
 
         for (String a : aliasObjectMap.keySet()) {
             assertFilesExist(a);
