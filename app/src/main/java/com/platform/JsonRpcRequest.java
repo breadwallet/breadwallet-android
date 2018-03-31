@@ -7,13 +7,17 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.tools.util.Utils;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
@@ -36,7 +40,7 @@ public class JsonRpcRequest {
     }
 
 
-    public Response makeRpcRequest(Context app, String url, Map<String, String> params, JsonRpcRequestListener listener) {
+    public Response makeRpcRequest(Context app, String url, JSONObject payload, JsonRpcRequestListener listener) {
 
         this.mRequestListener = listener;
 
@@ -48,21 +52,11 @@ public class JsonRpcRequest {
         Map<String, String> headers = BreadApp.getBreadHeaders();
 
 
-        // Package up rpc request params and put them in the POST request
-        JSONObject postJson = new JSONObject();
-        Iterator paramIt = params.entrySet().iterator();
+        final MediaType JSON
+                = MediaType.parse("application/json; charset=utf-8");
 
-        try {
-            while (paramIt.hasNext()) {
-                Map.Entry pair = (Map.Entry) paramIt.next();
-                postJson.put((String) pair.getKey(), pair.getValue());
-                Log.d(TAG, "Rpc params -> " + pair.getKey() + ", " + pair.getValue());
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-
-        RequestBody requestBody = RequestBody.create(null, postJson.toString());
+        RequestBody requestBody = RequestBody.create(JSON, payload.toString());
+        Log.d(TAG, "JSON params -> " + payload.toString());
 
 
         Request.Builder builder = new Request.Builder()
@@ -80,11 +74,20 @@ public class JsonRpcRequest {
 
         String response = null;
         Request request = builder.build();
-        Response resp = APIClient.getInstance(app).sendRequest(request, true, 0);
+        //Log.d(TAG, "Request body -> " + request.body().);
+        //Response resp = APIClient.getInstance(app).sendRequest(request, true, 0);
+
+        Response resp = null;
+        OkHttpClient client = new OkHttpClient.Builder().followRedirects(false).connectTimeout(10, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
+
         try {
+
+            request = APIClient.getInstance(app).authenticateRequest(request);
+            resp = client.newCall(request).execute();
+
+
             mRequestListener.onRpcRequestCompleted(resp.body().string());
-            //Log.d(TAG, "Rpc Response -> " + resp.body().string());
-            //Log.d(TAG, "Rpc response string 1 -> " + response);
+
 
 
             if (resp == null) {

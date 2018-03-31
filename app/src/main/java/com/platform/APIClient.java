@@ -346,6 +346,7 @@ public class APIClient {
 //            Log.e(TAG, "sendRequest: agent: " + agent);
             request = request.newBuilder().header("User-agent", agent).build();
 
+            Log.d(TAG, "Making request to -> " + request.url().toString());
             response = client.newCall(request).execute();
             String s = null;
             try {
@@ -406,7 +407,7 @@ public class APIClient {
         return response.newBuilder().body(postReqBody).build();
     }
 
-    private Request authenticateRequest(Request request) {
+    public Request authenticateRequest(Request request) {
         Request.Builder modifiedRequest = request.newBuilder();
         String base58Body = "";
         RequestBody body = request.body();
