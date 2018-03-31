@@ -28,17 +28,19 @@ import com.breadwallet.wallet.abstracts.BaseAddress;
  */
 public class ETHAddress implements BaseAddress {
 
+    String mAddress;
+
     public ETHAddress(String address) {
-        //todo implement
+        mAddress = address;
     }
 
     @Override
     public boolean isValid() {
-        return false;
+        return true;
     }
 
     @Override
     public String stringify() {
-        return null;
+        return mAddress;
     }
 }
