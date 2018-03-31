@@ -106,7 +106,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 for (int i = 0; i < newItems.size(); i++) {
                     item = newItems.get(i);
                     item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
-                    item.txReversed = Utils.reverseHex(Utils.bytesToHex(item.getTxHash()));
+                    item.txReversed = item.getHashReversed() == null ? Utils.reverseHex(Utils.bytesToHex(item.getTxHash())) : item.getHashReversed();
 
                 }
                 backUpFeed = newItems;

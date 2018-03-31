@@ -210,6 +210,29 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
+    public BigDecimal getEstimatedFee(BigDecimal amount, String address) {
+        BigDecimal fee;
+        if (amount == null) return null;
+        if (amount.compareTo(new BigDecimal(0)) == 0) {
+            fee = new BigDecimal(0);
+        } else {
+            BaseTransaction tx = null;
+            if (isAddressValid(address)) {
+                tx = createTransaction(amount, address);
+            }
+
+            if (tx == null) {
+                fee = getFeeForTxAmount(amount);
+            } else {
+                fee = getTxFee(tx);
+                if (fee == null || fee.compareTo(new BigDecimal(0)) <= 0)
+                    fee = getFeeForTxAmount(amount);
+            }
+        }
+        return fee;
+    }
+
+    @Override
     public BigDecimal getFeeForTxAmount(BigDecimal amount) {
         return new BigDecimal(getWallet().getFeeForTransactionAmount(amount.longValue()));
     }

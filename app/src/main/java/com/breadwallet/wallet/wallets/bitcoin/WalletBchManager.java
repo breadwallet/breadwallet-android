@@ -210,6 +210,29 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     @Override
+    public BigDecimal getEstimatedFee(BigDecimal amount, String address) {
+        BigDecimal fee;
+        if (amount == null) return null;
+        if (amount.compareTo(new BigDecimal(0)) == 0) {
+            fee = new BigDecimal(0);
+        } else {
+            BaseTransaction tx = null;
+            if (isAddressValid(address)) {
+                tx = createTransaction(amount, address);
+            }
+
+            if (tx == null) {
+                fee = getFeeForTxAmount(amount);
+            } else {
+                fee = getTxFee(tx);
+                if (fee == null || fee.compareTo(new BigDecimal(0)) <= 0)
+                    fee = getFeeForTxAmount(amount);
+            }
+        }
+        return fee;
+    }
+
+    @Override
     public BigDecimal getFeeForTxAmount(BigDecimal amount) {
         return new BigDecimal(getWallet().getFeeForTransactionAmount(amount.longValue()));
     }
@@ -298,7 +321,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
                     new BigDecimal(getWallet().getTransactionAmountReceived(tx)), new BigDecimal(getWallet().getTransactionFee(tx)),
                     null, null, tx.getOutputAddresses()[0], tx.getInputAddresses()[0],
                     new BigDecimal(getWallet().getBalanceAfterTransaction(tx)), (int) tx.getSize(),
-                            new BigDecimal(getWallet().getTransactionAmount(tx)), getWallet().transactionIsValid(tx)));
+                    new BigDecimal(getWallet().getTransactionAmount(tx)), getWallet().transactionIsValid(tx)));
         }
 
         return uiTxs;
@@ -405,7 +428,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             return null;
         }
         BRCoreTransaction tx = getWallet().createTransaction(amount.longValue(), new BRCoreAddress(address));
-        return tx == null? null : new CryptoTransaction(tx);
+        return tx == null ? null : new CryptoTransaction(tx);
     }
 
     @Override

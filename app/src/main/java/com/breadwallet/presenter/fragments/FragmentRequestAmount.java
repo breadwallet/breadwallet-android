@@ -214,8 +214,7 @@ public class FragmentRequestAmount extends Fragment {
                 if (!BRAnimator.isClickAllowed()) return;
                 showKeyboard(false);
                 BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-                long amount = getAmount();
-                Uri bitcoinUri = CryptoUriParser.createCryptoUrl(getActivity(), wm, wm.decorateAddress(getActivity(), mReceiveAddress), amount, null, null, null);
+                Uri bitcoinUri = CryptoUriParser.createCryptoUrl(getActivity(), wm, wm.decorateAddress(getActivity(), mReceiveAddress), getAmount(), null, null, null);
                 QRUtils.share("mailto:", getActivity(), bitcoinUri.toString());
 
             }
@@ -226,10 +225,9 @@ public class FragmentRequestAmount extends Fragment {
                 removeCurrencySelector();
                 if (!BRAnimator.isClickAllowed()) return;
                 showKeyboard(false);
-                long amount = getAmount();
                 BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
-                Uri bitcoinUri = CryptoUriParser.createCryptoUrl(getActivity(), wm, wm.decorateAddress(getActivity(), mReceiveAddress), amount, null, null, null);
+                Uri bitcoinUri = CryptoUriParser.createCryptoUrl(getActivity(), wm, wm.decorateAddress(getActivity(), mReceiveAddress), getAmount(), null, null, null);
                 QRUtils.share("sms:", getActivity(), bitcoinUri.toString());
             }
         });
@@ -450,7 +448,7 @@ public class FragmentRequestAmount extends Fragment {
 
         BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
 
-        long amount = isCrypto ? wm.getSmallestCryptoForCrypto(getActivity(), bigAmount).longValue() : wm.getSmallestCryptoForFiat(getActivity(), bigAmount).longValue();
+        BigDecimal amount = isCrypto ? wm.getSmallestCryptoForCrypto(getActivity(), bigAmount) : wm.getSmallestCryptoForFiat(getActivity(), bigAmount);
 
         Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), wm, address, amount, null, null, null);
 
@@ -472,12 +470,12 @@ public class FragmentRequestAmount extends Fragment {
         }
     }
 
-    private long getAmount() {
+    private BigDecimal getAmount() {
         BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
         String strAmount = amountEdit.getText().toString();
         boolean isIsoCrypto = WalletsMaster.getInstance(getActivity()).isIsoCrypto(getActivity(), selectedIso);
         BigDecimal bigAmount = new BigDecimal((Utils.isNullOrEmpty(strAmount) || strAmount.equalsIgnoreCase(".")) ? "0" : strAmount);
-        return isIsoCrypto ? wm.getSmallestCryptoForCrypto(getActivity(), bigAmount).longValue() : wm.getSmallestCryptoForFiat(getActivity(), bigAmount).longValue();
+        return isIsoCrypto ? wm.getSmallestCryptoForCrypto(getActivity(), bigAmount) : wm.getSmallestCryptoForFiat(getActivity(), bigAmount);
     }
 
 
