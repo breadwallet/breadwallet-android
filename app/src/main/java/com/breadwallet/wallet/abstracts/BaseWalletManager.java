@@ -10,7 +10,7 @@ import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWallet;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
-import com.breadwallet.wallet.wallets.configs.WalletUiConfiguration;
+import com.breadwallet.wallet.configs.WalletUiConfiguration;
 
 import java.math.BigDecimal;
 import java.util.List;

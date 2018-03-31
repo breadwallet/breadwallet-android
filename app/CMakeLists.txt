@@ -102,6 +102,7 @@ add_library( # The name of the library.
              src/main/jni/breadwallet-core/BRBech32.c
              src/main/jni/breadwallet-core/BRBech32.h
 
+<<<<<<< HEAD
              # Ethereum files
              src/main/jni/breadwallet-core/ethereum/BREthereum.h
              src/main/jni/breadwallet-core/ethereum/BREthereumAccount.c
@@ -153,6 +154,9 @@ add_library( # The name of the library.
              src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumToken.h
              src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumTransaction.h
              src/main/jni/breadwallet-core/ethereum/Java/com_breadwallet_core_ethereum_BREthereumWallet.h
+=======
+             # Etherium files
+>>>>>>> ETH wallet in progress
 
              )
 
