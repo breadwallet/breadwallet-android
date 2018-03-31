@@ -60,6 +60,7 @@ import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
+import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
@@ -405,7 +406,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             return null;
         }
         BRCoreTransaction tx = getWallet().createTransaction(amount.longValue(), new BRCoreAddress(address));
-        return tx == null? null : new BTCTransaction(tx);
+        return tx == null? null : new CryptoTransaction(tx);
     }
 
     @Override
@@ -862,7 +863,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         final Context ctx = BreadApp.getBreadContext();
         final WalletsMaster master = WalletsMaster.getInstance(ctx);
 
-        TxMetaData metaData = KVStoreManager.getInstance().createMetadata(ctx, this, new BTCTransaction(transaction));
+        TxMetaData metaData = KVStoreManager.getInstance().createMetadata(ctx, this, new CryptoTransaction(transaction));
         KVStoreManager.getInstance().putTxMetaData(ctx, metaData, transaction.getHash());
 
         final long amount = getWallet().getTransactionAmount(transaction);
