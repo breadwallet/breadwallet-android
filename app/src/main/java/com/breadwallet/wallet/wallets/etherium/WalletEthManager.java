@@ -33,10 +33,14 @@ import com.google.firebase.crash.FirebaseCrash;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import com.platform.JsonRpcConstants;
+import com.platform.JsonRpcRequest;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
@@ -84,6 +88,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     private final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // 90m ETH * 18 (WEI)
     private final BigDecimal WEI_ETH = new BigDecimal("1000000000000000000"); //1ETH = 1000000000000000000 WEI
     private BREthereumWallet mWallet;
+    private Context mContext;
 
     private int mSyncRetryCount = 0;
     private static final int SYNC_MAX_RETRY = 3;
@@ -102,6 +107,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
         mWallet = node.getWallet();
         mWallet.setDefaultUnit(BREthereumWallet.Unit.ETHER_WEI);
+        mContext = app;
 
         BREthereumWallet walletToken = node.createWallet(BREthereumToken.tokenBRD);
         walletToken.setDefaultUnit(BREthereumWallet.Unit.TOKEN_DECIMAL);
@@ -530,6 +536,16 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public void getTransactions(int id, String account) {
+        Log.d(TAG, "getTransactions()");
 
+        final String eth_rpc_url = BreadApp.HOST + JsonRpcConstants.ETH_RPC_ENDPOINT;
+        Log.d(TAG, "ETH RPC URL -> " + eth_rpc_url);
+
+        Map<String, String> params = new HashMap<>();
+        params.put("id", String.valueOf(id));
+        params.put("account", account);
+
+        JsonRpcRequest request = new JsonRpcRequest();
+        request.makeRpcRequest(mContext, eth_rpc_url, params);
     }
 }
