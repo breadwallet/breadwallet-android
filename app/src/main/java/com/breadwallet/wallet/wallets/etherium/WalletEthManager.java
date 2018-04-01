@@ -231,7 +231,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public BigDecimal getTxFee(BaseTransaction tx) {
-        return new BigDecimal(tx.getEtherTx().getGasUsed())
+        return new BigDecimal(tx.getEtherTx().getGasLimit())
                 .multiply(new BigDecimal(tx.getEtherTx().getGasPrice(BREthereumAmount.Unit.ETHER_WEI)));
     }
 
