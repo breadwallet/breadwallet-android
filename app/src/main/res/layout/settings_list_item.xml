@@ -35,21 +35,11 @@
        />
 
     <ImageButton
-        android:id="@+id/chevron_right"
+        android:id="@+id/right_icon"
         android:background="@drawable/chevron_right_light"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="8dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
-
-    <ImageButton
-        android:id="@+id/arrow_leave"
-        android:background="@drawable/arrow_leave"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="4dp"
-        android:visibility="invisible"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 

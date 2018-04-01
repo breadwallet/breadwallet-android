@@ -50,73 +50,85 @@
         android:textSize="28sp"
         android:layout_margin="@dimen/bread_margin"/>
 
-    <RelativeLayout
-        android:id="@+id/redeem_private_key_row"
-        android:background="@drawable/settings_row_shape"
+    <ListView
+        android:id="@+id/settings_list"
+        android:footerDividersEnabled="false"
+        android:headerDividersEnabled="false"
+        android:background="@color/extra_light_blue_background"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
         android:layout_below="@id/title"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+
+        />
+
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/redeem_private_key_row"-->
+        <!--android:background="@drawable/settings_row_shape"-->
+        <!--android:layout_below="@id/title"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
 
 
-        <com.breadwallet.presenter.customviews.BRText
-            android:id="@+id/redeem_key"
-            android:text="Redeem Private Key"
-            android:textSize="16sp"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:textColor="@color/total_assets_usd_color"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <!--<com.breadwallet.presenter.customviews.BRText-->
+            <!--android:id="@+id/redeem_key"-->
+            <!--android:text="Redeem Private Key"-->
+            <!--android:textSize="16sp"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginStart="24dp"-->
+            <!--android:layout_marginTop="16dp"-->
+            <!--android:layout_marginBottom="16dp"-->
+            <!--android:textColor="@color/total_assets_usd_color"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content" />-->
 
 
-        <ImageButton
-            android:id="@+id/chevron_right"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/chevron_right_light"
-            android:layout_marginRight="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:id="@+id/rescan_row"
-        android:background="@drawable/settings_row_shape"
-        android:layout_below="@id/redeem_private_key_row"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
-        <com.breadwallet.presenter.customviews.BRText
-            android:id="@+id/rescan"
-            android:text="Rescan Blockchain"
-            android:textSize="16sp"
-            android:layout_centerVertical="true"
-            android:layout_marginStart="24dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="16dp"
-            android:textColor="@color/total_assets_usd_color"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-
-        <ImageButton
-            android:id="@+id/rescan_chevron_right"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:background="@drawable/ic_rescan"
-            android:layout_marginRight="8dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+        <!--<ImageButton-->
+            <!--android:id="@+id/chevron_right"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:background="@drawable/chevron_right_light"-->
+            <!--android:layout_marginRight="8dp"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content" />-->
 
 
 
-    </RelativeLayout>
+    <!--</RelativeLayout>-->
+
+    <!--<RelativeLayout-->
+        <!--android:id="@+id/rescan_row"-->
+        <!--android:background="@drawable/settings_row_shape"-->
+        <!--android:layout_below="@id/redeem_private_key_row"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content">-->
+
+
+        <!--<com.breadwallet.presenter.customviews.BRText-->
+            <!--android:id="@+id/rescan"-->
+            <!--android:text="Rescan Blockchain"-->
+            <!--android:textSize="16sp"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:layout_marginStart="24dp"-->
+            <!--android:layout_marginTop="16dp"-->
+            <!--android:layout_marginBottom="16dp"-->
+            <!--android:textColor="@color/total_assets_usd_color"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content" />-->
+
+
+        <!--<ImageButton-->
+            <!--android:id="@+id/rescan_chevron_right"-->
+            <!--android:layout_alignParentRight="true"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:background="@drawable/ic_rescan"-->
+            <!--android:layout_marginRight="8dp"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content" />-->
+
+
+
+    <!--</RelativeLayout>-->
 
 
 

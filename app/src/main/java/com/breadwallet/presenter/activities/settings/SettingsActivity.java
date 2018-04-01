@@ -22,6 +22,7 @@ import com.breadwallet.presenter.activities.UpdatePinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
+import com.breadwallet.tools.adapter.SettingsAdapter;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 
@@ -63,61 +64,6 @@ public class SettingsActivity extends BRActivity {
     }
 
 
-    public class SettingsListAdapter extends ArrayAdapter<String> {
-
-        private List<BRSettingsItem> items;
-        private Context mContext;
-
-        public SettingsListAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<BRSettingsItem> items) {
-            super(context, resource);
-            this.items = items;
-            this.mContext = context;
-        }
-
-        @NonNull
-        @Override
-        public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-
-            View v;
-            BRSettingsItem item = items.get(position);
-            LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-
-            if (item.isSection) {
-                v = inflater.inflate(settings_list_section, parent, false);
-            } else {
-                v = inflater.inflate(settings_list_item, parent, false);
-                TextView addon = v.findViewById(R.id.item_addon);
-
-                if (!addon.getText().toString().isEmpty()) {
-                    addon.setVisibility(View.VISIBLE);
-                    addon.setText(item.addonText);
-                }
-                ImageButton leaveArrow = v.findViewById(R.id.arrow_leave);
-                ImageButton chevronRight = v.findViewById(R.id.chevron_right);
-                leaveArrow.setVisibility(item.showChevron ? View.INVISIBLE : View.VISIBLE);
-                chevronRight.setVisibility(item.showChevron ? View.VISIBLE : View.INVISIBLE);
-
-                v.setOnClickListener(item.listener);
-            }
-
-            TextView title = v.findViewById(R.id.item_title);
-            title.setText(item.title);
-
-            return v;
-
-        }
-
-        @Override
-        public int getCount() {
-            return items == null ? 0 : items.size();
-        }
-
-        @Override
-        public int getItemViewType(int position) {
-            return super.getItemViewType(position);
-        }
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -129,7 +75,7 @@ public class SettingsActivity extends BRActivity {
 
         populateItems();
 
-        listView.setAdapter(new SettingsListAdapter(this, R.layout.settings_list_item, items));
+        listView.setAdapter(new SettingsAdapter(this, R.layout.settings_list_item, items));
     }
 
     @Override
@@ -140,7 +86,7 @@ public class SettingsActivity extends BRActivity {
 
     private void populateItems() {
 
-        items.add(new BRSettingsItem(getString(R.string.Settings_wallet), "", null, true, true));
+        items.add(new BRSettingsItem(getString(R.string.Settings_wallet), "", null, true, 0));
 
 
         items.add(new BRSettingsItem(getString(R.string.Settings_wipe), "", new View.OnClickListener() {
@@ -150,10 +96,10 @@ public class SettingsActivity extends BRActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false, true));
+        }, false, R.drawable.chevron_right_light));
 
 
-        items.add(new BRSettingsItem(getString(R.string.Settings_preferences), "", null, true, true));
+        items.add(new BRSettingsItem(getString(R.string.Settings_preferences), "", null, true, 0));
 
         if (AuthManager.isFingerPrintAvailableAndSetup(this)) {
             items.add(new BRSettingsItem(getString(R.string.Settings_touchIdLimit_android), "", new View.OnClickListener() {
@@ -174,7 +120,7 @@ public class SettingsActivity extends BRActivity {
                     });
 
                 }
-            }, false, true));
+            }, false, R.drawable.chevron_right_light));
         }
 
         items.add(new BRSettingsItem(getString(R.string.Settings_updatePin), "", new View.OnClickListener() {
@@ -184,7 +130,7 @@ public class SettingsActivity extends BRActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false, true));
+        }, false, R.drawable.chevron_right_light));
 
         items.add(new BRSettingsItem(getString(R.string.Settings_currency), BRSharedPrefs.getPreferredFiatIso(this), new View.OnClickListener() {
             @Override
@@ -193,10 +139,10 @@ public class SettingsActivity extends BRActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false, true));
+        }, false, R.drawable.chevron_right_light));
 
 
-        items.add(new BRSettingsItem(getString(R.string.Settings_currencySettings), "", null, true, true));
+        items.add(new BRSettingsItem(getString(R.string.Settings_currencySettings), "", null, true, 0));
 
         items.add(new BRSettingsItem(getString(R.string.Settings_bitcoin), "", new View.OnClickListener() {
             @Override
@@ -206,7 +152,7 @@ public class SettingsActivity extends BRActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false, true));
+        }, false, R.drawable.chevron_right_light));
 
         items.add(new BRSettingsItem(getString(R.string.Settings_bitcoinCash), "", new View.OnClickListener() {
             @Override
@@ -216,10 +162,10 @@ public class SettingsActivity extends BRActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false, true));
+        }, false, R.drawable.chevron_right_light));
 
 
-        items.add(new BRSettingsItem(getString(R.string.Settings_other), "", null, true, true));
+        items.add(new BRSettingsItem(getString(R.string.Settings_other), "", null, true, 0));
 
         String shareAddOn = BRSharedPrefs.getShareData(SettingsActivity.this) ? "ON" : "OFF";
 
@@ -230,7 +176,7 @@ public class SettingsActivity extends BRActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false, true));
+        }, false, R.drawable.chevron_right_light));
 
         items.add(new BRSettingsItem(getString(R.string.Settings_review), "", new View.OnClickListener() {
             @Override
@@ -245,7 +191,7 @@ public class SettingsActivity extends BRActivity {
                 }
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false, false));
+        }, false, R.drawable.arrow_leave));
 
         items.add(new BRSettingsItem(getString(R.string.Settings_aboutBread), "", new View.OnClickListener() {
             @Override
@@ -254,7 +200,7 @@ public class SettingsActivity extends BRActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false, true));
+        }, false, R.drawable.chevron_right_light));
 
         items.add(new BRSettingsItem(getString(R.string.Settings_advancedTitle), "", new View.OnClickListener() {
             @Override
@@ -263,7 +209,7 @@ public class SettingsActivity extends BRActivity {
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false, true));
+        }, false, R.drawable.chevron_right_light));
 
 
     }
