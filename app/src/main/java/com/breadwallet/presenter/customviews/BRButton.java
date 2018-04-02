@@ -20,6 +20,7 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.manager.FontManager;
@@ -133,7 +134,7 @@ public class BRButton extends Button {
                 if (observer.isAlive()) {
                     observer.removeOnGlobalLayoutListener(this);
                 }
-                correctTextSizeIfNeeded();
+                Utils.correctTextSizeIfNeeded(BRButton.this);
                 correctTextBalance();
             }
         });
@@ -165,45 +166,14 @@ public class BRButton extends Button {
 
     }
 
-    private void correctTextSizeIfNeeded() {
-        int limit = 100;
-        int lines = getLineCount();
-        float px = getTextSize();
-        while (lines > 1 && !getText().toString().contains("\n")) {
-            limit--;
-            px -= 1;
-            setTextSize(TypedValue.COMPLEX_UNIT_PX, px);
-            lines = getLineCount();
-            if (limit <= 0) {
-                Log.e(TAG, "correctTextSizeIfNeeded: Failed to rescale, limit reached, final: " + px);
-                break;
-            }
-        }
-    }
-
     private void correctTextBalance() {
-//        Rect bounds = new Rect();
-//        Paint textPaint = getPaint();
-//        textPaint.getTextBounds(getText().toString(), 0, getText().toString().length(), bounds);
-//        int height = bounds.height();
-//        int width = bounds.width();
-
-//        int paddingLeft = getPaddingLeft();
-//        int paddingTop = getPaddingTop();
-//        int paddingRight = getPaddingRight();
-//        int paddingBottom = getPaddingBottom();
-//
-//        paddingTop = 5;
-//        paddingBottom = height - 5 - modifiedHeight;
-//
-//        setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-//        invalidate();
+        //implement if needed in the future
     }
 
     @Override
     protected void onDraw(Canvas canvas) {
         if (isBreadButton) {
-            if(hasShadow) {
+            if (hasShadow) {
                 shadowRect.set(5, height / 4, width - 5, (int) (height * shadowOffSet));
                 canvas.drawBitmap(shadow, null, shadowRect, null);
 
@@ -219,12 +189,12 @@ public class BRButton extends Button {
 
     }
 
-    public void setHasShadow(boolean hasShadow){
+    public void setHasShadow(boolean hasShadow) {
         this.hasShadow = hasShadow;
         invalidate();
     }
 
-    public void setColor(int color){
+    public void setColor(int color) {
         bPaint.setColor(color);
 
         invalidate();

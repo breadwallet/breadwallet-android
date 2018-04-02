@@ -70,13 +70,13 @@
                     android:id="@+id/close_button"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:background="@drawable/ic_close_black_24dp"
-                    app:layout_constraintLeft_toLeftOf="parent"
-                    android:layout_marginStart="16dp"
                     android:layout_marginBottom="0dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="0dp"
+                    android:background="@drawable/ic_close_black_24dp"
                     app:layout_constraintBottom_toBottomOf="@+id/title"
-                    app:layout_constraintTop_toTopOf="@+id/title"
-                    android:layout_marginTop="0dp"/>
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/title"/>
 
             </android.support.constraint.ConstraintLayout>
 
@@ -208,9 +208,11 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
+                android:singleLine="true"
+                android:ellipsize="middle"
                 android:text="----------------------------------"
                 android:textColor="@color/light_gray"
-                android:textSize="16sp"
+                android:textSize="14sp"
                 />
 
             <com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret
@@ -229,9 +231,9 @@
                     android:layout_marginBottom="16dp"
                     android:layout_marginTop="16dp"
                     android:gravity="center"
-                    android:textSize="@dimen/paragraph"
                     android:text="@string/Receive.copied"
-                    android:textColor="@color/white"/>
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/paragraph"/>
             </com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret>
 
             <com.breadwallet.presenter.customviews.BRButton
