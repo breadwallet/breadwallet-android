@@ -2,9 +2,7 @@ package com.breadwallet;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.Application;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.graphics.Point;
@@ -16,20 +14,31 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.listeners.SyncReceiver;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
 
+import org.apache.commons.codec.binary.Base32;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.platform.APIClient.BREAD_POINT;
+import static org.apache.commons.compress.utils.CharsetNames.ISO_8859_1;
 
 /**
  * BreadWallet
@@ -98,6 +107,7 @@ public class BreadApp extends Application {
         mHeaders.put("X-Bitcoin-Testnet", isTestNet ? "true" : "false");
         mHeaders.put("Accept-Language", lang);
 
+
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
@@ -114,6 +124,72 @@ public class BreadApp extends Application {
 //
 //            }
 //        });
+
+    }
+
+    public static synchronized String generateWalletId() {
+
+        // First, get the ETH wallet address
+        BaseWalletManager ethWallet = WalletsMaster.getInstance(mContext).getWalletByIso(mContext, "ETH");
+        String ethAddress = ethWallet.getReceiveAddress(mContext).stringify();
+        Log.d(TAG, "ETH Wallet ID START -> " + ethAddress);
+
+
+        try {
+            byte[] ptext = ethAddress.getBytes(ISO_8859_1);
+
+            // Encode the address to UTF-8
+            String ethAddressEncoded = URLEncoder.encode(ethAddress, "UTF-8");
+            Log.d(TAG, "Eth Address Encoded -> " + ethAddressEncoded);
+
+            // Remove the first 2 characters
+            ethAddressEncoded = ethAddressEncoded.substring(2, ethAddressEncoded.length());
+            Log.d(TAG, "Eth Address Encoded Shortened -> " + ethAddressEncoded);
+
+            // Get the shortened address bytes
+            byte[] addressBytes = ethAddressEncoded.getBytes();
+
+            // Run sha256 on the shortened address bytes
+            byte[] sha256Address = CryptoHelper.sha256(addressBytes);
+
+
+            // Get the first 10 bytes
+            byte[] firstTenBytes = Arrays.copyOfRange(sha256Address, 0, 10);
+            Log.d(TAG, "Eth address first 10 bytes -> " + Arrays.toString(firstTenBytes));
+
+
+            Base32 base32 = new Base32();
+            String base32String = base32.encodeAsString(firstTenBytes);
+            base32String = base32String.toLowerCase();
+            Log.d(TAG, "Base 32 String -> " + base32String);
+
+            StringBuilder builder = new StringBuilder();
+
+            Matcher matcher = Pattern.compile(".{1,4}").matcher(base32String);
+            List<String> result = new ArrayList<>();
+            while (matcher.find()) {
+                String piece = base32String.substring(matcher.start(), matcher.end());
+                result.add(piece);
+                builder.append(piece + " ");
+                Log.d(TAG, "Piece -> " + piece);
+            }
+
+            Log.d(TAG, "Final string -> " + builder.toString());
+
+
+            // Add the wallet ID to the request headers if it's not null or empty
+            if (builder.toString() != null && !builder.toString().isEmpty()) {
+                mHeaders.put("X-Wallet-ID", "");
+            }
+
+            return builder.toString();
+
+
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        return null;
 
     }
 
