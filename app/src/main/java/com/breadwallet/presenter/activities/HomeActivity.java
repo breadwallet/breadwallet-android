@@ -199,7 +199,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             }
         });
 
-
     }
 
     public void hidePrompt() {

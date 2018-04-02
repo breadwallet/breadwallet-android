@@ -107,6 +107,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     private static String ISO = "BTC";
 
+    public static final int ONE_BITCOIN = 100000000;
+
     private static final String mName = "Bitcoin";
     public static final String BTC_SCHEME = "bitcoin";
 
@@ -179,11 +181,21 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 //        balanceListeners = new ArrayList<>();
 
             uiConfig = new WalletUiConfiguration("#f29500", true, true, true, true, true, true);
-            settingsConfig = new WalletSettingsConfiguration(app, ISO);
+            settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
         } finally {
             isInitiatingWallet = false;
         }
 
+    }
+
+    private List<BigDecimal> getFingerprintLimits(Context app) {
+        List<BigDecimal> result = new ArrayList<>();
+        result.add(new BigDecimal(ONE_BITCOIN).divide(new BigDecimal(1000), getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE));
+        result.add(new BigDecimal(ONE_BITCOIN).divide(new BigDecimal(100), getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE));
+        result.add(new BigDecimal(ONE_BITCOIN).divide(new BigDecimal(10), getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE));
+        result.add(new BigDecimal(ONE_BITCOIN));
+        result.add(new BigDecimal(ONE_BITCOIN).multiply(new BigDecimal(10)));
+        return result;
     }
 
     @Override

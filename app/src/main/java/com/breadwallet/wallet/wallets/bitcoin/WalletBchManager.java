@@ -114,6 +114,8 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     private static final String TAG = WalletBchManager.class.getName();
 
+    public static final int ONE_BITCOIN = 100000000;
+
     private static String ISO = "BCH";
     public static final String BCH_SCHEME = BuildConfig.BITCOIN_TESTNET ? "bchtest" : "bitcoincash";
 
@@ -148,11 +150,9 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             long time = BRKeyStore.getWalletCreationTime(app);
             if (!BRSharedPrefs.getBchPreforkSynced(app) && time == 0)
                 time = BuildConfig.BITCOIN_TESTNET ? 1501597117 : 1501568580;
-//            if (Utils.isEmulatorOrDebug(app)) time = 1517955529;
-            //long time = 1519190488;
-//            long time = (System.currentTimeMillis() / 1000) - 3 * 7 * 24 * 60 * 60; // 3 * 7
 
-            instance = new WalletBchManager(app, pubKey, BuildConfig.BITCOIN_TESTNET ? BRCoreChainParams.testnetBcashChainParams : BRCoreChainParams.mainnetBcashChainParams, time);
+            instance = new WalletBchManager(app, pubKey, BuildConfig.BITCOIN_TESTNET ?
+                    BRCoreChainParams.testnetBcashChainParams : BRCoreChainParams.mainnetBcashChainParams, time);
         }
         return instance;
     }
@@ -186,15 +186,25 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
                     }
                 });
 
-//            BRPeerManager.getInstance().updateFixedPeer(ctx);//todo reimplement the fixed peer
-//        balanceListeners = new ArrayList<>();
+//          BRPeerManager.getInstance().updateFixedPeer(ctx);//todo reimplement the fixed peer
+//          balanceListeners = new ArrayList<>();
             uiConfig = new WalletUiConfiguration("#478559", true, true, false, true, true, true);
 
-            settingsConfig = new WalletSettingsConfiguration(app, ISO);
+            settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
         } finally {
             isInitiatingWallet = false;
         }
 
+    }
+
+    private List<BigDecimal> getFingerprintLimits(Context app) {
+        List<BigDecimal> result = new ArrayList<>();
+        result.add(new BigDecimal(ONE_BITCOIN).divide(new BigDecimal(100), getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE));
+        result.add(new BigDecimal(ONE_BITCOIN).divide(new BigDecimal(10), getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE));
+        result.add(new BigDecimal(ONE_BITCOIN));
+        result.add(new BigDecimal(ONE_BITCOIN).multiply(new BigDecimal(10)));
+        result.add(new BigDecimal(ONE_BITCOIN).multiply(new BigDecimal(100)));
+        return result;
     }
 
     @Override

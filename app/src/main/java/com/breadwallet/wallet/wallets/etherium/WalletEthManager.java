@@ -94,16 +94,16 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     private WalletUiConfiguration uiConfig;
     private WalletSettingsConfiguration settingsConfig;
     private final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // 90m ETH * 18 (WEI)
-    private final BigDecimal WEI_ETH = new BigDecimal("1000000000000000000"); //1ETH = 1000000000000000000 WEI
+    private final BigDecimal ONE_ETH = new BigDecimal("1000000000000000000"); //1ETH = 1000000000000000000 WEI
     private BREthereumWallet mWallet;
     BREthereumLightNode.JSON_RPC node;
     private Context mContext;
 
 
-    private WalletEthManager(final Context app, BREthereumNetwork network) {
+    private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
         uiConfig = new WalletUiConfiguration("#5e70a3", true, true, false, false, false, false);
-        settingsConfig = new WalletSettingsConfiguration(app, ISO);
-        byte[] ethPubKey = BRKeyStore.getEthPublicKey(app);
+        settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
+
         if (Utils.isNullOrEmpty(ethPubKey)) {
             Log.e(TAG, "WalletEthManager: Using the paperKey to create");
             try {
@@ -141,10 +141,27 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                 Log.e(TAG, "getInstance: rawPubKey is null");
                 return null;
             }
-            instance = new WalletEthManager(app, BuildConfig.BITCOIN_TESTNET ? BREthereumNetwork.testnet : BREthereumNetwork.mainnet);
+            byte[] ethPubKey = BRKeyStore.getEthPublicKey(app);
+            if (Utils.isNullOrEmpty(ethPubKey)) {
+                //check if there is a master key and if not means the wallet isn't created yet
+                if (Utils.isNullOrEmpty(BRKeyStore.getMasterPublicKey(app))) {
+                    return null;
+                }
+            }
+            instance = new WalletEthManager(app, ethPubKey, BuildConfig.BITCOIN_TESTNET ? BREthereumNetwork.testnet : BREthereumNetwork.mainnet);
 
         }
         return instance;
+    }
+
+    private List<BigDecimal> getFingerprintLimits(Context app) {
+        List<BigDecimal> result = new ArrayList<>();
+        result.add(ONE_ETH.divide(new BigDecimal(100), getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE));
+        result.add(ONE_ETH.divide(new BigDecimal(10), getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE));
+        result.add(ONE_ETH);
+        result.add(ONE_ETH.multiply(new BigDecimal(10)));
+        result.add(ONE_ETH.multiply(new BigDecimal(100)));
+        return result;
     }
 
     @Override
@@ -536,12 +553,12 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         if (ent != null) {
             //passed in a custom CurrencyEntity
             //get crypto amount
-            BigDecimal cryptoAmount = amount.divide(WEI_ETH, 8, BRConstants.ROUNDING_MODE);
+            BigDecimal cryptoAmount = amount.divide(ONE_ETH, 8, BRConstants.ROUNDING_MODE);
             //multiply by fiat rate
             return cryptoAmount.multiply(new BigDecimal(ent.rate));
         }
         //get crypto amount
-        BigDecimal cryptoAmount = amount.divide(WEI_ETH, 8, BRConstants.ROUNDING_MODE);
+        BigDecimal cryptoAmount = amount.divide(ONE_ETH, 8, BRConstants.ROUNDING_MODE);
 
         BigDecimal fiatData = getFiatForEth(app, cryptoAmount, iso);
         if (fiatData == null) return null;
@@ -559,13 +576,13 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     @Override
     public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
         if (amount == null || amount.compareTo(new BigDecimal(0)) == 0) return amount;
-        return amount.divide(WEI_ETH, 8, ROUNDING_MODE);
+        return amount.divide(ONE_ETH, 8, ROUNDING_MODE);
     }
 
     @Override
     public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
         if (amount == null || amount.compareTo(new BigDecimal(0)) == 0) return amount;
-        return amount.multiply(WEI_ETH);
+        return amount.multiply(ONE_ETH);
     }
 
     @Override
@@ -574,7 +591,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         BigDecimal ethAmount = getEthForFiat(app, amount, iso);
         if (ethAmount == null) return null;
-        return ethAmount.multiply(WEI_ETH);
+        return ethAmount.multiply(ONE_ETH);
     }
 
     //pass in a eth amount and return the specified amount in fiat
