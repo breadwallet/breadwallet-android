@@ -59,8 +59,9 @@ public class CurrencySettingsActivity extends BRActivity {
         app = this;
 
         items.addAll(WalletsMaster.getInstance(this).getCurrentWallet(this).getSettingsConfiguration().mSettingList);
-        listView.addFooterView(new View(this), null, true);
-        listView.addHeaderView(new View(this), null, true);
+        View view = new View(this);
+        listView.addFooterView(view, null, true);
+        listView.addHeaderView(view, null, true);
         listView.setAdapter(new SettingsAdapter(this, R.layout.settings_list_item, items));
     }
 

@@ -684,8 +684,8 @@ public class BRKeyStore {
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
-
-        return result != null && result.length > 0 ? new BigDecimal(new String(result)) : new BigDecimal(0);
+        BaseWalletManager wm = WalletsMaster.getInstance(context).getWalletByIso(context, iso);
+        return result != null && result.length > 0 ? new BigDecimal(new String(result)) : wm.getSettingsConfiguration().mFingerprintLimits.get(1);
     }
 
     public synchronized static boolean putTotalLimit(Context context, BigDecimal totalLimit, String iso) {
