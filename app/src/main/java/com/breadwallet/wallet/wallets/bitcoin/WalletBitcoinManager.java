@@ -59,6 +59,7 @@ import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
+import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.google.firebase.crash.FirebaseCrash;
@@ -109,11 +110,11 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     private static final String mName = "Bitcoin";
     public static final String BTC_SCHEME = "bitcoin";
 
-
     public static final long MAX_BTC = 21000000;
 
     private static WalletBitcoinManager instance;
     private WalletUiConfiguration uiConfig;
+    private WalletSettingsConfiguration settingsConfig;
 
     private int mSyncRetryCount = 0;
     private static final int SYNC_MAX_RETRY = 3;
@@ -178,7 +179,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 //        balanceListeners = new ArrayList<>();
 
             uiConfig = new WalletUiConfiguration("#f29500", true, true, true, true, true, true);
-
+            settingsConfig = new WalletSettingsConfiguration(app, ISO);
         } finally {
             isInitiatingWallet = false;
         }
@@ -521,6 +522,11 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     @Override
     public WalletUiConfiguration getUiConfiguration() {
         return uiConfig;
+    }
+
+    @Override
+    public WalletSettingsConfiguration getSettingsConfiguration() {
+        return settingsConfig;
     }
 
     @Override

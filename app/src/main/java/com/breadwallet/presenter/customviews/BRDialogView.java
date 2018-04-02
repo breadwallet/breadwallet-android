@@ -242,9 +242,5 @@ public class BRDialogView extends DialogFragment {
 
     }
 
-//    public interface SpanClickListener {
-//        void onClick();
-//
-//    }
 
 }

@@ -187,7 +187,6 @@ public class ReEnterPinActivity extends BRActivity {
         } else {
             AuthManager.getInstance().authFail(this);
             Log.e(TAG, "verifyPin: FAIL: firs: " + firstPIN + ", reEnter: " + pin.toString());
-//            title.setText("Wrong PIN,\nplease try again");
             SpringAnimator.failShakeAnimation(this, pinLayout);
             pin = new StringBuilder();
         }

@@ -64,19 +64,18 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private final int promptResId;
     private List<TxUiHolder> backUpFeed;
     private List<TxUiHolder> itemFeed;
-    //    private Map<String, TxMetaData> mds;
 
     private final int txType = 0;
     private final int promptType = 1;
-    private boolean updatingReverseTxHash;
     private boolean updatingData;
 
-//    private boolean updatingMetadata;
 
     public TransactionListAdapter(Context mContext, List<TxUiHolder> items) {
         this.txResId = R.layout.tx_item;
         this.promptResId = R.layout.prompt_item;
         this.mContext = mContext;
+        backUpFeed = items;
+        itemFeed = items;
         items = new ArrayList<>();
         init(items);
 //        updateMetadata();
@@ -166,16 +165,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             }
         }
 
-        boolean received;
-        if (item.getSent() != null)
-            received = item.getSent().compareTo(new BigDecimal(0)) == 0;
-        else
-            received = !Utils.isNullOrEmpty(item.getTo());
+        boolean received = item.getSent() != null ? item.getSent().compareTo(new BigDecimal(0)) == 0 : !Utils.isNullOrEmpty(item.getTo());
 
-        if (received)
-            convertView.transactionAmount.setTextColor(mContext.getResources().getColor(R.color.transaction_amount_received_color, null));
-        else
-            convertView.transactionAmount.setTextColor(mContext.getResources().getColor(R.color.total_assets_usd_color, null));
+        convertView.transactionAmount.setTextColor(mContext.getResources().getColor(received ? R.color.transaction_amount_received_color : R.color.total_assets_usd_color, null));
 
         // If this transaction failed, show the "FAILED" indicator in the cell
         if (!item.isValid())
@@ -236,8 +228,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void showTransactionProgress(TxHolder holder, int progress) {
-
-
         if (progress < 100) {
             holder.transactionProgress.setVisibility(View.VISIBLE);
             holder.transactionDate.setVisibility(View.GONE);
@@ -269,10 +259,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         params.setMargins(16, 0, 0, 0);
         params.addRule(RelativeLayout.CENTER_VERTICAL, holder.transactionFailed.getId());
         holder.transactionDetail.setLayoutParams(params);
+        BaseWalletManager wm = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
 
-        if (!received) {
-            holder.transactionDetail.setText("sending to " + tx.getTo());
-        }
+        if (!received)
+            holder.transactionDetail.setText(String.format(mContext.getString(R.string.Transaction_sendingTo), wm.decorateAddress(mContext, tx.getTo())));
+
     }
 
     public void filterBy(String query, boolean[] switches) {
@@ -336,7 +327,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         itemFeed = filteredList;
         notifyDataSetChanged();
 
-        Log.e(TAG, "filter: " + query + " took: " + (System.currentTimeMillis() - start));
+//        Log.e(TAG, "filter: " + query + " took: " + (System.currentTimeMillis() - start));
     }
 
     private class TxHolder extends RecyclerView.ViewHolder {

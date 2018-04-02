@@ -85,7 +85,6 @@ public class SpendLimitActivity extends BRActivity {
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
                 int limit = adapter.getItem(position);
-                Log.e(TAG, "limit chosen: " + limit);
                 BRKeyStore.putSpendLimit(new BigDecimal(limit), app);
                 BigDecimal totalSent = new BigDecimal(0);
                 List<BaseWalletManager> wallets = WalletsMaster.getInstance(app).getAllWallets();

@@ -113,6 +113,8 @@ public class DisplayCurrencyActivity extends BRActivity {
             }
 
         });
+        listView.addFooterView(new View(this), null, true);
+        listView.addHeaderView(new View(this), null, true);
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 

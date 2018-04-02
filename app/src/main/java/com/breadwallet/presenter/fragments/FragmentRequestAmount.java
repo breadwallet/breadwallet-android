@@ -99,35 +99,33 @@ public class FragmentRequestAmount extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_receive, container, false);
-        backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
-        signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
-        shareButtonsLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.share_buttons_layout);
-        copiedLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.copied_layout);
-//        currencyListLayout = (LinearLayout) rootView.findViewById(R.id.cur_spinner_layout);
-//        currencyListLayout.setVisibility(View.VISIBLE);
-        request = (Button) rootView.findViewById(R.id.request_button);
-        keyboardLayout = (LinearLayout) rootView.findViewById(R.id.keyboard_layout);
+        backgroundLayout = rootView.findViewById(R.id.background_layout);
+        signalLayout = rootView.findViewById(R.id.signal_layout);
+        shareButtonsLayout = rootView.findViewById(R.id.share_buttons_layout);
+        copiedLayout = rootView.findViewById(R.id.copied_layout);
+        request = rootView.findViewById(R.id.request_button);
+        keyboardLayout = rootView.findViewById(R.id.keyboard_layout);
         keyboardLayout.setVisibility(View.VISIBLE);
-        amountLayout = (RelativeLayout) rootView.findViewById(R.id.amount_layout);
+        amountLayout = rootView.findViewById(R.id.amount_layout);
         amountLayout.setVisibility(View.VISIBLE);
-        keyboard = (BRKeyboard) rootView.findViewById(R.id.keyboard);
+        keyboard = rootView.findViewById(R.id.keyboard);
         keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button);
         keyboard.setBRKeyboardColor(R.color.white);
-        isoText = (TextView) rootView.findViewById(R.id.iso_text);
-        amountEdit = (EditText) rootView.findViewById(R.id.amount_edit);
+        isoText = rootView.findViewById(R.id.iso_text);
+        amountEdit = rootView.findViewById(R.id.amount_edit);
         amountBuilder = new StringBuilder(0);
-        isoButton = (Button) rootView.findViewById(R.id.iso_button);
-        mTitle = (TextView) rootView.findViewById(R.id.title);
-        mAddress = (TextView) rootView.findViewById(R.id.address_text);
-        mQrImage = (ImageView) rootView.findViewById(R.id.qr_image);
-        shareButton = (BRButton) rootView.findViewById(R.id.share_button);
-        shareEmail = (Button) rootView.findViewById(R.id.share_email);
-        shareTextMessage = (Button) rootView.findViewById(R.id.share_text);
-        shareButtonsLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.share_buttons_layout);
-        close = (ImageButton) rootView.findViewById(R.id.close_button);
+        isoButton = rootView.findViewById(R.id.iso_button);
+        mTitle = rootView.findViewById(R.id.title);
+        mAddress = rootView.findViewById(R.id.address_text);
+        mQrImage = rootView.findViewById(R.id.qr_image);
+        shareButton = rootView.findViewById(R.id.share_button);
+        shareEmail = rootView.findViewById(R.id.share_email);
+        shareTextMessage = rootView.findViewById(R.id.share_text);
+        shareButtonsLayout = rootView.findViewById(R.id.share_buttons_layout);
+        close = rootView.findViewById(R.id.close_button);
         keyboardIndex = signalLayout.indexOfChild(keyboardLayout);
 
-        ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
+        ImageButton faq = rootView.findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -214,7 +212,8 @@ public class FragmentRequestAmount extends Fragment {
                 if (!BRAnimator.isClickAllowed()) return;
                 showKeyboard(false);
                 BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-                Uri bitcoinUri = CryptoUriParser.createCryptoUrl(getActivity(), wm, wm.decorateAddress(getActivity(), mReceiveAddress), getAmount(), null, null, null);
+                Uri bitcoinUri = CryptoUriParser.createCryptoUrl(getActivity(), wm, wm.decorateAddress(getActivity(), mReceiveAddress),
+                        getAmount(), null, null, null);
                 QRUtils.share("mailto:", getActivity(), bitcoinUri.toString());
 
             }
@@ -227,7 +226,8 @@ public class FragmentRequestAmount extends Fragment {
                 showKeyboard(false);
                 BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
-                Uri bitcoinUri = CryptoUriParser.createCryptoUrl(getActivity(), wm, wm.decorateAddress(getActivity(), mReceiveAddress), getAmount(), null, null, null);
+                Uri bitcoinUri = CryptoUriParser.createCryptoUrl(getActivity(), wm, wm.decorateAddress(getActivity(), mReceiveAddress),
+                        getAmount(), null, null, null);
                 QRUtils.share("sms:", getActivity(), bitcoinUri.toString());
             }
         });

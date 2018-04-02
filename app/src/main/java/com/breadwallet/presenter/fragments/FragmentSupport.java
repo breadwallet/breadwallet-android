@@ -74,20 +74,19 @@ public class FragmentSupport extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_support, container, false);
-        backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
-        signalLayout = (CardView) rootView.findViewById(R.id.signal_layout);
+        backgroundLayout = rootView.findViewById(R.id.background_layout);
+        signalLayout = rootView.findViewById(R.id.signal_layout);
 
         signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
 
         signalLayout.setLayoutTransition(BRAnimator.getDefaultTransition());
 
-        webView = (WebView) rootView.findViewById(R.id.web_view);
+        webView = rootView.findViewById(R.id.web_view);
         webView.setWebChromeClient(new BRWebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl());
-                Log.d(TAG, "shouldOverrideUrlLoading: " + request.getMethod());
+                Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl() + " | " + request.getMethod());
                 if (onCloseUrl != null && request.getUrl().toString().equalsIgnoreCase(onCloseUrl)) {
                     getActivity().getFragmentManager().popBackStack();
                     onCloseUrl = null;

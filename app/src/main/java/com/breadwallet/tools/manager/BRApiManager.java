@@ -104,10 +104,7 @@ public class BRApiManager {
                         tmp.code = tmpObj.getString("code");
                         tmp.rate = (float) tmpObj.getDouble("rate");
                         String selectedISO = BRSharedPrefs.getPreferredFiatIso(context);
-//                        Log.e(TAG,"selectedISO: " + selectedISO);
                         if (tmp.code.equalsIgnoreCase(selectedISO)) {
-//                            Log.e(TAG, "theIso : " + theIso);
-//                                Log.e(TAG, "Putting the shit in the shared prefs");
                             BRSharedPrefs.putPreferredFiatIso(context, tmp.code);
                         }
                     } catch (JSONException e) {
@@ -122,8 +119,6 @@ public class BRApiManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-//        List tempList = new ArrayList<>(set);
-//        Collections.reverse(tempList);
         Log.e(TAG, "getCurrencies: " + set.size());
         return new LinkedHashSet<>(set);
     }

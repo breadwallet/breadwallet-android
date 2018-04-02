@@ -66,7 +66,6 @@ public class FragmentPin extends Fragment {
     private View dot6;
     private StringBuilder pin = new StringBuilder();
     private int pinLimit = 6;
-//    private boolean pinInsertAllowed;
 
     private TextView title;
     private TextView message;
@@ -82,15 +81,15 @@ public class FragmentPin extends Fragment {
         // properly.
 
         View rootView = inflater.inflate(R.layout.fragment_bread_pin, container, false);
-        keyboard = (BRKeyboard) rootView.findViewById(R.id.brkeyboard);
-        pinLayout = (LinearLayout) rootView.findViewById(R.id.pinLayout);
+        keyboard = rootView.findViewById(R.id.brkeyboard);
+        pinLayout = rootView.findViewById(R.id.pinLayout);
 
         if (BRKeyStore.getPinCode(getContext()).length() == 4) pinLimit = 4;
 
-        title = (TextView) rootView.findViewById(R.id.title);
-        message = (TextView) rootView.findViewById(R.id.message);
-        dialogLayout = (RelativeLayout) rootView.findViewById(R.id.pin_dialog);
-        mainLayout = (ConstraintLayout) rootView.findViewById(R.id.activity_pin);
+        title = rootView.findViewById(R.id.title);
+        message = rootView.findViewById(R.id.message);
+        dialogLayout = rootView.findViewById(R.id.pin_dialog);
+        mainLayout = rootView.findViewById(R.id.activity_pin);
 
         mainLayout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -186,7 +185,8 @@ public class FragmentPin extends Fragment {
 
     private void updateDots() {
         if (dot1 == null) return;
-        AuthManager.getInstance().updateDots(getActivity(), pinLimit, pin.toString(), dot1, dot2, dot3, dot4, dot5, dot6, R.drawable.ic_pin_dot_gray, new AuthManager.OnPinSuccess() {
+        AuthManager.getInstance().updateDots(getActivity(), pinLimit, pin.toString(),
+                dot1, dot2, dot3, dot4, dot5, dot6, R.drawable.ic_pin_dot_gray, new AuthManager.OnPinSuccess() {
             @Override
             public void onSuccess() {
                 if (AuthManager.getInstance().checkAuth(pin.toString(), getContext())) {

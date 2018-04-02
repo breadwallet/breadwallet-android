@@ -36,7 +36,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="0dp"
-        android:text="Wallet Disabled"
+        android:text="@string/Disabled.title"
         android:textColor="@color/white"
         android:textSize="@dimen/header"
         app:layout_constraintBottom_toBottomOf="parent"

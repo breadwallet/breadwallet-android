@@ -2,6 +2,9 @@ package com.breadwallet.tools.util;
 
 import android.Manifest;
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.usage.UsageStats;
+import android.app.usage.UsageStatsManager;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageInfo;
@@ -26,6 +29,8 @@ import java.util.Calendar;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import static android.content.Context.FINGERPRINT_SERVICE;
 
@@ -216,6 +221,64 @@ public class Utils {
             result.append(new StringBuilder(hex.substring(i, i + 2)).reverse());
         }
         return result.reverse().toString();
+    }
+
+    // This method checks if a screen altering app(such as Twightlight) is currently running
+    // If it is, notify the user that the BRD app will not function properly and they should
+    // disable it
+    public static boolean checkIfScreenAlteringAppIsRunning(Context app, String packageName) {
+
+
+        // Use the ActivityManager API if sdk version is less than 21
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            // Get the Activity Manager
+            ActivityManager manager = (ActivityManager) app.getSystemService(Activity.ACTIVITY_SERVICE);
+
+            // Get a list of running tasks, we are only interested in the last one,
+            // the top most so we give a 1 as parameter so we only get the topmost.
+            List<ActivityManager.RunningAppProcessInfo> processes = manager.getRunningAppProcesses();
+            Log.d(TAG, "Process list count -> " + processes.size());
+
+
+            String processName = "";
+            for (ActivityManager.RunningAppProcessInfo processInfo : processes) {
+
+                // Get the info we need for comparison.
+                processName = processInfo.processName;
+                Log.d(TAG, "Process package name -> " + processName);
+
+                // Check if it matches our package name
+                if (processName.equals(packageName)) return true;
+
+
+            }
+
+        }
+
+        // Use the UsageStats API for sdk versions greater than Lollipop
+        else {
+            UsageStatsManager usm = (UsageStatsManager) app.getSystemService(Activity.USAGE_STATS_SERVICE);
+            long time = System.currentTimeMillis();
+            List<UsageStats> appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000 * 1000, time);
+            if (appList != null && appList.size() > 0) {
+                SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
+                String currentPackageName = "";
+                for (UsageStats usageStats : appList) {
+                    mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
+                    currentPackageName = usageStats.getPackageName();
+
+
+                    if (currentPackageName.equals(packageName)) {
+                        return true;
+                    }
+
+                }
+
+            }
+
+        }
+
+        return false;
     }
 
 }

@@ -50,7 +50,7 @@ public class PaperKeyActivity extends BRActivity {
         setContentView(R.layout.activity_paper_key);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
 
-        wordViewPager = (ViewPager) findViewById(R.id.phrase_words_pager);
+        wordViewPager = findViewById(R.id.phrase_words_pager);
         wordViewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             public void onPageScrollStateChanged(int state) {
 
@@ -69,11 +69,11 @@ public class PaperKeyActivity extends BRActivity {
             }
         });
 
-        nextButton = (Button) findViewById(R.id.send_button);
-        previousButton = (Button) findViewById(R.id.button_previous);
-        close = (ImageButton) findViewById(R.id.close_button);
-        itemIndexText = (TextView) findViewById(R.id.item_index_text);
-        buttonsLayout = (LinearLayout) findViewById(R.id.buttons_layout);
+        nextButton = findViewById(R.id.send_button);
+        previousButton = findViewById(R.id.button_previous);
+        close = findViewById(R.id.close_button);
+        itemIndexText = findViewById(R.id.item_index_text);
+        buttonsLayout = findViewById(R.id.buttons_layout);
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override

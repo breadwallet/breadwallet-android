@@ -69,9 +69,6 @@ public class WebViewActivity extends BRActivity {
     private static final int REQUEST_CAMERA_PERMISSION = 29;
     private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 3;
 
-    //    private static final int FILECHOOSER_RESULTCODE = 1;
-//    private ValueCallback<Uri> mUploadMessage;
-//    private Uri mCapturedImageURI = null;
     private ValueCallback<Uri[]> mFilePathCallback;
     private String mCameraPhotoPath;
 
@@ -88,8 +85,6 @@ public class WebViewActivity extends BRActivity {
     private RelativeLayout mRootView;
 
     private boolean keyboardListenersAttached = false;
-    private long size = 0;
-
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -598,7 +593,7 @@ public class WebViewActivity extends BRActivity {
 
                 if (android.support.v4.app.ActivityCompat.shouldShowRequestPermissionRationale(app,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    BRDialog.showCustomDialog(app, app.getString(R.string.Simplex_allowFileSystemAccess), app.getString(R.string.Simplex_allowFileSystemAccess), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                    BRDialog.showCustomDialog(app, "", app.getString(R.string.Android_Simplex_allowFileSystemAccess), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismiss();
@@ -659,9 +654,7 @@ public class WebViewActivity extends BRActivity {
                     app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
 
                 } else {
-
-
-                    Toast.makeText(WebViewActivity.this, "Please allow CAMERA permission in order to upload your image.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(WebViewActivity.this, app.getString(R.string.Send_cameraUnavailabeMessage_android), Toast.LENGTH_SHORT).show();
                 }
                 return;
             }

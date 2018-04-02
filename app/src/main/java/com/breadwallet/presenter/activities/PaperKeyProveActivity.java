@@ -61,22 +61,19 @@ public class PaperKeyProveActivity extends BRActivity {
         setContentView(R.layout.activity_paper_key_prove);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
 
-        submit = (Button) findViewById(R.id.button_submit);
-        wordEditFirst = (EditText) findViewById(R.id.word_edittext_first);
-        wordEditSecond = (EditText) findViewById(R.id.word_edittext_second);
-        wordTextFirst = (TextView) findViewById(R.id.word_number_first);
-        wordTextSecond = (TextView) findViewById(R.id.word_number_second);
+        submit = findViewById(R.id.button_submit);
+        wordEditFirst = findViewById(R.id.word_edittext_first);
+        wordEditSecond = findViewById(R.id.word_edittext_second);
+        wordTextFirst = findViewById(R.id.word_number_first);
+        wordTextSecond = findViewById(R.id.word_number_second);
 
-        checkMark1 = (ImageView) findViewById(R.id.check_mark_1);
-        checkMark2 = (ImageView) findViewById(R.id.check_mark_2);
-
-//        wordEditFirst.setOnFocusChangeListener(new FocusListener());
-//        wordEditSecond.setOnFocusChangeListener(new FocusListener());
+        checkMark1 = findViewById(R.id.check_mark_1);
+        checkMark2 = findViewById(R.id.check_mark_2);
 
         wordEditFirst.addTextChangedListener(new BRTextWatcher());
         wordEditSecond.addTextChangedListener(new BRTextWatcher());
 
-        constraintLayout = (ConstraintLayout) findViewById(R.id.constraintLayout);
+        constraintLayout = findViewById(R.id.constraintLayout);
         resetConstraintSet.clone(constraintLayout);
         applyConstraintSet.clone(constraintLayout);
 
@@ -91,10 +88,8 @@ public class PaperKeyProveActivity extends BRActivity {
                 applyConstraintSet.setMargin(R.id.word_number_second, ConstraintSet.TOP, 8);
                 applyConstraintSet.applyTo(constraintLayout);
 
-
             }
         }, 500);
-
 
         wordEditSecond.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
@@ -106,7 +101,6 @@ public class PaperKeyProveActivity extends BRActivity {
                 return false;
             }
         });
-
 
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -215,18 +209,6 @@ public class PaperKeyProveActivity extends BRActivity {
     protected void onSaveInstanceState(Bundle outState) {
     }
 
-//    private class FocusListener implements View.OnFocusChangeListener {
-//
-//        @Override
-//        public void onFocusChange(View v, boolean hasFocus) {
-//            if (!hasFocus) {
-//                validateWord((EditText) v);
-//            } else {
-//                ((EditText) v).setTextColor(getColor(R.color.light_gray));
-//            }
-//        }
-//    }
-
     private void validateWord(EditText view) {
         String word = view.getText().toString();
         boolean valid = SmartValidator.isWordValid(this, word);
@@ -265,6 +247,5 @@ public class PaperKeyProveActivity extends BRActivity {
 
         }
     }
-
 
 }

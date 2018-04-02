@@ -38,7 +38,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="@dimen/activity_vertical_margin"
                 android:layout_marginTop="40dp"
-                android:text="@string/TotalAssets"
+                android:text="@string/HomeScreen.totalAssets"
                 android:textColor="@color/total_assets_label_color"
                 app:customTFont="CircularPro-Book.otf"/>
 
@@ -111,7 +111,7 @@
                             android:layout_marginRight="8dp"
                             android:layout_weight="1"
                             android:background="@color/light_gray"
-                            android:text="Dismiss"
+                            android:text="@string/Button.dismiss"
                             android:textColor="@color/white"
                             android:textSize="14sp"
                             app:buttonType="4"
@@ -127,7 +127,7 @@
                             android:layout_toRightOf="@id/dismiss_button"
                             android:layout_weight="1"
                             android:background="@color/dark_blue"
-                            android:text="Continue"
+                            android:text="@string/Button.continueAction"
                             android:textColor="@color/white"
                             android:textSize="14sp"
                             app:buttonType="4"
@@ -152,7 +152,7 @@
                 android:layout_below="@id/prompt_card"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="30dp"
-                android:text="@string/Wallets"
+                android:text="@string/HomeScreen.portfolio"
                 android:textColor="#788f9e"/>
 
 
@@ -176,7 +176,7 @@
                 android:layout_below="@id/rv_wallet_list"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="16dp"
-                android:text="@string/Admin"
+                android:text="@string/HomeScreen.admin"
                 android:textColor="#788f9e"/>
 
 

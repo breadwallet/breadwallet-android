@@ -60,10 +60,10 @@ public class FragmentSignal extends Fragment {
         // properly.
 
         View rootView = inflater.inflate(R.layout.fragment_signal, container, false);
-        mTitle = (TextView) rootView.findViewById(R.id.title);
-        mDescription = (TextView) rootView.findViewById(R.id.description);
-        mIcon = (ImageView) rootView.findViewById(R.id.qr_image);
-        signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
+        mTitle = rootView.findViewById(R.id.title);
+        mDescription = rootView.findViewById(R.id.description);
+        mIcon = rootView.findViewById(R.id.qr_image);
+        signalLayout = rootView.findViewById(R.id.signal_layout);
         signalLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

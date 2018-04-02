@@ -74,12 +74,12 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
     private void init() {
         inflate(getContext(), R.layout.search_bar, this);
         breadActivity = (WalletActivity) getContext();
-        searchEdit = (EditText) findViewById(R.id.search_edit);
-        sentFilter = (BRButton) findViewById(R.id.sent_filter);
-        receivedFilter = (BRButton) findViewById(R.id.received_filter);
-        pendingFilter = (BRButton) findViewById(R.id.pending_filter);
-        completedFilter = (BRButton) findViewById(R.id.complete_filter);
-        cancelButton = (BRButton) findViewById(R.id.cancel_button);
+        searchEdit = findViewById(R.id.search_edit);
+        sentFilter = findViewById(R.id.sent_filter);
+        receivedFilter = findViewById(R.id.received_filter);
+        pendingFilter = findViewById(R.id.pending_filter);
+        completedFilter = findViewById(R.id.complete_filter);
+        cancelButton = findViewById(R.id.cancel_button);
 
         clearSwitches();
         setListeners();

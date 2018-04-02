@@ -53,9 +53,9 @@ public class FragmentGreetings extends Fragment {
         // properly.
 
         View rootView = inflater.inflate(R.layout.fragment_greetings, container, false);
-        ok = (BRButton) rootView.findViewById(R.id.ok);
-        mainLayout = (ConstraintLayout) rootView.findViewById(R.id.signal_layout);
-        background = (RelativeLayout) rootView.findViewById(R.id.layout);
+        ok = rootView.findViewById(R.id.ok);
+        mainLayout = rootView.findViewById(R.id.signal_layout);
+        background = rootView.findViewById(R.id.layout);
 
         ok.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +74,7 @@ public class FragmentGreetings extends Fragment {
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
             @Override
             public void onGlobalLayout() {
-                observer.removeGlobalOnLayoutListener(this);
+                observer.removeOnGlobalLayoutListener(this);
                 BRAnimator.animateBackgroundDim(background, false);
                 BRAnimator.animateSignalSlide(mainLayout, false, null);
             }

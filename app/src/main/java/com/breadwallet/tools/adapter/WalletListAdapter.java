@@ -112,9 +112,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             public void run() {
                 try {
                     mCurrentWalletSyncing = getNextWalletToSync();
-                    Log.e(TAG, "startObserving.." + mCurrentWalletSyncing);
                     if (mCurrentWalletSyncing == null) {
-                        Log.e(TAG, "startObserving: all wallets synced:" + Thread.currentThread());
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
@@ -130,7 +128,6 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                         return;
                     }
                     String walletIso = mCurrentWalletSyncing.walletManager.getIso(mContext);
-                    Log.e(TAG, "startObserving: connecting: " + walletIso);
                     mCurrentWalletSyncing.walletManager.connectWallet(mContext);
                     SyncService.startService(mContext.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, walletIso);
                 } finally {

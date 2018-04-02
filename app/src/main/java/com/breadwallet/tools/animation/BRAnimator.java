@@ -97,14 +97,11 @@ public class BRAnimator {
 
     public static void init(Activity app) {
         if (app == null) return;
-//        t1Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 30, app.getResources().getDisplayMetrics());
-//        t2Size = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 16, app.getResources().getDisplayMetrics());
         t1Size = 30;
         t2Size = 16;
     }
 
     public static void showFragmentByTag(Activity app, String tag) {
-        Log.e(TAG, "showFragmentByTag: " + tag);
         if (tag == null) return;
         //catch animation duration, make it 0 for no animation, then restore it.
         final int slideAnimation = SLIDE_ANIMATION_DURATION;
@@ -206,29 +203,6 @@ public class BRAnimator {
 
     }
 
-//    public static void showTransactionPager(Activity app, List<TxUiHolder> items, int position) {
-//        if (app == null) {
-//            Log.e(TAG, "showSendFragment: app is null");
-//            return;
-//        }
-//        FragmentTransactionDetails fragmentTransactionDetails = (FragmentTransactionDetails) app.getFragmentManager().findFragmentByTag(FragmentTransactionDetails.class.getName());
-//        if (fragmentTransactionDetails != null && fragmentTransactionDetails.isAdded()) {
-//            fragmentTransactionDetails.setItems(items);
-//            Log.e(TAG, "showTransactionPager: Already showing");
-//            return;
-//        }
-//        fragmentTransactionDetails = new FragmentTransactionDetails();
-//        fragmentTransactionDetails.setItems(items);
-//        Bundle bundle = new Bundle();
-//        bundle.putInt("pos", position);
-//        fragmentTransactionDetails.setArguments(bundle);
-//
-//        app.getFragmentManager().beginTransaction()
-//                .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-//                .add(android.R.id.content, fragmentTransactionDetails, FragmentTransactionDetails.class.getName())
-//                .addToBackStack(FragmentTransactionDetails.class.getName()).commit();
-//
-//    }
 
     public static void showTransactionDetails(Activity app, TxUiHolder item, int position){
 

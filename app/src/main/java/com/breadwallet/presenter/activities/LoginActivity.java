@@ -94,14 +94,14 @@ public class LoginActivity extends BRActivity {
 
         if (BRKeyStore.getPinCode(this).length() == 4) pinLimit = 4;
 
-        keyboard = (BRKeyboard) findViewById(R.id.brkeyboard);
-        pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
-        fingerPrint = (ImageButton) findViewById(R.id.fingerprint_icon);
+        keyboard = findViewById(R.id.brkeyboard);
+        pinLayout = findViewById(R.id.pinLayout);
+        fingerPrint = findViewById(R.id.fingerprint_icon);
 
-        unlockedImage = (ImageView) findViewById(R.id.unlocked_image);
-        unlockedText = (TextView) findViewById(R.id.unlocked_text);
-        enterPinLabel = (TextView) findViewById(R.id.enter_pin_label);
-        offlineButtonsLayout = (LinearLayout) findViewById(R.id.buttons_layout);
+        unlockedImage = findViewById(R.id.unlocked_image);
+        unlockedText = findViewById(R.id.unlocked_text);
+        enterPinLabel = findViewById(R.id.enter_pin_label);
+        offlineButtonsLayout = findViewById(R.id.buttons_layout);
 
         dot1 = findViewById(R.id.dot1);
         dot2 = findViewById(R.id.dot2);
@@ -123,8 +123,8 @@ public class LoginActivity extends BRActivity {
         keyboard.setCustomButtonBackgroundColor(10, getColor(android.R.color.transparent));
         keyboard.setDeleteImage(getDrawable(R.drawable.ic_delete_white));
 
-        leftButton = (Button) findViewById(R.id.left_button);
-        rightButton = (Button) findViewById(R.id.right_button);
+        leftButton = findViewById(R.id.left_button);
+        rightButton = findViewById(R.id.right_button);
 
         setUpOfflineButtons();
 

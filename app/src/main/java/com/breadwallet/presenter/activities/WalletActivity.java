@@ -156,9 +156,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Activity app = WalletActivity.this;
-//                BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-//                CryptoUriParser.processRequest(WalletActivity.this, "bitcoin:?r=https://bitpay.com/i/HUsFqTFirmVtgE4PhLzcRx", wm);
                 BRAnimator.showSendFragment(WalletActivity.this, null);
 
             }
@@ -172,9 +169,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             }
         });
-
-//        BaseWalletManager wm = WalletsMaster.getInstance(this).getCurrentWallet(this);
-//        Log.d(TAG, "Current wallet ISO -> " + wm.getIso(this));
 
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -211,7 +205,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
 
         updateUi();
-//        exchangeTest();
 
         boolean cryptoPreferred = BRSharedPrefs.isCryptoPreferred(this);
 
@@ -220,11 +213,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         }
 
         // Check if the "Twilight" screen altering app is currently running
-        if (checkIfScreenAlteringAppIsRunning("com.urbandroid.lux")) {
-
-            BRDialog.showSimpleDialog(this, getString(R.string.Dialog_screenAlteringTitle), getString(R.string.Dialog_screenAlteringMessage));
-
-
+        if (Utils.checkIfScreenAlteringAppIsRunning(this, "com.urbandroid.lux")) {
+            BRDialog.showSimpleDialog(this, "Screen Altering App Detected", getString(R.string.Android_screenAlteringMessage));
         }
 
     }
@@ -296,8 +286,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         }
 
 
-//        String fiatIso = BRSharedPrefs.getPreferredFiatIso(this);
-
         String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatExchangeRate(this));
         String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatBalance(this));
         String cryptoBalance = CurrencyUtils.getFormattedAmount(this, wallet.getIso(this), wallet.getCachedBalance(this));
@@ -320,98 +308,35 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
 
         if (!BRSharedPrefs.wasBchDialogShown(this)) {
-            BRDialog.showHelpDialog(this, getString(R.string.Dialog_welcomeBchTitle), getString(R.string.Dialog_welcomeBchMessage), getString(R.string.Dialog_Home), getString(R.string.Dialog_Dismiss), new BRDialogView.BROnClickListener() {
-                @Override
-                public void onClick(BRDialogView brDialogView) {
-                    brDialogView.dismiss();
-                    onBackPressed();
-                }
-            }, new BRDialogView.BROnClickListener() {
+            BRDialog.showHelpDialog(this, getString(R.string.Android_BCH_welcome_title),
+                    getString(R.string.Android_BCH_welcome_message),
+                    getString(R.string.Button_Home), getString(R.string.Button_dismiss), new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismiss();
+                            onBackPressed();
+                        }
+                    }, new BRDialogView.BROnClickListener() {
 
-                @Override
-                public void onClick(BRDialogView brDialogView) {
-                    brDialogView.dismiss();
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismiss();
 
-                }
-            }, new BRDialogView.BROnClickListener() {
-                @Override
-                public void onClick(BRDialogView brDialogView) {
-                    Log.d(TAG, "help clicked!");
+                        }
+                    }, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismiss();
+                            BaseWalletManager wm = WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this);
+                            BRAnimator.showSupportFragment(WalletActivity.this, BRConstants.bchFaq, wm.getIso(WalletActivity.this));
 
-                    brDialogView.dismiss();
-                    BaseWalletManager wm = WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this);
-                    BRAnimator.showSupportFragment(WalletActivity.this, BRConstants.bchFaq, wm.getIso(WalletActivity.this));
-
-                }
-            });
+                        }
+                    });
 
             BRSharedPrefs.putBchDialogShown(WalletActivity.this, true);
         }
 
 
-    }
-
-    // This method checks if a screen altering app(such as Twightlight) is currently running
-    // If it is, notify the user that the BRD app will not function properly and they should
-    // disable it
-    private boolean checkIfScreenAlteringAppIsRunning(String packageName) {
-
-
-        // Use the ActivityManager API if sdk version is less than 21
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            // Get the Activity Manager
-            ActivityManager manager = (ActivityManager) getSystemService(ACTIVITY_SERVICE);
-
-            // Get a list of running tasks, we are only interested in the last one,
-            // the top most so we give a 1 as parameter so we only get the topmost.
-            List<ActivityManager.RunningAppProcessInfo> processes = manager.getRunningAppProcesses();
-            Log.d(TAG, "Process list count -> " + processes.size());
-
-
-            String processName = "";
-            for (ActivityManager.RunningAppProcessInfo processInfo : processes) {
-
-                // Get the info we need for comparison.
-                processName = processInfo.processName;
-                Log.d(TAG, "Process package name -> " + processName);
-
-                // Check if it matches our package name
-                if (processName.equals(packageName)) return true;
-
-
-            }
-
-
-        }
-
-
-        // Use the UsageStats API for sdk versions greater than Lollipop
-        else {
-            UsageStatsManager usm = (UsageStatsManager) this.getSystemService(USAGE_STATS_SERVICE);
-            long time = System.currentTimeMillis();
-            List<UsageStats> appList = usm.queryUsageStats(UsageStatsManager.INTERVAL_DAILY, time - 1000 * 1000, time);
-            if (appList != null && appList.size() > 0) {
-                SortedMap<Long, UsageStats> mySortedMap = new TreeMap<Long, UsageStats>();
-                String currentPackageName = "";
-                for (UsageStats usageStats : appList) {
-                    mySortedMap.put(usageStats.getLastTimeUsed(), usageStats);
-                    currentPackageName = usageStats.getPackageName();
-
-
-                    if (currentPackageName.equals(packageName)) {
-                        return true;
-                    }
-
-
-                }
-
-
-            }
-
-        }
-
-
-        return false;
     }
 
     private void swap() {
@@ -422,22 +347,12 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     private void setPriceTags(final boolean cryptoPreferred, boolean animate) {
-        //mBalanceSecondary.setTextSize(!cryptoPreferred ? t1Size : t2Size);
-        //mBalancePrimary.setTextSize(!cryptoPreferred ? t2Size : t1Size);
         ConstraintSet set = new ConstraintSet();
         set.clone(toolBarConstraintLayout);
         if (animate)
             TransitionManager.beginDelayedTransition(toolBarConstraintLayout);
         int px8 = Utils.getPixelsFromDps(this, 8);
         int px16 = Utils.getPixelsFromDps(this, 16);
-//
-//        //align first item to parent right
-//        set.connect(!cryptoPreferred ? R.id.balance_secondary : R.id.balance_primary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, px16);
-//        //align swap symbol after the first item
-//        set.connect(R.id.swap, ConstraintSet.START, !cryptoPreferred ? R.id.balance_secondary : R.id.balance_primary, ConstraintSet.START, px8);
-//        //align second item after swap symbol
-//        set.connect(!cryptoPreferred ? R.id.balance_secondary : R.id.balance_primary, ConstraintSet.START, mSwap.getId(), ConstraintSet.END, px8);
-//
 
         // CRYPTO on RIGHT
         if (cryptoPreferred) {
@@ -455,8 +370,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             mBalancePrimary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 6));
             mBalanceSecondary.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 4));
             mSwap.setPadding(0, 0, 0, Utils.getPixelsFromDps(this, 2));
-
-            Log.d(TAG, "CryptoPreferred " + cryptoPreferred);
 
             mBalanceSecondary.setTextSize(t1Size);
             mBalancePrimary.setTextSize(t2Size);
