@@ -14,6 +14,7 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.listeners.SyncReceiver;
 import com.breadwallet.tools.manager.InternetManager;
@@ -21,8 +22,6 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.google.firebase.crash.FirebaseCrash;
-
-import org.apache.commons.codec.binary.Base32;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -132,6 +131,7 @@ public class BreadApp extends Application {
         // First, get the ETH wallet address
         BaseWalletManager ethWallet = WalletsMaster.getInstance(mContext).getWalletByIso(mContext, "ETH");
         String ethAddress = ethWallet.getReceiveAddress(mContext).stringify();
+
         Log.d(TAG, "ETH Wallet ID START -> " + ethAddress);
 
 
@@ -159,7 +159,7 @@ public class BreadApp extends Application {
 
 
             Base32 base32 = new Base32();
-            String base32String = base32.encodeAsString(firstTenBytes);
+            String base32String = base32.encodeOriginal(firstTenBytes);
             base32String = base32String.toLowerCase();
             Log.d(TAG, "Base 32 String -> " + base32String);
 
