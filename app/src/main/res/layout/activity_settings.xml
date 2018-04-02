@@ -29,7 +29,7 @@
 
             <com.breadwallet.presenter.customviews.BRText
                 android:id="@+id/nav_label"
-                android:text="Home"
+                android:text="@string/Button.Home"
                 app:customTFont="CircularPro-Bold.otf"
                 android:textSize="16sp"
                 android:layout_marginLeft="20dp"
@@ -45,17 +45,20 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Settings"
+        android:text="@string/Button.settings"
         android:layout_below="@id/toolbar"
-        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
         android:textColor="@color/total_assets_usd_color"
         android:textSize="28sp"
-        android:layout_margin="@dimen/bread_margin"/>
+        android:layout_marginStart="@dimen/bread_margin"
+        android:layout_marginEnd="@dimen/bread_margin"
+        android:layout_marginTop="@dimen/bread_margin"
+        />
 
     <ListView
         android:id="@+id/settings_list"
-        android:footerDividersEnabled="false"
-        android:headerDividersEnabled="false"
+        android:footerDividersEnabled="true"
+        android:headerDividersEnabled="true"
         android:background="@color/extra_light_blue_background"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

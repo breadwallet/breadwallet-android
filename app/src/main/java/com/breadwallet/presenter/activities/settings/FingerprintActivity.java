@@ -58,11 +58,11 @@ public class FingerprintActivity extends BRActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fingerprint);
-        toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
-        limitExchange = (TextView) findViewById(R.id.limit_exchange);
-        limitInfo = (TextView) findViewById(R.id.limit_info);
+        toggleButton = findViewById(R.id.toggleButton);
+        limitExchange = findViewById(R.id.limit_exchange);
+        limitInfo = findViewById(R.id.limit_info);
 
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        ImageButton faq = findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -82,7 +82,6 @@ public class FingerprintActivity extends BRActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Activity app = FingerprintActivity.this;
                 if (isChecked && !Utils.isFingerprintEnrolled(app)) {
-                    Log.e(TAG, "onCheckedChanged: fingerprint not setup");
                     BRDialog.showCustomDialog(app, getString(R.string.TouchIdSettings_disabledWarning_title_android), getString(R.string.TouchIdSettings_disabledWarning_body_android), getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
@@ -146,7 +145,8 @@ public class FingerprintActivity extends BRActivity {
         //amount in user preferred ISO (e.g. USD)
         BigDecimal curAmount = master.getCurrentWallet(this).getFiatForSmallestCrypto(this, satoshis, null);
         //formatted string for the label
-        return String.format(getString(R.string.TouchIdSettings_spendingLimit), CurrencyUtils.getFormattedAmount(this, "BTC", amount), CurrencyUtils.getFormattedAmount(this, iso, curAmount));
+        return String.format(getString(R.string.TouchIdSettings_spendingLimit),
+                CurrencyUtils.getFormattedAmount(this, "BTC", amount), CurrencyUtils.getFormattedAmount(this, iso, curAmount));
     }
 
     @Override
@@ -159,7 +159,6 @@ public class FingerprintActivity extends BRActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-//        BRAnimator.startBreadActivity(this, false);
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 

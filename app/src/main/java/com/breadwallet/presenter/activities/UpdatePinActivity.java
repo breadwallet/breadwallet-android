@@ -55,10 +55,10 @@ public class UpdatePinActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_template);
 
-        keyboard = (BRKeyboard) findViewById(R.id.brkeyboard);
-        title = (TextView) findViewById(R.id.title);
-        description = (TextView) findViewById(R.id.description);
-        pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
+        keyboard = findViewById(R.id.brkeyboard);
+        title = findViewById(R.id.title);
+        description = findViewById(R.id.description);
+        pinLayout = findViewById(R.id.pinLayout);
         if (BRKeyStore.getPinCode(this).length() == 4) pinLimit = 4;
         setMode(ENTER_PIN);
         title.setText(getString(R.string.UpdatePin_updateTitle));
@@ -69,7 +69,7 @@ public class UpdatePinActivity extends BRActivity {
         dot5 = findViewById(R.id.dot5);
         dot6 = findViewById(R.id.dot6);
 
-        faq = (ImageButton) findViewById(R.id.faq_button);
+        faq = findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,7 +79,6 @@ public class UpdatePinActivity extends BRActivity {
                 BRAnimator.showSupportFragment(UpdatePinActivity.this, BRConstants.setPin, wm.getIso(UpdatePinActivity.this));
             }
         });
-
 
         keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {
             @Override
@@ -177,7 +176,8 @@ public class UpdatePinActivity extends BRActivity {
             case RE_ENTER_NEW_PIN:
                 if (curNewPin.equalsIgnoreCase(pin.toString())) {
                     AuthManager.getInstance().setPinCode(pin.toString(), this);
-                    BRAnimator.showBreadSignal(this, getString(R.string.Alerts_pinSet), getString(R.string.UpdatePin_caption), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
+                    BRAnimator.showBreadSignal(this, getString(R.string.Alerts_pinSet),
+                            getString(R.string.UpdatePin_caption), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                         @Override
                         public void onComplete() {
                             BRAnimator.startBreadActivity(UpdatePinActivity.this, false);

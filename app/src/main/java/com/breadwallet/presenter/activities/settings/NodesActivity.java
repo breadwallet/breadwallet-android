@@ -123,7 +123,8 @@ public class NodesActivity extends BRActivity {
         } else {
             switchButton.setText(getString(R.string.NodeSelector_automaticButton));
         }
-        nodeStatus.setText(wm.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Connected ? getString(R.string.NodeSelector_connected) : getString(R.string.NodeSelector_notConnected));
+        nodeStatus.setText(wm.getPeerManager().getConnectStatus() == BRCorePeer.ConnectStatus.Connected ?
+                getString(R.string.NodeSelector_connected) : getString(R.string.NodeSelector_notConnected));
         if (trustNode != null)
             trustNode.setText(wm.getPeerManager().getCurrentPeerName());
     }

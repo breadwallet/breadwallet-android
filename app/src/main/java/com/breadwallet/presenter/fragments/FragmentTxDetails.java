@@ -154,11 +154,11 @@ public class FragmentTxDetails extends DialogFragment {
                 if (!mDetailsShowing) {
                     mDetailsContainer.setVisibility(View.VISIBLE);
                     mDetailsShowing = true;
-                    mShowHide.setText("Hide Details");
+                    mShowHide.setText(getString(R.string.TransactionDetails_titleFailed));
                 } else {
                     mDetailsContainer.setVisibility(View.GONE);
                     mDetailsShowing = false;
-                    mShowHide.setText("Show Details");
+                    mShowHide.setText(getString(R.string.TransactionDetails_showDetails));
                 }
             }
         });
@@ -210,16 +210,16 @@ public class FragmentTxDetails extends DialogFragment {
                     hideEthViews();
                 }
                 BigDecimal rawFee = mTransaction.getFee();
-                BigDecimal fee =  isCryptoPreferred? rawFee : walletManager.getFiatForSmallestCrypto(app, rawFee, null);
+                BigDecimal fee = isCryptoPreferred ? rawFee : walletManager.getFiatForSmallestCrypto(app, rawFee, null);
                 BigDecimal rawTotalSent = mTransaction.getAmount().abs().add(mTransaction.getFee().abs());
-                BigDecimal totalSent = isCryptoPreferred? rawTotalSent : walletManager.getFiatForSmallestCrypto(app, rawTotalSent, null);
+                BigDecimal totalSent = isCryptoPreferred ? rawTotalSent : walletManager.getFiatForSmallestCrypto(app, rawTotalSent, null);
                 mFeeSecondary.setText(CurrencyUtils.getFormattedAmount(app, iso, totalSent));
                 mFeePrimary.setText(CurrencyUtils.getFormattedAmount(app, iso, fee));
-                mFeePrimaryLabel.setText("Fee");
-                mFeeSecondaryLabel.setText("Total");
+                mFeePrimaryLabel.setText(String.format(getString(R.string.Send_fee), ""));
+                mFeeSecondaryLabel.setText(getString(R.string.Confirmation_totalLabel));
             }
 
-            if(mTransaction.getBlockHeight() == Integer.MAX_VALUE)
+            if (mTransaction.getBlockHeight() == Integer.MAX_VALUE)
                 hideConfirmedView();
 
             if (!mTransaction.isValid()) {
@@ -249,8 +249,8 @@ public class FragmentTxDetails extends DialogFragment {
             mAmountWhenSent.setText(amountWhenSent);
             mAmountNow.setText(amountNow);
 
-            mTxAction.setText(!received ? "Sent" : "Received");
-            mToFrom.setText(!received ? "To " : "Via ");
+            mTxAction.setText(!received ? getString(R.string.TransactionDetails_titleSent) : getString(R.string.TransactionDetails_titleReceived));
+            mToFrom.setText(!received ? getString(R.string.Confirmation_to) + " " : getString(R.string.TransactionDetails_addressViaHeader) + " ");
 
             mToFromAddress.setText(walletManager.decorateAddress(app, mTransaction.getTo())); //showing only the destination address
 
@@ -258,7 +258,6 @@ public class FragmentTxDetails extends DialogFragment {
             mToFromAddress.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-
                     // Get the default color based on theme
                     final int color = mToFromAddress.getCurrentTextColor();
 
@@ -290,22 +289,17 @@ public class FragmentTxDetails extends DialogFragment {
             TxMetaData txMetaData = KVStoreManager.getInstance().getTxMetaData(app, mTransaction.getTxHash());
 
             if (txMetaData != null) {
-                Log.d(TAG, "TxMetaData not null");
                 if (txMetaData.comment != null) {
-                    Log.d(TAG, "Comment not null");
                     memo = txMetaData.comment;
                     mMemoText.setText(memo);
                 } else {
-                    Log.d(TAG, "Comment is null");
                     mMemoText.setText("");
                 }
-
                 String metaIso = Utils.isNullOrEmpty(txMetaData.exchangeCurrency) ? "USD" : txMetaData.exchangeCurrency;
 
                 exchangeRateFormatted = CurrencyUtils.getFormattedAmount(app, metaIso, new BigDecimal(txMetaData.exchangeRate));
                 mExchangeRate.setText(exchangeRateFormatted);
             } else {
-                Log.d(TAG, "TxMetaData is null");
                 mMemoText.setText("");
 
             }
@@ -315,7 +309,6 @@ public class FragmentTxDetails extends DialogFragment {
 
             // Set the transaction id
             mTransactionId.setText(mTransaction.getHashReversed());
-            Log.e(TAG, "updateUi: " + mTransaction.getHashReversed());
 
             // Allow the transaction id to be copy-able
             mTransactionId.setOnClickListener(new View.OnClickListener() {
@@ -344,7 +337,6 @@ public class FragmentTxDetails extends DialogFragment {
             mConfirmedInBlock.setText(String.valueOf(mTransaction.getBlockHeight()));
 
         } else {
-
             Toast.makeText(getContext(), "Error getting transaction data", Toast.LENGTH_SHORT).show();
         }
 
@@ -365,6 +357,7 @@ public class FragmentTxDetails extends DialogFragment {
         mDetailsContainer.removeView(mGasPriceDivider);
         mDetailsContainer.removeView(mGasLimitDivider);
     }
+
     private void hideConfirmedView() {
         mDetailsContainer.removeView(mConfirmedContainer);
         mDetailsContainer.removeView(mConfirmedDivider);

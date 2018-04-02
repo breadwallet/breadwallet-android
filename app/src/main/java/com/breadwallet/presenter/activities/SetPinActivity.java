@@ -45,9 +45,9 @@ public class SetPinActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_template);
 
-        keyboard = (BRKeyboard) findViewById(R.id.brkeyboard);
-        title = (TextView) findViewById(R.id.title);
-        faq = (ImageButton) findViewById(R.id.faq_button);
+        keyboard = findViewById(R.id.brkeyboard);
+        title = findViewById(R.id.title);
+        faq = findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override

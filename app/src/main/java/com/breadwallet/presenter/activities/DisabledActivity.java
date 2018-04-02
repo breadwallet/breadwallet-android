@@ -40,13 +40,12 @@ public class DisabledActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_disabled);
 
-        untilLabel = (TextView) findViewById(R.id.until_label);
-        layout = (ConstraintLayout) findViewById(R.id.layout);
-        disabled = (TextView) findViewById(R.id.disabled);
-//        attempts = (TextView) findViewById(R.id.attempts_label);
-        resetButton = (Button) findViewById(R.id.reset_button);
+        untilLabel = findViewById(R.id.until_label);
+        layout = findViewById(R.id.layout);
+        disabled = findViewById(R.id.disabled);
+        resetButton = findViewById(R.id.reset_button);
 
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        ImageButton faq = findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -91,7 +91,6 @@ public class FragmentReceive extends Fragment {
     private Handler copyCloseHandler = new Handler();
     private BRKeyboard keyboard;
     private View separator2;
-    private static final int REQUEST_WRITE_EXTERNAL_STORAGE = 3;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -99,22 +98,22 @@ public class FragmentReceive extends Fragment {
         // properly.
 
         View rootView = inflater.inflate(R.layout.fragment_receive, container, false);
-        mTitle = (TextView) rootView.findViewById(R.id.title);
-        mAddress = (TextView) rootView.findViewById(R.id.address_text);
-        mQrImage = (ImageView) rootView.findViewById(R.id.qr_image);
-        backgroundLayout = (LinearLayout) rootView.findViewById(R.id.background_layout);
-        signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
-        shareButton = (BRButton) rootView.findViewById(R.id.share_button);
-        shareEmail = (Button) rootView.findViewById(R.id.share_email);
-        shareTextMessage = (Button) rootView.findViewById(R.id.share_text);
-        shareButtonsLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.share_buttons_layout);
-        copiedLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.copied_layout);
-        requestButton = (Button) rootView.findViewById(R.id.request_button);
-        keyboard = (BRKeyboard) rootView.findViewById(R.id.keyboard);
+        mTitle = rootView.findViewById(R.id.title);
+        mAddress = rootView.findViewById(R.id.address_text);
+        mQrImage = rootView.findViewById(R.id.qr_image);
+        backgroundLayout = rootView.findViewById(R.id.background_layout);
+        signalLayout = rootView.findViewById(R.id.signal_layout);
+        shareButton = rootView.findViewById(R.id.share_button);
+        shareEmail = rootView.findViewById(R.id.share_email);
+        shareTextMessage = rootView.findViewById(R.id.share_text);
+        shareButtonsLayout = rootView.findViewById(R.id.share_buttons_layout);
+        copiedLayout = rootView.findViewById(R.id.copied_layout);
+        requestButton = rootView.findViewById(R.id.request_button);
+        keyboard = rootView.findViewById(R.id.keyboard);
         keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button);
         keyboard.setBRKeyboardColor(R.color.white);
         separator = rootView.findViewById(R.id.separator);
-        close = (ImageButton) rootView.findViewById(R.id.close_button);
+        close = rootView.findViewById(R.id.close_button);
         separator2 = rootView.findViewById(R.id.separator2);
         separator2.setVisibility(View.GONE);
         setListeners();
@@ -126,7 +125,7 @@ public class FragmentReceive extends Fragment {
             }
         });
 
-        ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
+        ImageButton faq = rootView.findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override

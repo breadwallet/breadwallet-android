@@ -54,10 +54,10 @@ public class AdvancedActivity extends BRActivity {
         items.clear();
 
         populateItems();
-
+        listView.addFooterView(new View(this), null, true);
+        listView.addHeaderView(new View(this), null, true);
         listView.setAdapter(new SettingsAdapter(this, R.layout.settings_list_item, items));
     }
-
 
     @Override
     public void onBackPressed() {
@@ -66,8 +66,6 @@ public class AdvancedActivity extends BRActivity {
     }
 
     private void populateItems() {
-
-        items.add(new BRSettingsItem("", "", null, true, R.drawable.chevron_right_light));
 
         items.add(new BRSettingsItem(getString(R.string.NodeSelector_title), "", new View.OnClickListener() {
             @Override

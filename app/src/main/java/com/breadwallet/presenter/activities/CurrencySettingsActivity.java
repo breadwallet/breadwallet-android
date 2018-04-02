@@ -1,21 +1,16 @@
 package com.breadwallet.presenter.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.ImportActivity;
-import com.breadwallet.presenter.activities.settings.SyncBlockchainActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.tools.adapter.SettingsAdapter;
-import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
@@ -43,9 +38,7 @@ public class CurrencySettingsActivity extends BRActivity {
         listView = findViewById(R.id.settings_list);
         mBackButton = findViewById(R.id.back_button);
 
-        mBackButton.setOnClickListener(new View.OnClickListener()
-
-        {
+        mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onBackPressed();
@@ -54,7 +47,7 @@ public class CurrencySettingsActivity extends BRActivity {
 
         final BaseWalletManager wm = WalletsMaster.getInstance(this).getCurrentWallet(this);
 
-        mTitle.setText(String.format("%s Settings", wm.getName(this)));
+        mTitle.setText(String.format("%s %s", wm.getName(this), CurrencySettingsActivity.this.getString(R.string.Button_settings)));
     }
 
     @Override
@@ -65,8 +58,9 @@ public class CurrencySettingsActivity extends BRActivity {
         items.clear();
         app = this;
 
-        populateItems();
-
+        items.addAll(WalletsMaster.getInstance(this).getCurrentWallet(this).getSettingsConfiguration().mSettingList);
+        listView.addFooterView(new View(this), null, true);
+        listView.addHeaderView(new View(this), null, true);
         listView.setAdapter(new SettingsAdapter(this, R.layout.settings_list_item, items));
     }
 
@@ -76,32 +70,4 @@ public class CurrencySettingsActivity extends BRActivity {
         overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
     }
 
-    private void populateItems() {
-
-
-        items.add(new BRSettingsItem("Redeem Private Key", "", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                Intent intent = new Intent(CurrencySettingsActivity.this, ImportActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }, false, R.drawable.chevron_right_light));
-
-
-        items.add(new BRSettingsItem("Rescan Blockchain", "", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                Log.d("CurrencySettings", "Rescan tapped!");
-
-                Intent intent = new Intent(CurrencySettingsActivity.this, SyncBlockchainActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }, false, R.drawable.ic_rescan));
-
-
-    }
 }

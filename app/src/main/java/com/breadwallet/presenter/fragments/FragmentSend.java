@@ -125,31 +125,31 @@ public class FragmentSend extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View rootView = inflater.inflate(R.layout.fragment_send, container, false);
-        backgroundLayout = (ScrollView) rootView.findViewById(R.id.background_layout);
-        signalLayout = (LinearLayout) rootView.findViewById(R.id.signal_layout);
-        keyboard = (BRKeyboard) rootView.findViewById(R.id.keyboard);
+        backgroundLayout = rootView.findViewById(R.id.background_layout);
+        signalLayout = rootView.findViewById(R.id.signal_layout);
+        keyboard = rootView.findViewById(R.id.keyboard);
         keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button);
         keyboard.setBRKeyboardColor(R.color.white);
-        isoText = (TextView) rootView.findViewById(R.id.iso_text);
-        addressEdit = (EditText) rootView.findViewById(R.id.address_edit);
-        scan = (Button) rootView.findViewById(R.id.scan);
-        paste = (Button) rootView.findViewById(R.id.paste_button);
-        send = (Button) rootView.findViewById(R.id.send_button);
-        commentEdit = (EditText) rootView.findViewById(R.id.comment_edit);
-        amountEdit = (EditText) rootView.findViewById(R.id.amount_edit);
-        balanceText = (TextView) rootView.findViewById(R.id.balance_text);
-        feeText = (TextView) rootView.findViewById(R.id.fee_text);
-        feeEdit = (ImageView) rootView.findViewById(R.id.edit);
-        isoButton = (Button) rootView.findViewById(R.id.iso_button);
-        keyboardLayout = (LinearLayout) rootView.findViewById(R.id.keyboard_layout);
-        amountLayout = (ConstraintLayout) rootView.findViewById(R.id.amount_layout);
-        feeLayout = (BRLinearLayoutWithCaret) rootView.findViewById(R.id.fee_buttons_layout);
-        feeDescription = (BRText) rootView.findViewById(R.id.fee_description);
-        warningText = (BRText) rootView.findViewById(R.id.warning_text);
+        isoText = rootView.findViewById(R.id.iso_text);
+        addressEdit = rootView.findViewById(R.id.address_edit);
+        scan = rootView.findViewById(R.id.scan);
+        paste = rootView.findViewById(R.id.paste_button);
+        send = rootView.findViewById(R.id.send_button);
+        commentEdit = rootView.findViewById(R.id.comment_edit);
+        amountEdit = rootView.findViewById(R.id.amount_edit);
+        balanceText = rootView.findViewById(R.id.balance_text);
+        feeText = rootView.findViewById(R.id.fee_text);
+        feeEdit = rootView.findViewById(R.id.edit);
+        isoButton = rootView.findViewById(R.id.iso_button);
+        keyboardLayout = rootView.findViewById(R.id.keyboard_layout);
+        amountLayout = rootView.findViewById(R.id.amount_layout);
+        feeLayout = rootView.findViewById(R.id.fee_buttons_layout);
+        feeDescription = rootView.findViewById(R.id.fee_description);
+        warningText = rootView.findViewById(R.id.warning_text);
 
-        regular = (BRButton) rootView.findViewById(R.id.left_button);
-        economy = (BRButton) rootView.findViewById(R.id.right_button);
-        close = (ImageButton) rootView.findViewById(R.id.close_button);
+        regular = rootView.findViewById(R.id.left_button);
+        economy = rootView.findViewById(R.id.right_button);
+        close = rootView.findViewById(R.id.close_button);
         BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
         selectedIso = BRSharedPrefs.isCryptoPreferred(getActivity()) ? wm.getIso(getActivity()) : BRSharedPrefs.getPreferredFiatIso(getContext());
 
@@ -180,7 +180,7 @@ public class FragmentSend extends Fragment {
             });
         keyboardIndex = signalLayout.indexOfChild(keyboardLayout);
 
-        ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
+        ImageButton faq = rootView.findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -260,7 +260,6 @@ public class FragmentSend extends Fragment {
                     TransitionManager.beginDelayedTransition(amountLayout, tr);
 
                     int px4 = Utils.getPixelsFromDps(getContext(), 4);
-//                    int px8 = Utils.getPixelsFromDps(getContext(), 8);
                     set.connect(balanceText.getId(), ConstraintSet.TOP, isoText.getId(), ConstraintSet.BOTTOM, px4);
                     set.connect(feeText.getId(), ConstraintSet.TOP, balanceText.getId(), ConstraintSet.BOTTOM, px4);
                     set.connect(feeText.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px4);
@@ -327,12 +326,13 @@ public class FragmentSend extends Fragment {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        BRDialog.showCustomDialog(getActivity(), "", getResources().getString(R.string.Send_containsAddress), getResources().getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                                            @Override
-                                            public void onClick(BRDialogView brDialogView) {
-                                                brDialogView.dismiss();
-                                            }
-                                        }, null, null, 0);
+                                        BRDialog.showCustomDialog(getActivity(), "", getResources().getString(R.string.Send_containsAddress),
+                                                getResources().getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                                                    @Override
+                                                    public void onClick(BRDialogView brDialogView) {
+                                                        brDialogView.dismiss();
+                                                    }
+                                                }, null, null, 0);
                                         BRClipboardManager.putClipboard(getActivity(), "");
                                     }
                                 });
@@ -341,26 +341,20 @@ public class FragmentSend extends Fragment {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        String walletIso = wm.getIso(getActivity());
-                                        String firstLine = "";
-
-                                        if (walletIso.equalsIgnoreCase("BTC")) {
-                                            firstLine = getString(R.string.Sendbtc_UsedAddress_firstLine);
-                                        } else if (walletIso.equalsIgnoreCase("BCH")) {
-                                            firstLine = getString(R.string.Sendbch_UsedAddress_firstLine);
-                                        }
-                                        BRDialog.showCustomDialog(getActivity(), firstLine, getString(R.string.Send_UsedAddress_secondLIne), "Ignore", "Cancel", new BRDialogView.BROnClickListener() {
-                                            @Override
-                                            public void onClick(BRDialogView brDialogView) {
-                                                brDialogView.dismiss();
-                                                addressEdit.setText(wm.decorateAddress(getActivity(), obj.address));
-                                            }
-                                        }, new BRDialogView.BROnClickListener() {
-                                            @Override
-                                            public void onClick(BRDialogView brDialogView) {
-                                                brDialogView.dismiss();
-                                            }
-                                        }, null, 0);
+                                        String title = String.format("%1$s addresses are intended for single use only.", wm.getName(getActivity()));
+                                        BRDialog.showCustomDialog(getActivity(), title, getString(R.string.Send_UsedAddress_secondLIne),
+                                                "Ignore", "Cancel", new BRDialogView.BROnClickListener() {
+                                                    @Override
+                                                    public void onClick(BRDialogView brDialogView) {
+                                                        brDialogView.dismiss();
+                                                        addressEdit.setText(wm.decorateAddress(getActivity(), obj.address));
+                                                    }
+                                                }, new BRDialogView.BROnClickListener() {
+                                                    @Override
+                                                    public void onClick(BRDialogView brDialogView) {
+                                                        brDialogView.dismiss();
+                                                    }
+                                                }, null, 0);
                                     }
                                 });
 
@@ -459,15 +453,6 @@ public class FragmentSend extends Fragment {
                 }
 //                Log.e(TAG, "before createTransaction: smallestCryptoAmount.longValue: " + cryptoAmount.longValue() + ", addrs: " + address.stringify());
                 BaseTransaction tx = wallet.createTransaction(cryptoAmount, req.address);
-//                if (tx == null) {
-//                    BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_creatTransactionError), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-//                        @Override
-//                        public void onClick(BRDialogView brDialogView) {
-//                            brDialogView.dismissWithAnimation();
-//                        }
-//                    }, null, null, 0);
-//                    return;
-//                }
 
                 if (allFilled) {
                     CryptoRequest item = new CryptoRequest(tx, null, false, comment, req.address, cryptoAmount);
@@ -496,7 +481,8 @@ public class FragmentSend extends Fragment {
 
         addressEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER)) || (actionId == EditorInfo.IME_ACTION_DONE) || (actionId == EditorInfo.IME_ACTION_NEXT)) {
+                if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
+                        || (actionId == EditorInfo.IME_ACTION_DONE) || (actionId == EditorInfo.IME_ACTION_NEXT)) {
                     Utils.hideKeyboard(getActivity());
                     new Handler().postDelayed(new Runnable() {
                         @Override
@@ -550,7 +536,8 @@ public class FragmentSend extends Fragment {
     }
 
     private void sayClipboardEmpty() {
-        BRDialog.showCustomDialog(getActivity(), "", getResources().getString(R.string.Send_emptyPasteboard), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+        BRDialog.showCustomDialog(getActivity(), "", getResources().getString(R.string.Send_emptyPasteboard),
+                getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {
                 brDialogView.dismiss();
@@ -560,7 +547,8 @@ public class FragmentSend extends Fragment {
     }
 
     private void sayInvalidClipboardData() {
-        BRDialog.showCustomDialog(getActivity(), "", getResources().getString(R.string.Send_invalidAddressTitle), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+        BRDialog.showCustomDialog(getActivity(), "", getResources().getString(R.string.Send_invalidAddressTitle),
+                getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {
                 brDialogView.dismiss();
@@ -570,7 +558,9 @@ public class FragmentSend extends Fragment {
     }
 
     private void saySomethingWentWrong() {
-        BRDialog.showCustomDialog(getActivity(), "", "Something went wrong.", getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+        BRDialog.showCustomDialog(getActivity(), "", "Something went wrong.",
+                getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+
             @Override
             public void onClick(BRDialogView brDialogView) {
                 brDialogView.dismiss();
@@ -580,7 +570,8 @@ public class FragmentSend extends Fragment {
     }
 
     private void sayInvalidAddress() {
-        BRDialog.showCustomDialog(getActivity(), "", getResources().getString(R.string.Send_invalidAddressMessage), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+        BRDialog.showCustomDialog(getActivity(), "", getResources().getString(R.string.Send_invalidAddressMessage),
+                getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
             @Override
             public void onClick(BRDialogView brDialogView) {
                 brDialogView.dismiss();
@@ -610,7 +601,6 @@ public class FragmentSend extends Fragment {
         });
 
     }
-
 
     @Override
     public void onStop() {
@@ -746,7 +736,8 @@ public class FragmentSend extends Fragment {
                 isoText.setTextColor(getContext().getColor(R.color.almost_black));
         }
         //formattedBalance
-        String formattedBalance = CurrencyUtils.getFormattedAmount(app, selectedIso, isIsoCrypto ? wallet.getSmallestCryptoForCrypto(app, isoBalance) : isoBalance);
+        String formattedBalance = CurrencyUtils.getFormattedAmount(app, selectedIso,
+                isIsoCrypto ? wallet.getSmallestCryptoForCrypto(app, isoBalance) : isoBalance);
         balanceString = String.format(getString(R.string.Send_balance), formattedBalance);
         balanceText.setText(balanceString);
         feeText.setText(String.format(getString(R.string.Send_fee), formattedFee));

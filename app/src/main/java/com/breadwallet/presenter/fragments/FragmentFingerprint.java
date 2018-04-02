@@ -1,18 +1,4 @@
-package com.breadwallet.presenter.fragments;/*
- * Copyright (C) 2015 The Android Open Source Project 
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License 
- */
+package com.breadwallet.presenter.fragments;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -45,11 +31,6 @@ import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.FingerprintUiHelper;
 import com.breadwallet.tools.util.Utils;
 
-
-/**
- * A dialog which uses fingerprint APIs to authenticate the user, and falls back to password
- * authentication if fingerprint is not available.
- */
 public class FragmentFingerprint extends Fragment
         implements FingerprintUiHelper.Callback {
     public static final String TAG = FragmentFingerprint.class.getName();
@@ -85,11 +66,10 @@ public class FragmentFingerprint extends Fragment
                              Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.fingerprint_dialog_container, container, false);
-//        getDialog().setTitle(R.string.fingerprint_auth);
-        message = (TextView) v.findViewById(R.id.fingerprint_description);
-        title = (TextView) v.findViewById(R.id.fingerprint_title);
-        fingerPrintLayout = (LinearLayout) v.findViewById(R.id.fingerprint_layout);
-        fingerprintBackground = (RelativeLayout) v.findViewById(R.id.fingerprint_background);
+        message = v.findViewById(R.id.fingerprint_description);
+        title = v.findViewById(R.id.fingerprint_title);
+        fingerPrintLayout = v.findViewById(R.id.fingerprint_layout);
+        fingerprintBackground = v.findViewById(R.id.fingerprint_background);
         Bundle bundle = getArguments();
         String titleString = bundle.getString("title");
         String messageString = bundle.getString("message");
@@ -107,17 +87,12 @@ public class FragmentFingerprint extends Fragment
                 (TextView) v.findViewById(R.id.fingerprint_status), this, getContext());
         View mFingerprintContent = v.findViewById(R.id.fingerprint_container);
 
-        Button mCancelButton = (Button) v.findViewById(R.id.cancel_button);
-        Button mSecondDialogButton = (Button) v.findViewById(R.id.second_dialog_button);
+        Button mCancelButton = v.findViewById(R.id.cancel_button);
+        Button mSecondDialogButton = v.findViewById(R.id.second_dialog_button);
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!BRAnimator.isClickAllowed()) return;
-//                if (!BRAnimator.scanResultFragmentOn && mode == BRConstants.AUTH_FOR_PAY && request.isAmountRequested) {
-////                    FragmentScanResult.address = request.address[0];
-//                    WalletsMaster.getInstance().offerToChangeTheAmount(getActivity(), "");
-//                }
-//                dismiss();
                 closeMe();
             }
         });

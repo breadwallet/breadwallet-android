@@ -51,7 +51,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_centerVertical="true"
                 android:paddingEnd="8dp"
-                android:text="Close"
+                android:text="@string/AccessibilityLabels.close"
                 android:textColor="@color/button_primary_normal"
                 app:customTFont="CircularPro-Bold.otf"/>
 

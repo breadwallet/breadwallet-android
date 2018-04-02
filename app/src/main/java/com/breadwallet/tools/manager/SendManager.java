@@ -255,7 +255,7 @@ public class SendManager {
             return;
         }
         if (maxAmountDouble.compareTo(new BigDecimal(0)) == 0) {
-            BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), "Insufficient amount for transaction fee", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+            BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.Send_nilFeeError), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                 @Override
                 public void onClick(BRDialogView brDialogView) {
                     brDialogView.dismissWithAnimation();
@@ -265,7 +265,7 @@ public class SendManager {
             if (Utils.isNullOrEmpty(item.address)) throw new RuntimeException("can't happen");
             final BaseTransaction tx = wm.createTransaction(maxAmountDouble, item.address);
             if (tx == null) {
-                BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), "Insufficient amount for transaction fee", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.Send_nilFeeError), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         brDialogView.dismissWithAnimation();
@@ -276,7 +276,7 @@ public class SendManager {
             BigDecimal fee = wm.getTxFee(tx);
             if (fee.compareTo(new BigDecimal(0)) <= 0) {
                 BRReportsManager.reportBug(new RuntimeException("fee is weird:  " + fee));
-                BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), "Insufficient amount for transaction fee.", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.Send_nilFeeError), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         brDialogView.dismissWithAnimation();
@@ -290,7 +290,7 @@ public class SendManager {
 
             String posButtonText = String.format("%s (%s)", formattedCrypto, formattedFiat);
 
-            BRDialog.showCustomDialog(app, "Insufficient amount for transaction fee", "Send max?", posButtonText, "No thanks", new BRDialogView.BROnClickListener() {
+            BRDialog.showCustomDialog(app, app.getString(R.string.Send_nilFeeError), "Send max?", posButtonText, "No thanks", new BRDialogView.BROnClickListener() {
                 @Override
                 public void onClick(BRDialogView brDialogView) {
                     brDialogView.dismissWithAnimation();

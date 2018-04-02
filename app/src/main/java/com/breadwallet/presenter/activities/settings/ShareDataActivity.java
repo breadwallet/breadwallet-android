@@ -23,7 +23,7 @@ public class ShareDataActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_share_data);
 
-        toggleButton = (ToggleButton) findViewById(R.id.toggleButton);
+        toggleButton = findViewById(R.id.toggleButton);
         toggleButton.setChecked(BRSharedPrefs.getShareData(this));
         toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override

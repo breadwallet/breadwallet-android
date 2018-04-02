@@ -11,6 +11,7 @@ import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWallet;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
+import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
 
 import java.math.BigDecimal;
@@ -209,6 +210,10 @@ public interface BaseWalletManager {
      * @return - the wallet's Ui configuration
      */
     WalletUiConfiguration getUiConfiguration();
+    /**
+     * @return - the wallet's Settings configuration (Settings items)
+     */
+    WalletSettingsConfiguration getSettingsConfiguration();
 
     /**
      * @return - the wallet's currency exchange rate in the user's favorite fiat currency (e.g. dollars)

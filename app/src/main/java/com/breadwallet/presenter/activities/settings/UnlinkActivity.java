@@ -31,10 +31,10 @@ public class UnlinkActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_restore);
 
-        nextButton = (Button) findViewById(R.id.send_button);
-        close = (ImageButton) findViewById(R.id.close_button);
+        nextButton = findViewById(R.id.send_button);
+        close = findViewById(R.id.close_button);
 
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        ImageButton faq = findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override

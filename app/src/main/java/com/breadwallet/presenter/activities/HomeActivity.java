@@ -151,27 +151,28 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
 
         if (!BRSharedPrefs.wasBchDialogShown(this)) {
-            BRDialog.showHelpDialog(this, getString(R.string.Dialog_welcomeBchTitle), getString(R.string.Dialog_welcomeBchMessage), getString(R.string.Dialog_Home), getString(R.string.Dialog_Dismiss), new BRDialogView.BROnClickListener() {
-                @Override
-                public void onClick(BRDialogView brDialogView) {
-                    brDialogView.dismissWithAnimation();
-                }
-            }, new BRDialogView.BROnClickListener() {
+            BRDialog.showHelpDialog(this, getString(R.string.Android_BCH_welcome_title), getString(R.string.Android_BCH_welcome_message),
+                    getString(R.string.Button_Home), getString(R.string.Button_dismiss), new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismissWithAnimation();
+                        }
+                    }, new BRDialogView.BROnClickListener() {
 
-                @Override
-                public void onClick(BRDialogView brDialogView) {
-                    getFragmentManager().popBackStack();
-                }
-            }, new BRDialogView.BROnClickListener() {
-                @Override
-                public void onClick(BRDialogView brDialogView) {
-                    Log.d(TAG, "help clicked!");
-                    brDialogView.dismissWithAnimation();
-                    BaseWalletManager wm = WalletsMaster.getInstance(HomeActivity.this).getCurrentWallet(HomeActivity.this);
-                    BRAnimator.showSupportFragment(HomeActivity.this, BRConstants.bchFaq, wm.getIso(HomeActivity.this));
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            getFragmentManager().popBackStack();
+                        }
+                    }, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            Log.d(TAG, "help clicked!");
+                            brDialogView.dismissWithAnimation();
+                            BaseWalletManager wm = WalletsMaster.getInstance(HomeActivity.this).getCurrentWallet(HomeActivity.this);
+                            BRAnimator.showSupportFragment(HomeActivity.this, BRConstants.bchFaq, wm.getIso(HomeActivity.this));
 
-                }
-            });
+                        }
+                    });
 
             BRSharedPrefs.putBchDialogShown(HomeActivity.this, true);
         }
@@ -185,7 +186,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         });
 
         mPromptContinue.setColor(Color.parseColor("#4b77f3"));
-        mPromptContinue.setOnClickListener(new View.OnClickListener() {
+        mPromptContinue.setOnClickListener(new View.OnClickListener()
+
+        {
             @Override
             public void onClick(View v) {
                 PromptManager.PromptInfo info = PromptManager.getInstance().promptInfo(app, mCurrentPrompt);

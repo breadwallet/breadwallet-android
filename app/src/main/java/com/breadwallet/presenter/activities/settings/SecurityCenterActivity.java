@@ -58,12 +58,12 @@ public class SecurityCenterActivity extends BRActivity {
         setContentView(R.layout.activity_security_center);
 
         itemList = new ArrayList<>();
-        mListView = (ListView) findViewById(R.id.menu_listview);
+        mListView = findViewById(R.id.menu_listview);
         mListView.addFooterView(new View(this), null, true);
         mListView.addHeaderView(new View(this), null, true);
         mListView.setVerticalScrollBarEnabled(false);
         mListView.setClickable(false);
-        close = (ImageButton) findViewById(R.id.close_button);
+        close = findViewById(R.id.close_button);
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,7 +74,7 @@ public class SecurityCenterActivity extends BRActivity {
 
         updateList();
 
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        ImageButton faq = findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,9 +132,9 @@ public class SecurityCenterActivity extends BRActivity {
                 LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
                 convertView = inflater.inflate(defaultLayoutResource, parent, false);
             }
-            TextView title = (TextView) convertView.findViewById(R.id.item_title);
-            TextView text = (TextView) convertView.findViewById(R.id.item_text);
-            ImageView checkMark = (ImageView) convertView.findViewById(R.id.check_mark);
+            TextView title = convertView.findViewById(R.id.item_title);
+            TextView text = convertView.findViewById(R.id.item_text);
+            ImageView checkMark = convertView.findViewById(R.id.check_mark);
 
             title.setText(items.get(position).title);
             text.setText(items.get(position).text);

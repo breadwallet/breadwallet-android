@@ -99,7 +99,7 @@ public class CurAdapter extends RecyclerView.Adapter<CurAdapter.CustomViewHolder
 
         public CustomViewHolder(View view) {
             super(view);
-            button = (BRButton) view.findViewById(R.id.watch_list_layout);
+            button = view.findViewById(R.id.watch_list_layout);
         }
     }
 

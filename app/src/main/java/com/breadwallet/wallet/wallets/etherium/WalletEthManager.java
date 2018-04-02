@@ -35,6 +35,7 @@ import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
+import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.google.firebase.crash.FirebaseCrash;
@@ -91,6 +92,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     private static WalletEthManager instance;
     private WalletUiConfiguration uiConfig;
+    private WalletSettingsConfiguration settingsConfig;
     private final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // 90m ETH * 18 (WEI)
     private final BigDecimal WEI_ETH = new BigDecimal("1000000000000000000"); //1ETH = 1000000000000000000 WEI
     private BREthereumWallet mWallet;
@@ -100,7 +102,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     private WalletEthManager(final Context app, BREthereumNetwork network) {
         uiConfig = new WalletUiConfiguration("#5e70a3", true, true, false, false, false, false);
-
+        settingsConfig = new WalletSettingsConfiguration(app, ISO);
         byte[] ethPubKey = BRKeyStore.getEthPublicKey(app);
         if (Utils.isNullOrEmpty(ethPubKey)) {
             Log.e(TAG, "WalletEthManager: Using the paperKey to create");
@@ -503,6 +505,11 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     @Override
     public WalletUiConfiguration getUiConfiguration() {
         return uiConfig;
+    }
+
+    @Override
+    public WalletSettingsConfiguration getSettingsConfiguration() {
+        return settingsConfig;
     }
 
     @Override

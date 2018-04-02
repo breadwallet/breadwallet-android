@@ -94,7 +94,7 @@ public class InputWordsActivity extends BRActivity {
                     }, null, 0);
         }
 
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        ImageButton faq = findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -105,21 +105,21 @@ public class InputWordsActivity extends BRActivity {
             }
         });
 
-        title = (TextView) findViewById(R.id.title);
-        description = (TextView) findViewById(R.id.description);
+        title = findViewById(R.id.title);
+        description = findViewById(R.id.description);
 
-        word1 = (EditText) findViewById(R.id.word1);
-        word2 = (EditText) findViewById(R.id.word2);
-        word3 = (EditText) findViewById(R.id.word3);
-        word4 = (EditText) findViewById(R.id.word4);
-        word5 = (EditText) findViewById(R.id.word5);
-        word6 = (EditText) findViewById(R.id.word6);
-        word7 = (EditText) findViewById(R.id.word7);
-        word8 = (EditText) findViewById(R.id.word8);
-        word9 = (EditText) findViewById(R.id.word9);
-        word10 = (EditText) findViewById(R.id.word10);
-        word11 = (EditText) findViewById(R.id.word11);
-        word12 = (EditText) findViewById(R.id.word12);
+        word1 = findViewById(R.id.word1);
+        word2 = findViewById(R.id.word2);
+        word3 = findViewById(R.id.word3);
+        word4 = findViewById(R.id.word4);
+        word5 = findViewById(R.id.word5);
+        word6 = findViewById(R.id.word6);
+        word7 = findViewById(R.id.word7);
+        word8 = findViewById(R.id.word8);
+        word9 = findViewById(R.id.word9);
+        word10 = findViewById(R.id.word10);
+        word11 = findViewById(R.id.word11);
+        word12 = findViewById(R.id.word12);
 
         word1.setOnFocusChangeListener(new FocusListener());
         word2.setOnFocusChangeListener(new FocusListener());

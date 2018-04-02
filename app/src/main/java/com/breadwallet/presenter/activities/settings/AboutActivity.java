@@ -18,7 +18,7 @@ import java.util.Locale;
 
 public class AboutActivity extends BRActivity {
     private static final String TAG = AboutActivity.class.getName();
-//    private TextView termsText;
+    //    private TextView termsText;
     private TextView policyText;
     private TextView infoText;
 
@@ -42,9 +42,9 @@ public class AboutActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_about);
 
-        infoText = (TextView) findViewById(R.id.info_text);
+        infoText = findViewById(R.id.info_text);
 //        termsText = (TextView) findViewById(R.id.terms_text);
-        policyText = (TextView) findViewById(R.id.policy_text);
+        policyText = findViewById(R.id.policy_text);
 
         PackageInfo pInfo = null;
         try {
@@ -56,9 +56,9 @@ public class AboutActivity extends BRActivity {
 
         infoText.setText(String.format(Locale.getDefault(), getString(R.string.About_footer), verCode));
 
-        redditShare = (ImageView) findViewById(R.id.reddit_share_button);
-        twitterShare = (ImageView) findViewById(R.id.twitter_share_button);
-        blogShare = (ImageView) findViewById(R.id.blog_share_button);
+        redditShare = findViewById(R.id.reddit_share_button);
+        twitterShare = findViewById(R.id.twitter_share_button);
+        blogShare = findViewById(R.id.blog_share_button);
 
         redditShare.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -93,14 +93,6 @@ public class AboutActivity extends BRActivity {
                 app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
             }
         });
-//        termsText.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://breadapp.com/privacy-policy"));
-//                startActivity(browserIntent);
-//                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
-//            }
-//        });
 
     }
 

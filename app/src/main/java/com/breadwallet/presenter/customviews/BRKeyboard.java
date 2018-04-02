@@ -100,18 +100,18 @@ public class BRKeyboard extends LinearLayout implements View.OnClickListener {
         a.recycle();
 
         this.setWillNotDraw(false);
-        num0 = (Button) root.findViewById(R.id.num0);
-        num1 = (Button) root.findViewById(R.id.num1);
-        num2 = (Button) root.findViewById(R.id.num2);
-        num3 = (Button) root.findViewById(R.id.num3);
-        num4 = (Button) root.findViewById(R.id.num4);
-        num5 = (Button) root.findViewById(R.id.num5);
-        num6 = (Button) root.findViewById(R.id.num6);
-        num7 = (Button) root.findViewById(R.id.num7);
-        num8 = (Button) root.findViewById(R.id.num8);
-        num9 = (Button) root.findViewById(R.id.num9);
-        numDot = (Button) root.findViewById(R.id.numDot);
-        numDelete = (ImageButton) root.findViewById(R.id.numDelete);
+        num0 = root.findViewById(R.id.num0);
+        num1 = root.findViewById(R.id.num1);
+        num2 = root.findViewById(R.id.num2);
+        num3 = root.findViewById(R.id.num3);
+        num4 = root.findViewById(R.id.num4);
+        num5 = root.findViewById(R.id.num5);
+        num6 = root.findViewById(R.id.num6);
+        num7 = root.findViewById(R.id.num7);
+        num8 = root.findViewById(R.id.num8);
+        num9 = root.findViewById(R.id.num9);
+        numDot = root.findViewById(R.id.numDot);
+        numDelete = root.findViewById(R.id.numDelete);
 
         num0.setOnClickListener(this);
         num1.setOnClickListener(this);

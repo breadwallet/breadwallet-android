@@ -44,8 +44,8 @@
                 android:id="@+id/nav_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:text="Settings"
+                android:layout_marginLeft="@dimen/bread_margin"
+                android:text="@string/Button.settings"
                 android:textSize="16sp"
                 app:customTFont="CircularPro-Bold.otf" />
 
@@ -55,20 +55,13 @@
 
     </android.support.v7.widget.Toolbar>
 
-
     <ListView
         android:id="@+id/settings_list"
         android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/bread_margin"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:footerDividersEnabled="false"
-        android:headerDividersEnabled="false"
+        android:footerDividersEnabled="true"
+        android:headerDividersEnabled="true"
         android:layout_below="@id/title"/>
-
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="2px"
-        android:layout_below="@id/settings_list"
-        android:background="@color/pin_pad_text"/>
 
 </RelativeLayout>
