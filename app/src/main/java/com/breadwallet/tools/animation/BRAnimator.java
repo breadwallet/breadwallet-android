@@ -43,6 +43,7 @@ import com.breadwallet.presenter.fragments.FragmentTxDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Utils;
 
 
 /**
@@ -168,12 +169,12 @@ public class BRAnimator {
         }
         try {
             fragmentSupport = new FragmentSupport();
-            if (articleId != null && !articleId.isEmpty()) {
-                Bundle bundle = new Bundle();
+            Bundle bundle = new Bundle();
+            bundle.putString("walletIso", iso);
+            if (!Utils.isNullOrEmpty(articleId))
                 bundle.putString("articleId", articleId);
-                bundle.putString("walletIso", iso);
-                fragmentSupport.setArguments(bundle);
-            }
+
+            fragmentSupport.setArguments(bundle);
             app.getFragmentManager().beginTransaction()
                     .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                     .add(android.R.id.content, fragmentSupport, FragmentSend.class.getName())
@@ -204,11 +205,11 @@ public class BRAnimator {
     }
 
 
-    public static void showTransactionDetails(Activity app, TxUiHolder item, int position){
+    public static void showTransactionDetails(Activity app, TxUiHolder item, int position) {
 
         FragmentTxDetails txDetails = (FragmentTxDetails) app.getFragmentManager().findFragmentByTag(FragmentTxDetails.class.getName());
 
-        if(txDetails != null && txDetails.isAdded()){
+        if (txDetails != null && txDetails.isAdded()) {
             Log.e(TAG, "showTransactionDetails: Already showing");
 
             return;

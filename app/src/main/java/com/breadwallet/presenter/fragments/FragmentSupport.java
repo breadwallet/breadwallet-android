@@ -121,7 +121,7 @@ public class FragmentSupport extends Fragment {
         webSettings.setDomStorageEnabled(true);
         webSettings.setJavaScriptEnabled(true);
 
-        if (articleId != null && !articleId.isEmpty())
+        if (!Utils.isNullOrEmpty(articleId))
             theUrl = theUrl + "/article?slug=" + articleId + "&currency=" + walletIso.toLowerCase();
 
         Log.d(TAG, "onCreate: theUrl: " + theUrl + ", articleId: " + articleId);
