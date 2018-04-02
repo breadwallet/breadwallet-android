@@ -239,9 +239,6 @@ public class KeyStoreTests {
         BRKeyStore.putSpendLimit(mActivityRule.getActivity(), spendLimitBtc, "BTC");
         BRKeyStore.putSpendLimit(mActivityRule.getActivity(), spendLimitEth, "ETH");
         BRKeyStore.putSpendLimit(mActivityRule.getActivity(), spendLimitBch, "BCH");
-//        assertFilesExist(BRKeyStore.SPEND_LIMIT_ALIAS + "BTC");
-//        assertFilesExist(BRKeyStore.SPEND_LIMIT_ALIAS + "ETH");
-//        assertFilesExist(BRKeyStore.SPEND_LIMIT_ALIAS + "BCH");
         BigDecimal freshLimitBtc = BRKeyStore.getSpendLimit(mActivityRule.getActivity(), "BTC");
         BigDecimal freshLimitEth = BRKeyStore.getSpendLimit(mActivityRule.getActivity(), "ETH");
         BigDecimal freshLimitBch = BRKeyStore.getSpendLimit(mActivityRule.getActivity(), "BCH");
