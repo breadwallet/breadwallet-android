@@ -98,8 +98,8 @@ public class AuthManager {
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                AuthManager.getInstance().setTotalLimit(app, wallet == null ? new BigDecimal(0) : wallet.getTotalSent(app).add(BRKeyStore.getSpendLimit(app)));
+                BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+                BRKeyStore.putTotalLimit(app, wm == null ? new BigDecimal(0) : wm.getTotalSent(app).add(BRKeyStore.getSpendLimit(app, wm.getIso(app))), wm.getIso(app));
             }
         });
 
@@ -136,31 +136,20 @@ public class AuthManager {
         setSpendingLimitIfNotSet(context);
     }
 
-    /**
-     * Returns the total current limit that cannot be surpass without a pin
-     */
-    public BigDecimal getTotalLimit(Context activity) {
-        return BRKeyStore.getTotalLimit(activity);
-    }
 
-    /**
-     * Sets the total current limit that cannot be surpass without a pin
-     */
-    public void setTotalLimit(Context activity, BigDecimal limit) {
-        BRKeyStore.putTotalLimit(limit, activity);
-    }
+    private void setSpendingLimitIfNotSet(final Activity app) {
+        if (app == null) return;
+        final BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
 
-    private void setSpendingLimitIfNotSet(final Activity activity) {
-        if (activity == null) return;
-        BigDecimal limit = AuthManager.getInstance().getTotalLimit(activity);
+        BigDecimal limit = BRKeyStore.getTotalLimit(app, wm.getIso(app));
         if (limit.compareTo(new BigDecimal(0)) == 0) {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    BaseWalletManager wallet = WalletsMaster.getInstance(activity).getCurrentWallet(activity);
-                    BigDecimal totalSpent = wallet == null ? new BigDecimal(0) : wallet.getTotalSent(activity);
-                    BigDecimal totalLimit = totalSpent.add(BRKeyStore.getSpendLimit(activity));
-                    setTotalLimit(activity, totalLimit);
+                    BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
+                    BigDecimal totalSpent = wallet == null ? new BigDecimal(0) : wallet.getTotalSent(app);
+                    BigDecimal totalLimit = totalSpent.add(BRKeyStore.getSpendLimit(app, wm.getIso(app)));
+                    BRKeyStore.putTotalLimit(app, totalLimit, wm.getIso(app));
                 }
             });
 

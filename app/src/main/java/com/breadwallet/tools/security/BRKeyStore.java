@@ -394,7 +394,7 @@ public class BRKeyStore {
 
     private static void validateGet(String alias, String alias_file, String alias_iv) throws IllegalArgumentException {
         AliasObject obj = aliasObjectMap.get(alias);
-        if (!obj.alias.equals(alias) || !obj.datafileName.equals(alias_file) || !obj.ivFileName.equals(alias_iv)) {
+        if (obj != null && (!obj.alias.equals(alias) || !obj.datafileName.equals(alias_file) || !obj.ivFileName.equals(alias_iv))) {
             String err = alias + "|" + alias_file + "|" + alias_iv + ", obj: " + obj.alias + "|" + obj.datafileName + "|" + obj.ivFileName;
             throw new IllegalArgumentException("keystore insert inconsistency in names: " + err);
         }
@@ -404,7 +404,7 @@ public class BRKeyStore {
     private static void validateSet(byte[] data, String alias, String alias_file, String alias_iv, boolean auth_required) throws IllegalArgumentException {
         if (data == null) throw new IllegalArgumentException("keystore insert data is null");
         AliasObject obj = aliasObjectMap.get(alias);
-        if (!obj.alias.equals(alias) || !obj.datafileName.equals(alias_file) || !obj.ivFileName.equals(alias_iv)) {
+        if (obj != null && (!obj.alias.equals(alias) || !obj.datafileName.equals(alias_file) || !obj.ivFileName.equals(alias_iv))) {
             String err = alias + "|" + alias_file + "|" + alias_iv + ", obj: " + obj.alias + "|" + obj.datafileName + "|" + obj.ivFileName;
             throw new IllegalArgumentException("keystore insert inconsistency in names: " + err);
         }
@@ -665,27 +665,49 @@ public class BRKeyStore {
         return result != null && result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
     }
 
-    public synchronized static boolean putSpendLimit(BigDecimal spendLimit, Context context) {
+    public synchronized static boolean putSpendLimit(Context context, BigDecimal spendLimit, String iso) {
         AliasObject obj = aliasObjectMap.get(SPEND_LIMIT_ALIAS);
         byte[] bytesToStore = spendLimit.toPlainString().getBytes();
         try {
-            return bytesToStore.length != 0 && _setData(context, bytesToStore, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
+            return bytesToStore.length != 0 && _setData(context, bytesToStore, obj.alias + iso, obj.datafileName + iso, obj.ivFileName + iso, 0, false);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
         return false;
     }
 
-    public synchronized static BigDecimal getSpendLimit(final Context context) {
+    public synchronized static BigDecimal getSpendLimit(final Context context, String iso) {
         AliasObject obj = aliasObjectMap.get(SPEND_LIMIT_ALIAS);
         byte[] result = null;
         try {
-            result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
+            result = _getData(context, obj.alias + iso, obj.datafileName + iso, obj.ivFileName + iso, 0);
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
 
         return result != null && result.length > 0 ? new BigDecimal(new String(result)) : new BigDecimal(0);
+    }
+
+    public synchronized static boolean putTotalLimit(Context context, BigDecimal totalLimit, String iso) {
+        AliasObject obj = aliasObjectMap.get(TOTAL_LIMIT_ALIAS);
+        byte[] bytesToStore = totalLimit.toPlainString().getBytes();
+        try {
+            return bytesToStore.length != 0 && _setData(context, bytesToStore, obj.alias + iso, obj.datafileName + iso, obj.ivFileName + iso, 0, false);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public synchronized static BigDecimal getTotalLimit(final Context context, String iso) {
+        AliasObject obj = aliasObjectMap.get(TOTAL_LIMIT_ALIAS);
+        byte[] result = new byte[0];
+        try {
+            result = _getData(context, obj.alias + iso, obj.datafileName + iso, obj.ivFileName + iso, 0);
+        } catch (UserNotAuthenticatedException e) {
+            e.printStackTrace();
+        }
+        return (result != null && result.length > 0) ? new BigDecimal(new String(result)) : new BigDecimal(0);
     }
 
     public synchronized static boolean putFailTimeStamp(long spendLimit, Context context) {
@@ -720,30 +742,6 @@ public class BRKeyStore {
             e.printStackTrace();
         }
         return false;
-    }
-
-    // WARNING use AuthManager to get the limit
-    public synchronized static boolean putTotalLimit(BigDecimal totalLimit, Context context) {
-        AliasObject obj = aliasObjectMap.get(TOTAL_LIMIT_ALIAS);
-        byte[] bytesToStore = totalLimit.toPlainString().getBytes();
-        try {
-            return bytesToStore.length != 0 && _setData(context, bytesToStore, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    // WARNING use AuthManager to set the limit
-    public synchronized static BigDecimal getTotalLimit(final Context context) {
-        AliasObject obj = aliasObjectMap.get(TOTAL_LIMIT_ALIAS);
-        byte[] result = new byte[0];
-        try {
-            result = _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
-        } catch (UserNotAuthenticatedException e) {
-            e.printStackTrace();
-        }
-        return (result != null && result.length > 0) ? new BigDecimal(new String(result)) : new BigDecimal(0);
     }
 
     public synchronized static long getLastPinUsedTime(final Context context) {

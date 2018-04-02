@@ -309,20 +309,20 @@ public class SendManager {
 
     }
 
-    private static void confirmPay(final Context ctx, final CryptoRequest request, final BaseWalletManager walletManager) {
+    private static void confirmPay(final Context ctx, final CryptoRequest request, final BaseWalletManager wm) {
         if (ctx == null) {
             Log.e(TAG, "confirmPay: context is null");
             return;
         }
 
-        String message = createConfirmation(ctx, request, walletManager);
+        String message = createConfirmation(ctx, request, wm);
 
-        BigDecimal minOutput = request.isAmountRequested ? walletManager.getMinOutputAmountPossible() : walletManager.getMinOutputAmount();
+        BigDecimal minOutput = request.isAmountRequested ? wm.getMinOutputAmountPossible() : wm.getMinOutputAmount();
 
         //amount can't be less than the min
-        if (minOutput != null && walletManager.getTransactionAmount(request.tx).abs().compareTo(minOutput) <= 0) {
+        if (minOutput != null && wm.getTransactionAmount(request.tx).abs().compareTo(minOutput) <= 0) {
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.PaymentProtocol_Errors_smallTransaction),
-                    CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), minOutput));
+                    CurrencyUtils.getFormattedAmount(ctx, wm.getIso(ctx), minOutput));
 
             ((Activity) ctx).runOnUiThread(new Runnable() {
                 @Override
@@ -340,13 +340,13 @@ public class SendManager {
         boolean forcePin = false;
 
         if (Utils.isEmulatorOrDebug(ctx)) {
-            Log.e(TAG, "confirmPay: totalSent: " + walletManager.getTotalSent(ctx));
-            Log.e(TAG, "confirmPay: request.amount: " + walletManager.getTransactionAmount(request.tx));
-            Log.e(TAG, "confirmPay: total limit: " + AuthManager.getInstance().getTotalLimit(ctx));
-            Log.e(TAG, "confirmPay: limit: " + BRKeyStore.getSpendLimit(ctx));
+            Log.e(TAG, "confirmPay: totalSent: " + wm.getTotalSent(ctx));
+            Log.e(TAG, "confirmPay: request.amount: " + wm.getTransactionAmount(request.tx));
+            Log.e(TAG, "confirmPay: total limit: " + BRKeyStore.getTotalLimit(ctx, wm.getIso(ctx)));
+            Log.e(TAG, "confirmPay: limit: " + BRKeyStore.getSpendLimit(ctx, wm.getIso(ctx)));
         }
 
-        if (walletManager.getTotalSent(ctx).add(walletManager.getTransactionAmount(request.tx)).compareTo(AuthManager.getInstance().getTotalLimit(ctx)) > 0) {
+        if (wm.getTotalSent(ctx).add(wm.getTransactionAmount(request.tx)).compareTo(BRKeyStore.getTotalLimit(ctx, wm.getIso(ctx))) > 0) {
             forcePin = true;
         }
 

@@ -16,7 +16,9 @@ import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.security.AuthManager;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.List;
 
 /**
@@ -46,8 +48,10 @@ import java.util.List;
 public class WalletSettingsConfiguration {
 
     public List<BRSettingsItem> mSettingList;
+    public List<BigDecimal> mFingerprintLimits;
 
-    public WalletSettingsConfiguration(Context context, String iso) {
+    public WalletSettingsConfiguration(Context context, String iso, List<BigDecimal> limits) {
+        mFingerprintLimits = limits;
         mSettingList = new ArrayList<>();
         if (iso.equalsIgnoreCase("BTC") || iso.equalsIgnoreCase("BCH"))
             mSettingList.add(new BRSettingsItem("Redeem Private Key", "", new View.OnClickListener() {

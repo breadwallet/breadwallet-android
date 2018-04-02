@@ -82,7 +82,8 @@ public class FingerprintActivity extends BRActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 Activity app = FingerprintActivity.this;
                 if (isChecked && !Utils.isFingerprintEnrolled(app)) {
-                    BRDialog.showCustomDialog(app, getString(R.string.TouchIdSettings_disabledWarning_title_android), getString(R.string.TouchIdSettings_disabledWarning_body_android), getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                    BRDialog.showCustomDialog(app, getString(R.string.TouchIdSettings_disabledWarning_title_android),
+                            getString(R.string.TouchIdSettings_disabledWarning_body_android), getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();
@@ -138,15 +139,16 @@ public class FingerprintActivity extends BRActivity {
     private String getLimitText() {
         String iso = BRSharedPrefs.getPreferredFiatIso(this);
         //amount in satoshis
-        BigDecimal satoshis = BRKeyStore.getSpendLimit(this);
-        WalletsMaster master = WalletsMaster.getInstance(this);
-        //amount in BTC, mBTC or bits
-        BigDecimal amount = master.getCurrentWallet(this).getFiatForSmallestCrypto(this, satoshis, null);
+
+        BaseWalletManager wm = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        BigDecimal cryptoLimit = BRKeyStore.getSpendLimit(this, wm.getIso(this));
+        //amount in smallest crypto amount (satoshis, wei)
+        BigDecimal amount = wm.getFiatForSmallestCrypto(this, cryptoLimit, null);
         //amount in user preferred ISO (e.g. USD)
-        BigDecimal curAmount = master.getCurrentWallet(this).getFiatForSmallestCrypto(this, satoshis, null);
+        BigDecimal curAmount = wm.getFiatForSmallestCrypto(this, cryptoLimit, null);
         //formatted string for the label
         return String.format(getString(R.string.TouchIdSettings_spendingLimit),
-                CurrencyUtils.getFormattedAmount(this, "BTC", amount), CurrencyUtils.getFormattedAmount(this, iso, curAmount));
+                CurrencyUtils.getFormattedAmount(this, wm.getIso(this), amount), CurrencyUtils.getFormattedAmount(this, iso, curAmount));
     }
 
     @Override

@@ -16,6 +16,8 @@ import org.junit.runner.RunWith;
 
 import java.math.BigDecimal;
 
+import static com.breadwallet.tools.security.BRKeyStore.SPEND_LIMIT_ALIAS;
+import static com.breadwallet.tools.security.BRKeyStore.TOTAL_LIMIT_ALIAS;
 import static com.breadwallet.tools.security.BRKeyStore.aliasObjectMap;
 
 
@@ -160,122 +162,96 @@ public class KeyStoreTests {
     }
 
     @Test
-    public void setGetMasterPubKey() {
+    public void setGetAll() {
         byte[] pubKey = "26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes();
         BRKeyStore.putMasterPublicKey(pubKey, mActivityRule.getActivity());
         assertFilesExist(BRKeyStore.PUB_KEY_ALIAS);
-        byte[] freshGet;
-        freshGet = BRKeyStore.getMasterPublicKey(mActivityRule.getActivity());
-        Assert.assertArrayEquals(freshGet, freshGet);
-    }
+        byte[] freshGet = BRKeyStore.getMasterPublicKey(mActivityRule.getActivity());
+        Assert.assertArrayEquals(pubKey, freshGet);
 
-    @Test
-    public void setGetEthPublickey() {
-        byte[] pubKey = "26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes();
+        pubKey = "26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes();
         BRKeyStore.putEthPublicKey(pubKey, mActivityRule.getActivity());
         assertFilesExist(BRKeyStore.ETH_PUBKEY_ALIAS);
-        byte[] freshGet;
         freshGet = BRKeyStore.getEthPublicKey(mActivityRule.getActivity());
-        Assert.assertArrayEquals(freshGet, freshGet);
-    }
+        Assert.assertArrayEquals(freshGet, pubKey);
 
-
-    @Test
-    public void setGetAuthKey() {
         byte[] authKey = "26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes();
         BRKeyStore.putAuthKey(authKey, mActivityRule.getActivity());
         assertFilesExist(BRKeyStore.AUTH_KEY_ALIAS);
-        byte[] freshGet;
         freshGet = BRKeyStore.getAuthKey(mActivityRule.getActivity());
-        Assert.assertArrayEquals(freshGet, freshGet);
-    }
+        Assert.assertArrayEquals(freshGet, authKey);
 
-    @Test
-    public void setGetToken() {
         byte[] token = "26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes();
         BRKeyStore.putToken(token, mActivityRule.getActivity());
         assertFilesExist(BRKeyStore.TOKEN_ALIAS);
-        byte[] freshGet;
         freshGet = BRKeyStore.getToken(mActivityRule.getActivity());
-        Assert.assertArrayEquals(freshGet, freshGet);
-    }
+        Assert.assertArrayEquals(freshGet, token);
 
-    @Test
-    public void setGetWalletCreationTime() {
         int time = 1479686841;
         BRKeyStore.putWalletCreationTime(time, mActivityRule.getActivity());
         assertFilesExist(BRKeyStore.WALLET_CREATION_TIME_ALIAS);
-        int freshGet;
-        freshGet = BRKeyStore.getWalletCreationTime(mActivityRule.getActivity());
-        Assert.assertEquals(freshGet, freshGet);
-    }
+        int freshTime = BRKeyStore.getWalletCreationTime(mActivityRule.getActivity());
+        Assert.assertEquals(time, freshTime);
 
-    @Test
-    public void setGetPassCode() {
         String passCode = "0124";
         BRKeyStore.putPinCode(passCode, mActivityRule.getActivity());
         assertFilesExist(BRKeyStore.PASS_CODE_ALIAS);
-        String freshGet;
-        freshGet = BRKeyStore.getPinCode(mActivityRule.getActivity());
-        Assert.assertEquals(freshGet, freshGet);
-
+        String freshPass = BRKeyStore.getPinCode(mActivityRule.getActivity());
+        Assert.assertEquals(passCode, freshPass);
         passCode = "0000";
         BRKeyStore.putPinCode(passCode, mActivityRule.getActivity());
         assertFilesExist(BRKeyStore.PASS_CODE_ALIAS);
-        freshGet = BRKeyStore.getPinCode(mActivityRule.getActivity());
-        Assert.assertEquals(freshGet, freshGet);
-
+        freshPass = BRKeyStore.getPinCode(mActivityRule.getActivity());
+        Assert.assertEquals(passCode, freshPass);
         passCode = "9999";
         BRKeyStore.putPinCode(passCode, mActivityRule.getActivity());
         assertFilesExist(BRKeyStore.PASS_CODE_ALIAS);
-        freshGet = BRKeyStore.getPinCode(mActivityRule.getActivity());
-        Assert.assertEquals(freshGet, freshGet);
-
+        freshPass = BRKeyStore.getPinCode(mActivityRule.getActivity());
+        Assert.assertEquals(passCode, freshPass);
         passCode = "9876";
         BRKeyStore.putPinCode(passCode, mActivityRule.getActivity());
         assertFilesExist(BRKeyStore.PASS_CODE_ALIAS);
-        freshGet = BRKeyStore.getPinCode(mActivityRule.getActivity());
-        Assert.assertEquals(freshGet, freshGet);
-    }
+        freshPass = BRKeyStore.getPinCode(mActivityRule.getActivity());
+        Assert.assertEquals(passCode, freshPass);
 
-    @Test
-    public void setGetFailCount() {
         int failCount = 2;
         BRKeyStore.putFailCount(failCount, mActivityRule.getActivity());
         assertFilesExist(BRKeyStore.FAIL_COUNT_ALIAS);
-        int freshGet;
-        freshGet = BRKeyStore.getFailCount(mActivityRule.getActivity());
-        Assert.assertEquals(freshGet, freshGet);
-    }
+        int freshFailCount = BRKeyStore.getFailCount(mActivityRule.getActivity());
+        Assert.assertEquals(failCount, freshFailCount);
 
-    @Test
-    public void setGetSpendLimit() {
-        BigDecimal spendLimit = new BigDecimal(1000);
-        BRKeyStore.putSpendLimit(spendLimit, mActivityRule.getActivity());
-        assertFilesExist(BRKeyStore.SPEND_LIMIT_ALIAS);
-        BigDecimal freshGet = BRKeyStore.getSpendLimit(mActivityRule.getActivity());
-        Assert.assertNotNull(freshGet);
-        Assert.assertTrue(freshGet.compareTo(spendLimit) == 0);
-    }
-
-    @Test
-    public void setGetSFailTimeStamp() {
         long failTime = 1479686841;
         BRKeyStore.putFailTimeStamp(failTime, mActivityRule.getActivity());
         assertFilesExist(BRKeyStore.FAIL_TIMESTAMP_ALIAS);
-        long freshGet;
-        freshGet = BRKeyStore.getFailTimeStamp(mActivityRule.getActivity());
-        Assert.assertEquals(freshGet, freshGet);
-    }
+        long freshFailTime = BRKeyStore.getFailTimeStamp(mActivityRule.getActivity());
+        Assert.assertEquals(failTime, freshFailTime);
 
-    @Test
-    public void setGetLastPasscodeUsedTime() {
-        long time = 1479686841;
+        long passTime = 1479686841;
         BRKeyStore.putLastPinUsedTime(time, mActivityRule.getActivity());
         assertFilesExist(BRKeyStore.PASS_TIME_ALIAS);
-        long freshGet;
-        freshGet = BRKeyStore.getLastPinUsedTime(mActivityRule.getActivity());
-        Assert.assertEquals(freshGet, freshGet);
+        long freshPassTime = BRKeyStore.getLastPinUsedTime(mActivityRule.getActivity());
+        Assert.assertEquals(passTime, freshPassTime);
+
+
+        BigDecimal spendLimitBtc = new BigDecimal(1000);
+        BigDecimal spendLimitEth = new BigDecimal(800);
+        BigDecimal spendLimitBch = new BigDecimal(600);
+        BRKeyStore.putSpendLimit(mActivityRule.getActivity(), spendLimitBtc, "BTC");
+        BRKeyStore.putSpendLimit(mActivityRule.getActivity(), spendLimitEth, "ETH");
+        BRKeyStore.putSpendLimit(mActivityRule.getActivity(), spendLimitBch, "BCH");
+//        assertFilesExist(BRKeyStore.SPEND_LIMIT_ALIAS + "BTC");
+//        assertFilesExist(BRKeyStore.SPEND_LIMIT_ALIAS + "ETH");
+//        assertFilesExist(BRKeyStore.SPEND_LIMIT_ALIAS + "BCH");
+        BigDecimal freshLimitBtc = BRKeyStore.getSpendLimit(mActivityRule.getActivity(), "BTC");
+        BigDecimal freshLimitEth = BRKeyStore.getSpendLimit(mActivityRule.getActivity(), "ETH");
+        BigDecimal freshLimitBch = BRKeyStore.getSpendLimit(mActivityRule.getActivity(), "BCH");
+        Assert.assertNotNull(freshLimitBtc);
+        Assert.assertNotNull(freshLimitEth);
+        Assert.assertNotNull(freshLimitBch);
+        Assert.assertTrue(freshLimitBtc.compareTo(spendLimitBtc) == 0);
+        Assert.assertTrue(freshLimitEth.compareTo(spendLimitEth) == 0);
+        Assert.assertTrue(freshLimitBch.compareTo(spendLimitBch) == 0);
+
     }
 
     @Test
@@ -300,9 +276,9 @@ public class KeyStoreTests {
         BRKeyStore.putPinCode("0123", mActivityRule.getActivity());
         BRKeyStore.putFailCount(3, mActivityRule.getActivity());
         BRKeyStore.putFailTimeStamp(1479686841, mActivityRule.getActivity());
-        BRKeyStore.putSpendLimit(new BigDecimal(10000000), mActivityRule.getActivity());
+        BRKeyStore.putSpendLimit(mActivityRule.getActivity(), new BigDecimal(10000000), "BTC");
         BRKeyStore.putLastPinUsedTime(1479686841, mActivityRule.getActivity());
-        BRKeyStore.putTotalLimit(new BigDecimal(1479686841), mActivityRule.getActivity());
+        BRKeyStore.putTotalLimit(mActivityRule.getActivity(), new BigDecimal(1479686841), "BTC");
         BRKeyStore.putEthPublicKey("26wZYDdvpmCrYZeUcxgqd1KquN4o6wXwLomBW5SjnwUqG".getBytes(), mActivityRule.getActivity());
 
         for (String a : aliasObjectMap.keySet()) {
@@ -341,7 +317,6 @@ public class KeyStoreTests {
         Assert.assertEquals("", BRKeyStore.getPinCode(mActivityRule.getActivity()));
         Assert.assertEquals(0, BRKeyStore.getFailCount(mActivityRule.getActivity()));
         Assert.assertEquals(0, BRKeyStore.getFailTimeStamp(mActivityRule.getActivity()));
-        Assert.assertEquals(new BigDecimal(0), BRKeyStore.getSpendLimit(mActivityRule.getActivity()));
         Assert.assertEquals(0, BRKeyStore.getLastPinUsedTime(mActivityRule.getActivity()));
 
     }
@@ -359,6 +334,8 @@ public class KeyStoreTests {
 
     public void assertFilesExist(String alias) {
         Activity app = mActivityRule.getActivity();
+        if (alias.equalsIgnoreCase(SPEND_LIMIT_ALIAS)) return;
+        if (alias.equalsIgnoreCase(TOTAL_LIMIT_ALIAS)) return;
         byte[] data = BRKeyStore.retrieveEncryptedData(app, alias);
         Assert.assertNotNull(data);
         Assert.assertNotEquals(data.length, 0);
