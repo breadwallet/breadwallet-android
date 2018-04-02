@@ -63,7 +63,7 @@ public class JsonRpcRequest {
         try {
 
             resp = APIClient.getInstance(app).sendRequest(request, true, 0);
-
+            if(resp == null) return null;
             String responseString = resp.body().string();
 
             Log.d(TAG, "RPC response - > " + responseString);

@@ -308,6 +308,8 @@ public class FragmentReceive extends Fragment {
                         mReceiveAddress = BRSharedPrefs.getReceiveAddress(ctx, wallet.getIso(ctx));
                         String decorated = wallet.decorateAddress(ctx, mReceiveAddress);
                         mAddress.setText(decorated);
+                        Log.e(TAG, "run: " + decorated);
+                        Utils.correctTextSizeIfNeeded(mAddress);
                         Uri uri = CryptoUriParser.createCryptoUrl(ctx, wallet, decorated, new BigDecimal(0), null, null, null);
                         boolean generated = QRUtils.generateQR(ctx, uri.toString(), mQrImage);
                         if (!generated)

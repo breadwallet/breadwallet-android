@@ -16,9 +16,11 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.presenter.activities.intro.IntroActivity;
@@ -279,6 +281,22 @@ public class Utils {
         }
 
         return false;
+    }
+
+    public static void correctTextSizeIfNeeded(TextView v) {
+        int limit = 100;
+        int lines = v.getLineCount();
+        float px = v.getTextSize();
+        while (lines > 1 && !v.getText().toString().contains("\n")) {
+            limit--;
+            px -= 1;
+            v.setTextSize(TypedValue.COMPLEX_UNIT_PX, px);
+            lines = v.getLineCount();
+            if (limit <= 0) {
+                Log.e(TAG, "correctTextSizeIfNeeded: Failed to rescale, limit reached, final: " + px);
+                break;
+            }
+        }
     }
 
 }

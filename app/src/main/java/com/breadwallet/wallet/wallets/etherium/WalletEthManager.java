@@ -107,8 +107,12 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         if (Utils.isNullOrEmpty(ethPubKey)) {
             Log.e(TAG, "WalletEthManager: Using the paperKey to create");
             try {
-                String testPaperKey = new String(BRKeyStore.getPhrase(app, 0));
-                new BREthereumLightNode.JSON_RPC(this, network, testPaperKey);
+                String paperKey = new String(BRKeyStore.getPhrase(app, 0));
+                if (Utils.isNullOrEmpty(paperKey)) {
+                    instance = null;
+                    return;
+                }
+                new BREthereumLightNode.JSON_RPC(this, network, paperKey);
                 mWallet = node.getWallet();
                 ethPubKey = mWallet.getAccount().getPrimaryAddressPublicKey();
                 BRKeyStore.putEthPublicKey(ethPubKey, app);
@@ -775,6 +779,11 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public void submitTransaction(int wid, final int tid, final String rawTransaction, final int rid) {
+        Log.e(TAG, "submitTransaction: wid:" + wid);
+        Log.e(TAG, "submitTransaction: tid:" + tid);
+        Log.e(TAG, "submitTransaction: rawTransaction:" + rawTransaction);
+        Log.e(TAG, "submitTransaction: rid:" + rid);
+
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
