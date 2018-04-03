@@ -25,8 +25,8 @@ import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
@@ -261,8 +261,16 @@ public class WalletsMaster {
             mWallets.add(WalletBitcoinManager.getInstance(app));
         if (!mWallets.contains(WalletBchManager.getInstance(app)))
             mWallets.add(WalletBchManager.getInstance(app));
-        if (!mWallets.contains(WalletEthManager.getInstance(app)))
-            mWallets.add(WalletEthManager.getInstance(app));
+        if (!mWallets.contains(WalletEthManager.getInstance(app))) {
+            BaseWalletManager ethWallet = WalletEthManager.getInstance(app);
+            mWallets.add(ethWallet);
+
+            if (ethWallet != null) {
+                BreadApp.generateWalletId();
+            }
+        }
+
+
     }
 
     public void initLastWallet(Context app) {
