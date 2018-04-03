@@ -99,7 +99,8 @@ public class AuthManager {
                     e.printStackTrace();
                 }
                 BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                BRKeyStore.putTotalLimit(app, wm == null ? new BigDecimal(0) : wm.getTotalSent(app).add(BRKeyStore.getSpendLimit(app, wm.getIso(app))), wm.getIso(app));
+                if (wm != null)
+                    BRKeyStore.putTotalLimit(app, wm.getTotalSent(app).add(BRKeyStore.getSpendLimit(app, wm.getIso(app))), wm.getIso(app));
             }
         });
 

@@ -63,8 +63,8 @@ public class BRNotificationBar extends android.support.v7.widget.Toolbar {
     private void init(AttributeSet attrs) {
         inflate(getContext(), R.layout.notification_bar, this);
         activity = (BRActivity) getContext();
-        description = (BRText) findViewById(R.id.description);
-        close = (BRButton) findViewById(R.id.cancel_button);
+        description = findViewById(R.id.description);
+        close = findViewById(R.id.cancel_button);
 
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.BRNotificationBar);
         final int N = a.getIndexCount();

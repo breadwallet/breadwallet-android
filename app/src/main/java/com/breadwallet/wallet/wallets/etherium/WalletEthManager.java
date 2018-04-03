@@ -109,6 +109,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
             try {
                 String paperKey = new String(BRKeyStore.getPhrase(app, 0));
                 if (Utils.isNullOrEmpty(paperKey)) {
+                    Log.e(TAG, "WalletEthManager: paper key is empty too, no wallet!");
                     instance = null;
                     return;
                 }
