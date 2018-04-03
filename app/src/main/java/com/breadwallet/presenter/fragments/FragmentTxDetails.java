@@ -229,7 +229,6 @@ public class FragmentTxDetails extends DialogFragment {
                 mTxStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             }
 
-
             BigDecimal cryptoAmount = mTransaction.getAmount();
 
             BigDecimal fiatAmountNow = walletManager.getFiatForSmallestCrypto(app, cryptoAmount.abs(), null);
