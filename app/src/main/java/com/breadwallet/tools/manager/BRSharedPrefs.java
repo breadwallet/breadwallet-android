@@ -180,7 +180,8 @@ public class BRSharedPrefs {
 
     public static BigDecimal getCachedBalance(Context context, String iso) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return new BigDecimal(prefs.getString("balance" + iso.toUpperCase(), "0"));
+        return new BigDecimal(prefs.getString("balance" + iso.toUpperCase(),
+                String.valueOf(prefs.getLong("balance_" + iso.toUpperCase(), 0))));
     }
 
     public static void putCachedBalance(Context context, String iso, BigDecimal balance) {
