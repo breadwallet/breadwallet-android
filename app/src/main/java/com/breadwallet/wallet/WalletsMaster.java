@@ -256,7 +256,7 @@ public class WalletsMaster {
 
     }
 
-    public void initWallets(Context app) {
+    public void initWallets(final Context app) {
         if (!mWallets.contains(WalletBitcoinManager.getInstance(app)))
             mWallets.add(WalletBitcoinManager.getInstance(app));
         if (!mWallets.contains(WalletBchManager.getInstance(app)))
@@ -267,10 +267,29 @@ public class WalletsMaster {
 
             if (ethWallet != null) {
                 BreadApp.generateWalletId();
+                for (BaseWalletManager wm : mWallets) {
+                    if (wm != null) setSpendingLimitIfNotSet(app, wm);
+                }
             }
         }
+    }
 
+    private void setSpendingLimitIfNotSet(final Context app, final BaseWalletManager wm) {
+        if (app == null) return;
 
+        BigDecimal limit = BRKeyStore.getTotalLimit(app, wm.getIso(app));
+        if (limit.compareTo(new BigDecimal(0)) == 0) {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
+                    BigDecimal totalSpent = wallet == null ? new BigDecimal(0) : wallet.getTotalSent(app);
+                    BigDecimal totalLimit = totalSpent.add(BRKeyStore.getSpendLimit(app, wm.getIso(app)));
+                    BRKeyStore.putTotalLimit(app, totalLimit, wm.getIso(app));
+                }
+            });
+
+        }
     }
 
     public void initLastWallet(Context app) {

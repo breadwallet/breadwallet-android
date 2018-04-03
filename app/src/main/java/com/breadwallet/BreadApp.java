@@ -132,19 +132,14 @@ public class BreadApp extends Application {
         BaseWalletManager ethWallet = WalletsMaster.getInstance(mContext).getWalletByIso(mContext, "ETH");
         String ethAddress = ethWallet.getReceiveAddress(mContext).stringify();
 
-        Log.d(TAG, "ETH Wallet ID START -> " + ethAddress);
-
-
         try {
             byte[] ptext = ethAddress.getBytes(ISO_8859_1);
 
             // Encode the address to UTF-8
             String ethAddressEncoded = URLEncoder.encode(ethAddress, "UTF-8");
-            Log.d(TAG, "Eth Address Encoded -> " + ethAddressEncoded);
 
             // Remove the first 2 characters
             ethAddressEncoded = ethAddressEncoded.substring(2, ethAddressEncoded.length());
-            Log.d(TAG, "Eth Address Encoded Shortened -> " + ethAddressEncoded);
 
             // Get the shortened address bytes
             byte[] addressBytes = ethAddressEncoded.getBytes();
@@ -155,13 +150,10 @@ public class BreadApp extends Application {
 
             // Get the first 10 bytes
             byte[] firstTenBytes = Arrays.copyOfRange(sha256Address, 0, 10);
-            Log.d(TAG, "Eth address first 10 bytes -> " + Arrays.toString(firstTenBytes));
-
 
             Base32 base32 = new Base32();
             String base32String = base32.encodeOriginal(firstTenBytes);
             base32String = base32String.toLowerCase();
-            Log.d(TAG, "Base 32 String -> " + base32String);
 
             StringBuilder builder = new StringBuilder();
 
@@ -171,11 +163,7 @@ public class BreadApp extends Application {
                 String piece = base32String.substring(matcher.start(), matcher.end());
                 result.add(piece);
                 builder.append(piece + " ");
-                Log.d(TAG, "Piece -> " + piece);
             }
-
-            Log.d(TAG, "Final string -> " + builder.toString());
-
 
             // Add the wallet ID to the request headers if it's not null or empty
             if (builder.toString() != null && !builder.toString().isEmpty()) {

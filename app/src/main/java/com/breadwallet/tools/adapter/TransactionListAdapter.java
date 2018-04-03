@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -158,6 +159,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         TxUiHolder item = itemFeed.get(position);
         item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
 
+
         String commentString = "";
         if (item.metaData != null) {
             if (item.metaData.comment != null) {
@@ -165,15 +167,17 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             }
         }
 
-        boolean received = item.getSent() != null ? item.getSent().compareTo(new BigDecimal(0)) == 0 : !Utils.isNullOrEmpty(item.getTo());
+        boolean received = item.isReceived();
+        Log.e(TAG, "setTexts: received: " + received);
 
-        convertView.transactionAmount.setTextColor(mContext.getResources().getColor(received ? R.color.transaction_amount_received_color : R.color.total_assets_usd_color, null));
+        convertView.transactionAmount.setTextColor(mContext.getResources().getColor(received ?
+                R.color.transaction_amount_received_color : R.color.total_assets_usd_color, null));
 
         // If this transaction failed, show the "FAILED" indicator in the cell
         if (!item.isValid())
             showTransactionFailed(convertView, item, received);
 
-        BigDecimal cryptoAmount = item.getAmount();
+        BigDecimal cryptoAmount = item.getAmount().abs();
         Log.e(TAG, "setTexts: crypto:" + cryptoAmount);
         boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
         String preferredIso = isCryptoPreferred ? wallet.getIso(mContext) : BRSharedPrefs.getPreferredFiatIso(mContext);
@@ -181,7 +185,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         BigDecimal amount = isCryptoPreferred ? cryptoAmount : wallet.getFiatForSmallestCrypto(mContext, cryptoAmount, null);
         Log.e(TAG, "setTexts: amount:" + amount);
 
-        convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, preferredIso, amount));
+        convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, preferredIso, received ? amount : amount.negate()));
 
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext, wallet.getIso(mContext)) - blockHeight + 1;
@@ -296,17 +300,16 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 } else {
                     boolean willAdd = true;
                     //filter by sent and this is received
-                    if (switches[0] && (item.getAmount().compareTo(new BigDecimal(0)) <= 0)) {
+                    if (switches[0] && !item.isReceived()) {
                         willAdd = false;
                     }
                     //filter by received and this is sent
-                    if (switches[1] && (item.getAmount().compareTo(new BigDecimal(0)) > 0)) {
+                    if (switches[1] && item.isReceived()) {
                         willAdd = false;
                     }
                     BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
 
-                    int confirms = (int) item.getBlockHeight() ==
-                            Integer.MAX_VALUE ? 0
+                    int confirms = item.getBlockHeight() == Integer.MAX_VALUE ? 0
                             : BRSharedPrefs.getLastBlockHeight(mContext, wallet.getIso(mContext)) - item.getBlockHeight() + 1;
                     //complete
                     if (switches[2] && confirms >= 6) {

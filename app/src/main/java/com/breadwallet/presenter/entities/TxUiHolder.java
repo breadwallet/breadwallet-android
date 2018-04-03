@@ -1,5 +1,7 @@
 package com.breadwallet.presenter.entities;
 
+import android.util.Log;
+
 import com.platform.entities.TxMetaData;
 
 import java.math.BigDecimal;
@@ -34,8 +36,6 @@ public class TxUiHolder {
     private long timeStamp;
     private int blockHeight;
     private byte[] txHash;
-    private BigDecimal sent;
-    private BigDecimal received;
     private BigDecimal fee;//satoshis or gas paid
     private BigDecimal feeRate;//gas price
     private BigDecimal feeLimit;//gas limit
@@ -47,20 +47,19 @@ public class TxUiHolder {
     private boolean isValid;
     private int txSize;
     public TxMetaData metaData;
-    public Object transaction;
-    private TxUiHolder() {
-    }
+    private Object transaction;
+    private boolean isReceived;
 
-    public TxUiHolder(Object transaction, long timeStamp, int blockHeight, byte[] hash, String txReversed, BigDecimal sent,
-                      BigDecimal received, BigDecimal fee, BigDecimal feeRate, BigDecimal feeLimit, String to, String from,
+
+    public TxUiHolder(Object transaction, boolean isReceived, long timeStamp, int blockHeight, byte[] hash, String txReversed,
+                      BigDecimal fee, BigDecimal feeRate, BigDecimal feeLimit, String to, String from,
                       BigDecimal balanceAfterTx, int txSize, BigDecimal amount, boolean isValid) {
         this.transaction = transaction;
         this.timeStamp = timeStamp;
         this.blockHeight = blockHeight;
         this.txReversed = txReversed;
         this.txHash = hash;
-        this.sent = sent;
-        this.received = received;
+        this.isReceived = isReceived;
         this.fee = fee;
         this.feeRate = feeRate;
         this.feeLimit = feeLimit;
@@ -96,14 +95,6 @@ public class TxUiHolder {
         return txReversed;
     }
 
-    public BigDecimal getReceived() {
-        return received;
-    }
-
-    public BigDecimal getSent() {
-        return sent;
-    }
-
     public static String getTAG() {
         return TAG;
     }
@@ -134,5 +125,21 @@ public class TxUiHolder {
 
     public BigDecimal getFeeLimit() {
         return feeLimit;
+    }
+
+    public String getTxReversed() {
+        return txReversed;
+    }
+
+    public TxMetaData getMetaData() {
+        return metaData;
+    }
+
+    public Object getTransaction() {
+        return transaction;
+    }
+
+    public boolean isReceived() {
+        return isReceived;
     }
 }

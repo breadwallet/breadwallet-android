@@ -192,10 +192,7 @@ public class FragmentTxDetails extends DialogFragment {
 
             String iso = isCryptoPreferred ? cryptoIso : fiatIso;
 
-            boolean isEth = false;
-            if (mTransaction.getReceived() == null && mTransaction.getSent() == null) isEth = true;
-
-            boolean received = !isEth ? mTransaction.getSent().compareTo(new BigDecimal(0)) == 0 : !Utils.isNullOrEmpty(mTransaction.getTo());
+            boolean received = mTransaction.isReceived();
 
             String amountWhenSent;
             String amountNow;
@@ -203,8 +200,8 @@ public class FragmentTxDetails extends DialogFragment {
 
             if (received) hideSentViews();
             else {
-                if (isEth) {
-                    mGasPrice.setText(String.format("%s %s", mTransaction.getFeeRate().toPlainString(), "gwei"));
+                if (mTransaction.getFeeRate() != null) {
+                    mGasPrice.setText(String.format("%s %s", mTransaction.getFeeRate().divide(new BigDecimal("1000000000"), 0, 0).toPlainString(), "gwei"));
                     mGasLimit.setText(mTransaction.getFeeLimit().toPlainString());
                 } else {
                     hideEthViews();
@@ -237,7 +234,6 @@ public class FragmentTxDetails extends DialogFragment {
                 fiatAmountWhenSent = new BigDecimal(0);
                 amountWhenSent = CurrencyUtils.getFormattedAmount(app, fiatIso, fiatAmountWhenSent);//always fiat amount
             } else {
-
                 CurrencyEntity ent = new CurrencyEntity(metaData.exchangeCurrency, null, (float) metaData.exchangeRate, walletManager.getIso(app));
                 fiatAmountWhenSent = walletManager.getFiatForSmallestCrypto(app, cryptoAmount.abs(), ent);
                 amountWhenSent = CurrencyUtils.getFormattedAmount(app, ent.code, fiatAmountWhenSent);//always fiat amount
@@ -278,8 +274,7 @@ public class FragmentTxDetails extends DialogFragment {
                 }
             });
 
-            mTxAmount.setText(CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), cryptoAmount));//this is always crypto amount
-
+            mTxAmount.setText(CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), received ? cryptoAmount : cryptoAmount.negate()));//this is always crypto amount
 
             if (received)
                 mTxAmount.setTextColor(getContext().getColor(R.color.transaction_amount_received_color));
@@ -339,7 +334,6 @@ public class FragmentTxDetails extends DialogFragment {
         } else {
             Toast.makeText(getContext(), "Error getting transaction data", Toast.LENGTH_SHORT).show();
         }
-
 
     }
 

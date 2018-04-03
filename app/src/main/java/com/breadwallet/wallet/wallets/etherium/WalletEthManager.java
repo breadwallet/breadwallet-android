@@ -374,22 +374,18 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     @Override
     public void refreshCachedBalance(Context app) {
         BigDecimal balance = new BigDecimal(mWallet.getBalance());
-        Log.e(TAG, "refreshCachedBalance: balance:" + balance);
         BRSharedPrefs.putCachedBalance(app, ISO, balance);
     }
 
     @Override
     public List<TxUiHolder> getTxUiHolders() {
-        Log.e(TAG, "getTxUiHolders: ");
         BREthereumTransaction txs[] = mWallet.getTransactions();
-        Log.e(TAG, "getTxUiHolders: done");
         if (txs == null || txs.length <= 0) return null;
         List<TxUiHolder> uiTxs = new ArrayList<>();
         for (int i = txs.length - 1; i >= 0; i--) { //revere order
             BREthereumTransaction tx = txs[i];
-            uiTxs.add(new TxUiHolder(tx, tx.getBlockTimestamp(), (int) tx.getBlockNumber(), null,
-                    tx.getHash(), null,
-                    null, new BigDecimal(tx.getGasUsed()).multiply(new BigDecimal(tx.getGasPrice(BREthereumAmount.Unit.ETHER_WEI))),
+            uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(mWallet.getAccount().getPrimaryAddress()), tx.getBlockTimestamp(),
+                    (int) tx.getBlockNumber(), null, tx.getHash(), new BigDecimal(tx.getGasUsed()).multiply(new BigDecimal(tx.getGasPrice(BREthereumAmount.Unit.ETHER_WEI))),
                     new BigDecimal(tx.getGasPrice(BREthereumAmount.Unit.ETHER_WEI)), new BigDecimal(tx.getGasLimit()),
                     tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
                     new BigDecimal(tx.getAmount()), true));

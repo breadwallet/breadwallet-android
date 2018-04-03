@@ -133,27 +133,6 @@ public class AuthManager {
         BRKeyStore.putFailCount(0, context);
         BRKeyStore.putPinCode(pass, context);
         BRKeyStore.putLastPinUsedTime(System.currentTimeMillis(), context);
-        setSpendingLimitIfNotSet(context);
-    }
-
-
-    private void setSpendingLimitIfNotSet(final Activity app) {
-        if (app == null) return;
-        final BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-
-        BigDecimal limit = BRKeyStore.getTotalLimit(app, wm.getIso(app));
-        if (limit.compareTo(new BigDecimal(0)) == 0) {
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                    BigDecimal totalSpent = wallet == null ? new BigDecimal(0) : wallet.getTotalSent(app);
-                    BigDecimal totalLimit = totalSpent.add(BRKeyStore.getSpendLimit(app, wm.getIso(app)));
-                    BRKeyStore.putTotalLimit(app, totalLimit, wm.getIso(app));
-                }
-            });
-
-        }
     }
 
     public void updateDots(Context context, int pinLimit, String pin, View dot1, View dot2, View dot3, View dot4, View dot5, View dot6, int emptyPinRes, final OnPinSuccess onPinSuccess) {
