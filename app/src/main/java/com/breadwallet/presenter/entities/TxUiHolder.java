@@ -2,6 +2,7 @@ package com.breadwallet.presenter.entities;
 
 import android.util.Log;
 
+import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.platform.entities.TxMetaData;
 
 import java.math.BigDecimal;
@@ -37,8 +38,7 @@ public class TxUiHolder {
     private int blockHeight;
     private byte[] txHash;
     private BigDecimal fee;//satoshis or gas paid
-    private BigDecimal feeRate;//gas price
-    private BigDecimal feeLimit;//gas limit
+    private BREthereumTransaction ethTxHolder;
     private String to;
     private String from;
     public String txReversed;
@@ -50,9 +50,9 @@ public class TxUiHolder {
     private Object transaction;
     private boolean isReceived;
 
-
+    //todo refactor this useless class
     public TxUiHolder(Object transaction, boolean isReceived, long timeStamp, int blockHeight, byte[] hash, String txReversed,
-                      BigDecimal fee, BigDecimal feeRate, BigDecimal feeLimit, String to, String from,
+                      BigDecimal fee, BREthereumTransaction ethTxHolder, String to, String from,
                       BigDecimal balanceAfterTx, int txSize, BigDecimal amount, boolean isValid) {
         this.transaction = transaction;
         this.timeStamp = timeStamp;
@@ -61,14 +61,13 @@ public class TxUiHolder {
         this.txHash = hash;
         this.isReceived = isReceived;
         this.fee = fee;
-        this.feeRate = feeRate;
-        this.feeLimit = feeLimit;
         this.to = to;
         this.from = from;
         this.balanceAfterTx = balanceAfterTx;
         this.amount = amount;
         this.isValid = isValid;
         this.txSize = txSize;
+        this.ethTxHolder = ethTxHolder;
     }
 
     public int getBlockHeight() {
@@ -119,14 +118,6 @@ public class TxUiHolder {
         return isValid;
     }
 
-    public BigDecimal getFeeRate() {
-        return feeRate;
-    }
-
-    public BigDecimal getFeeLimit() {
-        return feeLimit;
-    }
-
     public String getTxReversed() {
         return txReversed;
     }
@@ -142,4 +133,9 @@ public class TxUiHolder {
     public boolean isReceived() {
         return isReceived;
     }
+
+    public BREthereumTransaction getEthTxHolder() {
+        return ethTxHolder;
+    }
+
 }
