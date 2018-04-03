@@ -154,7 +154,7 @@ public class FragmentTxDetails extends DialogFragment {
                 mTxStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             }
             //user prefers crypto (or fiat)
-            boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(getActivity());
+            boolean isCryptoPreferred = !BRSharedPrefs.isCryptoPreferred(getActivity());
             String cryptoIso = walletManager.getIso(getActivity());
             String fiatIso = BRSharedPrefs.getPreferredFiatIso(getContext());
 
