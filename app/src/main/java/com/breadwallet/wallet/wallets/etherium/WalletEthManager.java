@@ -386,8 +386,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         for (int i = txs.length - 1; i >= 0; i--) { //revere order
             BREthereumTransaction tx = txs[i];
             uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(mWallet.getAccount().getPrimaryAddress()), tx.getBlockTimestamp(),
-                    (int) tx.getBlockNumber(), null, tx.getHash(), new BigDecimal(tx.getGasUsed()).multiply(new BigDecimal(tx.getGasPrice(BREthereumAmount.Unit.ETHER_WEI))),
-                    new BigDecimal(tx.getGasPrice(BREthereumAmount.Unit.ETHER_WEI)), new BigDecimal(tx.getGasLimit()),
+                    (int) tx.getBlockNumber(), null, tx.getHash(), null, tx,
                     tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
                     new BigDecimal(tx.getAmount()), true));
         }

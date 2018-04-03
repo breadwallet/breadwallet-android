@@ -17,11 +17,14 @@ import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.breadwallet.R;
+import com.breadwallet.core.ethereum.BREthereumAmount;
+import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
@@ -200,15 +203,18 @@ public class FragmentTxDetails extends DialogFragment {
 
             if (received) hideSentViews();
             else {
-                if (mTransaction.getFeeRate() != null) {
-                    mGasPrice.setText(String.format("%s %s", mTransaction.getFeeRate().divide(new BigDecimal("1000000000"), 0, 0).toPlainString(), "gwei"));
-                    mGasLimit.setText(mTransaction.getFeeLimit().toPlainString());
+                BREthereumTransaction ethTx = mTransaction.getEthTxHolder();
+                BigDecimal rawFee = mTransaction.getFee();
+                if (ethTx != null) {
+                    mGasPrice.setText(String.format("%s %s", new BigDecimal(ethTx.getGasPrice(BREthereumAmount.Unit.ETHER_GWEI)).setScale(2, BRConstants.ROUNDING_MODE).toPlainString(), "gwei"));
+                    mGasLimit.setText(new BigDecimal(ethTx.getGasLimit()).toPlainString());
+                    rawFee = new BigDecimal(ethTx.isConfirmed() ? ethTx.getGasUsed() : ethTx.getGasLimit()).multiply(new BigDecimal(ethTx.getGasPrice(BREthereumAmount.Unit.ETHER_WEI)));
                 } else {
                     hideEthViews();
                 }
-                BigDecimal rawFee = mTransaction.getFee();
-                BigDecimal fee = isCryptoPreferred ? rawFee : walletManager.getFiatForSmallestCrypto(app, rawFee, null);
-                BigDecimal rawTotalSent = mTransaction.getAmount().abs().add(mTransaction.getFee().abs());
+
+                BigDecimal fee = isCryptoPreferred ? rawFee.abs() : walletManager.getFiatForSmallestCrypto(app, rawFee, null).abs();
+                BigDecimal rawTotalSent = mTransaction.getAmount().abs().add(rawFee.abs());
                 BigDecimal totalSent = isCryptoPreferred ? rawTotalSent : walletManager.getFiatForSmallestCrypto(app, rawTotalSent, null);
                 mFeeSecondary.setText(CurrencyUtils.getFormattedAmount(app, iso, totalSent));
                 mFeePrimary.setText(CurrencyUtils.getFormattedAmount(app, iso, fee));
