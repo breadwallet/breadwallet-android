@@ -257,19 +257,14 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             }
 
             if (tx == null) {
-                fee = getFeeForTxAmount(amount);
+                fee = new BigDecimal(getWallet().getFeeForTransactionAmount(amount.longValue()));
             } else {
                 fee = getTxFee(tx);
                 if (fee == null || fee.compareTo(new BigDecimal(0)) <= 0)
-                    fee = getFeeForTxAmount(amount);
+                    fee = new BigDecimal(getWallet().getFeeForTransactionAmount(amount.longValue()));
             }
         }
         return fee;
-    }
-
-    @Override
-    public BigDecimal getFeeForTxAmount(BigDecimal amount) {
-        return new BigDecimal(getWallet().getFeeForTransactionAmount(amount.longValue()));
     }
 
     @Override
@@ -364,7 +359,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             }
             if (toAddress == null) throw new NullPointerException("Failed to retrieve toAddress");
             uiTxs.add(new TxUiHolder(tx, getWallet().getTransactionAmountSent(tx) > 0, tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
-                    tx.getReverseHash(), new BigDecimal(getWallet().getTransactionFee(tx)),  null,
+                    tx.getReverseHash(), new BigDecimal(getWallet().getTransactionFee(tx)), null,
                     toAddress, tx.getInputAddresses()[0],
                     new BigDecimal(getWallet().getBalanceAfterTransaction(tx)), (int) tx.getSize(),
                     new BigDecimal(getWallet().getTransactionAmount(tx)), getWallet().transactionIsValid(tx)));
