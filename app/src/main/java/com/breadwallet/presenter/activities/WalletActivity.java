@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.ConnectivityManager;
 import android.net.Uri;
@@ -186,21 +187,13 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mBalancePrimary.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                boolean cryptoPreferred = BRSharedPrefs.isCryptoPreferred(WalletActivity.this);
-                swap(cryptoPreferred);
-
-
+                swap();
             }
         });
         mBalanceSecondary.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                boolean cryptoPreferred = BRSharedPrefs.isCryptoPreferred(WalletActivity.this);
-                swap(cryptoPreferred);
-
-
+                swap();
             }
         });
 
@@ -220,7 +213,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         boolean cryptoPreferred = BRSharedPrefs.isCryptoPreferred(this);
 
-        swap(!cryptoPreferred);
+        setPriceTags(cryptoPreferred, false);
 
     }
 
@@ -343,10 +336,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     }
 
-    private void swap(boolean bee) {
+    private void swap() {
         if (!BRAnimator.isClickAllowed()) return;
-        setPriceTags(bee, true);
-
+        BRSharedPrefs.setIsCryptoPreferred(WalletActivity.this, !BRSharedPrefs.isCryptoPreferred(WalletActivity.this));
+        setPriceTags(BRSharedPrefs.isCryptoPreferred(WalletActivity.this), true);
     }
 
 
@@ -359,12 +352,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         // CRYPTO on RIGHT
         if (cryptoPreferred) {
-
             // Align crypto balance to the right parent
             set.connect(R.id.balance_secondary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, px8);
             mBalancePrimary.setPadding(0, Utils.getPixelsFromDps(WalletActivity.this, 22), 0, 0);
             mBalanceSecondary.setPadding(0, Utils.getPixelsFromDps(WalletActivity.this, 12), 0, 0);
-
 
             // Align swap icon to left of crypto balance
             set.connect(R.id.swap, ConstraintSet.END, R.id.balance_secondary, ConstraintSet.START, px8);
@@ -377,14 +368,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             set.applyTo(toolBarConstraintLayout);
 
-            BRSharedPrefs.setIsCryptoPreferred(WalletActivity.this, false);
-
         }
 
         // CRYPTO on LEFT
         else {
-
-
             // Align primary to right of parent
             set.connect(R.id.balance_primary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, px8);
 
@@ -401,12 +388,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             mBalanceSecondary.setTextSize(t2Size);
             mBalancePrimary.setTextSize(t1Size);
 
-
             set.applyTo(toolBarConstraintLayout);
-
-            BRSharedPrefs.setIsCryptoPreferred(WalletActivity.this, true);
-
-
         }
 
 
@@ -428,7 +410,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                     public void run() {
                         updateUi();
                     }
-                }, 150);
+                }, 300);
     }
 
     @Override
