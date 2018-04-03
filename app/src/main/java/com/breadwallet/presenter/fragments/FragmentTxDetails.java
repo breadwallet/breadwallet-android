@@ -206,6 +206,7 @@ public class FragmentTxDetails extends DialogFragment {
                 BREthereumTransaction ethTx = mTransaction.getEthTxHolder();
                 BigDecimal rawFee = mTransaction.getFee();
                 if (ethTx != null) {
+                    Log.e(TAG, "updateUi: gas price: " + ethTx.getGasPrice(BREthereumAmount.Unit.ETHER_GWEI));
                     mGasPrice.setText(String.format("%s %s", new BigDecimal(ethTx.getGasPrice(BREthereumAmount.Unit.ETHER_GWEI)).setScale(2, BRConstants.ROUNDING_MODE).toPlainString(), "gwei"));
                     mGasLimit.setText(new BigDecimal(ethTx.getGasLimit()).toPlainString());
                     rawFee = new BigDecimal(ethTx.isConfirmed() ? ethTx.getGasUsed() : ethTx.getGasLimit()).multiply(new BigDecimal(ethTx.getGasPrice(BREthereumAmount.Unit.ETHER_WEI)));
