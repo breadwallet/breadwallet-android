@@ -181,7 +181,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         BigDecimal cryptoAmount = new BigDecimal(item.getAmount());
         Log.e(TAG, "setTexts: crypto:" + cryptoAmount);
-        boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
+        boolean isCryptoPreferred = !BRSharedPrefs.isCryptoPreferred(mContext);
         String preferredIso = isCryptoPreferred ? wallet.getIso(mContext) : BRSharedPrefs.getPreferredFiatIso(mContext);
 
         BigDecimal amount = isCryptoPreferred ? cryptoAmount : wallet.getFiatForSmallestCrypto(mContext, cryptoAmount, null);
