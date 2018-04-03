@@ -16,8 +16,8 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
-import android.support.transition.TransitionManager;
 import android.support.v7.widget.Toolbar;
+import android.transition.TransitionManager;
 import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -61,6 +61,7 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import static android.animation.LayoutTransition.*;
 import static com.breadwallet.tools.animation.BRAnimator.t1Size;
 import static com.breadwallet.tools.animation.BRAnimator.t2Size;
 
@@ -113,6 +114,14 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private boolean mLayoutSet;
     private boolean mSwapClickedOnce;
     private int mBalanceRight;
+    private int mCryptoStartingX;
+    private int mFiatStartingX;
+    private int mCryptoWidth;
+    private int mFiatWidth;
+    private int mSwapStartingX;
+    private int mSwapGap;
+    private int mCryptoStartingY;
+    private int mFiatStartingY;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -249,6 +258,15 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                     mCryptoXTranslate = mBalanceLabel.getRight() - mBalanceSecondary.getRight() - 90;
                     mFiatXTranslate = mBalancePrimary.getLeft() - mBalanceSecondary.getRight() + mBalancePrimary.getWidth();
                     mBalanceRight = mBalanceLabel.getRight();
+                    mCryptoStartingX = mBalanceSecondary.getLeft();
+                    mFiatStartingX = mBalancePrimary.getLeft();
+                    mCryptoWidth = mBalanceSecondary.getWidth();
+                    mFiatWidth = mBalancePrimary.getWidth();
+                    mSwapStartingX = mSwap.getLeft();
+                    mSwapGap = mBalancePrimary.getLeft() - mSwap.getRight();
+                    mCryptoStartingY = (int) mBalancePrimary.getY();
+                    mFiatStartingY = (int) mBalancePrimary.getY();
+
                     boolean isBCHWallet = mWallet.getIso(app).equalsIgnoreCase("BCH");
 
                     if (!isBCHWallet) {
@@ -259,8 +277,15 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
                     }
 
-                    Log.d(TAG, "mFiatTranslate -> " + mFiatXTranslate);
-                    Log.d(TAG, "mCryptoTranslate -> " + mCryptoXTranslate);
+                    Log.d(TAG, "layout mFiatTranslate -> " + mFiatXTranslate);
+                    Log.d(TAG, "layout mCryptoTranslate -> " + mCryptoXTranslate);
+                    Log.d(TAG, "layout mBalanceRight -> " + mBalanceRight);
+                    Log.d(TAG, "layout mCryptoStartingX -> " + mCryptoStartingX);
+                    Log.d(TAG, "layout mCryptoStartingY -> " + mCryptoStartingY);
+                    Log.d(TAG, "layout mFiatStartingX -> " + mFiatStartingX);
+                    Log.d(TAG, "layout mFiatStartingY -> " + mFiatStartingY);
+                    Log.d(TAG, "layout mSwapStartingX -> " + mSwapStartingX);
+
 
                     mLayoutSet = true;
                 }
@@ -275,7 +300,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         boolean cryptoPreferred = BRSharedPrefs.isCryptoPreferred(this);
 
         if (cryptoPreferred) {
-            swap(true);
+            Log.d(TAG, "onCreate, cryptoPreferred -> " + cryptoPreferred);
+            swap(cryptoPreferred);
         }
 
 
@@ -460,9 +486,26 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private void swap(boolean b) {
         if (!BRAnimator.isClickAllowed()) return;
         boolean isCryptoPreferred;
+        int cryptoXAfter = mBalanceRight - mBalanceSecondary.getWidth() - mGap;
+        int fiatXAfter;
+        int swapXAfter = mBalancePrimary.getLeft() - mSwapGap;
+
+        if (mBalanceSecondary.getText().length() >= 7) {
+            fiatXAfter = mCryptoStartingX - mGap;
+            Log.d(TAG, "Fiat X after, long balance -> " + fiatXAfter);
+
+        } else {
+            fiatXAfter = mCryptoStartingX - mFiatWidth + (mGap + mGap / 2);
+            Log.d(TAG, "Fiat X after, short balance -> " + fiatXAfter);
+
+        }
 
         // Show Crypto on right
         if (!b) {
+
+
+            Log.d(TAG, "Swap ->" + b);
+            Log.d(TAG, "Show Crypto on RIGHT ->" + b);
 
             mBalanceSecondary.setTextSize(t1Size);
             mBalanceSecondary.setTextColor(getResources().getColor(R.color.white, null));
@@ -472,20 +515,29 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             mBalancePrimary.setTextColor(getResources().getColor(R.color.currency_subheading_color, null));
             mBalancePrimary.setTypeface(FontManager.get(this, "CircularPro-Book.otf"));
 
-            if (mBalanceSecondary.getText().toString().length() > 7) {
+            Log.d(TAG, "mBalanceSecondary width test -> " + String.valueOf(mBalancePrimary.getRight() - mBalancePrimary.getLeft()));
+            Log.d(TAG, "mBalanceSecondary width -> " + mBalanceSecondary.getWidth());
+            mBalanceSecondary.animate().x(cryptoXAfter).setDuration(150).start();
+            mBalancePrimary.animate().x(mSwap.getLeft() - mGap).setDuration(150).start();
+            mBalancePrimary.animate().y(mFiatStartingY + 20).setDuration(150).start();
+            mSwap.animate().x(mBalancePrimary.getLeft() - mSwapGap).setDuration(150).start();
+            //mSwap.animate().y(mBalanceSecondary.getY() + 4).setDuration(150).start();
+
+
+
+
+
+            /*if (mBalanceSecondary.getText().toString().length() > 7) {
                 mBalanceSecondary.animate().translationXBy(mCryptoXTranslate - 120).setDuration(150).start();
 
             } else {
                 mBalanceSecondary.animate().translationXBy(mCryptoXTranslate).setDuration(150).start();
 
-            }
+            }*/
 
-            mBalancePrimary.animate().translationXBy(-mFiatXTranslate).setDuration(150).start();
-            mBalancePrimary.animate().translationYBy(-25).setDuration(150).start();
-            mSwap.animate().translationYBy(-4).setDuration(150).start();
-
-
-            mSwap.animate().translationXBy(-mGap).setDuration(150).start();
+            //mBalancePrimary.animate().x(-mFiatXTranslate).setDuration(150).start();
+            //mBalancePrimary.animate().y(-25).setDuration(150).start();
+            mSwap.animate().translationYBy(-6).setDuration(150).start();
 
 
             isCryptoPreferred = true;
@@ -493,7 +545,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             // Show Crypto on left
         } else {
-
+            Log.d(TAG, "Swap ->" + b);
+            Log.d(TAG, "Show Crypto on RIGHT ->" + b);
             mBalanceSecondary.setTextSize(t2Size);
             mBalanceSecondary.setTextColor(getResources().getColor(R.color.currency_subheading_color, null));
             mBalanceSecondary.setTypeface(FontManager.get(this, "CircularPro-Book.otf"));
@@ -502,7 +555,17 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             mBalancePrimary.setTextColor(getResources().getColor(R.color.white, null));
             mBalancePrimary.setTypeface(FontManager.get(this, "CircularPro-Bold.otf"));
 
-            mBalancePrimary.animate().translationXBy(mFiatXTranslate).setDuration(150).start();
+            Log.d(TAG, "crypto starting X");
+            mBalanceSecondary.animate().x(mCryptoStartingX).setDuration(150).start();
+            mBalancePrimary.animate().x(mFiatStartingX).setDuration(150).start();
+            mBalancePrimary.animate().y(mFiatStartingY - 6).setDuration(150).start();
+
+            mSwap.animate().x(mSwapStartingX).setDuration(150).start();
+            mSwap.animate().translationYBy(6).setDuration(150).start();
+
+
+
+            /*mBalancePrimary.animate().translationXBy(mFiatXTranslate).setDuration(150).start();
             if (mBalanceSecondary.getText().toString().length() > 7) {
                 mBalanceSecondary.animate().translationXBy(-(mCryptoXTranslate - 120)).setDuration(150).start();
 
@@ -514,7 +577,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 mBalancePrimary.animate().translationYBy(25).setDuration(150).start();
             }
             mSwap.animate().translationXBy(mGap).setDuration(150).start();
-            mSwap.animate().translationYBy(4).setDuration(150).start();
+            mSwap.animate().translationYBy(4).setDuration(150).start();*/
 
 
             isCryptoPreferred = false;
@@ -528,7 +591,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
 
-    /*private void setPriceTags(final boolean cryptoPreferred, boolean animate) {
+    private void setPriceTags(final boolean cryptoPreferred, boolean animate) {
         //mBalanceSecondary.setTextSize(!cryptoPreferred ? t1Size : t2Size);
         //mBalancePrimary.setTextSize(!cryptoPreferred ? t2Size : t1Size);
         ConstraintSet set = new ConstraintSet();
@@ -615,8 +678,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                     public void run() {
                         updateUi();
                     }
-                }, toolBarConstraintLayout.getLayoutTransition().getDuration(LayoutTransition.CHANGE_APPEARING));
-    }*/
+                }, toolBarConstraintLayout.getLayoutTransition().getDuration(CHANGE_APPEARING));
+    }
 
     @Override
     protected void onResume() {
