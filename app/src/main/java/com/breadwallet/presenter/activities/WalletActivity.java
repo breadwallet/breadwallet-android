@@ -170,8 +170,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             }
         });
 
-//        BaseWalletManager wm = WalletsMaster.getInstance(this).getCurrentWallet(this);
-//        Log.d(TAG, "Current wallet ISO -> " + wm.getIso(this));
 
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
