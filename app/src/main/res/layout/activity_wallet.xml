@@ -23,7 +23,6 @@
         android:elevation="8dp"
         android:orientation="vertical">
 
-
         <ViewFlipper
             android:id="@+id/tool_bar_flipper"
             android:layout_width="fill_parent"

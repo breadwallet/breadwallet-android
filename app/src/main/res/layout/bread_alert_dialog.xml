@@ -30,7 +30,7 @@
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="16dp"
             android:layout_marginTop="12dp"
-            android:background="@drawable/ic_help_circle"
+            android:background="@drawable/faq_question_white"
             android:visibility="visible"
             app:layout_constraintRight_toRightOf="parent"
             />

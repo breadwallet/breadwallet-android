@@ -527,10 +527,7 @@ public class WebViewActivity extends BRActivity {
             super.onActivityResult(requestCode, resultCode, data);
             return;
         } else if (requestCode == REQUEST_CHOOSE_IMAGE) {
-
-
         }
-
 
         Uri[] results = null;
 
