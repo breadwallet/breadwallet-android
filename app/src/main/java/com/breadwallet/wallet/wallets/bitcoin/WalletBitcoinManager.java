@@ -120,6 +120,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     private int mSyncRetryCount = 0;
     private static final int SYNC_MAX_RETRY = 3;
+    protected int createWalletAllowedRetries = 3;
 
     private boolean isInitiatingWallet;
 
@@ -196,6 +197,26 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         result.add(new BigDecimal(ONE_BITCOIN));
         result.add(new BigDecimal(ONE_BITCOIN).multiply(new BigDecimal(10)));
         return result;
+    }
+
+    protected BRCoreWallet createWalletRetry () {
+        Context app = BreadApp.getBreadContext();
+        if (0 == createWalletAllowedRetries) {
+            // The app is dead - tell the user...
+            BRDialog.showSimpleDialog(app, "Wallet error!", "please contact support@breadwallet.com");
+            // ... for now just this.  App crashes after this
+            return null;
+        }
+
+        createWalletAllowedRetries--;
+
+        // clear out the SQL data - ensure that loadTransaction returns an empty array
+        // mark this Manager a needing a sync.
+
+        BtcBchTransactionDataStore.getInstance(app).deleteAllTransactions(app, ISO);
+        BRReportsManager.reportBug(new RuntimeException("Wallet creation failed, after clearing tx size: " + loadTransactions().length));
+        // Try again
+        return createWallet();
     }
 
     @Override
@@ -341,9 +362,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                 }
             }
             if (toAddress == null) throw new NullPointerException("Failed to retrieve toAddress");
-            uiTxs.add(new TxUiHolder(tx, tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
-                    tx.getReverseHash(), new BigDecimal(getWallet().getTransactionAmountSent(tx)),
-                    new BigDecimal(getWallet().getTransactionAmountReceived(tx)), new BigDecimal(getWallet().getTransactionFee(tx)), null, null,
+            uiTxs.add(new TxUiHolder(tx, getWallet().getTransactionAmountSent(tx) > 0, tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
+                    tx.getReverseHash(), new BigDecimal(getWallet().getTransactionFee(tx)), null, null,
                     toAddress, tx.getInputAddresses()[0],
                     new BigDecimal(getWallet().getBalanceAfterTransaction(tx)), (int) tx.getSize(),
                     new BigDecimal(getWallet().getTransactionAmount(tx)), getWallet().transactionIsValid(tx)));
