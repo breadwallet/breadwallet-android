@@ -266,20 +266,16 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             }
 
             if (tx == null) {
-                fee = getFeeForTxAmount(amount);
+                fee = new BigDecimal(getWallet().getFeeForTransactionAmount(amount.longValue()));
             } else {
                 fee = getTxFee(tx);
                 if (fee == null || fee.compareTo(new BigDecimal(0)) <= 0)
-                    fee = getFeeForTxAmount(amount);
+                    fee = new BigDecimal(getWallet().getFeeForTransactionAmount(amount.longValue()));
             }
         }
         return fee;
     }
 
-    @Override
-    public BigDecimal getFeeForTxAmount(BigDecimal amount) {
-        return new BigDecimal(getWallet().getFeeForTransactionAmount(amount.longValue()));
-    }
 
     @Override
     public BigDecimal getFeeForTransactionSize(BigDecimal size) {
