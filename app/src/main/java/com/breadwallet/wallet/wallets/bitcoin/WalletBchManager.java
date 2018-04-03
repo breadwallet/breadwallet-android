@@ -208,6 +208,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         return result;
     }
 
+    @Override
     protected BRCoreWallet createWalletRetry() {
         Context app = BreadApp.getBreadContext();
         if (0 == createWalletAllowedRetries) {
