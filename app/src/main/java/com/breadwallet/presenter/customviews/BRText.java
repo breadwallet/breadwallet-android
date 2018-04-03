@@ -64,6 +64,8 @@ public class BRText extends TextView {
         FontManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Book.otf" : customFont);
         a.recycle();
         setLineSpacing(0, 1.3f);
+
+        //setTextDirection(TEXT_DIRECTION_LTR);
     }
 
 }
