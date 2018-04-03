@@ -283,7 +283,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         }
 
-
         String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatExchangeRate(this));
         String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatBalance(this));
         String cryptoBalance = CurrencyUtils.getFormattedAmount(this, wallet.getIso(this), wallet.getCachedBalance(this));
@@ -307,32 +306,31 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         if (!BRSharedPrefs.wasBchDialogShown(this)) {
             BRDialog.showHelpDialog(this, getString(R.string.Android_BCH_welcome_title), getString(R.string.Android_BCH_welcome_message),
                     getString(R.string.Button_Home), getString(R.string.Button_dismiss), new BRDialogView.BROnClickListener() {
-                @Override
-                public void onClick(BRDialogView brDialogView) {
-                    brDialogView.dismiss();
-                    onBackPressed();
-                }
-            }, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismiss();
+                            onBackPressed();
+                        }
+                    }, new BRDialogView.BROnClickListener() {
 
-                @Override
-                public void onClick(BRDialogView brDialogView) {
-                    brDialogView.dismiss();
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismiss();
 
-                }
-            }, new BRDialogView.BROnClickListener() {
-                @Override
-                public void onClick(BRDialogView brDialogView) {
-                    Log.d(TAG, "help clicked!");
+                        }
+                    }, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            Log.d(TAG, "help clicked!");
 
-                    brDialogView.dismiss();
-                    BRAnimator.showSupportFragment(WalletActivity.this, BRConstants.bchFaq, mWallet.getIso(WalletActivity.this));
+                            brDialogView.dismiss();
+                            BRAnimator.showSupportFragment(WalletActivity.this, BRConstants.bchFaq, mWallet.getIso(WalletActivity.this));
 
-                }
-            });
+                        }
+                    });
 
             BRSharedPrefs.putBchDialogShown(WalletActivity.this, true);
         }
-
 
     }
 
@@ -390,19 +388,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             set.applyTo(toolBarConstraintLayout);
         }
-
-
-        if (!cryptoPreferred) {
-            mBalanceSecondary.setTextColor(getResources().getColor(R.color.currency_subheading_color, null));
-            mBalancePrimary.setTextColor(getResources().getColor(R.color.white, null));
-            mBalanceSecondary.setTypeface(FontManager.get(this, "CircularPro-Book.otf"));
-
-        } else {
-            mBalanceSecondary.setTextColor(getResources().getColor(R.color.white, null));
-            mBalancePrimary.setTextColor(getResources().getColor(R.color.currency_subheading_color, null));
-            mBalanceSecondary.setTypeface(FontManager.get(this, "CircularPro-Bold.otf"));
-
-        }
+        mBalanceSecondary.setTextColor(getResources().getColor(cryptoPreferred ? R.color.white : R.color.currency_subheading_color, null));
+        mBalancePrimary.setTextColor(getResources().getColor(cryptoPreferred ? R.color.currency_subheading_color : R.color.white, null));
+        mBalanceSecondary.setTypeface(FontManager.get(this, cryptoPreferred ? "CircularPro-Bold.otf" : "CircularPro-Book.otf"));
+        mBalancePrimary.setTypeface(FontManager.get(this, !cryptoPreferred ? "CircularPro-Bold.otf" : "CircularPro-Book.otf"));
 
         new Handler().postDelayed(
                 new Runnable() {
