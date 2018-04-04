@@ -468,7 +468,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BaseAddress getReceiveAddress(Context app) {
-        return (BaseAddress) getWallet().getReceiveAddress();
+        return createAddress(getWallet().getReceiveAddress().stringify());
     }
 
     @Override
