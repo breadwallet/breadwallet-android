@@ -190,7 +190,7 @@
                 android:textColor="@color/settings_chevron_right"
                 app:customTFont="CircularPro-Book.otf"/>
 
-            <com.breadwallet.presenter.customviews.BRText
+            <com.breadwallet.presenter.customviews.BREdit
                 android:id="@+id/memo"
                 android:layout_width="130dp"
                 android:layout_height="wrap_content"
@@ -201,6 +201,10 @@
                 android:gravity="end"
                 android:paddingEnd="16dp"
                 android:paddingStart="16dp"
+                android:background="@android:color/transparent"
+                android:hint="@string/Transaction.AddMemo"
+                android:inputType="text"
+                android:imeOptions="actionDone"
                 android:text="Sample transaction memo would go here. Some things are truly better left unsaid"
                 android:textSize="12sp"
                 app:customTFont="CircularPro-Book.otf"/>
