@@ -152,29 +152,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
 
         if (!BRSharedPrefs.wasBchDialogShown(this)) {
-            BRDialog.showHelpDialog(this, getString(R.string.Android_BCH_welcome_title), getString(R.string.Android_BCH_welcome_message),
-                    getString(R.string.Button_Home), getString(R.string.Button_dismiss), new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            brDialogView.dismissWithAnimation();
-                        }
-                    }, new BRDialogView.BROnClickListener() {
-
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            getFragmentManager().popBackStack();
-                        }
-                    }, new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            Log.d(TAG, "help clicked!");
-                            brDialogView.dismissWithAnimation();
-                            BaseWalletManager wm = WalletsMaster.getInstance(HomeActivity.this).getCurrentWallet(HomeActivity.this);
-                            BRAnimator.showSupportFragment(HomeActivity.this, BRConstants.bchFaq, wm.getIso(HomeActivity.this));
-
-                        }
-                    });
-
             BRSharedPrefs.putBchDialogShown(HomeActivity.this, true);
         }
 

@@ -105,19 +105,6 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static boolean getGreetingsShown(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getBoolean("greetingsShown", false);
-
-    }
-
-    public static void putGreetingsShown(Context context, boolean shown) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("greetingsShown", shown);
-        editor.apply();
-    }
-
     public static boolean getFavorStandardFee(Context context, String iso) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean("favorStandardFee" + iso.toUpperCase(), true);

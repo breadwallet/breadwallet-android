@@ -72,7 +72,6 @@ public class SetPinActivity extends BRActivity {
             }
         });
         keyboard.setShowDot(false);
-        BRSharedPrefs.putGreetingsShown(this, true);
 
     }
 
