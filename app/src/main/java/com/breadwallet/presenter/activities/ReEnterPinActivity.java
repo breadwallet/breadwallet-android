@@ -50,21 +50,21 @@ public class ReEnterPinActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pin_template);
 
-        keyboard = (BRKeyboard) findViewById(R.id.brkeyboard);
-        pinLayout = (LinearLayout) findViewById(R.id.pinLayout);
+        keyboard = findViewById(R.id.brkeyboard);
+        pinLayout = findViewById(R.id.pinLayout);
 
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        ImageButton faq = findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(ReEnterPinActivity.this).getCurrentWallet(ReEnterPinActivity.this);
-                BRAnimator.showSupportFragment(ReEnterPinActivity.this, BRConstants.setPin, wm.getIso(ReEnterPinActivity.this));
+                BRAnimator.showSupportFragment(ReEnterPinActivity.this, BRConstants.setPin, wm);
             }
         });
 
-        title = (TextView) findViewById(R.id.title);
+        title = findViewById(R.id.title);
         title.setText(getString(R.string.UpdatePin_createTitleConfirm));
         firstPIN = getIntent().getExtras().getString("pin");
         if (Utils.isNullOrEmpty(firstPIN)) {
@@ -188,6 +188,13 @@ public class ReEnterPinActivity extends BRActivity {
             AuthManager.getInstance().authFail(this);
             Log.e(TAG, "verifyPin: FAIL: firs: " + firstPIN + ", reEnter: " + pin.toString());
             SpringAnimator.failShakeAnimation(this, pinLayout);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    pin = new StringBuilder("");
+                    updateDots();
+                }
+            }, 500);
             pin = new StringBuilder();
         }
 

@@ -325,7 +325,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                             Log.d(TAG, "help clicked!");
 
                             brDialogView.dismiss();
-                            BRAnimator.showSupportFragment(WalletActivity.this, BRConstants.bchFaq, mWallet.getIso(WalletActivity.this));
+                            BRAnimator.showSupportFragment(WalletActivity.this, BRConstants.bchFaq, mWallet);
 
                         }
                     });

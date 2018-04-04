@@ -138,7 +138,7 @@ public class FragmentReceive extends Fragment {
                 }
 
                 BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                BRAnimator.showSupportFragment(app, BRConstants.receive, wm.getIso(app));
+                BRAnimator.showSupportFragment(app, BRConstants.receive, wm);
             }
         });
 

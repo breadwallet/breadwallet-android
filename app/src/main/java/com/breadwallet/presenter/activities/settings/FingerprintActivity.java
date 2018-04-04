@@ -69,7 +69,7 @@ public class FingerprintActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(FingerprintActivity.this).getCurrentWallet(FingerprintActivity.this);
-                BRAnimator.showSupportFragment(FingerprintActivity.this, BRConstants.enableFingerprint, wm.getIso(FingerprintActivity.this));
+                BRAnimator.showSupportFragment(FingerprintActivity.this, BRConstants.enableFingerprint, wm);
             }
         });
 

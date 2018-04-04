@@ -45,6 +45,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 
 /**
@@ -156,7 +157,8 @@ public class BRAnimator {
 
     }
 
-    public static void showSupportFragment(Activity app, String articleId, String iso) {
+    public static void showSupportFragment(Activity app, String articleId, BaseWalletManager wm) {
+
         if (supportIsShowing) return;
         supportIsShowing = true;
         if (app == null) {
@@ -169,6 +171,8 @@ public class BRAnimator {
             return;
         }
         try {
+            String iso = "BTC";
+            if (wm != null) wm.getIso(app);
             fragmentSupport = new FragmentSupport();
             Bundle bundle = new Bundle();
             bundle.putString("walletIso", iso);

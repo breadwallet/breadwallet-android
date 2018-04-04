@@ -1054,7 +1054,7 @@ public class BRKeyStore {
                     public void run() {
                         BRDialog.hideDialog();
                         BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                        BRAnimator.showSupportFragment((Activity) app, BRConstants.loopBug, wm.getIso(app));
+                        BRAnimator.showSupportFragment((Activity) app, BRConstants.loopBug, wm);
                     }
                 });
 

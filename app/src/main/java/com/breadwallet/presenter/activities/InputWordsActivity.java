@@ -101,7 +101,7 @@ public class InputWordsActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(InputWordsActivity.this).getCurrentWallet(InputWordsActivity.this);
-                BRAnimator.showSupportFragment(InputWordsActivity.this, BRConstants.paperKey, wm.getIso(InputWordsActivity.this));
+                BRAnimator.showSupportFragment(InputWordsActivity.this, BRConstants.paperKey, wm);
             }
         });
 
