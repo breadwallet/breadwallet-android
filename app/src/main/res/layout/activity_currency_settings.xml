@@ -11,6 +11,7 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal">
@@ -19,17 +20,8 @@
                 android:id="@+id/back_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="-13dp"
                 android:background="@drawable/ic_chevron_left" />
-
-
-            <com.breadwallet.presenter.customviews.BRText
-                android:id="@+id/nav_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="@string/Button.settings"
-                android:textSize="16sp"
-                app:customTFont="CircularPro-Bold.otf" />
 
 
         </LinearLayout>
