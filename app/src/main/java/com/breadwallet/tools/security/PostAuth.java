@@ -15,6 +15,7 @@ import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRReportsManager;
@@ -212,23 +213,35 @@ public class PostAuth {
                 if (rawPhrase.length < 10) return;
                 try {
                     if (rawPhrase.length != 0) {
-                        if (mCryptoRequest != null && mCryptoRequest.tx != null) {
+                        if (mCryptoRequest != null && mCryptoRequest.amount != null && mCryptoRequest.address != null) {
 
-                            byte[] txHash = walletManager.signAndPublishTransaction(mCryptoRequest.tx, rawPhrase);
+                            BaseTransaction tx = walletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address);
+                            if (tx == null) {
+                                BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_insufficientFunds),
+                                        app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                                    @Override
+                                    public void onClick(BRDialogView brDialogView) {
+                                        brDialogView.dismiss();
+                                    }
+                                }, null, null, 0);
+                                return;
+                            }
+                            byte[] txHash = walletManager.signAndPublishTransaction(tx, rawPhrase);
                             if (Utils.isNullOrEmpty(txHash)) {
                                 Log.e(TAG, "onPublishTxAuth: signAndPublishTransaction returned an empty txHash");
-                                BRDialog.showSimpleDialog(app, "Send failed", "signAndPublishTransaction failed");
+                                BRDialog.showSimpleDialog(app, app.getString(R.string.Alerts_sendFailure), "Failed to create transaction");
                                 //todo fix this
 //                              WalletsMaster.getInstance(app).offerToChangeTheAmount(app, new PaymentItem(paymentRequest.addresses, paymentItem.serializedTx, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
                             } else {
-                                if(txHash.length == 1) return; //return a random 1 byte hash for eth and tokens
+                                if (txHash.length == 1)
+                                    return; //return a random 1 byte hash for eth and tokens
                                 TxMetaData txMetaData = new TxMetaData();
                                 txMetaData.comment = mCryptoRequest.message;
                                 txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
                                 BigDecimal fiatExchangeRate = walletManager.getFiatExchangeRate(app);
                                 txMetaData.exchangeRate = fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue();
-                                txMetaData.fee = walletManager.getTxFee(mCryptoRequest.tx).toPlainString();
-                                txMetaData.txSize = mCryptoRequest.tx.getTxSize().intValue();
+                                txMetaData.fee = walletManager.getTxFee(tx).toPlainString();
+                                txMetaData.txSize = tx.getTxSize().intValue();
                                 txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, walletManager.getIso(app));
                                 txMetaData.creationTime = (int) (System.currentTimeMillis() / 1000);//seconds
                                 txMetaData.deviceId = BRSharedPrefs.getDeviceId(app);

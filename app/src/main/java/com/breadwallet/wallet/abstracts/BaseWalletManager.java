@@ -109,10 +109,10 @@ public interface BaseWalletManager {
     BaseAddress getTxAddress(BaseTransaction tx);
 
     //get the maximum output amount possible for this wallet
-    BigDecimal getMaxOutputAmount();
+    BigDecimal getMaxOutputAmount(Context app);
 
     //get the reasonable minimum output amount
-    BigDecimal getMinOutputAmount();
+    BigDecimal getMinOutputAmount(Context app);
 
     //get the transaction amount (negative if sent)
     BigDecimal getTransactionAmount(BaseTransaction tx);

@@ -47,13 +47,11 @@ public class CryptoRequest {
     public String message;
     public String req;
 
-    public BaseTransaction tx;
     public String cn;
     public boolean isAmountRequested;
 
-    public CryptoRequest(BaseTransaction tx, String certificationName, boolean isAmountRequested, String message, String address, BigDecimal amount) {
+    public CryptoRequest(String certificationName, boolean isAmountRequested, String message, String address, BigDecimal amount) {
         this.isAmountRequested = isAmountRequested;
-        this.tx = tx;
         this.cn = certificationName;
         this.address = address;
         this.amount = amount;
@@ -74,22 +72,23 @@ public class CryptoRequest {
 
 
     public boolean isSmallerThanMin(Context app, BaseWalletManager walletManager) {
-        BigDecimal minAmount = walletManager.getMinOutputAmount();
-        BigDecimal amount = walletManager.getTransactionAmount(tx).abs();
-        Log.e(TAG, "isSmallerThanMin: " + amount);
-        return minAmount != null && amount.compareTo(minAmount) < 0;
+        BigDecimal minAmount = walletManager.getMinOutputAmount(app);
+        BigDecimal absAmt = this.amount.abs();
+        Log.e(TAG, "isSmallerThanMin: " + absAmt);
+        return minAmount != null && absAmt.compareTo(minAmount) < 0;
     }
 
     public boolean isLargerThanBalance(Context app, BaseWalletManager walletManager) {
-        return walletManager.getTransactionAmount(tx).abs().compareTo(walletManager.getCachedBalance(app)) > 0
-                && walletManager.getTransactionAmount(tx).abs().compareTo(new BigDecimal(0)) > 0;
+        return amount.abs().compareTo(walletManager.getCachedBalance(app)) > 0
+                && amount.abs().compareTo(new BigDecimal(0)) > 0;
     }
 
     public boolean notEnoughForFee(Context app, BaseWalletManager walletManager) {
-        BigDecimal maxOutput = walletManager.getMaxOutputAmount();
-        if (maxOutput.compareTo(new BigDecimal(0)) <= 0) return false;
+        BigDecimal maxOutput = walletManager.getMaxOutputAmount(app);
+        BigDecimal balance = walletManager.getCachedBalance(app);
+
         BigDecimal feeForTx = walletManager.getEstimatedFee(maxOutput, null);
-        return feeForTx.compareTo(new BigDecimal(0)) > 0;
+        return (maxOutput.add(feeForTx)).compareTo(balance) > 0;
     }
 
     public String getReceiver(BaseWalletManager walletManager) {
@@ -98,7 +97,7 @@ public class CryptoRequest {
         if (cn != null && cn.length() != 0) {
             certified = true;
         }
-        receiver = walletManager.getTxAddress(tx).stringify();
+        receiver = address;
         if (certified) {
             receiver = "certified: " + cn + "\n";
         }

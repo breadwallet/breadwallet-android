@@ -451,11 +451,9 @@ public class FragmentSend extends Fragment {
                     SpringAnimator.failShakeAnimation(getActivity(), balanceText);
                     SpringAnimator.failShakeAnimation(getActivity(), feeText);
                 }
-//                Log.e(TAG, "before createTransaction: smallestCryptoAmount.longValue: " + cryptoAmount.longValue() + ", addrs: " + address.stringify());
-                BaseTransaction tx = wallet.createTransaction(cryptoAmount, req.address);
 
                 if (allFilled) {
-                    CryptoRequest item = new CryptoRequest(tx, null, false, comment, req.address, cryptoAmount);
+                    CryptoRequest item = new CryptoRequest(null, false, comment, req.address, cryptoAmount);
                     SendManager.sendTransaction(getActivity(), item, wallet);
                 }
             }
