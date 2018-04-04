@@ -509,8 +509,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/details_container"
                 android:layout_centerHorizontal="true"
-                android:layout_marginBottom="16dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="26dp"
+                android:layout_marginBottom="20dp"
                 android:text="Show Details"
                 android:textColor="@color/blue"/>
 
