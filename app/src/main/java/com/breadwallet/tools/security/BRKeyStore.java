@@ -277,8 +277,13 @@ public class BRKeyStore {
             if (encryptedData != null) {
                 //new format data is present, good
                 byte[] iv = retrieveEncryptedData(context, alias_iv);
-                if (iv == null)
-                    throw new NullPointerException("iv is missing when data isn't: " + alias);
+                if (iv == null) {
+                    if (alias.equalsIgnoreCase(PHRASE_ALIAS))
+                        throw new RuntimeException("iv is missing when data isn't: " + alias + " (Can't proceed, risking user's phrase! )"); //crash here!
+                    else
+                        BRReportsManager.reportBug(new NullPointerException("iv is missing when data isn't: " + alias));
+                    return null;
+                }
                 Cipher outCipher;
 
                 outCipher = Cipher.getInstance(NEW_CIPHER_ALGORITHM);
