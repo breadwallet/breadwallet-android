@@ -86,9 +86,11 @@ public class CryptoRequest {
     public boolean notEnoughForFee(Context app, BaseWalletManager walletManager) {
         BigDecimal maxOutput = walletManager.getMaxOutputAmount(app);
         BigDecimal balance = walletManager.getCachedBalance(app);
-
         BigDecimal feeForTx = walletManager.getEstimatedFee(maxOutput, null);
-        return (maxOutput.add(feeForTx)).compareTo(balance) > 0;
+        Log.e(TAG, "maxOutput: " + maxOutput);
+        Log.e(TAG, "balance: " + balance);
+        Log.e(TAG, "notEnoughForFee: " + feeForTx);
+        return (amount.add(feeForTx)).compareTo(balance) > 0;
     }
 
     public String getReceiver(BaseWalletManager walletManager) {

@@ -541,7 +541,6 @@ public class FragmentSend extends Fragment {
                 brDialogView.dismiss();
             }
         }, null, null, 0);
-        BRClipboardManager.putClipboard(getActivity(), "");
     }
 
     private void sayInvalidClipboardData() {
@@ -552,7 +551,6 @@ public class FragmentSend extends Fragment {
                 brDialogView.dismiss();
             }
         }, null, null, 0);
-        BRClipboardManager.putClipboard(getActivity(), "");
     }
 
     private void saySomethingWentWrong() {
@@ -564,7 +562,6 @@ public class FragmentSend extends Fragment {
                 brDialogView.dismiss();
             }
         }, null, null, 0);
-        BRClipboardManager.putClipboard(getActivity(), "");
     }
 
     private void sayInvalidAddress() {
@@ -575,7 +572,6 @@ public class FragmentSend extends Fragment {
                 brDialogView.dismiss();
             }
         }, null, null, 0);
-        BRClipboardManager.putClipboard(getActivity(), "");
     }
 
     @Override

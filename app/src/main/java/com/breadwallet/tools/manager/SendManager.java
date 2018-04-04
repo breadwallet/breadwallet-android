@@ -199,11 +199,8 @@ public class SendManager {
         }
 //        long amount = paymentRequest.amount;
         BigDecimal balance = walletManager.getCachedBalance(app);
-        Log.e(TAG, "tryPay: balance:" + balance.toPlainString());
         BigDecimal minOutputAmount = walletManager.getMinOutputAmount(app);
-        Log.e(TAG, "tryPay: minOutputAmount:" + minOutputAmount.toPlainString());
         final BigDecimal maxOutputAmount = walletManager.getMaxOutputAmount(app);
-        Log.e(TAG, "tryPay: maxOutputAmount:" + maxOutputAmount.toPlainString());
 
         //not enough for fee
         if (paymentRequest.notEnoughForFee(app, walletManager)) {
@@ -262,17 +259,7 @@ public class SendManager {
             }, null, null, 0);
         } else {
             if (Utils.isNullOrEmpty(item.address)) throw new RuntimeException("can't happen");
-            final BaseTransaction tx = wm.createTransaction(maxAmountDouble, item.address);
-            if (tx == null) {
-                BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.Send_nilFeeError), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-                        brDialogView.dismissWithAnimation();
-                    }
-                }, null, null, 0);
-                return;
-            }
-            BigDecimal fee = wm.getTxFee(tx);
+            BigDecimal fee = wm.getEstimatedFee(maxAmountDouble, item.address);
             if (fee.compareTo(new BigDecimal(0)) <= 0) {
                 BRReportsManager.reportBug(new RuntimeException("fee is weird:  " + fee));
                 BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.Send_nilFeeError), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
@@ -288,6 +275,8 @@ public class SendManager {
             String formattedFiat = CurrencyUtils.getFormattedAmount(app, BRSharedPrefs.getPreferredFiatIso(app), wm.getFiatForSmallestCrypto(app, maxAmountDouble, null).negate());
 
             String posButtonText = String.format("%s (%s)", formattedCrypto, formattedFiat);
+
+            item.amount = maxAmountDouble;
 
             BRDialog.showCustomDialog(app, app.getString(R.string.Send_nilFeeError), "Send max?", posButtonText, "No thanks", new BRDialogView.BROnClickListener() {
                 @Override

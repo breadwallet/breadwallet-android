@@ -49,11 +49,13 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.platform.HTTPServer;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 import static com.breadwallet.tools.animation.BRAnimator.t1Size;
@@ -439,6 +441,13 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             }
         });
+        wallet.addBalanceChangedListener(new OnBalanceChangedListener() {
+            @Override
+            public void onBalanceChanged(String iso, BigDecimal newBalance) {
+                wallet.refreshCachedBalance(WalletActivity.this);
+                updateUi();
+            }
+        });
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -533,7 +542,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 updateUi();
             }
         });
-
     }
 
     public void updateSyncProgress(double progress) {
