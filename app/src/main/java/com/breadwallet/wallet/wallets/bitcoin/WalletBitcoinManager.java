@@ -273,7 +273,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     @Override
     public BaseAddress getTxAddress(BaseTransaction tx) {
-        return (BaseAddress) getWallet().getTransactionAddress(tx.getCoreTx());
+        return createAddress(getWallet().getTransactionAddress(tx.getCoreTx()).stringify());
     }
 
     @Override
