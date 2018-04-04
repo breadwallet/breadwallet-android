@@ -851,7 +851,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                                 if (app != null && app instanceof Activity) {
                                     if (!Utils.isNullOrEmpty(finalTxHash)) {
                                         PostAuth.stampMetaData(app, finalTxHash.getBytes());
-                                        BRAnimator.showBreadSignal((Activity) app, "Success", "Transaction submitted", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
+                                        BRAnimator.showBreadSignal((Activity) app, app.getString(R.string.Alerts_sendSuccess), app.getString(R.string.Alerts_sendSuccessSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                                             @Override
                                             public void onComplete() {
                                                 BRAnimator.killAllFragments((Activity) app);
