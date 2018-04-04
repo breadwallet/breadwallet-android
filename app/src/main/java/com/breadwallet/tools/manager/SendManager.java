@@ -108,7 +108,7 @@ public class SendManager {
                     errTitle[0] = app.getString(R.string.Alerts_sendFailure);
                     errMessage[0] = "Insufficient Funds";
                 } catch (AmountSmallerThanMinException e) {
-                    BigDecimal minAmount = walletManager.getMinOutputAmount();
+                    BigDecimal minAmount = walletManager.getMinOutputAmount(app);
                     errTitle[0] = app.getString(R.string.Alerts_sendFailure);
                     errMessage[0] = String.format(Locale.getDefault(), app.getString(R.string.PaymentProtocol_Errors_smallPayment),
                             BRConstants.symbolBits + minAmount.divide(new BigDecimal(100), BRConstants.ROUNDING_MODE));
@@ -199,26 +199,25 @@ public class SendManager {
         }
 //        long amount = paymentRequest.amount;
         BigDecimal balance = walletManager.getCachedBalance(app);
-        BigDecimal minOutputAmount = walletManager.getMinOutputAmount();
-        final BigDecimal maxOutputAmount = walletManager.getMaxOutputAmount();
+        Log.e(TAG, "tryPay: balance:" + balance.toPlainString());
+        BigDecimal minOutputAmount = walletManager.getMinOutputAmount(app);
+        Log.e(TAG, "tryPay: minOutputAmount:" + minOutputAmount.toPlainString());
+        final BigDecimal maxOutputAmount = walletManager.getMaxOutputAmount(app);
+        Log.e(TAG, "tryPay: maxOutputAmount:" + maxOutputAmount.toPlainString());
 
-        if (paymentRequest.tx == null) {
-            //not enough for fee
-            if (paymentRequest.notEnoughForFee(app, walletManager)) {
-                //weird bug when the core WalletsMaster is NULL
-                if (maxOutputAmount.compareTo(new BigDecimal(-1)) == 0) {
-                    BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
-                    throw new SomethingWentWrong("getMaxOutputAmount is -1, meaning _wallet is NULL");
-                }
-                // max you can spend is smaller than the min you can spend
-                if (maxOutputAmount.compareTo(new BigDecimal(0)) == 0 || maxOutputAmount.compareTo(minOutputAmount) == -1) {
-                    throw new InsufficientFundsException(paymentRequest.amount, balance);
-                }
-
-                throw new FeeNeedsAdjust(paymentRequest.amount, balance, new BigDecimal(-1));
-            } else {
-                throw new InsufficientFundsException(walletManager.getCachedBalance(app), new BigDecimal(-1));
+        //not enough for fee
+        if (paymentRequest.notEnoughForFee(app, walletManager)) {
+            //weird bug when the core WalletsMaster is NULL
+            if (maxOutputAmount.compareTo(new BigDecimal(-1)) == 0) {
+                BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
+                throw new SomethingWentWrong("getMaxOutputAmount is -1, meaning _wallet is NULL");
             }
+            // max you can spend is smaller than the min you can spend
+            if (maxOutputAmount.compareTo(new BigDecimal(0)) == 0 || maxOutputAmount.compareTo(minOutputAmount) < 0) {
+                throw new InsufficientFundsException(paymentRequest.amount, balance);
+            }
+
+            throw new FeeNeedsAdjust(paymentRequest.amount, balance, new BigDecimal(-1));
         }
 
         // check if spending is allowed
@@ -228,12 +227,12 @@ public class SendManager {
 
         //check if amount isn't smaller than the min amount
         if (paymentRequest.isSmallerThanMin(app, walletManager)) {
-            throw new AmountSmallerThanMinException(walletManager.getTransactionAmount(paymentRequest.tx), minOutputAmount);
+            throw new AmountSmallerThanMinException(paymentRequest.amount, minOutputAmount);
         }
 
         //amount is larger than balance
         if (paymentRequest.isLargerThanBalance(app, walletManager)) {
-            throw new InsufficientFundsException(walletManager.getTransactionAmount(paymentRequest.tx), balance);
+            throw new InsufficientFundsException(paymentRequest.amount, balance);
         }
 
         // payment successful
@@ -249,7 +248,7 @@ public class SendManager {
 
     private static void showAdjustFee(final Activity app, final CryptoRequest item, final BaseWalletManager walletManager) {
         BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-        BigDecimal maxAmountDouble = walletManager.getMaxOutputAmount();
+        BigDecimal maxAmountDouble = walletManager.getMaxOutputAmount(app);
         if (maxAmountDouble.compareTo(new BigDecimal(-1)) == 0) {
             BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"));
             return;
@@ -294,7 +293,6 @@ public class SendManager {
                 @Override
                 public void onClick(BRDialogView brDialogView) {
                     brDialogView.dismissWithAnimation();
-                    item.tx = tx;
                     PostAuth.getInstance().setPaymentItem(item);
                     confirmPay(app, item, walletManager);
 
@@ -317,10 +315,10 @@ public class SendManager {
 
         String message = createConfirmation(ctx, request, wm);
 
-        BigDecimal minOutput = request.isAmountRequested ? wm.getMinOutputAmountPossible() : wm.getMinOutputAmount();
+        BigDecimal minOutput = request.isAmountRequested ? wm.getMinOutputAmountPossible() : wm.getMinOutputAmount(ctx);
 
         //amount can't be less than the min
-        if (minOutput != null && wm.getTransactionAmount(request.tx).abs().compareTo(minOutput) <= 0) {
+        if (minOutput != null && request.amount.abs().compareTo(minOutput) <= 0) {
             final String bitcoinMinMessage = String.format(Locale.getDefault(), ctx.getString(R.string.PaymentProtocol_Errors_smallTransaction),
                     CurrencyUtils.getFormattedAmount(ctx, wm.getIso(ctx), minOutput));
 
@@ -341,12 +339,12 @@ public class SendManager {
 
         if (Utils.isEmulatorOrDebug(ctx)) {
             Log.e(TAG, "confirmPay: totalSent: " + wm.getTotalSent(ctx));
-            Log.e(TAG, "confirmPay: request.amount: " + wm.getTransactionAmount(request.tx));
+            Log.e(TAG, "confirmPay: request.amount: " + request.amount);
             Log.e(TAG, "confirmPay: total limit: " + BRKeyStore.getTotalLimit(ctx, wm.getIso(ctx)));
             Log.e(TAG, "confirmPay: limit: " + BRKeyStore.getSpendLimit(ctx, wm.getIso(ctx)));
         }
 
-        if (wm.getTotalSent(ctx).add(wm.getTransactionAmount(request.tx)).compareTo(BRKeyStore.getTotalLimit(ctx, wm.getIso(ctx))) > 0) {
+        if (wm.getTotalSent(ctx).add(request.amount).compareTo(BRKeyStore.getTotalLimit(ctx, wm.getIso(ctx))) > 0) {
             forcePin = true;
         }
 
@@ -392,9 +390,9 @@ public class SendManager {
 
         String iso = BRSharedPrefs.getPreferredFiatIso(ctx);
         BaseWalletManager wallet = WalletsMaster.getInstance(ctx).getCurrentWallet(ctx);
-        BigDecimal feeForTx = walletManager.getTxFee(request.tx);
+        BigDecimal feeForTx = walletManager.getEstimatedFee(request.amount, request.address);
         if (feeForTx.compareTo(new BigDecimal(0)) <= 0) {
-            BigDecimal maxAmount = walletManager.getMaxOutputAmount();
+            BigDecimal maxAmount = walletManager.getMaxOutputAmount(ctx);
             if (maxAmount != null && maxAmount.compareTo(new BigDecimal(-1)) == 0) {
                 BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
             }
@@ -409,12 +407,11 @@ public class SendManager {
                 return null;
             }
             if (maxAmount != null) {
-                request.tx = walletManager.createTransaction(maxAmount, wallet.getTxAddress(request.tx).stringify());
-                feeForTx = walletManager.getTxFee(request.tx);
-                feeForTx = feeForTx.add(walletManager.getCachedBalance(ctx).subtract(walletManager.getTransactionAmount(request.tx).abs()));
+                feeForTx = walletManager.getEstimatedFee(request.amount, request.address);
+                feeForTx = feeForTx.add(walletManager.getCachedBalance(ctx).subtract(request.amount.abs()));
             }
         }
-        BigDecimal amount = walletManager.getTransactionAmount(request.tx).abs();
+        BigDecimal amount = request.amount.abs();
         final BigDecimal total = amount.add(feeForTx);
         String formattedCryptoAmount = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), amount);
         String formatterCryptoFee = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), feeForTx);

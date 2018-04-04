@@ -6,9 +6,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.breadwallet.R;
-import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreKey;
-import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -23,17 +21,14 @@ import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseAddress;
 import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.util.HashMap;
 import java.util.Map;
-
 
 /**
  * BreadWallet
@@ -290,17 +285,7 @@ public class CryptoUriParser {
                 BRDialog.showSimpleDialog(app, app.getString(R.string.Send_invalidAddressTitle), "");
                 return true;
             }
-            BaseTransaction tx = wallet.createTransaction(requestObject.amount, requestObject.address);
-            if (tx == null) {
-                BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), "Insufficient amount for transaction", app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-                        brDialogView.dismiss();
-                    }
-                }, null, null, 0);
-                return true;
-            }
-            requestObject.tx = tx;
+
             SendManager.sendTransaction(app, requestObject, wallet);
         }
 

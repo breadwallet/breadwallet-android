@@ -283,13 +283,17 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public BigDecimal getMaxOutputAmount() {
-        return null;
+    public BigDecimal getMaxOutputAmount(Context app) {
+        BigDecimal balance = getCachedBalance(app);
+        if (balance.compareTo(new BigDecimal(0)) == 0) return new BigDecimal(0);
+        BigDecimal fee = new BigDecimal(mWallet.transactionEstimatedFee(balance.toPlainString()));
+        if (fee.compareTo(balance) > 0) return new BigDecimal(0);
+        return balance.subtract(fee);
     }
 
     @Override
-    public BigDecimal getMinOutputAmount() {
-        return null;
+    public BigDecimal getMinOutputAmount(Context app) {
+        return new BigDecimal(1); //1 WEI
     }
 
     @Override
@@ -299,7 +303,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public BigDecimal getMinOutputAmountPossible() {
-        return null;
+        return new BigDecimal(1); //1 WEI
     }
 
     @Override
@@ -374,7 +378,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         for (int i = txs.length - 1; i >= 0; i--) { //revere order
             BREthereumTransaction tx = txs[i];
             uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(mWallet.getAccount().getPrimaryAddress()), tx.getBlockTimestamp(),
-                    (int) tx.getBlockNumber(), null, tx.getHash(), null, tx,
+                    (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null : tx.getHash().getBytes(), tx.getHash(), null, tx,
                     tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
                     new BigDecimal(tx.getAmount()), true));
         }
@@ -841,6 +845,15 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                                             @Override
                                             public void onComplete() {
                                                 BRAnimator.killAllFragments((Activity) app);
+                                                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                                                    @Override
+                                                    public void run() {
+                                                        for (OnTxStatusUpdatedListener list : txStatusUpdatedListeners)
+                                                            if (list != null)
+                                                                list.onTxStatusUpdated();
+                                                        mWallet.updateBalance();
+                                                    }
+                                                });
                                             }
                                         });
                                     } else {

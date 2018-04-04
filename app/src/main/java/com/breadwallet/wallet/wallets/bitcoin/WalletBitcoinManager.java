@@ -278,12 +278,12 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public BigDecimal getMaxOutputAmount() {
+    public BigDecimal getMaxOutputAmount(Context app) {
         return new BigDecimal(getWallet().getMaxOutputAmount());
     }
 
     @Override
-    public BigDecimal getMinOutputAmount() {
+    public BigDecimal getMinOutputAmount(Context app) {
         return new BigDecimal(getWallet().getMinOutputAmount());
     }
 

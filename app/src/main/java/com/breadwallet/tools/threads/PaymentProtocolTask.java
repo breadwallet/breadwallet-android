@@ -300,7 +300,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             @Override
             public void run() {
                 BigDecimal txAmt = wm.getTransactionAmount(tx).abs();
-                BigDecimal minOutput = wm.getMinOutputAmount();
+                BigDecimal minOutput = wm.getMinOutputAmount(app);
                 if (txAmt.compareTo(minOutput) < 0) {
                     final String bitcoinMinMessage = String.format(Locale.getDefault(), app.getString(R.string.PaymentProtocol_Errors_smallTransaction),
                             BRConstants.symbolBits + minOutput.divide(new BigDecimal("100")));
