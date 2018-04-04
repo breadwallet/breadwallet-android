@@ -181,8 +181,8 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         CryptoTransaction cryptoTransaction = (CryptoTransaction) tx;
         mWallet.sign(cryptoTransaction.getEtherTx(), new String(phrase));
         mWallet.submit(cryptoTransaction.getEtherTx());
-        //todo remove hardcoded temporary hash
-        return new byte[]{1};//return 1 byte array to let the callback know it's a ETH or token tx
+        String hash = tx.getEtherTx().getHash();
+        return hash == null ? new byte[0] : hash.getBytes();
     }
 
     @Override
