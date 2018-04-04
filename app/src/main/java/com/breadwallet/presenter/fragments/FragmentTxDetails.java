@@ -267,16 +267,12 @@ public class FragmentTxDetails extends DialogFragment {
             mAmountWhenSent.setText(amountWhenSent);
             mAmountNow.setText(amountNow);
 
-            // If 'amount when sent' is 0 or unavailable, show fiat tx amount on its own
-            if (amountWhenSent.equals("$0.00")) {
+            // If 'amount when sent' is not available, hide the entire tx amount description line
+            if (amountWhenSent.equals("$0.00") || amountWhenSent.equals("") || amountWhenSent == null) {
                 mAmountWhenSent.setVisibility(View.INVISIBLE);
                 mWhenSentLabel.setVisibility(View.INVISIBLE);
                 mNowLabel.setVisibility(View.INVISIBLE);
-
-                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
-                params.addRule(RelativeLayout.BELOW, mTxAmount.getId());
-                mAmountNow.setLayoutParams(params);
+                mAmountNow.setVisibility(View.INVISIBLE);
 
             }
 
