@@ -24,6 +24,7 @@ import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
@@ -792,7 +793,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public void submitTransaction(int wid, final int tid, final String rawTransaction, final int rid) {
+    public void submitTransaction(final int wid, final int tid, final String rawTransaction, final int rid) {
         Log.e(TAG, "submitTransaction: wid:" + wid);
         Log.e(TAG, "submitTransaction: tid:" + tid);
         Log.e(TAG, "submitTransaction: rawTransaction:" + rawTransaction);
@@ -830,7 +831,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                                 if (responseObject.has("result")) {
                                     txHash = responseObject.getString("result");
                                     Log.e(TAG, "onRpcRequestCompleted: " + txHash);
-                                    node.announceSubmitTransaction(tid, txHash, rid);
+                                    node.announceSubmitTransaction(wid, tid, txHash, rid);
                                 } else if (responseObject.has("error")) {
                                     JSONObject errObj = responseObject.getJSONObject("error");
                                     errCode = errObj.getInt("code");
@@ -849,7 +850,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                                 final Context app = BreadApp.getBreadContext();
                                 if (app != null && app instanceof Activity) {
                                     if (!Utils.isNullOrEmpty(finalTxHash)) {
-                                        Log.e(TAG, "run: finalTxHash: " + finalTxHash);
+                                        PostAuth.stampMetaData(app, finalTxHash.getBytes());
                                         BRAnimator.showBreadSignal((Activity) app, "Success", "Transaction submitted", R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                                             @Override
                                             public void onComplete() {
