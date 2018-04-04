@@ -139,6 +139,7 @@
             android:paddingTop="8dp"
             android:text="@string/Button.cancel"
             app:isBreadButton="false"
+            app:customBFont="CircularPro-Book.otf"
             app:layout_constraintBottom_toBottomOf="@+id/search_edit"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/search_edit"/>
