@@ -9,21 +9,28 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
+import com.breadwallet.presenter.customviews.BREdit;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
@@ -53,7 +60,7 @@ public class FragmentTxDetails extends DialogFragment {
     private BRText mTxDate;
     private BRText mToFrom;
     private BRText mToFromAddress;
-    private BRText mMemoText;
+    private BREdit mMemoText;
 
     private BRText mGasPrice;
     private BRText mGasLimit;
@@ -165,6 +172,11 @@ public class FragmentTxDetails extends DialogFragment {
                 }
             }
         });
+
+        mMemoText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        int color = mToFromAddress.getTextColors().getDefaultColor();
+        mMemoText.setTextColor(color);
+
 
         updateUi();
         return rootView;
@@ -286,7 +298,7 @@ public class FragmentTxDetails extends DialogFragment {
 
             // Set the memo text if one is available
             String memo;
-            TxMetaData txMetaData = KVStoreManager.getInstance().getTxMetaData(app, mTransaction.getTxHash());
+            final TxMetaData txMetaData = KVStoreManager.getInstance().getTxMetaData(app, mTransaction.getTxHash());
 
             if (txMetaData != null) {
                 if (txMetaData.comment != null) {
@@ -303,6 +315,35 @@ public class FragmentTxDetails extends DialogFragment {
                 mMemoText.setText("");
 
             }
+
+            // Listen for an update to the memo text
+            mMemoText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        // Update the memo field on the transaction and save it
+                        if (txMetaData != null) {
+                            txMetaData.comment = mMemoText.getText().toString();
+                            Log.d(TAG, "MetaData not null");
+                            KVStoreManager.getInstance().putTxMetaData(getContext(), txMetaData, mTransaction.getTxHash());
+
+                            // Hide softkeyboard if it's visible
+                            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(mMemoText.getWindowToken(), 0);
+
+
+                            // Update Tx list to reflect the memo change
+                            TxManager.getInstance().updateTxList(getContext());
+
+                            // Hide Tx details dialog
+                            dismiss();
+
+                        }
+                    }
+                    return true;
+                }
+            });
 
             // timestamp is 0 if it's not confirmed in a block yet so make it now
             mTxDate.setText(BRDateUtil.getLongDate(mTransaction.getTimeStamp() == 0 ? System.currentTimeMillis() : (mTransaction.getTimeStamp() * 1000)));
