@@ -300,11 +300,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
                 } else {
                     boolean willAdd = true;
                     //filter by sent and this is received
-                    if (switches[0] && !item.isReceived()) {
+                    if (switches[0] && item.isReceived()) {
                         willAdd = false;
                     }
                     //filter by received and this is sent
-                    if (switches[1] && item.isReceived()) {
+                    if (switches[1] && !item.isReceived()) {
                         willAdd = false;
                     }
                     BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
