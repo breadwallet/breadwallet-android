@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -85,6 +86,8 @@ public class FragmentTxDetails extends DialogFragment {
     private BRText mShowHide;
     private BRText mAmountWhenSent;
     private BRText mAmountNow;
+    private BRText mWhenSentLabel;
+    private BRText mNowLabel;
 
     private ConstraintLayout mConfirmedContainer;
     private View mConfirmedDivider;
@@ -117,6 +120,7 @@ public class FragmentTxDetails extends DialogFragment {
         mAmountWhenSent = rootView.findViewById(R.id.amount_when_sent);
         mTxAction = rootView.findViewById(R.id.tx_action);
         mTxAmount = rootView.findViewById(R.id.tx_amount);
+        mNowLabel = rootView.findViewById(R.id.label_now);
 
         mTxStatus = rootView.findViewById(R.id.tx_status);
         mTxDate = rootView.findViewById(R.id.tx_date);
@@ -150,6 +154,7 @@ public class FragmentTxDetails extends DialogFragment {
         mFeeSecondaryContainer = rootView.findViewById(R.id.fee_secondary_container);
         mGasPriceContainer = rootView.findViewById(R.id.gas_price_container);
         mGasLimitContainer = rootView.findViewById(R.id.gas_limit_container);
+        mWhenSentLabel = rootView.findViewById(R.id.label_when_sent);
 
         mCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -262,6 +267,19 @@ public class FragmentTxDetails extends DialogFragment {
             mAmountWhenSent.setText(amountWhenSent);
             mAmountNow.setText(amountNow);
 
+            // If 'amount when sent' is 0 or unavailable, show fiat tx amount on its own
+            if (amountWhenSent.equals("$0.00")) {
+                mAmountWhenSent.setVisibility(View.INVISIBLE);
+                mWhenSentLabel.setVisibility(View.INVISIBLE);
+                mNowLabel.setVisibility(View.INVISIBLE);
+
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                params.addRule(RelativeLayout.BELOW, mTxAmount.getId());
+                mAmountNow.setLayoutParams(params);
+
+            }
+
             mTxAction.setText(!received ? getString(R.string.TransactionDetails_titleSent) : getString(R.string.TransactionDetails_titleReceived));
             mToFrom.setText(!received ? getString(R.string.Confirmation_to) + " " : getString(R.string.TransactionDetails_addressViaHeader) + " ");
 
@@ -329,7 +347,7 @@ public class FragmentTxDetails extends DialogFragment {
                             KVStoreManager.getInstance().putTxMetaData(getContext(), txMetaData, mTransaction.getTxHash());
 
                             // Hide softkeyboard if it's visible
-                            InputMethodManager imm = (InputMethodManager)getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(mMemoText.getWindowToken(), 0);
 
 
@@ -339,6 +357,8 @@ public class FragmentTxDetails extends DialogFragment {
                             // Hide Tx details dialog
                             dismiss();
 
+                        } else {
+                            Log.d(TAG, "MetaData is null");
                         }
                     }
                     return true;
