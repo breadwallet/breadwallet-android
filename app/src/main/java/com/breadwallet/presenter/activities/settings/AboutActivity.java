@@ -8,11 +8,15 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.manager.BRClipboardManager;
 
 import java.util.Locale;
 
@@ -26,6 +30,9 @@ public class AboutActivity extends BRActivity {
     private ImageView twitterShare;
     private ImageView blogShare;
     private static AboutActivity app;
+    private BRText mCopy;
+    private BRText mRewardsId;
+
 
     public static AboutActivity getApp() {
         return app;
@@ -59,6 +66,8 @@ public class AboutActivity extends BRActivity {
         redditShare = findViewById(R.id.reddit_share_button);
         twitterShare = findViewById(R.id.twitter_share_button);
         blogShare = findViewById(R.id.blog_share_button);
+        mRewardsId = findViewById(R.id.brd_rewards_id);
+        mCopy = findViewById(R.id.brd_copy);
 
         redditShare.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,6 +100,16 @@ public class AboutActivity extends BRActivity {
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://breadapp.com/privacy-policy"));
                 startActivity(browserIntent);
                 app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+            }
+        });
+
+        mRewardsId.setText(BreadApp.generateWalletId());
+
+        mCopy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                BRClipboardManager.putClipboard(AboutActivity.this, mRewardsId.getText().toString());
+                Toast.makeText(AboutActivity.this, getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show();
             }
         });
 
