@@ -66,6 +66,7 @@ public class PostAuth {
     private String phraseForKeyStore;
     public CryptoRequest mCryptoRequest;
     public static boolean isStuckWithAuthLoop;
+    public static TxMetaData txMetaData;
 
     private BaseTransaction mPaymentProtocolTx;
     private static PostAuth instance;
@@ -227,27 +228,25 @@ public class PostAuth {
                                 return;
                             }
                             byte[] txHash = walletManager.signAndPublishTransaction(tx, rawPhrase);
-                            if (Utils.isNullOrEmpty(txHash) && tx.getEtherTx() == null) {
+
+                            txMetaData = new TxMetaData();
+                            txMetaData.comment = mCryptoRequest.message;
+                            txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
+                            BigDecimal fiatExchangeRate = walletManager.getFiatExchangeRate(app);
+                            txMetaData.exchangeRate = fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue();
+                            txMetaData.fee = walletManager.getTxFee(tx).toPlainString();
+                            txMetaData.txSize = tx.getTxSize().intValue();
+                            txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, walletManager.getIso(app));
+                            txMetaData.creationTime = (int) (System.currentTimeMillis() / 1000);//seconds
+                            txMetaData.deviceId = BRSharedPrefs.getDeviceId(app);
+                            txMetaData.classVersion = 1;
+
+                            if (Utils.isNullOrEmpty(txHash)) {
+                                if (tx.getEtherTx() != null) return; // ignore ETH since txs do not have the hash right away
                                 Log.e(TAG, "onPublishTxAuth: signAndPublishTransaction returned an empty txHash");
                                 BRDialog.showSimpleDialog(app, app.getString(R.string.Alerts_sendFailure), "Failed to create transaction");
-                                //todo fix this
-//                              WalletsMaster.getInstance(app).offerToChangeTheAmount(app, new PaymentItem(paymentRequest.addresses, paymentItem.serializedTx, paymentRequest.amount, null, paymentRequest.isPaymentRequest));
                             } else {
-                                if (txHash.length == 1)
-                                    return; //return a random 1 byte hash for eth and tokens
-                                TxMetaData txMetaData = new TxMetaData();
-                                txMetaData.comment = mCryptoRequest.message;
-                                txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
-                                BigDecimal fiatExchangeRate = walletManager.getFiatExchangeRate(app);
-                                txMetaData.exchangeRate = fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue();
-                                txMetaData.fee = walletManager.getTxFee(tx).toPlainString();
-                                txMetaData.txSize = tx.getTxSize().intValue();
-                                txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, walletManager.getIso(app));
-                                txMetaData.creationTime = (int) (System.currentTimeMillis() / 1000);//seconds
-                                txMetaData.deviceId = BRSharedPrefs.getDeviceId(app);
-                                txMetaData.classVersion = 1;
-                                KVStoreManager.getInstance().putTxMetaData(app, txMetaData, txHash);
-
+                                stampMetaData(app, txHash);
                             }
 
                         } else {
@@ -264,6 +263,11 @@ public class PostAuth {
             }
         });
 
+    }
+
+    public static void stampMetaData(Context app, byte[] txHash) {
+        KVStoreManager.getInstance().putTxMetaData(app, txMetaData, txHash);
+        txMetaData = null;
     }
 
     public void onPaymentProtocolRequest(final Activity app, boolean authAsked) {
