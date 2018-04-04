@@ -1,26 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:animateLayoutChanges="true"
-            android:background="@color/extra_light_blue_background"
-            android:clipToPadding="false"
-            android:descendantFocusability="beforeDescendants"
-            android:filterTouchesWhenObscured="true"
-            android:fitsSystemWindows="true"
-            android:focusableInTouchMode="true"
-            android:orientation="vertical"
-            tools:context="com.breadwallet.presenter.activities.HomeActivity">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
+    android:background="@color/extra_light_blue_background"
+    android:clipToPadding="false"
+    android:descendantFocusability="beforeDescendants"
+    android:filterTouchesWhenObscured="true"
+    android:fitsSystemWindows="true"
+    android:focusableInTouchMode="true"
+    android:orientation="vertical"
+    tools:context="com.breadwallet.presenter.activities.HomeActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
         <RelativeLayout
+            android:id="@+id/home_header"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:layout_width="80dp"
@@ -29,7 +30,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="60dp"
-                android:background="@drawable/brd_logo_gradient"/>
+                android:background="@drawable/brd_logo_gradient" />
 
             <com.breadwallet.presenter.customviews.BRText
                 android:id="@+id/total_assets_label"
@@ -40,7 +41,7 @@
                 android:layout_marginTop="40dp"
                 android:text="@string/HomeScreen.totalAssets"
                 android:textColor="@color/total_assets_label_color"
-                app:customTFont="CircularPro-Book.otf"/>
+                app:customTFont="CircularPro-Book.otf" />
 
             <com.breadwallet.presenter.customviews.BRText
                 android:id="@+id/total_assets_usd"
@@ -52,16 +53,25 @@
                 android:text="$42,895.47"
                 android:textColor="@color/total_assets_usd_color"
                 android:textSize="28sp"
-                app:customTFont="CircularPro-Bold.otf"/>
+                app:customTFont="CircularPro-Bold.otf" />
+        </RelativeLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_below="@id/home_header"
+            android:layout_height="match_parent">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
             <android.support.v7.widget.CardView
                 android:id="@+id/prompt_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/total_assets_usd"
+                android:layout_marginEnd="16dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="16dp"
                 android:background="@color/extra_light_blue_background"
                 android:visibility="gone"
                 app:cardCornerRadius="4dp">
@@ -80,17 +90,17 @@
                         android:text="Paper Key - Action Required!"
                         android:textColor="@color/almost_black"
                         android:textSize="16sp"
-                        app:customTFont="CircularPro-Bold.otf"/>
+                        app:customTFont="CircularPro-Bold.otf" />
 
                     <com.breadwallet.presenter.customviews.BRText
                         android:id="@+id/prompt_description"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_below="@id/prompt_title"
-                        android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
+                        android:layout_marginStart="16dp"
                         android:text="Your Paper Key must be saved in case you ever loose your phone."
-                        android:textSize="14sp"/>
+                        android:textSize="14sp" />
 
                     <LinearLayout
                         android:id="@+id/button_container"
@@ -99,8 +109,8 @@
                         android:layout_alignParentBottom="true"
                         android:layout_below="@id/prompt_description"
                         android:layout_marginBottom="16dp"
-                        android:layout_marginStart="16dp"
                         android:layout_marginEnd="16dp"
+                        android:layout_marginStart="16dp"
                         android:weightSum="2">
 
                         <com.breadwallet.presenter.customviews.BRButton
@@ -117,7 +127,7 @@
                             app:buttonType="4"
                             app:customTFont="CircularPro-Bold.otf"
                             app:hasShadow="false"
-                            app:isBreadButton="true"/>
+                            app:isBreadButton="true" />
 
                         <com.breadwallet.presenter.customviews.BRButton
                             android:id="@+id/continue_button"
@@ -133,7 +143,7 @@
                             app:buttonType="4"
                             app:customTFont="CircularPro-Bold.otf"
                             app:hasShadow="false"
-                            app:isBreadButton="true"/>
+                            app:isBreadButton="true" />
 
                     </LinearLayout>
 
@@ -153,7 +163,7 @@
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="30dp"
                 android:text="@string/HomeScreen.portfolio"
-                android:textColor="#788f9e"/>
+                android:textColor="#788f9e" />
 
 
             <android.support.v7.widget.RecyclerView
@@ -161,9 +171,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/portfolio_label"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                >
+                android:layout_marginStart="@dimen/activity_horizontal_margin">
 
             </android.support.v7.widget.RecyclerView>
 
@@ -177,7 +186,7 @@
                 android:layout_marginStart="@dimen/activity_horizontal_margin"
                 android:layout_marginTop="16dp"
                 android:text="@string/HomeScreen.admin"
-                android:textColor="#788f9e"/>
+                android:textColor="#788f9e" />
 
 
             <RelativeLayout
@@ -185,8 +194,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
                 android:layout_below="@id/admin_label"
-                android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
                 android:background="@drawable/admin_card_shape">
 
@@ -195,19 +204,19 @@
                     android:id="@+id/settings_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
                     android:layout_gravity="center"
                     android:layout_marginStart="22dp"
                     android:layout_marginTop="16dp"
                     android:clickable="false"
-                    android:drawableStart="@drawable/ic_settings_cog"
-                    android:layout_alignParentStart="true"
-
                     android:drawablePadding="8dp"
+
+                    android:drawableStart="@drawable/ic_settings_cog"
                     android:focusable="false"
                     android:paddingBottom="4dp"
                     android:text="@string/MenuButton.settings"
                     android:textSize="16sp"
-                    app:customTFont="CircularPro-Book.otf"/>
+                    app:customTFont="CircularPro-Book.otf" />
 
 
                 <ImageButton
@@ -219,7 +228,7 @@
                     android:layout_marginEnd="16dp"
                     android:background="@drawable/ic_chevron_right"
                     android:clickable="false"
-                    android:focusable="false"/>
+                    android:focusable="false" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -227,8 +236,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="54dp"
                 android:layout_below="@id/settings_row"
-                android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
                 android:background="@drawable/admin_card_shape">
 
@@ -237,19 +246,19 @@
                     android:id="@+id/security_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
                     android:layout_gravity="center"
                     android:layout_marginStart="22dp"
                     android:layout_marginTop="16dp"
                     android:clickable="false"
-                    android:drawableStart="@drawable/ic_security"
-                    android:layout_alignParentStart="true"
-
                     android:drawablePadding="8dp"
+
+                    android:drawableStart="@drawable/ic_security"
                     android:focusable="false"
                     android:paddingBottom="4dp"
                     android:text="@string/MenuButton.security"
                     android:textSize="16sp"
-                    app:customTFont="CircularPro-Book.otf"/>
+                    app:customTFont="CircularPro-Book.otf" />
 
 
                 <ImageButton
@@ -261,7 +270,7 @@
                     android:layout_marginEnd="16dp"
                     android:background="@drawable/ic_chevron_right"
                     android:clickable="false"
-                    android:focusable="false"/>
+                    android:focusable="false" />
             </RelativeLayout>
 
             <RelativeLayout
@@ -270,8 +279,8 @@
                 android:layout_height="54dp"
                 android:layout_below="@id/security_row"
                 android:layout_marginBottom="30dp"
-                android:layout_marginStart="16dp"
                 android:layout_marginEnd="16dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
                 android:background="@drawable/admin_card_shape">
 
@@ -280,18 +289,18 @@
                     android:id="@+id/support_label"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
                     android:layout_gravity="center"
                     android:layout_marginStart="22dp"
                     android:layout_marginTop="16dp"
                     android:clickable="false"
-                    android:layout_alignParentStart="true"
-                    android:drawableStart="@drawable/ic_question_mark_shape"
                     android:drawablePadding="8dp"
+                    android:drawableStart="@drawable/ic_question_mark_shape"
                     android:focusable="false"
                     android:paddingBottom="4dp"
                     android:text="@string/MenuButton.support"
                     android:textSize="16sp"
-                    app:customTFont="CircularPro-Book.otf"/>
+                    app:customTFont="CircularPro-Book.otf" />
 
                 <ImageButton
                     android:id="@+id/support_arrow_right"
@@ -302,29 +311,36 @@
                     android:layout_marginEnd="16dp"
                     android:background="@drawable/ic_chevron_right"
                     android:clickable="false"
-                    android:focusable="false"/>
+                    android:focusable="false" />
             </RelativeLayout>
 
-        </RelativeLayout>
 
-        <com.breadwallet.presenter.customviews.BRNotificationBar
-            android:id="@+id/notification_bar"
-            android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:layout_marginStart="0dp"
-            android:layout_marginEnd="0dp"
-            android:layout_marginTop="4dp"
-            android:background="@color/blue"
-            android:contentInsetLeft="0dp"
-            android:contentInsetStart="0dp"
-            android:visibility="visible"
-            app:breadText="No internet connection found.\nCheck your connection and try again."
-            app:contentInsetLeft="0dp"
-            app:contentInsetStart="0dp"/>
+            <com.breadwallet.presenter.customviews.BRNotificationBar
+                android:id="@+id/notification_bar"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                android:layout_alignParentTop="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginEnd="0dp"
+                android:layout_marginStart="0dp"
+                android:layout_marginTop="4dp"
+                android:background="@color/blue"
+                android:contentInsetLeft="0dp"
+                android:contentInsetStart="0dp"
+                android:visibility="visible"
+                app:breadText="No internet connection found.\nCheck your connection and try again."
+                app:contentInsetLeft="0dp"
+                app:contentInsetStart="0dp" />
+
+            </RelativeLayout>
+
+        </ScrollView>
 
     </RelativeLayout>
 
 
-</ScrollView>
+</RelativeLayout>
+
+
+
+
