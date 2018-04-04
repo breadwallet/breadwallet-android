@@ -590,7 +590,7 @@ public class WebViewActivity extends BRActivity {
 
                 if (android.support.v4.app.ActivityCompat.shouldShowRequestPermissionRationale(app,
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    BRDialog.showCustomDialog(app, "", app.getString(R.string.Android_Simplex_allowFileSystemAccess), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                    BRDialog.showCustomDialog(app, "", app.getString(R.string.Android_allowFileSystemAccess), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismiss();
