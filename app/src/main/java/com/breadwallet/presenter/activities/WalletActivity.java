@@ -205,7 +205,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         updateUi();
 
-
         // Check if the "Twilight" screen altering app is currently running
         if (Utils.checkIfScreenAlteringAppIsRunning(this, "com.urbandroid.lux")) {
             BRDialog.showSimpleDialog(this, "Screen Altering App Detected", getString(R.string.Android_screenAlteringMessage));
