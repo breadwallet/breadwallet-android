@@ -47,7 +47,7 @@ public class WriteDownActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(WriteDownActivity.this).getCurrentWallet(WriteDownActivity.this);
-                BRAnimator.showSupportFragment(WriteDownActivity.this, BRConstants.paperKey, wm.getIso(WriteDownActivity.this));
+                BRAnimator.showSupportFragment(WriteDownActivity.this, BRConstants.paperKey, wm);
 
             }
         });

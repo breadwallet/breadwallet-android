@@ -145,7 +145,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(HomeActivity.this).getCurrentWallet(HomeActivity.this);
 
-                BRAnimator.showSupportFragment(HomeActivity.this, null, wm.getIso(HomeActivity.this));
+                BRAnimator.showSupportFragment(HomeActivity.this, null, wm);
             }
         });
 

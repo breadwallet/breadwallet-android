@@ -128,7 +128,7 @@ public class FragmentMenu extends Fragment {
                 }
                 BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
 
-                BRAnimator.showSupportFragment(app, null, wm.getIso(app));
+                BRAnimator.showSupportFragment(app, null, wm);
             }
         }));
         itemList.add(new BRMenuItem(getString(R.string.MenuButton_settings), R.drawable.ic_settings, new View.OnClickListener() {

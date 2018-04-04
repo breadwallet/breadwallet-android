@@ -76,7 +76,7 @@ public class UpdatePinActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(UpdatePinActivity.this).getCurrentWallet(UpdatePinActivity.this);
-                BRAnimator.showSupportFragment(UpdatePinActivity.this, BRConstants.setPin, wm.getIso(UpdatePinActivity.this));
+                BRAnimator.showSupportFragment(UpdatePinActivity.this, BRConstants.setPin, wm);
             }
         });
 

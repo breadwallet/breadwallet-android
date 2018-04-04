@@ -68,7 +68,7 @@ public class DisplayCurrencyActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(DisplayCurrencyActivity.this).getCurrentWallet(DisplayCurrencyActivity.this);
-                BRAnimator.showSupportFragment(DisplayCurrencyActivity.this, BRConstants.displayCurrency, wm.getIso(DisplayCurrencyActivity.this));
+                BRAnimator.showSupportFragment(DisplayCurrencyActivity.this, BRConstants.displayCurrency, wm);
             }
         });
 
