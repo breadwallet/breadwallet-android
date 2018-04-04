@@ -242,7 +242,8 @@ public class PostAuth {
                             txMetaData.classVersion = 1;
 
                             if (Utils.isNullOrEmpty(txHash)) {
-                                if (tx.getEtherTx() != null) return; // ignore ETH since txs do not have the hash right away
+                                if (tx.getEtherTx() != null)
+                                    return; // ignore ETH since txs do not have the hash right away
                                 Log.e(TAG, "onPublishTxAuth: signAndPublishTransaction returned an empty txHash");
                                 BRDialog.showSimpleDialog(app, app.getString(R.string.Alerts_sendFailure), "Failed to create transaction");
                             } else {
@@ -266,8 +267,10 @@ public class PostAuth {
     }
 
     public static void stampMetaData(Context app, byte[] txHash) {
-        KVStoreManager.getInstance().putTxMetaData(app, txMetaData, txHash);
-        txMetaData = null;
+        if (txMetaData != null) {
+            KVStoreManager.getInstance().putTxMetaData(app, txMetaData, txHash);
+            txMetaData = null;
+        } else Log.e(TAG, "stampMetaData: txMetaData is null!");
     }
 
     public void onPaymentProtocolRequest(final Activity app, boolean authAsked) {
