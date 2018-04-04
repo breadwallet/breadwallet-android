@@ -869,4 +869,6 @@
     <string name="Disabled.title">Wallet Disabled</string>
     <string name="Android.screenAlteringTitle">Screen Altering App Detected</string>
 
+    <string name="Android.About.brdRewardsId">BRD Rewards ID</string>
+
 </resources>
