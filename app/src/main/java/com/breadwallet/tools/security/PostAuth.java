@@ -219,15 +219,15 @@ public class PostAuth {
                             if (tx == null) {
                                 BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_insufficientFunds),
                                         app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                                    @Override
-                                    public void onClick(BRDialogView brDialogView) {
-                                        brDialogView.dismiss();
-                                    }
-                                }, null, null, 0);
+                                            @Override
+                                            public void onClick(BRDialogView brDialogView) {
+                                                brDialogView.dismiss();
+                                            }
+                                        }, null, null, 0);
                                 return;
                             }
                             byte[] txHash = walletManager.signAndPublishTransaction(tx, rawPhrase);
-                            if (Utils.isNullOrEmpty(txHash)) {
+                            if (Utils.isNullOrEmpty(txHash) && tx.getEtherTx() == null) {
                                 Log.e(TAG, "onPublishTxAuth: signAndPublishTransaction returned an empty txHash");
                                 BRDialog.showSimpleDialog(app, app.getString(R.string.Alerts_sendFailure), "Failed to create transaction");
                                 //todo fix this
