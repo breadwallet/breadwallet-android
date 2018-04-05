@@ -222,12 +222,21 @@ public class LoginActivity extends BRActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        updateDots();
+        Log.e(TAG, "onResume: 1");
 
-        WalletsMaster.getInstance(this).initWallets(this);
         appVisible = true;
         app = this;
         inputAllowed = true;
+
+        updateDots();
+
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                WalletsMaster.getInstance(app).initWallets(app);
+            }
+        });
+
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -236,6 +245,7 @@ public class LoginActivity extends BRActivity {
         });
         if (PLATFORM_ON)
             APIClient.getInstance(this).updatePlatform(this);
+        Log.e(TAG, "onResume: 2");
     }
 
     @Override

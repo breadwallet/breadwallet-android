@@ -407,8 +407,12 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     protected void onResume() {
         super.onResume();
         app = this;
-
-        WalletsMaster.getInstance(app).initWallets(app);
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                WalletsMaster.getInstance(app).initWallets(app);
+            }
+        });
 
         setupNetworking();
 
