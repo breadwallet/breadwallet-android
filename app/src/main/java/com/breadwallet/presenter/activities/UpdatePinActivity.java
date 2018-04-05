@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -180,7 +181,8 @@ public class UpdatePinActivity extends BRActivity {
                             getString(R.string.UpdatePin_caption), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                         @Override
                         public void onComplete() {
-                            BRAnimator.startBreadActivity(UpdatePinActivity.this, false);
+                            Intent homeIntent = new Intent(UpdatePinActivity.this, HomeActivity.class);
+                            startActivity(homeIntent);
                         }
                     });
                 } else {

@@ -9,21 +9,29 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
+import com.breadwallet.presenter.customviews.BREdit;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
@@ -53,7 +61,7 @@ public class FragmentTxDetails extends DialogFragment {
     private BRText mTxDate;
     private BRText mToFrom;
     private BRText mToFromAddress;
-    private BRText mMemoText;
+    private BREdit mMemoText;
 
     private BRText mGasPrice;
     private BRText mGasLimit;
@@ -78,6 +86,8 @@ public class FragmentTxDetails extends DialogFragment {
     private BRText mShowHide;
     private BRText mAmountWhenSent;
     private BRText mAmountNow;
+    private BRText mWhenSentLabel;
+    private BRText mNowLabel;
 
     private ConstraintLayout mConfirmedContainer;
     private View mConfirmedDivider;
@@ -110,6 +120,7 @@ public class FragmentTxDetails extends DialogFragment {
         mAmountWhenSent = rootView.findViewById(R.id.amount_when_sent);
         mTxAction = rootView.findViewById(R.id.tx_action);
         mTxAmount = rootView.findViewById(R.id.tx_amount);
+        mNowLabel = rootView.findViewById(R.id.label_now);
 
         mTxStatus = rootView.findViewById(R.id.tx_status);
         mTxDate = rootView.findViewById(R.id.tx_date);
@@ -143,6 +154,7 @@ public class FragmentTxDetails extends DialogFragment {
         mFeeSecondaryContainer = rootView.findViewById(R.id.fee_secondary_container);
         mGasPriceContainer = rootView.findViewById(R.id.gas_price_container);
         mGasLimitContainer = rootView.findViewById(R.id.gas_limit_container);
+        mWhenSentLabel = rootView.findViewById(R.id.label_when_sent);
 
         mCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -165,6 +177,11 @@ public class FragmentTxDetails extends DialogFragment {
                 }
             }
         });
+
+        mMemoText.setImeOptions(EditorInfo.IME_ACTION_DONE);
+        int color = mToFromAddress.getTextColors().getDefaultColor();
+        mMemoText.setTextColor(color);
+
 
         updateUi();
         return rootView;
@@ -250,6 +267,20 @@ public class FragmentTxDetails extends DialogFragment {
             mAmountWhenSent.setText(amountWhenSent);
             mAmountNow.setText(amountNow);
 
+            // If 'amount when sent' is 0 or unavailable, show fiat tx amount on its own
+            if (amountWhenSent.equals("$0.00") || amountWhenSent.equals("") || amountWhenSent == null) {
+                mAmountWhenSent.setVisibility(View.INVISIBLE);
+                mWhenSentLabel.setVisibility(View.INVISIBLE);
+                mNowLabel.setVisibility(View.INVISIBLE);
+                mAmountNow.setVisibility(View.INVISIBLE);
+
+                RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.addRule(RelativeLayout.CENTER_HORIZONTAL);
+                params.addRule(RelativeLayout.BELOW, mTxAmount.getId());
+                mAmountNow.setLayoutParams(params);
+
+            }
+
             mTxAction.setText(!received ? getString(R.string.TransactionDetails_titleSent) : getString(R.string.TransactionDetails_titleReceived));
             mToFrom.setText(!received ? getString(R.string.Confirmation_to) + " " : getString(R.string.TransactionDetails_addressViaHeader) + " ");
 
@@ -286,7 +317,7 @@ public class FragmentTxDetails extends DialogFragment {
 
             // Set the memo text if one is available
             String memo;
-            TxMetaData txMetaData = KVStoreManager.getInstance().getTxMetaData(app, mTransaction.getTxHash());
+            final TxMetaData txMetaData = KVStoreManager.getInstance().getTxMetaData(app, mTransaction.getTxHash());
 
             if (txMetaData != null) {
                 if (txMetaData.comment != null) {
@@ -303,6 +334,37 @@ public class FragmentTxDetails extends DialogFragment {
                 mMemoText.setText("");
 
             }
+
+            // Listen for an update to the memo text
+            mMemoText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
+
+                @Override
+                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
+                    if (actionId == EditorInfo.IME_ACTION_DONE) {
+                        // Update the memo field on the transaction and save it
+                        if (txMetaData != null) {
+                            txMetaData.comment = mMemoText.getText().toString();
+                            Log.d(TAG, "MetaData not null");
+                            KVStoreManager.getInstance().putTxMetaData(getContext(), txMetaData, mTransaction.getTxHash());
+
+                            // Hide softkeyboard if it's visible
+                            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                            imm.hideSoftInputFromWindow(mMemoText.getWindowToken(), 0);
+
+
+                            // Update Tx list to reflect the memo change
+                            TxManager.getInstance().updateTxList(getContext());
+
+                            // Hide Tx details dialog
+                            dismiss();
+
+                        } else {
+                            Log.d(TAG, "MetaData is null");
+                        }
+                    }
+                    return true;
+                }
+            });
 
             // timestamp is 0 if it's not confirmed in a block yet so make it now
             mTxDate.setText(BRDateUtil.getLongDate(mTransaction.getTimeStamp() == 0 ? System.currentTimeMillis() : (mTransaction.getTimeStamp() * 1000)));

@@ -25,6 +25,7 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -37,17 +38,8 @@
                 android:id="@+id/back_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="-13dp"
                 android:background="@drawable/ic_chevron_left" />
-
-
-            <com.breadwallet.presenter.customviews.BRText
-                android:id="@+id/nav_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="@dimen/bread_margin"
-                android:text="@string/Button.settings"
-                android:textSize="16sp"
-                app:customTFont="CircularPro-Bold.otf" />
 
 
         </LinearLayout>

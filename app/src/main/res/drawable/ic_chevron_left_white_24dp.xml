@@ -1,7 +1,7 @@
 <!-- drawable/chevron_left.xml -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
-        android:width="48dp"
-        android:height="48dp"
+        android:width="58dp"
+        android:height="58dp"
         android:viewportHeight="48"
         android:viewportWidth="48">
     <path

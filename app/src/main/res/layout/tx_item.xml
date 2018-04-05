@@ -15,7 +15,7 @@
         android:layout_marginTop="12dp"
         android:text="Dec 2"
         android:textColor="@color/total_assets_usd_color"
-        android:textSize="15sp"
+        android:textSize="18sp"
         app:customTFont="CircularPro-Book.otf" />
 
 
@@ -41,7 +41,7 @@
         android:layout_centerVertical="true"
         android:layout_marginRight="12dp"
         android:text="-$839.30"
-        android:textSize="16sp"
+        android:textSize="20sp"
         app:customTFont="CircularPro-Bold.otf"/>
 
     <ProgressBar
