@@ -82,7 +82,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     private static final String TAG = WalletEthManager.class.getSimpleName();
 
     private static String ISO = "ETH";
-    public static final String ETH_SCHEME = "ether";
+    public static final String ETH_SCHEME = "ethereum";
 
     private static final String mName = "Ethereum";
 
@@ -102,7 +102,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
 
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
-        uiConfig = new WalletUiConfiguration("#5e70a3", true, true, false, false, false, false);
+        uiConfig = new WalletUiConfiguration("#5e70a3", true, true, false, false, false, true);
         settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
 
         if (Utils.isNullOrEmpty(ethPubKey)) {
