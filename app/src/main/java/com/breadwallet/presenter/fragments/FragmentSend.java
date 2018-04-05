@@ -762,6 +762,8 @@ public class FragmentSend extends Fragment {
                     BigDecimal satoshiAmount = obj.amount.multiply(new BigDecimal(100000000));
                     amountBuilder = new StringBuilder(wm.getFiatForSmallestCrypto(getActivity(), satoshiAmount, null).toPlainString());
                     updateText();
+                }else{
+                    //if(obj)
                 }
             }
         }, 500);
