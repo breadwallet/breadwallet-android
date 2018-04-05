@@ -185,7 +185,10 @@ public class CryptoUriParser {
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
-            } else if (keyValue[0].trim().equals("label")) {
+            } else if(keyValue[0].trim().equals("value")){
+                obj.value = keyValue[1].trim();
+            }
+            else if (keyValue[0].trim().equals("label")) {
                 obj.label = keyValue[1].trim();
             } else if (keyValue[0].trim().equals("message")) {
                 obj.message = keyValue[1].trim();
@@ -313,7 +316,6 @@ public class CryptoUriParser {
 
                 BigDecimal ethAmount = cryptoAmount.divide(new BigDecimal("1000000000000000000"), 3, RoundingMode.HALF_EVEN);
                 builder = builder.appendQueryParameter("value", ethAmount.toPlainString() + "e18");
-
 
             } else {
                 builder = builder.appendQueryParameter("amount", cryptoAmount.divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString());

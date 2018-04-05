@@ -46,6 +46,7 @@ public class CryptoRequest {
     public String label;
     public String message;
     public String req;
+    public String value; // ETH payment request amounts are called `value`
 
     public String cn;
     public boolean isAmountRequested;
@@ -55,6 +56,7 @@ public class CryptoRequest {
         this.cn = certificationName;
         this.address = address;
         this.amount = amount;
+        this.value = amount.toPlainString();
         this.message = message;
     }
 
