@@ -23,10 +23,14 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URLDecoder;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -293,7 +297,8 @@ public class CryptoUriParser {
 
     }
 
-    public static Uri createCryptoUrl(Context app, BaseWalletManager wm, String addr, BigDecimal satoshiAmount, String label, String message, String rURL) {
+    public static Uri createCryptoUrl(Context app, BaseWalletManager wm, String addr, BigDecimal cryptoAmount, String label, String message, String rURL) {
+        String iso = wm.getIso(app);
         Uri.Builder builder = new Uri.Builder();
         String walletScheme = wm.getScheme(app);
         String cleanAddress = addr;
@@ -303,8 +308,16 @@ public class CryptoUriParser {
         builder = builder.scheme(walletScheme);
         if (!Utils.isNullOrEmpty(cleanAddress))
             builder = builder.appendPath(cleanAddress);
-        if (satoshiAmount.compareTo(new BigDecimal(0)) != 0)
-            builder = builder.appendQueryParameter("amount", satoshiAmount.divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString());
+        if (cryptoAmount.compareTo(new BigDecimal(0)) != 0)
+            if (iso.equals("ETH")) {
+
+                BigDecimal ethAmount = cryptoAmount.divide(new BigDecimal("1000000000000000000"), 3, RoundingMode.HALF_EVEN);
+                builder = builder.appendQueryParameter("value", ethAmount.toPlainString() + "e18");
+
+
+            } else {
+                builder = builder.appendQueryParameter("amount", cryptoAmount.divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString());
+            }
         if (label != null && !label.isEmpty())
             builder = builder.appendQueryParameter("label", label);
         if (message != null && !message.isEmpty())
