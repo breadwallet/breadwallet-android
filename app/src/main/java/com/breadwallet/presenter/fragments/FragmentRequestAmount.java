@@ -452,10 +452,6 @@ public class FragmentRequestAmount extends Fragment {
 
         Uri uri = CryptoUriParser.createCryptoUrl(getActivity(), wm, address, amount, null, null, null);
 
-
-        Log.d(TAG, "Crypto Amount -> " + amount.toPlainString());
-        Log.d(TAG, "Bitcoin QR String -> " + uri.toString());
-
         return QRUtils.generateQR(getActivity(), uri.toString(), mQrImage);
     }
 
