@@ -10,6 +10,7 @@ import android.util.Log;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
+import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.presenter.activities.SetPinActivity;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
@@ -81,12 +82,17 @@ public class PostAuth {
         return instance;
     }
 
-    public void onCreateWalletAuth(Activity app, boolean authAsked) {
+    public void onCreateWalletAuth(final Activity app, boolean authAsked) {
         Log.e(TAG, "onCreateWalletAuth: " + authAsked);
         long start = System.currentTimeMillis();
         boolean success = WalletsMaster.getInstance(app).generateRandomSeed(app);
         if (success) {
-            WalletsMaster.getInstance(app).initWallets(app);
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    WalletsMaster.getInstance(app).initWallets(app);
+                }
+            });
             Intent intent = new Intent(app, WriteDownActivity.class);
             app.startActivity(intent);
             app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);

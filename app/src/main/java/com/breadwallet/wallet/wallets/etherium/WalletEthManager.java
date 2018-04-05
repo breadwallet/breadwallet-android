@@ -358,7 +358,9 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public void refreshAddress(Context app) {
+        Log.e(TAG, "refreshAddress: start");
         BaseAddress address = getReceiveAddress(app);
+        Log.e(TAG, "refreshAddress: end");
         if (Utils.isNullOrEmpty(address.stringify())) {
             Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
         }
@@ -366,9 +368,14 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public void refreshCachedBalance(Context app) {
-        BigDecimal balance = new BigDecimal(mWallet.getBalance());
-        BRSharedPrefs.putCachedBalance(app, ISO, balance);
+    public void refreshCachedBalance(final Context app) {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                BigDecimal balance = new BigDecimal(mWallet.getBalance());
+                BRSharedPrefs.putCachedBalance(app, ISO, balance);
+            }
+        });
     }
 
     @Override
@@ -500,7 +507,6 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     @Override
     public void setCachedBalance(Context app, BigDecimal balance) {
         BRSharedPrefs.putCachedBalance(app, getIso(app), balance);
-        refreshAddress(app);
         for (OnBalanceChangedListener listener : balanceListeners) {
             if (listener != null) listener.onBalanceChanged(getIso(app), balance);
         }
