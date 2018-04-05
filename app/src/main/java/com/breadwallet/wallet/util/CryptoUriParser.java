@@ -185,10 +185,11 @@ public class CryptoUriParser {
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
-            } else if(keyValue[0].trim().equals("value")){
-                obj.value = keyValue[1].trim();
-            }
-            else if (keyValue[0].trim().equals("label")) {
+                // ETH payment request amounts are called `value`
+            } else if (keyValue[0].trim().equals("value")) {
+                BigDecimal bigDecimal = new BigDecimal(keyValue[1].trim());
+                obj.value = bigDecimal.multiply(new BigDecimal("1000000000000000000"));
+            } else if (keyValue[0].trim().equals("label")) {
                 obj.label = keyValue[1].trim();
             } else if (keyValue[0].trim().equals("message")) {
                 obj.message = keyValue[1].trim();

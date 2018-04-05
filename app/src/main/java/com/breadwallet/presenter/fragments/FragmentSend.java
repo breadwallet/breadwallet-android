@@ -536,42 +536,42 @@ public class FragmentSend extends Fragment {
     private void sayClipboardEmpty() {
         BRDialog.showCustomDialog(getActivity(), "", getResources().getString(R.string.Send_emptyPasteboard),
                 getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-            @Override
-            public void onClick(BRDialogView brDialogView) {
-                brDialogView.dismiss();
-            }
-        }, null, null, 0);
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        brDialogView.dismiss();
+                    }
+                }, null, null, 0);
     }
 
     private void sayInvalidClipboardData() {
         BRDialog.showCustomDialog(getActivity(), "", getResources().getString(R.string.Send_invalidAddressTitle),
                 getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-            @Override
-            public void onClick(BRDialogView brDialogView) {
-                brDialogView.dismiss();
-            }
-        }, null, null, 0);
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        brDialogView.dismiss();
+                    }
+                }, null, null, 0);
     }
 
     private void saySomethingWentWrong() {
         BRDialog.showCustomDialog(getActivity(), "", "Something went wrong.",
                 getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
 
-            @Override
-            public void onClick(BRDialogView brDialogView) {
-                brDialogView.dismiss();
-            }
-        }, null, null, 0);
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        brDialogView.dismiss();
+                    }
+                }, null, null, 0);
     }
 
     private void sayInvalidAddress() {
         BRDialog.showCustomDialog(getActivity(), "", getResources().getString(R.string.Send_invalidAddressMessage),
                 getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-            @Override
-            public void onClick(BRDialogView brDialogView) {
-                brDialogView.dismiss();
-            }
-        }, null, null, 0);
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        brDialogView.dismiss();
+                    }
+                }, null, null, 0);
     }
 
     @Override
@@ -762,8 +762,15 @@ public class FragmentSend extends Fragment {
                     BigDecimal satoshiAmount = obj.amount.multiply(new BigDecimal(100000000));
                     amountBuilder = new StringBuilder(wm.getFiatForSmallestCrypto(getActivity(), satoshiAmount, null).toPlainString());
                     updateText();
-                }else{
-                    //if(obj)
+                } else {
+                    if (obj.value != null) {
+
+                        // ETH request amount param is named `value`
+                        BigDecimal cryptoAmount = obj.value.multiply(new BigDecimal("1000000000000000000"));
+                        amountBuilder = new StringBuilder(wm.getFiatForSmallestCrypto(getActivity(), cryptoAmount, null).toPlainString());
+                        updateText();
+
+                    }
                 }
             }
         }, 500);
