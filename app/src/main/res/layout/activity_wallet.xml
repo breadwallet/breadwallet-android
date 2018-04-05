@@ -173,6 +173,7 @@
                         android:text="1.56739 BTC"
                         android:textColor="@color/trans_white"
                         android:textSize="16sp"
+                        android:maxLines="1"
                         app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@id/swap"
