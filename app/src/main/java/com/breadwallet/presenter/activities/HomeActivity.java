@@ -186,7 +186,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         BreadApp.addOnBackgroundedListener(new BreadApp.OnAppBackgrounded() {
             @Override
             public void onBackgrounded() {
-                Log.d(TAG, "App backgrounded from HomeScreen!");
                 BRSharedPrefs.putAppBackgroundedFromHome(HomeActivity.this, true);
 
             }
