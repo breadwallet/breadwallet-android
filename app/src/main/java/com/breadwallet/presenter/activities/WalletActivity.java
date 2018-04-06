@@ -217,15 +217,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         setPriceTags(cryptoPreferred, false);
 
-        BreadApp.addOnBackgroundedListener(new BreadApp.OnAppBackgrounded() {
-            @Override
-            public void onBackgrounded() {
-                BRSharedPrefs.putAppBackgroundedFromHome(WalletActivity.this, false);
-
-            }
-        });
 
     }
+
 
     @Override
     protected void onDestroy() {

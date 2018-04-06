@@ -183,15 +183,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             }
         });
 
-        BreadApp.addOnBackgroundedListener(new BreadApp.OnAppBackgrounded() {
-            @Override
-            public void onBackgrounded() {
-                BRSharedPrefs.putAppBackgroundedFromHome(HomeActivity.this, true);
-
-            }
-        });
-
     }
+
 
     public void hidePrompt() {
         mPromptCard.setVisibility(View.GONE);
