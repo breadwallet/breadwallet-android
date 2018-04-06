@@ -35,6 +35,7 @@ import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.CryptoRequest;
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SlideDetector;
@@ -54,6 +55,7 @@ import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 import static com.breadwallet.wallet.util.CryptoUriParser.parseRequest;
 import static com.platform.HTTPServer.URL_SUPPORT;
@@ -301,6 +303,10 @@ public class FragmentSend extends Fragment {
                 }
 
                 final CryptoRequest obj = parseRequest(getActivity(), theUrl);
+                Log.d(TAG, "Send Address -> " + obj.address);
+                Log.d(TAG, "Send Value -> " + obj.value);
+                Log.d(TAG, "Send Amount -> " + obj.amount);
+
 
                 if (obj == null || Utils.isNullOrEmpty(obj.address)) {
                     sayInvalidClipboardData();
@@ -759,15 +765,19 @@ public class FragmentSend extends Fragment {
                     commentEdit.setText(obj.message);
                 }
                 if (obj.amount != null) {
+
                     BigDecimal satoshiAmount = obj.amount.multiply(new BigDecimal(100000000));
                     amountBuilder = new StringBuilder(wm.getFiatForSmallestCrypto(getActivity(), satoshiAmount, null).toPlainString());
                     updateText();
                 } else {
+                    // ETH request amount param is named `value`
+
                     if (obj.value != null) {
 
-                        // ETH request amount param is named `value`
-                        BigDecimal cryptoAmount = obj.value.multiply(new BigDecimal("1000000000000000000"));
-                        amountBuilder = new StringBuilder(wm.getFiatForSmallestCrypto(getActivity(), cryptoAmount, null).toPlainString());
+                        BigDecimal fiatAmount = wm.getFiatForSmallestCrypto(getActivity(), obj.value, null);
+                        fiatAmount = fiatAmount.setScale(2, RoundingMode.HALF_EVEN);
+
+                        amountBuilder = new StringBuilder(fiatAmount.toPlainString());
                         updateText();
 
                     }
