@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.core.test.BRWalletManager;
 import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
@@ -179,6 +180,15 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                     info.listener.onClick(mPromptContinue);
                 else
                     Log.e(TAG, "Continue :" + info.title + " (FAILED)");
+            }
+        });
+
+        BreadApp.addOnBackgroundedListener(new BreadApp.OnAppBackgrounded() {
+            @Override
+            public void onBackgrounded() {
+                Log.d(TAG, "App backgrounded from HomeScreen!");
+                BRSharedPrefs.putAppBackgroundedFromHome(HomeActivity.this, true);
+
             }
         });
 
