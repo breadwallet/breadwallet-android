@@ -119,7 +119,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     private static String ISO = "BCH";
     public static final String BCH_SCHEME = BuildConfig.BITCOIN_TESTNET ? "bchtest" : "bitcoincash";
 
-    private static final String mName = "BitcoinCash";
+    private static final String mName = "Bitcoin Cash";
 
     public final long MAX_BCH = 21000000;
 

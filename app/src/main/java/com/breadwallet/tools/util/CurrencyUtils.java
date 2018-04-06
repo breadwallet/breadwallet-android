@@ -1,9 +1,7 @@
 package com.breadwallet.tools.util;
 
 import android.content.Context;
-import android.util.Log;
 
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
@@ -43,9 +41,8 @@ public class CurrencyUtils {
 
 
     /**
-     *
-     * @param app - the Context
-     * @param iso - the iso for the currency we want to format the amount for
+     * @param app    - the Context
+     * @param iso    - the iso for the currency we want to format the amount for
      * @param amount - the smallest denomination currency (e.g. dollars or satoshis)
      * @return - the formatted amount e.g. $535.50 or b5000
      */
@@ -66,12 +63,12 @@ public class CurrencyUtils {
 //        int decimalPoints = 0;
         BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
         if (wallet != null) {
-            symbol = wallet.getSymbol(app);
+            //symbol = wallet.getSymbol(app);
             amount = wallet.getCryptoForSmallestCrypto(app, amount);
         } else {
             try {
                 currency = Currency.getInstance(iso);
-                symbol = currency.getSymbol();
+                //symbol = currency.getSymbol();
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }
