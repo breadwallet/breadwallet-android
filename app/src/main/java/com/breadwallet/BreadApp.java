@@ -13,10 +13,13 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.breadwallet.presenter.activities.HomeActivity;
+import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.listeners.SyncReceiver;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -221,8 +224,16 @@ public class BreadApp extends Application {
         return context == null || activityCounter.get() <= 0;
     }
 
-    //call onStop on evert activity so
+    //call onStop on every activity so
     public static void onStop(final BRActivity app) {
+
+        if (app instanceof WalletActivity) {
+            BRSharedPrefs.putAppBackgroundedFromHome(mContext, false);
+
+        } else if (app instanceof HomeActivity) {
+            BRSharedPrefs.putAppBackgroundedFromHome(mContext, true);
+
+        }
         if (isBackgroundChecker != null) isBackgroundChecker.cancel();
         isBackgroundChecker = new Timer();
         TimerTask backgroundCheck = new TimerTask() {
@@ -232,8 +243,8 @@ public class BreadApp extends Application {
                     backgroundedTime = System.currentTimeMillis();
                     Log.e(TAG, "App went in background!");
                     // APP in background, do something
-                    isBackgroundChecker.cancel();
                     fireListeners();
+                    isBackgroundChecker.cancel();
                 }
                 // APP in foreground, do something else
             }
