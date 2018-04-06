@@ -21,16 +21,12 @@ import com.breadwallet.tools.threads.PaymentProtocolTask;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URLDecoder;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,6 +60,7 @@ public class CryptoUriParser {
     private static final Object lockObject = new Object();
 
     public static synchronized boolean processRequest(Context app, String url, BaseWalletManager walletManager) {
+        Log.d(TAG, "processRequest -> " + url);
         if (url == null) {
             Log.e(TAG, "processRequest: url is null");
             return false;
@@ -188,7 +185,7 @@ public class CryptoUriParser {
                 // ETH payment request amounts are called `value`
             } else if (keyValue[0].trim().equals("value")) {
                 BigDecimal bigDecimal = new BigDecimal(keyValue[1].trim());
-                obj.value = bigDecimal.multiply(new BigDecimal("1000000000000000000"));
+                obj.value = bigDecimal;
             } else if (keyValue[0].trim().equals("label")) {
                 obj.label = keyValue[1].trim();
             } else if (keyValue[0].trim().equals("message")) {
