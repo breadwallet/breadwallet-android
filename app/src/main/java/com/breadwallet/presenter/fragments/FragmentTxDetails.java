@@ -347,20 +347,21 @@ public class FragmentTxDetails extends DialogFragment {
                             Log.d(TAG, "MetaData not null");
                             KVStoreManager.getInstance().putTxMetaData(getContext(), txMetaData, mTransaction.getTxHash());
 
-                            // Hide softkeyboard if it's visible
-                            InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                            imm.hideSoftInputFromWindow(mMemoText.getWindowToken(), 0);
-
-
-                            // Update Tx list to reflect the memo change
-                            TxManager.getInstance().updateTxList(getContext());
-
-                            // Hide Tx details dialog
-                            dismiss();
 
                         } else {
                             Log.d(TAG, "MetaData is null");
                         }
+
+                        // Hide softkeyboard if it's visible
+                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                        imm.hideSoftInputFromWindow(mMemoText.getWindowToken(), 0);
+
+
+                        // Update Tx list to reflect the memo change
+                        TxManager.getInstance().updateTxList(getContext());
+
+                        // Hide Tx details dialog
+                        dismiss();
                     }
                     return true;
                 }
