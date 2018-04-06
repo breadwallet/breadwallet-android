@@ -360,7 +360,7 @@ public class FragmentTxDetails extends DialogFragment {
                         // Update Tx list to reflect the memo change
                         TxManager.getInstance().updateTxList(getContext());
 
-                        // Hide Tx details dialog
+                        // Hide Tx details
                         dismiss();
                     }
                     return true;
