@@ -27,6 +27,7 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ViewFlipper;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
@@ -215,6 +216,14 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         boolean cryptoPreferred = BRSharedPrefs.isCryptoPreferred(this);
 
         setPriceTags(cryptoPreferred, false);
+
+        BreadApp.addOnBackgroundedListener(new BreadApp.OnAppBackgrounded() {
+            @Override
+            public void onBackgrounded() {
+                BRSharedPrefs.putAppBackgroundedFromHome(WalletActivity.this, false);
+
+            }
+        });
 
     }
 

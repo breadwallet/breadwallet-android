@@ -383,6 +383,7 @@ public class BRAnimator {
         if (!BRSharedPrefs.wasBchDialogShown(from) || BRSharedPrefs.wasAppBackgroundedFromHome(from)) {
             toStart = HomeActivity.class;
         }
+
         Intent intent = new Intent(from, toStart);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         from.startActivity(intent);
