@@ -9,7 +9,6 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,7 +18,6 @@ import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
-import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.services.SyncService;
@@ -28,7 +26,6 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 
 /**
@@ -81,9 +78,9 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
         // Set wallet fields
         holder.mWalletName.setText(name);
-        holder.mTradePrice.setText(exchangeRate);
+        holder.mTradePrice.setText(exchangeRate + " per " + iso);
         holder.mWalletBalanceUSD.setText(fiatBalance);
-        holder.mWalletBalanceCurrency.setText(cryptoBalance);
+        holder.mWalletBalanceCurrency.setText(cryptoBalance + " " + iso);
         holder.mSyncingProgressBar.setVisibility(item.mShowSyncing ? View.VISIBLE : View.INVISIBLE);
         holder.mSyncingProgressBar.setProgress(item.mProgress);
         holder.mSyncingLabel.setVisibility(item.mShowSyncingLabel ? View.VISIBLE : View.INVISIBLE);
@@ -179,7 +176,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     //return the next wallet that is not connected or null if all are connected
     private WalletItem getNextWalletToSync() {
         BaseWalletManager currentWallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
-        if (currentWallet.getSyncProgress(BRSharedPrefs.getStartHeight(mContext, currentWallet.getIso(mContext))) == 1){
+        if (currentWallet.getSyncProgress(BRSharedPrefs.getStartHeight(mContext, currentWallet.getIso(mContext))) == 1) {
             currentWallet = null;
         }
 
@@ -258,8 +255,8 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                 String intentWalletIso = intent.getStringExtra(SyncService.EXTRA_WALLET_ISO);
                 double progress = intent.getDoubleExtra(SyncService.EXTRA_PROGRESS, SyncService.PROGRESS_NOT_DEFINTED);
 
-                if (mCurrentWalletSyncing == null ) {
-                    Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: mCurrentWalletSyncing is null. Wallet:" + intentWalletIso + " Progress:" + progress + " Ignored" );
+                if (mCurrentWalletSyncing == null) {
+                    Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: mCurrentWalletSyncing is null. Wallet:" + intentWalletIso + " Progress:" + progress + " Ignored");
                     return;
                 }
 
