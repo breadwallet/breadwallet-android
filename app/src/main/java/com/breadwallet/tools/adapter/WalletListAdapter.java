@@ -75,6 +75,11 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         String exchangeRate = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatExchangeRate(mContext));
         String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatBalance(mContext));
         String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getIso(mContext), wallet.getCachedBalance(mContext));
+        String symbol = wallet.getSymbol(mContext);
+
+        if(cryptoBalance.contains(symbol)){
+            cryptoBalance = cryptoBalance.replace(symbol, "");
+        }
 
         // Set wallet fields
         holder.mWalletName.setText(name);
