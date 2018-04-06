@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 
-
 import com.breadwallet.tools.util.BRConstants;
 
 import org.json.JSONArray;
@@ -469,5 +468,19 @@ public class BRSharedPrefs {
     public static boolean wasBchDialogShown(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getBoolean("bchDialogShown", false);
+    }
+
+    public static boolean wasAppBackgroundedFromHome(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getBoolean("appBackgroundedFromHome", false);
+
+    }
+
+    public static void putAppBackgroundedFromHome(Context context, boolean fromHome) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean("appBackgroundedFromHome", fromHome);
+        editor.apply();
+
     }
 }
