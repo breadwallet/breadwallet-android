@@ -63,12 +63,12 @@ public class CurrencyUtils {
 //        int decimalPoints = 0;
         BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
         if (wallet != null) {
-            //symbol = wallet.getSymbol(app);
+            symbol = wallet.getSymbol(app);
             amount = wallet.getCryptoForSmallestCrypto(app, amount);
         } else {
             try {
                 currency = Currency.getInstance(iso);
-                //symbol = currency.getSymbol();
+                symbol = currency.getSymbol();
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
             }
