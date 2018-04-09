@@ -81,12 +81,14 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
+        // TODO : Asynchronously loading the wallets seems to cause a bug(see DROID-481) where no wallets are shown
+        // TODO : on the Home Screen. Probably because initWallets() is not finished before onCreate() is.
+       // BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            //@Override
+            //public void run() {
                 WalletsMaster.getInstance(HomeActivity.this).initWallets(HomeActivity.this);
-            }
-        });
+          //  }
+        //});
 
         ArrayList<BaseWalletManager> walletList = new ArrayList<>();
 

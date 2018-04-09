@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities.util;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
@@ -51,6 +52,7 @@ import com.platform.tools.BRBitId;
 public class BRActivity extends Activity {
     private static final String TAG = BRActivity.class.getName();
     public static final Point screenParametersPoint = new Point();
+    private static final String PACKAGE_NAME = BreadApp.getBreadContext().getApplicationContext().getPackageName();
 
 
     static {
@@ -59,6 +61,7 @@ public class BRActivity extends Activity {
         } catch (UnsatisfiedLinkError e) {
             e.printStackTrace();
             Log.d(TAG, "Native code library failed to load.\\n\" + " + e);
+            Log.d(TAG, "Installer Package Name -> " + BreadApp.getBreadContext().getPackageManager().getInstallerPackageName(PACKAGE_NAME));
         }
     }
 
