@@ -58,7 +58,7 @@ public class BRActivity extends Activity {
             System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
         } catch (UnsatisfiedLinkError e) {
             e.printStackTrace();
-
+            Log.d(TAG, "Native code library failed to load.\\n\" + " + e);
         }
     }
 
