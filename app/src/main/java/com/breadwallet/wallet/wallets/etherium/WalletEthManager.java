@@ -28,6 +28,7 @@ import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseAddress;
 import com.breadwallet.wallet.abstracts.BaseTransaction;
@@ -51,6 +52,7 @@ import org.json.JSONObject;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
@@ -114,7 +116,19 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                     instance = null;
                     return;
                 }
-                new BREthereumLightNode.JSON_RPC(this, network, paperKey);
+
+                String lang = Locale.getDefault().getLanguage();
+                if (lang == null) lang = "en";
+
+                List<String> list = Bip39Reader.bip39List(app, lang);
+                String[] words = list.toArray(new String[list.size()]);
+
+                if (words.length % Bip39Reader.WORD_LIST_SIZE != 0) {
+                    Log.e(TAG, "isPaperKeyValid: " + "The list size should divide by " + Bip39Reader.WORD_LIST_SIZE);
+                    BRReportsManager.reportBug(new IllegalArgumentException("words.length is not dividable by " + Bip39Reader.WORD_LIST_SIZE), true);
+                }
+
+                new BREthereumLightNode.JSON_RPC(this, network, paperKey, words);
                 mWallet = node.getWallet();
                 ethPubKey = mWallet.getAccount().getPrimaryAddressPublicKey();
                 BRKeyStore.putEthPublicKey(ethPubKey, app);
@@ -749,7 +763,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public void getGasEstimate(int wid, final int tid, final String to, final String amount, final String data, final int rid) {
+    public void getGasEstimate(final int wid, final int tid, final String to, final String amount, final String data, final int rid) {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -784,13 +798,13 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                             if (responseObject.has("result")) {
                                 gasEstimate = responseObject.getString("result");
 
-                                node.announceGasEstimate(tid, gasEstimate, rid);
+                                node.announceGasEstimate(wid, tid, gasEstimate, rid);
                                 return;
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        node.announceGasEstimate(tid, gasEstimate, rid);
+                        node.announceGasEstimate(wid, tid, gasEstimate, rid);
                     }
                 });
             }
