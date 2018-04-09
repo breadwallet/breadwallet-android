@@ -54,7 +54,11 @@ public class BRActivity extends Activity {
 
 
     static {
-        System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
+        try {
+            System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
+        } catch (UnsatisfiedLinkError e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
