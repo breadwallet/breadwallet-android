@@ -908,12 +908,9 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "getTransactions()");
-                Log.d(TAG, "account -> " + address);
 
                 //final String eth_rpc_url = String.format(JsonRpcConstants.ETH_RPC_TX_LIST, mWallet.getAccount().getPrimaryAddress());
                 final String eth_rpc_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?module=account&action=txlist&address=" + address;
-                Log.d(TAG, "getTransactions ETH RPC URL -> " + eth_rpc_url);
 
                 final JsonRpcRequest request = new JsonRpcRequest();
                 final JSONObject payload = new JSONObject();
