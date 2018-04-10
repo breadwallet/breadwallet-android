@@ -217,11 +217,11 @@ public class KVStoreManager {
             result.blockHeight = json.getInt("bh");
             result.exchangeRate = json.getDouble("er");
             result.exchangeCurrency = json.getString("erc");
+            result.comment = json.getString("comment");
             result.fee = json.getString("fr");
             result.txSize = json.getInt("s");
             result.creationTime = json.getInt("c");
             result.deviceId = json.getString("dId");
-            result.comment = json.getString("comment");
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(TAG, "getTxMetaData: FAILED to get json value");
