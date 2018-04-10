@@ -81,12 +81,12 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
+       // BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+         //   @Override
+           // public void run() {
                 WalletsMaster.getInstance(HomeActivity.this).initWallets(HomeActivity.this);
-            }
-        });
+            //}
+        //});
 
         ArrayList<BaseWalletManager> walletList = new ArrayList<>();
 
