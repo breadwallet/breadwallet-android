@@ -303,9 +303,11 @@ public class FragmentSend extends Fragment {
                 }
 
                 final CryptoRequest obj = parseRequest(getActivity(), theUrl);
-                Log.d(TAG, "Send Address -> " + obj.address);
-                Log.d(TAG, "Send Value -> " + obj.value);
-                Log.d(TAG, "Send Amount -> " + obj.amount);
+                if (Utils.isEmulatorOrDebug(getActivity())) {
+                    Log.d(TAG, "Send Address -> " + obj.address);
+                    Log.d(TAG, "Send Value -> " + obj.value);
+                    Log.d(TAG, "Send Amount -> " + obj.amount);
+                }
 
 
                 if (obj == null || Utils.isNullOrEmpty(obj.address)) {
