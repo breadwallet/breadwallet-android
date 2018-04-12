@@ -307,35 +307,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             }
         });
 
-        if (!BRSharedPrefs.wasBchDialogShown(this)) {
-            BRDialog.showHelpDialog(this, getString(R.string.Android_BCH_welcome_title), getString(R.string.Android_BCH_welcome_message),
-                    getString(R.string.Button_Home), getString(R.string.Button_dismiss), new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            brDialogView.dismiss();
-                            onBackPressed();
-                        }
-                    }, new BRDialogView.BROnClickListener() {
-
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            brDialogView.dismiss();
-
-                        }
-                    }, new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            Log.d(TAG, "help clicked!");
-
-                            brDialogView.dismiss();
-                            BRAnimator.showSupportFragment(WalletActivity.this, BRConstants.bchFaq, mWallet);
-
-                        }
-                    });
-
-            BRSharedPrefs.putBchDialogShown(WalletActivity.this, true);
-        }
-
     }
 
     private void swap() {

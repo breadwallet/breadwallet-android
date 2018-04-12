@@ -9,11 +9,14 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.activities.DisabledActivity;
+import com.breadwallet.presenter.activities.HomeActivity;
+import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRApiManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -74,6 +77,13 @@ public class BRActivity extends Activity {
         super.onStop();
         BreadApp.activityCounter.decrementAndGet();
         BreadApp.onStop(this);
+
+        //open back to HomeActivity if needed
+        if (this instanceof WalletActivity)
+            BRSharedPrefs.putAppBackgroundedFromHome(this, false);
+        else if (this instanceof HomeActivity)
+            BRSharedPrefs.putAppBackgroundedFromHome(this, true);
+
     }
 
     @Override
