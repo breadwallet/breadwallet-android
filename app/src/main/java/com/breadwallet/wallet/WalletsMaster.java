@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.security.keystore.UserNotAuthenticatedException;
+import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -292,6 +293,7 @@ public class WalletsMaster {
         }
     }
 
+    @WorkerThread
     public void initLastWallet(Context app) {
         if (app == null) {
             app = BreadApp.getBreadContext();
@@ -302,9 +304,10 @@ public class WalletsMaster {
         }
         BaseWalletManager wallet = getWalletByIso(app, BRSharedPrefs.getCurrentWalletIso(app));
         if (wallet == null) wallet = getWalletByIso(app, "BTC");
-        wallet.connectWallet(app);
+        wallet.connect(app);
     }
 
+    @WorkerThread
     public void updateFixedPeer(Context app, BaseWalletManager wm) {
         String node = BRSharedPrefs.getTrustNode(app, wm.getIso(app));
         if (!Utils.isNullOrEmpty(node)) {
@@ -319,7 +322,7 @@ public class WalletsMaster {
                 Log.d(TAG, "updateFixedPeer: succeeded");
             }
         }
-        wm.connect();
+        wm.connect(app);
 
     }
 

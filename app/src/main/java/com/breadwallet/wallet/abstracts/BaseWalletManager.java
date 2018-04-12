@@ -78,11 +78,11 @@ public interface BaseWalletManager {
 
     @WorkerThread
         //Connect the wallet (PeerManager for Bitcoin)
-    void connect();
+    void connect(Context app);
 
     @WorkerThread
         //Disconnect the wallet (PeerManager for Bitcoin)
-    void disconnect();
+    void disconnect(Context app);
 
     @WorkerThread
         //Use a fixed favorite node to connect
@@ -145,10 +145,6 @@ public interface BaseWalletManager {
     @WorkerThread
         //generate the wallet if needed
     boolean generateWallet(Context app);
-
-    @WorkerThread
-        //init the current wallet
-    boolean connectWallet(Context app);
 
     //get the currency symbol e.g. Bitcoin - ₿, Ether - Ξ
     String getSymbol(Context app);

@@ -163,23 +163,23 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
             }
             String firstAddress = masterPubKey.getPubKeyAsCoreKey().address();
             BRSharedPrefs.putFirstAddress(app, firstAddress);
-            BigDecimal fee = BRSharedPrefs.getFeeRate(app, getIso(app));
-            BigDecimal economyFee = BRSharedPrefs.getEconomyFeeRate(app, getIso(app));
-            if (fee.compareTo(new BigDecimal(0)) == 0) {
-                fee = new BigDecimal(getWallet().getDefaultFeePerKb());
-                BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
-            }
-            getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app, getIso(app)) ? fee.longValue() : economyFee.longValue());
-            if (BRSharedPrefs.getStartHeight(app, getIso(app)) == 0)
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        BRSharedPrefs.putStartHeight(app, getIso(app), getPeerManager().getLastBlockHeight());
-                    }
-                });
 
-            WalletsMaster.getInstance(app).updateFixedPeer(app, this);
-//        balanceListeners = new ArrayList<>();
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (BRSharedPrefs.getStartHeight(app, getIso(app)) == 0)
+                        BRSharedPrefs.putStartHeight(app, getIso(app), getPeerManager().getLastBlockHeight());
+
+                    BigDecimal fee = BRSharedPrefs.getFeeRate(app, getIso(app));
+                    BigDecimal economyFee = BRSharedPrefs.getEconomyFeeRate(app, getIso(app));
+                    if (fee.compareTo(new BigDecimal(0)) == 0) {
+                        fee = new BigDecimal(getWallet().getDefaultFeePerKb());
+                        BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
+                    }
+                    getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app, getIso(app)) ? fee.longValue() : economyFee.longValue());
+                    WalletsMaster.getInstance(app).updateFixedPeer(app, WalletBitcoinManager.this);
+                }
+            });
 
             uiConfig = new WalletUiConfiguration("#f29500", true, true, true, true, true, true);
             settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
@@ -387,19 +387,6 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         //no need, one key for all wallets so far
         return true;
     }
-
-    @Override
-    public boolean connectWallet(final Context app) {
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                getPeerManager().connect();
-            }
-        });
-
-        return true;
-    }
-
 
     @Override
     public String getSymbol(Context app) {
@@ -727,12 +714,12 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public void connect() {
+    public void connect(Context app) {
         getPeerManager().connect();
     }
 
     @Override
-    public void disconnect() {
+    public void disconnect(Context app) {
         getPeerManager().disconnect();
     }
 

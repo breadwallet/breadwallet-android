@@ -448,6 +448,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                         updateUi();
                     }
                 });
+                if (wallet.getConnectStatus() != 2)
+                    wallet.connect(WalletActivity.this);
 
             }
         });
@@ -456,14 +458,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             public void onBalanceChanged(String iso, BigDecimal newBalance) {
                 wallet.refreshCachedBalance(WalletActivity.this);
                 updateUi();
-            }
-        });
-
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                if (wallet.getConnectStatus() != 2)
-                    wallet.connectWallet(WalletActivity.this);
             }
         });
 

@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
 
@@ -36,7 +37,6 @@ public class SyncReceiver extends IntentService {
     public final static String SYNC_RECEIVER = "SYNC_RECEIVER";
     public static Context app;
 
-    //    private Calendar c = Calendar.getInstance();
     static {
         System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
     }
@@ -50,7 +50,12 @@ public class SyncReceiver extends IntentService {
         if (workIntent != null)
             if (SYNC_RECEIVER.equals(workIntent.getAction())) {
                 app = getApplication();
-                WalletsMaster.getInstance(app).initLastWallet(app);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        WalletsMaster.getInstance(app).initLastWallet(app);
+                    }
+                });
             }
     }
 }

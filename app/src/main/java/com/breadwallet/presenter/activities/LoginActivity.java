@@ -211,7 +211,7 @@ public class LoginActivity extends BRActivity {
                 //disconnect all wallets on backgrounded
                 List<BaseWalletManager> wallets = WalletsMaster.getInstance(LoginActivity.this).getAllWallets();
                 for (BaseWalletManager w : wallets) {
-                    w.disconnect();
+                    w.disconnect(LoginActivity.this);
                 }
 
             }

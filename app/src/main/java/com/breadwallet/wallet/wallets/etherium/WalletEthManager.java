@@ -244,12 +244,12 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public void connect() {
+    public void connect(Context app) {
         //Not needed for ETH
     }
 
     @Override
-    public void disconnect() {
+    public void disconnect(Context app) {
         //Not needed for ETH
     }
 
@@ -427,12 +427,6 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public boolean generateWallet(Context app) {
-        //Not needed for ETH
-        return false;
-    }
-
-    @Override
-    public boolean connectWallet(Context app) {
         //Not needed for ETH
         return false;
     }
