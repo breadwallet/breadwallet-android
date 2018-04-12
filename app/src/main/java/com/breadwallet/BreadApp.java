@@ -21,6 +21,7 @@ import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.listeners.SyncReceiver;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -79,6 +80,18 @@ public class BreadApp extends Application {
     public static long backgroundedTime;
     public static boolean appInBackground;
     private static Context mContext;
+
+    private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
+
+    static {
+        try {
+            System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
+        } catch (UnsatisfiedLinkError e) {
+            e.printStackTrace();
+            Log.d(TAG, "Native code library failed to load.\\n\" + " + e);
+            Log.d(TAG, "Installer Package Name -> " + (PACKAGE_NAME == null ? "null" : BreadApp.getBreadContext().getPackageManager().getInstallerPackageName(PACKAGE_NAME)));
+        }
+    }
 
     public static final boolean IS_ALPHA = false;
 
