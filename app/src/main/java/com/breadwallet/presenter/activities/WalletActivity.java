@@ -290,10 +290,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatExchangeRate(this));
         String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatBalance(this));
         String cryptoBalance = CurrencyUtils.getFormattedAmount(this, wallet.getIso(this), wallet.getCachedBalance(this));
-        String symbol = wallet.getSymbol(app);
-        if(cryptoBalance.contains(symbol)){
-            cryptoBalance = cryptoBalance.replace(symbol, "");
-        }
 
         mCurrencyTitle.setText(wallet.getName(this));
         mCurrencyPriceUsd.setText(String.format("%s per %s", fiatExchangeRate, wallet.getIso(this)));

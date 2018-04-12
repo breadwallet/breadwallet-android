@@ -433,7 +433,8 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public String getSymbol(Context app) {
-        return BRConstants.symbolEther;
+//        return BRConstants.symbolEther;
+        return ISO;
     }
 
     @Override

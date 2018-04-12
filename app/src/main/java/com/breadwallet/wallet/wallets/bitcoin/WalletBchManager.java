@@ -399,36 +399,21 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         return true;
     }
 
-
     @Override
     public String getSymbol(Context app) {
 
-        SymbolUtils symbolUtils = new SymbolUtils();
         String currencySymbolString = BRConstants.symbolBits;
         if (app != null) {
             int unit = BRSharedPrefs.getCryptoDenomination(app, getIso(app));
             switch (unit) {
                 case BRConstants.CURRENT_UNIT_BITS:
-                    currencySymbolString = BRConstants.symbolBits + "c";
+                    currencySymbolString = "μ" + ISO;
                     break;
                 case BRConstants.CURRENT_UNIT_MBITS:
-                    if (symbolUtils.doesDeviceSupportSymbol(BRConstants.symbolBitcoinPrimary)) {
-                        currencySymbolString = "m" + BRConstants.symbolBitcoinPrimary + "C";
-
-                    } else {
-                        currencySymbolString = "m" + BRConstants.symbolBitcoinSecondary + "C";
-
-                    }
+                    currencySymbolString = "m" + ISO;
                     break;
                 case BRConstants.CURRENT_UNIT_BITCOINS:
-
-                    if (symbolUtils.doesDeviceSupportSymbol(BRConstants.symbolBitcoinPrimary)) {
-                        currencySymbolString = BRConstants.symbolBitcoinPrimary + "C";
-
-                    } else {
-                        currencySymbolString = BRConstants.symbolBitcoinSecondary + "C";
-
-                    }
+                    currencySymbolString =  ISO;
                     break;
             }
         }
