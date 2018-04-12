@@ -283,7 +283,6 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
             fee = new BigDecimal(0);
         } else {
             fee = new BigDecimal(mWallet.transactionEstimatedFee(amount.toPlainString()));
-
         }
         return fee;
     }
