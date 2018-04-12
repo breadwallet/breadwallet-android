@@ -257,7 +257,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     public BigDecimal getEstimatedFee(BigDecimal amount, String address) {
         BigDecimal fee;
         if (amount == null) return null;
-        if (amount.compareTo(new BigDecimal(0)) == 0) {
+        if (amount.longValue() == 0) {
             fee = new BigDecimal(0);
         } else {
             BaseTransaction tx = null;

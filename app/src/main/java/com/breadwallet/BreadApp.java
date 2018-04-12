@@ -21,6 +21,7 @@ import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.listeners.SyncReceiver;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -105,8 +106,13 @@ public class BreadApp extends Application {
         if (Utils.isEmulatorOrDebug(this)) {
 //            BRKeyStore.putFailCount(0, this);
             HOST = "stage2.breadwallet.com";
-            FirebaseCrash.setCrashCollectionEnabled(false);
-//            FirebaseCrash.report(new RuntimeException("test with new json file"));
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    FirebaseCrash.setCrashCollectionEnabled(false);
+
+                }
+            });
         }
         mContext = this;
 
