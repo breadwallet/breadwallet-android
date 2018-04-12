@@ -78,6 +78,7 @@ public class CurrencyUtils {
 //        currencyFormat.setMaximumFractionDigits(decimalPoints);
         currencyFormat.setGroupingUsed(true);
         currencyFormat.setMaximumFractionDigits(currency != null ? currency.getDefaultFractionDigits() : wallet.getMaxDecimalPlaces(app));
+        currencyFormat.setMinimumFractionDigits(0);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
         currencyFormat.setNegativeSuffix("");

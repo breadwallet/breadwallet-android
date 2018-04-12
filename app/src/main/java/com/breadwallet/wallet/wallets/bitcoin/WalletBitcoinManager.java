@@ -181,7 +181,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                 }
             });
 
-            uiConfig = new WalletUiConfiguration("#f29500", true, true, true, true, true, true);
+            uiConfig = new WalletUiConfiguration("#f29500", true, true,  true, true);
             settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
         } finally {
             isInitiatingWallet = false;
@@ -460,10 +460,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         switch (unit) {
             case BRConstants.CURRENT_UNIT_BITS:
                 return 2;
-            case BRConstants.CURRENT_UNIT_MBITS:
-                return 5;
             default:
-                return 8;
+                return 5;
         }
     }
 

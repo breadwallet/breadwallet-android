@@ -31,18 +31,14 @@ public class WalletUiConfiguration {
     public boolean receiveVisible;
     public boolean buyVisible;
 
-    public boolean showEconomyFee;
-    public boolean showLiveFee;
     public boolean showRequestAnAmount;
 
     //todo refactor to receive objects tied to specific screens
-    public WalletUiConfiguration(String colorHex, boolean sendVisible, boolean receiveVisible, boolean buyVisible, boolean showEconomyFee, boolean showLiveFee, boolean showRequestAnAmount) {
+    public WalletUiConfiguration(String colorHex, boolean sendVisible, boolean receiveVisible, boolean buyVisible,  boolean showRequestAnAmount) {
         this.colorHex = colorHex;
         this.sendVisible = sendVisible;
         this.receiveVisible = receiveVisible;
         this.buyVisible = buyVisible;
-        this.showEconomyFee = showEconomyFee;
-        this.showLiveFee = showLiveFee;
         this.showRequestAnAmount = showRequestAnAmount;
     }
 
