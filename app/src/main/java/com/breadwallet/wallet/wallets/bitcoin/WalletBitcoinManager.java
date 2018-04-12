@@ -391,34 +391,18 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     @Override
     public String getSymbol(Context app) {
 
-        SymbolUtils symbolUtils = new SymbolUtils();
         String currencySymbolString = BRConstants.symbolBits;
         if (app != null) {
             int unit = BRSharedPrefs.getCryptoDenomination(app, getIso(app));
             switch (unit) {
                 case BRConstants.CURRENT_UNIT_BITS:
-                    currencySymbolString = BRConstants.symbolBits;
+                    currencySymbolString = "μ" + ISO;
                     break;
                 case BRConstants.CURRENT_UNIT_MBITS:
-
-
-                    if (symbolUtils.doesDeviceSupportSymbol(BRConstants.symbolBitcoinPrimary)) {
-                        currencySymbolString = "m" + BRConstants.symbolBitcoinPrimary;
-
-                    } else {
-                        currencySymbolString = "m" + BRConstants.symbolBitcoinSecondary;
-
-                    }
+                    currencySymbolString = "m" + ISO;
                     break;
                 case BRConstants.CURRENT_UNIT_BITCOINS:
-
-                    if (symbolUtils.doesDeviceSupportSymbol(BRConstants.symbolBitcoinPrimary)) {
-                        currencySymbolString = BRConstants.symbolBitcoinPrimary;
-
-                    } else {
-                        currencySymbolString = BRConstants.symbolBitcoinSecondary;
-
-                    }
+                    currencySymbolString =  ISO;
                     break;
             }
         }
