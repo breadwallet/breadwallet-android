@@ -321,13 +321,10 @@ public class APIClient {
 
         Map<String, String> headers = BreadApp.getBreadHeaders();
 
-        Iterator it = headers.entrySet().iterator();
-
         Request.Builder newBuilder = locRequest.newBuilder();
-        while (it.hasNext()) {
-            Map.Entry pair = (Map.Entry) it.next();
-//            Log.e(TAG, "urlGET: adding extra Bread headers: " + pair.getKey() + " : " + pair.getValue());
-            newBuilder.header((String) pair.getKey(), (String) pair.getValue());
+        for (String key : headers.keySet()) {
+            String value = headers.get(key);
+            newBuilder.header(key, value);
         }
 
         Request request = newBuilder.build();
