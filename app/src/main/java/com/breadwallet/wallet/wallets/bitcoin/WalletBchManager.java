@@ -349,7 +349,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     @Override
-    public List<TxUiHolder> getTxUiHolders() {
+    public List<TxUiHolder> getTxUiHolders(Context app) {
         BRCoreTransaction txs[] = getWallet().getTransactions();
         if (txs == null || txs.length <= 0) return null;
         List<TxUiHolder> uiTxs = new ArrayList<>();
@@ -917,7 +917,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         super.onTxAdded(transaction);
         final Context ctx = BreadApp.getBreadContext();
         final WalletsMaster master = WalletsMaster.getInstance(ctx);
-        Log.e(TAG, "onTxAdded: " + transaction.getReverseHash());
         TxMetaData metaData = KVStoreManager.getInstance().createMetadata(ctx, this, new CryptoTransaction(transaction));
         KVStoreManager.getInstance().putTxMetaData(ctx, metaData, transaction.getHash());
 

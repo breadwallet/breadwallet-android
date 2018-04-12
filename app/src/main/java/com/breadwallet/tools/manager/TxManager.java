@@ -98,7 +98,7 @@ public class TxManager {
             Log.e(TAG, "updateTxList: wallet is null");
             return;
         }
-        final List<TxUiHolder> items = wallet.getTxUiHolders();
+        final List<TxUiHolder> items = wallet.getTxUiHolders(app);
 
         long took = (System.currentTimeMillis() - start);
         if (took > 500)
