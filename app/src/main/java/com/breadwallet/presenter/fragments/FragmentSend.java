@@ -172,14 +172,13 @@ public class FragmentSend extends Fragment {
 
         showFeeSelectionButtons(feeButtonsShown);
 
-        if (wm.getUiConfiguration().showEconomyFee)
-            feeEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    feeButtonsShown = !feeButtonsShown;
-                    showFeeSelectionButtons(feeButtonsShown);
-                }
-            });
+        feeEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                feeButtonsShown = !feeButtonsShown;
+                showFeeSelectionButtons(feeButtonsShown);
+            }
+        });
         keyboardIndex = signalLayout.indexOfChild(keyboardLayout);
 
         ImageButton faq = rootView.findViewById(R.id.faq_button);
@@ -217,10 +216,8 @@ public class FragmentSend extends Fragment {
                     amountEdit.setHint("0");
                     amountEdit.setTextSize(24);
                     balanceText.setVisibility(View.VISIBLE);
-                    if (wm.getUiConfiguration().showEconomyFee)
-                        feeEdit.setVisibility(View.VISIBLE);
-                    if (wm.getUiConfiguration().showLiveFee)
-                        feeText.setVisibility(View.VISIBLE);
+                    feeEdit.setVisibility(View.VISIBLE);
+                    feeText.setVisibility(View.VISIBLE);
                     isoText.setTextColor(getContext().getColor(R.color.almost_black));
                     isoText.setText(CurrencyUtils.getSymbolByIso(getActivity(), selectedIso));
                     isoText.setTextSize(28);

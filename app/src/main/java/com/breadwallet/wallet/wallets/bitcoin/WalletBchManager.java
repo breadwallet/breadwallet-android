@@ -190,7 +190,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             });
 
 //          BRPeerManager.getInstance().updateFixedPeer(ctx);//todo reimplement the fixed peer
-            uiConfig = new WalletUiConfiguration("#478559", true, true, false, true, true, true);
+            uiConfig = new WalletUiConfiguration("#478559", true, true,  true, true);
 
             settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
         } finally {
@@ -476,10 +476,8 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         switch (unit) {
             case BRConstants.CURRENT_UNIT_BITS:
                 return 2;
-            case BRConstants.CURRENT_UNIT_MBITS:
-                return 5;
             default:
-                return 8;
+                return 5;
         }
     }
 
