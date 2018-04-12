@@ -10,7 +10,9 @@ import android.content.IntentFilter;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
@@ -55,6 +57,18 @@ public class SyncService extends IntentService {
     public static final int PROGRESS_NOT_DEFINTED = -1;
     public static final int PROGRESS_START = 0;
     public static final int PROGRESS_FINISH = 1;
+
+    private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
+
+    static {
+        try {
+            System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
+        } catch (UnsatisfiedLinkError e) {
+            e.printStackTrace();
+            Log.d(TAG, "Native code library failed to load.\\n\" + " + e);
+            Log.d(TAG, "Installer Package Name -> " + (PACKAGE_NAME == null ? "null" : BreadApp.getBreadContext().getPackageManager().getInstallerPackageName(PACKAGE_NAME)));
+        }
+    }
 
     /**
      * The {@link SyncService} is responsible for polling the native layer for wallet sync updates and
