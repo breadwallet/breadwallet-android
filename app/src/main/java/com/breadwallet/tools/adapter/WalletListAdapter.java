@@ -130,7 +130,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                         return;
                     }
                     String walletIso = mCurrentWalletSyncing.walletManager.getIso(mContext);
-                    mCurrentWalletSyncing.walletManager.connectWallet(mContext);
+                    mCurrentWalletSyncing.walletManager.connect(mContext);
                     SyncService.startService(mContext.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, walletIso);
                 } finally {
                     mObesrverIsStarting = false;
@@ -189,7 +189,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             if (currentWallet == null) {
                 if (w.walletManager.getSyncProgress(BRSharedPrefs.getStartHeight(mContext, w.walletManager.getIso(mContext))) < 1 ||
                         w.walletManager.getConnectStatus() != 2) {
-                    w.walletManager.connect();
+                    w.walletManager.connect(mContext);
                     return w;
                 }
             } else {
