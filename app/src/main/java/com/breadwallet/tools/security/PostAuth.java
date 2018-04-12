@@ -172,7 +172,6 @@ public class PostAuth {
             } else {
                 if (phraseForKeyStore.length() != 0) {
                     BRSharedPrefs.putPhraseWroteDown(app, true);
-                    BRSharedPrefs.putBchDialogShown(app, true);
                     byte[] seed = BRCoreKey.getSeedFromPhrase(phraseForKeyStore.getBytes());
                     byte[] authKey = BRCoreKey.getAuthPrivKeyForAPI(seed);
                     BRKeyStore.putAuthKey(authKey, app);

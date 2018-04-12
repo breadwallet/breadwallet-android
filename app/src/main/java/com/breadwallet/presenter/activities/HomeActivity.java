@@ -160,10 +160,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
 
-        if (!BRSharedPrefs.wasBchDialogShown(this)) {
-            BRSharedPrefs.putBchDialogShown(HomeActivity.this, true);
-        }
-
         mPromptDismiss.setColor(Color.parseColor("#b3c0c8"));
         mPromptDismiss.setOnClickListener(new View.OnClickListener() {
             @Override

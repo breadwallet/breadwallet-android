@@ -240,13 +240,6 @@ public class BreadApp extends Application {
     //call onStop on every activity so
     public static void onStop(final BRActivity app) {
 
-        if (app instanceof WalletActivity) {
-            BRSharedPrefs.putAppBackgroundedFromHome(mContext, false);
-
-        } else if (app instanceof HomeActivity) {
-            BRSharedPrefs.putAppBackgroundedFromHome(mContext, true);
-
-        }
         if (isBackgroundChecker != null) isBackgroundChecker.cancel();
         isBackgroundChecker = new Timer();
         TimerTask backgroundCheck = new TimerTask() {

@@ -379,12 +379,7 @@ public class BRAnimator {
     public static void startBreadActivity(Activity from, boolean auth) {
         if (from == null) return;
         Log.e(TAG, "startBreadActivity: " + from.getClass().getName());
-        Class toStart  ;
-        if(auth){
-            toStart = LoginActivity.class;
-        } else {
-            toStart = !BRSharedPrefs.wasBchDialogShown(from) || BRSharedPrefs.wasAppBackgroundedFromHome(from) ? HomeActivity.class : WalletActivity.class;
-        }
+        Class toStart = auth ? LoginActivity.class : WalletActivity.class;
 
         Intent intent = new Intent(from, toStart);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
