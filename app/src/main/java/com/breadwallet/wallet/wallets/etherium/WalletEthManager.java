@@ -44,6 +44,8 @@ import com.google.firebase.crash.FirebaseCrash;
 
 import com.platform.JsonRpcConstants;
 import com.platform.JsonRpcRequest;
+import com.platform.entities.TxMetaData;
+import com.platform.tools.KVStoreManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -104,7 +106,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
 
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
-        uiConfig = new WalletUiConfiguration("#5e70a3", true, true, false,  true);
+        uiConfig = new WalletUiConfiguration("#5e70a3", true, true, false, true);
         settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
 
         if (Utils.isNullOrEmpty(ethPubKey)) {
@@ -393,12 +395,18 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public List<TxUiHolder> getTxUiHolders() {
+    public List<TxUiHolder> getTxUiHolders(Context app) {
         BREthereumTransaction txs[] = mWallet.getTransactions();
         if (txs == null || txs.length <= 0) return null;
         List<TxUiHolder> uiTxs = new ArrayList<>();
         for (int i = txs.length - 1; i >= 0; i--) { //revere order
             BREthereumTransaction tx = txs[i];
+            TxMetaData md = KVStoreManager.getInstance().getTxMetaData(app, tx.getHash().getBytes());
+            //if the txMetaData isn't saved - SAVE IT!
+            if (md == null)
+                md = KVStoreManager.getInstance().createMetadata(app, this, new CryptoTransaction(tx));
+            if (md != null)
+                KVStoreManager.getInstance().putTxMetaData(app, md, tx.getHash().getBytes());
             uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(mWallet.getAccount().getPrimaryAddress()), tx.getBlockTimestamp(),
                     (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null : tx.getHash().getBytes(), tx.getHash(), null, tx,
                     tx.getTargetAddress(), tx.getSourceAddress(), null, 0,

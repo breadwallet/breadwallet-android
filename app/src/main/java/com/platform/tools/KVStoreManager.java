@@ -3,6 +3,7 @@ package com.platform.tools;
 import android.content.Context;
 import android.util.Log;
 
+import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -360,7 +361,8 @@ public class KVStoreManager {
     public TxMetaData createMetadata(Context app, BaseWalletManager wm, BaseTransaction tx){
         TxMetaData txMetaData = new TxMetaData();
         txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
-        txMetaData.exchangeRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, wm.getIso(app), txMetaData.exchangeCurrency).rate;
+        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, wm.getIso(app), txMetaData.exchangeCurrency);
+        txMetaData.exchangeRate = ent == null? 0 : ent.rate;
         txMetaData.fee = wm.getTxFee(tx).toPlainString();
         txMetaData.txSize = tx.getTxSize().intValue();
         txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, wm.getIso(app));

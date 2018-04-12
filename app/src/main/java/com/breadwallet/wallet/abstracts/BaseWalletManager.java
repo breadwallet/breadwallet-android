@@ -131,7 +131,7 @@ public interface BaseWalletManager {
     void refreshCachedBalance(Context app);
 
     //get a list of all the transactions UI holders sorted by timestamp
-    List<TxUiHolder> getTxUiHolders();
+    List<TxUiHolder> getTxUiHolders(Context app);
 
     //return true if this wallet owns this address
     boolean containsAddress(String address);
