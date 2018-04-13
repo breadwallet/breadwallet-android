@@ -106,7 +106,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
 
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
-        uiConfig = new WalletUiConfiguration("#5e70a3", true, true, false, true);
+        uiConfig = new WalletUiConfiguration("#5e70a3",  true);
         settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
 
         if (Utils.isNullOrEmpty(ethPubKey)) {
@@ -1081,5 +1081,10 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
             }
         });
 
+    }
+
+    @Override
+    public void getLogs(String address, String event, int rid) {
+        
     }
 }
