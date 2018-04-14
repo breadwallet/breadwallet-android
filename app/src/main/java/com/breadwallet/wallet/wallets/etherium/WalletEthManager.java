@@ -104,7 +104,6 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     BREthereumLightNode.JSON_RPC node;
     private Context mContext;
 
-
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
         uiConfig = new WalletUiConfiguration("#5e70a3", null, true);
         settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
@@ -181,6 +180,10 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         result.add(ONE_ETH.multiply(new BigDecimal(10)));
         result.add(ONE_ETH.multiply(new BigDecimal(100)));
         return result;
+    }
+
+    public BREthereumWallet getEthWallet() {
+        return mWallet;
     }
 
     @Override
