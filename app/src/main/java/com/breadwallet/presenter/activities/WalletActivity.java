@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -283,12 +284,29 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mCurrencyPriceUsd.setText(String.format("%s per %s", fiatExchangeRate, wallet.getIso(this)));
         mBalancePrimary.setText(fiatBalance);
         mBalanceSecondary.setText(cryptoBalance);
-        mToolbar.setBackgroundColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
 
-        mSendButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
-        mReceiveButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
-        mBuyButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
-        mSellButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
+        String startColor = wallet.getUiConfiguration().mStartColor;
+        String endColor = wallet.getUiConfiguration().mEndColor;
+
+        if (endColor != null) {
+            //it's a gradient
+            GradientDrawable gd = new GradientDrawable(
+                    GradientDrawable.Orientation.LEFT_RIGHT,
+                    new int[]{Color.parseColor(startColor), Color.parseColor(endColor)});
+            gd.setCornerRadius(0f);
+            mToolbar.setBackground(gd);
+            mSendButton.makeGradient(Color.parseColor(startColor), Color.parseColor(endColor));
+            mReceiveButton.makeGradient(Color.parseColor(startColor), Color.parseColor(endColor));
+            mBuyButton.makeGradient(Color.parseColor(startColor), Color.parseColor(endColor));
+            mSellButton.makeGradient(Color.parseColor(startColor), Color.parseColor(endColor));
+        } else {
+            //it's a solid color
+            mToolbar.setBackgroundColor(Color.parseColor(startColor));
+            mSendButton.setColor(Color.parseColor(startColor));
+            mReceiveButton.setColor(Color.parseColor(startColor));
+            mBuyButton.setColor(Color.parseColor(startColor));
+            mSellButton.setColor(Color.parseColor(startColor));
+        }
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
