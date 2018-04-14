@@ -106,7 +106,9 @@ public class WalletsMaster {
     public BigDecimal getAggregatedFiatBalance(Context app) {
         BigDecimal totalBalance = new BigDecimal(0);
         for (BaseWalletManager wallet : mWallets) {
-            totalBalance = totalBalance.add(wallet.getFiatBalance(app));
+            BigDecimal fiatBalance = wallet.getFiatBalance(app);
+            if (fiatBalance != null)
+                totalBalance = totalBalance.add(fiatBalance);
         }
         return totalBalance;
     }
