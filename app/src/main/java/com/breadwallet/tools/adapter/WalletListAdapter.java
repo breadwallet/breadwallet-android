@@ -75,17 +75,12 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         String exchangeRate = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatExchangeRate(mContext));
         String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatBalance(mContext));
         String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getIso(mContext), wallet.getCachedBalance(mContext));
-        String symbol = wallet.getSymbol(mContext);
-
-        if (cryptoBalance.contains(symbol)) {
-            cryptoBalance = cryptoBalance.replace(symbol, "");
-        }
 
         // Set wallet fields
         holder.mWalletName.setText(name);
         holder.mTradePrice.setText(mContext.getString(R.string.Account_exchangeRate, exchangeRate, iso));
         holder.mWalletBalanceUSD.setText(fiatBalance);
-        holder.mWalletBalanceCurrency.setText(cryptoBalance + " " + iso);
+        holder.mWalletBalanceCurrency.setText(cryptoBalance);
         holder.mSyncingProgressBar.setVisibility(item.mShowSyncing ? View.VISIBLE : View.INVISIBLE);
         holder.mSyncingProgressBar.setProgress(item.mProgress);
         holder.mSyncingLabel.setVisibility(item.mShowSyncingLabel ? View.VISIBLE : View.INVISIBLE);
