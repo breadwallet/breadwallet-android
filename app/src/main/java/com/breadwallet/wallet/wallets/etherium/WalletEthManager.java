@@ -217,6 +217,10 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         return result;
     }
 
+    public BREthereumWallet getEthWallet() {
+        return mWallet;
+    }
+
     @Override
     public int getForkId() {
         //No need for ETH
