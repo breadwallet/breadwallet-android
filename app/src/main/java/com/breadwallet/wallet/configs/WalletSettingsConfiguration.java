@@ -50,6 +50,11 @@ public class WalletSettingsConfiguration {
     public List<BRSettingsItem> mSettingList;
     public List<BigDecimal> mFingerprintLimits;
 
+    public WalletSettingsConfiguration(){
+        mSettingList = new ArrayList<>();
+        mSettingList = new ArrayList<>();
+    }
+
     public WalletSettingsConfiguration(Context context, String iso, List<BigDecimal> limits) {
         mFingerprintLimits = limits;
         mSettingList = new ArrayList<>();
