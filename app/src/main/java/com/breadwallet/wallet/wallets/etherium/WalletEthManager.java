@@ -1129,14 +1129,15 @@ public class WalletEthManager implements BaseWalletManager,
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String host = "http://api.etherscan.io/";
-                final String eth_rpc_url = host + "api?module=logs&action=getLogs" +
+                final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
+                final String eth_rpc_url = host + "module=logs&action=getLogs" +
                         "&fromBlock=0&toBlock=latest" +
-                        // &address=0x558ec3152e2eb2174905cd19aea4e34a23de9ad6 // contract
+//                         "&address=" + ... not needed since we're asking for all the contracts
                         "&topic0=" + event +
                         "&topic1=" + address +
                         "&topic1_2_opr=or" +
                         "&topic2=" + address;
+                Log.e(TAG, "run: " + eth_rpc_url);
                 final JSONObject payload = new JSONObject();
                 try {
                     payload.put("id", String.valueOf(rid));
@@ -1151,6 +1152,7 @@ public class WalletEthManager implements BaseWalletManager,
                             public void onRpcRequestCompleted(String jsonResult) {
 
                                 final String jsonRcpResponse = jsonResult;
+                                Log.e(TAG, "onRpcRequestCompleted: " + jsonRcpResponse);
 
                                 if (jsonRcpResponse != null) {
                                     try {
