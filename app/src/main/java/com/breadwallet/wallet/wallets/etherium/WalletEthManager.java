@@ -8,12 +8,14 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.core.ethereum.BREthereumNetwork;
 import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.core.ethereum.BREthereumWallet;
+import com.breadwallet.core.ethereum.test.BREthereumLightNodeClientTest;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
@@ -118,19 +120,24 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                     return;
                 }
 
-                String lang = Locale.getDefault().getLanguage();
-                if (lang == null) lang = "en";
+                String[] words = lookupWords (app, paperKey, Locale.getDefault().getLanguage());
 
-                List<String> list = Bip39Reader.bip39List(app, lang);
-                String[] words = list.toArray(new String[list.size()]);
-
-                if (words.length % Bip39Reader.WORD_LIST_SIZE != 0) {
-                    Log.e(TAG, "isPaperKeyValid: " + "The list size should divide by " + Bip39Reader.WORD_LIST_SIZE);
-                    BRReportsManager.reportBug(new IllegalArgumentException("words.length is not dividable by " + Bip39Reader.WORD_LIST_SIZE), true);
+                if (null == words) {
+                    Log.e (TAG, "WalletEthManager: paper key does not validate with BIP39 Words for: " +
+                            Locale.getDefault().getLanguage());
+                    instance = null;
+                    return;
                 }
 
                 new BREthereumLightNode.JSON_RPC(this, network, paperKey, words);
                 mWallet = node.getWallet();
+
+                if (null == mWallet) {
+                    Log.e (TAG, "WalletEthManager: failed to create the ETH wallet using paperKey.");
+                    instance = null;
+                    return;
+                }
+
                 ethPubKey = mWallet.getAccount().getPrimaryAddressPublicKey();
                 BRKeyStore.putEthPublicKey(ethPubKey, app);
             } catch (UserNotAuthenticatedException e) {
@@ -140,6 +147,12 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
             Log.e(TAG, "WalletEthManager: Using the pubkey to create");
             new BREthereumLightNode.JSON_RPC(this, network, ethPubKey);
             mWallet = node.getWallet();
+
+            if (null == mWallet) {
+                Log.e (TAG, "WalletEthManager: failed to create the ETH wallet using saved publicKey.");
+                instance = null;
+                return;
+            }
         }
 
         mContext = app;
@@ -148,8 +161,6 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         BREthereumWallet walletToken = node.createWallet(BREthereumToken.tokenBRD);
         walletToken.setDefaultUnit(BREthereumAmount.Unit.TOKEN_DECIMAL);
         node.connect();
-
-
     }
 
     public synchronized static WalletEthManager getInstance(Context app) {
@@ -170,6 +181,30 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
         }
         return instance;
+    }
+
+    private String[] lookupWords (Context app, String paperKey, String language) {
+        if (null == language) language = "en";
+
+        List<String> list = Bip39Reader.bip39List(app, language);
+        String[] words = list.toArray(new String[list.size()]);
+
+        if (words.length % Bip39Reader.WORD_LIST_SIZE != 0) {
+            Log.e(TAG, "isPaperKeyValid: " + "The list size should divide by " + Bip39Reader.WORD_LIST_SIZE);
+            BRReportsManager.reportBug(new IllegalArgumentException("words.length is not dividable by " + Bip39Reader.WORD_LIST_SIZE), true);
+        }
+
+        // If the paperKey is valid for `words`, then return `words`
+        if (BRCoreMasterPubKey.validateRecoveryPhrase(words, paperKey))
+            return words;
+
+            // Otherwise if not English, then try English
+        else if (!"en".equals(language))
+            return lookupWords(app, paperKey, "en");
+
+            // Otherwise, nothing
+        else
+            return null;
     }
 
     private List<BigDecimal> getFingerprintLimits(Context app) {
