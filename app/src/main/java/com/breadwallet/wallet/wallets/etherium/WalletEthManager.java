@@ -82,7 +82,9 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.ClientJSON_RPC {
+public class WalletEthManager implements BaseWalletManager,
+        BREthereumLightNode.ClientJSON_RPC,
+        BREthereumLightNode.Listener {
     private static final String TAG = WalletEthManager.class.getSimpleName();
 
     private static String ISO = "ETH";
@@ -656,6 +658,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     @Override
     public void assignNode(BREthereumLightNode node) {
         this.node = (BREthereumLightNode.JSON_RPC) node;
+        this.node.addListener (this);
     }
 
     @Override
@@ -1087,7 +1090,116 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public void getLogs(String address, String event, int rid) {
-            //implement for tokens
+    public void getLogs(final String address, final String event, final int rid) {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                final String host = "http://api.etherscan.io/";
+                final String eth_rpc_url = host + "api?module=logs&action=getLogs" +
+                        "&fromBlock=0&toBlock=latest" +
+                        // &address=0x558ec3152e2eb2174905cd19aea4e34a23de9ad6 // contract
+                        "&topic0=" + event +
+                        "&topic1=" + address +
+                        "&topic1_2_opr=or" +
+                        "&topic2=" + address;
+/*
+                final JSONObject payload = new JSONObject();
+                try {
+                    payload.put("id", String.valueOf(rid));
+                    // ?? payload.put("account", address);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                new JsonRpcRequest()
+                        .makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                    @Override
+                    public void onRpcRequestCompleted(String jsonResult) {
+
+                        final String jsonRcpResponse = jsonResult;
+
+                        if (jsonRcpResponse != null) {
+                            try {
+                                // Convert response into JsonArray of logs
+                                JSONObject logs = new JSONObject(jsonResult);
+                                JSONArray logsArray = logs.getJSONArray("result");
+
+                                // Iterate through the list of transactions and call node.announceTransaction()
+                                // to notify the core
+                                for (int i = 0; i < logsArray.length(); i++) {
+                                    JSONObject log = logsArray.getJSONObject(i);
+
+//                                    { "address":"0x722dd3f80bac40c951b51bdd28dd19d435762180",
+//                                        "topics":["0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
+//                                            "0x0000000000000000000000000000000000000000000000000000000000000000",
+//                                            "0x000000000000000000000000bdfdad139440d2db9ba2aa3b7081c2de39291508"],
+//                                        "data":"0x0000000000000000000000000000000000000000000000000000000000002328",
+//                                        "blockNumber":"0x1e487e",
+//                                        "timeStamp":"0x59fa1ac9",
+//                                        "gasPrice":"0xba43b7400",
+//                                        "gasUsed":"0xc64e",
+//                                        "logIndex":"0x",
+//                                        "transactionHash":"0xa37bd8bd8b1fa2838ef65aec9f401f56a6279f99bb1cfb81fa84e923b1b60f2b",
+//                                        "transactionIndex":"0x"}
+
+                                    JSONArray topicsArray = log.getJSONArray("topics");
+                                    String[] topics = new String [topicsArray.length()];
+                                    for (int dex = 0; dex < topics.length; dex++)
+                                        topics[dex] = topicsArray.getString(dex);
+
+                                    node.announceLog(rid,
+                                            log.getString("transactionHash"),
+                                            log.getString("address"), // contract
+                                            topics,
+                                            log.getString ("data"),
+                                            log.getString ("gasPrice"),
+                                            log.getString ("gasUsed"),
+                                            log.getString ("logIndex"),
+                                            log.getString ("blockNumber"),
+                                            log.getString ("transactionIndex"),
+                                            log.getString ("blockTimestamp"));
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+            });
+            */
+            }
+        });
+    }
+
+    @Override
+    public void handleWalletEvent(BREthereumWallet wallet, WalletEvent event) {
+        Log.d (TAG, "ETH: WalletEvent: " + event.name());
+        switch (event) {
+            case CREATED:
+                Log.d (TAG, "ETH:     New Wallet holding: " +
+                        (null == wallet.getToken() ? "ETH" : wallet.getToken().getSymbol()));
+                break;
+
+            case BALANCE_UPDATED:
+            case DEFAULT_GAS_LIMIT_UPDATED:
+            case DEFAULT_GAS_PRICE_UPDATED:
+            case TRANSACTION_ADDED:
+            case TRANSACTION_REMOVED:
+            case DELETED:
+                break;
+        }
+    }
+
+    @Override
+    public void handleTransactionEvent(BREthereumWallet wallet, BREthereumTransaction transaction, TransactionEvent event) {
+        Log.d (TAG, "ETH: TransactionEvent: " + event.name());
+        switch (event) {
+            case CREATED:
+            case SIGNED:
+            case SUBMITTED:
+            case BLOCKED:
+            case ERRORED:
+            case GAS_ESTIMATE_UPDATED:
+                break;
+        }
     }
 }
