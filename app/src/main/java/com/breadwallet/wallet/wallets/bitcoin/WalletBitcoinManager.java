@@ -181,7 +181,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                 }
             });
 
-            uiConfig = new WalletUiConfiguration("#f29500",  true);
+            uiConfig = new WalletUiConfiguration("#f29500", null,  true);
             settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
         } finally {
             isInitiatingWallet = false;

@@ -4,6 +4,9 @@
         android:radius="4dp"
         />
 
-    <solid android:color="@color/bitcoin_cash_row_color"/>
+    <gradient
+        android:startColor="@color/gray"
+        android:endColor="@color/dark_gray"
+        android:angle="0"/>
 
 </shape>
