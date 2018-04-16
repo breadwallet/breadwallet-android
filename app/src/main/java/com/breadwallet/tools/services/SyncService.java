@@ -2,11 +2,13 @@ package com.breadwallet.tools.services;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -134,7 +136,7 @@ public class SyncService extends IntentService {
      * @param walletIso The wallet ISO used to identify which wallet is going to be acted upon.
      */
     public static void startService(Context context, String action, String walletIso) {
-        if (!BreadApp.isAppInBackground(context))
+//        if (!BreadApp.isAppInBackground(context))
             context.startService(createIntent(context, action, walletIso));
     }
 
