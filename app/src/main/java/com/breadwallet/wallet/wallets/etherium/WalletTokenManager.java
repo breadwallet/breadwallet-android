@@ -58,7 +58,7 @@ public class WalletTokenManager implements BaseWalletManager {
 
     public WalletTokenManager(WalletEthManager walletEthManager, String contractAddress) {
         this.mWalletEthManager = walletEthManager;
-       mWalletToken = node.createWallet(BREthereumToken.tokenBRD)
+       mWalletToken = walletEthManager.getNode().createWallet(BREthereumToken.tokenBRD);
     }
 
     @Override
@@ -139,7 +139,7 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public BaseTransaction[] getTxs() {
-        return mWalletEthManager.getEthWallet().get;
+        return (BaseTransaction[]) mWalletToken.getTransactions();
     }
 
     @Override
