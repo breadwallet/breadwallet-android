@@ -178,14 +178,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             showTransactionFailed(convertView, item, received);
 
         BigDecimal cryptoAmount = item.getAmount().abs();
-        Log.e(TAG, "setTexts: crypto:" + cryptoAmount);
         boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
         String preferredIso = isCryptoPreferred ? wallet.getIso(mContext) : BRSharedPrefs.getPreferredFiatIso(mContext);
 
         BigDecimal amount = isCryptoPreferred ? cryptoAmount : wallet.getFiatForSmallestCrypto(mContext, cryptoAmount, null);
-        Log.e(TAG, "setTexts: amount:" + amount);
-
-        convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, preferredIso, received ? amount : amount.negate()));
+        convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, preferredIso, received ? amount : (amount == null? null : amount.negate())));
 
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext, wallet.getIso(mContext)) - blockHeight + 1;
