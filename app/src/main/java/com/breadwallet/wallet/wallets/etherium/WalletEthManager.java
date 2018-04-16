@@ -84,7 +84,9 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.ClientJSON_RPC {
+public class WalletEthManager implements BaseWalletManager,
+        BREthereumLightNode.ClientJSON_RPC,
+        BREthereumLightNode.Listener {
     private static final String TAG = WalletEthManager.class.getSimpleName();
 
     private static String ISO = "ETH";
@@ -691,6 +693,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     @Override
     public void assignNode(BREthereumLightNode node) {
         this.node = (BREthereumLightNode.JSON_RPC) node;
+        this.node.addListener(this);
     }
 
     @Override
@@ -1202,5 +1205,38 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     public BREthereumLightNode.JSON_RPC getNode() {
         return node;
+    }
+
+    @Override
+    public void handleWalletEvent(BREthereumWallet wallet, WalletEvent event) {
+        Log.d(TAG, "ETH: WalletEvent: " + event.name());
+        switch (event) {
+            case CREATED:
+                Log.d(TAG, "ETH:     New Wallet holding: " +
+                        (null == wallet.getToken() ? "ETH" : wallet.getToken().getSymbol()));
+                break;
+
+            case BALANCE_UPDATED:
+            case DEFAULT_GAS_LIMIT_UPDATED:
+            case DEFAULT_GAS_PRICE_UPDATED:
+            case TRANSACTION_ADDED:
+            case TRANSACTION_REMOVED:
+            case DELETED:
+                break;
+        }
+    }
+
+    @Override
+    public void handleTransactionEvent(BREthereumWallet wallet, BREthereumTransaction transaction, TransactionEvent event) {
+        Log.d(TAG, "ETH: TransactionEvent: " + event.name());
+        switch (event) {
+            case CREATED:
+            case SIGNED:
+            case SUBMITTED:
+            case BLOCKED:
+            case ERRORED:
+            case GAS_ESTIMATE_UPDATED:
+                break;
+        }
     }
 }
