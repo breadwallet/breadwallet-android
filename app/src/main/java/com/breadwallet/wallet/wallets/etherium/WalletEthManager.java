@@ -735,7 +735,7 @@ public class WalletEthManager implements BaseWalletManager,
                                     Log.e(TAG, "RPC:getBalance: " + balance);
                                 }
                             } else {
-                                Log.e(TAG, "onRpcRequestCompleted: jsonResult is null");
+//                                Log.e(TAG, "onRpcRequestCompleted: jsonResult is null");
                             }
                         } catch (JSONException je) {
                             je.printStackTrace();
@@ -1106,7 +1106,6 @@ public class WalletEthManager implements BaseWalletManager,
                                     Context app = BreadApp.getBreadContext();
                                     int blockHeight = Integer.valueOf(txBlockNumber) + Integer.valueOf(txBlockConfirmations);
                                     if (app != null && blockHeight != Integer.MAX_VALUE && blockHeight > 0) {
-                                        Log.e(TAG, "onRpcRequestCompleted: putLastBlockHeight: " + blockHeight);
                                         BRSharedPrefs.putLastBlockHeight(app, getIso(app), blockHeight);
                                     }
                                 }
