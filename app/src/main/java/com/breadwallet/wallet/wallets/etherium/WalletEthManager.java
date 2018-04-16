@@ -1192,7 +1192,7 @@ public class WalletEthManager implements BaseWalletManager,
                                                     log.getString("logIndex"),
                                                     log.getString("blockNumber"),
                                                     log.getString("transactionIndex"),
-                                                    log.getString("blockTimestamp"));
+                                                    log.getString("timeStamp"));
                                         }
                                     } catch (JSONException e) {
                                         e.printStackTrace();
