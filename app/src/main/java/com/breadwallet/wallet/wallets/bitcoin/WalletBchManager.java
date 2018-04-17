@@ -190,7 +190,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             });
 
 //          BRPeerManager.getInstance().updateFixedPeer(ctx);//todo reimplement the fixed peer
-            uiConfig = new WalletUiConfiguration("#478559", true);
+            uiConfig = new WalletUiConfiguration("#478559", null, true);
 
             settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
         } finally {

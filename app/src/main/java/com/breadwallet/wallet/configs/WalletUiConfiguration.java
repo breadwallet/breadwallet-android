@@ -25,12 +25,14 @@ package com.breadwallet.wallet.configs;
  * THE SOFTWARE.
  */
 public class WalletUiConfiguration {
-    public String colorHex;
+    public String mStartColor;
+    public String mEndColor;
 
     public boolean showRequestAnAmount;
 
-    public WalletUiConfiguration(String colorHex,  boolean showRequestAnAmount) {
-        this.colorHex = colorHex;
+    public WalletUiConfiguration(String startColor,  String endColor, boolean showRequestAnAmount) {
+        this.mStartColor = startColor;
+        this.mEndColor = endColor;
         this.showRequestAnAmount = showRequestAnAmount;
     }
 
