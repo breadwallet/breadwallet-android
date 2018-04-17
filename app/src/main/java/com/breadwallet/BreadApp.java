@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -106,13 +107,12 @@ public class BreadApp extends Application {
         if (Utils.isEmulatorOrDebug(this)) {
 //            BRKeyStore.putFailCount(0, this);
             HOST = "stage2.breadwallet.com";
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    FirebaseCrash.setCrashCollectionEnabled(false);
+            try {
+                FirebaseCrash.setCrashCollectionEnabled(false);
+            } catch (RejectedExecutionException ex) {
+                Log.e(TAG, "run: ", ex);
+            }
 
-                }
-            });
         }
         mContext = this;
 

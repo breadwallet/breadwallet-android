@@ -433,30 +433,19 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static boolean getShareDataDismissed(Context context) {
+    public static boolean getPromptDismissed(Context context, String promptName) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return settingsToGet.getBoolean("shareDataDismissed", false);
+        return settingsToGet.getBoolean("prompt_" + promptName, false);
     }
 
-    public static void putShareDataDismissed(Context context, boolean dismissed) {
+    public static void putPromptDismissed(Context context, String promptName, boolean dismissed) {
         if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean("shareDataDismissed", dismissed);
+        editor.putBoolean("prompt_" + promptName, dismissed);
         editor.apply();
-    }
-    public static boolean getFingerprintPromptDismissed(Context context) {
-        SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return settingsToGet.getBoolean("fingerprintPromptDismissed", false);
     }
 
-    public static void putFingerprintPromptDismissed(Context context, boolean dismissed) {
-        if (context == null) return;
-        SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean("fingerprintPromptDismissed", dismissed);
-        editor.apply();
-    }
 
     public static String getTrustNode(Context context, String iso) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
