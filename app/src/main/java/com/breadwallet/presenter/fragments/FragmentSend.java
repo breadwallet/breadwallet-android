@@ -282,6 +282,13 @@ public class FragmentSend extends Fragment {
             }
         });
 
+        commentEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                showKeyboard(!hasFocus);
+            }
+        });
+
         paste.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -291,6 +298,7 @@ public class FragmentSend extends Fragment {
                     sayClipboardEmpty();
                     return;
                 }
+                showKeyboard(false);
 
                 final BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
@@ -300,16 +308,15 @@ public class FragmentSend extends Fragment {
                 }
 
                 final CryptoRequest obj = parseRequest(getActivity(), theUrl);
-                if (Utils.isEmulatorOrDebug(getActivity())) {
-                    Log.d(TAG, "Send Address -> " + obj.address);
-                    Log.d(TAG, "Send Value -> " + obj.value);
-                    Log.d(TAG, "Send Amount -> " + obj.amount);
-                }
-
 
                 if (obj == null || Utils.isNullOrEmpty(obj.address)) {
                     sayInvalidClipboardData();
                     return;
+                }
+                if (Utils.isEmulatorOrDebug(getActivity())) {
+                    Log.d(TAG, "Send Address -> " + obj.address);
+                    Log.d(TAG, "Send Value -> " + obj.value);
+                    Log.d(TAG, "Send Amount -> " + obj.amount);
                 }
 
                 if (obj.iso != null && !obj.iso.equalsIgnoreCase(wm.getIso(getActivity()))) {
@@ -496,6 +503,13 @@ public class FragmentSend extends Fragment {
 
                 }
                 return false;
+            }
+        });
+
+        addressEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                showKeyboard(!hasFocus);
             }
         });
 
