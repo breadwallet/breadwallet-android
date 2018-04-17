@@ -19,6 +19,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.listeners.SyncReceiver;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -43,7 +44,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.platform.APIClient.BREAD_POINT;
-import static org.apache.commons.compress.utils.CharsetNames.ISO_8859_1;
 
 /**
  * BreadWallet
@@ -139,66 +139,55 @@ public class BreadApp extends Application {
 
         registerReceiver(InternetManager.getInstance(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
-//        addOnBackgroundedListener(new OnAppBackgrounded() {
-//            @Override
-//            public void onBackgrounded() {
-//
-//            }
-//        });
-
     }
 
-    public static synchronized String generateWalletId() {
+    public static void generateWalletIfIfNeeded(Context app, String address) {
+        if (BRSharedPrefs.getWalletRewardId(app) == null) {
+            String rewardId = generateWalletId(app, address);
+            if (!Utils.isNullOrEmpty(rewardId))
+                BRSharedPrefs.putWalletRewardId(currentActivity, rewardId);
+            else BRReportsManager.reportBug(new NullPointerException("rewardId is empty"));
+        }
+    }
 
-        // First, get the ETH wallet address
-        BaseWalletManager ethWallet = WalletsMaster.getInstance(mContext).getWalletByIso(mContext, "ETH");
-        String ethAddress = ethWallet.getReceiveAddress(mContext).stringify();
-
+    private static synchronized String generateWalletId(Context app, String address) {
+        if (app == null) {
+            Log.e(TAG, "generateWalletId: app is null");
+            return null;
+        }
         try {
-            byte[] ptext = ethAddress.getBytes();
-
-            // Encode the address to UTF-8
-            String ethAddressEncoded = URLEncoder.encode(ethAddress, "UTF-8");
-
             // Remove the first 2 characters
-            ethAddressEncoded = ethAddressEncoded.substring(2, ethAddressEncoded.length());
+            String cleanAddress = address.substring(2, address.length());
 
             // Get the shortened address bytes
-            byte[] addressBytes = ethAddressEncoded.getBytes();
+            byte[] addressBytes = cleanAddress.getBytes("UTF-8");
 
             // Run sha256 on the shortened address bytes
             byte[] sha256Address = CryptoHelper.sha256(addressBytes);
-
+            if (Utils.isNullOrEmpty(sha256Address)) {
+                BRReportsManager.reportBug(new IllegalAccessException("Failed to sha256"));
+                return null;
+            }
 
             // Get the first 10 bytes
             byte[] firstTenBytes = Arrays.copyOfRange(sha256Address, 0, 10);
 
-            Base32 base32 = new Base32();
-            String base32String = base32.encodeOriginal(firstTenBytes);
+            String base32String = new String(Base32.encode(firstTenBytes));
             base32String = base32String.toLowerCase();
 
             StringBuilder builder = new StringBuilder();
 
             Matcher matcher = Pattern.compile(".{1,4}").matcher(base32String);
-            List<String> result = new ArrayList<>();
             while (matcher.find()) {
                 String piece = base32String.substring(matcher.start(), matcher.end());
-                result.add(piece);
                 builder.append(piece + " ");
             }
-
-            // Add the wallet ID to the request headers if it's not null or empty
-            if (builder.toString() != null && !builder.toString().isEmpty()) {
-                mHeaders.put("X-Wallet-ID", builder.toString());
-            }
-
             return builder.toString();
-
 
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
-        }
 
+        }
         return null;
 
     }
