@@ -78,7 +78,8 @@ public class TxManager {
         }));
         if (adapter == null)
             adapter = new TransactionListAdapter(app, null);
-        txList.setAdapter(adapter);
+        if (txList.getAdapter() == null)
+            txList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         //setupSwipe(app);
     }
@@ -108,7 +109,6 @@ public class TxManager {
                 @Override
                 public void run() {
                     adapter.setItems(items);
-                    txList.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                 }
             });
