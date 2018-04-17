@@ -698,6 +698,15 @@ public class WalletEthManager implements BaseWalletManager,
 
     @Override
     public void getBalance(final int wid, final String address, final int rid) {
+        BREthereumWallet wallet = this.node.getWalletByIdentifier(wid);
+        BREthereumToken token = wallet.getToken();
+        if (null == token)
+            getEtherBalance(wallet, wid, address, rid);
+        else
+            getTokenBalance(wallet, wid, token.getAddress(), address, rid);
+    }
+
+    protected void getEtherBalance (final BREthereumWallet wallet, final int wid, final String address, final int rid) {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -741,6 +750,8 @@ public class WalletEthManager implements BaseWalletManager,
                             je.printStackTrace();
                         }
                         node.announceBalance(wid, balance, rid);
+
+                        // TODO: Use `wallet`, not `mWallet`
                         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                             @Override
                             public void run() {
@@ -749,13 +760,67 @@ public class WalletEthManager implements BaseWalletManager,
                                         list.onBalanceChanged(ISO, new BigDecimal(mWallet.getBalance()));
                             }
                         });
-
                     }
                 });
-
             }
         });
+    }
 
+    protected void getTokenBalance(final BREthereumWallet wallet, final int wid,
+                                   final String contractAddress,
+                                   final String address,
+                                   final int rid) {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
+                final String eth_rpc_url = host + "module=account&action=tokenbalance" +
+                        "&address=" + address +
+                        "&contractaddress=" + contractAddress;
+
+                Log.e(TAG, "run: " + eth_rpc_url);
+                final JSONObject payload = new JSONObject();
+                try {
+                    payload.put("id", String.valueOf(rid));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                new JsonRpcRequest()
+                        .makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                            @Override
+                            public void onRpcRequestCompleted(String jsonResult) {
+                                String balance = "0x";
+
+                                try {
+
+                                    if (jsonResult != null) {
+
+                                        JSONObject responseObject = new JSONObject(jsonResult);
+
+                                        if (responseObject.has("result")) {
+                                            balance = responseObject.getString("result");
+                                        }
+                                    }
+                                } catch (JSONException je) {
+                                    je.printStackTrace();
+                                }
+
+                                node.announceBalance(wid, balance, rid);
+
+                                // TODO: Use `wallet`, not `mWallet`
+                                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                                    @Override
+                                    public void run() {
+                                        for (OnBalanceChangedListener list : balanceListeners)
+                                            if (list != null)
+                                                list.onBalanceChanged(ISO, new BigDecimal(mWallet.getBalance()));
+                                    }
+                                });
+                            }
+                        });
+            }
+        });
     }
 
     @Override
