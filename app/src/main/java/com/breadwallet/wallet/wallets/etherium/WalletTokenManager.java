@@ -10,7 +10,6 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseAddress;
 import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -54,7 +53,6 @@ public class WalletTokenManager implements BaseWalletManager {
 
     private WalletEthManager mWalletEthManager;
     private BREthereumWallet mWalletToken;
-
 
     private List<OnBalanceChangedListener> balanceListeners = new ArrayList<>();
     private List<OnTxStatusUpdatedListener> txStatusUpdatedListeners = new ArrayList<>();
@@ -299,7 +297,6 @@ public class WalletTokenManager implements BaseWalletManager {
     @Override
     public BigDecimal getCachedBalance(Context app) {
         return BRSharedPrefs.getCachedBalance(app, getIso(app));
-
     }
 
     @Override
