@@ -67,6 +67,7 @@ public class TxManager {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
 
+                if (position == -1) return;
                 TxUiHolder item = adapter.getItems().get(position);
                 BRAnimator.showTransactionDetails(app, item, position);
             }
