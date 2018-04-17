@@ -81,15 +81,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-
-        // TODO : Asynchronously loading the wallets seems to cause a bug(see DROID-481) where no wallets are shown
-        // TODO : on the Home Screen. Probably because initWallets() is not finished before onCreate() is.
-       // BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            //@Override
-            //public void run() {
-                WalletsMaster.getInstance(HomeActivity.this).initWallets(HomeActivity.this);
-          //  }
-        //});
+        WalletsMaster.getInstance(HomeActivity.this).initWallets(HomeActivity.this);
 
         ArrayList<BaseWalletManager> walletList = new ArrayList<>();
 
@@ -190,6 +182,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         Log.e(TAG, "hidePrompt: " + mCurrentPrompt);
         if (mCurrentPrompt == PromptManager.PromptItem.SHARE_DATA) {
             BRSharedPrefs.putShareDataDismissed(app, true);
+        } else if(mCurrentPrompt == PromptManager.PromptItem.FINGER_PRINT){
+            BRSharedPrefs.putFingerprintPromptDismissed(app, true);
         }
         if (mCurrentPrompt != null)
             BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(mCurrentPrompt) + ".dismissed");
