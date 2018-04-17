@@ -223,8 +223,6 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
                     keyboard.showSoftInput(searchEdit, 0);
                 }
             }, 400);
-            if (TxManager.getInstance().adapter != null)
-                TxManager.getInstance().adapter.updateData();
 
         } else {
             keyboard.hideSoftInputFromWindow(searchEdit.getWindowToken(), 0);

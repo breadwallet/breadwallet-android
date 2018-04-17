@@ -88,10 +88,11 @@ public class FragmentTxDetails extends DialogFragment {
     private BRText mAmountNow;
     private BRText mWhenSentLabel;
     private BRText mNowLabel;
+    private OnPauseListener mOnPauseListener;
 
     private ConstraintLayout mConfirmedContainer;
     private View mConfirmedDivider;
-
+    private TxMetaData mTxMetaData;
 
     private ImageButton mCloseButton;
     private LinearLayout mDetailsContainer;
@@ -309,6 +310,29 @@ public class FragmentTxDetails extends DialogFragment {
 
                 }
             });
+            mOnPauseListener = new OnPauseListener() {
+                @Override
+                public void onPaused() {
+                    // Update the memo field on the transaction and save it
+                    if (mTxMetaData != null) {
+                        mTxMetaData.comment = mMemoText.getText().toString();
+                        Log.d(TAG, "MetaData not null");
+                        KVStoreManager.getInstance().putTxMetaData(getContext(), mTxMetaData, mTransaction.getTxHash());
+                        mTxMetaData = null;
+
+                    } else {
+                        Log.d(TAG, "MetaData is null");
+                    }
+
+                    // Hide softkeyboard if it's visible
+                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+                    imm.hideSoftInputFromWindow(mMemoText.getWindowToken(), 0);
+
+                    // Update Tx list to reflect the memo change
+                    TxManager.getInstance().updateTxList(getContext());
+
+                }
+            };
 
             mTxAmount.setText(CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), received ? cryptoAmount : cryptoAmount.negate()));//this is always crypto amount
 
@@ -317,55 +341,23 @@ public class FragmentTxDetails extends DialogFragment {
 
             // Set the memo text if one is available
             String memo;
-            final TxMetaData txMetaData = KVStoreManager.getInstance().getTxMetaData(app, mTransaction.getTxHash());
+            mTxMetaData = KVStoreManager.getInstance().getTxMetaData(app, mTransaction.getTxHash());
 
-            if (txMetaData != null) {
-                if (txMetaData.comment != null) {
-                    memo = txMetaData.comment;
+            if (mTxMetaData != null) {
+                if (mTxMetaData.comment != null) {
+                    memo = mTxMetaData.comment;
                     mMemoText.setText(memo);
                 } else {
                     mMemoText.setText("");
                 }
-                String metaIso = Utils.isNullOrEmpty(txMetaData.exchangeCurrency) ? "USD" : txMetaData.exchangeCurrency;
+                String metaIso = Utils.isNullOrEmpty(mTxMetaData.exchangeCurrency) ? "USD" : mTxMetaData.exchangeCurrency;
 
-                exchangeRateFormatted = CurrencyUtils.getFormattedAmount(app, metaIso, new BigDecimal(txMetaData.exchangeRate));
+                exchangeRateFormatted = CurrencyUtils.getFormattedAmount(app, metaIso, new BigDecimal(mTxMetaData.exchangeRate));
                 mExchangeRate.setText(exchangeRateFormatted);
             } else {
                 mMemoText.setText("");
 
             }
-
-            // Listen for an update to the memo text
-            mMemoText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-
-                @Override
-                public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                    if (actionId == EditorInfo.IME_ACTION_DONE) {
-                        // Update the memo field on the transaction and save it
-                        if (txMetaData != null) {
-                            txMetaData.comment = mMemoText.getText().toString();
-                            Log.d(TAG, "MetaData not null");
-                            KVStoreManager.getInstance().putTxMetaData(getContext(), txMetaData, mTransaction.getTxHash());
-
-
-                        } else {
-                            Log.d(TAG, "MetaData is null");
-                        }
-
-                        // Hide softkeyboard if it's visible
-                        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                        imm.hideSoftInputFromWindow(mMemoText.getWindowToken(), 0);
-
-
-                        // Update Tx list to reflect the memo change
-                        TxManager.getInstance().updateTxList(getContext());
-
-                        // Hide Tx details
-                        dismiss();
-                    }
-                    return true;
-                }
-            });
 
             // timestamp is 0 if it's not confirmed in a block yet so make it now
             mTxDate.setText(BRDateUtil.getLongDate(mTransaction.getTimeStamp() == 0 ? System.currentTimeMillis() : (mTransaction.getTimeStamp() * 1000)));
@@ -429,5 +421,17 @@ public class FragmentTxDetails extends DialogFragment {
     public void onResume() {
         super.onResume();
 
+    }
+
+    @Override
+    public void onPause() {
+        if (mOnPauseListener != null) mOnPauseListener.onPaused();
+
+        super.onPause();
+
+    }
+
+    public interface OnPauseListener {
+        void onPaused();
     }
 }
