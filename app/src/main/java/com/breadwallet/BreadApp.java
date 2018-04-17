@@ -149,6 +149,8 @@ public class BreadApp extends Application {
                 if (!mHeaders.containsKey("X-Wallet-ID")) mHeaders.put("X-Wallet-ID", rewardId);
             } else BRReportsManager.reportBug(new NullPointerException("rewardId is empty"));
         }
+
+        Log.e(TAG, "generateWalletIfIfNeeded: test:" + generateWalletId(app, "0x25024691907e126b2dd93ceea405d591696f9e0b"));
     }
 
     private static synchronized String generateWalletId(Context app, String address) {
@@ -173,7 +175,7 @@ public class BreadApp extends Application {
             // Get the first 10 bytes
             byte[] firstTenBytes = Arrays.copyOfRange(sha256Address, 0, 10);
 
-            String base32String = new String(Base32.encode(firstTenBytes));
+            String base32String = Base32.encode(firstTenBytes);
             base32String = base32String.toLowerCase();
 
             StringBuilder builder = new StringBuilder();
