@@ -160,8 +160,6 @@ public class WalletEthManager implements BaseWalletManager,
         mContext = app;
         mWallet.estimateGasPrice();
         mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
-        BREthereumWallet walletToken = node.createWallet(BREthereumToken.tokenBRD);
-        walletToken.setDefaultUnit(BREthereumAmount.Unit.TOKEN_DECIMAL);
         node.connect();
     }
 

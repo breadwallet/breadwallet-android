@@ -267,13 +267,13 @@ public class WalletsMaster {
         if (!mWallets.contains(WalletEthManager.getInstance(app))) {
             BaseWalletManager ethWallet = WalletEthManager.getInstance(app);
             mWallets.add(ethWallet);
-
-            if (ethWallet != null) {
-                BreadApp.generateWalletId();
+            if (ethWallet != null){
+                BreadApp.generateWalletIfIfNeeded(app, ethWallet.getReceiveAddress(app).stringify());
                 for (BaseWalletManager wm : mWallets) {
                     if (wm != null) setSpendingLimitIfNotSet(app, wm);
                 }
             }
+
         }
     }
 
