@@ -1,153 +1,161 @@
-package com.breadwallet.tools.crypto;
-
-/**
- * Created by byfieldj on 4/2/18.
- */
-
-import java.io.UnsupportedEncodingException;
-
-/**
- * Base32 - encodes and decodes RFC3548 Base32
- * (see http://www.faqs.org/rfcs/rfc3548.html )
+package com.breadwallet.tools.crypto;/*
+ * Taken with small modifications
  *
+ * Copyright 2009 Google Inc. All Rights Reserved.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
+
+
+import java.security.SecureRandom;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Locale;
+
 public class Base32 {
-    private static final String base32Chars =
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-    private static final int[] base32Lookup =
-            { 0xFF,0xFF,0x1A,0x1B,0x1C,0x1D,0x1E,0x1F, // '0', '1', '2', '3', '4', '5', '6', '7'
-                    0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF, // '8', '9', ':', ';', '<', '=', '>', '?'
-                    0xFF,0x00,0x01,0x02,0x03,0x04,0x05,0x06, // '@', 'A', 'B', 'C', 'D', 'E', 'F', 'G'
-                    0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E, // 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O'
-                    0x0F,0x10,0x11,0x12,0x13,0x14,0x15,0x16, // 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W'
-                    0x17,0x18,0x19,0xFF,0xFF,0xFF,0xFF,0xFF, // 'X', 'Y', 'Z', '[', '\', ']', '^', '_'
-                    0xFF,0x00,0x01,0x02,0x03,0x04,0x05,0x06, // '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g'
-                    0x07,0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E, // 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o'
-                    0x0F,0x10,0x11,0x12,0x13,0x14,0x15,0x16, // 'p', 'q', 'r', 's', 't', 'u', 'v', 'w'
-                    0x17,0x18,0x19,0xFF,0xFF,0xFF,0xFF,0xFF  // 'x', 'y', 'z', '{', '|', '}', '~', 'DEL'
-            };
+    // singleton
 
-    public static byte[] encode(byte[] data) throws UnsupportedEncodingException {
-        String lower = encodeOriginal(data).toLowerCase();
-        return lower.getBytes("US-ASCII");
+    private static final int SECRET_SIZE = 10;
+
+    private static final SecureRandom RANDOM = new SecureRandom();
+
+    private static final Base32 INSTANCE =
+            new Base32("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"); // RFC 4648/3548
+
+    static Base32 getInstance() {
+        return INSTANCE;
     }
 
-    public static byte[] decodeModified(String data) {
-        return decode(data.replace('8', 'L').replace('9', 'O'));
+    private String ALPHABET;
+    private char[] DIGITS;
+    private int MASK;
+    private int SHIFT;
+    private HashMap<Character, Integer> CHAR_MAP;
+
+    static final String SEPARATOR = "-";
+
+    protected Base32(String alphabet) {
+        this.ALPHABET = alphabet;
+        DIGITS = ALPHABET.toCharArray();
+        MASK = DIGITS.length - 1;
+        SHIFT = Integer.numberOfTrailingZeros(DIGITS.length);
+        CHAR_MAP = new HashMap<Character, Integer>();
+        for (int i = 0; i < DIGITS.length; i++) {
+            CHAR_MAP.put(DIGITS[i], i);
+        }
     }
 
+    public static byte[] decode(String encoded) throws DecodingException {
+        return getInstance().decodeInternal(encoded);
+    }
 
-    /**
-     * Encodes byte array to Base32 String.
-     *
-     * @param bytes Bytes to encode.
-     * @return Encoded byte array <code>bytes</code> as a String.
-     *
-     */
-    static private String encodeOriginal(final byte[] bytes) {
-        int i = 0, index = 0, digit = 0;
-        int currByte, nextByte;
-        StringBuffer base32 = new StringBuffer((bytes.length + 7) * 8 / 5);
+    protected byte[] decodeInternal(String encoded) throws DecodingException {
+        // Remove whitespace and separators
+        encoded = encoded.trim().replaceAll(SEPARATOR, "").replaceAll(" ", "");
 
-        while (i < bytes.length) {
-            currByte = (bytes[i] >= 0) ? bytes[i] : (bytes[i] + 256); // unsign
+        // Remove padding. Note: the padding is used as hint to determine how many
+        // bits to decode from the last incomplete chunk (which is commented out
+        // below, so this may have been wrong to start with).
+        encoded = encoded.replaceFirst("[=]*$", "");
 
-            /* Is the current digit going to span a byte boundary? */
-            if (index > 3) {
-                if ((i + 1) < bytes.length) {
-                    nextByte =
-                            (bytes[i + 1] >= 0) ? bytes[i + 1] : (bytes[i + 1] + 256);
+        // Canonicalize to all upper case
+        encoded = encoded.toUpperCase(Locale.US);
+        if (encoded.length() == 0) {
+            return new byte[0];
+        }
+        int encodedLength = encoded.length();
+        int outLength = encodedLength * SHIFT / 8;
+        byte[] result = new byte[outLength];
+        int buffer = 0;
+        int next = 0;
+        int bitsLeft = 0;
+        for (char c : encoded.toCharArray()) {
+            if (!CHAR_MAP.containsKey(c)) {
+                throw new DecodingException("Illegal character: " + c);
+            }
+            buffer <<= SHIFT;
+            buffer |= CHAR_MAP.get(c) & MASK;
+            bitsLeft += SHIFT;
+            if (bitsLeft >= 8) {
+                result[next++] = (byte) (buffer >> (bitsLeft - 8));
+                bitsLeft -= 8;
+            }
+        }
+        // We'll ignore leftover bits for now.
+        //
+        // if (next != outLength || bitsLeft >= SHIFT) {
+        //  throw new DecodingException("Bits left: " + bitsLeft);
+        // }
+        return result;
+    }
+
+    public static String encode(byte[] data) {
+        return getInstance().encodeInternal(data);
+    }
+
+    protected String encodeInternal(byte[] data) {
+        if (data.length == 0) {
+            return "";
+        }
+
+        // SHIFT is the number of bits per output character, so the length of the
+        // output is the length of the input multiplied by 8/SHIFT, rounded up.
+        if (data.length >= (1 << 28)) {
+            // The computation below will fail, so don't do it.
+            throw new IllegalArgumentException();
+        }
+
+        int outputLength = (data.length * 8 + SHIFT - 1) / SHIFT;
+        StringBuilder result = new StringBuilder(outputLength);
+
+        int buffer = data[0];
+        int next = 1;
+        int bitsLeft = 8;
+        while (bitsLeft > 0 || next < data.length) {
+            if (bitsLeft < SHIFT) {
+                if (next < data.length) {
+                    buffer <<= 8;
+                    buffer |= (data[next++] & 0xff);
+                    bitsLeft += 8;
                 } else {
-                    nextByte = 0;
+                    int pad = SHIFT - bitsLeft;
+                    buffer <<= pad;
+                    bitsLeft += pad;
                 }
-
-                digit = currByte & (0xFF >> index);
-                index = (index + 5) % 8;
-                digit <<= index;
-                digit |= nextByte >> (8 - index);
-                i++;
-            } else {
-                digit = (currByte >> (8 - (index + 5))) & 0x1F;
-                index = (index + 5) % 8;
-                if (index == 0)
-                    i++;
             }
-            base32.append(base32Chars.charAt(digit));
+            int index = MASK & (buffer >> (bitsLeft - SHIFT));
+            bitsLeft -= SHIFT;
+            result.append(DIGITS[index]);
         }
-
-        return base32.toString();
+        return result.toString();
     }
 
-    /**
-     * Decodes the given Base32 String to a raw byte array.
-     *
-     * @param base32
-     * @return Decoded <code>base32</code> String as a raw byte array.
-     */
-    static public byte[] decode(final String base32) {
-        int i, index, lookup, offset, digit;
-        byte[] bytes = new byte[base32.length() * 5 / 8];
-
-        for (i = 0, index = 0, offset = 0; i < base32.length(); i++) {
-            lookup = base32.charAt(i) - '0';
-
-            /* Skip chars outside the lookup table */
-            if (lookup < 0 || lookup >= base32Lookup.length) {
-                continue;
-            }
-
-            digit = base32Lookup[lookup];
-
-            /* If this digit is not in the table, ignore it */
-            if (digit == 0xFF) {
-                continue;
-            }
-
-            if (index <= 3) {
-                index = (index + 5) % 8;
-                if (index == 0) {
-                    bytes[offset] |= digit;
-                    offset++;
-                    if (offset >= bytes.length)
-                        break;
-                } else {
-                    bytes[offset] |= digit << (8 - index);
-                }
-            } else {
-                index = (index + 5) % 8;
-                bytes[offset] |= (digit >>> index);
-                offset++;
-
-                if (offset >= bytes.length) {
-                    break;
-                }
-                bytes[offset] |= digit << (8 - index);
-            }
+    public static class DecodingException extends Exception {
+        public DecodingException(String message) {
+            super(message);
         }
-        return bytes;
     }
 
-    /** For testing, take a command-line argument in Base32, decode, print in hex,
-     * encode, print
-     *
-     * @param args
-     */
-    static public void main(String[] args) throws UnsupportedEncodingException {
-        if (args.length == 0) {
-            System.out.println("Supply a Base32-encoded argument.");
-            return;
-        }
-        System.out.println(" Original: " + args[0]);
-        byte[] decoded = Base32.decode(args[0]);
-        System.out.print("      Hex: ");
-        for (int i = 0; i < decoded.length; i++) {
-            int b = decoded[i];
-            if (b < 0) {
-                b += 256;
-            }
-            System.out.print((Integer.toHexString(b + 256)).substring(1));
-        }
-        System.out.println();
-        System.out.println("Reencoded: " + Base32.encode(decoded));
+    public static String random() {
+
+        // Allocating the buffer
+        byte[] buffer = new byte[SECRET_SIZE];
+
+        // Filling the buffer with random numbers.
+        RANDOM.nextBytes(buffer);
+
+        // Getting the key and converting it to Base32
+        byte[] secretKey = Arrays.copyOf(buffer, SECRET_SIZE);
+        return encode(secretKey);
     }
 }

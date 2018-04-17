@@ -120,10 +120,10 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                     return;
                 }
 
-                String[] words = lookupWords (app, paperKey, Locale.getDefault().getLanguage());
+                String[] words = lookupWords(app, paperKey, Locale.getDefault().getLanguage());
 
                 if (null == words) {
-                    Log.e (TAG, "WalletEthManager: paper key does not validate with BIP39 Words for: " +
+                    Log.e(TAG, "WalletEthManager: paper key does not validate with BIP39 Words for: " +
                             Locale.getDefault().getLanguage());
                     instance = null;
                     return;
@@ -133,7 +133,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                 mWallet = node.getWallet();
 
                 if (null == mWallet) {
-                    Log.e (TAG, "WalletEthManager: failed to create the ETH wallet using paperKey.");
+                    Log.e(TAG, "WalletEthManager: failed to create the ETH wallet using paperKey.");
                     instance = null;
                     return;
                 }
@@ -149,7 +149,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
             mWallet = node.getWallet();
 
             if (null == mWallet) {
-                Log.e (TAG, "WalletEthManager: failed to create the ETH wallet using saved publicKey.");
+                Log.e(TAG, "WalletEthManager: failed to create the ETH wallet using saved publicKey.");
                 instance = null;
                 return;
             }
@@ -183,7 +183,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         return instance;
     }
 
-    private String[] lookupWords (Context app, String paperKey, String language) {
+    private String[] lookupWords(Context app, String paperKey, String language) {
         if (null == language) language = "en";
 
         List<String> list = Bip39Reader.bip39List(app, language);
@@ -694,7 +694,6 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                Log.e(TAG, "getBalance: " + address);
                 final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
 //        Log.d(TAG, "Making rpc request to " + eth_url);
                 final JSONObject payload = new JSONObject();
@@ -851,10 +850,12 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public void submitTransaction(final int wid, final int tid, final String rawTransaction, final int rid) {
-        Log.e(TAG, "submitTransaction: wid:" + wid);
-        Log.e(TAG, "submitTransaction: tid:" + tid);
-        Log.e(TAG, "submitTransaction: rawTransaction:" + rawTransaction);
-        Log.e(TAG, "submitTransaction: rid:" + rid);
+        if (Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
+            Log.e(TAG, "submitTransaction: wid:" + wid);
+            Log.e(TAG, "submitTransaction: tid:" + tid);
+            Log.e(TAG, "submitTransaction: rawTransaction:" + rawTransaction);
+            Log.e(TAG, "submitTransaction: rid:" + rid);
+        }
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -1119,6 +1120,6 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public void getLogs(String address, String event, int rid) {
-            //implement for tokens
+        //implement for tokens
     }
 }
