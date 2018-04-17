@@ -44,7 +44,7 @@ public class Base32 {
      * @return Encoded byte array <code>bytes</code> as a String.
      *
      */
-    static public String encodeOriginal(final byte[] bytes) {
+    static private String encodeOriginal(final byte[] bytes) {
         int i = 0, index = 0, digit = 0;
         int currByte, nextByte;
         StringBuffer base32 = new StringBuffer((bytes.length + 7) * 8 / 5);

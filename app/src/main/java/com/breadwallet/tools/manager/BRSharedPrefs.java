@@ -292,18 +292,27 @@ public class BRSharedPrefs {
     }
 
     public static String getCurrentWalletIso(Context activity) {
-//        Log.d(TAG, "getCurrentWalletIso() Activity -> " + activity.getClass().getSimpleName());
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-//        Log.d(TAG, "Getting current wallet ISO -> " + prefs.getString("currentWalletIso", "BTC"));
         return prefs.getString("currentWalletIso", "BTC");
     }
 
     public static void putCurrentWalletIso(Context activity, String iso) {
-        Log.d(TAG, "putCurrentWalletIso(), ISO -> " + iso);
         if (iso == null) throw new NullPointerException("cannot be null");
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("currentWalletIso", iso);
+        editor.apply();
+    }
+    public static String getWalletRewardId(Context activity) {
+        SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("walletRewardId", null);
+    }
+
+    public static void putWalletRewardId(Context app, String id) {
+        if (id == null) throw new NullPointerException("cannot be null");
+        SharedPreferences prefs = app.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("walletRewardId", id);
         editor.apply();
     }
 
