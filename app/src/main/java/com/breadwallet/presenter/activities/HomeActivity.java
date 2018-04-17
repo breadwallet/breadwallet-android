@@ -118,12 +118,19 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             @Override
             public void onItemClick(View view, int position, float x, float y) {
                 if (position >= mAdapter.getItemCount() || position < 0) return;
-                BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, mAdapter.getItemAt(position).getIso(HomeActivity.this));
 //                Log.d("HomeActivity", "Saving current wallet ISO as " + mAdapter.getItemAt(position).getIso(HomeActivity.this));
 
-                Intent newIntent = new Intent(HomeActivity.this, WalletActivity.class);
-                startActivity(newIntent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                if(mAdapter.getItemViewType(position) == 0) {
+                    BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, mAdapter.getItemAt(position).getIso(HomeActivity.this));
+                    Intent newIntent = new Intent(HomeActivity.this, WalletActivity.class);
+                    startActivity(newIntent);
+                    overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                }else{
+                    Intent intent = new Intent(HomeActivity.this, AddWalletsActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+
+                }
             }
 
             @Override
