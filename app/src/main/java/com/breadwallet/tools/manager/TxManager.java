@@ -99,6 +99,13 @@ public class TxManager {
             Log.e(TAG, "updateTxList: wallet is null");
             return;
         }
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (TxManager.getInstance().adapter != null)
+                    TxManager.getInstance().adapter.updateData();
+            }
+        });
         final List<TxUiHolder> items = wallet.getTxUiHolders(app);
 
         long took = (System.currentTimeMillis() - start);
