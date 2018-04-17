@@ -693,7 +693,7 @@ public class WalletEthManager implements BaseWalletManager,
     @Override
     public void assignNode(BREthereumLightNode node) {
         this.node = (BREthereumLightNode.JSON_RPC) node;
-        this.node.addListener (this);
+        this.node.addListener(this);
     }
 
     @Override
@@ -1129,14 +1129,15 @@ public class WalletEthManager implements BaseWalletManager,
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String host = "http://api.etherscan.io/";
-                final String eth_rpc_url = host + "api?module=logs&action=getLogs" +
+                final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
+                final String eth_rpc_url = host + "module=logs&action=getLogs" +
                         "&fromBlock=0&toBlock=latest" +
-                        // &address=0x558ec3152e2eb2174905cd19aea4e34a23de9ad6 // contract
+//                         "&address=" + ... not needed since we're asking for all the contracts
                         "&topic0=" + event +
                         "&topic1=" + address +
                         "&topic1_2_opr=or" +
                         "&topic2=" + address;
+                Log.e(TAG, "run: " + eth_rpc_url);
                 final JSONObject payload = new JSONObject();
                 try {
                     payload.put("id", String.valueOf(rid));
@@ -1147,21 +1148,21 @@ public class WalletEthManager implements BaseWalletManager,
 
                 new JsonRpcRequest()
                         .makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
-                    @Override
-                    public void onRpcRequestCompleted(String jsonResult) {
+                            @Override
+                            public void onRpcRequestCompleted(String jsonResult) {
 
-                        final String jsonRcpResponse = jsonResult;
+                                final String jsonRcpResponse = jsonResult;
 
-                        if (jsonRcpResponse != null) {
-                            try {
-                                // Convert response into JsonArray of logs
-                                JSONObject logs = new JSONObject(jsonResult);
-                                JSONArray logsArray = logs.getJSONArray("result");
+                                if (jsonRcpResponse != null) {
+                                    try {
+                                        // Convert response into JsonArray of logs
+                                        JSONObject logs = new JSONObject(jsonResult);
+                                        JSONArray logsArray = logs.getJSONArray("result");
 
-                                // Iterate through the list of transactions and call node.announceTransaction()
-                                // to notify the core
-                                for (int i = 0; i < logsArray.length(); i++) {
-                                    JSONObject log = logsArray.getJSONObject(i);
+                                        // Iterate through the list of transactions and call node.announceTransaction()
+                                        // to notify the core
+                                        for (int i = 0; i < logsArray.length(); i++) {
+                                            JSONObject log = logsArray.getJSONObject(i);
 
 //                                    { "address":"0x722dd3f80bac40c951b51bdd28dd19d435762180",
 //                                        "topics":["0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
@@ -1176,29 +1177,29 @@ public class WalletEthManager implements BaseWalletManager,
 //                                        "transactionHash":"0xa37bd8bd8b1fa2838ef65aec9f401f56a6279f99bb1cfb81fa84e923b1b60f2b",
 //                                        "transactionIndex":"0x"}
 
-                                    JSONArray topicsArray = log.getJSONArray("topics");
-                                    String[] topics = new String [topicsArray.length()];
-                                    for (int dex = 0; dex < topics.length; dex++)
-                                        topics[dex] = topicsArray.getString(dex);
+                                            JSONArray topicsArray = log.getJSONArray("topics");
+                                            String[] topics = new String[topicsArray.length()];
+                                            for (int dex = 0; dex < topics.length; dex++)
+                                                topics[dex] = topicsArray.getString(dex);
 
-                                    node.announceLog(rid,
-                                            log.getString("transactionHash"),
-                                            log.getString("address"), // contract
-                                            topics,
-                                            log.getString ("data"),
-                                            log.getString ("gasPrice"),
-                                            log.getString ("gasUsed"),
-                                            log.getString ("logIndex"),
-                                            log.getString ("blockNumber"),
-                                            log.getString ("transactionIndex"),
-                                            log.getString ("blockTimestamp"));
+                                            node.announceLog(rid,
+                                                    log.getString("transactionHash"),
+                                                    log.getString("address"), // contract
+                                                    topics,
+                                                    log.getString("data"),
+                                                    log.getString("gasPrice"),
+                                                    log.getString("gasUsed"),
+                                                    log.getString("logIndex"),
+                                                    log.getString("blockNumber"),
+                                                    log.getString("transactionIndex"),
+                                                    log.getString("blockTimestamp"));
+                                        }
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
                                 }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
                             }
-                        }
-                    }
-            });
+                        });
             }
         });
     }
