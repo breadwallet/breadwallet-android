@@ -184,8 +184,6 @@ public class BreadApp extends Application {
             // Add the wallet ID to the request headers if it's not null or empty
             if (builder.toString() != null && !builder.toString().isEmpty()) {
                 mHeaders.put("X-Wallet-ID", builder.toString());
-                Log.d(TAG, "X-Wallet ID -> " + builder.toString());
-
             }
 
             return builder.toString();
