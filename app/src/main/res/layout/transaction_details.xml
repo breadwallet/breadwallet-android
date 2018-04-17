@@ -199,6 +199,7 @@
                 android:layout_marginTop="14dp"
                 android:layout_toEndOf="@id/memo_label"
                 android:gravity="end"
+                android:cursorVisible="false"
                 android:paddingEnd="16dp"
                 android:paddingStart="16dp"
                 android:background="@android:color/transparent"
