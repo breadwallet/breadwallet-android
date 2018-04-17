@@ -84,7 +84,9 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.ClientJSON_RPC {
+public class WalletEthManager implements BaseWalletManager,
+        BREthereumLightNode.ClientJSON_RPC,
+        BREthereumLightNode.Listener {
     private static final String TAG = WalletEthManager.class.getSimpleName();
 
     private static String ISO = "ETH";
@@ -691,6 +693,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     @Override
     public void assignNode(BREthereumLightNode node) {
         this.node = (BREthereumLightNode.JSON_RPC) node;
+        this.node.addListener (this);
     }
 
     @Override
@@ -1144,21 +1147,21 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
                 new JsonRpcRequest()
                         .makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
-                            @Override
-                            public void onRpcRequestCompleted(String jsonResult) {
+                    @Override
+                    public void onRpcRequestCompleted(String jsonResult) {
 
-                                final String jsonRcpResponse = jsonResult;
+                        final String jsonRcpResponse = jsonResult;
 
-                                if (jsonRcpResponse != null) {
-                                    try {
-                                        // Convert response into JsonArray of logs
-                                        JSONObject logs = new JSONObject(jsonResult);
-                                        JSONArray logsArray = logs.getJSONArray("result");
+                        if (jsonRcpResponse != null) {
+                            try {
+                                // Convert response into JsonArray of logs
+                                JSONObject logs = new JSONObject(jsonResult);
+                                JSONArray logsArray = logs.getJSONArray("result");
 
-                                        // Iterate through the list of transactions and call node.announceTransaction()
-                                        // to notify the core
-                                        for (int i = 0; i < logsArray.length(); i++) {
-                                            JSONObject log = logsArray.getJSONObject(i);
+                                // Iterate through the list of transactions and call node.announceTransaction()
+                                // to notify the core
+                                for (int i = 0; i < logsArray.length(); i++) {
+                                    JSONObject log = logsArray.getJSONObject(i);
 
 //                                    { "address":"0x722dd3f80bac40c951b51bdd28dd19d435762180",
 //                                        "topics":["0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
@@ -1173,34 +1176,101 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 //                                        "transactionHash":"0xa37bd8bd8b1fa2838ef65aec9f401f56a6279f99bb1cfb81fa84e923b1b60f2b",
 //                                        "transactionIndex":"0x"}
 
-                                            JSONArray topicsArray = log.getJSONArray("topics");
-                                            String[] topics = new String[topicsArray.length()];
-                                            for (int dex = 0; dex < topics.length; dex++)
-                                                topics[dex] = topicsArray.getString(dex);
+                                    JSONArray topicsArray = log.getJSONArray("topics");
+                                    String[] topics = new String [topicsArray.length()];
+                                    for (int dex = 0; dex < topics.length; dex++)
+                                        topics[dex] = topicsArray.getString(dex);
 
-                                            node.announceLog(rid,
-                                                    log.getString("transactionHash"),
-                                                    log.getString("address"), // contract
-                                                    topics,
-                                                    log.getString("data"),
-                                                    log.getString("gasPrice"),
-                                                    log.getString("gasUsed"),
-                                                    log.getString("logIndex"),
-                                                    log.getString("blockNumber"),
-                                                    log.getString("transactionIndex"),
-                                                    log.getString("blockTimestamp"));
-                                        }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
+                                    node.announceLog(rid,
+                                            log.getString("transactionHash"),
+                                            log.getString("address"), // contract
+                                            topics,
+                                            log.getString ("data"),
+                                            log.getString ("gasPrice"),
+                                            log.getString ("gasUsed"),
+                                            log.getString ("logIndex"),
+                                            log.getString ("blockNumber"),
+                                            log.getString ("transactionIndex"),
+                                            log.getString ("blockTimestamp"));
                                 }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        });
+                        }
+                    }
+            });
             }
         });
     }
 
     public BREthereumLightNode.JSON_RPC getNode() {
         return node;
+    }
+
+    @Override
+    public void handleWalletEvent(BREthereumWallet wallet, WalletEvent event) {
+        Context app = BreadApp.getBreadContext();
+
+        if (app != null && Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
+            String iso = (null == wallet.getToken() ? "ETH" : wallet.getToken().getSymbol());
+            switch (event) {
+                case CREATED:
+                    printInfo("Wallet Created", iso, event.name());
+                    break;
+
+                case BALANCE_UPDATED:
+                    printInfo("New Balance: " + wallet.getBalance(), iso, event.name());
+                    break;
+                case DEFAULT_GAS_LIMIT_UPDATED:
+                    printInfo("New Gas Limit: ...", iso, event.name());
+                    break;
+                case DEFAULT_GAS_PRICE_UPDATED:
+                    printInfo("New Gas Price: " + BRSharedPrefs.getFeeRate(app, getIso(app)), iso, event.name());
+                    break;
+                case TRANSACTION_ADDED:
+                    printInfo("New transaction added: ", iso, event.name());
+                    break;
+                case TRANSACTION_REMOVED:
+                    printInfo("Transaction removed: ", iso, event.name());
+                    break;
+                case DELETED:
+                    BRReportsManager.reportBug(new NullPointerException("Wallet was deleted:" + event.name()));
+                    printInfo("Deleted: ", iso, event.name());
+                    break;
+            }
+        }
+    }
+
+    private void printInfo(String infoText, String walletIso, String eventName) {
+        Log.d(TAG, String.format("%s (%s): %s", eventName, walletIso, infoText));
+    }
+
+    @Override
+    public void handleTransactionEvent(BREthereumWallet wallet, BREthereumTransaction transaction, TransactionEvent event) {
+        Context app = BreadApp.getBreadContext();
+
+        if (app != null && Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
+            String iso = (null == wallet.getToken() ? "ETH" : wallet.getToken().getSymbol());
+            switch (event) {
+                case CREATED:
+                    printInfo("Transaction created: " + transaction.getAmount(), iso, event.name());
+                    break;
+                case SIGNED:
+                    printInfo("Transaction signed: " + transaction.getAmount(), iso, event.name());
+                    break;
+                case SUBMITTED:
+                    printInfo("Transaction submitted: " + transaction.getAmount(), iso, event.name());
+                    break;
+                case BLOCKED:
+                    printInfo("Transaction blocked: " + transaction.getAmount(), iso, event.name());
+                    break;
+                case ERRORED:
+                    printInfo("Transaction error: " + transaction.getAmount(), iso, event.name());
+                    break;
+                case GAS_ESTIMATE_UPDATED:
+                    printInfo("Transaction gas estimate updated: " + transaction.getAmount(), iso, event.name());
+                    break;
+            }
+        }
     }
 }
