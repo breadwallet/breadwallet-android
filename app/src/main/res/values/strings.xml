@@ -895,4 +895,6 @@
 
 
   <string name="Transaction.AddMemo">Add memo...</string>
+  <string name="ERC20.Wallets.AddWallet">"Add Wallets</string>
+
 </resources>
