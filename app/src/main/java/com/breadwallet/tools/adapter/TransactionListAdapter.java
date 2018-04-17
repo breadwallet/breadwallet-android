@@ -68,7 +68,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private final int promptResId;
     private List<TxUiHolder> backUpFeed;
     private List<TxUiHolder> itemFeed;
-    private Map<Integer,TxMetaData> mMetaDatas;
+    private Map<Integer, TxMetaData> mMetaDatas;
 
     private final int txType = 0;
     private final int promptType = 1;
@@ -102,27 +102,23 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     public void updateData() {
         if (updatingData) return;
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+        Map<Integer, TxMetaData> localMDs = new HashMap<>();
+        for (int i = 0; i < backUpFeed.size(); i++) {
+            TxUiHolder item = backUpFeed.get(i);
+            localMDs.put(i, KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash()));
+
+        }
+        mMetaDatas.clear();
+        mMetaDatas.putAll(localMDs);
+        updatingData = false;
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-                mMetaDatas.clear();
-                for (int i = 0; i < backUpFeed.size(); i++) {
-                    TxUiHolder item = backUpFeed.get(i);
-                    mMetaDatas.put(i, KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash()));
-
-                }
-                updatingData = false;
-                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        notifyDataSetChanged();
-                    }
-                });
+                notifyDataSetChanged();
             }
         });
 
     }
-
 
     public List<TxUiHolder> getItems() {
         return itemFeed;

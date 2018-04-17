@@ -160,7 +160,6 @@ public class KVStoreManager {
 //    }
 
     public TxMetaData getTxMetaData(Context app, byte[] txHash) {
-//        if(ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         String key = txKey(txHash);
 
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
