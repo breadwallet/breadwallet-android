@@ -149,7 +149,7 @@ public class BreadApp extends Application {
         String ethAddress = ethWallet.getReceiveAddress(mContext).stringify();
 
         try {
-            byte[] ptext = ethAddress.getBytes(ISO_8859_1);
+            byte[] ptext = ethAddress.getBytes();
 
             // Encode the address to UTF-8
             String ethAddressEncoded = URLEncoder.encode(ethAddress, "UTF-8");
@@ -184,6 +184,8 @@ public class BreadApp extends Application {
             // Add the wallet ID to the request headers if it's not null or empty
             if (builder.toString() != null && !builder.toString().isEmpty()) {
                 mHeaders.put("X-Wallet-ID", builder.toString());
+                Log.d(TAG, "X-Wallet ID -> " + builder.toString());
+
             }
 
             return builder.toString();
