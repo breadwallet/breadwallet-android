@@ -149,7 +149,7 @@ public class BreadApp extends Application {
         String ethAddress = ethWallet.getReceiveAddress(mContext).stringify();
 
         try {
-            byte[] ptext = ethAddress.getBytes(ISO_8859_1);
+            byte[] ptext = ethAddress.getBytes();
 
             // Encode the address to UTF-8
             String ethAddressEncoded = URLEncoder.encode(ethAddress, "UTF-8");
