@@ -13,6 +13,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.APIClient;
+import com.platform.entities.TokenListMetaData;
 import com.platform.entities.TxMetaData;
 import com.platform.entities.WalletInfo;
 import com.platform.kvstore.CompletionObject;
@@ -20,10 +21,12 @@ import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
 import com.platform.sqlite.KVItem;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,7 +59,8 @@ public class KVStoreManager {
     private static final String TAG = KVStoreManager.class.getName();
 
     private static KVStoreManager instance;
-    String walletInfoKey = "wallet-info";
+    private static final String WALLET_INFO_KEY = "wallet-info";
+    private static final String TOKEN_LIST_META_DATA = "token-list-metadata";
 
     private KVStoreManager() {
     }
@@ -70,10 +74,10 @@ public class KVStoreManager {
         WalletInfo result = new WalletInfo();
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
-        long ver = kvStore.localVersion(walletInfoKey).version;
-        CompletionObject obj = kvStore.get(walletInfoKey, ver);
+        long ver = kvStore.localVersion(WALLET_INFO_KEY).version;
+        CompletionObject obj = kvStore.get(WALLET_INFO_KEY, ver);
         if (obj.kv == null) {
-            Log.e(TAG, "getWalletInfo: value is null for key: " + obj.key);
+            Log.e(TAG, "getWalletInfo: value is null for key: " + WALLET_INFO_KEY);
             return null;
         }
 
@@ -146,18 +150,123 @@ public class KVStoreManager {
         }
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
-        long localVer = kvStore.localVersion(walletInfoKey).version;
-        long removeVer = kvStore.remoteVersion(walletInfoKey);
-        CompletionObject compObj = kvStore.set(localVer, removeVer, walletInfoKey, compressed, System.currentTimeMillis(), 0);
+        long localVer = kvStore.localVersion(WALLET_INFO_KEY).version;
+        long removeVer = kvStore.remoteVersion(WALLET_INFO_KEY);
+        CompletionObject compObj = kvStore.set(localVer, removeVer, WALLET_INFO_KEY, compressed, System.currentTimeMillis(), 0);
         if (compObj.err != null) {
-            Log.e(TAG, "putWalletInfo: Error setting value for key: " + walletInfoKey + ", err: " + compObj.err);
+            Log.e(TAG, "putWalletInfo: Error setting value for key: " + WALLET_INFO_KEY + ", err: " + compObj.err);
         }
 
     }
 
-//    public TxMetaData getTxMetaData(Context app, byte[] txHash) {
-//        return getTxMetaData(app, txHash, null);
-//    }
+    public TokenListMetaData getTokenListMetaData(Context app) {
+        TokenListMetaData result = new TokenListMetaData();
+        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
+        ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
+        List itms = kvStore.getRawKVs();
+        long ver = kvStore.localVersion(TOKEN_LIST_META_DATA).version;
+        CompletionObject obj = kvStore.get(TOKEN_LIST_META_DATA, ver);
+        if (obj.kv == null) {
+            Log.e(TAG, "putTokenListMetaData: value is null for key: " + TOKEN_LIST_META_DATA);
+            return null;
+        }
+
+        JSONObject json;
+
+        try {
+            byte[] decompressed = BRCompressor.bz2Extract(obj.kv.value);
+            if (decompressed == null) {
+                Log.e(TAG, "putTokenListMetaData: decompressed value is null");
+                return null;
+            }
+            json = new JSONObject(new String(decompressed));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        try {
+            result.classVersion = json.getInt("classVersion");
+            result.enabledCurrencies = jsonToMetaData(json.getJSONArray("enabledCurrencies"));
+            result.hiddenCurrencies = jsonToMetaData(json.getJSONArray("hiddenCurrencies"));
+//            result.currentCurrency = json.getString("currentCurrency");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, "getWalletInfo: FAILED to get json value");
+        }
+
+        Log.e(TAG, "putTokenListMetaData: " + json);
+        return result;
+    }
+
+    private List<TokenListMetaData.TokenItem> jsonToMetaData(JSONArray json) throws JSONException {
+        List<TokenListMetaData.TokenItem> result = new ArrayList<>();
+        if (json == null) {
+            Log.e(TAG, "jsonToMetaData: JSONArray is null");
+            return result;
+        }
+        for (int i = 0; i < result.size(); i++) {
+            String s = json.getString(i);
+            boolean isErc20 = s.contains(":");
+            String name = s;
+            String address = null;
+            if (isErc20) {
+                name = s.split(":")[0];
+                address = s.split(":")[1];
+            }
+            result.add(new TokenListMetaData.TokenItem(name, isErc20, address));
+        }
+
+        return result;
+    }
+
+    public void putTokenListMetaData(Context app, TokenListMetaData md) {
+        TokenListMetaData old = getTokenListMetaData(app);
+        if (old == null) old = new TokenListMetaData(); //create new one if it's null
+
+        //add all the params that we want to change
+        if (md.classVersion != 0) old.classVersion = md.classVersion;
+        if (md.enabledCurrencies.size() > 0) old.enabledCurrencies = md.enabledCurrencies;
+        if (md.hiddenCurrencies.size() > 0) old.hiddenCurrencies = md.hiddenCurrencies;
+
+        //sanity check
+        if (old.classVersion == 0) old.classVersion = 1;
+
+        JSONObject obj = new JSONObject();
+        byte[] result;
+        try {
+            obj.put("classVersion", old.classVersion);
+            obj.put("enabledCurrencies", old.enabledCurrencies);
+            obj.put("hiddenCurrencies", old.hiddenCurrencies);
+            result = obj.toString().getBytes();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, "putTokenListMetaData: FAILED to create json");
+            return;
+        }
+
+        if (result.length == 0) {
+            Log.e(TAG, "putTokenListMetaData: FAILED: result is empty");
+            return;
+        }
+        byte[] compressed;
+        try {
+            compressed = BRCompressor.bz2Compress(result);
+        } catch (IOException e) {
+            BRReportsManager.reportBug(e);
+            return;
+        }
+        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
+        ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
+        long localVer = kvStore.localVersion(TOKEN_LIST_META_DATA).version;
+        long removeVer = kvStore.remoteVersion(TOKEN_LIST_META_DATA);
+        CompletionObject compObj = kvStore.set(localVer, removeVer, TOKEN_LIST_META_DATA, compressed, System.currentTimeMillis(), 0);
+        if (compObj.err != null) {
+            Log.e(TAG, "putTokenListMetaData: Error setting value for key: " + TOKEN_LIST_META_DATA + ", err: " + compObj.err);
+        }
+
+    }
 
     public TxMetaData getTxMetaData(Context app, byte[] txHash) {
         String key = txKey(txHash);
@@ -357,11 +466,11 @@ public class KVStoreManager {
         }
     }
 
-    public TxMetaData createMetadata(Context app, BaseWalletManager wm, BaseTransaction tx){
+    public TxMetaData createMetadata(Context app, BaseWalletManager wm, BaseTransaction tx) {
         TxMetaData txMetaData = new TxMetaData();
         txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, wm.getIso(app), txMetaData.exchangeCurrency);
-        txMetaData.exchangeRate = ent == null? 0 : ent.rate;
+        txMetaData.exchangeRate = ent == null ? 0 : ent.rate;
         txMetaData.fee = wm.getTxFee(tx).toPlainString();
         txMetaData.txSize = tx.getTxSize().intValue();
         txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, wm.getIso(app));

@@ -39,6 +39,8 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
+import com.platform.entities.TokenListMetaData;
+import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -174,8 +176,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             }
         });
 
-    }
+        TokenListMetaData md = KVStoreManager.getInstance().getTokenListMetaData(this);
 
+    }
 
     public void hidePrompt() {
         mPromptCard.setVisibility(View.GONE);

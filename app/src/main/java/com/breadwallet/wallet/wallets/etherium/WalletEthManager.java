@@ -708,9 +708,7 @@ public class WalletEthManager implements BaseWalletManager,
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                Log.e(TAG, "getBalance: " + address);
                 final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
-//        Log.d(TAG, "Making rpc request to " + eth_url);
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
 
@@ -739,7 +737,6 @@ public class WalletEthManager implements BaseWalletManager,
 
                                 if (responseObject.has("result")) {
                                     balance = responseObject.getString("result");
-                                    Log.e(TAG, "RPC:getBalance: " + balance);
                                 }
                             } else {
 //                                Log.e(TAG, "onRpcRequestCompleted: jsonResult is null");

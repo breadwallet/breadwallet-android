@@ -1,6 +1,8 @@
 package com.platform.entities;
 
 
+import java.util.List;
+
 /**
  * BreadWallet
  * <p/>
@@ -25,22 +27,33 @@ package com.platform.entities;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletInfo {
+public class TokenListMetaData {
+    public static class TokenItem {
+        public String name;
+        public boolean erc20;
+        public String contractAddress;
 
-    /**WalletInfo:
+        public TokenItem(String name, boolean erc20, String contractAddress) {
+            this.name = name;
+            this.erc20 = erc20;
+            this.contractAddress = contractAddress;
+        }
+    }
 
-     Key: “wallet-info”
-
-     {
-        “classVersion”: 2, //used for versioning the schema
-        “creationDate”: 123475859, //Unix timestamp
-        “name”: “My Bread”,
-        “currentCurrency”: “USD”
-     }
+    /**
+     * WalletInfo:
+     * <p>
+     * Key: “wallet-info”
+     * <p>
+     * {
+     * “classVersion”: 2, //used for versioning the schema
+     * "enabledCurrencies": ["btc":"eth": "erc20:0xsd98fjetc"] enabled currencies
+     * "hiddenCurrencies": "bch"] hidden currencies
+     * }
      */
 
     public int classVersion;
-    public int creationDate;
-    public String name;
+    public List<TokenItem> enabledCurrencies;
+    public List<TokenItem> hiddenCurrencies;
 
 }
