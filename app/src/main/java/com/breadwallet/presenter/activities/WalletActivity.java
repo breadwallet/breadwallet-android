@@ -427,8 +427,19 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         wallet.addBalanceChangedListener(new OnBalanceChangedListener() {
             @Override
             public void onBalanceChanged(String iso, BigDecimal newBalance) {
-                wallet.refreshCachedBalance(WalletActivity.this);
-                updateUi();
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        wallet.refreshCachedBalance(WalletActivity.this);
+                        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateUi();
+                            }
+                        });
+                    }
+                });
+
             }
         });
 
@@ -442,7 +453,12 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             @Override
             public void syncStarted() {
-                SyncService.startService(WalletActivity.this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletIso);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        SyncService.startService(WalletActivity.this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletIso);
+                    }
+                });
             }
         });
 

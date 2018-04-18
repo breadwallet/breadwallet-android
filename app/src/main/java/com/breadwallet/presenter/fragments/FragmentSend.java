@@ -711,7 +711,7 @@ public class FragmentSend extends Fragment {
         curBalance = wallet.getCachedBalance(app);
         if (!amountLabelOn)
             isoText.setText(CurrencyUtils.getSymbolByIso(app, selectedIso));
-        isoButton.setText(String.format("%s(%s)", selectedIso, CurrencyUtils.getSymbolByIso(app, selectedIso)));
+        isoButton.setText(String.format("%s", CurrencyUtils.getSymbolByIso(app, selectedIso)));
 
         //is the chosen ISO a crypto (could be also a fiat currency)
         boolean isIsoCrypto = WalletsMaster.getInstance(getActivity()).isIsoCrypto(getActivity(), selectedIso);

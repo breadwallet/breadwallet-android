@@ -70,7 +70,7 @@ public class GeoLocationPlugin implements Plugin {
                 try {
                     if (granted) {
                         Log.e(TAG, "handleGeoPermission: granted");
-                        BRHTTPHelper.handleSuccess(204, null, globalBaseRequest, (HttpServletResponse) continuation.getServletResponse(), null);
+                        BRHTTPHelper.handleSuccess(204, null, globalBaseRequest, (HttpServletResponse) continuation.getServletResponse(), "application/json");
                         globalBaseRequest.setHandled(true);
 
                     } else {
@@ -130,7 +130,7 @@ public class GeoLocationPlugin implements Plugin {
                         jsonResult.put("status", status);
                         jsonResult.put("user_queried", permRequested);
                         jsonResult.put("location_enabled", enabled);
-                        return BRHTTPHelper.handleSuccess(200, jsonResult.toString().getBytes(), baseRequest, response, null);
+                        return BRHTTPHelper.handleSuccess(200, jsonResult.toString().getBytes(), baseRequest, response, "application/json");
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "handle: failed to send permission status: " + target + " " + baseRequest.getMethod());
