@@ -1074,4 +1074,9 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         });
 
     }
+
+    @Override
+    public void getLogs(String address, String event, int rid) {
+
+    }
 }

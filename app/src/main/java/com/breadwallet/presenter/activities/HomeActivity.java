@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
+import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.test.BRWalletManager;
 import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
@@ -276,6 +277,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 WalletsMaster.getInstance(HomeActivity.this).refreshBalances(HomeActivity.this);
             }
         });
+
+
+
     }
 
     @Override

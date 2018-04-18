@@ -10,6 +10,7 @@ import android.widget.ImageView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRText;
+import com.breadwallet.presenter.entities.TokenItem;
 
 import java.util.ArrayList;
 
@@ -18,7 +19,7 @@ public class AddWalletListAdapter extends RecyclerView.Adapter<AddWalletListAdap
     private Context mContext;
     private ArrayList<TokenItem> mTokens;
 
-    public AddWalletListAdapter(Context context, ArrayList<TokenItem> tokens){
+    public AddWalletListAdapter(Context context, ArrayList<TokenItem> tokens) {
 
         this.mContext = context;
         this.mTokens = tokens;
@@ -56,7 +57,7 @@ public class AddWalletListAdapter extends RecyclerView.Adapter<AddWalletListAdap
         private BRText symbol;
         private BRText name;
 
-        public TokenItemViewHolder(View view){
+        public TokenItemViewHolder(View view) {
             super(view);
 
             logo = view.findViewById(R.id.token_icon);
@@ -65,11 +66,5 @@ public class AddWalletListAdapter extends RecyclerView.Adapter<AddWalletListAdap
         }
     }
 
-    public class TokenItem{
 
-        public String address;
-        public String symbol;
-        public String name;
-        public String image;
-    }
 }
