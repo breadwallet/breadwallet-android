@@ -190,7 +190,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             });
 
 //          BRPeerManager.getInstance().updateFixedPeer(ctx);//todo reimplement the fixed peer
-            uiConfig = new WalletUiConfiguration("#478559", true, true,  false, true);
+            uiConfig = new WalletUiConfiguration("#478559", true, true, false, true);
 
             settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
         } finally {
@@ -412,7 +412,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
                     currencySymbolString = "m" + ISO;
                     break;
                 case BRConstants.CURRENT_UNIT_BITCOINS:
-                    currencySymbolString =  ISO;
+                    currencySymbolString = ISO;
                     break;
             }
         }
@@ -499,9 +499,15 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     @Override
-    public void setCachedBalance(Context app, BigDecimal balance) {
+    public void setCachedBalance(final Context app, BigDecimal balance) {
         BRSharedPrefs.putCachedBalance(app, getIso(app), balance);
-        refreshAddress(app);
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                refreshAddress(app);
+            }
+        });
+
         for (OnBalanceChangedListener listener : balanceListeners) {
             if (listener != null) listener.onBalanceChanged(getIso(app), balance);
         }
@@ -753,6 +759,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     public void balanceChanged(long balance) {
         super.balanceChanged(balance);
+
         Context app = BreadApp.getBreadContext();
         setCachedBalance(app, new BigDecimal(balance));
         for (OnTxListModified list : txModifiedListeners)
