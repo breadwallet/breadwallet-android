@@ -733,12 +733,13 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                             je.printStackTrace();
                         }
                         node.announceBalance(wid, balance, rid);
+                        final BigDecimal uiBalance = new BigDecimal(mWallet.getBalance());
                         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                             @Override
                             public void run() {
                                 for (OnBalanceChangedListener list : balanceListeners)
                                     if (list != null)
-                                        list.onBalanceChanged(ISO, new BigDecimal(mWallet.getBalance()));
+                                        list.onBalanceChanged(ISO, uiBalance);
                             }
                         });
 

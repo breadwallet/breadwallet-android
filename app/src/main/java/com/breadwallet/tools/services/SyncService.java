@@ -14,6 +14,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -87,17 +88,16 @@ public class SyncService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
-        if (intent != null)
-            switch (intent.getAction()) {
-                case ACTION_START_SYNC_PROGRESS_POLLING:
-                    String walletIso = intent.getStringExtra(EXTRA_WALLET_ISO);
-                    if (walletIso != null) {
-                        startSyncPolling(SyncService.this.getApplicationContext(), walletIso);
-                    }
-                    break;
-                default:
-                    Log.i(TAG, "Intent not recognized.");
-            }
+        switch (intent.getAction()) {
+            case ACTION_START_SYNC_PROGRESS_POLLING:
+                String walletIso = intent.getStringExtra(EXTRA_WALLET_ISO);
+                if (walletIso != null) {
+                    startSyncPolling(SyncService.this.getApplicationContext(), walletIso);
+                }
+                break;
+            default:
+                Log.i(TAG, "Intent not recognized.");
+        }
     }
 
     /**
@@ -136,9 +136,15 @@ public class SyncService extends IntentService {
      * @param action    The action of the intent.
      * @param walletIso The wallet ISO used to identify which wallet is going to be acted upon.
      */
-    public static void startService(Context context, String action, String walletIso) {
+    public static void startService(final Context context, final String action, final String walletIso) {
 //        if (!BreadApp.isAppInBackground(context))
-        context.startService(createIntent(context, action, walletIso));
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                context.startService(createIntent(context, action, walletIso));
+            }
+        });
+
     }
 
     /**

@@ -144,7 +144,6 @@ public class IntroActivity extends BRActivity implements Serializable {
         });
     }
 
-
     private void setListeners() {
         newWalletButton.setOnClickListener(new View.OnClickListener() {
             @Override
