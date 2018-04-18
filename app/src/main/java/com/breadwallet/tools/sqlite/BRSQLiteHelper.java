@@ -178,7 +178,8 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
             db.execSQL("INSERT INTO " + MB_TABLE_NAME + " (_id, merkleBlockBuff, merkleBlockHeight) SELECT _id, merkleBlockBuff, merkleBlockHeight FROM " + MB_TABLE_NAME_OLD);
             db.execSQL("INSERT INTO " + TX_TABLE_NAME + " (_id, transactionBuff, transactionBlockHeight, transactionTimeStamp) SELECT _id, transactionBuff, transactionBlockHeight, transactionTimeStamp FROM " + TX_TABLE_NAME_OLD);
-            db.execSQL("INSERT INTO " + CURRENCY_TABLE_NAME + " (code, name, rate) SELECT code, name, rate FROM " + CURRENCY_TABLE_NAME_OLD);
+            if (tableExists(CURRENCY_TABLE_NAME_OLD, db) && tableExists(CURRENCY_TABLE_NAME, db))
+                db.execSQL("INSERT INTO " + CURRENCY_TABLE_NAME + " (code, name, rate) SELECT code, name, rate FROM " + CURRENCY_TABLE_NAME_OLD);
 
             db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME_OLD);//drop this table (fully refactored schema)
             db.execSQL("DROP TABLE IF EXISTS " + MB_TABLE_NAME_OLD);
@@ -189,6 +190,8 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 
             db.setTransactionSuccessful();
             Log.e(TAG, "migrateDatabases: SUCCESS");
+        } catch (SQLiteException ex) {
+
         } finally {
             Log.e(TAG, "migrateDatabases: ENDED");
             db.endTransaction();
