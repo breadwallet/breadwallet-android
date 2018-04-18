@@ -69,17 +69,14 @@ public class GeoLocationPlugin implements Plugin {
 
                 try {
                     if (granted) {
+                        Log.e(TAG, "handleGeoPermission: granted");
+                        BRHTTPHelper.handleSuccess(204, null, globalBaseRequest, (HttpServletResponse) continuation.getServletResponse(), null);
                         globalBaseRequest.setHandled(true);
-                        ((HttpServletResponse) continuation.getServletResponse()).setStatus(204);
 
                     } else {
-                        try {
-                            Log.e(TAG, "handleGeoPermission: granted is false");
-                            globalBaseRequest.setHandled(true);
-                            ((HttpServletResponse) continuation.getServletResponse()).sendError(400);
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
+                        Log.e(TAG, "handleGeoPermission: granted is false");
+                        BRHTTPHelper.handleError(400, "Not granted", globalBaseRequest, (HttpServletResponse) continuation.getServletResponse());
+
                     }
                 } finally {
                     continuation.complete();
@@ -96,7 +93,7 @@ public class GeoLocationPlugin implements Plugin {
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (target.startsWith("/_permissions/geo")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
-            Context app =  BreadApp.getBreadContext();
+            Context app = BreadApp.getBreadContext();
             if (app == null) {
                 Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
@@ -139,19 +136,21 @@ public class GeoLocationPlugin implements Plugin {
                         Log.e(TAG, "handle: failed to send permission status: " + target + " " + baseRequest.getMethod());
                         return BRHTTPHelper.handleError(500, null, baseRequest, response);
                     }
-                // POST /_permissions/geo
-                //
-                // Call this method to request the geo permission from the user.
-                // The request body should be a JSON dictionary containing a single key, "style"
-                // the value of which should be either "inuse" or "always" - these correspond to the
-                // two ways the user can authorize geo access to the app. "inuse" will request
-                // geo availability to the app when the app is foregrounded, and "always" will request
-                // full time geo availability to the app
+                    // POST /_permissions/geo
+                    //
+                    // Call this method to request the geo permission from the user.
+                    // The request body should be a JSON dictionary containing a single key, "style"
+                    // the value of which should be either "inuse" or "always" - these correspond to the
+                    // two ways the user can authorize geo access to the app. "inuse" will request
+                    // geo availability to the app when the app is foregrounded, and "always" will request
+                    // full time geo availability to the app
                 case "POST":
                     if (ContextCompat.checkSelfPermission(app, Manifest.permission.ACCESS_FINE_LOCATION)
                             != PackageManager.PERMISSION_GRANTED) {
                         Log.e(TAG, "handle: requesting permissions: " + target + " " + baseRequest.getMethod());
                         ActivityCompat.requestPermissions((Activity) app, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, BRConstants.GEO_REQUEST_ID);
+                    } else {
+                        handleGeoPermission(true);
                     }
                     BRSharedPrefs.putGeoPermissionsRequested(app, true);
                     continuation = ContinuationSupport.getContinuation(request);
@@ -175,14 +174,16 @@ public class GeoLocationPlugin implements Plugin {
             // "description" = "a string representation of this object"
             // "timestamp" = "ISO-8601 timestamp of when this location was generated"
             // "horizontal_accuracy" = double
-            Context app =  BreadApp.getBreadContext();
-            if (app == null) {                    Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
+            Context app = BreadApp.getBreadContext();
+            if (app == null) {
+                Log.e(TAG, "handle: context is null: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
 
             if (request.getMethod().equalsIgnoreCase("GET")) {
                 JSONObject obj = getAuthorizationError(app);
-                if (obj != null) {                        Log.e(TAG, "handle: error getting location: " + obj.toString() + ", " + target + " " + baseRequest.getMethod());
+                if (obj != null) {
+                    Log.e(TAG, "handle: error getting location: " + obj.toString() + ", " + target + " " + baseRequest.getMethod());
                     return BRHTTPHelper.handleError(500, obj.toString(), baseRequest, response);
                 }
 

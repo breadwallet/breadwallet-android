@@ -893,6 +893,7 @@ public class CameraActivity extends BRActivity implements View.OnClickListener, 
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
+                            Thread.currentThread().setName("BG:" + TAG + ":handleCameraImageTaken");
                             try {
                                 Thread.sleep(1000);
                                 CameraPlugin.handleCameraImageTaken(BreadApp.getBreadContext(), bytes);

@@ -303,6 +303,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                Thread.currentThread().setName("BG:" + TAG + ":updateTxList");
                 TxManager.getInstance().updateTxList(WalletActivity.this);
             }
         });
@@ -384,6 +385,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                Thread.currentThread().setName("BG:" + TAG + ":initLastWallet");
                 WalletsMaster.getInstance(app).initWallets(app);
             }
         });
@@ -398,6 +400,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
+                        Thread.currentThread().setName("UI:" + TAG + ":updateUi");
                         updateUi();
                     }
                 });
@@ -412,6 +415,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
+                        Thread.currentThread().setName("UI:" + TAG + ":updateUi");
                         updateUi();
                     }
                 });
@@ -510,6 +514,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
+                Thread.currentThread().setName("UI:" + TAG + ":updateUi");
                 updateUi();
             }
         });

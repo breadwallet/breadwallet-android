@@ -41,8 +41,10 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.HTTPServer;
+import com.platform.middlewares.plugins.GeoLocationPlugin;
 import com.platform.middlewares.plugins.LinkPlugin;
 
 import org.json.JSONException;
@@ -629,6 +631,7 @@ public class WebViewActivity extends BRActivity {
         return imageFile;
     }
 
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -639,11 +642,8 @@ public class WebViewActivity extends BRActivity {
             case REQUEST_CAMERA_PERMISSION: {
 
                 Log.d(TAG, "ALLOWED camera permission");
-
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission is granted, open camera
                     Log.d(TAG, "Camera permission GRANTED");
                     Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -653,14 +653,25 @@ public class WebViewActivity extends BRActivity {
                 } else {
                     Toast.makeText(WebViewActivity.this, app.getString(R.string.Send_cameraUnavailabeMessage_android), Toast.LENGTH_SHORT).show();
                 }
-                return;
+                break;
             }
 
             case REQUEST_WRITE_EXTERNAL_STORAGE: {
-
-
+                break;
             }
 
+            case BRConstants.GEO_REQUEST_ID: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // Permission is granted
+                    Log.d(TAG, "Geo permission GRANTED");
+                    GeoLocationPlugin.handleGeoPermission(true);
+                } else {
+                    GeoLocationPlugin.handleGeoPermission(false);
+                }
+                break;
+            }
         }
     }
 

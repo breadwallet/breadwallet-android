@@ -265,10 +265,16 @@ public class WalletsMaster {
         if (!mWallets.contains(WalletBchManager.getInstance(app)))
             mWallets.add(WalletBchManager.getInstance(app));
         if (!mWallets.contains(WalletEthManager.getInstance(app))) {
-            BaseWalletManager ethWallet = WalletEthManager.getInstance(app);
+            final BaseWalletManager ethWallet = WalletEthManager.getInstance(app);
             mWallets.add(ethWallet);
             if (ethWallet != null) {
-                BreadApp.generateWalletIfIfNeeded(app, ethWallet.getReceiveAddress(app).stringify());
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        BreadApp.generateWalletIfIfNeeded(app, ethWallet.getReceiveAddress(app).stringify()); //blocks
+                    }
+                });
+
                 for (BaseWalletManager wm : mWallets) {
                     if (wm != null) setSpendingLimitIfNotSet(app, wm);
                 }

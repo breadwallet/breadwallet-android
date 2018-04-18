@@ -133,7 +133,8 @@ public class IntroActivity extends BRActivity implements Serializable {
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                Thread.currentThread().setName("updateBundle");
+                Thread.currentThread().setName("BG:" + TAG + ":updateBundles");
+
                 final long startTime = System.currentTimeMillis();
                 APIClient apiClient = APIClient.getInstance(IntroActivity.this);
                 apiClient.updateBundle();
