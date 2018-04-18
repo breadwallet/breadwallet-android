@@ -306,7 +306,8 @@ public class WalletsMaster {
         }
         BaseWalletManager wallet = getWalletByIso(app, BRSharedPrefs.getCurrentWalletIso(app));
         if (wallet == null) wallet = getWalletByIso(app, "BTC");
-        wallet.connect(app);
+        if (wallet != null)
+            wallet.connect(app);
     }
 
     @WorkerThread

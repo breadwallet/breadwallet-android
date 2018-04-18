@@ -45,6 +45,7 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -319,7 +320,7 @@ public class APIClient {
             throw new RuntimeException("network on main thread");
         }
 
-        Map<String, String> headers = BreadApp.getBreadHeaders();
+        Map<String, String> headers = new HashMap<>(BreadApp.getBreadHeaders());
 
         Request.Builder newBuilder = locRequest.newBuilder();
         for (String key : headers.keySet()) {
