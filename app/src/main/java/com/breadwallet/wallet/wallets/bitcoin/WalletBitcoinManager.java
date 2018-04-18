@@ -484,9 +484,15 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public void setCachedBalance(Context app, BigDecimal balance) {
+    public void setCachedBalance(final Context app, BigDecimal balance) {
         BRSharedPrefs.putCachedBalance(app, getIso(app), balance);
-        refreshAddress(app);
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                refreshAddress(app);
+            }
+        });
+
         for (OnBalanceChangedListener listener : balanceListeners) {
             if (listener != null) listener.onBalanceChanged(getIso(app), balance);
         }
