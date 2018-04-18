@@ -141,7 +141,7 @@ public class BreadApp extends Application {
 
     }
 
-    public static synchronized void generateWalletIfIfNeeded(Context app, String address) {
+    public synchronized static void generateWalletIfIfNeeded(Context app, String address) {
         if (BRSharedPrefs.getWalletRewardId(app) == null) {
             String rewardId = generateWalletId(app, address);
             if (!Utils.isNullOrEmpty(rewardId)) {
@@ -152,7 +152,7 @@ public class BreadApp extends Application {
 
     }
 
-    private static synchronized String generateWalletId(Context app, String address) {
+    private static String generateWalletId(Context app, String address) {
         if (app == null) {
             Log.e(TAG, "generateWalletId: app is null");
             return null;

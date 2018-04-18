@@ -11,7 +11,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
@@ -45,7 +44,6 @@ import com.platform.APIClient;
 import java.util.List;
 
 import static com.breadwallet.R.color.white;
-import static com.breadwallet.tools.util.BRConstants.PLATFORM_ON;
 import static com.breadwallet.tools.util.BRConstants.SCANNER_REQUEST;
 
 public class LoginActivity extends BRActivity {
@@ -246,8 +244,7 @@ public class LoginActivity extends BRActivity {
                 WalletsMaster.getInstance(LoginActivity.this).initLastWallet(LoginActivity.this);
             }
         });
-        if (PLATFORM_ON)
-            APIClient.getInstance(this).updatePlatform(this);
+        APIClient.getInstance(this).updatePlatform(this);
         Log.e(TAG, "onResume: 2");
     }
 
