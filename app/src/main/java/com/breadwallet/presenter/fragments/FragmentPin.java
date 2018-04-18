@@ -187,16 +187,16 @@ public class FragmentPin extends Fragment {
         if (dot1 == null) return;
         AuthManager.getInstance().updateDots(getActivity(), pinLimit, pin.toString(),
                 dot1, dot2, dot3, dot4, dot5, dot6, R.drawable.ic_pin_dot_gray, new AuthManager.OnPinSuccess() {
-            @Override
-            public void onSuccess() {
-                if (AuthManager.getInstance().checkAuth(pin.toString(), getContext())) {
-                    handleSuccess();
-                } else {
-                    handleFail();
-                }
-                pin = new StringBuilder("");
-            }
-        });
+                    @Override
+                    public void onSuccess() {
+                        if (AuthManager.getInstance().checkAuth(pin.toString(), getContext())) {
+                            handleSuccess();
+                        } else {
+                            handleFail();
+                        }
+                        pin = new StringBuilder("");
+                    }
+                });
 
     }
 
@@ -213,7 +213,7 @@ public class FragmentPin extends Fragment {
                 completion.onComplete();
                 Activity app = getActivity();
                 AuthManager.getInstance().authSuccess(app);
-                if (app != null)
+                if (app != null && !app.isDestroyed())
                     app.getFragmentManager().popBackStack();
 
             }

@@ -142,6 +142,8 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                 BRKeyStore.putEthPublicKey(ethPubKey, app);
             } catch (UserNotAuthenticatedException e) {
                 e.printStackTrace();
+                instance = null;
+                return;
             }
         } else {
             Log.e(TAG, "WalletEthManager: Using the pubkey to create");
