@@ -234,6 +234,7 @@ public class LoginActivity extends BRActivity {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                Thread.currentThread().setName("BG:" + TAG + ":initWallets");
                 WalletsMaster.getInstance(app).initWallets(app);
             }
         });
@@ -241,6 +242,7 @@ public class LoginActivity extends BRActivity {
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                Thread.currentThread().setName("BG:" + TAG + ":initLastWallet");
                 WalletsMaster.getInstance(LoginActivity.this).initLastWallet(LoginActivity.this);
             }
         });

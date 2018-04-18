@@ -86,7 +86,7 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
     public void onBackgrounded() {
         Log.e(TAG, "onBackgrounded: ");
         saveEvents();
-        pushToServer();
+//        pushToServer();
     }
 
     private void saveEvents() {

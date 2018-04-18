@@ -141,7 +141,7 @@ public class BreadApp extends Application {
 
     }
 
-    public static void generateWalletIfIfNeeded(Context app, String address) {
+    public static synchronized void generateWalletIfIfNeeded(Context app, String address) {
         if (BRSharedPrefs.getWalletRewardId(app) == null) {
             String rewardId = generateWalletId(app, address);
             if (!Utils.isNullOrEmpty(rewardId)) {
@@ -150,7 +150,6 @@ public class BreadApp extends Application {
             } else BRReportsManager.reportBug(new NullPointerException("rewardId is empty"));
         }
 
-        Log.e(TAG, "generateWalletIfIfNeeded: test:" + generateWalletId(app, "0x25024691907e126b2dd93ceea405d591696f9e0b"));
     }
 
     private static synchronized String generateWalletId(Context app, String address) {

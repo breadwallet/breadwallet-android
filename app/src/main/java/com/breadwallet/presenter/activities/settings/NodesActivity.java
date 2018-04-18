@@ -94,6 +94,7 @@ public class NodesActivity extends BRActivity {
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
+                                Thread.currentThread().setName("BG:" + TAG + ":updateFixedPeer");
                                 WalletsMaster.getInstance(app).updateFixedPeer(app, wm);
                                 updatingNode = false;
                                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
@@ -186,11 +187,13 @@ public class NodesActivity extends BRActivity {
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
+                                Thread.currentThread().setName("BG:" + TAG + ":updateFixedPeer");
                                 WalletsMaster.getInstance(app).updateFixedPeer(app, wm);
                                 updatingNode = false;
                                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                     @Override
                                     public void run() {
+                                        Thread.currentThread().setName("Ui:" + TAG + ":custom node title set");
                                         customTitle.setText(getString(R.string.RecoverWallet_done));
                                         new Handler().postDelayed(new Runnable() {
                                             @Override

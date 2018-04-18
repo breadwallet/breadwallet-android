@@ -247,6 +247,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
+                        Thread.currentThread().setName("UI:" + TAG + ":updateUi");
                         updateUi();
                     }
                 });
@@ -256,6 +257,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                Thread.currentThread().setName("BG:" + TAG + ":refreshBalances");
                 WalletsMaster.getInstance(HomeActivity.this).refreshBalances(HomeActivity.this);
             }
         });
