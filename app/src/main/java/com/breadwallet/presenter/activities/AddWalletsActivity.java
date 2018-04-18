@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.core.ethereum.BREthereumToken;
@@ -11,6 +12,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BREdit;
 import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.adapter.AddWalletListAdapter;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,6 +24,7 @@ public class AddWalletsActivity extends BRActivity {
     private AddWalletListAdapter mAdapter;
     private BREdit mSearchView;
     private RecyclerView mRecycler;
+    private static final String TAG = AddWalletsActivity.class.getSimpleName();
 
 
     @Override
@@ -37,19 +40,38 @@ public class AddWalletsActivity extends BRActivity {
     protected void onResume() {
         super.onResume();
 
-        mTokens = BREthereumToken.tokens;
-        if (mAdapter == null && mTokens != null) {
+        final ArrayList<TokenItem> tokenItems = new ArrayList<>();
 
-            ArrayList<TokenItem> tokenItems = new ArrayList<>();
-            for (BREthereumToken token : mTokens) {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                mTokens = BREthereumToken.tokens;
 
-                TokenItem tokenItem = new TokenItem(token.getAddress(), token.getSymbol(), token.getName(), null);
-                tokenItems.add(tokenItem);
+                Log.d(TAG, "Token list -> " + mTokens.toString());
+                Log.d(TAG, "Token list length -> " + mTokens.length);
+
+                //if (mAdapter == null && mTokens != null) {
+                Log.d(TAG, "Token list not empty, setting up adapter");
+
+                for (int i = 0; i < mTokens.length; i++) {
+
+                    BREthereumToken token = mTokens[i];
+                    TokenItem tokenItem = new TokenItem(token.getAddress(), token.getSymbol(), token.getName(), null);
+                    tokenItems.add(tokenItem);
+                    //}
+                }
+
+                Log.d(TAG, "Token list size -> " + tokenItems.size());
+
+
+
             }
+        });
 
-            mAdapter = new AddWalletListAdapter(this, tokenItems);
-            mRecycler.setLayoutManager(new LinearLayoutManager(this));
-            mRecycler.setAdapter(mAdapter);
-        }
+
+        mAdapter = new AddWalletListAdapter(this, tokenItems);
+        mRecycler.setLayoutManager(new LinearLayoutManager(this));
+        mRecycler.setAdapter(mAdapter);
+
     }
 }
