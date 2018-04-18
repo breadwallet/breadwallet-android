@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -81,6 +82,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     BRButton mSendButton;
     BRButton mReceiveButton;
     BRButton mBuyButton;
+    BRButton mSellButton;
     BRText mBalanceLabel;
     BRText mProgressLabel;
     ProgressBar mProgressBar;
@@ -124,6 +126,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mSendButton = findViewById(R.id.send_button);
         mReceiveButton = findViewById(R.id.receive_button);
         mBuyButton = findViewById(R.id.buy_button);
+        mSellButton = findViewById(R.id.sell_button);
         barFlipper = findViewById(R.id.tool_bar_flipper);
         searchBar = findViewById(R.id.search_bar);
         mSearchIcon = findViewById(R.id.search_icon);
@@ -251,58 +254,59 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             return;
         }
 
-        if (wallet.getUiConfiguration().buyVisible) {
-            mBuyButton.setHasShadow(false);
-            mBuyButton.setVisibility(View.VISIBLE);
-            mBuyButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent intent = new Intent(WalletActivity.this, WebViewActivity.class);
-                    intent.putExtra("url", HTTPServer.URL_BUY);
-                    Activity app = WalletActivity.this;
-                    app.startActivity(intent);
-                    app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
-                }
-            });
+        mBuyButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(WalletActivity.this, WebViewActivity.class);
+                intent.putExtra("url", HTTPServer.URL_BUY);
+                Activity app = WalletActivity.this;
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+            }
+        });
 
-        } else {
-            LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    Utils.getPixelsFromDps(this, 65), 1.5f
-            );
-
-            LinearLayout.LayoutParams param2 = new LinearLayout.LayoutParams(
-                    ViewGroup.LayoutParams.MATCH_PARENT,
-                    Utils.getPixelsFromDps(this, 65), 1.5f
-            );
-            param.gravity = Gravity.CENTER;
-            param2.gravity = Gravity.CENTER;
-
-            param.setMargins(Utils.getPixelsFromDps(this, 8), Utils.getPixelsFromDps(this, 8), Utils.getPixelsFromDps(this, 8), 0);
-            param2.setMargins(0, Utils.getPixelsFromDps(this, 8), Utils.getPixelsFromDps(this, 8), 0);
-
-            mSendButton.setLayoutParams(param);
-            mReceiveButton.setLayoutParams(param2);
-            mBuyButton.setVisibility(View.GONE);
-
-        }
+        mSellButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(WalletActivity.this, WebViewActivity.class);
+                intent.putExtra("url", HTTPServer.URL_SELL);
+                Activity app = WalletActivity.this;
+                app.startActivity(intent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+            }
+        });
 
         String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatExchangeRate(this));
         String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatBalance(this));
         String cryptoBalance = CurrencyUtils.getFormattedAmount(this, wallet.getIso(this), wallet.getCachedBalance(this));
-        String symbol = wallet.getSymbol(app);
-        if(cryptoBalance.contains(symbol)){
-            cryptoBalance = cryptoBalance.replace(symbol, "");
-        }
 
         mCurrencyTitle.setText(wallet.getName(this));
         mCurrencyPriceUsd.setText(String.format("%s per %s", fiatExchangeRate, wallet.getIso(this)));
         mBalancePrimary.setText(fiatBalance);
         mBalanceSecondary.setText(cryptoBalance);
-        mToolbar.setBackgroundColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
-        mSendButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
-        mBuyButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
-        mReceiveButton.setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
+
+        String startColor = wallet.getUiConfiguration().mStartColor;
+        String endColor = wallet.getUiConfiguration().mEndColor;
+
+        if (endColor != null) {
+            //it's a gradient
+            GradientDrawable gd = new GradientDrawable(
+                    GradientDrawable.Orientation.LEFT_RIGHT,
+                    new int[]{Color.parseColor(startColor), Color.parseColor(endColor)});
+            gd.setCornerRadius(0f);
+            mToolbar.setBackground(gd);
+            mSendButton.makeGradient(Color.parseColor(startColor), Color.parseColor(endColor));
+            mReceiveButton.makeGradient(Color.parseColor(startColor), Color.parseColor(endColor));
+            mBuyButton.makeGradient(Color.parseColor(startColor), Color.parseColor(endColor));
+            mSellButton.makeGradient(Color.parseColor(startColor), Color.parseColor(endColor));
+        } else {
+            //it's a solid color
+            mToolbar.setBackgroundColor(Color.parseColor(startColor));
+            mSendButton.setColor(Color.parseColor(startColor));
+            mReceiveButton.setColor(Color.parseColor(startColor));
+            mBuyButton.setColor(Color.parseColor(startColor));
+            mSellButton.setColor(Color.parseColor(startColor));
+        }
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -310,35 +314,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 TxManager.getInstance().updateTxList(WalletActivity.this);
             }
         });
-
-        if (!BRSharedPrefs.wasBchDialogShown(this)) {
-            BRDialog.showHelpDialog(this, getString(R.string.Android_BCH_welcome_title), getString(R.string.Android_BCH_welcome_message),
-                    getString(R.string.Button_Home), getString(R.string.Button_dismiss), new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            brDialogView.dismiss();
-                            onBackPressed();
-                        }
-                    }, new BRDialogView.BROnClickListener() {
-
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            brDialogView.dismiss();
-
-                        }
-                    }, new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            Log.d(TAG, "help clicked!");
-
-                            brDialogView.dismiss();
-                            BRAnimator.showSupportFragment(WalletActivity.this, BRConstants.bchFaq, mWallet);
-
-                        }
-                    });
-
-            BRSharedPrefs.putBchDialogShown(WalletActivity.this, true);
-        }
 
     }
 

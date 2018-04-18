@@ -17,6 +17,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 
 import java.util.Locale;
 
@@ -103,7 +104,7 @@ public class AboutActivity extends BRActivity {
             }
         });
 
-        mRewardsId.setText(BreadApp.generateWalletId());
+        mRewardsId.setText(BRSharedPrefs.getWalletRewardId(this));
 
         mCopy.setOnClickListener(new View.OnClickListener() {
             @Override

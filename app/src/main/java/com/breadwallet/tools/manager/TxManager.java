@@ -67,6 +67,7 @@ public class TxManager {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
 
+                if (position == -1) return;
                 TxUiHolder item = adapter.getItems().get(position);
                 BRAnimator.showTransactionDetails(app, item, position);
             }
@@ -78,7 +79,8 @@ public class TxManager {
         }));
         if (adapter == null)
             adapter = new TransactionListAdapter(app, null);
-        txList.setAdapter(adapter);
+        if (txList.getAdapter() == null)
+            txList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
         //setupSwipe(app);
     }
@@ -98,7 +100,14 @@ public class TxManager {
             Log.e(TAG, "updateTxList: wallet is null");
             return;
         }
-        final List<TxUiHolder> items = wallet.getTxUiHolders();
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (TxManager.getInstance().adapter != null)
+                    TxManager.getInstance().adapter.updateData();
+            }
+        });
+        final List<TxUiHolder> items = wallet.getTxUiHolders(app);
 
         long took = (System.currentTimeMillis() - start);
         if (took > 500)
@@ -108,7 +117,6 @@ public class TxManager {
                 @Override
                 public void run() {
                     adapter.setItems(items);
-                    txList.setAdapter(adapter);
                     adapter.notifyDataSetChanged();
                 }
             });

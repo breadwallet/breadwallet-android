@@ -40,6 +40,8 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
+import com.platform.entities.TokenListMetaData;
+import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -82,15 +84,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-
-        // TODO : Asynchronously loading the wallets seems to cause a bug(see DROID-481) where no wallets are shown
-        // TODO : on the Home Screen. Probably because initWallets() is not finished before onCreate() is.
-       // BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            //@Override
-            //public void run() {
-                WalletsMaster.getInstance(HomeActivity.this).initWallets(HomeActivity.this);
-          //  }
-        //});
+        WalletsMaster.getInstance(HomeActivity.this).initWallets(HomeActivity.this);
 
         ArrayList<BaseWalletManager> walletList = new ArrayList<>();
 
@@ -168,10 +162,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
 
-        if (!BRSharedPrefs.wasBchDialogShown(this)) {
-            BRSharedPrefs.putBchDialogShown(HomeActivity.this, true);
-        }
-
         mPromptDismiss.setColor(Color.parseColor("#b3c0c8"));
         mPromptDismiss.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -194,14 +184,17 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             }
         });
 
-    }
+        TokenListMetaData md = KVStoreManager.getInstance().getTokenListMetaData(this);
 
+    }
 
     public void hidePrompt() {
         mPromptCard.setVisibility(View.GONE);
         Log.e(TAG, "hidePrompt: " + mCurrentPrompt);
         if (mCurrentPrompt == PromptManager.PromptItem.SHARE_DATA) {
-            BRSharedPrefs.putShareDataDismissed(app, true);
+            BRSharedPrefs.putPromptDismissed(app, "shareData", true);
+        } else if (mCurrentPrompt == PromptManager.PromptItem.FINGER_PRINT) {
+            BRSharedPrefs.putPromptDismissed(app, "fingerprint", true);
         }
         if (mCurrentPrompt != null)
             BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(mCurrentPrompt) + ".dismissed");

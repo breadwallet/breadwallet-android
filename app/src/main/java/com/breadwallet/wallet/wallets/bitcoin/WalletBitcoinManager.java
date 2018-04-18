@@ -181,7 +181,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                 }
             });
 
-            uiConfig = new WalletUiConfiguration("#f29500", true, true, true, true, true, true);
+            uiConfig = new WalletUiConfiguration("#f29500", null,  true);
             settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
         } finally {
             isInitiatingWallet = false;
@@ -247,7 +247,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     public BigDecimal getEstimatedFee(BigDecimal amount, String address) {
         BigDecimal fee;
         if (amount == null) return null;
-        if (amount.compareTo(new BigDecimal(0)) == 0) {
+        if (amount.longValue() == 0) {
             fee = new BigDecimal(0);
         } else {
             BaseTransaction tx = null;
@@ -338,7 +338,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public List<TxUiHolder> getTxUiHolders() {
+    public List<TxUiHolder> getTxUiHolders(Context app) {
         BRCoreTransaction txs[] = getWallet().getTransactions();
         if (txs == null || txs.length <= 0) return null;
         List<TxUiHolder> uiTxs = new ArrayList<>();
@@ -391,34 +391,18 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     @Override
     public String getSymbol(Context app) {
 
-        SymbolUtils symbolUtils = new SymbolUtils();
         String currencySymbolString = BRConstants.symbolBits;
         if (app != null) {
             int unit = BRSharedPrefs.getCryptoDenomination(app, getIso(app));
             switch (unit) {
                 case BRConstants.CURRENT_UNIT_BITS:
-                    currencySymbolString = BRConstants.symbolBits;
+                    currencySymbolString = "μ" + ISO;
                     break;
                 case BRConstants.CURRENT_UNIT_MBITS:
-
-
-                    if (symbolUtils.doesDeviceSupportSymbol(BRConstants.symbolBitcoinPrimary)) {
-                        currencySymbolString = "m" + BRConstants.symbolBitcoinPrimary;
-
-                    } else {
-                        currencySymbolString = "m" + BRConstants.symbolBitcoinSecondary;
-
-                    }
+                    currencySymbolString = "m" + ISO;
                     break;
                 case BRConstants.CURRENT_UNIT_BITCOINS:
-
-                    if (symbolUtils.doesDeviceSupportSymbol(BRConstants.symbolBitcoinPrimary)) {
-                        currencySymbolString = BRConstants.symbolBitcoinPrimary;
-
-                    } else {
-                        currencySymbolString = BRConstants.symbolBitcoinSecondary;
-
-                    }
+                    currencySymbolString =  ISO;
                     break;
             }
         }
@@ -476,10 +460,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
         switch (unit) {
             case BRConstants.CURRENT_UNIT_BITS:
                 return 2;
-            case BRConstants.CURRENT_UNIT_MBITS:
-                return 5;
             default:
-                return 8;
+                return 5;
         }
     }
 

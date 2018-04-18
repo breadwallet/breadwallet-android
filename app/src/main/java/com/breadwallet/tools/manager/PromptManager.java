@@ -86,7 +86,7 @@ public class PromptManager {
         assert (app != null);
         switch (item) {
             case FINGER_PRINT:
-                return !BRSharedPrefs.getUseFingerprint(app) && Utils.isFingerprintAvailable(app);
+                return !BRSharedPrefs.getUseFingerprint(app) && Utils.isFingerprintAvailable(app) && !BRSharedPrefs.getPromptDismissed(app, "fingerprint");
             case PAPER_KEY:
                 return !BRSharedPrefs.getPhraseWroteDown(app);
             case UPGRADE_PIN:
@@ -95,7 +95,7 @@ public class PromptManager {
                 BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
                 return wallet != null && BRSharedPrefs.getScanRecommended(app, wallet.getIso(app));
             case SHARE_DATA:
-                return !BRSharedPrefs.getShareData(app) && !BRSharedPrefs.getShareDataDismissed(app);
+                return !BRSharedPrefs.getShareData(app) && !BRSharedPrefs.getPromptDismissed(app, "shareData");
 
         }
         return false;

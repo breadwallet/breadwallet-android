@@ -75,12 +75,11 @@ public class CurrencyUtils {
         }
 
         decimalFormatSymbols.setCurrencySymbol(symbol);
-//        currencyFormat.setMaximumFractionDigits(decimalPoints);
         currencyFormat.setGroupingUsed(true);
         currencyFormat.setMaximumFractionDigits(currency != null ? currency.getDefaultFractionDigits() : wallet.getMaxDecimalPlaces(app));
+        currencyFormat.setMinimumFractionDigits(currency != null ? currency.getDefaultFractionDigits() : 0);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
-        currencyFormat.setNegativePrefix(decimalFormatSymbols.getCurrencySymbol() + "-");
-        currencyFormat.setNegativeSuffix("");
+        currencyFormat.setNegativePrefix("-" + decimalFormatSymbols.getCurrencySymbol());
         return currencyFormat.format(amount);
     }
 

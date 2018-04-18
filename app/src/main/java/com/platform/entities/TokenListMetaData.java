@@ -1,10 +1,13 @@
-package com.breadwallet.wallet.configs;
+package com.platform.entities;
+
+
+import java.util.List;
 
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 1/25/18.
- * Copyright (c) 2018 breadwallet LLC
+ * Created by Mihail Gutan on <mihail@breadwallet.com> 6/22/17.
+ * Copyright (c) 2017 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -24,16 +27,33 @@ package com.breadwallet.wallet.configs;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletUiConfiguration {
-    public String mStartColor;
-    public String mEndColor;
+public class TokenListMetaData {
+    public static class TokenItem {
+        public String name;
+        public boolean erc20;
+        public String contractAddress;
 
-    public boolean showRequestAnAmount;
-
-    public WalletUiConfiguration(String startColor,  String endColor, boolean showRequestAnAmount) {
-        this.mStartColor = startColor;
-        this.mEndColor = endColor;
-        this.showRequestAnAmount = showRequestAnAmount;
+        public TokenItem(String name, boolean erc20, String contractAddress) {
+            this.name = name;
+            this.erc20 = erc20;
+            this.contractAddress = contractAddress;
+        }
     }
+
+    /**
+     * WalletInfo:
+     * <p>
+     * Key: “wallet-info”
+     * <p>
+     * {
+     * “classVersion”: 2, //used for versioning the schema
+     * "enabledCurrencies": ["btc":"eth": "erc20:0xsd98fjetc"] enabled currencies
+     * "hiddenCurrencies": "bch"] hidden currencies
+     * }
+     */
+
+    public int classVersion;
+    public List<TokenItem> enabledCurrencies;
+    public List<TokenItem> hiddenCurrencies;
 
 }

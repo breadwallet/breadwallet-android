@@ -2,11 +2,13 @@ package com.breadwallet.tools.services;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -100,8 +102,8 @@ public class SyncService extends IntentService {
     /**
      * Creates an intent with the specified parameters.
      *
-     * @param context The context in which we are operating.
-     * @param action The action of the intent.
+     * @param context   The context in which we are operating.
+     * @param action    The action of the intent.
      * @param walletIso The wallet ISO used to identify which wallet is going to be acted upon.
      * @return An intent with the specified parameters.
      */
@@ -115,10 +117,10 @@ public class SyncService extends IntentService {
     /**
      * Creates an intent with the specified parameters.
      *
-     * @param context The context in which we are operating.
-     * @param action The action of the intent.
+     * @param context   The context in which we are operating.
+     * @param action    The action of the intent.
      * @param walletIso The wallet ISO used to identify which wallet is going to be acted upon.
-     * @param progress The current sync progress of the specified wallet.
+     * @param progress  The current sync progress of the specified wallet.
      * @return An intent with the specified parameters.
      */
     private static Intent createIntent(Context context, String action, String walletIso, double progress) {
@@ -129,24 +131,25 @@ public class SyncService extends IntentService {
     /**
      * Starts the sync polling service with the specified parameters.
      *
-     * @param context The context in which we are operating.
-     * @param action The action of the intent.
+     * @param context   The context in which we are operating.
+     * @param action    The action of the intent.
      * @param walletIso The wallet ISO used to identify which wallet is going to be acted upon.
      */
     public static void startService(Context context, String action, String walletIso) {
-        context.startService(createIntent(context, action, walletIso));
+//        if (!BreadApp.isAppInBackground(context))
+            context.startService(createIntent(context, action, walletIso));
     }
 
     /**
      * Starts polling the native layer for sync progress on the specified wallet.
      *
-     * @param context The context in which we are operating.
+     * @param context   The context in which we are operating.
      * @param walletIso The wallet ISO used to identify which wallet needs to be polled for sync progress.
      */
     private void startSyncPolling(Context context, String walletIso) {
         final BaseWalletManager walletManager = WalletsMaster.getInstance(context).getWalletByIso(context, walletIso);
         final double progress = walletManager.getSyncProgress(BRSharedPrefs.getStartHeight(context,
-                        BRSharedPrefs.getCurrentWalletIso(context)));
+                BRSharedPrefs.getCurrentWalletIso(context)));
         Log.e(TAG, "startSyncPolling: Progress:" + progress + " Wallet: " + walletIso);
 
         if (progress > PROGRESS_START && progress < PROGRESS_FINISH) {
@@ -167,9 +170,9 @@ public class SyncService extends IntentService {
     /**
      * Broadcasts the sync progress update to registered listeners.
      *
-     * @param context The context in which we are operating.
+     * @param context   The context in which we are operating.
      * @param walletIso The wallet ISO used to identify which wallet is going to be acted upon.
-     * @param progress The current sync progress of the specified wallet.
+     * @param progress  The current sync progress of the specified wallet.
      */
     private static void broadcastSyncProgressUpdate(Context context, String walletIso, double progress) {
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
@@ -180,7 +183,7 @@ public class SyncService extends IntentService {
     /**
      * Registers the specified listener for sync progress updates.
      *
-     * @param context The context in which we are operating.
+     * @param context           The context in which we are operating.
      * @param broadcastReceiver The specified listener.
      */
     public static void registerSyncNotificationBroadcastReceiver(Context context, BroadcastReceiver broadcastReceiver) {
@@ -194,7 +197,7 @@ public class SyncService extends IntentService {
     /**
      * Unregisters the specified listener from receiving sync progress updates.
      *
-     * @param context The context in which we are operating.
+     * @param context           The context in which we are operating.
      * @param broadcastReceiver The specified listener.
      */
     public static void unregisterSyncNotificationBroadcastReceiver(Context context, BroadcastReceiver broadcastReceiver) {

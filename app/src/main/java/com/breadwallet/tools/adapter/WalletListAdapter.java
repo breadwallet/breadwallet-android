@@ -81,7 +81,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     }
 
     public BaseWalletManager getItemAt(int pos) {
-        if(pos < mWalletItems.size()) {
+        if (pos < mWalletItems.size()) {
             return mWalletItems.get(pos).walletManager;
         }
 
@@ -91,7 +91,8 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     @Override
     public void onBindViewHolder(final WalletItemViewHolder holder, int position) {
 
-        if(getItemViewType(position) == VIEW_TYPE_WALLET) {
+        if (getItemViewType(position) == VIEW_TYPE_WALLET) {
+
             WalletItem item = mWalletItems.get(position);
             final BaseWalletManager wallet = item.walletManager;
             String name = wallet.getName(mContext);
@@ -99,32 +100,30 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             String exchangeRate = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatExchangeRate(mContext));
             String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatBalance(mContext));
             String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getIso(mContext), wallet.getCachedBalance(mContext));
-            String symbol = wallet.getSymbol(mContext);
-
-            if (cryptoBalance.contains(symbol)) {
-                cryptoBalance = cryptoBalance.replace(symbol, "");
-            }
 
             // Set wallet fields
             holder.mWalletName.setText(name);
             holder.mTradePrice.setText(mContext.getString(R.string.Account_exchangeRate, exchangeRate, iso));
             holder.mWalletBalanceUSD.setText(fiatBalance);
-            holder.mWalletBalanceCurrency.setText(cryptoBalance + " " + iso);
+            holder.mWalletBalanceCurrency.setText(cryptoBalance);
             holder.mSyncingProgressBar.setVisibility(item.mShowSyncing ? View.VISIBLE : View.INVISIBLE);
             holder.mSyncingProgressBar.setProgress(item.mProgress);
             holder.mSyncingLabel.setVisibility(item.mShowSyncingLabel ? View.VISIBLE : View.INVISIBLE);
             holder.mSyncingLabel.setText(item.mLabelText);
             holder.mWalletBalanceCurrency.setVisibility(item.mShowBalance ? View.VISIBLE : View.INVISIBLE);
 
-            Drawable drawable = mContext.getResources().getDrawable(R.drawable.crypto_card_shape, null);
-            ((GradientDrawable) drawable).setColor(Color.parseColor(wallet.getUiConfiguration().colorHex));
+            String startColor = wallet.getUiConfiguration().mStartColor;
+            String endColor = wallet.getUiConfiguration().mEndColor;
 
+//        Log.e(TAG, "onBindViewHolder: start: " + startColor + ", end: " + endColor);
+            Drawable drawable = mContext.getResources().getDrawable(R.drawable.crypto_card_shape, null).mutate();
+            //create gradient with 2 colors if exist
+            ((GradientDrawable) drawable).setColors(new int[]{Color.parseColor(startColor), Color.parseColor(endColor == null ? startColor : endColor)});
+            ((GradientDrawable) drawable).setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
             holder.mParent.setBackground(drawable);
-        }
-        else{
+            Log.e(TAG, "onBindViewHolder: ");
 
         }
-
     }
 
     public void stopObserving() {

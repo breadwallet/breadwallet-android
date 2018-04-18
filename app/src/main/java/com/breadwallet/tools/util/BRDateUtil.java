@@ -74,10 +74,8 @@ public class BRDateUtil {
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timestamp);
-        Log.d("BRDateUtil", "Timestamp -> " + timestamp);
 
         String dateString = new SimpleDateFormat("MMM dd", Locale.getDefault()).format(calendar.getTimeInMillis());
-        Log.d("BRDateUtil", "Transaction date string -> " + dateString);
 
         return dateString;
     }
@@ -86,10 +84,8 @@ public class BRDateUtil {
 
         Calendar calendar = Calendar.getInstance();
         calendar.setTimeInMillis(timestamp);
-        Log.d("BRDateUtil", "Timestamp -> " + timestamp);
 
         String dateString = new SimpleDateFormat("MMMM dd, yyyy, hh:mm a", Locale.getDefault()).format(calendar.getTimeInMillis());
-        Log.d("BRDateUtil", "Transaction date string -> " + dateString);
 
         return dateString;
 

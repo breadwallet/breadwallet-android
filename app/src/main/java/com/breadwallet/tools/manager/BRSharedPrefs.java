@@ -292,18 +292,27 @@ public class BRSharedPrefs {
     }
 
     public static String getCurrentWalletIso(Context activity) {
-//        Log.d(TAG, "getCurrentWalletIso() Activity -> " + activity.getClass().getSimpleName());
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-//        Log.d(TAG, "Getting current wallet ISO -> " + prefs.getString("currentWalletIso", "BTC"));
         return prefs.getString("currentWalletIso", "BTC");
     }
 
     public static void putCurrentWalletIso(Context activity, String iso) {
-        Log.d(TAG, "putCurrentWalletIso(), ISO -> " + iso);
         if (iso == null) throw new NullPointerException("cannot be null");
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("currentWalletIso", iso);
+        editor.apply();
+    }
+    public static String getWalletRewardId(Context activity) {
+        SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("walletRewardId", null);
+    }
+
+    public static void putWalletRewardId(Context app, String id) {
+        if (id == null) throw new NullPointerException("cannot be null");
+        SharedPreferences prefs = app.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("walletRewardId", id);
         editor.apply();
     }
 
@@ -433,18 +442,19 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static boolean getShareDataDismissed(Context context) {
+    public static boolean getPromptDismissed(Context context, String promptName) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return settingsToGet.getBoolean("shareDataDismissed", false);
+        return settingsToGet.getBoolean("prompt_" + promptName, false);
     }
 
-    public static void putShareDataDismissed(Context context, boolean dismissed) {
+    public static void putPromptDismissed(Context context, String promptName, boolean dismissed) {
         if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean("shareDataDismissed", dismissed);
+        editor.putBoolean("prompt_" + promptName, dismissed);
         editor.apply();
     }
+
 
     public static String getTrustNode(Context context, String iso) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -458,21 +468,10 @@ public class BRSharedPrefs {
         editor.apply();
     }
 
-    public static void putBchDialogShown(Context context, boolean shown) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("bchDialogShown", shown);
-        editor.apply();
-    }
-
-    public static boolean wasBchDialogShown(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getBoolean("bchDialogShown", false);
-    }
 
     public static boolean wasAppBackgroundedFromHome(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
-        return prefs.getBoolean("appBackgroundedFromHome", false);
+        return prefs.getBoolean("appBackgroundedFromHome", true);
 
     }
 

@@ -172,14 +172,13 @@ public class FragmentSend extends Fragment {
 
         showFeeSelectionButtons(feeButtonsShown);
 
-        if (wm.getUiConfiguration().showEconomyFee)
-            feeEdit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    feeButtonsShown = !feeButtonsShown;
-                    showFeeSelectionButtons(feeButtonsShown);
-                }
-            });
+        feeEdit.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                feeButtonsShown = !feeButtonsShown;
+                showFeeSelectionButtons(feeButtonsShown);
+            }
+        });
         keyboardIndex = signalLayout.indexOfChild(keyboardLayout);
 
         ImageButton faq = rootView.findViewById(R.id.faq_button);
@@ -217,10 +216,8 @@ public class FragmentSend extends Fragment {
                     amountEdit.setHint("0");
                     amountEdit.setTextSize(24);
                     balanceText.setVisibility(View.VISIBLE);
-                    if (wm.getUiConfiguration().showEconomyFee)
-                        feeEdit.setVisibility(View.VISIBLE);
-                    if (wm.getUiConfiguration().showLiveFee)
-                        feeText.setVisibility(View.VISIBLE);
+                    feeEdit.setVisibility(View.VISIBLE);
+                    feeText.setVisibility(View.VISIBLE);
                     isoText.setTextColor(getContext().getColor(R.color.almost_black));
                     isoText.setText(CurrencyUtils.getSymbolByIso(getActivity(), selectedIso));
                     isoText.setTextSize(28);
@@ -285,6 +282,13 @@ public class FragmentSend extends Fragment {
             }
         });
 
+        commentEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                showKeyboard(!hasFocus);
+            }
+        });
+
         paste.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -294,6 +298,7 @@ public class FragmentSend extends Fragment {
                     sayClipboardEmpty();
                     return;
                 }
+                showKeyboard(false);
 
                 final BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
@@ -303,16 +308,15 @@ public class FragmentSend extends Fragment {
                 }
 
                 final CryptoRequest obj = parseRequest(getActivity(), theUrl);
-                if (Utils.isEmulatorOrDebug(getActivity())) {
-                    Log.d(TAG, "Send Address -> " + obj.address);
-                    Log.d(TAG, "Send Value -> " + obj.value);
-                    Log.d(TAG, "Send Amount -> " + obj.amount);
-                }
-
 
                 if (obj == null || Utils.isNullOrEmpty(obj.address)) {
                     sayInvalidClipboardData();
                     return;
+                }
+                if (Utils.isEmulatorOrDebug(getActivity())) {
+                    Log.d(TAG, "Send Address -> " + obj.address);
+                    Log.d(TAG, "Send Value -> " + obj.value);
+                    Log.d(TAG, "Send Amount -> " + obj.amount);
                 }
 
                 if (obj.iso != null && !obj.iso.equalsIgnoreCase(wm.getIso(getActivity()))) {
@@ -428,7 +432,7 @@ public class FragmentSend extends Fragment {
                 String comment = commentEdit.getText().toString();
 
                 //inserted amount
-                BigDecimal rawAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) ? "0" : amountStr);
+                BigDecimal rawAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) || amountStr.equalsIgnoreCase(".") ? "0" : amountStr);
                 //is the chosen ISO a crypto (could be a fiat currency)
                 boolean isIsoCrypto = master.isIsoCrypto(getActivity(), selectedIso);
 
@@ -499,6 +503,13 @@ public class FragmentSend extends Fragment {
 
                 }
                 return false;
+            }
+        });
+
+        addressEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+            @Override
+            public void onFocusChange(View v, boolean hasFocus) {
+                showKeyboard(!hasFocus);
             }
         });
 

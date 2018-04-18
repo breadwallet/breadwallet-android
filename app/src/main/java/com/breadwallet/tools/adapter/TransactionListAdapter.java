@@ -25,11 +25,14 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 /**
@@ -65,6 +68,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private final int promptResId;
     private List<TxUiHolder> backUpFeed;
     private List<TxUiHolder> itemFeed;
+    private Map<Integer, TxMetaData> mMetaDatas;
 
     private final int txType = 0;
     private final int promptType = 1;
@@ -77,6 +81,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         this.mContext = mContext;
         backUpFeed = items;
         itemFeed = items;
+        mMetaDatas = new HashMap<>();
         items = new ArrayList<>();
         init(items);
 //        updateMetadata();
@@ -97,27 +102,23 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     public void updateData() {
         if (updatingData) return;
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+        Map<Integer, TxMetaData> localMDs = new HashMap<>();
+        for (int i = 0; i < backUpFeed.size(); i++) {
+            TxUiHolder item = backUpFeed.get(i);
+            localMDs.put(i, KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash()));
+
+        }
+        mMetaDatas.clear();
+        mMetaDatas.putAll(localMDs);
+        updatingData = false;
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-                long s = System.currentTimeMillis();
-                List<TxUiHolder> newItems = new ArrayList<>(itemFeed);
-                TxUiHolder item;
-                for (int i = 0; i < newItems.size(); i++) {
-                    item = newItems.get(i);
-                    item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
-                    item.txReversed = item.getHashReversed() == null ? Utils.reverseHex(Utils.bytesToHex(item.getTxHash())) : item.getHashReversed();
-
-                }
-                backUpFeed = newItems;
-                String log = String.format("newItems: %d, took: %d", newItems.size(), (System.currentTimeMillis() - s));
-                Log.e(TAG, "updateData: " + log);
-                updatingData = false;
+                notifyDataSetChanged();
             }
         });
 
     }
-
 
     public List<TxUiHolder> getItems() {
         return itemFeed;
@@ -155,20 +156,20 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void setTexts(final TxHolder convertView, int position) {
+        Log.e(TAG, "setTexts: 1");
         BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
         TxUiHolder item = itemFeed.get(position);
-        item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
-
+//        item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
 
         String commentString = "";
-        if (item.metaData != null) {
-            if (item.metaData.comment != null) {
-                commentString = item.metaData.comment;
+        TxMetaData md = mMetaDatas.size() > position ? mMetaDatas.get(position) : null;
+        if (md != null) {
+            if (md.comment != null) {
+                commentString = md.comment;
             }
         }
 
         boolean received = item.isReceived();
-        Log.e(TAG, "setTexts: received: " + received);
 
         convertView.transactionAmount.setTextColor(mContext.getResources().getColor(received ?
                 R.color.transaction_amount_received_color : R.color.total_assets_usd_color, null));
@@ -178,14 +179,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             showTransactionFailed(convertView, item, received);
 
         BigDecimal cryptoAmount = item.getAmount().abs();
-        Log.e(TAG, "setTexts: crypto:" + cryptoAmount);
         boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
         String preferredIso = isCryptoPreferred ? wallet.getIso(mContext) : BRSharedPrefs.getPreferredFiatIso(mContext);
 
         BigDecimal amount = isCryptoPreferred ? cryptoAmount : wallet.getFiatForSmallestCrypto(mContext, cryptoAmount, null);
-        Log.e(TAG, "setTexts: amount:" + amount);
-
-        convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, preferredIso, received ? amount : amount.negate()));
+        convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, preferredIso, received ? amount : (amount == null ? null : amount.negate())));
 
         int blockHeight = item.getBlockHeight();
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext, wallet.getIso(mContext)) - blockHeight + 1;
@@ -213,8 +211,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         if (level > 0 && level < 5)
             showTransactionProgress(convertView, level * 20);
 
-        Log.d(TAG, "Level -> " + level);
-
         if (level > 4) {
             convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? "sent to " : "received via ") + wallet.decorateAddress(mContext, item.getTo()));
         } else {
@@ -228,7 +224,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         String shortDate = BRDateUtil.getShortDate(timeStamp);
 
         convertView.transactionDate.setText(shortDate);
-
+        Log.e(TAG, "setTexts: 2");
     }
 
     private void showTransactionProgress(TxHolder holder, int progress) {

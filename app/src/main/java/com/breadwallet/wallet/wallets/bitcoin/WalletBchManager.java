@@ -190,7 +190,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
             });
 
 //          BRPeerManager.getInstance().updateFixedPeer(ctx);//todo reimplement the fixed peer
-            uiConfig = new WalletUiConfiguration("#478559", true, true, false, true, true, true);
+            uiConfig = new WalletUiConfiguration("#478559", null, true);
 
             settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
         } finally {
@@ -257,7 +257,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     public BigDecimal getEstimatedFee(BigDecimal amount, String address) {
         BigDecimal fee;
         if (amount == null) return null;
-        if (amount.compareTo(new BigDecimal(0)) == 0) {
+        if (amount.longValue() == 0) {
             fee = new BigDecimal(0);
         } else {
             BaseTransaction tx = null;
@@ -349,7 +349,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     @Override
-    public List<TxUiHolder> getTxUiHolders() {
+    public List<TxUiHolder> getTxUiHolders(Context app) {
         BRCoreTransaction txs[] = getWallet().getTransactions();
         if (txs == null || txs.length <= 0) return null;
         List<TxUiHolder> uiTxs = new ArrayList<>();
@@ -367,7 +367,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
                     }
                 }
             }
-            if (toAddress == null) throw new NullPointerException("Failed to retrieve toAddress");
             uiTxs.add(new TxUiHolder(tx, getWallet().getTransactionAmountSent(tx) <= 0, tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
                     tx.getReverseHash(), new BigDecimal(getWallet().getTransactionFee(tx)), null,
                     toAddress, tx.getInputAddresses()[0],
@@ -399,36 +398,21 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         return true;
     }
 
-
     @Override
     public String getSymbol(Context app) {
 
-        SymbolUtils symbolUtils = new SymbolUtils();
         String currencySymbolString = BRConstants.symbolBits;
         if (app != null) {
             int unit = BRSharedPrefs.getCryptoDenomination(app, getIso(app));
             switch (unit) {
                 case BRConstants.CURRENT_UNIT_BITS:
-                    currencySymbolString = BRConstants.symbolBits + "c";
+                    currencySymbolString = "μ" + ISO;
                     break;
                 case BRConstants.CURRENT_UNIT_MBITS:
-                    if (symbolUtils.doesDeviceSupportSymbol(BRConstants.symbolBitcoinPrimary)) {
-                        currencySymbolString = "m" + BRConstants.symbolBitcoinPrimary + "C";
-
-                    } else {
-                        currencySymbolString = "m" + BRConstants.symbolBitcoinSecondary + "C";
-
-                    }
+                    currencySymbolString = "m" + ISO;
                     break;
                 case BRConstants.CURRENT_UNIT_BITCOINS:
-
-                    if (symbolUtils.doesDeviceSupportSymbol(BRConstants.symbolBitcoinPrimary)) {
-                        currencySymbolString = BRConstants.symbolBitcoinPrimary + "C";
-
-                    } else {
-                        currencySymbolString = BRConstants.symbolBitcoinSecondary + "C";
-
-                    }
+                    currencySymbolString = ISO;
                     break;
             }
         }
@@ -491,10 +475,8 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         switch (unit) {
             case BRConstants.CURRENT_UNIT_BITS:
                 return 2;
-            case BRConstants.CURRENT_UNIT_MBITS:
-                return 5;
             default:
-                return 8;
+                return 5;
         }
     }
 
@@ -934,7 +916,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         super.onTxAdded(transaction);
         final Context ctx = BreadApp.getBreadContext();
         final WalletsMaster master = WalletsMaster.getInstance(ctx);
-        Log.e(TAG, "onTxAdded: " + transaction.getReverseHash());
         TxMetaData metaData = KVStoreManager.getInstance().createMetadata(ctx, this, new CryptoTransaction(transaction));
         KVStoreManager.getInstance().putTxMetaData(ctx, metaData, transaction.getHash());
 
