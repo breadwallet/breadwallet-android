@@ -818,7 +818,8 @@ public class APIClient {
             public void run() {
                 final long startTime = System.currentTimeMillis();
                 for (BaseWalletManager w : WalletsMaster.getInstance(app).getAllWallets()) {
-                    w.updateFee(app);
+                    if (w != null)
+                        w.updateFee(app);
                 }
                 long endTime = System.currentTimeMillis();
                 Log.d(TAG, "update fee: DONE in " + (endTime - startTime) + "ms");
