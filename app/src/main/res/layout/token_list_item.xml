@@ -5,13 +5,13 @@
     android:layout_height="60dp"
     android:background="#fff">
 
-    <ImageView
+    <com.breadwallet.presenter.customviews.TokenIconView
         android:id="@+id/token_icon"
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@drawable/token_icon_background"
         android:layout_centerVertical="true"
-        android:layout_marginStart="16dp"
-        android:background="@color/red" />
+        android:layout_marginStart="16dp" />
 
 
     <com.breadwallet.presenter.customviews.BRText

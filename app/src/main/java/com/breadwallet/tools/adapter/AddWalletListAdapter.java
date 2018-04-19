@@ -13,6 +13,7 @@ import android.widget.ImageView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRText;
+import com.breadwallet.presenter.customviews.TokenIconView;
 import com.breadwallet.presenter.entities.TokenItem;
 
 import java.util.ArrayList;
@@ -57,7 +58,7 @@ public class AddWalletListAdapter extends RecyclerView.Adapter<AddWalletListAdap
 
     public class TokenItemViewHolder extends RecyclerView.ViewHolder {
 
-        private ImageView logo;
+        private TokenIconView logo;
         private BRText symbol;
         private BRText name;
         private Button addRemoveButton;
