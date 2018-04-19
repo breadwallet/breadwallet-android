@@ -206,6 +206,16 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         updateUi();
 
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                Thread.currentThread().setName("BG:" + TAG + ":refreshBalances and address");
+                Activity app = WalletActivity.this;
+                WalletsMaster.getInstance(app).refreshBalances(app);
+                WalletsMaster.getInstance(app).getCurrentWallet(app).refreshAddress(app);
+            }
+        });
+
         // Check if the "Twilight" screen altering app is currently running
         if (Utils.checkIfScreenAlteringAppIsRunning(this, "com.urbandroid.lux")) {
             BRDialog.showSimpleDialog(this, "Screen Altering App Detected", getString(R.string.Android_screenAlteringMessage));

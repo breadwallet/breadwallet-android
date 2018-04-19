@@ -6,6 +6,7 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.manager.BREventManager;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -79,8 +80,15 @@ public class WalletPlugin implements Plugin {
                 /**whether or not the users wallet is set up yet, or is currently locked*/
                 jsonResp.put("no_wallet", wm.noWalletForPlatform(app));
 
+                String addrs = BRSharedPrefs.getReceiveAddress(app, wm.getCurrentWallet(app).getIso(app));
+                if (Utils.isNullOrEmpty(addrs)) {
+                    BRReportsManager.reportBug(new NullPointerException("Address is null for simplex!"));
+                    Log.e(TAG, "handle: Address is null for simplex!");
+                    addrs = wm.getCurrentWallet(app).getReceiveAddress(app).stringify();
+                }
+                Log.e(TAG, "_wallet address: " + addrs);
                 /**the current receive address*/
-                jsonResp.put("receive_address", BRSharedPrefs.getReceiveAddress(app, "BTC"));
+                jsonResp.put("receive_address", addrs);
 
                 /**how digits after the decimal point. 2 = bits 8 = btc 6 = mbtc*/
                 jsonResp.put("btc_denomiation_digits", BRSharedPrefs.getCryptoDenomination(app, wm.getCurrentWallet(app).getIso(app)) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);

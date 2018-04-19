@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Color;
@@ -257,8 +258,10 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                Thread.currentThread().setName("BG:" + TAG + ":refreshBalances");
-                WalletsMaster.getInstance(HomeActivity.this).refreshBalances(HomeActivity.this);
+                Thread.currentThread().setName("BG:" + TAG + ":refreshBalances and address");
+                Activity app = HomeActivity.this;
+                WalletsMaster.getInstance(app).refreshBalances(app);
+                WalletsMaster.getInstance(app).getCurrentWallet(app).refreshAddress(app);
             }
         });
     }
