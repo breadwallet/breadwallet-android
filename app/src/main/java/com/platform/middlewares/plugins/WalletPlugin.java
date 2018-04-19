@@ -86,7 +86,6 @@ public class WalletPlugin implements Plugin {
                     Log.e(TAG, "handle: Address is null for simplex!");
                     addrs = wm.getCurrentWallet(app).getReceiveAddress(app).stringify();
                 }
-                Log.e(TAG, "_wallet address: " + addrs);
                 /**the current receive address*/
                 jsonResp.put("receive_address", addrs);
 
