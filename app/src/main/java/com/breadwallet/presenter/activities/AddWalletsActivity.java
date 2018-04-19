@@ -11,17 +11,16 @@ import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BREdit;
 import com.breadwallet.presenter.entities.TokenItem;
-import com.breadwallet.tools.adapter.AddWalletListAdapter;
+import com.breadwallet.tools.adapter.AddTokenListAdapter;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class AddWalletsActivity extends BRActivity {
 
 
     private BREthereumToken[] mTokens;
-    private AddWalletListAdapter mAdapter;
+    private AddTokenListAdapter mAdapter;
     private BREdit mSearchView;
     private RecyclerView mRecycler;
     private static final String TAG = AddWalletsActivity.class.getSimpleName();
@@ -69,7 +68,7 @@ public class AddWalletsActivity extends BRActivity {
         });
 
 
-        mAdapter = new AddWalletListAdapter(this, tokenItems);
+        mAdapter = new AddTokenListAdapter(this, tokenItems);
         mRecycler.setLayoutManager(new LinearLayoutManager(this));
         mRecycler.setAdapter(mAdapter);
 

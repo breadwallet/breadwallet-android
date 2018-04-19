@@ -4,12 +4,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.ImageView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRText;
@@ -18,24 +16,39 @@ import com.breadwallet.presenter.entities.TokenItem;
 
 import java.util.ArrayList;
 
-public class AddWalletListAdapter extends RecyclerView.Adapter<AddWalletListAdapter.TokenItemViewHolder> {
+public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapter.TokenItemViewHolder> {
 
     private Context mContext;
     private ArrayList<TokenItem> mTokens;
-    private static final String TAG = AddWalletListAdapter.class.getSimpleName();
+    private static final String TAG = AddTokenListAdapter.class.getSimpleName();
+    private OnTokenAddOrRemovedListener mListener;
 
-    public AddWalletListAdapter(Context context, ArrayList<TokenItem> tokens) {
+    public AddTokenListAdapter(Context context, ArrayList<TokenItem> tokens, OnTokenAddOrRemovedListener listener) {
 
         this.mContext = context;
         this.mTokens = tokens;
+        this.mListener = listener;
+    }
+
+    public interface OnTokenAddOrRemovedListener{
+
+        void onTokenAdded(TokenItem token);
+        void onTokenRemoved(TokenItem token);
     }
 
 
     @Override
-    public void onBindViewHolder(@NonNull AddWalletListAdapter.TokenItemViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull AddTokenListAdapter.TokenItemViewHolder holder, int position) {
 
         holder.name.setText(mTokens.get(position).name);
         holder.symbol.setText(mTokens.get(position).symbol);
+        holder.addRemoveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // TODO: Add logic to change add/remove button states and update
+            }
+        });
 
 
     }
@@ -47,7 +60,7 @@ public class AddWalletListAdapter extends RecyclerView.Adapter<AddWalletListAdap
 
     @NonNull
     @Override
-    public AddWalletListAdapter.TokenItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public AddTokenListAdapter.TokenItemViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
         View convertView = inflater.inflate(R.layout.token_list_item, parent, false);
