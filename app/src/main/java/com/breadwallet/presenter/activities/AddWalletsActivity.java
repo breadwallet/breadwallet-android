@@ -68,7 +68,20 @@ public class AddWalletsActivity extends BRActivity {
         });
 
 
-        mAdapter = new AddTokenListAdapter(this, tokenItems);
+        mAdapter = new AddTokenListAdapter(this, tokenItems, new AddTokenListAdapter.OnTokenAddOrRemovedListener() {
+            @Override
+            public void onTokenAdded(TokenItem token) {
+
+                Log.d(TAG, "onTokenAdded, -> " + token.name);
+            }
+
+            @Override
+            public void onTokenRemoved(TokenItem token) {
+                Log.d(TAG, "onTokenRemoved, -> " + token.name);
+
+
+            }
+        });
         mRecycler.setLayoutManager(new LinearLayoutManager(this));
         mRecycler.setAdapter(mAdapter);
 
