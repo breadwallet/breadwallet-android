@@ -13,8 +13,11 @@ import com.breadwallet.presenter.customviews.BREdit;
 import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.adapter.AddTokenListAdapter;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.platform.entities.TokenListMetaData;
+import com.platform.tools.KVStoreManager;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class AddWalletsActivity extends BRActivity {
 
@@ -73,11 +76,33 @@ public class AddWalletsActivity extends BRActivity {
             public void onTokenAdded(TokenItem token) {
 
                 Log.d(TAG, "onTokenAdded, -> " + token.name);
+
+                TokenListMetaData metaData = KVStoreManager.getInstance().getTokenListMetaData(AddWalletsActivity.this);
+                TokenListMetaData.TokenItem item = new TokenListMetaData.TokenItem(token.name, true, token.address);
+
+                if(metaData != null && metaData.enabledCurrencies != null) {
+                    Log.d(TAG, "onTokenAdded() : Adding token to KV store list -> " + item.name);
+                    metaData.enabledCurrencies.add(item);
+                    KVStoreManager.getInstance().putTokenListMetaData(AddWalletsActivity.this, metaData);
+                }
+
+
             }
 
             @Override
             public void onTokenRemoved(TokenItem token) {
                 Log.d(TAG, "onTokenRemoved, -> " + token.name);
+
+                TokenListMetaData metaData = KVStoreManager.getInstance().getTokenListMetaData(AddWalletsActivity.this);
+                TokenListMetaData.TokenItem item = new TokenListMetaData.TokenItem(token.name, true, token.address);
+
+                if(metaData != null && metaData.hiddenCurrencies != null){
+                    Log.d(TAG, "onTokenRemoved() : Removing token from KV Store list -> " + item.name);
+                    metaData.hiddenCurrencies.add(item);
+                    KVStoreManager.getInstance().putTokenListMetaData(AddWalletsActivity.this, metaData);
+
+                }
+
 
 
             }

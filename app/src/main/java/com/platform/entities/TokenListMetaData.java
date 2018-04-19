@@ -1,6 +1,8 @@
 package com.platform.entities;
 
 
+import com.breadwallet.presenter.entities.TokenItem;
+
 import java.util.List;
 
 /**
