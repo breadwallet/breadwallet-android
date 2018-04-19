@@ -157,10 +157,14 @@ public class WalletEthManager implements BaseWalletManager,
             }
         }
 
+        BREthereumWallet walletToken = node.getWallet(BREthereumToken.tokenBRD);
+        Log.e(TAG, "WalletEthManager: " + walletToken.getToken().getSymbol());
+
         mContext = app;
         mWallet.estimateGasPrice();
         mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
         node.connect();
+
     }
 
     public synchronized static WalletEthManager getInstance(Context app) {
@@ -704,7 +708,7 @@ public class WalletEthManager implements BaseWalletManager,
             getTokenBalance(wallet, wid, token.getAddress(), address, rid);
     }
 
-    protected void getEtherBalance (final BREthereumWallet wallet, final int wid, final String address, final int rid) {
+    protected void getEtherBalance(final BREthereumWallet wallet, final int wid, final String address, final int rid) {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {

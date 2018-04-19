@@ -1,6 +1,7 @@
 package com.breadwallet.wallet.wallets.etherium;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumToken;
@@ -8,6 +9,7 @@ import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.wallet.abstracts.BaseAddress;
@@ -23,7 +25,9 @@ import com.breadwallet.wallet.wallets.CryptoTransaction;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * BreadWallet
@@ -51,7 +55,10 @@ import java.util.List;
  */
 public class WalletTokenManager implements BaseWalletManager {
 
+    private static final String TAG = WalletTokenManager.class.getSimpleName();
+
     private WalletEthManager mWalletEthManager;
+    private static Map<String, WalletTokenManager> mTokenWallets = new HashMap<>();
     private BREthereumWallet mWalletToken;
 
     private List<OnBalanceChangedListener> balanceListeners = new ArrayList<>();
@@ -60,11 +67,63 @@ public class WalletTokenManager implements BaseWalletManager {
     private List<OnTxListModified> txModifiedListeners = new ArrayList<>();
     private WalletUiConfiguration uiConfig;
 
-    public WalletTokenManager(WalletEthManager walletEthManager, String startColor, String endColor, String contractAddress) {
+    private WalletTokenManager(WalletEthManager walletEthManager, BREthereumWallet tokenWallet) {
         this.mWalletEthManager = walletEthManager;
-        uiConfig = new WalletUiConfiguration(startColor, endColor, false);
+        this.mWalletToken = tokenWallet;
+        uiConfig = new WalletUiConfiguration(tokenWallet.getToken().getColorLeft(), tokenWallet.getToken().getColorRight(), false);
 
-        mWalletToken = walletEthManager.getNode().createWallet(BREthereumToken.tokenBRD);
+    }
+
+    private synchronized static WalletTokenManager getTokenWallet(WalletEthManager walletEthManager, String contractAddress) {
+        if (mTokenWallets.containsKey(contractAddress.toLowerCase())) {
+            return mTokenWallets.get(contractAddress.toLowerCase());
+        } else {
+            BREthereumToken tk = BREthereumToken.lookup(contractAddress);
+            if (tk == null) {
+                BRReportsManager.reportBug(new NullPointerException("Failed to lookup for token: " + contractAddress));
+                return null;
+            }
+            BREthereumWallet w = walletEthManager.node.getWallet(tk);
+
+            if (w != null) {
+                if (w.getToken() == null) {
+                    BRReportsManager.reportBug(new NullPointerException("getToken is null:" + contractAddress));
+                    return null;
+                }
+                WalletTokenManager token = new WalletTokenManager(walletEthManager, w);
+                mTokenWallets.put(w.getToken().getAddress().toLowerCase(), token);
+                return token;
+            } else {
+                BRReportsManager.reportBug(new NullPointerException("Failed to find token by address: " + contractAddress), true);
+            }
+
+        }
+        return null;
+    }
+
+    public static WalletTokenManager getBrdWallet(WalletEthManager walletEthManager) {
+        BREthereumWallet brdWallet = walletEthManager.node.getWallet(BREthereumToken.tokenBRD);
+        if (brdWallet.getToken() == null) {
+            BRReportsManager.reportBug(new NullPointerException("getBrd failed"));
+            return null;
+        }
+        if (mTokenWallets.containsKey(brdWallet.getToken().getAddress())) {
+            return mTokenWallets.get(brdWallet.getToken().getAddress());
+        } else {
+            WalletTokenManager wt = new WalletTokenManager(walletEthManager, brdWallet);
+            mTokenWallets.put(brdWallet.getToken().getAddress(), wt);
+            return wt;
+        }
+    }
+
+    public synchronized static WalletTokenManager getTokenWalletByIso(WalletEthManager walletEthManager, String iso) {
+        for (BREthereumToken t : BREthereumToken.tokens) {
+            if (t.getSymbol().toLowerCase().equalsIgnoreCase(iso.toLowerCase())) {
+                return getTokenWallet(walletEthManager, t.getAddress());
+            }
+        }
+        BRReportsManager.reportBug(new NullPointerException("Failed to getTokenWalletByIso: " + iso));
+        return null;
     }
 
     @Override

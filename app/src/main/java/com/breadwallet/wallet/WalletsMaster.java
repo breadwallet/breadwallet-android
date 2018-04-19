@@ -14,6 +14,8 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
+import com.breadwallet.core.ethereum.BREthereumToken;
+import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
@@ -29,6 +31,7 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
+import com.breadwallet.wallet.wallets.etherium.WalletTokenManager;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
@@ -260,21 +263,28 @@ public class WalletsMaster {
     }
 
     public void initWallets(final Context app) {
+        //BTC wallet
         if (!mWallets.contains(WalletBitcoinManager.getInstance(app)))
             mWallets.add(WalletBitcoinManager.getInstance(app));
+        //BCH wallet
         if (!mWallets.contains(WalletBchManager.getInstance(app)))
             mWallets.add(WalletBchManager.getInstance(app));
-        if (!mWallets.contains(WalletEthManager.getInstance(app))) {
-            BaseWalletManager ethWallet = WalletEthManager.getInstance(app);
+        //ETH wallet
+        WalletEthManager ethWallet = WalletEthManager.getInstance(app);
+        if (!mWallets.contains(ethWallet)) {
             mWallets.add(ethWallet);
-            if (ethWallet != null){
+            if (ethWallet != null) {
                 BreadApp.generateWalletIfIfNeeded(app, ethWallet.getReceiveAddress(app).stringify());
                 for (BaseWalletManager wm : mWallets) {
                     if (wm != null) setSpendingLimitIfNotSet(app, wm);
                 }
+                //add BRD wallet
+//                WalletTokenManager brdWallet = WalletTokenManager.getBrdWallet(ethWallet);
+//                if (brdWallet != null)
+//                    if (!mWallets.contains(brdWallet)) mWallets.add(brdWallet);
             }
-
         }
+
     }
 
     private void setSpendingLimitIfNotSet(final Context app, final BaseWalletManager wm) {
