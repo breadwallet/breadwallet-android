@@ -44,8 +44,10 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -816,7 +818,8 @@ public class APIClient {
             @Override
             public void run() {
                 final long startTime = System.currentTimeMillis();
-                for (BaseWalletManager w : WalletsMaster.getInstance(app).getAllWallets()) {
+                List<BaseWalletManager> wallets = new ArrayList<>(WalletsMaster.getInstance(app).getAllWallets(app));
+                for (BaseWalletManager w : wallets) {
                     w.updateFee(app);
                 }
                 long endTime = System.currentTimeMillis();

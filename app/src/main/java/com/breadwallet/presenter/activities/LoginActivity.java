@@ -42,6 +42,7 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.APIClient;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.breadwallet.R.color.white;
@@ -209,8 +210,8 @@ public class LoginActivity extends BRActivity {
             @Override
             public void onBackgrounded() {
                 //disconnect all wallets on backgrounded
-                List<BaseWalletManager> wallets = WalletsMaster.getInstance(LoginActivity.this).getAllWallets();
-                for (BaseWalletManager w : wallets) {
+                List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(LoginActivity.this).getAllWallets(LoginActivity.this));
+                for (BaseWalletManager w : list) {
                     w.disconnect(LoginActivity.this);
                 }
 
@@ -229,13 +230,6 @@ public class LoginActivity extends BRActivity {
         inputAllowed = true;
 
         updateDots();
-
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                WalletsMaster.getInstance(app).initWallets(app);
-            }
-        });
 
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override

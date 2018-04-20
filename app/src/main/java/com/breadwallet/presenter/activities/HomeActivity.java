@@ -44,6 +44,7 @@ import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by byfieldj on 1/17/18.
@@ -83,11 +84,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        WalletsMaster.getInstance(HomeActivity.this).initWallets(HomeActivity.this);
-
-        ArrayList<BaseWalletManager> walletList = new ArrayList<>();
-
-        walletList.addAll(WalletsMaster.getInstance(this).getAllWallets());
+        populateWallets();
 
         mWalletRecycler = findViewById(R.id.rv_wallet_list);
         mFiatTotal = findViewById(R.id.total_assets_usd);
@@ -102,8 +99,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mPromptDescription = findViewById(R.id.prompt_description);
         mPromptContinue = findViewById(R.id.continue_button);
         mPromptDismiss = findViewById(R.id.dismiss_button);
-
-        mAdapter = new WalletListAdapter(this, walletList);
 
         mWalletRecycler.setLayoutManager(new LinearLayoutManager(this));
         mWalletRecycler.setAdapter(mAdapter);
@@ -176,8 +171,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             }
         });
 
-        TokenListMetaData md = KVStoreManager.getInstance().getTokenListMetaData(this);
-
     }
 
     public void hidePrompt() {
@@ -224,6 +217,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         showNextPromptIfNeeded();
 
+        populateWallets();
+
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -262,6 +257,20 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 WalletsMaster.getInstance(HomeActivity.this).refreshBalances(HomeActivity.this);
             }
         });
+    }
+
+    private void populateWallets() {
+        List<TokenListMetaData.TokenItem> enabled = new ArrayList<>();
+        enabled.add(new TokenListMetaData.TokenItem("ETH", false, null));
+        enabled.add(new TokenListMetaData.TokenItem("BTC", false, null));
+        enabled.add(new TokenListMetaData.TokenItem("BRD", true, "some"));
+        List<TokenListMetaData.TokenItem> hidden = new ArrayList<>();
+        hidden.add(new TokenListMetaData.TokenItem("ETH", false, null));
+
+        KVStoreManager.getInstance().putTokenListMetaData(this, new TokenListMetaData(1, enabled, hidden));
+
+        ArrayList<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(this).getAllWallets(this));
+        mAdapter = new WalletListAdapter(this, list);
     }
 
     @Override

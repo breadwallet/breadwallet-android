@@ -159,70 +159,9 @@ public class KVStoreManager {
 
     }
 
-    public TokenListMetaData getTokenListMetaData(Context app) {
-        TokenListMetaData result = new TokenListMetaData();
-        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
-        ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
-        List itms = kvStore.getRawKVs();
-        long ver = kvStore.localVersion(TOKEN_LIST_META_DATA).version;
-        CompletionObject obj = kvStore.get(TOKEN_LIST_META_DATA, ver);
-        if (obj.kv == null) {
-            Log.e(TAG, "putTokenListMetaData: value is null for key: " + TOKEN_LIST_META_DATA);
-            return null;
-        }
-
-        JSONObject json;
-
-        try {
-            byte[] decompressed = BRCompressor.bz2Extract(obj.kv.value);
-            if (decompressed == null) {
-                Log.e(TAG, "putTokenListMetaData: decompressed value is null");
-                return null;
-            }
-            json = new JSONObject(new String(decompressed));
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }
-
-        try {
-            result.classVersion = json.getInt("classVersion");
-            result.enabledCurrencies = jsonToMetaData(json.getJSONArray("enabledCurrencies"));
-            result.hiddenCurrencies = jsonToMetaData(json.getJSONArray("hiddenCurrencies"));
-//            result.currentCurrency = json.getString("currentCurrency");
-        } catch (JSONException e) {
-            e.printStackTrace();
-            Log.e(TAG, "getWalletInfo: FAILED to get json value");
-        }
-
-        Log.e(TAG, "putTokenListMetaData: " + json);
-        return result;
-    }
-
-    private List<TokenListMetaData.TokenItem> jsonToMetaData(JSONArray json) throws JSONException {
-        List<TokenListMetaData.TokenItem> result = new ArrayList<>();
-        if (json == null) {
-            Log.e(TAG, "jsonToMetaData: JSONArray is null");
-            return result;
-        }
-        for (int i = 0; i < result.size(); i++) {
-            String s = json.getString(i);
-            boolean isErc20 = s.contains(":");
-            String name = s;
-            String address = null;
-            if (isErc20) {
-                name = s.split(":")[0];
-                address = s.split(":")[1];
-            }
-            result.add(new TokenListMetaData.TokenItem(name, isErc20, address));
-        }
-
-        return result;
-    }
-
     public void putTokenListMetaData(Context app, TokenListMetaData md) {
         TokenListMetaData old = getTokenListMetaData(app);
-        if (old == null) old = new TokenListMetaData(); //create new one if it's null
+        if (old == null) old = new TokenListMetaData(0, null, null); //create new one if it's null
 
         //add all the params that we want to change
         if (md.classVersion != 0) old.classVersion = md.classVersion;
@@ -236,8 +175,17 @@ public class KVStoreManager {
         byte[] result;
         try {
             obj.put("classVersion", old.classVersion);
-            obj.put("enabledCurrencies", old.enabledCurrencies);
-            obj.put("hiddenCurrencies", old.hiddenCurrencies);
+            JSONArray enabledArr = new JSONArray();
+            JSONArray hiddenArr = new JSONArray();
+            for (TokenListMetaData.TokenItem item : old.enabledCurrencies) {
+                enabledArr.put(item.erc20 ? item.name + ":" + item.contractAddress : item.name);
+            }
+            for (TokenListMetaData.TokenItem item : old.hiddenCurrencies) {
+                hiddenArr.put(item.erc20 ? item.name + ":" + item.contractAddress : item.name);
+            }
+
+            obj.put("enabledCurrencies", enabledArr);
+            obj.put("hiddenCurrencies", hiddenArr);
             result = obj.toString().getBytes();
 
         } catch (JSONException e) {
@@ -266,6 +214,69 @@ public class KVStoreManager {
             Log.e(TAG, "putTokenListMetaData: Error setting value for key: " + TOKEN_LIST_META_DATA + ", err: " + compObj.err);
         }
 
+    }
+
+    public TokenListMetaData getTokenListMetaData(Context app) {
+
+        RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
+        ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
+        List itms = kvStore.getRawKVs();
+        long ver = kvStore.localVersion(TOKEN_LIST_META_DATA).version;
+        CompletionObject obj = kvStore.get(TOKEN_LIST_META_DATA, ver);
+        if (obj.kv == null) {
+            Log.e(TAG, "putTokenListMetaData: value is null for key: " + TOKEN_LIST_META_DATA);
+            return null;
+        }
+
+        JSONObject json;
+
+        try {
+            byte[] decompressed = BRCompressor.bz2Extract(obj.kv.value);
+            if (decompressed == null) {
+                Log.e(TAG, "putTokenListMetaData: decompressed value is null");
+                return null;
+            }
+            json = new JSONObject(new String(decompressed));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+
+        TokenListMetaData result = null;
+        try {
+            int classVersion = json.getInt("classVersion");
+            List<TokenListMetaData.TokenItem> enabledCurrencies = jsonToMetaData(json.getJSONArray("enabledCurrencies"));
+            List<TokenListMetaData.TokenItem> hiddenCurrencies = jsonToMetaData(json.getJSONArray("hiddenCurrencies"));
+            result = new TokenListMetaData(classVersion, enabledCurrencies, hiddenCurrencies);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, "getWalletInfo: FAILED to get json value");
+        }
+
+        Log.e(TAG, "putTokenListMetaData: " + json);
+        return result;
+    }
+
+    private List<TokenListMetaData.TokenItem> jsonToMetaData(JSONArray json) throws JSONException {
+        List<TokenListMetaData.TokenItem> result = new ArrayList<>();
+        if (json == null) {
+            Log.e(TAG, "jsonToMetaData: JSONArray is null");
+            return result;
+        }
+        for (int i = 0; i < json.length(); i++) {
+            String s = json.getString(i);
+            boolean isErc20 = s.contains(":");
+            String name = s;
+            String address = null;
+            if (isErc20) {
+                name = s.split(":")[0];
+                address = s.split(":")[1];
+            }
+            result.add(new TokenListMetaData.TokenItem(name, isErc20, address));
+        }
+
+        return result;
     }
 
     public TxMetaData getTxMetaData(Context app, byte[] txHash) {

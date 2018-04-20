@@ -1,6 +1,7 @@
 package com.platform.entities;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -28,18 +29,6 @@ import java.util.List;
  * THE SOFTWARE.
  */
 public class TokenListMetaData {
-    public static class TokenItem {
-        public String name;
-        public boolean erc20;
-        public String contractAddress;
-
-        public TokenItem(String name, boolean erc20, String contractAddress) {
-            this.name = name;
-            this.erc20 = erc20;
-            this.contractAddress = contractAddress;
-        }
-    }
-
     /**
      * WalletInfo:
      * <p>
@@ -55,5 +44,37 @@ public class TokenListMetaData {
     public int classVersion;
     public List<TokenItem> enabledCurrencies;
     public List<TokenItem> hiddenCurrencies;
+
+    public TokenListMetaData(int classVersion, List<TokenItem> enabledCurrencies, List<TokenItem> hiddenCurrencies) {
+        this.classVersion = classVersion;
+        this.enabledCurrencies = enabledCurrencies;
+        this.hiddenCurrencies = hiddenCurrencies;
+
+        if (this.enabledCurrencies == null) {
+            this.enabledCurrencies = new ArrayList<>();
+            this.enabledCurrencies.add(new TokenItem("BTC", false, null));
+            this.enabledCurrencies.add(new TokenItem("BCH", false, null));
+            this.enabledCurrencies.add(new TokenItem("ETH", false, null));
+        }
+        if (this.hiddenCurrencies == null) this.hiddenCurrencies = new ArrayList<>();
+    }
+
+
+    public static class TokenItem {
+        public String name;
+        public boolean erc20;
+        public String contractAddress;
+
+        public TokenItem(String name, boolean erc20, String contractAddress) {
+            this.name = name;
+            this.erc20 = erc20;
+            this.contractAddress = contractAddress;
+        }
+
+        @Override
+        public String toString() {
+            return erc20 ? name + ":" + contractAddress : name;
+        }
+    }
 
 }

@@ -138,7 +138,9 @@ public class BRApiManager {
                                     stopTimerTask();
                                     return;
                                 }
-                                for (final BaseWalletManager w : WalletsMaster.getInstance(context).getAllWallets()) {
+                                List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(context).getAllWallets(context));
+
+                                for (final BaseWalletManager w : list) {
                                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                                         @Override
                                         public void run() {

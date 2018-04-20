@@ -58,6 +58,7 @@ import com.breadwallet.wallet.util.CryptoUriParser;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.breadwallet.tools.animation.BRAnimator.t1Size;
@@ -391,12 +392,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     protected void onResume() {
         super.onResume();
         app = this;
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                WalletsMaster.getInstance(app).initWallets(app);
-            }
-        });
 
         setupNetworking();
 
@@ -574,7 +569,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             while (true) {
                 boolean needsLog = false;
                 StringBuilder builder = new StringBuilder();
-                for (BaseWalletManager w : WalletsMaster.getInstance(WalletActivity.this).getAllWallets()) {
+                List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(WalletActivity.this).getAllWallets(WalletActivity.this));
+                for (BaseWalletManager w : list) {
                     builder.append("   " + w.getIso(WalletActivity.this));
                     String connectionStatus = "";
                     if (w.getConnectStatus() == 2)

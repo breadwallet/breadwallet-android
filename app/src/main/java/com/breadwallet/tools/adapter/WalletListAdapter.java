@@ -90,13 +90,11 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         String startColor = wallet.getUiConfiguration().mStartColor;
         String endColor = wallet.getUiConfiguration().mEndColor;
 
-//        Log.e(TAG, "onBindViewHolder: start: " + startColor + ", end: " + endColor);
         Drawable drawable = mContext.getResources().getDrawable(R.drawable.crypto_card_shape, null).mutate();
         //create gradient with 2 colors if exist
         ((GradientDrawable) drawable).setColors(new int[]{Color.parseColor(startColor), Color.parseColor(endColor == null ? startColor : endColor)});
         ((GradientDrawable) drawable).setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
         holder.mParent.setBackground(drawable);
-        Log.e(TAG, "onBindViewHolder: " );
 
     }
 
