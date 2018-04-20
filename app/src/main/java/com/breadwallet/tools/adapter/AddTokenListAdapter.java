@@ -48,7 +48,6 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
     @Override
     public void onBindViewHolder(final @NonNull AddTokenListAdapter.TokenItemViewHolder holder, final int position) {
 
-
         TokenItem item = mTokens.get(position);
         String tickerName = item.symbol.toLowerCase();
 
@@ -58,7 +57,6 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
 
 
         String iconResourceName = tickerName;
-        Log.d(TAG, "Loading -> " + iconResourceName);
         int iconResourceId = mContext.getResources().getIdentifier(tickerName, "drawable", mContext.getPackageName());
 
         holder.name.setText(mTokens.get(position).name);
@@ -73,7 +71,7 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
             @Override
             public void onClick(View v) {
 
-                // TODO: Add logic to change add/remove button states and update
+                 // Set button to "Remove"
                 if (!mTokens.get(position).isAdded) {
                     mTokens.get(position).isAdded = true;
                     holder.addRemoveButton.setText("Remove");
@@ -88,7 +86,10 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
                     params.setMarginEnd(Utils.getPixelsFromDps(mContext, 12));
                     holder.addRemoveButton.setLayoutParams(params);
                     mListener.onTokenAdded(mTokens.get(position));
-                } else {
+                }
+
+                // Set button back to "Add"
+                else {
                     mTokens.get(position).isAdded = false;
 
                     holder.addRemoveButton.setText("Add");
@@ -126,8 +127,10 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
         LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
         View convertView = inflater.inflate(R.layout.token_list_item, parent, false);
 
+        TokenItemViewHolder holder = new TokenItemViewHolder(convertView);
+        holder.setIsRecyclable(false);
 
-        return new TokenItemViewHolder(convertView);
+        return holder;
     }
 
     public class TokenItemViewHolder extends RecyclerView.ViewHolder {

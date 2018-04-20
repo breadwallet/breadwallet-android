@@ -39,17 +39,6 @@ public class AddWalletsActivity extends BRActivity {
         mRecycler = findViewById(R.id.token_list);
         mSearchView = findViewById(R.id.search_edit);
 
-        if (KVStoreManager.getInstance().getTokenListMetaData(this) == null) {
-            Log.d(TAG, "TokenListMetaData is null");
-        } else {
-            Log.d(TAG, "TokenListMetaData is not null");
-
-        }
-
-        if (KVStoreManager.getInstance().getTokenListMetaData(this) != null && KVStoreManager.getInstance().getTokenListMetaData(this).enabledCurrencies != null && KVStoreManager.getInstance().getTokenListMetaData(this).hiddenCurrencies != null) {
-            Log.d(TAG, "Enabled tokens -> " + KVStoreManager.getInstance().getTokenListMetaData(this).enabledCurrencies.toArray().toString());
-            Log.d(TAG, "Hidden tokens -> " + KVStoreManager.getInstance().getTokenListMetaData(this).hiddenCurrencies.toArray().toString());
-        }
 
         mSearchView.addTextChangedListener(new TextWatcher() {
             @Override
@@ -59,7 +48,6 @@ public class AddWalletsActivity extends BRActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                Log.d(TAG, "onTextChanged() -> " + s + ", count -> " + count);
 
                 String query = mSearchView.getText().toString();
 
@@ -67,7 +55,7 @@ public class AddWalletsActivity extends BRActivity {
                     mAdapter.filter(query);
                 }
 
-                if(query.equals("")){
+                if (query.equals("")) {
                     mAdapter.resetFilter();
                 }
 
@@ -93,21 +81,14 @@ public class AddWalletsActivity extends BRActivity {
             public void run() {
                 mTokens = BREthereumToken.tokens;
 
-                Log.d(TAG, "Token list -> " + mTokens.toString());
-                Log.d(TAG, "Token list length -> " + mTokens.length);
-
-                //if (mAdapter == null && mTokens != null) {
-                Log.d(TAG, "Token list not empty, setting up adapter");
 
                 for (int i = 0; i < mTokens.length; i++) {
 
                     BREthereumToken token = mTokens[i];
                     TokenItem tokenItem = new TokenItem(token.getAddress(), token.getSymbol(), token.getName(), null);
                     tokenItems.add(tokenItem);
-                    //}
-                }
 
-                Log.d(TAG, "Token list size -> " + tokenItems.size());
+                }
 
 
             }
