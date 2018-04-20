@@ -7,6 +7,8 @@ import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 
 import com.breadwallet.R;
 import com.breadwallet.core.ethereum.BREthereumToken;
@@ -29,6 +31,7 @@ public class AddWalletsActivity extends BRActivity {
     private BREdit mSearchView;
     private RecyclerView mRecycler;
     private static final String TAG = AddWalletsActivity.class.getSimpleName();
+    private ImageButton mBackButton;
 
 
     @Override
@@ -38,6 +41,14 @@ public class AddWalletsActivity extends BRActivity {
 
         mRecycler = findViewById(R.id.token_list);
         mSearchView = findViewById(R.id.search_edit);
+        mBackButton = findViewById(R.id.back_arrow);
+
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
 
         mSearchView.addTextChangedListener(new TextWatcher() {
