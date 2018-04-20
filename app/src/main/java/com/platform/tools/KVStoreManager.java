@@ -216,11 +216,11 @@ public class KVStoreManager {
 
     }
 
+    //expensive, takes ~ 20 milliseconds
     public TokenListMetaData getTokenListMetaData(Context app) {
 
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);
-        List itms = kvStore.getRawKVs();
         long ver = kvStore.localVersion(TOKEN_LIST_META_DATA).version;
         CompletionObject obj = kvStore.get(TOKEN_LIST_META_DATA, ver);
         if (obj.kv == null) {
@@ -254,7 +254,6 @@ public class KVStoreManager {
             Log.e(TAG, "getWalletInfo: FAILED to get json value");
         }
 
-        Log.e(TAG, "putTokenListMetaData: " + json);
         return result;
     }
 

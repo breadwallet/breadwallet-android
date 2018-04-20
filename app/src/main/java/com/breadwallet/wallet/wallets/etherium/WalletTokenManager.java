@@ -12,6 +12,7 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseAddress;
 import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -262,7 +263,14 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public void refreshAddress(Context app) {
-        //no need
+        if (Utils.isNullOrEmpty(BRSharedPrefs.getReceiveAddress(app, getIso(app)))) {
+            BaseAddress address = getReceiveAddress(app);
+            if (Utils.isNullOrEmpty(address.stringify())) {
+                Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
+                BRReportsManager.reportBug(new NullPointerException("empty address!"));
+            }
+            BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso(app));
+        }
     }
 
     @Override
@@ -409,36 +417,36 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public BigDecimal getFiatExchangeRate(Context app) {
-        return null;
+        return new BigDecimal(0);
     }
 
     @Override
     public BigDecimal getFiatBalance(Context app) {
-        return null;
+        return new BigDecimal(0);
     }
 
     @Override
     public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount, CurrencyEntity ent) {
-        return null;
+        return new BigDecimal(0);
     }
 
     @Override
     public BigDecimal getCryptoForFiat(Context app, BigDecimal amount) {
-        return null;
+        return new BigDecimal(0);
     }
 
     @Override
     public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
-        return null;
+        return new BigDecimal(0);
     }
 
     @Override
     public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
-        return null;
+        return new BigDecimal(0);
     }
 
     @Override
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
-        return null;
+        return new BigDecimal(0);
     }
 }

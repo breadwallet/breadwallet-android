@@ -50,6 +50,8 @@ public interface BaseWalletManager {
     //get the core wallet
     int getForkId();
 
+
+
     boolean isAddressValid(String address);
 
     @WorkerThread

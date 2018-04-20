@@ -409,13 +409,14 @@ public class WalletEthManager implements BaseWalletManager,
 
     @Override
     public void refreshAddress(Context app) {
-        Log.e(TAG, "refreshAddress: start");
-        BaseAddress address = getReceiveAddress(app);
-        Log.e(TAG, "refreshAddress: end");
-        if (Utils.isNullOrEmpty(address.stringify())) {
-            Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
+        if (Utils.isNullOrEmpty(BRSharedPrefs.getReceiveAddress(app, getIso(app)))) {
+            BaseAddress address = getReceiveAddress(app);
+            if (Utils.isNullOrEmpty(address.stringify())) {
+                Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
+                BRReportsManager.reportBug(new NullPointerException("empty address!"));
+            }
+            BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso(app));
         }
-        BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso(app));
     }
 
     @Override

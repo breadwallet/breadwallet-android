@@ -92,6 +92,8 @@ public class WalletsMaster {
             for (BaseWalletManager wm : mWallets) {
                 if (wm != null) setSpendingLimitIfNotSet(app, wm);
             }
+        } else {
+            return mWallets; //return empty wallets if ETH is null (meaning no public key yet)
         }
         TokenListMetaData md = KVStoreManager.getInstance().getTokenListMetaData(app);
         if (md == null) md = new TokenListMetaData(1, null, null);
@@ -137,6 +139,9 @@ public class WalletsMaster {
             return WalletBchManager.getInstance(app);
         if (iso.equalsIgnoreCase("ETH"))
             return WalletEthManager.getInstance(app);
+        else if (isIsoCrypto(app, iso)) {
+            return WalletTokenManager.getTokenWalletByIso(WalletEthManager.getInstance(app), iso);
+        }
         return null;
     }
 
