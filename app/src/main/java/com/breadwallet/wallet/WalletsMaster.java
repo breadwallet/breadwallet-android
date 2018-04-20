@@ -279,9 +279,9 @@ public class WalletsMaster {
                     if (wm != null) setSpendingLimitIfNotSet(app, wm);
                 }
                 //add BRD wallet
-//                WalletTokenManager brdWallet = WalletTokenManager.getBrdWallet(ethWallet);
-//                if (brdWallet != null)
-//                    if (!mWallets.contains(brdWallet)) mWallets.add(brdWallet);
+                WalletTokenManager brdWallet = WalletTokenManager.getBrdWallet(ethWallet);
+                if (brdWallet != null)
+                    if (!mWallets.contains(brdWallet)) mWallets.add(brdWallet);
             }
         }
 

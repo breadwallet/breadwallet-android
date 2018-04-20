@@ -290,6 +290,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         if (endColor != null) {
             //it's a gradient
+            Log.e(TAG, "updateUi: start:" + startColor);
+            Log.e(TAG, "updateUi: end:" + endColor);
             GradientDrawable gd = new GradientDrawable(
                     GradientDrawable.Orientation.LEFT_RIGHT,
                     new int[]{Color.parseColor(startColor), Color.parseColor(endColor)});

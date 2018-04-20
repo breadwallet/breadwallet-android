@@ -109,7 +109,7 @@ public class WalletEthManager implements BaseWalletManager,
     private Context mContext;
 
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
-        uiConfig = new WalletUiConfiguration("#5e70a3", null, true);
+        uiConfig = new WalletUiConfiguration("5e70a3", null, true);
         settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
 
         if (Utils.isNullOrEmpty(ethPubKey)) {
@@ -118,7 +118,6 @@ public class WalletEthManager implements BaseWalletManager,
                 String paperKey = new String(BRKeyStore.getPhrase(app, 0));
                 if (Utils.isNullOrEmpty(paperKey)) {
                     Log.e(TAG, "WalletEthManager: paper key is empty too, no wallet!");
-                    instance = null;
                     return;
                 }
 
@@ -127,7 +126,6 @@ public class WalletEthManager implements BaseWalletManager,
                 if (null == words) {
                     Log.e(TAG, "WalletEthManager: paper key does not validate with BIP39 Words for: " +
                             Locale.getDefault().getLanguage());
-                    instance = null;
                     return;
                 }
 
@@ -136,7 +134,6 @@ public class WalletEthManager implements BaseWalletManager,
 
                 if (null == mWallet) {
                     Log.e(TAG, "WalletEthManager: failed to create the ETH wallet using paperKey.");
-                    instance = null;
                     return;
                 }
 
@@ -152,13 +149,9 @@ public class WalletEthManager implements BaseWalletManager,
 
             if (null == mWallet) {
                 Log.e(TAG, "WalletEthManager: failed to create the ETH wallet using saved publicKey.");
-                instance = null;
                 return;
             }
         }
-
-        BREthereumWallet walletToken = node.getWallet(BREthereumToken.tokenBRD);
-        Log.e(TAG, "WalletEthManager: " + walletToken.getToken().getSymbol());
 
         mContext = app;
         mWallet.estimateGasPrice();

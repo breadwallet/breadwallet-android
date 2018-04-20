@@ -30,9 +30,9 @@ public class WalletUiConfiguration {
 
     public boolean showRequestAnAmount;
 
-    public WalletUiConfiguration(String startColor,  String endColor, boolean showRequestAnAmount) {
-        this.mStartColor = startColor;
-        this.mEndColor = endColor;
+    public WalletUiConfiguration(String startColor, String endColor, boolean showRequestAnAmount) {
+        this.mStartColor = startColor.contains("#") ? startColor : "#" + startColor;
+        this.mEndColor = endColor != null ? (endColor.contains("#") ? endColor : "#" + endColor) : this.mStartColor;
         this.showRequestAnAmount = showRequestAnAmount;
     }
 
