@@ -36,6 +36,19 @@ public class AddWalletsActivity extends BRActivity {
 
         mRecycler = findViewById(R.id.token_list);
         mSearchView = findViewById(R.id.search_edit);
+
+        if(KVStoreManager.getInstance().getTokenListMetaData(this) == null){
+            Log.d(TAG, "TokenListMetaData is null");
+        }else{
+            Log.d(TAG, "TokenListMetaData is not null");
+
+        }
+
+        if (KVStoreManager.getInstance().getTokenListMetaData(this) != null && KVStoreManager.getInstance().getTokenListMetaData(this).enabledCurrencies != null && KVStoreManager.getInstance().getTokenListMetaData(this).hiddenCurrencies != null) {
+            Log.d(TAG, "Enabled tokens -> " + KVStoreManager.getInstance().getTokenListMetaData(this).enabledCurrencies.toArray().toString());
+            Log.d(TAG, "Hidden tokens -> " + KVStoreManager.getInstance().getTokenListMetaData(this).hiddenCurrencies.toArray().toString());
+        }
+
     }
 
     @Override
@@ -66,7 +79,6 @@ public class AddWalletsActivity extends BRActivity {
                 Log.d(TAG, "Token list size -> " + tokenItems.size());
 
 
-
             }
         });
 
@@ -80,8 +92,15 @@ public class AddWalletsActivity extends BRActivity {
                 TokenListMetaData metaData = KVStoreManager.getInstance().getTokenListMetaData(AddWalletsActivity.this);
                 TokenListMetaData.TokenItem item = new TokenListMetaData.TokenItem(token.name, true, token.address);
 
-                if(metaData != null && metaData.enabledCurrencies != null) {
+                if (metaData != null && metaData.enabledCurrencies != null) {
+                    Log.d(TAG, "onTokenAdded(): TokenListMetaData not null");
                     Log.d(TAG, "onTokenAdded() : Adding token to KV store list -> " + item.name);
+                    metaData.enabledCurrencies.add(item);
+                    KVStoreManager.getInstance().putTokenListMetaData(AddWalletsActivity.this, metaData);
+                }else if(metaData == null){
+                    Log.d(TAG, "onTokenAdded(): TokenListMetaData is null");
+                    metaData = new TokenListMetaData();
+                    metaData.enabledCurrencies = new ArrayList<>();
                     metaData.enabledCurrencies.add(item);
                     KVStoreManager.getInstance().putTokenListMetaData(AddWalletsActivity.this, metaData);
                 }
@@ -96,13 +115,12 @@ public class AddWalletsActivity extends BRActivity {
                 TokenListMetaData metaData = KVStoreManager.getInstance().getTokenListMetaData(AddWalletsActivity.this);
                 TokenListMetaData.TokenItem item = new TokenListMetaData.TokenItem(token.name, true, token.address);
 
-                if(metaData != null && metaData.hiddenCurrencies != null){
+                if (metaData != null && metaData.hiddenCurrencies != null) {
                     Log.d(TAG, "onTokenRemoved() : Removing token from KV Store list -> " + item.name);
                     metaData.hiddenCurrencies.add(item);
                     KVStoreManager.getInstance().putTokenListMetaData(AddWalletsActivity.this, metaData);
 
                 }
-
 
 
             }

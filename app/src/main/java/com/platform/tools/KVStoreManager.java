@@ -167,7 +167,7 @@ public class KVStoreManager {
         long ver = kvStore.localVersion(TOKEN_LIST_META_DATA).version;
         CompletionObject obj = kvStore.get(TOKEN_LIST_META_DATA, ver);
         if (obj.kv == null) {
-            Log.e(TAG, "putTokenListMetaData: value is null for key: " + TOKEN_LIST_META_DATA);
+            Log.e(TAG, "getTokenListMetaData: value is null for key: " + TOKEN_LIST_META_DATA);
             return null;
         }
 
@@ -176,7 +176,7 @@ public class KVStoreManager {
         try {
             byte[] decompressed = BRCompressor.bz2Extract(obj.kv.value);
             if (decompressed == null) {
-                Log.e(TAG, "putTokenListMetaData: decompressed value is null");
+                Log.e(TAG, "getTokenListMetaData: decompressed value is null");
                 return null;
             }
             json = new JSONObject(new String(decompressed));
