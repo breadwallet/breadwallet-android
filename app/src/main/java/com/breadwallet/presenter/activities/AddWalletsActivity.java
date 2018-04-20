@@ -4,6 +4,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 
 import com.breadwallet.R;
@@ -48,6 +50,28 @@ public class AddWalletsActivity extends BRActivity {
             Log.d(TAG, "Enabled tokens -> " + KVStoreManager.getInstance().getTokenListMetaData(this).enabledCurrencies.toArray().toString());
             Log.d(TAG, "Hidden tokens -> " + KVStoreManager.getInstance().getTokenListMetaData(this).hiddenCurrencies.toArray().toString());
         }
+
+        mSearchView.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+                if(mAdapter != null){
+                    String query = s.toString();
+                    mAdapter.filter(query);
+                }
+
+            }
+        });
 
     }
 

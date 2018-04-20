@@ -5,10 +5,12 @@ import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
@@ -45,8 +47,26 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
     public void onBindViewHolder(final @NonNull AddTokenListAdapter.TokenItemViewHolder holder, final int position) {
 
 
+        TokenItem item = mTokens.get(position);
+        String tickerName = item.symbol.toLowerCase();
+
+        if (tickerName.equals("1st")) {
+            tickerName = "first";
+        }
+
+
+        String iconResourceName = tickerName;
+        Log.d(TAG, "Loading -> " + iconResourceName);
+        int iconResourceId = mContext.getResources().getIdentifier(tickerName, "drawable", mContext.getPackageName());
+
         holder.name.setText(mTokens.get(position).name);
         holder.symbol.setText(mTokens.get(position).symbol);
+        try {
+            holder.logo.setBackground(mContext.getDrawable(iconResourceId));
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.d(TAG, "Error finding icon for -> " + iconResourceName);
+        }
         holder.addRemoveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,7 +130,7 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
 
     public class TokenItemViewHolder extends RecyclerView.ViewHolder {
 
-        private TokenIconView logo;
+        private ImageView logo;
         private BRText symbol;
         private BRText name;
         private Button addRemoveButton;
@@ -126,6 +146,20 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
             Typeface typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/CircularPro-Book.otf");
             addRemoveButton.setTypeface(typeface);
         }
+    }
+
+    public void filter(String query) {
+        ArrayList<TokenItem> filteredList = new ArrayList<>();
+
+        for (TokenItem item : mTokens) {
+
+            if (item.name.equals(query) || item.symbol.equals(query) || item.name.contains(query) || item.symbol.contains(query)) {
+                filteredList.add(item);
+            }
+        }
+
+        mTokens = filteredList;
+        notifyDataSetChanged();
     }
 
 

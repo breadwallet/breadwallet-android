@@ -226,8 +226,14 @@ public class KVStoreManager {
 
         //add all the params that we want to change
         if (md.classVersion != 0) old.classVersion = md.classVersion;
-        if (md.enabledCurrencies.size() > 0) old.enabledCurrencies = md.enabledCurrencies;
-        if (md.hiddenCurrencies.size() > 0) old.hiddenCurrencies = md.hiddenCurrencies;
+
+        if (md.enabledCurrencies != null) {
+            if (md.enabledCurrencies.size() > 0) old.enabledCurrencies = md.enabledCurrencies;
+        }
+
+        if (md.hiddenCurrencies != null) {
+            if (md.hiddenCurrencies.size() > 0) old.hiddenCurrencies = md.hiddenCurrencies;
+        }
 
         //sanity check
         if (old.classVersion == 0) old.classVersion = 1;
