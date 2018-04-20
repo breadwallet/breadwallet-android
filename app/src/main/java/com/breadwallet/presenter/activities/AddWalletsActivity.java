@@ -39,9 +39,9 @@ public class AddWalletsActivity extends BRActivity {
         mRecycler = findViewById(R.id.token_list);
         mSearchView = findViewById(R.id.search_edit);
 
-        if(KVStoreManager.getInstance().getTokenListMetaData(this) == null){
+        if (KVStoreManager.getInstance().getTokenListMetaData(this) == null) {
             Log.d(TAG, "TokenListMetaData is null");
-        }else{
+        } else {
             Log.d(TAG, "TokenListMetaData is not null");
 
         }
@@ -59,16 +59,23 @@ public class AddWalletsActivity extends BRActivity {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
+                Log.d(TAG, "onTextChanged() -> " + s + ", count -> " + count);
+
+                String query = mSearchView.getText().toString();
+
+                if (mAdapter != null) {
+                    mAdapter.filter(query);
+                }
+
+                if(query.equals("")){
+                    mAdapter.resetFilter();
+                }
 
             }
 
             @Override
             public void afterTextChanged(Editable s) {
 
-                if(mAdapter != null){
-                    String query = s.toString();
-                    mAdapter.filter(query);
-                }
 
             }
         });
@@ -121,7 +128,7 @@ public class AddWalletsActivity extends BRActivity {
                     Log.d(TAG, "onTokenAdded() : Adding token to KV store list -> " + item.name);
                     metaData.enabledCurrencies.add(item);
                     KVStoreManager.getInstance().putTokenListMetaData(AddWalletsActivity.this, metaData);
-                }else if(metaData == null){
+                } else if (metaData == null) {
                     Log.d(TAG, "onTokenAdded(): TokenListMetaData is null");
                     metaData = new TokenListMetaData();
                     metaData.enabledCurrencies = new ArrayList<>();

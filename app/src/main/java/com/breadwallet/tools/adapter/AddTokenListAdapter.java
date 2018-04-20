@@ -25,6 +25,7 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
 
     private Context mContext;
     private ArrayList<TokenItem> mTokens;
+    private ArrayList<TokenItem> mBackupTokens;
     private static final String TAG = AddTokenListAdapter.class.getSimpleName();
     private OnTokenAddOrRemovedListener mListener;
 
@@ -33,6 +34,7 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
         this.mContext = context;
         this.mTokens = tokens;
         this.mListener = listener;
+        this.mBackupTokens = mTokens;
     }
 
     public interface OnTokenAddOrRemovedListener {
@@ -148,18 +150,27 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
         }
     }
 
+    public void resetFilter() {
+        mTokens = mBackupTokens;
+        notifyDataSetChanged();
+    }
+
     public void filter(String query) {
         ArrayList<TokenItem> filteredList = new ArrayList<>();
 
+        query = query.toUpperCase();
+
         for (TokenItem item : mTokens) {
 
-            if (item.name.equals(query) || item.symbol.equals(query) || item.name.contains(query) || item.symbol.contains(query)) {
+
+            if (item.name.contains(query) || item.symbol.contains(query)) {
                 filteredList.add(item);
             }
         }
 
         mTokens = filteredList;
         notifyDataSetChanged();
+
     }
 
 
