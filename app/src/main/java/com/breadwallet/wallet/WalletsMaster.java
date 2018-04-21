@@ -85,13 +85,9 @@ public class WalletsMaster {
     }
 
     public synchronized List<BaseWalletManager> getAllWallets(Context app) {
+        Log.e(TAG, "getAllWallets: " + Thread.currentThread().getName());
         WalletEthManager ethWallet = WalletEthManager.getInstance(app);
-        if (ethWallet != null) {
-            BreadApp.generateWalletIfIfNeeded(app, ethWallet.getReceiveAddress(app).stringify());
-            for (BaseWalletManager wm : mWallets) {
-                if (wm != null) setSpendingLimitIfNotSet(app, wm);
-            }
-        } else {
+        if (ethWallet == null) {
             return mWallets; //return empty wallet list if ETH is null (meaning no public key yet)
         }
         TokenListMetaData md = KVStoreManager.getInstance().getTokenListMetaData(app);
@@ -115,6 +111,7 @@ public class WalletsMaster {
                 } else {
                     //add ERC20 wallet
                     WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(ethWallet, enabled.name);
+
                     if (tokenWallet != null)
                         if (!mWallets.contains(tokenWallet)) mWallets.add(tokenWallet);
                 }
@@ -306,7 +303,8 @@ public class WalletsMaster {
 
     }
 
-    private void setSpendingLimitIfNotSet(final Context app, final BaseWalletManager wm) {
+    public void setSpendingLimitIfNotSet(final Context app, final BaseWalletManager wm) {
+        Log.e(TAG, "setSpendingLimitIfNotSet: " + Thread.currentThread().getName());
         if (app == null) return;
 
         BigDecimal limit = BRKeyStore.getTotalLimit(app, wm.getIso(app));

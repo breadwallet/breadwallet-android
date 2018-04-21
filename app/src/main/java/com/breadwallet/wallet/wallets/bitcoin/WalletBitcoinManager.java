@@ -48,11 +48,9 @@ import com.breadwallet.tools.sqlite.TransactionStorageManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.util.SymbolUtils;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseAddress;
 import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
@@ -181,6 +179,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                 }
             });
 
+            WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
+
             uiConfig = new WalletUiConfiguration("f29500", null,  true);
             settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
         } finally {
@@ -272,8 +272,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public BaseAddress getTxAddress(BaseTransaction tx) {
-        return createAddress(getWallet().getTransactionAddress(tx.getCoreTx()).stringify());
+    public String getTxAddress(BaseTransaction tx) {
+        return getWallet().getTransactionAddress(tx.getCoreTx()).stringify();
     }
 
     @Override
@@ -375,11 +375,6 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     @Override
     public boolean addressIsUsed(String address) {
         return !Utils.isNullOrEmpty(address) && getWallet().addressIsUsed(new BRCoreAddress(address));
-    }
-
-    @Override
-    public BaseAddress createAddress(String address) {
-        return new BTCAddress(address);
     }
 
     @Override

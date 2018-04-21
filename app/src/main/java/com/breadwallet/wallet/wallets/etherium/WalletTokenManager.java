@@ -13,7 +13,6 @@ import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.abstracts.BaseAddress;
 import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
@@ -232,7 +231,7 @@ public class WalletTokenManager implements BaseWalletManager {
     }
 
     @Override
-    public BaseAddress getTxAddress(BaseTransaction tx) {
+    public String getTxAddress(BaseTransaction tx) {
         return mWalletEthManager.getTxAddress(tx);
     }
 
@@ -264,12 +263,12 @@ public class WalletTokenManager implements BaseWalletManager {
     @Override
     public void refreshAddress(Context app) {
         if (Utils.isNullOrEmpty(BRSharedPrefs.getReceiveAddress(app, getIso(app)))) {
-            BaseAddress address = getReceiveAddress(app);
-            if (Utils.isNullOrEmpty(address.stringify())) {
+            String address = getReceiveAddress(app);
+            if (Utils.isNullOrEmpty(address)) {
                 Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
                 BRReportsManager.reportBug(new NullPointerException("empty address!"));
             }
-            BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso(app));
+            BRSharedPrefs.putReceiveAddress(app, address, getIso(app));
         }
     }
 
@@ -298,11 +297,6 @@ public class WalletTokenManager implements BaseWalletManager {
     @Override
     public boolean addressIsUsed(String address) {
         return mWalletEthManager.addressIsUsed(address);
-    }
-
-    @Override
-    public BaseAddress createAddress(String address) {
-        return mWalletEthManager.createAddress(address);
     }
 
     @Override
@@ -336,8 +330,8 @@ public class WalletTokenManager implements BaseWalletManager {
     }
 
     @Override
-    public BaseAddress getReceiveAddress(Context app) {
-        return mWalletEthManager.getReceiveAddress(app);
+    public String getReceiveAddress(Context app) {
+        return mWalletToken.getToken().getAddress();
     }
 
     @Override

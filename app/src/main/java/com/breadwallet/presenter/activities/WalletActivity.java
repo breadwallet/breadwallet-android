@@ -138,11 +138,11 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mProgressBar = findViewById(R.id.sync_progress);
         mNotificationBar = findViewById(R.id.notification_bar);
 
-        if (Utils.isEmulatorOrDebug(this)) {
-            if (logger != null) logger.interrupt();
-            logger = new TestLogger(); //Sync logger
-            logger.start();
-        }
+//        if (Utils.isEmulatorOrDebug(this)) {
+//            if (logger != null) logger.interrupt();
+//            logger = new TestLogger(); //Sync logger
+//            logger.start();
+//        }
 
         setUpBarFlipper();
 
