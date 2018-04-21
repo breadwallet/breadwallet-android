@@ -82,4 +82,8 @@
     <color name="dialog_button_positive">#4b77f3</color>
     <color name="dialog_button_negative">#b3c0c8</color>
 
+    // Add Wallets
+    <color name="add_wallets_header_color">#f9f9f9</color>
+    <color name="add_wallets_searchbar_color">#ececec</color>
+
 </resources>
