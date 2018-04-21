@@ -401,7 +401,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        Log.e(TAG, "run: addOnDataChangedListener");
                         updateUi();
                     }
                 });

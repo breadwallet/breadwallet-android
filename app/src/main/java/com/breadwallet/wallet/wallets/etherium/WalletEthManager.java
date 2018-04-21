@@ -104,7 +104,7 @@ public class WalletEthManager implements BaseWalletManager,
     private final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // 90m ETH * 18 (WEI)
     private final BigDecimal ONE_ETH = new BigDecimal("1000000000000000000"); //1ETH = 1000000000000000000 WEI
     private BREthereumWallet mWallet;
-    BREthereumLightNode.JSON_RPC node;
+    public BREthereumLightNode.JSON_RPC node;
     private Context mContext;
 
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
