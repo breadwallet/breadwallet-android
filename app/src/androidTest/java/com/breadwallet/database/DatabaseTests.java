@@ -177,8 +177,9 @@ public class DatabaseTests {
         ent.code = "OMG";
         ent.name = "OmiseGo";
         ent.rate = 8.43f;
+        ent.iso = "BTC";
         toInsert.add(ent);
-        cds.putCurrencies(app, "BTC", toInsert);
+        cds.putCurrencies(app,  toInsert);
         List<CurrencyEntity> cs = cds.getAllCurrencies(app, "BTC");
         Assert.assertNotNull(cs);
         Assert.assertEquals(cs.size(), 1);
@@ -193,8 +194,9 @@ public class DatabaseTests {
         btcEntity.code = "ETH";
         btcEntity.name = "Ether";
         btcEntity.rate = 6f;
+        btcEntity.iso = "bch";
         toInsert.add(btcEntity);
-        cds.putCurrencies(app, "bch", toInsert);
+        cds.putCurrencies(app,  toInsert);
 
         List<CurrencyEntity> btcCurs = cds.getAllCurrencies(app, "BTC");
         List<CurrencyEntity> bchCurs = cds.getAllCurrencies(app, "BCH");

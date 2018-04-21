@@ -69,7 +69,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
-    public void putCurrencies(Context app, String iso, Collection<CurrencyEntity> currencyEntities) {
+    public void putCurrencies(Context app, Collection<CurrencyEntity> currencyEntities) {
         if (currencyEntities == null || currencyEntities.size() <= 0) {
             Log.e(TAG, "putCurrencies: failed: " + currencyEntities);
             return;
@@ -89,7 +89,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
                 values.put(BRSQLiteHelper.CURRENCY_CODE, c.code);
                 values.put(BRSQLiteHelper.CURRENCY_NAME, c.name);
                 values.put(BRSQLiteHelper.CURRENCY_RATE, c.rate);
-                values.put(BRSQLiteHelper.CURRENCY_ISO, iso.toUpperCase());
+                values.put(BRSQLiteHelper.CURRENCY_ISO, c.iso);
                 database.insertWithOnConflict(BRSQLiteHelper.CURRENCY_TABLE_NAME, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
             }

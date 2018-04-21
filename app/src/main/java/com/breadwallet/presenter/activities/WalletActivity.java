@@ -291,8 +291,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         if (endColor != null) {
             //it's a gradient
-            Log.e(TAG, "updateUi: start:" + startColor);
-            Log.e(TAG, "updateUi: end:" + endColor);
             GradientDrawable gd = new GradientDrawable(
                     GradientDrawable.Orientation.LEFT_RIGHT,
                     new int[]{Color.parseColor(startColor), Color.parseColor(endColor)});
@@ -403,6 +401,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
+                        Log.e(TAG, "run: addOnDataChangedListener");
                         updateUi();
                     }
                 });

@@ -91,7 +91,7 @@ public class WalletTests {
         System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
     }
 
-    public void exchangeTests(){
+    public void exchangeTests() {
         long satoshis = 50000000;
         //todo finish tests
     }
@@ -191,10 +191,10 @@ public class WalletTests {
 
         Set<CurrencyEntity> tmp = new HashSet<>();
         tmp.add(new CurrencyEntity("USD", "Dollar", btcRate, "BTC"));
-        CurrencyDataSource.getInstance(app).putCurrencies(app, "BTC", tmp);
+        CurrencyDataSource.getInstance(app).putCurrencies(app, tmp);
         tmp = new HashSet<>();
         tmp.add(new CurrencyEntity("BTC", "Bitcoin", ethRate, "ETH"));
-        CurrencyDataSource.getInstance(app).putCurrencies(app, "ETH", tmp);
+        CurrencyDataSource.getInstance(app).putCurrencies(app, tmp);
 
         BRSharedPrefs.putCryptoDenomination(app, "BTC", BRConstants.CURRENT_UNIT_BITCOINS);
 
@@ -239,7 +239,7 @@ public class WalletTests {
         //getFiatForSmallestCrypto(..)
         val = new BigDecimal(50000000);
         res = btcWallet.getFiatForSmallestCrypto(app, val, null);
-        Assert.assertEquals(res.doubleValue(), btcRate / 2 , 0); // dollars
+        Assert.assertEquals(res.doubleValue(), btcRate / 2, 0); // dollars
 
         //getSmallestCryptoForFiat(..)
         val = new BigDecimal(6000);//$6000.00 = c600000

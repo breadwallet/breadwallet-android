@@ -332,7 +332,7 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public CryptoAddress getReceiveAddress(Context app) {
-        return new CryptoAddress(mWalletToken.getToken().getAddress(), null);
+        return mWalletEthManager.getReceiveAddress(app);
     }
 
     @Override

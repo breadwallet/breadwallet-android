@@ -104,10 +104,7 @@ public class BRApiManager {
                         tmp.name = tmpObj.getString("name");
                         tmp.code = tmpObj.getString("code");
                         tmp.rate = (float) tmpObj.getDouble("rate");
-                        String selectedISO = BRSharedPrefs.getPreferredFiatIso(context);
-                        if (tmp.code.equalsIgnoreCase(selectedISO)) {
-                            BRSharedPrefs.putPreferredFiatIso(context, tmp.code);
-                        }
+                        tmp.iso = walletManager.getIso(context);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -160,9 +157,8 @@ public class BRApiManager {
                         @Override
                         public void run() {
                             //get each wallet's rates
-                            String iso = w.getIso(context);
                             Set<CurrencyEntity> tmp = getCurrencies((Activity) context, w);
-                            CurrencyDataSource.getInstance(context).putCurrencies(context, iso, tmp);
+                            CurrencyDataSource.getInstance(context).putCurrencies(context, tmp);
                         }
                     });
                 }
@@ -187,6 +183,7 @@ public class BRApiManager {
                 return;
             }
             String object = null;
+            Set<CurrencyEntity> tmp = new LinkedHashSet<>();
             for (int i = 0; i < arr.length(); i++) {
 
                 Object obj = arr.get(i);
@@ -201,11 +198,10 @@ public class BRApiManager {
                 String iso = json.getString("symbol");
 
                 CurrencyEntity ent = new CurrencyEntity(code, name, (float) rate, iso);
-                Set<CurrencyEntity> tmp = new LinkedHashSet<>();
                 tmp.add(ent);
-                CurrencyDataSource.getInstance(context).putCurrencies(context, iso, tmp);
 
             }
+            CurrencyDataSource.getInstance(context).putCurrencies(context, tmp);
             if (object != null)
                 BRReportsManager.reportBug(new IllegalArgumentException("JSONArray returns a wrong object: " + object));
         } catch (JSONException e) {
