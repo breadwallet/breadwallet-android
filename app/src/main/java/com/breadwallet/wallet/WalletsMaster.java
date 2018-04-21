@@ -85,7 +85,6 @@ public class WalletsMaster {
     }
 
     public synchronized List<BaseWalletManager> getAllWallets(Context app) {
-        mWallets.clear();
         WalletEthManager ethWallet = WalletEthManager.getInstance(app);
         if (ethWallet != null) {
             BreadApp.generateWalletIfIfNeeded(app, ethWallet.getReceiveAddress(app).stringify());
@@ -93,7 +92,7 @@ public class WalletsMaster {
                 if (wm != null) setSpendingLimitIfNotSet(app, wm);
             }
         } else {
-            return mWallets; //return empty wallets if ETH is null (meaning no public key yet)
+            return mWallets; //return empty wallet list if ETH is null (meaning no public key yet)
         }
         TokenListMetaData md = KVStoreManager.getInstance().getTokenListMetaData(app);
         if (md == null) md = new TokenListMetaData(1, null, null);
@@ -114,16 +113,13 @@ public class WalletsMaster {
                         mWallets.add(ethWallet);
                     }
                 } else {
-                    if (ethWallet != null) {
-                        //add ERC20 wallet
-                        WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(ethWallet, enabled.name);
-                        if (tokenWallet != null)
-                            if (!mWallets.contains(tokenWallet)) mWallets.add(tokenWallet);
-                    }
+                    //add ERC20 wallet
+                    WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(ethWallet, enabled.name);
+                    if (tokenWallet != null)
+                        if (!mWallets.contains(tokenWallet)) mWallets.add(tokenWallet);
                 }
             }
         }
-
 
         return mWallets;
     }
