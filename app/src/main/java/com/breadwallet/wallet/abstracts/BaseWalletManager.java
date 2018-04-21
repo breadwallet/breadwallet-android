@@ -13,6 +13,7 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
+import com.breadwallet.wallet.wallets.CryptoAddress;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -162,7 +163,7 @@ public interface BaseWalletManager {
 
     @WorkerThread
         //get the wallet's receive address
-    String getReceiveAddress(Context app);
+    CryptoAddress getReceiveAddress(Context app);
 
     BaseTransaction createTransaction(BigDecimal amount, String address);
 

@@ -8,6 +8,7 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
@@ -40,6 +41,7 @@ import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
+import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.google.firebase.crash.FirebaseCrash;
 
@@ -150,7 +152,7 @@ public class WalletEthManager implements BaseWalletManager,
             }
         }
 
-        BreadApp.generateWalletIfIfNeeded(app, getReceiveAddress(app));
+        BreadApp.generateWalletIfIfNeeded(app, getReceiveAddress(app).stringify());
         WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
 
         mContext = app;
@@ -410,12 +412,12 @@ public class WalletEthManager implements BaseWalletManager,
     @Override
     public void refreshAddress(Context app) {
         if (Utils.isNullOrEmpty(BRSharedPrefs.getReceiveAddress(app, getIso(app)))) {
-            String address = getReceiveAddress(app);
-            if (Utils.isNullOrEmpty(address)) {
+            CryptoAddress address = getReceiveAddress(app);
+            if (Utils.isNullOrEmpty(address.stringify())) {
                 Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
                 BRReportsManager.reportBug(new NullPointerException("empty address!"));
             }
-            BRSharedPrefs.putReceiveAddress(app, address, getIso(app));
+            BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso(app));
         }
     }
 
@@ -496,8 +498,8 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-    public String getReceiveAddress(Context app) {
-        return mWallet.getAccount().getPrimaryAddress();
+    public CryptoAddress getReceiveAddress(Context app) {
+        return new CryptoAddress(mWallet.getAccount().getPrimaryAddress(), null);
     }
 
     @Override

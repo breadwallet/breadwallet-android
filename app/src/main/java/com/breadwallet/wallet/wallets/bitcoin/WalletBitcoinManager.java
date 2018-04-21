@@ -59,6 +59,7 @@ import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
+import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.entities.TxMetaData;
@@ -425,8 +426,9 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public BaseAddress getReceiveAddress(Context app) {
-        return createAddress(getWallet().getReceiveAddress().stringify());
+    public CryptoAddress getReceiveAddress(Context app) {
+        BRCoreAddress addr = getWallet().getReceiveAddress();
+        return new CryptoAddress(addr.stringify(), addr);
     }
 
     @Override

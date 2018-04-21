@@ -21,6 +21,7 @@ import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
+import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 
 import java.math.BigDecimal;
@@ -263,7 +264,7 @@ public class WalletTokenManager implements BaseWalletManager {
     @Override
     public void refreshAddress(Context app) {
         if (Utils.isNullOrEmpty(BRSharedPrefs.getReceiveAddress(app, getIso(app)))) {
-            String address = getReceiveAddress(app);
+            String address = getReceiveAddress(app).stringify();
             if (Utils.isNullOrEmpty(address)) {
                 Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
                 BRReportsManager.reportBug(new NullPointerException("empty address!"));
@@ -330,8 +331,8 @@ public class WalletTokenManager implements BaseWalletManager {
     }
 
     @Override
-    public String getReceiveAddress(Context app) {
-        return mWalletToken.getToken().getAddress();
+    public CryptoAddress getReceiveAddress(Context app) {
+        return new CryptoAddress(mWalletToken.getToken().getAddress(), null);
     }
 
     @Override
