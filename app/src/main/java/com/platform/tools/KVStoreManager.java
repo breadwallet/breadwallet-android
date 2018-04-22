@@ -161,27 +161,23 @@ public class KVStoreManager {
 
     public void putTokenListMetaData(Context app, TokenListMetaData md) {
         TokenListMetaData old = getTokenListMetaData(app);
-        if (old == null) old = new TokenListMetaData(0, null, null); //create new one if it's null
+        if (old == null) old = new TokenListMetaData(null, null); //create new one if it's null
 
         //add all the params that we want to change
-        if (md.classVersion != 0) old.classVersion = md.classVersion;
         if (md.enabledCurrencies.size() > 0) old.enabledCurrencies = md.enabledCurrencies;
         if (md.hiddenCurrencies.size() > 0) old.hiddenCurrencies = md.hiddenCurrencies;
-
-        //sanity check
-        if (old.classVersion == 0) old.classVersion = 1;
 
         JSONObject obj = new JSONObject();
         byte[] result;
         try {
-            obj.put("classVersion", old.classVersion);
+            obj.put("classVersion", TokenListMetaData.CLASS_VERSION);
             JSONArray enabledArr = new JSONArray();
             JSONArray hiddenArr = new JSONArray();
-            for (TokenListMetaData.TokenItem item : old.enabledCurrencies) {
-                enabledArr.put(item.erc20 ? item.name + ":" + item.contractAddress : item.name);
+            for (TokenListMetaData.TokenInfo item : old.enabledCurrencies) {
+                enabledArr.put(item.erc20 ? item.symbol + ":" + item.contractAddress : item.symbol);
             }
-            for (TokenListMetaData.TokenItem item : old.hiddenCurrencies) {
-                hiddenArr.put(item.erc20 ? item.name + ":" + item.contractAddress : item.name);
+            for (TokenListMetaData.TokenInfo item : old.hiddenCurrencies) {
+                hiddenArr.put(item.erc20 ? item.symbol + ":" + item.contractAddress : item.symbol);
             }
 
             obj.put("enabledCurrencies", enabledArr);
@@ -245,10 +241,10 @@ public class KVStoreManager {
 
         TokenListMetaData result = null;
         try {
-            int classVersion = json.getInt("classVersion");
-            List<TokenListMetaData.TokenItem> enabledCurrencies = jsonToMetaData(json.getJSONArray("enabledCurrencies"));
-            List<TokenListMetaData.TokenItem> hiddenCurrencies = jsonToMetaData(json.getJSONArray("hiddenCurrencies"));
-            result = new TokenListMetaData(classVersion, enabledCurrencies, hiddenCurrencies);
+            int classVersion = json.getInt("classVersion"); //not using yet
+            List<TokenListMetaData.TokenInfo> enabledCurrencies = jsonToMetaData(json.getJSONArray("enabledCurrencies"));
+            List<TokenListMetaData.TokenInfo> hiddenCurrencies = jsonToMetaData(json.getJSONArray("hiddenCurrencies"));
+            result = new TokenListMetaData(enabledCurrencies, hiddenCurrencies);
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(TAG, "getWalletInfo: FAILED to get json value");
@@ -257,8 +253,8 @@ public class KVStoreManager {
         return result;
     }
 
-    private List<TokenListMetaData.TokenItem> jsonToMetaData(JSONArray json) throws JSONException {
-        List<TokenListMetaData.TokenItem> result = new ArrayList<>();
+    private List<TokenListMetaData.TokenInfo> jsonToMetaData(JSONArray json) throws JSONException {
+        List<TokenListMetaData.TokenInfo> result = new ArrayList<>();
         if (json == null) {
             Log.e(TAG, "jsonToMetaData: JSONArray is null");
             return result;
@@ -266,13 +262,13 @@ public class KVStoreManager {
         for (int i = 0; i < json.length(); i++) {
             String s = json.getString(i);
             boolean isErc20 = s.contains(":");
-            String name = s;
+            String symbol = s;
             String address = null;
             if (isErc20) {
-                name = s.split(":")[0];
+                symbol = s.split(":")[0];
                 address = s.split(":")[1];
             }
-            result.add(new TokenListMetaData.TokenItem(name, isErc20, address));
+            result.add(new TokenListMetaData.TokenInfo(symbol, isErc20, address));
         }
 
         return result;

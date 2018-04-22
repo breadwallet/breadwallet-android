@@ -94,7 +94,6 @@ public class WebViewActivity extends BRActivity {
 
         webView = findViewById(R.id.web_view);
         webView.setBackgroundColor(0);
-//        webView.setWebChromeClient(new BRWebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
 
             @Override

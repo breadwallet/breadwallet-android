@@ -86,6 +86,7 @@ public class AddWalletsActivity extends BRActivity {
         super.onResume();
 
         final ArrayList<TokenItem> tokenItems = new ArrayList<>();
+        final TokenListMetaData md = KVStoreManager.getInstance().getTokenListMetaData(this);
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -93,11 +94,11 @@ public class AddWalletsActivity extends BRActivity {
                 mTokens = BREthereumToken.tokens;
 
 
-                for (int i = 0; i < mTokens.length; i++) {
+                for (BREthereumToken token : mTokens) {
 
-                    BREthereumToken token = mTokens[i];
                     TokenItem tokenItem = new TokenItem(token.getAddress(), token.getSymbol(), token.getName(), null);
-                    tokenItems.add(tokenItem);
+                    if (!md.isCurrencyEnabled(tokenItem.symbol))
+                        tokenItems.add(tokenItem);
 
                 }
 
@@ -110,24 +111,19 @@ public class AddWalletsActivity extends BRActivity {
             @Override
             public void onTokenAdded(TokenItem token) {
 
-                Log.d(TAG, "onTokenAdded, -> " + token.name);
+                Log.d(TAG, "onTokenAdded, -> " + token.symbol);
 
                 TokenListMetaData metaData = KVStoreManager.getInstance().getTokenListMetaData(AddWalletsActivity.this);
-                TokenListMetaData.TokenItem item = new TokenListMetaData.TokenItem(token.name, true, token.address);
-
-                if (metaData != null && metaData.enabledCurrencies != null) {
-                    Log.d(TAG, "onTokenAdded(): TokenListMetaData not null");
-                    Log.d(TAG, "onTokenAdded() : Adding token to KV store list -> " + item.name);
-                    metaData.enabledCurrencies.add(item);
-                    KVStoreManager.getInstance().putTokenListMetaData(AddWalletsActivity.this, metaData);
-                } else if (metaData == null) {
-                    Log.d(TAG, "onTokenAdded(): TokenListMetaData is null");
-                    metaData = new TokenListMetaData();
+                TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(token.symbol, true, token.address);
+                if (metaData == null) metaData = new TokenListMetaData(null, null);
+                if (metaData.enabledCurrencies == null)
                     metaData.enabledCurrencies = new ArrayList<>();
+                if (!metaData.isCurrencyEnabled(item.symbol))
                     metaData.enabledCurrencies.add(item);
-                    KVStoreManager.getInstance().putTokenListMetaData(AddWalletsActivity.this, metaData);
-                }
 
+                KVStoreManager.getInstance().putTokenListMetaData(AddWalletsActivity.this, metaData);
+
+                mAdapter.notifyDataSetChanged();
 
             }
 
@@ -136,16 +132,13 @@ public class AddWalletsActivity extends BRActivity {
                 Log.d(TAG, "onTokenRemoved, -> " + token.name);
 
                 TokenListMetaData metaData = KVStoreManager.getInstance().getTokenListMetaData(AddWalletsActivity.this);
-                TokenListMetaData.TokenItem item = new TokenListMetaData.TokenItem(token.name, true, token.address);
+                TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(token.symbol, true, token.address);
+                if (metaData == null) metaData = new TokenListMetaData(null, null);
+                metaData.disableCurrency(item.symbol);
 
-                if (metaData != null && metaData.hiddenCurrencies != null) {
-                    Log.d(TAG, "onTokenRemoved() : Removing token from KV Store list -> " + item.name);
-                    metaData.hiddenCurrencies.add(item);
-                    KVStoreManager.getInstance().putTokenListMetaData(AddWalletsActivity.this, metaData);
+                KVStoreManager.getInstance().putTokenListMetaData(AddWalletsActivity.this, metaData);
 
-                }
-
-
+                mAdapter.notifyDataSetChanged();
             }
         });
         mRecycler.setLayoutManager(new LinearLayoutManager(this));

@@ -34,6 +34,9 @@ public class WalletUiConfiguration {
         this.mStartColor = startColor.contains("#") ? startColor : "#" + startColor;
         this.mEndColor = endColor != null ? (endColor.contains("#") ? endColor : "#" + endColor) : this.mStartColor;
         this.showRequestAnAmount = showRequestAnAmount;
+        //temp
+        if(mStartColor.equalsIgnoreCase("#fafafa")) mStartColor = "#6AAC6D";
+        if(mEndColor.equalsIgnoreCase("#fafafa")) mEndColor = "#549957";
     }
 
 }

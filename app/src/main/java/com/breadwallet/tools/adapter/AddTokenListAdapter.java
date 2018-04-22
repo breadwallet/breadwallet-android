@@ -55,7 +55,6 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
             tickerName = "first";
         }
 
-
         String iconResourceName = tickerName;
         int iconResourceId = mContext.getResources().getIdentifier(tickerName, "drawable", mContext.getPackageName());
 
@@ -67,47 +66,27 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
             e.printStackTrace();
             Log.d(TAG, "Error finding icon for -> " + iconResourceName);
         }
+
+        holder.addRemoveButton.setText(item.isAdded ? "Remove" : "Add");
+        holder.addRemoveButton.setBackground(mContext.getDrawable(item.isAdded ? R.drawable.remove_wallet_button : R.drawable.add_wallet_button));
+        holder.addRemoveButton.setTextColor(mContext.getColor(item.isAdded ? R.color.red : R.color.dialog_button_positive));
+
         holder.addRemoveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                 // Set button to "Remove"
+                // Set button to "Remove"
                 if (!mTokens.get(position).isAdded) {
                     mTokens.get(position).isAdded = true;
-                    holder.addRemoveButton.setText("Remove");
-                    holder.addRemoveButton.setBackground(mContext.getDrawable(R.drawable.remove_wallet_button));
-                    holder.addRemoveButton.setTextColor(mContext.getColor(R.color.red));
-
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    params.width = Utils.getPixelsFromDps(mContext, 55);
-                    params.height = Utils.getPixelsFromDps(mContext, 30);
-                    params.addRule(RelativeLayout.ALIGN_PARENT_END, holder.addRemoveButton.getId());
-                    params.addRule(RelativeLayout.CENTER_VERTICAL, holder.addRemoveButton.getId());
-                    params.setMarginEnd(Utils.getPixelsFromDps(mContext, 12));
-                    holder.addRemoveButton.setLayoutParams(params);
                     mListener.onTokenAdded(mTokens.get(position));
                 }
 
                 // Set button back to "Add"
                 else {
                     mTokens.get(position).isAdded = false;
-
-                    holder.addRemoveButton.setText("Add");
-                    holder.addRemoveButton.setBackground(mContext.getDrawable(R.drawable.add_wallet_button));
-                    holder.addRemoveButton.setTextColor(mContext.getColor(R.color.dialog_button_positive));
-
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    params.width = Utils.getPixelsFromDps(mContext, 40);
-                    params.height = Utils.getPixelsFromDps(mContext, 30);
-                    params.addRule(RelativeLayout.ALIGN_PARENT_END, holder.addRemoveButton.getId());
-                    params.addRule(RelativeLayout.CENTER_VERTICAL, holder.addRemoveButton.getId());
-                    params.setMarginEnd(Utils.getPixelsFromDps(mContext, 12));
-                    holder.addRemoveButton.setLayoutParams(params);
                     mListener.onTokenRemoved(mTokens.get(position));
 
-
                 }
-
 
             }
         });
@@ -159,14 +138,13 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
     }
 
     public void filter(String query) {
+        resetFilter();
         ArrayList<TokenItem> filteredList = new ArrayList<>();
 
-        query = query.toUpperCase();
+        query = query.toLowerCase();
 
         for (TokenItem item : mTokens) {
-
-
-            if (item.name.contains(query) || item.symbol.contains(query)) {
+            if (item.name.toLowerCase().contains(query) || item.symbol.toLowerCase().contains(query)) {
                 filteredList.add(item);
             }
         }
@@ -175,6 +153,5 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
         notifyDataSetChanged();
 
     }
-
 
 }

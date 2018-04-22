@@ -90,26 +90,33 @@ public class WalletsMaster {
             return mWallets; //return empty wallet list if ETH is null (meaning no public key yet)
         }
         TokenListMetaData md = KVStoreManager.getInstance().getTokenListMetaData(app);
-        if (md == null) md = new TokenListMetaData(1, null, null);
+        if (md == null) {
+            List<TokenListMetaData.TokenInfo> enabled = new ArrayList<>();
+            enabled.add(new TokenListMetaData.TokenInfo("BTC", false, null));
+            enabled.add(new TokenListMetaData.TokenInfo("BCH", false, null));
+            enabled.add(new TokenListMetaData.TokenInfo("ETH", false, null));
+            md = new TokenListMetaData(enabled, null);
+            KVStoreManager.getInstance().putTokenListMetaData(app, md); //put default currencies if null
+        }
 
-        for (TokenListMetaData.TokenItem enabled : md.enabledCurrencies) {
+        for (TokenListMetaData.TokenInfo enabled : md.enabledCurrencies) {
             if (!md.hiddenCurrencies.contains(enabled)) {
-                if (enabled.name.equalsIgnoreCase("BTC")) {
+                if (enabled.symbol.equalsIgnoreCase("BTC")) {
                     //BTC wallet
                     if (!mWallets.contains(WalletBitcoinManager.getInstance(app)))
                         mWallets.add(WalletBitcoinManager.getInstance(app));
-                } else if (enabled.name.equalsIgnoreCase("BCH")) {
+                } else if (enabled.symbol.equalsIgnoreCase("BCH")) {
                     //BCH wallet
                     if (!mWallets.contains(WalletBchManager.getInstance(app)))
                         mWallets.add(WalletBchManager.getInstance(app));
-                } else if (enabled.name.equalsIgnoreCase("ETH")) {
+                } else if (enabled.symbol.equalsIgnoreCase("ETH")) {
                     //ETH wallet
                     if (!mWallets.contains(ethWallet)) {
                         mWallets.add(ethWallet);
                     }
                 } else {
                     //add ERC20 wallet
-                    WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(ethWallet, enabled.name);
+                    WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(ethWallet, enabled.symbol);
                     if (tokenWallet != null)
                         if (!mWallets.contains(tokenWallet)) mWallets.add(tokenWallet);
                 }

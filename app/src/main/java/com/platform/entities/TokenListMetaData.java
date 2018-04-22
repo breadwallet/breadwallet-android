@@ -1,6 +1,8 @@
 package com.platform.entities;
 
 
+import com.breadwallet.presenter.entities.TokenItem;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -41,40 +43,59 @@ public class TokenListMetaData {
      * }
      */
 
-    public int classVersion;
-    public List<TokenItem> enabledCurrencies;
-    public List<TokenItem> hiddenCurrencies;
+    public static final int CLASS_VERSION = 2;
+    public List<TokenInfo> enabledCurrencies;
+    public List<TokenInfo> hiddenCurrencies;
 
-    public TokenListMetaData(int classVersion, List<TokenItem> enabledCurrencies, List<TokenItem> hiddenCurrencies) {
-        this.classVersion = classVersion;
+    public TokenListMetaData(List<TokenInfo> enabledCurrencies, List<TokenInfo> hiddenCurrencies) {
         this.enabledCurrencies = enabledCurrencies;
         this.hiddenCurrencies = hiddenCurrencies;
 
         if (this.enabledCurrencies == null) {
             this.enabledCurrencies = new ArrayList<>();
-            this.enabledCurrencies.add(new TokenItem("BTC", false, null));
-            this.enabledCurrencies.add(new TokenItem("BCH", false, null));
-            this.enabledCurrencies.add(new TokenItem("ETH", false, null));
+            this.enabledCurrencies.add(new TokenInfo("BTC", false, null));
+            this.enabledCurrencies.add(new TokenInfo("BCH", false, null));
+            this.enabledCurrencies.add(new TokenInfo("ETH", false, null));
         }
         if (this.hiddenCurrencies == null) this.hiddenCurrencies = new ArrayList<>();
     }
 
+    public boolean isCurrencyHidden(String symbol) {
+        if (hiddenCurrencies == null || hiddenCurrencies.size() == 0) return false;
+        for (TokenInfo info : hiddenCurrencies)
+            if (info.symbol.equalsIgnoreCase(symbol)) return true;
+        return false;
+    }
 
-    public static class TokenItem {
-        public String name;
+    public boolean isCurrencyEnabled(String symbol) {
+        if (enabledCurrencies == null || enabledCurrencies.size() == 0) return false;
+        for (TokenInfo info : enabledCurrencies)
+            if (info.symbol.equalsIgnoreCase(symbol)) return true;
+        return false;
+    }
+
+    public void disableCurrency(String symbol) {
+        if (enabledCurrencies == null || enabledCurrencies.size() == 0) return;
+        for (TokenInfo info : enabledCurrencies)
+            if (info.symbol.equalsIgnoreCase(symbol)) enabledCurrencies.remove(info);
+    }
+
+    public static class TokenInfo {
+        public String symbol;
         public boolean erc20;
         public String contractAddress;
 
-        public TokenItem(String name, boolean erc20, String contractAddress) {
-            this.name = name;
+        public TokenInfo(String symbol, boolean erc20, String contractAddress) {
+            this.symbol = symbol;
             this.erc20 = erc20;
             this.contractAddress = contractAddress;
         }
 
         @Override
         public String toString() {
-            return erc20 ? name + ":" + contractAddress : name;
+            return erc20 ? symbol + ":" + contractAddress : symbol;
         }
     }
+
 
 }

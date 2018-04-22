@@ -121,6 +121,7 @@ public class WalletTokenManager implements BaseWalletManager {
 
     public synchronized static WalletTokenManager getTokenWalletByIso(WalletEthManager walletEthManager, String iso) {
         for (BREthereumToken t : BREthereumToken.tokens) {
+
             if (t.getSymbol().toLowerCase().equalsIgnoreCase(iso.toLowerCase())) {
                 return getTokenWallet(walletEthManager, t.getAddress());
             }
