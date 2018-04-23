@@ -176,7 +176,7 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public long getRelayCount(byte[] txHash) {
-        return -1;
+        return 3; // ready to go
     }
 
     @Override
@@ -211,7 +211,7 @@ public class WalletTokenManager implements BaseWalletManager {
     }
 
     @Override
-    public BaseTransaction[] getTxs() {
+    public BaseTransaction[] getTxs(Context app) {
         return (BaseTransaction[]) mWalletToken.getTransactions();
     }
 

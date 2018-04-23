@@ -234,7 +234,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     @Override
-    public BaseTransaction[] getTxs() {
+    public BaseTransaction[] getTxs(Context app) {
         return (BaseTransaction[]) getWallet().getTransactions();
     }
 

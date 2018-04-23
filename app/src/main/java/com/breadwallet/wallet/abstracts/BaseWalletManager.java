@@ -97,7 +97,7 @@ public interface BaseWalletManager {
 
     @WorkerThread
         //get a list of all the transactions sorted by timestamp (e.g. BRCoreTransaction[] for BTC)
-    BaseTransaction[] getTxs();
+    BaseTransaction[] getTxs(Context app);
 
     //get the transaction fee
     BigDecimal getTxFee(BaseTransaction tx);

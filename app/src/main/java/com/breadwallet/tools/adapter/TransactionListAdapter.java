@@ -190,7 +190,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         int level;
         if (confirms <= 0) {
             long relayCount = wallet.getRelayCount(item.getTxHash());
-            if (relayCount == -1) relayCount = 3; //Ethereum does not have relay count
             if (relayCount <= 0)
                 level = 0;
             else if (relayCount == 1)
