@@ -724,24 +724,25 @@ public class WalletEthManager implements BaseWalletManager,
 
                                 if (responseObject.has("result")) {
                                     balance = responseObject.getString("result");
+                                    node.announceBalance(wid, balance, rid);
+
+                                    // TODO: Use `wallet`, not `mWallet`
+                                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            for (OnBalanceChangedListener list : balanceListeners)
+                                                if (list != null)
+                                                    list.onBalanceChanged(ISO, new BigDecimal(mWallet.getBalance()));
+                                        }
+                                    });
                                 }
                             } else {
-//                                Log.e(TAG, "onRpcRequestCompleted: jsonResult is null");
+                                Log.e(TAG, "onRpcRequestCompleted: jsonResult is null");
                             }
                         } catch (JSONException je) {
                             je.printStackTrace();
                         }
-                        node.announceBalance(wid, balance, rid);
 
-                        // TODO: Use `wallet`, not `mWallet`
-                        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                for (OnBalanceChangedListener list : balanceListeners)
-                                    if (list != null)
-                                        list.onBalanceChanged(ISO, new BigDecimal(mWallet.getBalance()));
-                            }
-                        });
                     }
                 });
             }
@@ -776,29 +777,29 @@ public class WalletEthManager implements BaseWalletManager,
 
                                 try {
 
-                                    if (jsonResult != null) {
+                                    if (!Utils.isNullOrEmpty(jsonResult)) {
 
                                         JSONObject responseObject = new JSONObject(jsonResult);
 
                                         if (responseObject.has("result")) {
                                             balance = responseObject.getString("result");
+                                            node.announceBalance(wid, balance, rid);
+
+                                            // TODO: Use `wallet`, not `mWallet`
+                                            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                                                @Override
+                                                public void run() {
+                                                    for (OnBalanceChangedListener list : balanceListeners)
+                                                        if (list != null)
+                                                            list.onBalanceChanged(ISO, new BigDecimal(mWallet.getBalance()));
+                                                }
+                                            });
                                         }
                                     }
                                 } catch (JSONException je) {
                                     je.printStackTrace();
                                 }
 
-                                node.announceBalance(wid, balance, rid);
-
-                                // TODO: Use `wallet`, not `mWallet`
-                                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        for (OnBalanceChangedListener list : balanceListeners)
-                                            if (list != null)
-                                                list.onBalanceChanged(ISO, new BigDecimal(mWallet.getBalance()));
-                                    }
-                                });
                             }
                         });
             }

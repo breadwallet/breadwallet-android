@@ -227,7 +227,8 @@ public class WalletTokenManager implements BaseWalletManager {
         if (amount.compareTo(new BigDecimal(0)) == 0) {
             fee = new BigDecimal(0);
         } else {
-            fee = new BigDecimal(mWalletToken.transactionEstimatedFee(amount.toPlainString(), BREthereumAmount.Unit.TOKEN_DECIMAL, BREthereumAmount.Unit.TOKEN_DECIMAL));
+            fee = new BigDecimal(mWalletToken.transactionEstimatedFee(amount.toPlainString(),
+                    BREthereumAmount.Unit.TOKEN_DECIMAL, BREthereumAmount.Unit.ETHER_WEI));
         }
         return fee;
     }
@@ -465,6 +466,13 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
+        if (amount == null) return null;
+        amount = amount.stripTrailingZeros();
+        //if the maount has more than 18 digits, then it's probably WEI (ETH fee amount)
+        //Use ETH wallet to convert
+        if (amount.precision() - amount.scale() >= 18) {
+            return mWalletEthManager.getCryptoForSmallestCrypto(app, amount);
+        }
         return amount; //only using Tokens
     }
 

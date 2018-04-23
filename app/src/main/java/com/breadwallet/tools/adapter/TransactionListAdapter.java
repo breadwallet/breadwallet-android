@@ -156,7 +156,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void setTexts(final TxHolder convertView, int position) {
-        Log.e(TAG, "setTexts: 1");
         BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
         TxUiHolder item = itemFeed.get(position);
 //        item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
@@ -224,7 +223,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         String shortDate = BRDateUtil.getShortDate(timeStamp);
 
         convertView.transactionDate.setText(shortDate);
-        Log.e(TAG, "setTexts: 2");
     }
 
     private void showTransactionProgress(TxHolder holder, int progress) {
