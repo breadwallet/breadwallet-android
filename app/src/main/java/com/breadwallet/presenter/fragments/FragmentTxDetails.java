@@ -269,7 +269,7 @@ public class FragmentTxDetails extends DialogFragment {
             mAmountNow.setText(amountNow);
 
             // If 'amount when sent' is 0 or unavailable, show fiat tx amount on its own
-            if (amountWhenSent.equals("$0.00") || amountWhenSent.equals("") || amountWhenSent == null) {
+            if (fiatAmountWhenSent.compareTo(new BigDecimal(0)) == 0) {
                 mAmountWhenSent.setVisibility(View.INVISIBLE);
                 mWhenSentLabel.setVisibility(View.INVISIBLE);
                 mNowLabel.setVisibility(View.INVISIBLE);

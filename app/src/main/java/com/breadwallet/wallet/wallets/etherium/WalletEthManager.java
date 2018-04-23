@@ -439,12 +439,6 @@ public class WalletEthManager implements BaseWalletManager,
         List<TxUiHolder> uiTxs = new ArrayList<>();
         for (int i = txs.length - 1; i >= 0; i--) { //revere order
             BREthereumTransaction tx = txs[i];
-//            TxMetaData md = KVStoreManager.getInstance().getTxMetaData(app, tx.getHash().getBytes()); //EXPENSIVE OPERATION
-            //if the txMetaData isn't saved - SAVE IT!
-//            if (md == null)
-//                md = KVStoreManager.getInstance().createMetadata(app, this, new CryptoTransaction(tx));
-//            if (md != null)
-//                KVStoreManager.getInstance().putTxMetaData(app, md, tx.getHash().getBytes());
             uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(mWallet.getAccount().getPrimaryAddress()), tx.getBlockTimestamp(),
                     (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null : tx.getHash().getBytes(), tx.getHash(), null, tx,
                     tx.getTargetAddress(), tx.getSourceAddress(), null, 0,

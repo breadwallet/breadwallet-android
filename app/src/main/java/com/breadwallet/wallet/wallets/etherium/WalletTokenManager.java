@@ -291,8 +291,18 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public List<TxUiHolder> getTxUiHolders(Context app) {
-        //todo implement
-        return null;
+        BREthereumTransaction txs[] = mWalletToken.getTransactions();
+        if (txs == null || txs.length <= 0) return null;
+        List<TxUiHolder> uiTxs = new ArrayList<>();
+        for (int i = txs.length - 1; i >= 0; i--) { //revere order
+            BREthereumTransaction tx = txs[i];
+            uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(mWalletToken.getAccount().getPrimaryAddress()), tx.getBlockTimestamp(),
+                    (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null : tx.getHash().getBytes(), tx.getHash(), null, tx,
+                    tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
+                    new BigDecimal(tx.getAmount()), true));
+        }
+
+        return uiTxs;
     }
 
     @Override
