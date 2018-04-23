@@ -42,6 +42,9 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     private boolean mObesrverIsStarting;
     private SyncNotificationBroadcastReceiver mSyncNotificationBroadcastReceiver;
 
+    private static final int VIEW_TYPE_WALLET = 0;
+    private static final int VIEW_TYPE_ADD_WALLET = 1;
+
     public WalletListAdapter(Context context, ArrayList<BaseWalletManager> walletList) {
         this.mContext = context;
         mWalletItems = new ArrayList<>();
@@ -56,39 +59,61 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     public WalletItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 
         LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-        View convertView = inflater.inflate(R.layout.wallet_list_item, parent, false);
+        View convertView;
 
-        return new WalletItemViewHolder(convertView);
+        if (viewType == VIEW_TYPE_WALLET) {
+            convertView = inflater.inflate(R.layout.wallet_list_item, parent, false);
+            return new WalletItemViewHolder(convertView);
+        } else {
+            convertView = inflater.inflate(R.layout.add_wallets_item, parent, false);
+            return new AddWalletItemViewHolder(convertView);
+
+        }
+
+
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        if (position < mWalletItems.size()) {
+            return VIEW_TYPE_WALLET;
+        } else return VIEW_TYPE_ADD_WALLET;
     }
 
     public BaseWalletManager getItemAt(int pos) {
-        return mWalletItems.get(pos).walletManager;
+        if (pos < mWalletItems.size()) {
+            return mWalletItems.get(pos).walletManager;
+        }
+
+        return null;
     }
 
     @Override
     public void onBindViewHolder(final WalletItemViewHolder holder, int position) {
 
-        WalletItem item = mWalletItems.get(position);
-        final BaseWalletManager wallet = item.walletManager;
-        String name = wallet.getName(mContext);
-        final String iso = wallet.getIso(mContext);
-        String exchangeRate = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatExchangeRate(mContext));
-        String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatBalance(mContext));
-        String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getIso(mContext), wallet.getCachedBalance(mContext));
+        if (getItemViewType(position) == VIEW_TYPE_WALLET) {
 
-        // Set wallet fields
-        holder.mWalletName.setText(name);
-        holder.mTradePrice.setText(mContext.getString(R.string.Account_exchangeRate, exchangeRate, iso));
-        holder.mWalletBalanceUSD.setText(fiatBalance);
-        holder.mWalletBalanceCurrency.setText(cryptoBalance);
-        holder.mSyncingProgressBar.setVisibility(item.mShowSyncing ? View.VISIBLE : View.INVISIBLE);
-        holder.mSyncingProgressBar.setProgress(item.mProgress);
-        holder.mSyncingLabel.setVisibility(item.mShowSyncingLabel ? View.VISIBLE : View.INVISIBLE);
-        holder.mSyncingLabel.setText(item.mLabelText);
-        holder.mWalletBalanceCurrency.setVisibility(item.mShowBalance ? View.VISIBLE : View.INVISIBLE);
+            WalletItem item = mWalletItems.get(position);
+            final BaseWalletManager wallet = item.walletManager;
+            String name = wallet.getName(mContext);
+            final String iso = wallet.getIso(mContext);
+            String exchangeRate = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatExchangeRate(mContext));
+            String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatBalance(mContext));
+            String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getIso(mContext), wallet.getCachedBalance(mContext));
 
-        String startColor = wallet.getUiConfiguration().mStartColor;
-        String endColor = wallet.getUiConfiguration().mEndColor;
+            // Set wallet fields
+            holder.mWalletName.setText(name);
+            holder.mTradePrice.setText(mContext.getString(R.string.Account_exchangeRate, exchangeRate, iso));
+            holder.mWalletBalanceUSD.setText(fiatBalance);
+            holder.mWalletBalanceCurrency.setText(cryptoBalance);
+            holder.mSyncingProgressBar.setVisibility(item.mShowSyncing ? View.VISIBLE : View.INVISIBLE);
+            holder.mSyncingProgressBar.setProgress(item.mProgress);
+            holder.mSyncingLabel.setVisibility(item.mShowSyncingLabel ? View.VISIBLE : View.INVISIBLE);
+            holder.mSyncingLabel.setText(item.mLabelText);
+            holder.mWalletBalanceCurrency.setVisibility(item.mShowBalance ? View.VISIBLE : View.INVISIBLE);
+
+            String startColor = wallet.getUiConfiguration().mStartColor;
+            String endColor = wallet.getUiConfiguration().mEndColor;
 
         Drawable drawable = mContext.getResources().getDrawable(R.drawable.crypto_card_shape, null).mutate();
         //create gradient with 2 colors if exist
@@ -96,6 +121,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         ((GradientDrawable) drawable).setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
         holder.mParent.setBackground(drawable);
 
+        }
     }
 
     public void stopObserving() {
@@ -201,7 +227,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
     @Override
     public int getItemCount() {
-        return mWalletItems.size();
+        return mWalletItems.size() + 1;
     }
 
     public class WalletItemViewHolder extends RecyclerView.ViewHolder {
@@ -224,6 +250,13 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             mParent = view.findViewById(R.id.wallet_card);
             mSyncingLabel = view.findViewById(R.id.syncing_label);
             mSyncingProgressBar = view.findViewById(R.id.sync_progress);
+        }
+    }
+
+    public class AddWalletItemViewHolder extends WalletItemViewHolder {
+
+        public AddWalletItemViewHolder(View view) {
+            super(view);
         }
     }
 

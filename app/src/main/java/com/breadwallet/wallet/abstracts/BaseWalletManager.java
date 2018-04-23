@@ -13,6 +13,7 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
+import com.breadwallet.wallet.wallets.CryptoAddress;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -49,6 +50,8 @@ public interface BaseWalletManager {
 
     //get the core wallet
     int getForkId();
+
+
 
     boolean isAddressValid(String address);
 
@@ -106,7 +109,7 @@ public interface BaseWalletManager {
     BigDecimal getFeeForTransactionSize(BigDecimal size);
 
     //get the transaction to address
-    BaseAddress getTxAddress(BaseTransaction tx);
+    String getTxAddress(BaseTransaction tx);
 
     //get the maximum output amount possible for this wallet
     BigDecimal getMaxOutputAmount(Context app);
@@ -139,9 +142,6 @@ public interface BaseWalletManager {
     //return true if this wallet already used this address
     boolean addressIsUsed(String address);
 
-    //return the new address object
-    BaseAddress createAddress(String address);
-
     @WorkerThread
         //generate the wallet if needed
     boolean generateWallet(Context app);
@@ -163,7 +163,7 @@ public interface BaseWalletManager {
 
     @WorkerThread
         //get the wallet's receive address
-    BaseAddress getReceiveAddress(Context app);
+    CryptoAddress getReceiveAddress(Context app);
 
     BaseTransaction createTransaction(BigDecimal amount, String address);
 

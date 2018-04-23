@@ -1,11 +1,9 @@
-package com.breadwallet.wallet.wallets.etherium;
-
-import com.breadwallet.wallet.abstracts.BaseAddress;
+package com.breadwallet.wallet.wallets;
 
 /**
  * BreadWallet
  * <p/>
- * Created by Mihail Gutan on <mihail@breadwallet.com> 3/22/18.
+ * Created by Mihail Gutan on <mihail@breadwallet.com> 4/21/18.
  * Copyright (c) 2018 breadwallet LLC
  * <p/>
  * Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -26,21 +24,21 @@ import com.breadwallet.wallet.abstracts.BaseAddress;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class ETHAddress implements BaseAddress {
+public class CryptoAddress {
 
-    String mAddress;
+    String address;
+    Object coreObject;
 
-    public ETHAddress(String address) {
-        mAddress = address;
+    public CryptoAddress(String address, Object coreObject) {
+        this.address = address;
+        this.coreObject = coreObject;
     }
 
-    @Override
-    public boolean isValid() {
-        return true;
-    }
-
-    @Override
     public String stringify() {
-        return mAddress;
+        return address;
+    }
+
+    public Object getCoreObject() {
+        return coreObject;
     }
 }

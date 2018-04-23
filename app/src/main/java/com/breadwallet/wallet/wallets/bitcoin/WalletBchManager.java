@@ -2,13 +2,11 @@ package com.breadwallet.wallet.wallets.bitcoin;
 
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
-import android.view.View;
 import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
@@ -24,20 +22,14 @@ import com.breadwallet.core.BRCorePeerManager;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWallet;
 import com.breadwallet.core.BRCoreWalletManager;
-import com.breadwallet.presenter.activities.CurrencySettingsActivity;
-import com.breadwallet.presenter.activities.settings.ImportActivity;
-import com.breadwallet.presenter.activities.settings.SpendLimitActivity;
-import com.breadwallet.presenter.activities.settings.SyncBlockchainActivity;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
-import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.presenter.entities.BRTransactionEntity;
 import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
-import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
@@ -47,7 +39,6 @@ import com.breadwallet.tools.manager.BRNotificationManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
-import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
@@ -57,11 +48,9 @@ import com.breadwallet.tools.sqlite.TransactionStorageManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.util.SymbolUtils;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseAddress;
 import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
@@ -70,6 +59,7 @@ import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
+import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.entities.TxMetaData;
@@ -188,7 +178,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
                         BRSharedPrefs.putStartHeight(app, getIso(app), getPeerManager().getLastBlockHeight());
                 }
             });
-
+            WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
 //          BRPeerManager.getInstance().updateFixedPeer(ctx);//todo reimplement the fixed peer
             uiConfig = new WalletUiConfiguration("478559", null, true);
 
@@ -283,8 +273,8 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     @Override
-    public BaseAddress getTxAddress(BaseTransaction tx) {
-        return createAddress(getWallet().getTransactionAddress(tx.getCoreTx()).stringify());
+    public String getTxAddress(BaseTransaction tx) {
+        return getWallet().getTransactionAddress(tx.getCoreTx()).stringify();
     }
 
     @Override
@@ -388,11 +378,6 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     @Override
-    public BaseAddress createAddress(String address) {
-        return new BTCAddress(address);
-    }
-
-    @Override
     public boolean generateWallet(Context app) {
         //no need, one key for all wallets so far
         return true;
@@ -440,8 +425,9 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     @Override
-    public BaseAddress getReceiveAddress(Context app) {
-        return createAddress(getWallet().getReceiveAddress().stringify());
+    public CryptoAddress getReceiveAddress(Context app) {
+        BRCoreAddress addr = getWallet().getReceiveAddress();
+        return new CryptoAddress(addr.stringify(), addr);
     }
 
     @Override

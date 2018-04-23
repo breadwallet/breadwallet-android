@@ -300,16 +300,16 @@ public class FragmentReceive extends Fragment {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                WalletsMaster.getInstance(ctx).getCurrentWallet(ctx).refreshAddress(ctx);
-                final BaseWalletManager wallet = WalletsMaster.getInstance(ctx).getCurrentWallet(ctx);
+                final BaseWalletManager wm = WalletsMaster.getInstance(ctx).getCurrentWallet(ctx);
+                wm.refreshAddress(ctx);
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        mReceiveAddress = BRSharedPrefs.getReceiveAddress(ctx, wallet.getIso(ctx));
-                        String decorated = wallet.decorateAddress(ctx, mReceiveAddress);
+                        mReceiveAddress = BRSharedPrefs.getReceiveAddress(ctx, wm.getIso(ctx));
+                        String decorated = wm.decorateAddress(ctx, mReceiveAddress);
                         mAddress.setText(decorated);
                         Utils.correctTextSizeIfNeeded(mAddress);
-                        Uri uri = CryptoUriParser.createCryptoUrl(ctx, wallet, decorated, new BigDecimal(0), null, null, null);
+                        Uri uri = CryptoUriParser.createCryptoUrl(ctx, wm, decorated, new BigDecimal(0), null, null, null);
                         boolean generated = QRUtils.generateQR(ctx, uri.toString(), mQrImage);
                         if (!generated)
                             throw new RuntimeException("failed to generate qr image for address");

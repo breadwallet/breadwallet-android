@@ -32,6 +32,7 @@ import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
@@ -690,7 +691,10 @@ public class BRKeyStore {
             e.printStackTrace();
         }
         BaseWalletManager wm = WalletsMaster.getInstance(context).getWalletByIso(context, iso);
-        return result != null && result.length > 0 ? new BigDecimal(new String(result)) : wm.getSettingsConfiguration().mFingerprintLimits.get(1);
+        WalletSettingsConfiguration configs = wm.getSettingsConfiguration();
+        return (result != null && result.length > 0) ?
+                new BigDecimal(new String(result)) :
+                (configs.mFingerprintLimits.size() != 0 ? configs.mFingerprintLimits.get(1) : new BigDecimal(0));
     }
 
     public synchronized static boolean putTotalLimit(Context context, BigDecimal totalLimit, String iso) {

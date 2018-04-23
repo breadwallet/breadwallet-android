@@ -7,9 +7,12 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import com.breadwallet.core.BRCoreMasterPubKey;
+import com.breadwallet.core.ethereum.BREthereumToken;
+import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.activities.settings.TestActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.CryptoRequest;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
@@ -19,6 +22,7 @@ import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
+import com.breadwallet.wallet.wallets.etherium.WalletTokenManager;
 
 
 import org.junit.After;
@@ -29,6 +33,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.HashSet;
 import java.util.Set;
@@ -91,7 +96,7 @@ public class WalletTests {
         System.loadLibrary(BRConstants.NATIVE_LIB_NAME);
     }
 
-    public void exchangeTests(){
+    public void exchangeTests() {
         long satoshis = 50000000;
         //todo finish tests
     }
@@ -188,13 +193,13 @@ public class WalletTests {
 
         int btcRate = 12000;
         float ethRate = 0.05f;
+        float brdRate = 0.00005f;
 
         Set<CurrencyEntity> tmp = new HashSet<>();
         tmp.add(new CurrencyEntity("USD", "Dollar", btcRate, "BTC"));
-        CurrencyDataSource.getInstance(app).putCurrencies(app, "BTC", tmp);
-        tmp = new HashSet<>();
         tmp.add(new CurrencyEntity("BTC", "Bitcoin", ethRate, "ETH"));
-        CurrencyDataSource.getInstance(app).putCurrencies(app, "ETH", tmp);
+        tmp.add(new CurrencyEntity("BTC", "Bitcoin", brdRate, "BRD"));
+        CurrencyDataSource.getInstance(app).putCurrencies(app, tmp);
 
         BRSharedPrefs.putCryptoDenomination(app, "BTC", BRConstants.CURRENT_UNIT_BITCOINS);
 
@@ -239,7 +244,7 @@ public class WalletTests {
         //getFiatForSmallestCrypto(..)
         val = new BigDecimal(50000000);
         res = btcWallet.getFiatForSmallestCrypto(app, val, null);
-        Assert.assertEquals(res.doubleValue(), btcRate / 2 , 0); // dollars
+        Assert.assertEquals(res.doubleValue(), btcRate / 2, 0); // dollars
 
         //getSmallestCryptoForFiat(..)
         val = new BigDecimal(6000);//$6000.00 = c600000
@@ -253,6 +258,7 @@ public class WalletTests {
 
         //TEST ETH
         WalletEthManager ethWallet = WalletEthManager.getInstance(app);
+        Assert.assertNotNull(ethWallet);
 
         //getCryptoForSmallestCrypto(..)
         val = new BigDecimal("25000000000000000000");
@@ -278,6 +284,36 @@ public class WalletTests {
         val = new BigDecimal(ethRate).multiply(new BigDecimal(3)).multiply(new BigDecimal(btcRate));
         res = ethWallet.getCryptoForFiat(app, val);
         Assert.assertTrue(res.compareTo(new BigDecimal("3")) == 0);
+
+
+        //TEST erc20
+        WalletTokenManager tokenManager = WalletTokenManager.getBrdWallet(ethWallet);
+        Assert.assertNotNull(tokenManager);
+
+        //getCryptoForSmallestCrypto(..)
+        val = new BigDecimal("25");
+        res = tokenManager.getCryptoForSmallestCrypto(app, val);
+        Assert.assertTrue(res.compareTo(new BigDecimal(25)) == 0);
+
+        //getSmallestCryptoForCrypto(..)
+        val = new BigDecimal(25);
+        res = tokenManager.getSmallestCryptoForCrypto(app, val);
+        Assert.assertTrue(res.toPlainString().compareTo(new BigDecimal("25").toPlainString()) == 0);
+
+        //getFiatForSmallestCrypto(..)
+        val = new BigDecimal("2");
+        res = tokenManager.getFiatForSmallestCrypto(app, val, null);
+        Assert.assertEquals(res.doubleValue(), btcRate * brdRate * 2, 0.001); //dollars
+
+        //getSmallestCryptoForFiat(..)
+        val = new BigDecimal(3);//
+        res = tokenManager.getSmallestCryptoForFiat(app, val);
+        Assert.assertEquals(res.doubleValue(),5, 0.00001);
+
+        //getCryptoForFiat(..)
+        val = new BigDecimal(3);//
+        res = tokenManager.getCryptoForFiat(app, val);
+        Assert.assertEquals(res.doubleValue(),5, 0.00001);
 
     }
 

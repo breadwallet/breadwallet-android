@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:background="#fff">
+
+    <ImageView
+        android:id="@+id/token_icon"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="16dp" />
+
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/token_ticker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="6dp"
+        android:layout_toEndOf="@id/token_icon"
+        android:text="BRD"
+        android:textSize="20sp"
+        app:customTFont="CircularPro-Bold.otf" />
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/token_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/token_ticker"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="-5dp"
+        android:layout_toEndOf="@id/token_icon"
+        android:text="BRD"
+        android:textSize="18sp"
+        app:customTFont="CircularPro-Book.otf" />
+
+
+    <Button
+        android:id="@+id/add_remove_button"
+        android:layout_width="wrap_content"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="12dp"
+        android:text="@string/ERC20.Wallets.Add"
+        android:textColor="@color/dialog_button_positive"
+        android:textSize="14sp"
+        android:background="@drawable/add_wallet_button"
+         />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1px"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:background="@color/total_assets_usd_color" />
+
+</RelativeLayout>

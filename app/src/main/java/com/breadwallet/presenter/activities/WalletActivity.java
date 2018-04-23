@@ -138,11 +138,11 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mProgressBar = findViewById(R.id.sync_progress);
         mNotificationBar = findViewById(R.id.notification_bar);
 
-        if (Utils.isEmulatorOrDebug(this)) {
-            if (logger != null) logger.interrupt();
-            logger = new TestLogger(); //Sync logger
-            logger.start();
-        }
+//        if (Utils.isEmulatorOrDebug(this)) {
+//            if (logger != null) logger.interrupt();
+//            logger = new TestLogger(); //Sync logger
+//            logger.start();
+//        }
 
         setUpBarFlipper();
 
@@ -291,8 +291,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         if (endColor != null) {
             //it's a gradient
-            Log.e(TAG, "updateUi: start:" + startColor);
-            Log.e(TAG, "updateUi: end:" + endColor);
             GradientDrawable gd = new GradientDrawable(
                     GradientDrawable.Orientation.LEFT_RIGHT,
                     new int[]{Color.parseColor(startColor), Color.parseColor(endColor)});

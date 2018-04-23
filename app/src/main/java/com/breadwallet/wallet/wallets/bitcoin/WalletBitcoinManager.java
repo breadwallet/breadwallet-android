@@ -48,11 +48,9 @@ import com.breadwallet.tools.sqlite.TransactionStorageManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
-import com.breadwallet.tools.util.SymbolUtils;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseAddress;
 import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
@@ -61,6 +59,7 @@ import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
+import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.google.firebase.crash.FirebaseCrash;
 import com.platform.entities.TxMetaData;
@@ -181,6 +180,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                 }
             });
 
+            WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
+
             uiConfig = new WalletUiConfiguration("f29500", null,  true);
             settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
         } finally {
@@ -272,8 +273,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public BaseAddress getTxAddress(BaseTransaction tx) {
-        return createAddress(getWallet().getTransactionAddress(tx.getCoreTx()).stringify());
+    public String getTxAddress(BaseTransaction tx) {
+        return getWallet().getTransactionAddress(tx.getCoreTx()).stringify();
     }
 
     @Override
@@ -378,11 +379,6 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public BaseAddress createAddress(String address) {
-        return new BTCAddress(address);
-    }
-
-    @Override
     public boolean generateWallet(Context app) {
         //no need, one key for all wallets so far
         return true;
@@ -430,8 +426,9 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public BaseAddress getReceiveAddress(Context app) {
-        return createAddress(getWallet().getReceiveAddress().stringify());
+    public CryptoAddress getReceiveAddress(Context app) {
+        BRCoreAddress addr = getWallet().getReceiveAddress();
+        return new CryptoAddress(addr.stringify(), addr);
     }
 
     @Override

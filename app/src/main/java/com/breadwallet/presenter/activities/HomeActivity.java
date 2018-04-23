@@ -16,6 +16,7 @@ import android.widget.RelativeLayout;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
+import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.test.BRWalletManager;
 import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
@@ -84,8 +85,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        populateWallets();
-
         mWalletRecycler = findViewById(R.id.rv_wallet_list);
         mFiatTotal = findViewById(R.id.total_assets_usd);
 
@@ -101,18 +100,24 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mPromptDismiss = findViewById(R.id.dismiss_button);
 
         mWalletRecycler.setLayoutManager(new LinearLayoutManager(this));
-        mWalletRecycler.setAdapter(mAdapter);
 
         mWalletRecycler.addOnItemTouchListener(new RecyclerItemClickListener(this, mWalletRecycler, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
                 if (position >= mAdapter.getItemCount() || position < 0) return;
-                BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, mAdapter.getItemAt(position).getIso(HomeActivity.this));
 //                Log.d("HomeActivity", "Saving current wallet ISO as " + mAdapter.getItemAt(position).getIso(HomeActivity.this));
 
-                Intent newIntent = new Intent(HomeActivity.this, WalletActivity.class);
-                startActivity(newIntent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                if (mAdapter.getItemViewType(position) == 0) {
+                    BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, mAdapter.getItemAt(position).getIso(HomeActivity.this));
+                    Intent newIntent = new Intent(HomeActivity.this, WalletActivity.class);
+                    startActivity(newIntent);
+                    overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                } else {
+                    Intent intent = new Intent(HomeActivity.this, AddWalletsActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+
+                }
             }
 
             @Override
@@ -147,7 +152,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             }
         });
 
-        onConnectionChanged(InternetManager.getInstance().isConnected(this));
 
         mPromptDismiss.setColor(Color.parseColor("#b3c0c8"));
         mPromptDismiss.setOnClickListener(new View.OnClickListener() {
@@ -257,20 +261,15 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 WalletsMaster.getInstance(HomeActivity.this).refreshBalances(HomeActivity.this);
             }
         });
+
+        onConnectionChanged(InternetManager.getInstance().isConnected(this));
+
     }
 
     private void populateWallets() {
-        List<TokenListMetaData.TokenItem> enabled = new ArrayList<>();
-        enabled.add(new TokenListMetaData.TokenItem("ETH", false, null));
-        enabled.add(new TokenListMetaData.TokenItem("BTC", false, null));
-        enabled.add(new TokenListMetaData.TokenItem("BRD", true, "some"));
-        List<TokenListMetaData.TokenItem> hidden = new ArrayList<>();
-        hidden.add(new TokenListMetaData.TokenItem("ETH", false, null));
-
-        KVStoreManager.getInstance().putTokenListMetaData(this, new TokenListMetaData(1, enabled, hidden));
-
         ArrayList<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(this).getAllWallets(this));
         mAdapter = new WalletListAdapter(this, list);
+        mWalletRecycler.setAdapter(mAdapter);
     }
 
     @Override
@@ -306,7 +305,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 mNotificationBar.setVisibility(View.INVISIBLE);
             }
 
-            mAdapter.startObserving();
+            if (mAdapter != null)
+                mAdapter.startObserving();
         } else {
             if (mNotificationBar != null)
                 mNotificationBar.setVisibility(View.VISIBLE);

@@ -8,6 +8,7 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
@@ -15,7 +16,6 @@ import com.breadwallet.core.ethereum.BREthereumNetwork;
 import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.core.ethereum.BREthereumWallet;
-import com.breadwallet.core.ethereum.test.BREthereumLightNodeClientTest;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
@@ -32,7 +32,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.abstracts.BaseAddress;
+import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
@@ -41,13 +41,12 @@ import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
+import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.google.firebase.crash.FirebaseCrash;
 
 import com.platform.JsonRpcConstants;
 import com.platform.JsonRpcRequest;
-import com.platform.entities.TxMetaData;
-import com.platform.tools.KVStoreManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -105,7 +104,7 @@ public class WalletEthManager implements BaseWalletManager,
     private final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // 90m ETH * 18 (WEI)
     private final BigDecimal ONE_ETH = new BigDecimal("1000000000000000000"); //1ETH = 1000000000000000000 WEI
     private BREthereumWallet mWallet;
-    BREthereumLightNode.JSON_RPC node;
+    public BREthereumLightNode.JSON_RPC node;
     private Context mContext;
 
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
@@ -152,6 +151,9 @@ public class WalletEthManager implements BaseWalletManager,
                 return;
             }
         }
+
+        BreadApp.generateWalletIfIfNeeded(app, getReceiveAddress(app).stringify());
+        WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
 
         mContext = app;
         mWallet.estimateGasPrice();
@@ -330,8 +332,8 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-    public BaseAddress getTxAddress(BaseTransaction tx) {
-        return new ETHAddress(tx.getEtherTx().getTargetAddress());
+    public String getTxAddress(BaseTransaction tx) {
+        return tx.getEtherTx().getTargetAddress();
     }
 
     @Override
@@ -409,13 +411,14 @@ public class WalletEthManager implements BaseWalletManager,
 
     @Override
     public void refreshAddress(Context app) {
-        Log.e(TAG, "refreshAddress: start");
-        BaseAddress address = getReceiveAddress(app);
-        Log.e(TAG, "refreshAddress: end");
-        if (Utils.isNullOrEmpty(address.stringify())) {
-            Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
+        if (Utils.isNullOrEmpty(BRSharedPrefs.getReceiveAddress(app, getIso(app)))) {
+            CryptoAddress address = getReceiveAddress(app);
+            if (Utils.isNullOrEmpty(address.stringify())) {
+                Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
+                BRReportsManager.reportBug(new NullPointerException("empty address!"));
+            }
+            BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso(app));
         }
-        BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso(app));
     }
 
     @Override
@@ -463,11 +466,6 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-    public BaseAddress createAddress(String address) {
-        return new ETHAddress(address);
-    }
-
-    @Override
     public boolean generateWallet(Context app) {
         //Not needed for ETH
         return false;
@@ -500,8 +498,8 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-    public BaseAddress getReceiveAddress(Context app) {
-        return new ETHAddress(mWallet.getAccount().getPrimaryAddress());
+    public CryptoAddress getReceiveAddress(Context app) {
+        return new CryptoAddress(mWallet.getAccount().getPrimaryAddress(), null);
     }
 
     @Override
@@ -1181,6 +1179,7 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
+
     public void getLogs(final String address, final String event, final int rid) {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override

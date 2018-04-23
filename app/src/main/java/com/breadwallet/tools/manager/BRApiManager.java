@@ -27,6 +27,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -103,10 +104,7 @@ public class BRApiManager {
                         tmp.name = tmpObj.getString("name");
                         tmp.code = tmpObj.getString("code");
                         tmp.rate = (float) tmpObj.getDouble("rate");
-                        String selectedISO = BRSharedPrefs.getPreferredFiatIso(context);
-                        if (tmp.code.equalsIgnoreCase(selectedISO)) {
-                            BRSharedPrefs.putPreferredFiatIso(context, tmp.code);
-                        }
+                        tmp.iso = walletManager.getIso(context);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -130,38 +128,87 @@ public class BRApiManager {
                 //use a handler to run a toast that shows the current timestamp
                 handler.post(new Runnable() {
                     public void run() {
-                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (BreadApp.isAppInBackground(context)) {
-                                    Log.e(TAG, "doInBackground: Stopping timer, no activity on.");
-                                    stopTimerTask();
-                                    return;
-                                }
-                                List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(context).getAllWallets(context));
-
-                                for (final BaseWalletManager w : list) {
-                                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            w.updateFee(context);
-                                        }
-                                    });
-                                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            String iso = w.getIso(context);
-                                            Set<CurrencyEntity> tmp = getCurrencies((Activity) context, w);
-                                            CurrencyDataSource.getInstance(context).putCurrencies(context, iso, tmp);
-                                        }
-                                    });
-                                }
-                            }
-                        });
+                        updateData(context);
                     }
                 });
             }
         };
+    }
+
+    private void updateData(final Context context) {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (BreadApp.isAppInBackground(context)) {
+                    Log.e(TAG, "doInBackground: Stopping timer, no activity on.");
+                    stopTimerTask();
+                    return;
+                }
+                List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(context).getAllWallets(context));
+
+                for (final BaseWalletManager w : list) {
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            w.updateFee(context);
+                        }
+                    });
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            //get each wallet's rates
+                            Set<CurrencyEntity> tmp = getCurrencies((Activity) context, w);
+                            CurrencyDataSource.getInstance(context).putCurrencies(context, tmp);
+                        }
+                    });
+                }
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateErc20Rates(context);
+                    }
+                });
+            }
+        });
+    }
+
+    private void updateErc20Rates(Context context) {
+        //get all erc20 rates.
+        String url = "https://api.coinmarketcap.com/v1/ticker/?limit=1000&convert=BTC";
+        String result = urlGET(context, url);
+        try {
+            JSONArray arr = new JSONArray(result);
+            if (arr.length() == 0) {
+                BRReportsManager.reportBug(new NullPointerException("Failed to retrieve erc20 rates: " + url));
+                return;
+            }
+            String object = null;
+            Set<CurrencyEntity> tmp = new LinkedHashSet<>();
+            for (int i = 0; i < arr.length(); i++) {
+
+                Object obj = arr.get(i);
+                if (!(obj instanceof JSONObject)) {
+                    object = obj.getClass().getSimpleName();
+                    continue;
+                }
+                JSONObject json = (JSONObject) obj;
+                String code = "BTC";
+                String name = json.getString("name");
+                double rate = json.getDouble("price_btc");
+                String iso = json.getString("symbol");
+
+                CurrencyEntity ent = new CurrencyEntity(code, name, (float) rate, iso);
+                tmp.add(ent);
+
+            }
+            CurrencyDataSource.getInstance(context).putCurrencies(context, tmp);
+            if (object != null)
+                BRReportsManager.reportBug(new IllegalArgumentException("JSONArray returns a wrong object: " + object));
+        } catch (JSONException e) {
+            BRReportsManager.reportBug(e);
+            e.printStackTrace();
+        }
+
     }
 
     public void startTimer(Context context) {

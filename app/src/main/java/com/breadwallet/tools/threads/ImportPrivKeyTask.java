@@ -34,6 +34,7 @@ import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
@@ -259,12 +260,13 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
 
             if (totalAmount <= 0) return null;
 //
-            BRCoreAddress address = (BRCoreAddress) walletManager.getReceiveAddress(app); //cast, assuming it's BTC or BCH for now
+            CryptoAddress address = walletManager.getReceiveAddress(app); //cast, assuming it's BTC or BCH for now
+            BRCoreAddress coreAddr = (BRCoreAddress) address.getCoreObject(); //assume BTC and BCH for now
 
             BRCoreKey signingKey = new BRCoreKey(key);
 
             BigDecimal fee = walletManager.getFeeForTransactionSize(new BigDecimal(transaction.getSize() + 34 + (signingKey.getPubKey().length - 33) * transaction.getInputs().length));
-            transaction.addOutput(new BRCoreTransactionOutput(new BigDecimal(totalAmount).subtract(fee).longValue(), address.getPubKeyScript()));
+            transaction.addOutput(new BRCoreTransactionOutput(new BigDecimal(totalAmount).subtract(fee).longValue(), coreAddr.getPubKeyScript()));
             return new CryptoTransaction(transaction);
         } catch (JSONException e) {
             e.printStackTrace();
