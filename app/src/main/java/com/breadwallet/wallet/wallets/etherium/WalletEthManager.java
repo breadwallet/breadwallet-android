@@ -233,9 +233,8 @@ public class WalletEthManager implements BaseWalletManager,
 
     @Override
     public byte[] signAndPublishTransaction(BaseTransaction tx, byte[] phrase) {
-        CryptoTransaction cryptoTransaction = (CryptoTransaction) tx;
-        mWallet.sign(cryptoTransaction.getEtherTx(), new String(phrase));
-        mWallet.submit(cryptoTransaction.getEtherTx());
+        mWallet.sign(tx.getEtherTx(), new String(phrase));
+        mWallet.submit(tx.getEtherTx());
         String hash = tx.getEtherTx().getHash();
         return hash == null ? new byte[0] : hash.getBytes();
     }
@@ -310,8 +309,7 @@ public class WalletEthManager implements BaseWalletManager,
 
     @Override
     public BigDecimal getTxFee(BaseTransaction tx) {
-        return new BigDecimal(tx.getEtherTx().getGasLimit())
-                .multiply(new BigDecimal(tx.getEtherTx().getGasPrice(BREthereumAmount.Unit.ETHER_WEI)));
+        return new BigDecimal(tx.getEtherTx().getFee(BREthereumAmount.Unit.ETHER_WEI));
     }
 
     @Override

@@ -144,7 +144,10 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public byte[] signAndPublishTransaction(BaseTransaction tx, byte[] seed) {
-        return mWalletEthManager.signAndPublishTransaction(tx, seed);
+        mWalletToken.signWithPrivateKey(tx.getEtherTx(), seed);
+        mWalletToken.submit(tx.getEtherTx());
+        String hash = tx.getEtherTx().getHash();
+        return hash == null ? new byte[0] : hash.getBytes();
     }
 
     @Override
@@ -214,8 +217,7 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public BigDecimal getTxFee(BaseTransaction tx) {
-        return new BigDecimal(tx.getEtherTx().getGasLimit())
-                .multiply(new BigDecimal(tx.getEtherTx().getGasPrice(BREthereumAmount.Unit.ETHER_WEI)));
+        return new BigDecimal(tx.getEtherTx().getFee(BREthereumAmount.Unit.ETHER_WEI));
     }
 
     @Override
@@ -225,7 +227,7 @@ public class WalletTokenManager implements BaseWalletManager {
         if (amount.compareTo(new BigDecimal(0)) == 0) {
             fee = new BigDecimal(0);
         } else {
-            fee = new BigDecimal(mWalletToken.transactionEstimatedFee(amount.toPlainString()));
+            fee = new BigDecimal(mWalletToken.transactionEstimatedFee(amount.toPlainString(), BREthereumAmount.Unit.TOKEN_DECIMAL, BREthereumAmount.Unit.TOKEN_DECIMAL));
         }
         return fee;
     }
@@ -352,7 +354,7 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public BaseTransaction createTransaction(BigDecimal amount, String address) {
-        BREthereumTransaction tx = mWalletToken.createTransaction(address, amount.toPlainString(), BREthereumAmount.Unit.ETHER_WEI);
+        BREthereumTransaction tx = mWalletToken.createTransaction(address, amount.toPlainString(), BREthereumAmount.Unit.TOKEN_DECIMAL);
         return new CryptoTransaction(tx);
     }
 
