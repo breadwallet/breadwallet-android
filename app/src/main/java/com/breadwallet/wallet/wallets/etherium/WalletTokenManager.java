@@ -89,6 +89,7 @@ public class WalletTokenManager implements BaseWalletManager {
             BREthereumWallet w = walletEthManager.node.getWallet(tk);
 
             if (w != null) {
+                w.setDefaultUnit(BREthereumAmount.Unit.TOKEN_DECIMAL);
                 if (w.getToken() == null) {
                     BRReportsManager.reportBug(new NullPointerException("getToken is null:" + contractAddress));
                     return null;
@@ -281,7 +282,8 @@ public class WalletTokenManager implements BaseWalletManager {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                BigDecimal balance = new BigDecimal(mWalletToken.getBalance());
+                BigDecimal balance = new BigDecimal(mWalletToken.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));
+                Log.e(TAG, "run: balance-> " + balance + ", iso ->" + getIso(app));
                 BRSharedPrefs.putCachedBalance(app, getIso(app), balance);
             }
         });

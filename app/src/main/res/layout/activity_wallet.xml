@@ -142,7 +142,7 @@
                         android:paddingTop="8dp"
                         android:text="$26,495.69"
                         android:textColor="@color/white"
-                        android:textSize="28sp"
+                        android:textSize="22sp"
                         app:customTFont="CircularPro-Bold.otf"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintRight_toRightOf="parent"
