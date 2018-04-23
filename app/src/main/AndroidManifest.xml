@@ -222,6 +222,10 @@
             android:name=".presenter.activities.AddWalletsActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"></activity>
+        <activity
+            android:name=".presenter.activities.ManageWalletsActivity"
+            android:launchMode="singleTask"
+            android:screenOrientation="portrait"></activity>
 
         <service
             android:name=".tools.listeners.SyncReceiver"
