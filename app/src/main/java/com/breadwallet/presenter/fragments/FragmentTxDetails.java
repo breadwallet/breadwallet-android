@@ -273,7 +273,6 @@ public class FragmentTxDetails extends DialogFragment {
                 mAmountWhenSent.setVisibility(View.INVISIBLE);
                 mWhenSentLabel.setVisibility(View.INVISIBLE);
                 mNowLabel.setVisibility(View.INVISIBLE);
-                mAmountNow.setVisibility(View.INVISIBLE);
 
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 params.addRule(RelativeLayout.CENTER_HORIZONTAL);
