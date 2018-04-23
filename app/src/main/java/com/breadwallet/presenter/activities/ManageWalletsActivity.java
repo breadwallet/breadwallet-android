@@ -48,6 +48,11 @@ public class ManageWalletsActivity extends BRActivity {
             @Override
             public void run() {
                 mTokens = KVStoreManager.getInstance().getTokenListMetaData(ManageWalletsActivity.this).enabledCurrencies;
+                List<TokenListMetaData.TokenInfo> hiddenTokens = KVStoreManager.getInstance().getTokenListMetaData(ManageWalletsActivity.this).hiddenCurrencies;
+
+                if(hiddenTokens != null && !hiddenTokens.isEmpty()){
+                    mTokens.addAll(hiddenTokens);
+                }
 
 
                 for (int i = 0; i < mTokens.size(); i++) {
@@ -88,7 +93,7 @@ public class ManageWalletsActivity extends BRActivity {
                 if (metaData == null) metaData = new TokenListMetaData(null, null);
                 if (metaData.isCurrencyHidden(item.symbol))
                     metaData.hiddenCurrencies.remove(item);
-                metaData.enabledCurrencies.add(item);
+                //metaData.enabledCurrencies.add(item);
                 KVStoreManager.getInstance().putTokenListMetaData(ManageWalletsActivity.this, metaData);
 
 

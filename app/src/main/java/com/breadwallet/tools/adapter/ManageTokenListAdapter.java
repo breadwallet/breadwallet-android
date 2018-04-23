@@ -64,10 +64,12 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
         }
 
         if(KVStoreManager.getInstance().getTokenListMetaData(mContext).isCurrencyEnabled(item.symbol)){
+            Log.d(TAG, "Currency is HIDDEN");
             holder.showHide.setBackground(mContext.getDrawable(R.drawable.remove_wallet_button));
             holder.showHide.setText("Hide");
             holder.showHide.setTextColor(mContext.getColor(R.color.red));
         }else{
+            Log.d(TAG, "Currency is SHOWING");
             holder.showHide.setBackground(mContext.getDrawable(R.drawable.add_wallet_button));
             holder.showHide.setText("Show");
             holder.showHide.setTextColor(mContext.getColor(R.color.dialog_button_positive));
@@ -81,17 +83,19 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
 
                 //First, check if this token is hidden on HomeScreen
                 if(!KVStoreManager.getInstance().getTokenListMetaData(mContext).isCurrencyEnabled(item.symbol)){
-                    Log.d(TAG, "Currency is HIDDEN");
                     holder.showHide.setText("Show");
                     holder.showHide.setTextColor(mContext.getColor(R.color.dialog_button_positive));
                     holder.showHide.setBackground(mContext.getDrawable(R.drawable.add_wallet_button));
                     mListener.onShowToken(item);
+                    Log.d(TAG, "SHOWING token");
+
                 }else{
-                    Log.d(TAG, "Currency is SHOWING");
                     holder.showHide.setText("Hide");
                     holder.showHide.setTextColor(mContext.getColor(R.color.red));
                     holder.showHide.setBackground(mContext.getDrawable(R.drawable.remove_wallet_button));
                     mListener.onHideToken(item);
+                    Log.d(TAG, "HIDING token");
+
 
                 }
             }
