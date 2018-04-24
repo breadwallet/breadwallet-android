@@ -96,18 +96,20 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
         });
 
 
-        BigDecimal tokenBalance = new BigDecimal(0);
-        tokenBalance.setScale(3);
+        BigDecimal tokenBalance;
         String iso = item.symbol.toUpperCase();
         WalletEthManager ethManager = WalletEthManager.getInstance(mContext);
         WalletTokenManager tokenManager = WalletTokenManager.getTokenWalletByIso(ethManager, item.symbol);
 
         if (tokenManager != null) {
             tokenBalance = tokenManager.getCachedBalance(mContext);
+            if (tokenBalance.compareTo(new BigDecimal(0)) == 0) {
+                holder.tokenBalance.setText("");
+            } else {
+                holder.tokenBalance.setText(tokenBalance.toPlainString() + iso);
+            }
 
         }
-
-        holder.tokenBalance.setText(tokenBalance.toPlainString() + iso);
 
 
     }
@@ -172,14 +174,19 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
 
         // Update KV store with new sort order of enabledCurrencies array
         TokenListMetaData currentMd = KVStoreManager.getInstance().getTokenListMetaData(mContext);
-        List<TokenListMetaData.TokenInfo> newEnabled = currentMd.enabledCurrencies = new ArrayList<>();
 
-        for (TokenItem token : mTokens) {
-            TokenListMetaData.TokenInfo info = new TokenListMetaData.TokenInfo(token.symbol, true, token.address);
-            newEnabled.add(info);
-        }
 
-        if (!newEnabled.isEmpty())
-            KVStoreManager.getInstance().putTokenListMetaData(mContext, currentMd);
+        // Temporarily remove the dragged token from the list
+        TokenListMetaData.TokenInfo movedToken = new TokenListMetaData.TokenInfo(item.symbol, true, item.address);
+        currentMd.disableCurrency(movedToken.symbol);
+        KVStoreManager.getInstance().putTokenListMetaData(mContext, currentMd);
+
+
+
+        // Replace it, but in the new position
+        currentMd.enabledCurrencies.add(toPosition, movedToken);
+        KVStoreManager.getInstance().putTokenListMetaData(mContext, currentMd);
+
+
     }
 }
