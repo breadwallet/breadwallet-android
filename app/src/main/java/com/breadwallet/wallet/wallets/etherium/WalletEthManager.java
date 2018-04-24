@@ -84,7 +84,7 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  * THE SOFTWARE.
  */
 public class WalletEthManager implements BaseWalletManager,
-        BREthereumLightNode.ClientJSON_RPC,
+        BREthereumLightNode.Client,
         BREthereumLightNode.Listener {
     private static final String TAG = WalletEthManager.class.getSimpleName();
 
@@ -104,7 +104,7 @@ public class WalletEthManager implements BaseWalletManager,
     private final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // 90m ETH * 18 (WEI)
     private final BigDecimal ONE_ETH = new BigDecimal("1000000000000000000"); //1ETH = 1000000000000000000 WEI
     private BREthereumWallet mWallet;
-    public BREthereumLightNode.JSON_RPC node;
+    public BREthereumLightNode node;
     private Context mContext;
 
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
@@ -128,7 +128,7 @@ public class WalletEthManager implements BaseWalletManager,
                     return;
                 }
 
-                new BREthereumLightNode.JSON_RPC(this, network, paperKey, words);
+                node = new BREthereumLightNode(this, network, paperKey, words);
                 mWallet = node.getWallet();
 
                 if (null == mWallet) {
@@ -143,7 +143,7 @@ public class WalletEthManager implements BaseWalletManager,
             }
         } else {
             Log.e(TAG, "WalletEthManager: Using the pubkey to create");
-            new BREthereumLightNode.JSON_RPC(this, network, ethPubKey);
+            node = new BREthereumLightNode (this, network, ethPubKey);
             mWallet = node.getWallet();
 
             if (null == mWallet) {
@@ -156,9 +156,10 @@ public class WalletEthManager implements BaseWalletManager,
         WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
 
         mContext = app;
-        mWallet.estimateGasPrice();
         mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
         node.connect();
+        mWallet.estimateGasPrice();
+
 
     }
 
@@ -679,16 +680,8 @@ public class WalletEthManager implements BaseWalletManager,
 
 
     /**
-     * The JSON RPC callbacks
-     * Implement JSON RPC methods synchronously
+     * The Client callbacks
      */
-
-    @Override
-    public void assignNode(BREthereumLightNode node) {
-        this.node = (BREthereumLightNode.JSON_RPC) node;
-        this.node.addListener(this);
-    }
-
     @Override
     public void getBalance(final int wid, final String address, final int rid) {
         BREthereumWallet wallet = this.node.getWalletByIdentifier(wid);
@@ -1059,98 +1052,98 @@ public class WalletEthManager implements BaseWalletManager,
 
                                     if (txObject.has("hash")) {
                                         txHash = txObject.getString("hash");
-                                        Log.d(TAG, "TxObject Hash -> " + txHash);
+                                        // Log.d(TAG, "TxObject Hash -> " + txHash);
 
                                     }
 
                                     if (txObject.has("to")) {
                                         txTo = txObject.getString("to");
-                                        Log.d(TAG, "TxObject to -> " + txTo);
+                                        // Log.d(TAG, "TxObject to -> " + txTo);
 
                                     }
 
                                     if (txObject.has("from")) {
                                         txFrom = txObject.getString("from");
-                                        Log.d(TAG, "TxObject from -> " + txFrom);
+                                        // Log.d(TAG, "TxObject from -> " + txFrom);
 
                                     }
 
                                     if (txObject.has("contractAddress")) {
                                         txContract = txObject.getString("contractAddress");
-                                        Log.d(TAG, "TxObject contractAddress -> " + txContract);
+                                        // Log.d(TAG, "TxObject contractAddress -> " + txContract);
 
                                     }
 
                                     if (txObject.has("value")) {
                                         txValue = txObject.getString("value");
-                                        Log.d(TAG, "TxObject value -> " + txValue);
+                                        // Log.d(TAG, "TxObject value -> " + txValue);
 
                                     }
 
                                     if (txObject.has("gas")) {
                                         txGas = txObject.getString("gas");
-                                        Log.d(TAG, "TxObject gas -> " + txGas);
+                                        // Log.d(TAG, "TxObject gas -> " + txGas);
 
 
                                     }
 
                                     if (txObject.has("gasPrice")) {
                                         txGasPrice = txObject.getString("gasPrice");
-                                        Log.d(TAG, "TxObject gasPrice -> " + txGasPrice);
+                                        // Log.d(TAG, "TxObject gasPrice -> " + txGasPrice);
 
                                     }
 
                                     if (txObject.has("nonce")) {
                                         txNonce = txObject.getString("nonce");
-                                        Log.d(TAG, "TxObject nonce -> " + txNonce);
+                                        // Log.d(TAG, "TxObject nonce -> " + txNonce);
 
                                     }
 
                                     if (txObject.has("gasUsed")) {
                                         txGasUsed = txObject.getString("gasUsed");
-                                        Log.d(TAG, "TxObject gasUsed -> " + txGasUsed);
+                                        // Log.d(TAG, "TxObject gasUsed -> " + txGasUsed);
 
                                     }
 
                                     if (txObject.has("blockNumber")) {
                                         txBlockNumber = txObject.getString("blockNumber");
-                                        Log.d(TAG, "TxObject blockNumber -> " + txBlockNumber);
+                                        // Log.d(TAG, "TxObject blockNumber -> " + txBlockNumber);
 
                                     }
 
                                     if (txObject.has("blockHash")) {
                                         txBlockHash = txObject.getString("blockHash");
-                                        Log.d(TAG, "TxObject blockHash -> " + txBlockHash);
+                                        // Log.d(TAG, "TxObject blockHash -> " + txBlockHash);
 
                                     }
 
                                     if (txObject.has("input")) {
                                         txData = txObject.getString("input");
-                                        Log.d(TAG, "TxObject input -> " + txData);
+                                        // Log.d(TAG, "TxObject input -> " + txData);
 
                                     }
 
                                     if (txObject.has("confirmations")) {
                                         txBlockConfirmations = txObject.getString("confirmations");
-                                        Log.d(TAG, "TxObject confirmations -> " + txBlockConfirmations);
+                                        // Log.d(TAG, "TxObject confirmations -> " + txBlockConfirmations);
 
                                     }
 
                                     if (txObject.has("transactionIndex")) {
                                         txBlockTransactionIndex = txObject.getString("transactionIndex");
-                                        Log.d(TAG, "TxObject transactionIndex -> " + txBlockTransactionIndex);
+                                        // Log.d(TAG, "TxObject transactionIndex -> " + txBlockTransactionIndex);
 
                                     }
 
                                     if (txObject.has("timeStamp")) {
                                         txBlockTimestamp = txObject.getString("timeStamp");
-                                        Log.d(TAG, "TxObject blockTimestamp -> " + txBlockTimestamp);
+                                        // Log.d(TAG, "TxObject blockTimestamp -> " + txBlockTimestamp);
 
                                     }
 
                                     if (txObject.has("isError")) {
                                         txIsError = txObject.getString("isError");
-                                        Log.d(TAG, "TxObject isError -> " + txIsError);
+                                        // Log.d(TAG, "TxObject isError -> " + txIsError);
 
                                     }
 
@@ -1179,7 +1172,6 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-
     public void getLogs(final String address, final String event, final int rid) {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -1259,7 +1251,7 @@ public class WalletEthManager implements BaseWalletManager,
         });
     }
 
-    public BREthereumLightNode.JSON_RPC getNode() {
+    public BREthereumLightNode getNode() {
         return node;
     }
 
