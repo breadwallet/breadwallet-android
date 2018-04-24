@@ -100,27 +100,33 @@ public class WalletsMaster {
         }
 
         for (TokenListMetaData.TokenInfo enabled : md.enabledCurrencies) {
-            if (!md.hiddenCurrencies.contains(enabled)) {
-                if (enabled.symbol.equalsIgnoreCase("BTC")) {
-                    //BTC wallet
-                    if (!mWallets.contains(WalletBitcoinManager.getInstance(app)))
-                        mWallets.add(WalletBitcoinManager.getInstance(app));
-                } else if (enabled.symbol.equalsIgnoreCase("BCH")) {
-                    //BCH wallet
-                    if (!mWallets.contains(WalletBchManager.getInstance(app)))
-                        mWallets.add(WalletBchManager.getInstance(app));
-                } else if (enabled.symbol.equalsIgnoreCase("ETH")) {
-                    //ETH wallet
-                    if (!mWallets.contains(ethWallet)) {
-                        mWallets.add(ethWallet);
+            if (enabled.symbol.equalsIgnoreCase("BTC")) {
+                //BTC wallet
+                if (!mWallets.contains(WalletBitcoinManager.getInstance(app)))
+                    mWallets.add(WalletBitcoinManager.getInstance(app));
+            } else if (enabled.symbol.equalsIgnoreCase("BCH")) {
+                //BCH wallet
+                if (!mWallets.contains(WalletBchManager.getInstance(app)))
+                    mWallets.add(WalletBchManager.getInstance(app));
+            } else if (enabled.symbol.equalsIgnoreCase("ETH")) {
+                //ETH wallet
+                if (!mWallets.contains(ethWallet)) {
+                    mWallets.add(ethWallet);
+                }
+            } else {
+                //add ERC20 wallet
+                WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(ethWallet, enabled.symbol);
+                if (tokenWallet != null)
+                    if (!mWallets.contains(tokenWallet)) mWallets.add(tokenWallet);
+
+                for (TokenListMetaData.TokenInfo hidden : md.hiddenCurrencies) {
+                    if (tokenWallet.getIso(app).equalsIgnoreCase(hidden.symbol)) {
+                        mWallets.remove(tokenWallet);
                     }
-                } else {
-                    //add ERC20 wallet
-                    WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(ethWallet, enabled.symbol);
-                    if (tokenWallet != null)
-                        if (!mWallets.contains(tokenWallet)) mWallets.add(tokenWallet);
                 }
             }
+
+
         }
 
         return mWallets;

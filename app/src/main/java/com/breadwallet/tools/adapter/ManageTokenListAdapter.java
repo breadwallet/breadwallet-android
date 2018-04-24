@@ -19,10 +19,12 @@ import com.breadwallet.tools.animation.ItemTouchHelperAdapter;
 import com.breadwallet.tools.animation.ItemTouchHelperViewHolder;
 import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
 import com.breadwallet.wallet.wallets.etherium.WalletTokenManager;
+import com.platform.entities.TokenListMetaData;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenListAdapter.ManageTokenItemViewHolder> implements ItemTouchHelperAdapter {
 
@@ -67,48 +69,46 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
             Log.d(TAG, "Error finding icon for -> " + iconResourceName);
         }
 
-        if (KVStoreManager.getInstance().getTokenListMetaData(mContext).isCurrencyEnabled(item.symbol)) {
-            Log.d(TAG, "Currency is HIDDEN");
-            holder.showHide.setBackground(mContext.getDrawable(R.drawable.remove_wallet_button));
-            holder.showHide.setText("Hide");
-            holder.showHide.setTextColor(mContext.getColor(R.color.red));
-        } else {
-            Log.d(TAG, "Currency is SHOWING");
-            holder.showHide.setBackground(mContext.getDrawable(R.drawable.add_wallet_button));
-            holder.showHide.setText("Show");
-            holder.showHide.setTextColor(mContext.getColor(R.color.dialog_button_positive));
+        boolean isHidden = KVStoreManager.getInstance().getTokenListMetaData(mContext).isCurrencyHidden(item.symbol);
 
-        }
+        holder.showHide.setBackground(mContext.getDrawable(isHidden ? R.drawable.add_wallet_button : R.drawable.remove_wallet_button));
+        holder.showHide.setText(isHidden ? "Show" : "Hide");
+        holder.showHide.setTextColor(mContext.getColor(isHidden ? R.color.dialog_button_positive : R.color.red));
 
 
         holder.showHide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                //First, check if this token is hidden on HomeScreen
-                if (!KVStoreManager.getInstance().getTokenListMetaData(mContext).isCurrencyEnabled(item.symbol)) {
-                    holder.showHide.setText("Show");
-                    holder.showHide.setTextColor(mContext.getColor(R.color.dialog_button_positive));
-                    holder.showHide.setBackground(mContext.getDrawable(R.drawable.add_wallet_button));
-                    mListener.onShowToken(item);
-                    Log.d(TAG, "SHOWING token");
+                // If token is already hidden, show it
+                if (KVStoreManager.getInstance().getTokenListMetaData(mContext).isCurrencyHidden(item.symbol)) {
 
+                    mListener.onShowToken(item);
+
+                    // If token is already showing, hide it
                 } else {
-                    holder.showHide.setText("Hide");
-                    holder.showHide.setTextColor(mContext.getColor(R.color.red));
-                    holder.showHide.setBackground(mContext.getDrawable(R.drawable.remove_wallet_button));
+
                     mListener.onHideToken(item);
-                    Log.d(TAG, "HIDING token");
 
 
                 }
             }
         });
 
+
+        BigDecimal tokenBalance = new BigDecimal(0);
+        tokenBalance.setScale(3);
         String iso = item.symbol.toUpperCase();
         WalletEthManager ethManager = WalletEthManager.getInstance(mContext);
-        BigDecimal tokenBalance = WalletTokenManager.getTokenWalletByIso(ethManager, item.symbol).getCachedBalance(mContext);
-        holder.tokenBalance.setText(tokenBalance.toPlainString());
+        WalletTokenManager tokenManager = WalletTokenManager.getTokenWalletByIso(ethManager, item.symbol);
+
+        if (tokenManager != null) {
+            tokenBalance = tokenManager.getCachedBalance(mContext);
+
+        }
+
+        holder.tokenBalance.setText(tokenBalance.toPlainString() + iso);
+
 
     }
 
@@ -169,5 +169,17 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
         TokenItem item = mTokens.remove(fromPosition);
         mTokens.add(toPosition > fromPosition ? toPosition - 1 : toPosition, item);
         notifyItemMoved(fromPosition, toPosition);
+
+        // Update KV store with new sort order of enabledCurrencies array
+        TokenListMetaData currentMd = KVStoreManager.getInstance().getTokenListMetaData(mContext);
+        List<TokenListMetaData.TokenInfo> newEnabled = currentMd.enabledCurrencies = new ArrayList<>();
+
+        for (TokenItem token : mTokens) {
+            TokenListMetaData.TokenInfo info = new TokenListMetaData.TokenInfo(token.symbol, true, token.address);
+            newEnabled.add(info);
+        }
+
+        if (!newEnabled.isEmpty())
+            KVStoreManager.getInstance().putTokenListMetaData(mContext, currentMd);
     }
 }

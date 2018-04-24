@@ -1,6 +1,8 @@
 package com.platform.entities;
 
 
+import android.util.Log;
+
 import com.breadwallet.presenter.entities.TokenItem;
 
 import java.util.ArrayList;
@@ -65,6 +67,20 @@ public class TokenListMetaData {
         for (TokenInfo info : hiddenCurrencies)
             if (info.symbol.equalsIgnoreCase(symbol)) return true;
         return false;
+    }
+
+    public void hideCurrency(String symbol) {
+        if (hiddenCurrencies == null) return;
+        for (TokenInfo info : hiddenCurrencies)
+            if (info.symbol.equalsIgnoreCase(symbol)) hiddenCurrencies.add(info);
+    }
+
+    public synchronized void showCurrency(String symbol) {
+        if (hiddenCurrencies == null) return;
+        for (TokenInfo info : hiddenCurrencies)
+            if (info.symbol.equalsIgnoreCase(symbol))
+                hiddenCurrencies.remove(info);
+
     }
 
     public boolean isCurrencyEnabled(String symbol) {

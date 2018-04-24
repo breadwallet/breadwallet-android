@@ -165,7 +165,7 @@ public class KVStoreManager {
 
         //add all the params that we want to change
         if (md.enabledCurrencies.size() > 0) old.enabledCurrencies = md.enabledCurrencies;
-        if (md.hiddenCurrencies.size() > 0) old.hiddenCurrencies = md.hiddenCurrencies;
+        old.hiddenCurrencies = md.hiddenCurrencies;
 
         JSONObject obj = new JSONObject();
         byte[] result;

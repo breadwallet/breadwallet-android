@@ -22,6 +22,8 @@ import java.util.List;
 
 public class ManageWalletsActivity extends BRActivity {
 
+
+    private static final String TAG = ManageWalletsActivity.class.getSimpleName();
     private ManageTokenListAdapter mAdapter;
     private RecyclerView mTokenList;
     private List<TokenListMetaData.TokenInfo> mTokens;
@@ -48,19 +50,12 @@ public class ManageWalletsActivity extends BRActivity {
             @Override
             public void run() {
                 mTokens = KVStoreManager.getInstance().getTokenListMetaData(ManageWalletsActivity.this).enabledCurrencies;
-                List<TokenListMetaData.TokenInfo> hiddenTokens = KVStoreManager.getInstance().getTokenListMetaData(ManageWalletsActivity.this).hiddenCurrencies;
-
-                if(hiddenTokens != null && !hiddenTokens.isEmpty()){
-                    mTokens.addAll(hiddenTokens);
-                }
-
 
                 for (int i = 0; i < mTokens.size(); i++) {
 
                     TokenListMetaData.TokenInfo tokenInfo = mTokens.get(i);
                     TokenListMetaData.TokenInfo info = mTokens.get(i);
                     TokenItem tokenItem;
-                    Log.d("ManageWalletsActivity", "Looking up -> " + mTokens.get(i).symbol);
 
                     if (mTokens.get(i).symbol.equalsIgnoreCase("btc")) {
                         tokenItem = new TokenItem(null, tokenInfo.symbol, "Bitcoin", null);
@@ -74,9 +69,10 @@ public class ManageWalletsActivity extends BRActivity {
 
                         BREthereumToken tk = BREthereumToken.lookup(info.contractAddress);
                         tokenItem = new TokenItem(tk.getAddress(), tk.getSymbol(), tk.getName(), null);
+                        tokenItems.add(tokenItem);
+
 
                     }
-                    tokenItems.add(tokenItem);
 
                 }
 
@@ -87,13 +83,20 @@ public class ManageWalletsActivity extends BRActivity {
         mAdapter = new ManageTokenListAdapter(ManageWalletsActivity.this, tokenItems, new ManageTokenListAdapter.OnTokenShowOrHideListener() {
             @Override
             public void onShowToken(TokenItem token) {
+                Log.d(TAG, "onShowToken");
+
 
                 TokenListMetaData metaData = KVStoreManager.getInstance().getTokenListMetaData(ManageWalletsActivity.this);
                 TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(token.symbol, true, token.address);
                 if (metaData == null) metaData = new TokenListMetaData(null, null);
-                if (metaData.isCurrencyHidden(item.symbol))
-                    metaData.hiddenCurrencies.remove(item);
-                //metaData.enabledCurrencies.add(item);
+
+
+                if (metaData.hiddenCurrencies == null)
+                    metaData.hiddenCurrencies = new ArrayList<>();
+                metaData.showCurrency(item.symbol);
+
+
+                mAdapter.notifyDataSetChanged();
                 KVStoreManager.getInstance().putTokenListMetaData(ManageWalletsActivity.this, metaData);
 
 
@@ -101,23 +104,34 @@ public class ManageWalletsActivity extends BRActivity {
 
             @Override
             public void onHideToken(TokenItem token) {
+                Log.d(TAG, "onHideToken");
 
                 TokenListMetaData metaData = KVStoreManager.getInstance().getTokenListMetaData(ManageWalletsActivity.this);
                 TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(token.symbol, true, token.address);
                 if (metaData == null) metaData = new TokenListMetaData(null, null);
-                if (!metaData.isCurrencyHidden(token.symbol))
-                    metaData.disableCurrency(item.symbol);
+
+                if (metaData.hiddenCurrencies == null)
+                    metaData.hiddenCurrencies = new ArrayList<>();
+
+                metaData.hiddenCurrencies.add(item);
+
+
+                mAdapter.notifyDataSetChanged();
                 KVStoreManager.getInstance().putTokenListMetaData(ManageWalletsActivity.this, metaData);
 
 
             }
         });
 
-        mTokenList.setLayoutManager(new LinearLayoutManager(ManageWalletsActivity.this));
+        mTokenList.setLayoutManager(new
+
+                LinearLayoutManager(ManageWalletsActivity.this));
         mTokenList.setAdapter(mAdapter);
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
-        mItemTouchHelper = new ItemTouchHelper(callback);
+        mItemTouchHelper = new
+
+                ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(mTokenList);
     }
 }
