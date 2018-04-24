@@ -2,6 +2,7 @@ package com.breadwallet.tools.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -147,6 +148,9 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
             tokenBalance = view.findViewById(R.id.token_balance);
             showHide = view.findViewById(R.id.show_hide_button);
             tokenIcon = view.findViewById(R.id.token_icon);
+
+            Typeface typeface = Typeface.createFromAsset(mContext.getAssets(), "fonts/CircularPro-Book.otf");
+            showHide.setTypeface(typeface);
         }
 
         @Override
@@ -172,7 +176,6 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
         mTokens.add(toPosition > fromPosition ? toPosition - 1 : toPosition, item);
         notifyItemMoved(fromPosition, toPosition);
 
-        // Update KV store with new sort order of enabledCurrencies array
         TokenListMetaData currentMd = KVStoreManager.getInstance().getTokenListMetaData(mContext);
 
 

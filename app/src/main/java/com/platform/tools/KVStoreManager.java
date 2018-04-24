@@ -180,6 +180,7 @@ public class KVStoreManager {
                 hiddenArr.put(item.erc20 ? item.symbol + ":" + item.contractAddress : item.symbol);
             }
 
+
             obj.put("enabledCurrencies", enabledArr);
             obj.put("hiddenCurrencies", hiddenArr);
             result = obj.toString().getBytes();

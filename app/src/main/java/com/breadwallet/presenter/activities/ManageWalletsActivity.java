@@ -53,19 +53,10 @@ public class ManageWalletsActivity extends BRActivity {
 
                 for (int i = 0; i < mTokens.size(); i++) {
 
-                    TokenListMetaData.TokenInfo tokenInfo = mTokens.get(i);
                     TokenListMetaData.TokenInfo info = mTokens.get(i);
                     TokenItem tokenItem;
 
-                    if (mTokens.get(i).symbol.equalsIgnoreCase("btc")) {
-                        tokenItem = new TokenItem(null, tokenInfo.symbol, "Bitcoin", null);
-                    } else if (mTokens.get(i).symbol.equalsIgnoreCase("bch")) {
-                        tokenItem = new TokenItem(null, tokenInfo.symbol, "Bitcoin Cash", null);
-
-                    } else if (mTokens.get(i).symbol.equalsIgnoreCase("eth")) {
-                        tokenItem = new TokenItem(null, tokenInfo.symbol, "Ethereum", null);
-
-                    } else {
+                    if (!mTokens.get(i).symbol.equalsIgnoreCase("btc") && !mTokens.get(i).symbol.equalsIgnoreCase("bch") && !mTokens.get(i).symbol.equalsIgnoreCase("eth")) {
 
                         BREthereumToken tk = BREthereumToken.lookup(info.contractAddress);
                         tokenItem = new TokenItem(tk.getAddress(), tk.getSymbol(), tk.getName(), null);

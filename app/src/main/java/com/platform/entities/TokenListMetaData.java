@@ -90,7 +90,7 @@ public class TokenListMetaData {
         return false;
     }
 
-    public void disableCurrency(String symbol) {
+    public synchronized void disableCurrency(String symbol) {
         if (enabledCurrencies == null || enabledCurrencies.size() == 0) return;
         for (TokenInfo info : enabledCurrencies)
             if (info.symbol.equalsIgnoreCase(symbol)) enabledCurrencies.remove(info);
