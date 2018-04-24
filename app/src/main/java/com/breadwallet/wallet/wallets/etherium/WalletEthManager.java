@@ -11,6 +11,7 @@ import com.breadwallet.R;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.ethereum.BREthereumAmount;
+import com.breadwallet.core.ethereum.BREthereumBlock;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.core.ethereum.BREthereumNetwork;
 import com.breadwallet.core.ethereum.BREthereumToken;
@@ -1255,17 +1256,20 @@ public class WalletEthManager implements BaseWalletManager,
         return node;
     }
 
+    private void printInfo(String infoText, String walletIso, String eventName) {
+        Log.d(TAG, String.format("%s (%s): %s", eventName, walletIso, infoText));
+    }
+
     @Override
     public void handleWalletEvent(BREthereumWallet wallet, WalletEvent event) {
         Context app = BreadApp.getBreadContext();
 
         if (app != null && Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
-            String iso = (null == wallet.getToken() ? "ETH" : wallet.getToken().getSymbol());
+            String iso = wallet.getSymbol ();
             switch (event) {
                 case CREATED:
                     printInfo("Wallet Created", iso, event.name());
                     break;
-
                 case BALANCE_UPDATED:
                     printInfo("New Balance: " + wallet.getBalance(), iso, event.name());
                     break;
@@ -1289,8 +1293,22 @@ public class WalletEthManager implements BaseWalletManager,
         }
     }
 
-    private void printInfo(String infoText, String walletIso, String eventName) {
-        Log.d(TAG, String.format("%s (%s): %s", eventName, walletIso, infoText));
+    @Override
+    public void handleBlockEvent(BREthereumBlock block, BlockEvent event) {
+        Context app = BreadApp.getBreadContext();
+
+        if (app != null && Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
+            //String iso = (null == wallet.getToken() ? "ETH" : wallet.getToken().getSymbol());
+
+            switch (event) {
+                case CREATED:
+                    printInfo("Block created: " + block.getNumber(), "UNK", event.name());
+                    break;
+                case DELETED:
+                    printInfo("Block deleted: " + block.getNumber(), "UNK", event.name());
+                    break;
+            }
+        }
     }
 
     @Override
@@ -1298,7 +1316,7 @@ public class WalletEthManager implements BaseWalletManager,
         Context app = BreadApp.getBreadContext();
 
         if (app != null && Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
-            String iso = (null == wallet.getToken() ? "ETH" : wallet.getToken().getSymbol());
+            String iso = wallet.getSymbol ();
             switch (event) {
                 case CREATED:
                     printInfo("Transaction created: " + transaction.getAmount(), iso, event.name());
@@ -1317,6 +1335,9 @@ public class WalletEthManager implements BaseWalletManager,
                     break;
                 case GAS_ESTIMATE_UPDATED:
                     printInfo("Transaction gas estimate updated: " + transaction.getAmount(), iso, event.name());
+                    break;
+                case BLOCK_CONFIRMATIONS_UPDATED:
+                    printInfo("Transaction confirmations updated: " + transaction.getBlockConfirmations(), iso, event.name());
                     break;
             }
         }

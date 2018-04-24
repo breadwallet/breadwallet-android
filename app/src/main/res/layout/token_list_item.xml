@@ -12,7 +12,6 @@
         android:layout_centerVertical="true"
         android:layout_marginStart="16dp" />
 
-
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/token_ticker"
         android:layout_width="wrap_content"
@@ -20,7 +19,6 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="6dp"
         android:layout_toEndOf="@id/token_icon"
-        android:text="BRD"
         android:textSize="20sp"
         app:customTFont="CircularPro-Bold.otf" />
 
@@ -32,10 +30,8 @@
         android:layout_marginStart="12dp"
         android:layout_marginTop="-5dp"
         android:layout_toEndOf="@id/token_icon"
-        android:text="BRD"
         android:textSize="18sp"
         app:customTFont="CircularPro-Book.otf" />
-
 
     <Button
         android:id="@+id/add_remove_button"

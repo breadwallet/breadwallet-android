@@ -296,10 +296,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                     new int[]{Color.parseColor(startColor), Color.parseColor(endColor)});
             gd.setCornerRadius(0f);
             mToolbar.setBackground(gd);
-            mSendButton.makeGradient(Color.parseColor(startColor), Color.parseColor(endColor));
-            mReceiveButton.makeGradient(Color.parseColor(startColor), Color.parseColor(endColor));
-            mBuyButton.makeGradient(Color.parseColor(startColor), Color.parseColor(endColor));
-            mSellButton.makeGradient(Color.parseColor(startColor), Color.parseColor(endColor));
+            mSendButton.setColor(Color.parseColor(endColor)); //end color if gradient
+            mReceiveButton.setColor(Color.parseColor(endColor));
+            mBuyButton.setColor(Color.parseColor(endColor));
+            mSellButton.setColor(Color.parseColor(endColor));
         } else {
             //it's a solid color
             mToolbar.setBackgroundColor(Color.parseColor(startColor));
