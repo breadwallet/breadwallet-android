@@ -10,7 +10,7 @@
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/add_wallets"
-        android:text="@string/HomeScreen.portfolio"
+        android:text="@string/TokenList.addTitle"
         android:layout_centerVertical="true"
         android:layout_marginStart="22dp"
         android:drawableLeft="@drawable/ic_wallets_add"
