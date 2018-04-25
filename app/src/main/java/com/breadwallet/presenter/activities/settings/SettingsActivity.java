@@ -92,7 +92,7 @@ public class SettingsActivity extends BRActivity {
     private void populateItems() {
 
         items.add(new BRSettingsItem(getString(R.string.Settings_wallet), "", null, true, 0));
-        items.add(new BRSettingsItem(getString(R.string.ManageWallet_title), "", new View.OnClickListener() {
+        items.add(new BRSettingsItem(getString(R.string.TokenList_manageTitle), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SettingsActivity.this, ManageWalletsActivity.class);
