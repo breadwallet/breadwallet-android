@@ -65,18 +65,12 @@ public class TokenListMetaData {
     public synchronized boolean isCurrencyHidden(String symbol) {
         if (hiddenCurrencies == null || hiddenCurrencies.size() == 0) return false;
         for (TokenInfo info : hiddenCurrencies) {
-            Log.d("TokenListMeta", "Hidden Currencies contain -> " + info.symbol);
             if (info.symbol.equalsIgnoreCase(symbol)) return true;
         }
         return false;
 
     }
 
-    public void hideCurrency(String symbol) {
-        if (hiddenCurrencies == null) return;
-        for (TokenInfo info : hiddenCurrencies)
-            if (info.symbol.equalsIgnoreCase(symbol)) hiddenCurrencies.add(info);
-    }
 
     public synchronized void showCurrency(String symbol) {
         if (hiddenCurrencies == null) return;
