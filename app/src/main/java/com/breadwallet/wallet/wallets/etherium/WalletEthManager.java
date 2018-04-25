@@ -11,6 +11,7 @@ import com.breadwallet.R;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.ethereum.BREthereumAmount;
+import com.breadwallet.core.ethereum.BREthereumBlock;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.core.ethereum.BREthereumNetwork;
 import com.breadwallet.core.ethereum.BREthereumToken;
@@ -1284,6 +1285,11 @@ public class WalletEthManager implements BaseWalletManager,
                     break;
             }
         }
+    }
+
+    @Override
+    public void handleBlockEvent(BREthereumBlock block, BlockEvent event) {
+        Log.e(TAG, "handleBlockEvent: " + block + ", event: " + event);
     }
 
     private void printInfo(String infoText, String walletIso, String eventName) {
