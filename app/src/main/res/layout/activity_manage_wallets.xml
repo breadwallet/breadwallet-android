@@ -28,7 +28,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:text="@string/ERC20.Wallets.ManageWallets"
+                android:text="@string/TokenList.manageTitle"
                 android:textSize="18sp"
                 app:customTFont="CircularPro-Book.otf" />
 
