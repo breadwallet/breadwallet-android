@@ -11,11 +11,11 @@ import com.breadwallet.R;
 import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.ethereum.BREthereumAmount;
-import com.breadwallet.core.ethereum.BREthereumBlock;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.core.ethereum.BREthereumNetwork;
 import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
+import com.breadwallet.core.ethereum.BREthereumBlock;
 import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
@@ -85,7 +85,7 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  * THE SOFTWARE.
  */
 public class WalletEthManager implements BaseWalletManager,
-        BREthereumLightNode.Client,
+        BREthereumLightNode.ClientJSON_RPC,
         BREthereumLightNode.Listener {
     private static final String TAG = WalletEthManager.class.getSimpleName();
 
@@ -105,7 +105,7 @@ public class WalletEthManager implements BaseWalletManager,
     private final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // 90m ETH * 18 (WEI)
     private final BigDecimal ONE_ETH = new BigDecimal("1000000000000000000"); //1ETH = 1000000000000000000 WEI
     private BREthereumWallet mWallet;
-    public BREthereumLightNode node;
+    public BREthereumLightNode.JSON_RPC node;
     private Context mContext;
 
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
@@ -129,7 +129,7 @@ public class WalletEthManager implements BaseWalletManager,
                     return;
                 }
 
-                node = new BREthereumLightNode(this, network, paperKey, words);
+                new BREthereumLightNode.JSON_RPC(this, network, paperKey, words);
                 mWallet = node.getWallet();
 
                 if (null == mWallet) {
@@ -144,7 +144,7 @@ public class WalletEthManager implements BaseWalletManager,
             }
         } else {
             Log.e(TAG, "WalletEthManager: Using the pubkey to create");
-            node = new BREthereumLightNode(this, network, ethPubKey);
+            new BREthereumLightNode.JSON_RPC(this, network, ethPubKey);
             mWallet = node.getWallet();
 
             if (null == mWallet) {
@@ -157,10 +157,9 @@ public class WalletEthManager implements BaseWalletManager,
         WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
 
         mContext = app;
+        mWallet.estimateGasPrice();
         mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
         node.connect();
-        mWallet.estimateGasPrice();
-
 
     }
 
@@ -672,8 +671,16 @@ public class WalletEthManager implements BaseWalletManager,
 
 
     /**
-     * The Client callbacks
+     * The JSON RPC callbacks
+     * Implement JSON RPC methods synchronously
      */
+
+    @Override
+    public void assignNode(BREthereumLightNode node) {
+        this.node = (BREthereumLightNode.JSON_RPC) node;
+        this.node.addListener(this);
+    }
+
     @Override
     public void getBalance(final int wid, final String address, final int rid) {
         BREthereumWallet wallet = this.node.getWalletByIdentifier(wid);
@@ -1162,6 +1169,7 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
+
     public void getLogs(final String address, final String event, final int rid) {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -1241,7 +1249,7 @@ public class WalletEthManager implements BaseWalletManager,
         });
     }
 
-    public BREthereumLightNode getNode() {
+    public BREthereumLightNode.JSON_RPC getNode() {
         return node;
     }
 
@@ -1254,11 +1262,12 @@ public class WalletEthManager implements BaseWalletManager,
         Context app = BreadApp.getBreadContext();
 
         if (app != null && Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
-            String iso = wallet.getSymbol();
+            String iso = (null == wallet.getToken() ? "ETH" : wallet.getToken().getSymbol());
             switch (event) {
                 case CREATED:
                     printInfo("Wallet Created", iso, event.name());
                     break;
+
                 case BALANCE_UPDATED:
                     printInfo("New Balance: " + wallet.getBalance(), iso, event.name());
                     break;
@@ -1305,7 +1314,7 @@ public class WalletEthManager implements BaseWalletManager,
         Context app = BreadApp.getBreadContext();
 
         if (app != null && Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
-            String iso = wallet.getSymbol();
+            String iso = (null == wallet.getToken() ? "ETH" : wallet.getToken().getSymbol());
             switch (event) {
                 case CREATED:
                     printInfo("Transaction created: " + transaction.getAmount(), iso, event.name());
