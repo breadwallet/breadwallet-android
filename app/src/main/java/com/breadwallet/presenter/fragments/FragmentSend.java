@@ -754,8 +754,8 @@ public class FragmentSend extends Fragment {
         isoButton.setText(String.format("%s(%s)", selectedIso, CurrencyUtils.getSymbolByIso(app, selectedIso)));
 
         //is the chosen ISO a crypto (could be also a fiat currency)
-        boolean isIsoCrypto = WalletsMaster.getInstance(getActivity()).isIsoCrypto(getActivity(), selectedIso);
-        boolean isWalletErc20 = WalletsMaster.getInstance(getActivity()).isIsoErc20(getActivity(), wm.getIso(app));
+        boolean isIsoCrypto = WalletsMaster.getInstance(app).isIsoCrypto(app, selectedIso);
+        boolean isWalletErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, wm.getIso(app));
         BigDecimal inputAmount = new BigDecimal(Utils.isNullOrEmpty(stringAmount) || stringAmount.equalsIgnoreCase(".") ? "0" : stringAmount);
 
         //smallest crypto e.g. satoshis

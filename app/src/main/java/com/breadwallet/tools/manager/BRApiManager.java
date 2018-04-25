@@ -178,7 +178,7 @@ public class BRApiManager {
         try {
             JSONArray arr = new JSONArray(result);
             if (arr.length() == 0) {
-                BRReportsManager.reportBug(new NullPointerException("Failed to retrieve erc20 rates: " + url));
+                Log.e(TAG, "updateErc20Rates: empty json");
                 return;
             }
             String object = null;

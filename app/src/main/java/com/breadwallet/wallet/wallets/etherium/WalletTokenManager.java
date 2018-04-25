@@ -144,7 +144,7 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public byte[] signAndPublishTransaction(BaseTransaction tx, byte[] seed) {
-        mWalletToken.signWithPrivateKey(tx.getEtherTx(), seed);
+        mWalletToken.sign(tx.getEtherTx(), new String(seed));
         mWalletToken.submit(tx.getEtherTx());
         String hash = tx.getEtherTx().getHash();
         return hash == null ? new byte[0] : hash.getBytes();
@@ -306,7 +306,7 @@ public class WalletTokenManager implements BaseWalletManager {
             uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(mWalletToken.getAccount().getPrimaryAddress()), tx.getBlockTimestamp(),
                     (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null : tx.getHash().getBytes(), tx.getHash(), new BigDecimal(tx.getFee()), tx,
                     tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
-                    new BigDecimal(tx.getAmount()), true));
+                    new BigDecimal(tx.getAmount(BREthereumAmount.Unit.TOKEN_DECIMAL)), true));
         }
 
         return uiTxs;
@@ -508,8 +508,6 @@ public class WalletTokenManager implements BaseWalletManager {
             Log.e(TAG, "getUsdFromBtc: No BTC rates for ETH");
             return null;
         }
-        Log.e(TAG, "getFiatForToken: btcRate:" + btcRate.rate);
-        Log.e(TAG, "getFiatForToken: tokenBtcRate:" + tokenBtcRate.rate);
 
         return tokenAmount.multiply(new BigDecimal(tokenBtcRate.rate)).multiply(new BigDecimal(btcRate.rate));
     }

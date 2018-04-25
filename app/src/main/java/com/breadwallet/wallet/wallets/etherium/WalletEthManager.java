@@ -766,9 +766,7 @@ public class WalletEthManager implements BaseWalletManager,
                             public void onRpcRequestCompleted(String jsonResult) {
 
                                 try {
-
                                     if (!Utils.isNullOrEmpty(jsonResult)) {
-
                                         JSONObject responseObject = new JSONObject(jsonResult);
 
                                         if (responseObject.has("result")) {
@@ -778,9 +776,10 @@ public class WalletEthManager implements BaseWalletManager,
                                             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                                 @Override
                                                 public void run() {
+                                                    Log.e(TAG, "run: " + wallet.getToken().getSymbol());
                                                     for (OnBalanceChangedListener list : balanceListeners)
                                                         if (list != null)
-                                                            list.onBalanceChanged(ISO, new BigDecimal(wallet.getBalance()));
+                                                            list.onBalanceChanged(wallet.getToken().getSymbol(), new BigDecimal(wallet.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL)));
                                                 }
                                             });
                                         }
