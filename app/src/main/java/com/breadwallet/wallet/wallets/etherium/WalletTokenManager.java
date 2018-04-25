@@ -250,7 +250,7 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public BigDecimal getMinOutputAmount(Context app) {
-        return mWalletEthManager.getMinOutputAmount(app);
+        return new BigDecimal(0);
     }
 
     @Override
@@ -295,12 +295,16 @@ public class WalletTokenManager implements BaseWalletManager {
     @Override
     public List<TxUiHolder> getTxUiHolders(Context app) {
         BREthereumTransaction txs[] = mWalletToken.getTransactions();
+        int blockHeight = (int) mWalletEthManager.node.getBlockHeight();
+        if (app != null && blockHeight != Integer.MAX_VALUE && blockHeight > 0) {
+            BRSharedPrefs.putLastBlockHeight(app, getIso(app), blockHeight);
+        }
         if (txs == null || txs.length <= 0) return null;
         List<TxUiHolder> uiTxs = new ArrayList<>();
         for (int i = txs.length - 1; i >= 0; i--) { //revere order
             BREthereumTransaction tx = txs[i];
             uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(mWalletToken.getAccount().getPrimaryAddress()), tx.getBlockTimestamp(),
-                    (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null : tx.getHash().getBytes(), tx.getHash(), null, tx,
+                    (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null : tx.getHash().getBytes(), tx.getHash(), new BigDecimal(tx.getFee()), tx,
                     tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
                     new BigDecimal(tx.getAmount()), true));
         }
@@ -467,14 +471,15 @@ public class WalletTokenManager implements BaseWalletManager {
     @Override
     public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
         if (amount == null) return null;
-        amount = amount.stripTrailingZeros();
-        //if the maount has more than 18 digits, then it's probably WEI (ETH fee amount)
-        //Use ETH wallet to convert
-        if (amount.precision() - amount.scale() >= 18) {
-            return mWalletEthManager.getCryptoForSmallestCrypto(app, amount);
-        }
         return amount; //only using Tokens
     }
+
+//    private boolean isWei(BigDecimal amount) {
+//        amount = amount.stripTrailingZeros();
+//        //if the maount has more than 18 digits, then it's probably WEI (ETH fee amount)
+//        //Use ETH wallet to convert
+//        return amount.precision() - amount.scale() >= 10;
+//    }
 
     @Override
     public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
@@ -483,7 +488,6 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
-
         return getCryptoForFiat(app, amount);
     }
 
@@ -492,8 +496,10 @@ public class WalletTokenManager implements BaseWalletManager {
     private BigDecimal getFiatForToken(Context app, BigDecimal tokenAmount, String code) {
         //fiat rate for btc
         CurrencyEntity btcRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
+
         //Btc rate for the token
         CurrencyEntity tokenBtcRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
+
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;
@@ -502,6 +508,8 @@ public class WalletTokenManager implements BaseWalletManager {
             Log.e(TAG, "getUsdFromBtc: No BTC rates for ETH");
             return null;
         }
+        Log.e(TAG, "getFiatForToken: btcRate:" + btcRate.rate);
+        Log.e(TAG, "getFiatForToken: tokenBtcRate:" + tokenBtcRate.rate);
 
         return tokenAmount.multiply(new BigDecimal(tokenBtcRate.rate)).multiply(new BigDecimal(btcRate.rate));
     }

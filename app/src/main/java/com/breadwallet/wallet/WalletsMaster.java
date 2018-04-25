@@ -233,6 +233,14 @@ public class WalletsMaster {
         return false;
     }
 
+    public boolean isIsoErc20(Context app, String iso) {
+        if (Utils.isNullOrEmpty(iso)) return false;
+        for (BREthereumToken token : BREthereumToken.tokens) {
+            if (token.getSymbol().equalsIgnoreCase(iso)) return true;
+        }
+        return false;
+    }
+
     public boolean wipeKeyStore(Context context) {
         Log.d(TAG, "wipeKeyStore");
         return BRKeyStore.resetWalletKeyStore(context);

@@ -117,7 +117,6 @@ public class BRApiManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        Log.e(TAG, "getCurrencies: " + set.size());
         return new LinkedHashSet<>(set);
     }
 

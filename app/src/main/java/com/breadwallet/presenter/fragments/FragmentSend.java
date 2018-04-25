@@ -50,6 +50,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -416,9 +417,9 @@ public class FragmentSend extends Fragment {
                 //not allowed now
                 if (!BRAnimator.isClickAllowed()) return;
                 WalletsMaster master = WalletsMaster.getInstance(getActivity());
-                BaseWalletManager wallet = master.getCurrentWallet(getActivity());
+                BaseWalletManager wm = master.getCurrentWallet(getActivity());
                 //get the current wallet used
-                if (wallet == null) {
+                if (wm == null) {
                     Log.e(TAG, "onClick: Wallet is null and it can't happen.");
                     BRReportsManager.reportBug(new NullPointerException("Wallet is null and it can't happen."), true);
                     return;
@@ -433,15 +434,14 @@ public class FragmentSend extends Fragment {
                 //is the chosen ISO a crypto (could be a fiat currency)
                 boolean isIsoCrypto = master.isIsoCrypto(getActivity(), selectedIso);
 
-                BigDecimal cryptoAmount = isIsoCrypto ? wallet.getSmallestCryptoForCrypto(getActivity(), rawAmount) : wallet.getSmallestCryptoForFiat(getActivity(), rawAmount);
+                BigDecimal cryptoAmount = isIsoCrypto ? wm.getSmallestCryptoForCrypto(getActivity(), rawAmount) : wm.getSmallestCryptoForFiat(getActivity(), rawAmount);
                 CryptoRequest req = CryptoUriParser.parseRequest(getActivity(), rawAddress);
                 if (req == null || Utils.isNullOrEmpty(req.address)) {
                     sayInvalidClipboardData();
                     return;
                 }
-                Activity app = getActivity();
-                if (!wallet.isAddressValid(req.address)) {
-                    allFilled = false;
+                final Activity app = getActivity();
+                if (!wm.isAddressValid(req.address)) {
 
                     BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_noAddress), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                         @Override
@@ -455,15 +455,33 @@ public class FragmentSend extends Fragment {
                     allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), amountEdit);
                 }
-                if (cryptoAmount.compareTo(wallet.getCachedBalance(getActivity())) > 0) {
+
+                if (cryptoAmount.compareTo(wm.getCachedBalance(getActivity())) > 0) {
                     allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), balanceText);
                     SpringAnimator.failShakeAnimation(getActivity(), feeText);
                 }
 
+                if (WalletsMaster.getInstance(getActivity()).isIsoErc20(getActivity(), wm.getIso(app))) {
+
+                    BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, addressEdit.getText().toString());
+                    BaseWalletManager ethWm = WalletEthManager.getInstance(app);
+                    BigDecimal isoFee = isIsoCrypto ? rawFee : ethWm.getFiatForSmallestCrypto(app, rawFee, null);
+                    BigDecimal b = ethWm.getCachedBalance(app);
+                    if (isoFee.compareTo(b) > 0) {
+                        if (allFilled) {
+                            BigDecimal ethVal = ethWm.getCryptoForSmallestCrypto(app, isoFee);
+                            sayInsufficientEthereumForFee(app, ethVal.setScale(ethWm.getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE).toPlainString());
+
+                            allFilled = false;
+                        }
+                    }
+
+                }
+
                 if (allFilled) {
                     CryptoRequest item = new CryptoRequest(null, false, comment, req.address, cryptoAmount);
-                    SendManager.sendTransaction(getActivity(), item, wallet);
+                    SendManager.sendTransaction(getActivity(), item, wm);
                 }
             }
         });
@@ -590,6 +608,31 @@ public class FragmentSend extends Fragment {
                 }, null, null, 0);
     }
 
+    private void sayInsufficientEthereumForFee(final Activity app, String ethNeeded){
+        String message = String.format("You must have at least %s Ethereum in your wallet in order to transfer this type of token. " +
+                "Would you like to go to your Ethereum wallet now?", ethNeeded);
+        BRDialog.showCustomDialog(app, "Insufficient Ethereum Balance", message, app.getString(R.string.Button_continueAction),
+                app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        brDialogView.dismissWithAnimation();
+                        app.getFragmentManager().popBackStack();
+                        new Handler().postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (!app.isDestroyed())
+                                    app.onBackPressed();
+                            }
+                        }, 1000);
+                    }
+                }, new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        brDialogView.dismissWithAnimation();
+                    }
+                }, null, 0);
+    }
+
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -700,38 +743,46 @@ public class FragmentSend extends Fragment {
 
         String stringAmount = amountBuilder.toString();
         setAmount();
-        BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
+        BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
         String balanceString;
         if (selectedIso == null)
-            selectedIso = wallet.getIso(app);
+            selectedIso = wm.getIso(app);
         //String iso = selectedIso;
-        curBalance = wallet.getCachedBalance(app);
+        curBalance = wm.getCachedBalance(app);
         if (!amountLabelOn)
             isoText.setText(CurrencyUtils.getSymbolByIso(app, selectedIso));
         isoButton.setText(String.format("%s(%s)", selectedIso, CurrencyUtils.getSymbolByIso(app, selectedIso)));
 
         //is the chosen ISO a crypto (could be also a fiat currency)
         boolean isIsoCrypto = WalletsMaster.getInstance(getActivity()).isIsoCrypto(getActivity(), selectedIso);
-
+        boolean isWalletErc20 = WalletsMaster.getInstance(getActivity()).isIsoErc20(getActivity(), wm.getIso(app));
         BigDecimal inputAmount = new BigDecimal(Utils.isNullOrEmpty(stringAmount) || stringAmount.equalsIgnoreCase(".") ? "0" : stringAmount);
 
         //smallest crypto e.g. satoshis
-        BigDecimal cryptoAmount = isIsoCrypto ? wallet.getSmallestCryptoForCrypto(app, inputAmount) : wallet.getSmallestCryptoForFiat(app, inputAmount);
+        BigDecimal cryptoAmount = isIsoCrypto ? wm.getSmallestCryptoForCrypto(app, inputAmount) : wm.getSmallestCryptoForFiat(app, inputAmount);
 
         //wallet's balance for the selected ISO
-        BigDecimal isoBalance = isIsoCrypto ? wallet.getCryptoForSmallestCrypto(app, curBalance) : wallet.getFiatForSmallestCrypto(app, curBalance, null);
+        BigDecimal isoBalance = isIsoCrypto ? wm.getCryptoForSmallestCrypto(app, curBalance) : wm.getFiatForSmallestCrypto(app, curBalance, null);
         if (isoBalance == null) isoBalance = new BigDecimal(0);
 
-        BigDecimal fee = wallet.getEstimatedFee(cryptoAmount, addressEdit.getText().toString());
+        BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, addressEdit.getText().toString());
 
         //get the fee for iso (dollars, bits, BTC..)
-        BigDecimal isoFee = isIsoCrypto ? wallet.getCryptoForSmallestCrypto(app, fee) : wallet.getFiatForSmallestCrypto(app, fee, null);
+        BigDecimal isoFee = isIsoCrypto ? rawFee : wm.getFiatForSmallestCrypto(app, rawFee, null);
 
         //format the fee to the selected ISO
-        String formattedFee = CurrencyUtils.getFormattedAmount(app, selectedIso, isIsoCrypto ? wallet.getSmallestCryptoForCrypto(app, isoFee) : isoFee);
-//        Log.e(TAG, "updateText: aproxFee:" + aproxFee);
+        String formattedFee = CurrencyUtils.getFormattedAmount(app, selectedIso, isoFee);
+
+
+        if (isWalletErc20) {
+            BaseWalletManager ethWm = WalletEthManager.getInstance(app);
+            isoFee = isIsoCrypto ? rawFee : ethWm.getFiatForSmallestCrypto(app, rawFee, null);
+            formattedFee = CurrencyUtils.getFormattedAmount(app, isIsoCrypto ? ethWm.getIso(app) : selectedIso, isoFee);
+
+        }
 
         boolean isOverTheBalance = inputAmount.compareTo(isoBalance) > 0;
+
         if (isOverTheBalance) {
             balanceText.setTextColor(getContext().getColor(R.color.warning_color));
             feeText.setTextColor(getContext().getColor(R.color.warning_color));
@@ -747,7 +798,7 @@ public class FragmentSend extends Fragment {
         }
         //formattedBalance
         String formattedBalance = CurrencyUtils.getFormattedAmount(app, selectedIso,
-                isIsoCrypto ? wallet.getSmallestCryptoForCrypto(app, isoBalance) : isoBalance);
+                isIsoCrypto ? wm.getSmallestCryptoForCrypto(app, isoBalance) : isoBalance);
         balanceString = String.format(getString(R.string.Send_balance), formattedBalance);
         balanceText.setText(balanceString);
         feeText.setText(String.format(getString(R.string.Send_fee), formattedFee));

@@ -714,7 +714,6 @@ public class WalletEthManager implements BaseWalletManager,
                 request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
-                        String balance = "0x";
                         try {
                             if (!Utils.isNullOrEmpty(jsonResult)) {
 
@@ -722,16 +721,15 @@ public class WalletEthManager implements BaseWalletManager,
                                 Log.d(TAG, "getBalance response -> " + responseObject.toString());
 
                                 if (responseObject.has("result")) {
-                                    balance = responseObject.getString("result");
+                                    String balance = responseObject.getString("result");
                                     node.announceBalance(wid, balance, rid);
 
-                                    // TODO: Use `wallet`, not `mWallet`
                                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                         @Override
                                         public void run() {
                                             for (OnBalanceChangedListener list : balanceListeners)
                                                 if (list != null)
-                                                    list.onBalanceChanged(ISO, new BigDecimal(mWallet.getBalance()));
+                                                    list.onBalanceChanged(ISO, new BigDecimal(wallet.getBalance()));
                                         }
                                     });
                                 }
@@ -772,7 +770,6 @@ public class WalletEthManager implements BaseWalletManager,
                         .makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                             @Override
                             public void onRpcRequestCompleted(String jsonResult) {
-                                String balance = "0x";
 
                                 try {
 
@@ -781,16 +778,15 @@ public class WalletEthManager implements BaseWalletManager,
                                         JSONObject responseObject = new JSONObject(jsonResult);
 
                                         if (responseObject.has("result")) {
-                                            balance = responseObject.getString("result");
+                                            String balance = responseObject.getString("result");
                                             node.announceBalance(wid, balance, rid);
 
-                                            // TODO: Use `wallet`, not `mWallet`
                                             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                                 @Override
                                                 public void run() {
                                                     for (OnBalanceChangedListener list : balanceListeners)
                                                         if (list != null)
-                                                            list.onBalanceChanged(ISO, new BigDecimal(mWallet.getBalance()));
+                                                            list.onBalanceChanged(ISO, new BigDecimal(wallet.getBalance()));
                                                 }
                                             });
                                         }
@@ -1151,7 +1147,8 @@ public class WalletEthManager implements BaseWalletManager,
                                             (mWallet.getAccount().getPrimaryAddress().equalsIgnoreCase(txTo) ? address : txTo),
                                             txContract, txValue, txGas, txGasPrice, txData, txNonce, txGasUsed, txBlockNumber, txBlockHash, txBlockConfirmations, txBlockTransactionIndex, txBlockTimestamp, txIsError);
                                     Context app = BreadApp.getBreadContext();
-                                    int blockHeight = Integer.valueOf(txBlockNumber) + Integer.valueOf(txBlockConfirmations);
+
+                                    int blockHeight = (int) node.getBlockHeight();
                                     if (app != null && blockHeight != Integer.MAX_VALUE && blockHeight > 0) {
                                         BRSharedPrefs.putLastBlockHeight(app, getIso(app), blockHeight);
                                     }

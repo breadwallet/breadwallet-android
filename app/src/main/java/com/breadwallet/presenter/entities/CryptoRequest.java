@@ -6,6 +6,7 @@ import android.util.Log;
 
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
@@ -92,7 +93,8 @@ public class CryptoRequest {
         Log.e(TAG, "maxOutput: " + maxOutput);
         Log.e(TAG, "balance: " + balance);
         Log.e(TAG, "notEnoughForFee: " + feeForTx);
-        return (amount.add(feeForTx)).compareTo(balance) > 0;
+
+        return WalletsMaster.getInstance(app).isIsoErc20(app, walletManager.getIso(app)) ? amount.compareTo(balance) > 0 : amount.add(feeForTx).compareTo(balance) > 0;
     }
 
     public String getReceiver(BaseWalletManager walletManager) {

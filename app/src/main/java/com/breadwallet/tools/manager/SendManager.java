@@ -26,6 +26,7 @@ import com.breadwallet.wallet.exceptions.FeeOutOfDate;
 import com.breadwallet.wallet.exceptions.InsufficientFundsException;
 import com.breadwallet.wallet.exceptions.SomethingWentWrong;
 import com.breadwallet.wallet.exceptions.SpendingNotAllowed;
+import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.math.BigDecimal;
@@ -77,26 +78,28 @@ public class SendManager {
                     }
                     sending = true;
                     long now = System.currentTimeMillis();
-                    //if the fee was updated more than 24 hours ago then try updating the fee
-                    if (now - BRSharedPrefs.getFeeTime(app, walletManager.getIso(app)) >= FEE_EXPIRATION_MILLIS) {
-                        new Thread(new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    Thread.sleep(3000);
-                                } catch (InterruptedException e) {
-                                    e.printStackTrace();
-                                }
+                    //if the fee (for BTC and BCH only) was updated more than 24 hours ago then try updating the fee
+                    if (walletManager.getIso(app).equalsIgnoreCase("BTC") || walletManager.getIso(app).equalsIgnoreCase("BCH")) {
+                        if (now - BRSharedPrefs.getFeeTime(app, walletManager.getIso(app)) >= FEE_EXPIRATION_MILLIS) {
+                            new Thread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        Thread.sleep(3000);
+                                    } catch (InterruptedException e) {
+                                        e.printStackTrace();
+                                    }
 
-                                if (sending) timedOut = true;
+                                    if (sending) timedOut = true;
+                                }
+                            }).start();
+                            walletManager.updateFee(app);
+                            //if the fee is STILL out of date then fail with network problem message
+                            long time = BRSharedPrefs.getFeeTime(app, walletManager.getIso(app));
+                            if (time <= 0 || now - time >= FEE_EXPIRATION_MILLIS) {
+                                Log.e(TAG, "sendTransaction: fee out of date even after fetching...");
+                                throw new FeeOutOfDate(BRSharedPrefs.getFeeTime(app, walletManager.getIso(app)), now);
                             }
-                        }).start();
-                        walletManager.updateFee(app);
-                        //if the fee is STILL out of date then fail with network problem message
-                        long time = BRSharedPrefs.getFeeTime(app, walletManager.getIso(app));
-                        if (time <= 0 || now - time >= FEE_EXPIRATION_MILLIS) {
-                            Log.e(TAG, "sendTransaction: fee out of date even after fetching...");
-                            throw new FeeOutOfDate(BRSharedPrefs.getFeeTime(app, walletManager.getIso(app)), now);
                         }
                     }
                     if (!timedOut)
@@ -365,23 +368,22 @@ public class SendManager {
 
     }
 
-    private static String createConfirmation(Context ctx, CryptoRequest request, final BaseWalletManager walletManager) {
+    private static String createConfirmation(Context ctx, CryptoRequest request, final BaseWalletManager wm) {
 
         String receiver;
         boolean certified = false;
         if (request.cn != null && request.cn.length() != 0) {
             certified = true;
         }
-        receiver = walletManager.decorateAddress(ctx, request.address);
+        receiver = wm.decorateAddress(ctx, request.address);
         if (certified) {
             receiver = "certified: " + request.cn + "\n";
         }
 
         String iso = BRSharedPrefs.getPreferredFiatIso(ctx);
-        BaseWalletManager wallet = WalletsMaster.getInstance(ctx).getCurrentWallet(ctx);
-        BigDecimal feeForTx = walletManager.getEstimatedFee(request.amount, request.address);
+        BigDecimal feeForTx = wm.getEstimatedFee(request.amount, request.address);
         if (feeForTx.compareTo(new BigDecimal(0)) <= 0) {
-            BigDecimal maxAmount = walletManager.getMaxOutputAmount(ctx);
+            BigDecimal maxAmount = wm.getMaxOutputAmount(ctx);
             if (maxAmount != null && maxAmount.compareTo(new BigDecimal(-1)) == 0) {
                 BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
             }
@@ -396,25 +398,33 @@ public class SendManager {
                 return null;
             }
             if (maxAmount != null) {
-                feeForTx = walletManager.getEstimatedFee(request.amount, request.address);
-                feeForTx = feeForTx.add(walletManager.getCachedBalance(ctx).subtract(request.amount.abs()));
+                feeForTx = wm.getEstimatedFee(request.amount, request.address);
+                feeForTx = feeForTx.add(wm.getCachedBalance(ctx).subtract(request.amount.abs()));
             }
         }
         BigDecimal amount = request.amount.abs();
         final BigDecimal total = amount.add(feeForTx);
-        String formattedCryptoAmount = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), amount);
-        String formatterCryptoFee = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), feeForTx);
-        String formatterCryptoTotal = CurrencyUtils.getFormattedAmount(ctx, walletManager.getIso(ctx), total);
+        String formattedCryptoAmount = CurrencyUtils.getFormattedAmount(ctx, wm.getIso(ctx), amount);
+        String formattedCryptoFee = CurrencyUtils.getFormattedAmount(ctx, wm.getIso(ctx), feeForTx);
+        String formattedCryptoTotal = CurrencyUtils.getFormattedAmount(ctx, wm.getIso(ctx), total);
 
-        String formattedAmount = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, amount, null));
-        String formattedFee = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, feeForTx, null));
-        String formattedTotal = CurrencyUtils.getFormattedAmount(ctx, iso, wallet.getFiatForSmallestCrypto(ctx, total, null));
+        String formattedAmount = CurrencyUtils.getFormattedAmount(ctx, iso, wm.getFiatForSmallestCrypto(ctx, amount, null));
+        String formattedFee = CurrencyUtils.getFormattedAmount(ctx, iso, wm.getFiatForSmallestCrypto(ctx, feeForTx, null));
+        String formattedTotal = CurrencyUtils.getFormattedAmount(ctx, iso, wm.getFiatForSmallestCrypto(ctx, total, null));
+
+        if (WalletsMaster.getInstance(ctx).isIsoErc20(ctx, wm.getIso(ctx))) {
+            formattedCryptoTotal = "";
+            formattedTotal = "";
+            BaseWalletManager ethWm = WalletEthManager.getInstance(ctx);
+            formattedCryptoFee = CurrencyUtils.getFormattedAmount(ctx, ethWm.getIso(ctx), feeForTx);
+            formattedFee = CurrencyUtils.getFormattedAmount(ctx, iso, ethWm.getFiatForSmallestCrypto(ctx, feeForTx, null));
+        }
 
         //formatted text
         return receiver + "\n\n"
                 + ctx.getString(R.string.Confirmation_amountLabel) + " " + formattedCryptoAmount + " (" + formattedAmount + ")"
-                + "\n" + ctx.getString(R.string.Confirmation_feeLabel) + " " + formatterCryptoFee + " (" + formattedFee + ")"
-                + "\n" + ctx.getString(R.string.Confirmation_totalLabel) + " " + formatterCryptoTotal + " (" + formattedTotal + ")"
+                + "\n" + ctx.getString(R.string.Confirmation_feeLabel) + " " + formattedCryptoFee + " (" + formattedFee + ")"
+                + "\n" + ctx.getString(R.string.Confirmation_totalLabel) + " " + formattedCryptoTotal + " (" + formattedTotal + ")"
                 + (request.message == null ? "" : "\n\n" + request.message);
     }
 
