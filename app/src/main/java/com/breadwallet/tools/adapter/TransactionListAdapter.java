@@ -214,12 +214,12 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         String receivedVia = String.format(mContext.getString(R.string.TransactionDetails_receivedVia), wallet.decorateAddress(mContext, item.getTo()));
 
         String sendingTo = String.format(mContext.getString(R.string.Transaction_sendingTo), wallet.decorateAddress(mContext, item.getTo()));
-        String recevingVia = String.format(mContext.getString(R.string.TransactionDetails_receivingVia), wallet.decorateAddress(mContext, item.getTo()));
+        String receivingVia = String.format(mContext.getString(R.string.TransactionDetails_receivingVia), wallet.decorateAddress(mContext, item.getTo()));
 
         if (level > 4) {
             convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? sentTo : receivedVia));
         } else {
-            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? sendingTo : recevingVia));
+            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? sendingTo : receivingVia));
 
         }
 
