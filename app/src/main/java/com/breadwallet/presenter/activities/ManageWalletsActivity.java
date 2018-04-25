@@ -14,6 +14,7 @@ import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.adapter.ManageTokenListAdapter;
 import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.wallet.wallets.etherium.WalletTokenManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.tools.KVStoreManager;
 
@@ -54,16 +55,29 @@ public class ManageWalletsActivity extends BRActivity {
                 for (int i = 0; i < mTokens.size(); i++) {
 
                     TokenListMetaData.TokenInfo info = mTokens.get(i);
-                    TokenItem tokenItem;
+                    TokenItem tokenItem = null;
+                    String tokenSymbol = mTokens.get(i).symbol;
 
-                    if (!mTokens.get(i).symbol.equalsIgnoreCase("btc") && !mTokens.get(i).symbol.equalsIgnoreCase("bch") && !mTokens.get(i).symbol.equalsIgnoreCase("eth")) {
+
+                    if (!tokenSymbol.equalsIgnoreCase("btc") && !tokenSymbol.equalsIgnoreCase("bch") && !tokenSymbol.equalsIgnoreCase("eth")) {
 
                         BREthereumToken tk = BREthereumToken.lookup(info.contractAddress);
                         tokenItem = new TokenItem(tk.getAddress(), tk.getSymbol(), tk.getName(), null);
+
+
+                    } else if (tokenSymbol.equalsIgnoreCase("btc"))
+                        tokenItem = new TokenItem(null, "BTC", "Bitcoin", null);
+
+                    else if (tokenSymbol.equalsIgnoreCase("bch"))
+                        tokenItem = new TokenItem(null, "BCH", "Bitcoin Cash", null);
+                    else if (tokenSymbol.equalsIgnoreCase("eth"))
+                        tokenItem = new TokenItem(null, "ETH", "Ethereum", null);
+
+
+                    if (tokenItem != null) {
                         tokenItems.add(tokenItem);
-
-
                     }
+
 
                 }
 

@@ -55,6 +55,7 @@
         android:layout_marginEnd="8dp"
         android:text="12.45BTC"
         android:textSize="12sp"
+        android:visibility="invisible"
         app:customTFont="CircularPro-Book.otf"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

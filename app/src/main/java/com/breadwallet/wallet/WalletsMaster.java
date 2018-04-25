@@ -100,18 +100,30 @@ public class WalletsMaster {
         }
 
         for (TokenListMetaData.TokenInfo enabled : md.enabledCurrencies) {
+
+            boolean isHidden = KVStoreManager.getInstance().getTokenListMetaData(app).isCurrencyHidden(enabled.symbol);
+
             if (enabled.symbol.equalsIgnoreCase("BTC")) {
                 //BTC wallet
-                if (!mWallets.contains(WalletBitcoinManager.getInstance(app)))
+                if (!mWallets.contains(WalletBitcoinManager.getInstance(app)) && !isHidden) {
                     mWallets.add(WalletBitcoinManager.getInstance(app));
+                } else if (mWallets.contains(WalletBitcoinManager.getInstance(app)) && isHidden) {
+                    mWallets.remove(WalletBitcoinManager.getInstance(app));
+                }
             } else if (enabled.symbol.equalsIgnoreCase("BCH")) {
                 //BCH wallet
-                if (!mWallets.contains(WalletBchManager.getInstance(app)))
+                if (!mWallets.contains(WalletBchManager.getInstance(app)) && !isHidden) {
                     mWallets.add(WalletBchManager.getInstance(app));
+                } else if (mWallets.contains(WalletBchManager.getInstance(app)) && isHidden) {
+                    mWallets.remove(WalletBchManager.getInstance(app));
+                }
             } else if (enabled.symbol.equalsIgnoreCase("ETH")) {
                 //ETH wallet
-                if (!mWallets.contains(ethWallet)) {
+                if (!mWallets.contains(ethWallet) && !isHidden) {
+                    Log.d(TAG, "Adding ETH wallet to home screen");
                     mWallets.add(ethWallet);
+                } else if (mWallets.contains(ethWallet) && isHidden) {
+                    mWallets.remove(ethWallet);
                 }
             } else {
                 //add ERC20 wallet
