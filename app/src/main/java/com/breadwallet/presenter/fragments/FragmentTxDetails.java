@@ -226,9 +226,9 @@ public class FragmentTxDetails extends DialogFragment {
                 BigDecimal rawFee = mTransaction.getFee();
                 //meaning ETH or erc20
                 if (ethTx != null) {
-                    mGasPrice.setText(String.format("%s %s", new BigDecimal(ethTx.getGasPrice()).setScale(2, BRConstants.ROUNDING_MODE).toPlainString(), "gwei"));
+                    mGasPrice.setText(String.format("%s %s", new BigDecimal(ethTx.getGasPrice(BREthereumAmount.Unit.ETHER_GWEI)).setScale(2, BRConstants.ROUNDING_MODE).toPlainString(), "gwei"));
                     mGasLimit.setText(new BigDecimal(ethTx.getGasLimit()).toPlainString());
-                    rawFee = new BigDecimal(ethTx.isConfirmed() ? ethTx.getGasUsed() : ethTx.getGasLimit()).multiply(new BigDecimal(ethTx.getGasPrice()));
+                    rawFee = new BigDecimal(ethTx.isConfirmed() ? ethTx.getGasUsed() : ethTx.getGasLimit()).multiply(new BigDecimal(ethTx.getGasPrice(BREthereumAmount.Unit.ETHER_WEI)));
                 } else {
                     hideEthViews();
                 }
