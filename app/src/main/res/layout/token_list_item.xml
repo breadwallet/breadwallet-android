@@ -40,7 +40,7 @@
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="12dp"
-        android:text="@string/ERC20.Wallets.Add"
+        android:text="@string/MenuButton.addWallet"
         android:textColor="@color/dialog_button_positive"
         android:textSize="14sp"
         android:background="@drawable/add_wallet_button"

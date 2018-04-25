@@ -203,7 +203,7 @@
                 android:paddingEnd="16dp"
                 android:paddingStart="16dp"
                 android:background="@android:color/transparent"
-                android:hint="@string/Transaction.AddMemo"
+                android:hint="@string/TransactionDetails.commentsPlaceholder"
                 android:inputType="text"
                 android:imeOptions="actionDone"
                 android:text="Sample transaction memo would go here. Some things are truly better left unsaid"
