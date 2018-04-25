@@ -1,6 +1,8 @@
 package com.platform.entities;
 
 
+import android.util.Log;
+
 import com.breadwallet.presenter.entities.TokenItem;
 
 import java.util.ArrayList;
@@ -60,11 +62,28 @@ public class TokenListMetaData {
         if (this.hiddenCurrencies == null) this.hiddenCurrencies = new ArrayList<>();
     }
 
-    public boolean isCurrencyHidden(String symbol) {
+    public synchronized boolean isCurrencyHidden(String symbol) {
         if (hiddenCurrencies == null || hiddenCurrencies.size() == 0) return false;
-        for (TokenInfo info : hiddenCurrencies)
+        for (TokenInfo info : hiddenCurrencies) {
             if (info.symbol.equalsIgnoreCase(symbol)) return true;
+        }
         return false;
+
+    }
+
+
+    public synchronized void showCurrency(String symbol) {
+        if (hiddenCurrencies == null) return;
+        for (int i = 0; i < hiddenCurrencies.size(); i++) {
+
+            TokenInfo info = hiddenCurrencies.get(i);
+
+            if (info.symbol.equalsIgnoreCase(symbol)) {
+                hiddenCurrencies.remove(info);
+            }
+        }
+
+
     }
 
     public boolean isCurrencyEnabled(String symbol) {
@@ -74,10 +93,14 @@ public class TokenListMetaData {
         return false;
     }
 
-    public void disableCurrency(String symbol) {
+    public synchronized void disableCurrency(String symbol) {
         if (enabledCurrencies == null || enabledCurrencies.size() == 0) return;
-        for (TokenInfo info : enabledCurrencies)
-            if (info.symbol.equalsIgnoreCase(symbol)) enabledCurrencies.remove(info);
+        for (int i = 0; i < enabledCurrencies.size(); i++) {
+            TokenInfo info = enabledCurrencies.get(i);
+
+            if (info.symbol.equalsIgnoreCase(symbol))
+                enabledCurrencies.remove(info);
+        }
     }
 
     public static class TokenInfo {
