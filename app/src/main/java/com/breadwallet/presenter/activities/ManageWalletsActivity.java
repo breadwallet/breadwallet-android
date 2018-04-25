@@ -13,6 +13,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.adapter.ManageTokenListAdapter;
 import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.wallet.wallets.etherium.WalletTokenManager;
 import com.platform.entities.TokenListMetaData;
@@ -61,7 +62,11 @@ public class ManageWalletsActivity extends BRActivity {
                     if (!tokenSymbol.equalsIgnoreCase("btc") && !tokenSymbol.equalsIgnoreCase("bch") && !tokenSymbol.equalsIgnoreCase("eth")) {
 
                         BREthereumToken tk = BREthereumToken.lookup(info.contractAddress);
-                        tokenItem = new TokenItem(tk.getAddress(), tk.getSymbol(), tk.getName(), null);
+                        if (tk == null) {
+                            BRReportsManager.reportBug(new NullPointerException("No token for contract: " + info.contractAddress));
+
+                        } else
+                            tokenItem = new TokenItem(tk.getAddress(), tk.getSymbol(), tk.getName(), null);
 
 
                     } else if (tokenSymbol.equalsIgnoreCase("btc"))
