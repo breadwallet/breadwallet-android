@@ -159,7 +159,7 @@ public class KVStoreManager {
 
     }
 
-    public void putTokenListMetaData(Context app, TokenListMetaData md) {
+    public synchronized void putTokenListMetaData(Context app, TokenListMetaData md) {
         TokenListMetaData old = getTokenListMetaData(app);
         if (old == null) old = new TokenListMetaData(null, null); //create new one if it's null
 
@@ -214,7 +214,7 @@ public class KVStoreManager {
     }
 
     //expensive, takes ~ 20 milliseconds
-    public TokenListMetaData getTokenListMetaData(Context app) {
+    public synchronized TokenListMetaData getTokenListMetaData(Context app) {
 
         RemoteKVStore remoteKVStore = RemoteKVStore.getInstance(APIClient.getInstance(app));
         ReplicatedKVStore kvStore = ReplicatedKVStore.getInstance(app, remoteKVStore);

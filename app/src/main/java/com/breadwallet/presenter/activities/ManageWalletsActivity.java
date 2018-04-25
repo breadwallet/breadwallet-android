@@ -46,7 +46,6 @@ public class ManageWalletsActivity extends BRActivity {
 
         final ArrayList<TokenItem> tokenItems = new ArrayList<>();
 
-
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -102,8 +101,8 @@ public class ManageWalletsActivity extends BRActivity {
 
 
                 mAdapter.notifyDataSetChanged();
-                KVStoreManager.getInstance().putTokenListMetaData(ManageWalletsActivity.this, metaData);
-
+                final TokenListMetaData finalMetaData = metaData;
+                KVStoreManager.getInstance().putTokenListMetaData(ManageWalletsActivity.this, finalMetaData);
 
             }
 
@@ -128,15 +127,11 @@ public class ManageWalletsActivity extends BRActivity {
             }
         });
 
-        mTokenList.setLayoutManager(new
-
-                LinearLayoutManager(ManageWalletsActivity.this));
+        mTokenList.setLayoutManager(new LinearLayoutManager(ManageWalletsActivity.this));
         mTokenList.setAdapter(mAdapter);
 
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
-        mItemTouchHelper = new
-
-                ItemTouchHelper(callback);
+        mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(mTokenList);
     }
 }

@@ -130,7 +130,7 @@
         <activity
             android:name=".presenter.activities.settings.SettingsActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".presenter.activities.settings.NotificationActivity"
             android:launchMode="singleTask"
@@ -178,7 +178,7 @@
         <activity
             android:name=".presenter.activities.camera.ScanQRActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <!-- Use launchMode="standard for WebViewActivity in order to be able to have multiple instances" -->
         <activity
             android:name=".presenter.activities.settings.WebViewActivity"
@@ -217,15 +217,15 @@
         <activity
             android:name=".presenter.activities.CurrencySettingsActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".presenter.activities.AddWalletsActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
         <activity
             android:name=".presenter.activities.ManageWalletsActivity"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"></activity>
+            android:screenOrientation="portrait"/>
 
         <service
             android:name=".tools.listeners.SyncReceiver"
@@ -235,7 +235,7 @@
         <service
             android:name=".tools.services.SyncService"
             android:enabled="true"
-            android:exported="false"></service>
+            android:exported="false"/>
     </application>
 
 </manifest>

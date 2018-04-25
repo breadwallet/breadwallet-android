@@ -73,7 +73,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
         boolean isHidden = KVStoreManager.getInstance().getTokenListMetaData(mContext).isCurrencyHidden(item.symbol);
 
         holder.showHide.setBackground(mContext.getDrawable(isHidden ? R.drawable.add_wallet_button : R.drawable.remove_wallet_button));
-        holder.showHide.setText(isHidden ? "Show" : "Hide");
+        holder.showHide.setText(isHidden ? mContext.getString(R.string.TokenList_show) : mContext.getString(R.string.TokenList_hide));
         holder.showHide.setTextColor(mContext.getColor(isHidden ? R.color.dialog_button_positive : R.color.red));
 
 
@@ -183,7 +183,6 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
         TokenListMetaData.TokenInfo movedToken = new TokenListMetaData.TokenInfo(item.symbol, true, item.address);
         currentMd.disableCurrency(movedToken.symbol);
         KVStoreManager.getInstance().putTokenListMetaData(mContext, currentMd);
-
 
 
         // Replace it, but in the new position
