@@ -129,7 +129,9 @@
   <!-- OK button label -->
   <string name="Button.ok">OK</string>
   <!-- receive button -->
-  <string name="Button.receive">ta emot</string>
+  <string name="Button.receive">Ta emot</string>
+  <!-- Click this button to sell an asset -->
+  <string name="Button.sell">Sälj</string>
   <!-- send button -->
   <string name="Button.send">skicka</string>
   <!-- Settings button label -->
@@ -290,6 +292,8 @@
   <string name="ManageWallet.textFeildLabel">Plånbokens namn</string>
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">Hantera plånbok</string>
+  <!-- "Add [a] Wallet [to the home screen]" -->
+  <string name="MenuButton.addWallet">Lägg till plånbok</string>
   <!-- Buy bitcoin title -->
   <string name="MenuButton.buy">Köp Bitcoin</string>
   <!-- Menu button title -->
@@ -512,6 +516,10 @@
   <string name="Send.identityNotCertified">Betalningsmottagaren är inte certifierad.</string>
   <!-- Insufficient funds error -->
   <string name="Send.insufficientFunds">Inte tillräckligt med pengar</string>
+  <!-- e,g, "You must have at least $2 in your wallet in order to transfer this type of token." In this case, "token" is an ethereum ERC20 token. -->
+  <string name="Send.insufficientGasMessage">Du måste ha minst %1$s i din plånbok för att överföra denna typ av token. Vill du gå till din Ethereum-plånbok nu?</string>
+  <!-- Your ethereum balance is insufficient to complete this action. -->
+  <string name="Send.insufficientGasTitle">För lågt Ethereum-saldo</string>
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">Mottagaradressen är inte en giltig %1$s-adress.</string>
   <!-- Invalid address on pasteboard message -->
@@ -638,6 +646,18 @@
   <string name="TimeSince.minutes">%1$s m</string>
   <!-- 6 s (6 seconds) -->
   <string name="TimeSince.seconds">%1$s s</string>
+  <!-- Add [this item to the list] -->
+  <string name="TokenList.add">Lägg till</string>
+  <!-- Add Wallets  [to your home screen] -->
+  <string name="TokenList.addTitle">Lägg till plånböcker</string>
+  <!-- Hide [this token from view] -->
+  <string name="TokenList.hide">Dölj</string>
+  <!-- [click here to] Manage [your] Wallets -->
+  <string name="TokenList.manageTitle">Hantera plånböcker</string>
+  <!-- Remove [this item from the list] -->
+  <string name="TokenList.remove">Ta bort</string>
+  <!-- Show [this item on your home screen] -->
+  <string name="TokenList.show">Visa</string>
   <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
   <string name="TouchIdSettings.customizeText">Du kan anpassa din utgiftsgräns i Touch ID från %1$s.</string>
   <!-- Fingerprint enabling description body -->
@@ -704,6 +724,8 @@
   <string name="Transaction.sentTo">skickat till %1$s</string>
   <!-- eg. Starting balance: $50.00 -->
   <string name="Transaction.starting">Ingående saldo: %1$s</string>
+  <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
+  <string name="Transaction.tokenTransfer">Avgift för token-överföring: %1$s</string>
   <!-- Waiting to be confirmed string -->
   <string name="Transaction.waiting">Väntar på bekräftelse. Vissa handlare kräver bekräftelse för att slutföra en transaktion. Uppskattad tid: 1-2 timmar.</string>
   <!-- e.g. I received money from an account. -->

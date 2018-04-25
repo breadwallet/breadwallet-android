@@ -129,7 +129,9 @@
   <!-- OK button label -->
   <string name="Button.ok">OK</string>
   <!-- receive button -->
-  <string name="Button.receive">modtag</string>
+  <string name="Button.receive">Modtag</string>
+  <!-- Click this button to sell an asset -->
+  <string name="Button.sell">Sælg</string>
   <!-- send button -->
   <string name="Button.send">send</string>
   <!-- Settings button label -->
@@ -290,6 +292,8 @@
   <string name="ManageWallet.textFeildLabel">Pungens navn</string>
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">Administrer pung</string>
+  <!-- "Add [a] Wallet [to the home screen]" -->
+  <string name="MenuButton.addWallet">Tilføj pung</string>
   <!-- Buy bitcoin title -->
   <string name="MenuButton.buy">Køb Bitcoin</string>
   <!-- Menu button title -->
@@ -512,6 +516,10 @@
   <string name="Send.identityNotCertified">Betalingsmodtagerens identitet er ikke bekræftet.</string>
   <!-- Insufficient funds error -->
   <string name="Send.insufficientFunds">Utilstrækkelige midler</string>
+  <!-- e,g, "You must have at least $2 in your wallet in order to transfer this type of token." In this case, "token" is an ethereum ERC20 token. -->
+  <string name="Send.insufficientGasMessage">Du skal have mindst %1$s i din pung, for at kunne overføre denne type token. Vil du gå til din Ethereum pung nu?</string>
+  <!-- Your ethereum balance is insufficient to complete this action. -->
+  <string name="Send.insufficientGasTitle">Utilstrækkelig Ethereum balance</string>
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">Modtageradressen er ikke en gyldig %1$s-adresse.</string>
   <!-- Invalid address on pasteboard message -->
@@ -638,6 +646,18 @@
   <string name="TimeSince.minutes">%1$s m</string>
   <!-- 6 s (6 seconds) -->
   <string name="TimeSince.seconds">%1$s s</string>
+  <!-- Add [this item to the list] -->
+  <string name="TokenList.add">Tilføj</string>
+  <!-- Add Wallets  [to your home screen] -->
+  <string name="TokenList.addTitle">Tilføj punge</string>
+  <!-- Hide [this token from view] -->
+  <string name="TokenList.hide">Skjul</string>
+  <!-- [click here to] Manage [your] Wallets -->
+  <string name="TokenList.manageTitle">Administrer punge</string>
+  <!-- Remove [this item from the list] -->
+  <string name="TokenList.remove">Fjern</string>
+  <!-- Show [this item on your home screen] -->
+  <string name="TokenList.show">Vis</string>
   <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
   <string name="TouchIdSettings.customizeText">Du kan tilpasse forbrugsgrænsen for dit Touch ID fra %1$s.</string>
   <!-- Fingerprint enabling description body -->
@@ -704,6 +724,8 @@
   <string name="Transaction.sentTo">sendt til %1$s</string>
   <!-- eg. Starting balance: $50.00 -->
   <string name="Transaction.starting">Startbalance: %1$s</string>
+  <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
+  <string name="Transaction.tokenTransfer">Gebyr for token-overførsel: %1$s</string>
   <!-- Waiting to be confirmed string -->
   <string name="Transaction.waiting">Venter på bekræftelse. Nogen forhandlere kræver bekræftelse for at gennemføre en transaktion. Anslået tid: 1-2 timer.</string>
   <!-- e.g. I received money from an account. -->
@@ -896,5 +918,4 @@
   <string name="WritePaperPhrase.previous">Forrige</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d af %2$d</string>
-
 </resources>

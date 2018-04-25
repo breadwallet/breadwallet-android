@@ -129,7 +129,9 @@
   <!-- OK button label -->
   <string name="Button.ok">OK</string>
   <!-- receive button -->
-  <string name="Button.receive">recevoir</string>
+  <string name="Button.receive">Recevoir</string>
+  <!-- Click this button to sell an asset -->
+  <string name="Button.sell">Vendre</string>
   <!-- send button -->
   <string name="Button.send">envoyer</string>
   <!-- Settings button label -->
@@ -290,6 +292,8 @@
   <string name="ManageWallet.textFeildLabel">Nom du portefeuille</string>
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">Gérer le portefeuille</string>
+  <!-- "Add [a] Wallet [to the home screen]" -->
+  <string name="MenuButton.addWallet">Ajouter un portefeuille</string>
   <!-- Buy bitcoin title -->
   <string name="MenuButton.buy">Acheter des Bitcoins</string>
   <!-- Menu button title -->
@@ -512,6 +516,10 @@
   <string name="Send.identityNotCertified">L\'identité du bénéficiaire n\'est pas certifiée.</string>
   <!-- Insufficient funds error -->
   <string name="Send.insufficientFunds">Fonds insuffisants</string>
+  <!-- e,g, "You must have at least $2 in your wallet in order to transfer this type of token." In this case, "token" is an ethereum ERC20 token. -->
+  <string name="Send.insufficientGasMessage">Vous devez avoir au moins %1$s dans votre portefeuille pour transférer ce type de jeton. Souhaitez-vous être redirigé vers votre portefeuille Ethereum maintenant ?</string>
+  <!-- Your ethereum balance is insufficient to complete this action. -->
+  <string name="Send.insufficientGasTitle">Solde d\'Ethereum insuffisant</string>
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">L\'adresse de destination n\'est pas une adresse %1$s valide.</string>
   <!-- Invalid address on pasteboard message -->
@@ -638,6 +646,18 @@
   <string name="TimeSince.minutes">%1$s min</string>
   <!-- 6 s (6 seconds) -->
   <string name="TimeSince.seconds">%1$s sec</string>
+  <!-- Add [this item to the list] -->
+  <string name="TokenList.add">Ajouter</string>
+  <!-- Add Wallets  [to your home screen] -->
+  <string name="TokenList.addTitle">Ajouter des portefeuilles</string>
+  <!-- Hide [this token from view] -->
+  <string name="TokenList.hide">Cacher</string>
+  <!-- [click here to] Manage [your] Wallets -->
+  <string name="TokenList.manageTitle">Gérer les portefeuilles</string>
+  <!-- Remove [this item from the list] -->
+  <string name="TokenList.remove">Retirer</string>
+  <!-- Show [this item on your home screen] -->
+  <string name="TokenList.show">Afficher</string>
   <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
   <string name="TouchIdSettings.customizeText">Vous pouvez personnaliser votre plafond de dépenses Touch ID à partir de %1$s.</string>
   <!-- Fingerprint enabling description body -->
@@ -704,6 +724,8 @@
   <string name="Transaction.sentTo">envoyé à %1$s</string>
   <!-- eg. Starting balance: $50.00 -->
   <string name="Transaction.starting">Solde initial : %1$s</string>
+  <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
+  <string name="Transaction.tokenTransfer">Frais de transfert du jeton : %1$s</string>
   <!-- Waiting to be confirmed string -->
   <string name="Transaction.waiting">En attente d\'être confirmé. Certains marchands exigent une confirmation pour mener à bien une transaction. Temps estimé : 1-2 heures.</string>
   <!-- e.g. I received money from an account. -->

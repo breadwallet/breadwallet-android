@@ -129,7 +129,9 @@
   <!-- OK button label -->
   <string name="Button.ok">ОК</string>
   <!-- receive button -->
-  <string name="Button.receive">получить</string>
+  <string name="Button.receive">Получить</string>
+  <!-- Click this button to sell an asset -->
+  <string name="Button.sell">Продать</string>
   <!-- send button -->
   <string name="Button.send">отправить</string>
   <!-- Settings button label -->
@@ -290,6 +292,8 @@
   <string name="ManageWallet.textFeildLabel">Название кошелька</string>
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">Управление кошельком</string>
+  <!-- "Add [a] Wallet [to the home screen]" -->
+  <string name="MenuButton.addWallet">Добавить кошелек</string>
   <!-- Buy bitcoin title -->
   <string name="MenuButton.buy">Купить Bitcoin</string>
   <!-- Menu button title -->
@@ -512,6 +516,10 @@
   <string name="Send.identityNotCertified">Личность получателя платежа не сертифицирована.</string>
   <!-- Insufficient funds error -->
   <string name="Send.insufficientFunds">Недостаточно средств</string>
+  <!-- e,g, "You must have at least $2 in your wallet in order to transfer this type of token." In this case, "token" is an ethereum ERC20 token. -->
+  <string name="Send.insufficientGasMessage">Чтобы передать токен этого типа, у вас в кошельке должно быть хотя бы %1$s. Вы хотите перейти к своему Ethereum-кошельку?</string>
+  <!-- Your ethereum balance is insufficient to complete this action. -->
+  <string name="Send.insufficientGasTitle">Недостаточно Ethereum</string>
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">Недействительный %1$s-адрес получателя.</string>
   <!-- Invalid address on pasteboard message -->
@@ -640,6 +648,18 @@
   <string name="TimeSince.minutes">%1$s м</string>
   <!-- 6 s (6 seconds) -->
   <string name="TimeSince.seconds">%1$s с</string>
+  <!-- Add [this item to the list] -->
+  <string name="TokenList.add">Добавить</string>
+  <!-- Add Wallets  [to your home screen] -->
+  <string name="TokenList.addTitle">Добавить кошельки</string>
+  <!-- Hide [this token from view] -->
+  <string name="TokenList.hide">Скрыть</string>
+  <!-- [click here to] Manage [your] Wallets -->
+  <string name="TokenList.manageTitle">Управление кошельками</string>
+  <!-- Remove [this item from the list] -->
+  <string name="TokenList.remove">Удалить</string>
+  <!-- Show [this item on your home screen] -->
+  <string name="TokenList.show">Показать</string>
   <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
   <string name="TouchIdSettings.customizeText">Вы можете настроить лимит расходов Touch ID через %1$s.</string>
   <!-- Fingerprint enabling description body -->
@@ -706,6 +726,8 @@
   <string name="Transaction.sentTo">отправлено по адресу %1$s</string>
   <!-- eg. Starting balance: $50.00 -->
   <string name="Transaction.starting">Начальный баланс: %1$s</string>
+  <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
+  <string name="Transaction.tokenTransfer">Сбор за передачу токена: %1$s</string>
   <!-- Waiting to be confirmed string -->
   <string name="Transaction.waiting">Ожидает подтверждения. Некоторые продавцы требуют подтверждения для выполнения транзакции. Предполагаемое время: 1-2 часа.</string>
   <!-- e.g. I received money from an account. -->

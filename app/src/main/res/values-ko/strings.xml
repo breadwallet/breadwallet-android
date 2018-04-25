@@ -130,6 +130,8 @@
   <string name="Button.ok">오케이</string>
   <!-- receive button -->
   <string name="Button.receive">받기</string>
+  <!-- Click this button to sell an asset -->
+  <string name="Button.sell">팔기</string>
   <!-- send button -->
   <string name="Button.send">보내기</string>
   <!-- Settings button label -->
@@ -290,6 +292,8 @@
   <string name="ManageWallet.textFeildLabel">지갑 이름</string>
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">지갑 관리</string>
+  <!-- "Add [a] Wallet [to the home screen]" -->
+  <string name="MenuButton.addWallet">지갑 추가</string>
   <!-- Buy bitcoin title -->
   <string name="MenuButton.buy">비트코인 구매</string>
   <!-- Menu button title -->
@@ -512,6 +516,10 @@
   <string name="Send.identityNotCertified">인증되지 않은 수취인입니다.</string>
   <!-- Insufficient funds error -->
   <string name="Send.insufficientFunds">자금 부족</string>
+  <!-- e,g, "You must have at least $2 in your wallet in order to transfer this type of token." In this case, "token" is an ethereum ERC20 token. -->
+  <string name="Send.insufficientGasMessage">이 종류의 토큰을 전송하려면 지갑에 최소 %1$s가 있어야 합니다. 지금 이더리움 지갑으로 가시겠습니까?</string>
+  <!-- Your ethereum balance is insufficient to complete this action. -->
+  <string name="Send.insufficientGasTitle">이더리움 잔액이 부족합니다</string>
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">해당 수취인 주소는 %1$s에서 유효하지 않은 주소입니다.</string>
   <!-- Invalid address on pasteboard message -->
@@ -637,6 +645,18 @@
   <string name="TimeSince.minutes">%1$s 분</string>
   <!-- 6 s (6 seconds) -->
   <string name="TimeSince.seconds">%1$s 초</string>
+  <!-- Add [this item to the list] -->
+  <string name="TokenList.add">추가</string>
+  <!-- Add Wallets  [to your home screen] -->
+  <string name="TokenList.addTitle">지갑 추가</string>
+  <!-- Hide [this token from view] -->
+  <string name="TokenList.hide">숨기기</string>
+  <!-- [click here to] Manage [your] Wallets -->
+  <string name="TokenList.manageTitle">지갑 관리</string>
+  <!-- Remove [this item from the list] -->
+  <string name="TokenList.remove">삭제</string>
+  <!-- Show [this item on your home screen] -->
+  <string name="TokenList.show">보기</string>
   <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
   <string name="TouchIdSettings.customizeText">%1$s에서 ???????????.</string>
   <!-- Fingerprint enabling description body -->
@@ -703,6 +723,8 @@
   <string name="Transaction.sentTo">%1$s으로 전송되었습니다</string>
   <!-- eg. Starting balance: $50.00 -->
   <string name="Transaction.starting">기초 잔액: %1$s</string>
+  <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
+  <string name="Transaction.tokenTransfer">토큰 송금 수수료: %1$s</string>
   <!-- Waiting to be confirmed string -->
   <string name="Transaction.waiting">확인 대기 중. 일부 판매자는 트랜잭션을 완료하기 위해 확인을 요구합니다. 예상 소요 시간: 1~2시간.</string>
   <!-- e.g. I received money from an account. -->

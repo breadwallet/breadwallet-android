@@ -130,6 +130,8 @@
   <string name="Button.ok">OK</string>
   <!-- receive button -->
   <string name="Button.receive">Receive</string>
+  <!-- Click this button to sell an asset -->
+  <string name="Button.sell">Sell</string>
   <!-- send button -->
   <string name="Button.send">Send</string>
   <!-- Settings button label -->
@@ -288,6 +290,8 @@
   <string name="ManageWallet.textFeildLabel">Wallet Name</string>
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">Manage Wallet</string>
+  <!-- "Add [a] Wallet [to the home screen]" -->
+  <string name="MenuButton.addWallet">Add Wallet</string>
   <!-- Buy bitcoin title -->
   <string name="MenuButton.buy">Buy Bitcoin</string>
   <!-- Menu button title -->
@@ -510,6 +514,10 @@
   <string name="Send.identityNotCertified">Payee identity isn\'t certified.</string>
   <!-- Insufficient funds error -->
   <string name="Send.insufficientFunds">Insufficient Funds</string>
+  <!-- e,g, "You must have at least $2 in your wallet in order to transfer this type of token." In this case, "token" is an ethereum ERC20 token. -->
+  <string name="Send.insufficientGasMessage">You must have at least %1$s in your wallet in order to transfer this type of token. Would you like to go to your Ethereum wallet now?</string>
+  <!-- Your ethereum balance is insufficient to complete this action. -->
+  <string name="Send.insufficientGasTitle">Insufficient Ethereum Balance</string>
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">The destination address is not a valid %1$s address.</string>
   <!-- Invalid address on pasteboard message -->
@@ -634,6 +642,18 @@
   <string name="TimeSince.minutes">%1$s m</string>
   <!-- 6 s (6 seconds) -->
   <string name="TimeSince.seconds">%1$s s</string>
+  <!-- Add [this item to the list] -->
+  <string name="TokenList.add">Add</string>
+  <!-- Add Wallets  [to your home screen] -->
+  <string name="TokenList.addTitle">Add Wallets</string>
+  <!-- Hide [this token from view] -->
+  <string name="TokenList.hide">Hide</string>
+  <!-- [click here to] Manage [your] Wallets -->
+  <string name="TokenList.manageTitle">Manage Wallets</string>
+  <!-- Remove [this item from the list] -->
+  <string name="TokenList.remove">Remove</string>
+  <!-- Show [this item on your home screen] -->
+  <string name="TokenList.show">Show</string>
   <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
   <string name="TouchIdSettings.customizeText">You can customize your Touch ID spending limit from the %1$s.</string>
   <!-- Fingerprint enabling description body -->
@@ -700,6 +720,8 @@
   <string name="Transaction.sentTo">sent to %1$s</string>
   <!-- eg. Starting balance: $50.00 -->
   <string name="Transaction.starting">Starting balance: %1$s</string>
+  <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
+  <string name="Transaction.tokenTransfer">Fee for token transfer: %1$s</string>
   <!-- Waiting to be confirmed string -->
   <string name="Transaction.waiting">Waiting to be confirmed. Some merchants require confirmation to complete a transaction. Estimated time: 1-2 hours.</string>
   <!-- e.g. I received money from an account. -->
@@ -892,12 +914,4 @@
   <string name="WritePaperPhrase.previous">Previous</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d of %2$d</string>
-
-
-  <string name="Transaction.AddMemo">Add memo...</string>
-  <string name="ERC20.Wallets.AddWallet">"Add Wallets</string>
-  <string name="ERC20.Wallets.Add">Add</string>
-  <string name="ERC20.Wallets.Remove">Remove</string>
-
-
 </resources>
