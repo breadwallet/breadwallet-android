@@ -508,6 +508,8 @@ public class WalletTokenManager implements BaseWalletManager {
             Log.e(TAG, "getUsdFromBtc: No BTC rates for ETH");
             return null;
         }
+        if (tokenBtcRate.rate == 0 || btcRate.rate == 0) return new BigDecimal(0);
+
 
         return tokenAmount.multiply(new BigDecimal(tokenBtcRate.rate)).multiply(new BigDecimal(btcRate.rate));
     }
