@@ -215,7 +215,7 @@ public class WalletTokenManager implements BaseWalletManager {
     @Override
     public BigDecimal getTxFee(BaseTransaction tx) {
         return new BigDecimal(tx.getEtherTx().getGasLimit())
-                .multiply(new BigDecimal(tx.getEtherTx().getGasPrice(BREthereumAmount.Unit.ETHER_WEI)));
+                .multiply(new BigDecimal(tx.getEtherTx().getGasPrice()));
     }
 
     @Override
