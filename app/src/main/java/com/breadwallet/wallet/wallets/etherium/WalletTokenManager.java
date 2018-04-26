@@ -90,6 +90,7 @@ public class WalletTokenManager implements BaseWalletManager {
 
             if (w != null) {
                 w.setDefaultUnit(BREthereumAmount.Unit.TOKEN_DECIMAL);
+                w.estimateGasPrice();
                 if (w.getToken() == null) {
                     BRReportsManager.reportBug(new NullPointerException("getToken is null:" + contractAddress));
                     return null;
