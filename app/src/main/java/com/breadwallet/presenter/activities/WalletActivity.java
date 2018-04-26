@@ -277,6 +277,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             }
         });
 
+        Log.e(TAG, "updateUi: " + wallet.getIso(this) + ", exchange rate:" + wallet.getFiatExchangeRate(this));
         String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatExchangeRate(this));
         String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatBalance(this));
         String cryptoBalance = CurrencyUtils.getFormattedAmount(this, wallet.getIso(this), wallet.getCachedBalance(this));

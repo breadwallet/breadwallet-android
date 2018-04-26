@@ -128,8 +128,9 @@ public class HTTPServer {
     public static void stopServer() {
         Log.d(TAG, "stopServer");
         try {
-            if (server != null)
-                server.stop();
+            if (server != null){
+
+                server.stop();}
         } catch (Exception e) {
             e.printStackTrace();
         }

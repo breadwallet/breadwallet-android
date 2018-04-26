@@ -117,6 +117,10 @@ public class WalletTokenManager implements BaseWalletManager {
 
         String address = mTokenIsos.get(iso.toLowerCase());
         address = address == null ? null : address.toLowerCase();
+        if (address == null) {
+            BRReportsManager.reportBug(new NullPointerException("getTokenWalletByIso: address is null for: " + iso));
+            return null;
+        }
         if (mTokenWallets.containsKey(address))
             return mTokenWallets.get(address);
 
@@ -124,9 +128,8 @@ public class WalletTokenManager implements BaseWalletManager {
         if (token != null) {
             return getTokenWallet(walletEthManager, token);
         } else
-            BRReportsManager.reportBug(new NullPointerException("Failed to getTokenWalletByIso: " + iso));
+            BRReportsManager.reportBug(new NullPointerException("Failed to getTokenWalletByIso: " + iso + ":" + address));
         return null;
-
     }
 
     public synchronized static void mapTokenIsos() {
