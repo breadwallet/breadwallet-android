@@ -114,7 +114,9 @@ public class WalletTokenManager implements BaseWalletManager {
 
     public synchronized static WalletTokenManager getTokenWalletByIso(WalletEthManager walletEthManager, String iso) {
         if (mTokenIsos.size() <= 0) mapTokenIsos();
-        String address = mTokenIsos.get(iso.toLowerCase()).toLowerCase();
+
+        String address = mTokenIsos.get(iso.toLowerCase());
+        address = address == null ? null : address.toLowerCase();
         if (mTokenWallets.containsKey(address))
             return mTokenWallets.get(address);
 
