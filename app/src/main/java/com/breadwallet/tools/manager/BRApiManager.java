@@ -12,6 +12,7 @@ import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -23,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -103,7 +105,7 @@ public class BRApiManager {
                         JSONObject tmpObj = (JSONObject) arr.get(i);
                         tmp.name = tmpObj.getString("name");
                         tmp.code = tmpObj.getString("code");
-                        tmp.rate = (float) tmpObj.getDouble("rate");
+                        tmp.rate = Float.valueOf(tmpObj.getString("rate"));
                         tmp.iso = walletManager.getIso(context);
                     } catch (JSONException e) {
                         e.printStackTrace();
@@ -193,10 +195,10 @@ public class BRApiManager {
                 JSONObject json = (JSONObject) obj;
                 String code = "BTC";
                 String name = json.getString("name");
-                double rate = json.getDouble("price_btc");
+                String rate = json.getString("price_btc");
                 String iso = json.getString("symbol");
 
-                CurrencyEntity ent = new CurrencyEntity(code, name, (float) rate, iso);
+                CurrencyEntity ent = new CurrencyEntity(code, name, Float.valueOf(rate), iso);
                 tmp.add(ent);
 
             }

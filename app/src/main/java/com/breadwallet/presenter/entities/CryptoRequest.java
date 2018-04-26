@@ -4,10 +4,8 @@ package com.breadwallet.presenter.entities;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.math.BigDecimal;

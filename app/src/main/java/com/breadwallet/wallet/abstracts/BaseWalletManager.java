@@ -15,6 +15,7 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
+import com.breadwallet.wallet.wallets.CryptoTransaction;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -59,7 +60,7 @@ public interface BaseWalletManager {
 
     @WorkerThread
         //sign and publish the tx using the seed
-    byte[] signAndPublishTransaction(BaseTransaction tx, byte[] seed);
+    byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] seed);
 
     void addBalanceChangedListener(OnBalanceChangedListener list);
 
@@ -99,10 +100,10 @@ public interface BaseWalletManager {
 
     @WorkerThread
         //get a list of all the transactions sorted by timestamp (e.g. BRCoreTransaction[] for BTC)
-    BaseTransaction[] getTxs(Context app);
+    CryptoTransaction[] getTxs(Context app);
 
     //get the transaction fee
-    BigDecimal getTxFee(BaseTransaction tx);
+    BigDecimal getTxFee(CryptoTransaction tx);
 
     //get the transaction fee
     BigDecimal getEstimatedFee(BigDecimal amount, String address);
@@ -111,7 +112,7 @@ public interface BaseWalletManager {
     BigDecimal getFeeForTransactionSize(BigDecimal size);
 
     //get the transaction to address
-    String getTxAddress(BaseTransaction tx);
+    String getTxAddress(CryptoTransaction tx);
 
     //get the maximum output amount possible for this wallet
     BigDecimal getMaxOutputAmount(Context app);
@@ -120,7 +121,7 @@ public interface BaseWalletManager {
     BigDecimal getMinOutputAmount(Context app);
 
     //get the transaction amount (negative if sent)
-    BigDecimal getTransactionAmount(BaseTransaction tx);
+    BigDecimal getTransactionAmount(CryptoTransaction tx);
 
     //get the reasonable minimum output amount (not smaller than dust)
     BigDecimal getMinOutputAmountPossible();
@@ -167,7 +168,7 @@ public interface BaseWalletManager {
         //get the wallet's receive address
     CryptoAddress getReceiveAddress(Context app);
 
-    BaseTransaction createTransaction(BigDecimal amount, String address);
+    CryptoTransaction createTransaction(BigDecimal amount, String address);
 
     //decorate an address to a particular currency, if needed (like BCH address format)
     String decorateAddress(Context app, String addr);

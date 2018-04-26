@@ -22,8 +22,8 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.BRBitId;
 import com.platform.tools.KVStoreManager;
@@ -65,7 +65,7 @@ public class PostAuth {
     public static boolean isStuckWithAuthLoop;
     public static TxMetaData txMetaData;
 
-    private BaseTransaction mPaymentProtocolTx;
+    private CryptoTransaction mPaymentProtocolTx;
     private static PostAuth instance;
 
     private PostAuth() {
@@ -211,7 +211,7 @@ public class PostAuth {
                     if (rawPhrase.length != 0) {
                         if (mCryptoRequest != null && mCryptoRequest.amount != null && mCryptoRequest.address != null) {
 
-                            BaseTransaction tx = walletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address);
+                            CryptoTransaction tx = walletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address);
                             if (tx == null) {
                                 BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_insufficientFunds),
                                         app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
@@ -307,7 +307,7 @@ public class PostAuth {
         this.mCryptoRequest = cryptoRequest;
     }
 
-    public void setTmpPaymentRequestTx(BaseTransaction tx) {
+    public void setTmpPaymentRequestTx(CryptoTransaction tx) {
         this.mPaymentProtocolTx = tx;
     }
 

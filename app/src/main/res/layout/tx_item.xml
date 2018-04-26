@@ -21,12 +21,12 @@
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/tx_description"
-        android:layout_width="200dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignLeft="@id/tx_date"
+        android:layout_alignStart="@id/tx_date"
         android:layout_below="@id/tx_date"
+        android:layout_toStartOf="@id/tx_amount"
         android:ellipsize="end"
-        android:maxLength="20"
         android:maxLines="1"
         android:paddingBottom="4dp"
         android:text="sent to f94c57..."

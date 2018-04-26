@@ -8,7 +8,6 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.core.BRCoreAddress;
 import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
@@ -34,7 +33,6 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
@@ -238,7 +236,7 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-    public byte[] signAndPublishTransaction(BaseTransaction tx, byte[] phrase) {
+    public byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] phrase) {
         mWallet.sign(tx.getEtherTx(), new String(phrase));
         mWallet.submit(tx.getEtherTx());
         String hash = tx.getEtherTx().getHash();
@@ -308,12 +306,18 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-    public BaseTransaction[] getTxs(Context app) {
-        return (BaseTransaction[]) mWallet.getTransactions();
+    public CryptoTransaction[] getTxs(Context app) {
+        BREthereumTransaction[] txs = mWallet.getTransactions();
+        CryptoTransaction[] arr = new CryptoTransaction[txs.length];
+        for (int i = 0; i < txs.length; i++) {
+            arr[i] = new CryptoTransaction(txs[i]);
+        }
+
+        return arr;
     }
 
     @Override
-    public BigDecimal getTxFee(BaseTransaction tx) {
+    public BigDecimal getTxFee(CryptoTransaction tx) {
         return new BigDecimal(tx.getEtherTx().getFee(BREthereumAmount.Unit.ETHER_WEI));
     }
 
@@ -335,7 +339,7 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-    public String getTxAddress(BaseTransaction tx) {
+    public String getTxAddress(CryptoTransaction tx) {
         return tx.getEtherTx().getTargetAddress();
     }
 
@@ -354,7 +358,7 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-    public BigDecimal getTransactionAmount(BaseTransaction tx) {
+    public BigDecimal getTransactionAmount(CryptoTransaction tx) {
         return new BigDecimal(tx.getEtherTx().getAmount());
     }
 
@@ -443,9 +447,10 @@ public class WalletEthManager implements BaseWalletManager,
         for (int i = txs.length - 1; i >= 0; i--) { //revere order
             BREthereumTransaction tx = txs[i];
             uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(mWallet.getAccount().getPrimaryAddress()), tx.getBlockTimestamp(),
-                    (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null : tx.getHash().getBytes(), tx.getHash(), null, tx,
+                    (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null : tx.getHash().getBytes(), tx.getHash(),
+                    new BigDecimal(tx.getFee(BREthereumAmount.Unit.ETHER_WEI)), tx,
                     tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
-                    new BigDecimal(tx.getAmount()), true));
+                    new BigDecimal(tx.getAmount(BREthereumAmount.Unit.ETHER_WEI)), true));
         }
 
         return uiTxs;
@@ -500,7 +505,7 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-    public BaseTransaction createTransaction(BigDecimal amount, String address) {
+    public CryptoTransaction createTransaction(BigDecimal amount, String address) {
         BREthereumTransaction tx = mWallet.createTransaction(address, amount.toPlainString(), BREthereumAmount.Unit.ETHER_WEI);
         return new CryptoTransaction(tx);
     }
@@ -1212,6 +1217,8 @@ public class WalletEthManager implements BaseWalletManager,
                                         // to notify the core
                                         for (int i = 0; i < logsArray.length(); i++) {
                                             JSONObject log = logsArray.getJSONObject(i);
+
+                                            Log.d(TAG, "LogObject contains -> " + log.toString());
 
 //                                    { "address":"0x722dd3f80bac40c951b51bdd28dd19d435762180",
 //                                        "topics":["0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",

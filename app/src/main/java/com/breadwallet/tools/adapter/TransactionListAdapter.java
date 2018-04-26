@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.TxUiHolder;
@@ -84,7 +85,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         mMetaDatas = new HashMap<>();
         items = new ArrayList<>();
         init(items);
-//        updateMetadata();
     }
 
     public void setItems(List<TxUiHolder> items) {
@@ -158,7 +158,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private void setTexts(final TxHolder convertView, int position) {
         BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
         TxUiHolder item = itemFeed.get(position);
-//        item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
 
         String commentString = "";
         TxMetaData md = mMetaDatas.size() > position ? mMetaDatas.get(position) : null;
@@ -178,12 +177,15 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             showTransactionFailed(convertView, item, received);
 
         BigDecimal cryptoAmount = item.getAmount().abs();
+
+        BREthereumToken tkn = null;
+        if (wallet.getIso(mContext).equalsIgnoreCase("ETH"))
+            tkn = BREthereumToken.lookup(item.getTo());
+        if (tkn != null) cryptoAmount = item.getFee(); // it's a token transfer ETH tx
         boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
         String preferredIso = isCryptoPreferred ? wallet.getIso(mContext) : BRSharedPrefs.getPreferredFiatIso(mContext);
-
         BigDecimal amount = isCryptoPreferred ? cryptoAmount : wallet.getFiatForSmallestCrypto(mContext, cryptoAmount, null);
         convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, preferredIso, received ? amount : (amount == null ? null : amount.negate())));
-
         int blockHeight = item.getBlockHeight();
         int lastBlockHeight = BRSharedPrefs.getLastBlockHeight(mContext, wallet.getIso(mContext));
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : lastBlockHeight - blockHeight + 1;
@@ -209,7 +211,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
         if (level > 0 && level < 5)
             showTransactionProgress(convertView, level * 20);
-
         String sentTo = String.format(mContext.getString(R.string.Transaction_sentTo), wallet.decorateAddress(mContext, item.getTo()));
         String receivedVia = String.format(mContext.getString(R.string.TransactionDetails_receivedVia), wallet.decorateAddress(mContext, item.getTo()));
 
@@ -220,8 +221,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? sentTo : receivedVia));
         } else {
             convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? sendingTo : receivingVia));
-
         }
+        if (tkn != null) // it's a token transfer ETH tx
+            convertView.transactionDetail.setText(String.format(mContext.getString(R.string.Transaction_tokenTransfer), tkn.getSymbol()));
 
         //if it's 0 we use the current time.
         long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * 1000;

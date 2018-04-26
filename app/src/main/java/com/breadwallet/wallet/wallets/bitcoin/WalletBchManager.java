@@ -23,6 +23,7 @@ import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWallet;
 import com.breadwallet.core.BRCoreWalletManager;
 import com.breadwallet.core.ethereum.BREthereumAmount;
+import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
@@ -52,7 +53,6 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
@@ -235,12 +235,18 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     @Override
-    public BaseTransaction[] getTxs(Context app) {
-        return (BaseTransaction[]) getWallet().getTransactions();
+    public CryptoTransaction[] getTxs(Context app) {
+        BRCoreTransaction[] txs = getWallet().getTransactions();
+        CryptoTransaction[] arr = new CryptoTransaction[txs.length];
+        for(int i = 0; i < txs.length; i++){
+            arr[i] = new CryptoTransaction(txs[i]);
+        }
+
+        return arr;
     }
 
     @Override
-    public BigDecimal getTxFee(BaseTransaction tx) {
+    public BigDecimal getTxFee(CryptoTransaction tx) {
         return new BigDecimal(getWallet().getTransactionFee(tx.getCoreTx()));
     }
 
@@ -251,7 +257,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         if (amount.longValue() == 0) {
             fee = new BigDecimal(0);
         } else {
-            BaseTransaction tx = null;
+            CryptoTransaction tx = null;
             if (isAddressValid(address)) {
                 tx = createTransaction(amount, address);
             }
@@ -274,7 +280,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     @Override
-    public String getTxAddress(BaseTransaction tx) {
+    public String getTxAddress(CryptoTransaction tx) {
         return getWallet().getTransactionAddress(tx.getCoreTx()).stringify();
     }
 
@@ -289,7 +295,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     @Override
-    public BigDecimal getTransactionAmount(BaseTransaction tx) {
+    public BigDecimal getTransactionAmount(CryptoTransaction tx) {
         return new BigDecimal(getWallet().getTransactionAmount(tx.getCoreTx()));
     }
 
@@ -432,7 +438,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     @Override
-    public BaseTransaction createTransaction(BigDecimal amount, String address) {
+    public CryptoTransaction createTransaction(BigDecimal amount, String address) {
         if (Utils.isNullOrEmpty(address)) {
             Log.e(TAG, "createTransaction: can't create, address is null");
             return null;
@@ -647,7 +653,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     @Override
-    public byte[] signAndPublishTransaction(BaseTransaction tx, byte[] seed) {
+    public byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] seed) {
         return super.signAndPublishTransaction(tx.getCoreTx(), seed);
     }
 

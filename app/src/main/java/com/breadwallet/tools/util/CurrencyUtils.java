@@ -1,6 +1,7 @@
 package com.breadwallet.tools.util;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;

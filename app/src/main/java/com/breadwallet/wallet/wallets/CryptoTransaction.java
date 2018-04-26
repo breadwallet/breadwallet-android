@@ -2,7 +2,6 @@ package com.breadwallet.wallet.wallets;
 
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
-import com.breadwallet.wallet.abstracts.BaseTransaction;
 
 import java.math.BigDecimal;
 
@@ -30,7 +29,7 @@ import java.math.BigDecimal;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class CryptoTransaction implements BaseTransaction {
+public class CryptoTransaction {
 
     private BRCoreTransaction mCoreTx;
     private BREthereumTransaction mEtherTx;
@@ -41,26 +40,22 @@ public class CryptoTransaction implements BaseTransaction {
             mEtherTx = (BREthereumTransaction) transaction;
     }
 
-    @Override
     public BigDecimal getTxSize() {
         if (mCoreTx != null) return new BigDecimal(mCoreTx.getSize());
         else if (mEtherTx != null) return new BigDecimal(0);
         else return null;
     }
 
-    @Override
     public BigDecimal getTxStandardFee() {
         if (mCoreTx != null) return new BigDecimal(mCoreTx.getStandardFee());
         else if (mEtherTx != null) return new BigDecimal(0);
         else return null;
     }
 
-    @Override
     public BRCoreTransaction getCoreTx() {
         return mCoreTx;
     }
 
-    @Override
     public BREthereumTransaction getEtherTx() {
         return mEtherTx;
     }

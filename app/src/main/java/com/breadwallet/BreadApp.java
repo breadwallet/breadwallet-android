@@ -9,6 +9,7 @@ import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -112,6 +113,19 @@ public class BreadApp extends Application {
             } catch (RejectedExecutionException ex) {
                 Log.e(TAG, "run: ", ex);
             }
+
+            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+                    .detectDiskReads()
+                    .detectDiskWrites()
+                    .detectNetwork()   // or .detectAll() for all detectable problems
+                    .penaltyLog()
+                    .build());
+            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+                    .detectLeakedSqlLiteObjects()
+                    .detectLeakedClosableObjects()
+                    .penaltyLog()
+                    .penaltyDeath()
+                    .build());
 
         }
         mContext = this;

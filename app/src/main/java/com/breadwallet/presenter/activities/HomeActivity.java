@@ -217,6 +217,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     @Override
     protected void onResume() {
         super.onResume();
+        Log.e(TAG, "onResume: 1");
         app = this;
 
         showNextPromptIfNeeded();
@@ -263,7 +264,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         });
 
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
-
+        Log.e(TAG, "onResume: 2");
     }
 
     private void populateWallets() {
@@ -280,15 +281,25 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     }
 
     private void updateUi() {
-        BigDecimal fiatTotalAmount = WalletsMaster.getInstance(this).getAggregatedFiatBalance(this);
-        if (fiatTotalAmount == null) {
-            Log.e(TAG, "updateUi: fiatTotalAmount is null");
-            return;
-        }
-        mFiatTotal.setText(CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), fiatTotalAmount));
-        mAdapter.notifyDataSetChanged();
-    }
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                final BigDecimal fiatTotalAmount = WalletsMaster.getInstance(HomeActivity.this).getAggregatedFiatBalance(HomeActivity.this);
+                if (fiatTotalAmount == null) {
+                    Log.e(TAG, "updateUi: fiatTotalAmount is null");
+                    return;
+                }
+                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        mFiatTotal.setText(CurrencyUtils.getFormattedAmount(HomeActivity.this, BRSharedPrefs.getPreferredFiatIso(HomeActivity.this), fiatTotalAmount));
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
 
+            }
+        });
+    }
 
     @Override
     protected void onDestroy() {

@@ -9,9 +9,10 @@ import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.util.BRCompressor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.platform.APIClient;
 import com.platform.entities.TokenListMetaData;
 import com.platform.entities.TxMetaData;
@@ -26,6 +27,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -329,14 +331,23 @@ public class KVStoreManager {
         }
 
         try {
-            result.classVersion = json.getInt("classVersion");
-            result.blockHeight = json.getInt("bh");
+            if (json.has("classVersion"))
+                result.classVersion = json.getInt("classVersion");
+            if (json.has("bh"))
+                result.blockHeight = json.getInt("bh");
+            if (json.has("er"))
             result.exchangeRate = json.getDouble("er");
+            if (json.has("erc"))
             result.exchangeCurrency = json.getString("erc");
+            if (json.has("comment"))
             result.comment = json.getString("comment");
+            if (json.has("fr"))
             result.fee = json.getString("fr");
+            if (json.has("s"))
             result.txSize = json.getInt("s");
+            if (json.has("c"))
             result.creationTime = json.getInt("c");
+            if (json.has("dId"))
             result.deviceId = json.getString("dId");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -473,11 +484,11 @@ public class KVStoreManager {
         }
     }
 
-    public TxMetaData createMetadata(Context app, BaseWalletManager wm, BaseTransaction tx) {
+    public TxMetaData createMetadata(Context app, BaseWalletManager wm, CryptoTransaction tx) {
         TxMetaData txMetaData = new TxMetaData();
         txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
         CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, wm.getIso(app), txMetaData.exchangeCurrency);
-        txMetaData.exchangeRate = ent == null ? 0 : ent.rate;
+        txMetaData.exchangeRate = ent == null ? 0 : new BigDecimal(ent.rate).setScale(8, BRConstants.ROUNDING_MODE).stripTrailingZeros().doubleValue();
         txMetaData.fee = wm.getTxFee(tx).toPlainString();
         txMetaData.txSize = tx.getTxSize().intValue();
         txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, wm.getIso(app));

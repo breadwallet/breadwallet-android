@@ -85,6 +85,7 @@ public class WalletsMaster {
     }
 
     public synchronized List<BaseWalletManager> getAllWallets(Context app) {
+        Log.e(TAG, "getAllWallets: 1");
         WalletEthManager ethWallet = WalletEthManager.getInstance(app);
         if (ethWallet == null) {
             return mWallets; //return empty wallet list if ETH is null (meaning no public key yet)
@@ -132,7 +133,8 @@ public class WalletsMaster {
                     if (!mWallets.contains(tokenWallet)) mWallets.add(tokenWallet);
 
                 for (TokenListMetaData.TokenInfo hidden : md.hiddenCurrencies) {
-                    if (tokenWallet.getIso(app).equalsIgnoreCase(hidden.symbol)) {
+
+                    if (tokenWallet != null && tokenWallet.getIso(app).equalsIgnoreCase(hidden.symbol)) {
                         mWallets.remove(tokenWallet);
                     }
                 }
@@ -140,7 +142,7 @@ public class WalletsMaster {
 
 
         }
-
+        Log.e(TAG, "getAllWallets: 2");
         return mWallets;
     }
 
@@ -155,7 +157,7 @@ public class WalletsMaster {
             return WalletBchManager.getInstance(app);
         if (iso.equalsIgnoreCase("ETH"))
             return WalletEthManager.getInstance(app);
-        else if (isIsoCrypto(app, iso)) {
+        else if (isIsoErc20(app, iso)) {
             return WalletTokenManager.getTokenWalletByIso(WalletEthManager.getInstance(app), iso);
         }
         return null;
@@ -254,8 +256,11 @@ public class WalletsMaster {
     public boolean isIsoErc20(Context app, String iso) {
         if (Utils.isNullOrEmpty(iso)) return false;
         for (BREthereumToken token : BREthereumToken.tokens) {
-            if (token.getSymbol().equalsIgnoreCase(iso)) return true;
+            if (token.getSymbol().equalsIgnoreCase(iso)) {
+                return true;
+            }
         }
+        
         return false;
     }
 
