@@ -139,6 +139,11 @@ public class WalletTokenManager implements BaseWalletManager {
     }
 
     @Override
+    public BREthereumAmount.Unit getUnit() {
+        return BREthereumAmount.Unit.TOKEN_DECIMAL;
+    }
+
+    @Override
     public boolean isAddressValid(String address) {
         return mWalletEthManager.isAddressValid(address);
     }
@@ -229,7 +234,7 @@ public class WalletTokenManager implements BaseWalletManager {
             fee = new BigDecimal(0);
         } else {
             fee = new BigDecimal(mWalletToken.transactionEstimatedFee(amount.toPlainString(),
-                    BREthereumAmount.Unit.TOKEN_DECIMAL, BREthereumAmount.Unit.ETHER_WEI));
+                    BREthereumAmount.Unit.ETHER_WEI, BREthereumAmount.Unit.ETHER_WEI));
         }
         return fee;
     }
@@ -301,14 +306,18 @@ public class WalletTokenManager implements BaseWalletManager {
             BRSharedPrefs.putLastBlockHeight(app, getIso(app), blockHeight);
         }
         if (txs == null || txs.length <= 0) return null;
+        StringBuilder builder = new StringBuilder("Tx count: " + txs.length);
         List<TxUiHolder> uiTxs = new ArrayList<>();
         for (int i = txs.length - 1; i >= 0; i--) { //revere order
             BREthereumTransaction tx = txs[i];
-            uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(mWalletToken.getAccount().getPrimaryAddress()), tx.getBlockTimestamp(),
-                    (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null : tx.getHash().getBytes(), tx.getHash(), new BigDecimal(tx.getFee()), tx,
+            builder.append(" | " + tx.getTargetAddress() + " | ");
+            uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(mWalletEthManager.getReceiveAddress(app).stringify()),
+                    tx.getBlockTimestamp(), (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null :
+                    tx.getHash().getBytes(), tx.getHash(), new BigDecimal(tx.getFee(getUnit())), tx,
                     tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
-                    new BigDecimal(tx.getAmount(BREthereumAmount.Unit.TOKEN_DECIMAL)), true));
+                    new BigDecimal(tx.getAmount(getUnit())), true));
         }
+        Log.e(TAG, "getTxUiHolders: " + builder.toString());
 
         return uiTxs;
     }

@@ -22,6 +22,7 @@ import com.breadwallet.core.BRCorePeerManager;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWallet;
 import com.breadwallet.core.BRCoreWalletManager;
+import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
@@ -630,6 +631,11 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     @Override
     public int getForkId() {
         return super.getForkId();
+    }
+
+    @Override
+    public BREthereumAmount.Unit getUnit() {
+        throw new RuntimeException("stub");
     }
 
     @Override

@@ -359,7 +359,7 @@
                         android:layout_marginBottom="14dp"
                         android:layout_marginStart="16dp"
                         android:layout_marginTop="14dp"
-                        android:text="Exchange Rate at Time"
+                        android:text="Total Cost"
                         android:textColor="@color/settings_chevron_right"
                         app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="parent"

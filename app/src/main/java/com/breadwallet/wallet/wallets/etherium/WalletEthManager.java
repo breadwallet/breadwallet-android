@@ -228,6 +228,11 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
+    public BREthereumAmount.Unit getUnit() {
+        return BREthereumAmount.Unit.ETHER_WEI;
+    }
+
+    @Override
     public boolean isAddressValid(String address) {
         return !Utils.isNullOrEmpty(address) && address.startsWith("0x");
     }
@@ -730,7 +735,7 @@ public class WalletEthManager implements BaseWalletManager,
                                         public void run() {
                                             for (OnBalanceChangedListener list : balanceListeners)
                                                 if (list != null)
-                                                    list.onBalanceChanged(ISO, new BigDecimal(wallet.getBalance()));
+                                                    list.onBalanceChanged(ISO, new BigDecimal(wallet.getBalance(getUnit())));
                                         }
                                     });
                                 }
@@ -767,36 +772,36 @@ public class WalletEthManager implements BaseWalletManager,
                     e.printStackTrace();
                 }
 
-                new JsonRpcRequest()
-                        .makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
-                            @Override
-                            public void onRpcRequestCompleted(String jsonResult) {
+                new JsonRpcRequest().makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                    @Override
+                    public void onRpcRequestCompleted(String jsonResult) {
 
-                                try {
-                                    if (!Utils.isNullOrEmpty(jsonResult)) {
-                                        JSONObject responseObject = new JSONObject(jsonResult);
+                        try {
+                            if (!Utils.isNullOrEmpty(jsonResult)) {
+                                JSONObject responseObject = new JSONObject(jsonResult);
 
-                                        if (responseObject.has("result")) {
-                                            String balance = responseObject.getString("result");
-                                            node.announceBalance(wid, balance, rid);
+                                if (responseObject.has("result")) {
+                                    String balance = responseObject.getString("result");
+                                    node.announceBalance(wid, balance, rid);
 
-                                            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                                                @Override
-                                                public void run() {
-                                                    Log.e(TAG, "run: " + wallet.getToken().getSymbol());
-                                                    for (OnBalanceChangedListener list : balanceListeners)
-                                                        if (list != null)
-                                                            list.onBalanceChanged(wallet.getToken().getSymbol(), new BigDecimal(wallet.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL)));
-                                                }
-                                            });
+                                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            Log.e(TAG, "run: " + wallet.getToken().getSymbol());
+                                            for (OnBalanceChangedListener list : balanceListeners)
+                                                if (list != null)
+                                                    list.onBalanceChanged(wallet.getToken().getSymbol(),
+                                                            new BigDecimal(wallet.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL)));//use TOKEN_DECIMAL
                                         }
-                                    }
-                                } catch (JSONException je) {
-                                    je.printStackTrace();
+                                    });
                                 }
-
                             }
-                        });
+                        } catch (JSONException je) {
+                            je.printStackTrace();
+                        }
+
+                    }
+                });
             }
         });
     }

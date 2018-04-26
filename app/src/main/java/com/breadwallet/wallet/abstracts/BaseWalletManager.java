@@ -9,6 +9,7 @@ import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.core.BRCorePeerManager;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWallet;
+import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
@@ -51,7 +52,8 @@ public interface BaseWalletManager {
     //get the core wallet
     int getForkId();
 
-
+    //get the currency unit ETHEREUM_WEI...
+    BREthereumAmount.Unit getUnit();
 
     boolean isAddressValid(String address);
 

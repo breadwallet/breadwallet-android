@@ -211,6 +211,7 @@ public class FragmentTxDetails extends DialogFragment {
             boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(app);
             String cryptoIso = walletManager.getIso(app);
             String fiatIso = BRSharedPrefs.getPreferredFiatIso(getContext());
+            boolean isErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, cryptoIso);
 
             String iso = isCryptoPreferred ? cryptoIso : fiatIso;
 
@@ -224,13 +225,14 @@ public class FragmentTxDetails extends DialogFragment {
             else {
                 BREthereumTransaction ethTx = mTransaction.getEthTxHolder();
                 BigDecimal rawFee = mTransaction.getFee();
-                //meaning ETH or erc20
-                if (ethTx != null) {
+                //meaning ETH
+                if (ethTx != null && !isErc20) {
                     mGasPrice.setText(String.format("%s %s", new BigDecimal(ethTx.getGasPrice(BREthereumAmount.Unit.ETHER_GWEI)).setScale(2, BRConstants.ROUNDING_MODE).toPlainString(), "gwei"));
                     mGasLimit.setText(new BigDecimal(ethTx.getGasLimit()).toPlainString());
-                    rawFee = new BigDecimal(ethTx.isConfirmed() ? ethTx.getGasUsed() : ethTx.getGasLimit()).multiply(new BigDecimal(ethTx.getGasPrice(BREthereumAmount.Unit.ETHER_WEI)));
+                    rawFee = new BigDecimal(ethTx.isConfirmed() ? ethTx.getGasUsed() : ethTx.getGasLimit()).multiply(new BigDecimal(ethTx.getGasPrice(walletManager.getUnit())));
                 } else {
                     hideEthViews();
+
                 }
 
                 BigDecimal fee = isCryptoPreferred ? rawFee.abs() : walletManager.getFiatForSmallestCrypto(app, rawFee, null).abs();
@@ -240,6 +242,12 @@ public class FragmentTxDetails extends DialogFragment {
                 mFeePrimary.setText(CurrencyUtils.getFormattedAmount(app, iso, fee));
                 mFeePrimaryLabel.setText(String.format(getString(R.string.Send_fee), ""));
                 mFeeSecondaryLabel.setText(getString(R.string.Confirmation_totalLabel));
+
+                //erc20s
+                if (isErc20) {
+                    hideTotalCost();
+                    mFeePrimary.setText(String.format("%s %s", mTransaction.getFee().setScale(2, BRConstants.ROUNDING_MODE).toPlainString(), "gwei"));
+                }
             }
 
             if (mTransaction.getBlockHeight() == Integer.MAX_VALUE)
@@ -411,6 +419,10 @@ public class FragmentTxDetails extends DialogFragment {
         mDetailsContainer.removeView(mGasLimitContainer);
         mDetailsContainer.removeView(mGasPriceDivider);
         mDetailsContainer.removeView(mGasLimitDivider);
+    }
+    private void hideTotalCost() {
+        mDetailsContainer.removeView(mFeeSecondaryContainer);
+        mDetailsContainer.removeView(mFeeSecondaryDivider);
     }
 
     private void hideConfirmedView() {
