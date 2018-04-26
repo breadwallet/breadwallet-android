@@ -6,6 +6,8 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
+import android.view.View;
+import android.widget.ImageButton;
 
 import com.breadwallet.R;
 import com.breadwallet.core.ethereum.BREthereumToken;
@@ -30,6 +32,7 @@ public class ManageWalletsActivity extends BRActivity {
     private RecyclerView mTokenList;
     private List<TokenListMetaData.TokenInfo> mTokens;
     private ItemTouchHelper mItemTouchHelper;
+    private ImageButton mBackButton;
 
 
     @Override
@@ -38,6 +41,14 @@ public class ManageWalletsActivity extends BRActivity {
         setContentView(R.layout.activity_manage_wallets);
 
         mTokenList = findViewById(R.id.token_list);
+        mBackButton = findViewById(R.id.back_arrow);
+
+        mBackButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+            }
+        });
 
     }
 
