@@ -292,7 +292,7 @@ public class WalletTokenManager implements BaseWalletManager {
             @Override
             public void run() {
                 BigDecimal balance = new BigDecimal(mWalletToken.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));
-                Log.e(TAG, "run: balance-> " + balance + ", iso ->" + getIso(app));
+                if (balance.compareTo(new BigDecimal(0)) == 0) return;//if 0 don't bother
                 BRSharedPrefs.putCachedBalance(app, getIso(app), balance);
             }
         });
@@ -306,18 +306,16 @@ public class WalletTokenManager implements BaseWalletManager {
             BRSharedPrefs.putLastBlockHeight(app, getIso(app), blockHeight);
         }
         if (txs == null || txs.length <= 0) return null;
-        StringBuilder builder = new StringBuilder("Tx count: " + txs.length);
         List<TxUiHolder> uiTxs = new ArrayList<>();
         for (int i = txs.length - 1; i >= 0; i--) { //revere order
             BREthereumTransaction tx = txs[i];
-            builder.append(" | " + tx.getTargetAddress() + " | ");
+            printTxInfo(tx);
             uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(mWalletEthManager.getReceiveAddress(app).stringify()),
                     tx.getBlockTimestamp(), (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null :
                     tx.getHash().getBytes(), tx.getHash(), new BigDecimal(tx.getFee(getUnit())), tx,
                     tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
                     new BigDecimal(tx.getAmount(getUnit())), true));
         }
-        Log.e(TAG, "getTxUiHolders: " + builder.toString());
 
         return uiTxs;
     }
@@ -541,5 +539,19 @@ public class WalletTokenManager implements BaseWalletManager {
         }
 
         return fiatAmount.divide(new BigDecimal(tokenBtcRate.rate).multiply(new BigDecimal(btcRate.rate)), 8, BRConstants.ROUNDING_MODE);
+    }
+
+    private void printTxInfo(BREthereumTransaction tx) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("|Tx:");
+        builder.append("|Amount:");
+        builder.append(tx.getAmount());
+        builder.append("|Fee:");
+        builder.append(tx.getFee());
+        builder.append("|Source:");
+        builder.append(tx.getSourceAddress());
+        builder.append("|Target:");
+        builder.append(tx.getTargetAddress());
+
     }
 }

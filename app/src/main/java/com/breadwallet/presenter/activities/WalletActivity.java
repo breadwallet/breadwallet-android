@@ -254,7 +254,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             Log.e(TAG, "updateUi: wallet is null");
             return;
         }
-        Log.e(TAG, "updateUi: " + wallet.getIso(this));
 
         mBuyButton.setOnClickListener(new View.OnClickListener() {
             @Override
