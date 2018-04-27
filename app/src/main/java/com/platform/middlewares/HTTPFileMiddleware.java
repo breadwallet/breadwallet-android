@@ -121,7 +121,7 @@ public class HTTPFileMiddleware implements Middleware {
             } catch (IOException e) {
                 e.printStackTrace();
             } finally {
-                debugResp.close();
+                if (debugResp != null) debugResp.close();
             }
 
         }

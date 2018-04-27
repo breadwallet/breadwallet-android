@@ -14,7 +14,7 @@ import com.breadwallet.presenter.entities.BlockEntity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
 import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -84,8 +84,8 @@ public class DatabaseTests {
         BtcBchTransactionDataStore.getInstance(app).deleteAllTransactions(app, "BTC");
         BtcBchTransactionDataStore.getInstance(app).deleteAllTransactions(app, "BCH");
 
-        CurrencyDataSource.getInstance(app).deleteAllCurrencies(app, "BTC");
-        CurrencyDataSource.getInstance(app).deleteAllCurrencies(app, "BCH");
+        RatesDataSource.getInstance(app).deleteAllCurrencies(app, "BTC");
+        RatesDataSource.getInstance(app).deleteAllCurrencies(app, "BCH");
 
         MerkleBlockDataSource.getInstance(app).deleteAllBlocks(app, "BTC");
         MerkleBlockDataSource.getInstance(app).deleteAllBlocks(app, "BCH");
@@ -171,7 +171,7 @@ public class DatabaseTests {
 
 
         // Test inserting OMG as a currency
-        CurrencyDataSource cds = CurrencyDataSource.getInstance(mActivityRule.getActivity());
+        RatesDataSource cds = RatesDataSource.getInstance(mActivityRule.getActivity());
         List<CurrencyEntity> toInsert = new ArrayList<>();
         CurrencyEntity ent = new CurrencyEntity();
         ent.code = "OMG";
@@ -313,7 +313,7 @@ public class DatabaseTests {
 //        Assert.assertArrayEquals(ps.get(0).getPort(), "somePort".getBytes());
 //        Assert.assertArrayEquals(ps.get(0).getTimeStamp(), "someTimestamp".getBytes());
 //
-//        CurrencyDataSource cds = CurrencyDataSource.getInstance(mActivityRule.getActivity());
+//        RatesDataSource cds = RatesDataSource.getInstance(mActivityRule.getActivity());
 //        List<CurrencyEntity> toInsert = new ArrayList<>();
 //        CurrencyEntity ent = new CurrencyEntity();
 //        ent.code = "OMG";

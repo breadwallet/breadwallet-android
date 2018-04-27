@@ -14,38 +14,28 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.core.ethereum.BREthereumToken;
-import com.breadwallet.core.test.BRWalletManager;
 import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
-import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.PromptManager;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
-import com.platform.entities.TokenListMetaData;
-import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Created by byfieldj on 1/17/18.
@@ -84,6 +74,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+        Log.e(TAG, "onCreate: 1");
 
         mWalletRecycler = findViewById(R.id.rv_wallet_list);
         mFiatTotal = findViewById(R.id.total_assets_usd);
@@ -174,6 +165,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                     Log.e(TAG, "Continue :" + info.title + " (FAILED)");
             }
         });
+        Log.e(TAG, "onCreate: 2");
 
     }
 
@@ -217,7 +209,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e(TAG, "onResume: 1");
         app = this;
 
         showNextPromptIfNeeded();
@@ -244,7 +235,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         });
 
         updateUi();
-        CurrencyDataSource.getInstance(this).addOnDataChangedListener(new CurrencyDataSource.OnDataChanged() {
+        RatesDataSource.getInstance(this).addOnDataChangedListener(new RatesDataSource.OnDataChanged() {
             @Override
             public void onChanged() {
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
@@ -264,7 +255,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         });
 
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
-        Log.e(TAG, "onResume: 2");
     }
 
     private void populateWallets() {

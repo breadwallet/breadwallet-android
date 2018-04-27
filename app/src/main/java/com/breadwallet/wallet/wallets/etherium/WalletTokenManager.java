@@ -11,7 +11,7 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -118,7 +118,8 @@ public class WalletTokenManager implements BaseWalletManager {
         String address = mTokenIsos.get(iso.toLowerCase());
         address = address == null ? null : address.toLowerCase();
         if (address == null) {
-            BRReportsManager.reportBug(new NullPointerException("getTokenWalletByIso: address is null for: " + iso));
+            if (!iso.equalsIgnoreCase("BTC") && !iso.equalsIgnoreCase("BCH") && !iso.equalsIgnoreCase("ETH"))
+                BRReportsManager.reportBug(new NullPointerException("getTokenWalletByIso: address is null for: " + iso));
             return null;
         }
         if (mTokenWallets.containsKey(address))
@@ -516,10 +517,10 @@ public class WalletTokenManager implements BaseWalletManager {
     //erc20 rates are in BTC (thus this math)
     private BigDecimal getFiatForToken(Context app, BigDecimal tokenAmount, String code) {
         //fiat rate for btc
-        CurrencyEntity btcRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
+        CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
 
         //Btc rate for the token
-        CurrencyEntity tokenBtcRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
+        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
 
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
@@ -540,9 +541,9 @@ public class WalletTokenManager implements BaseWalletManager {
     //Token rates are in BTC (thus this math)
     private BigDecimal getTokensForFiat(Context app, BigDecimal fiatAmount, String code) {
         //fiat rate for btc
-        CurrencyEntity btcRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
+        CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
         //Btc rate for token
-        CurrencyEntity tokenBtcRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
+        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;

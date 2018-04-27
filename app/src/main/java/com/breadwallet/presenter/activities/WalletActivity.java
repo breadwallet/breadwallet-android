@@ -5,7 +5,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.net.ConnectivityManager;
@@ -19,21 +18,16 @@ import android.support.v7.widget.Toolbar;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.util.TypedValue;
-import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ViewFlipper;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
-import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BRText;
@@ -44,9 +38,8 @@ import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.services.SyncService;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -397,7 +390,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         TxManager.getInstance().onResume(this);
 
-        CurrencyDataSource.getInstance(this).addOnDataChangedListener(new CurrencyDataSource.OnDataChanged() {
+        RatesDataSource.getInstance(this).addOnDataChangedListener(new RatesDataSource.OnDataChanged() {
             @Override
             public void onChanged() {
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {

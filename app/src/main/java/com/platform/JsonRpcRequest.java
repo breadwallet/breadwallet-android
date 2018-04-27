@@ -21,10 +21,8 @@ import okhttp3.Response;
 public class JsonRpcRequest {
 
     private static final String TAG = "JsonRpcRequest";
-    private JsonRpcRequestListener mRequestListener;
-    private String mResponse;
 
-    public JsonRpcRequest() {
+    private JsonRpcRequest() {
     }
 
     public interface JsonRpcRequestListener {
@@ -33,9 +31,8 @@ public class JsonRpcRequest {
     }
 
 
-    public synchronized Response makeRpcRequest(Context app, String url, JSONObject payload, JsonRpcRequestListener listener) {
+    public static synchronized Response makeRpcRequest(Context app, String url, JSONObject payload, JsonRpcRequestListener listener) {
 
-        this.mRequestListener = listener;
 
         if (ActivityUTILS.isMainThread()) {
             Log.e(TAG, "makeRpcRequest: network on main thread");
@@ -63,40 +60,24 @@ public class JsonRpcRequest {
         try {
 
             resp = APIClient.getInstance(app).sendRequest(request, true, 0);
-            if(resp == null) return null;
+            if (resp == null) return null;
             String responseString = resp.body().string();
 
             Log.d(TAG, "RPC response - > " + responseString);
 
-            if (mRequestListener != null) {
-                mRequestListener.onRpcRequestCompleted(responseString);
+            if (listener != null) {
+                listener.onRpcRequestCompleted(responseString);
             }
 
-
-            if (resp == null) {
-
-                Log.e(TAG, "makeRpcRequest: " + url + ", resp is null");
-                return null;
-
-            } else {
-                setResponseString(responseString);
-
-            }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if (resp != null) resp.close(); // CLOSE IT
         }
 
 
         return resp;
 
-    }
-
-    private void setResponseString(String response) {
-        this.mResponse = response;
-    }
-
-    public String getResponseString() {
-        return this.mResponse;
     }
 
 

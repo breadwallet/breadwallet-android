@@ -41,10 +41,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class CurrencyDataSource implements BRDataSourceInterface {
-    private static final String TAG = CurrencyDataSource.class.getName();
+public class RatesDataSource implements BRDataSourceInterface {
+    private static final String TAG = RatesDataSource.class.getName();
 
     List<OnDataChanged> onDataChangedListeners = new ArrayList<>();
+     static int counter = 0;
 
     // Database fields
     private SQLiteDatabase database;
@@ -56,20 +57,22 @@ public class CurrencyDataSource implements BRDataSourceInterface {
             BRSQLiteHelper.CURRENCY_ISO,
     };
 
-    private static CurrencyDataSource instance;
+    private static RatesDataSource instance;
 
-    public static CurrencyDataSource getInstance(Context context) {
+    public static RatesDataSource getInstance(Context context) {
         if (instance == null) {
-            instance = new CurrencyDataSource(context);
+            instance = new RatesDataSource(context);
         }
         return instance;
     }
 
-    public CurrencyDataSource(Context context) {
+    public RatesDataSource(Context context) {
         dbHelper = BRSQLiteHelper.getInstance(context);
     }
 
     public void putCurrencies(Context app, Collection<CurrencyEntity> currencyEntities) {
+        counter++;
+        Log.e(TAG, "putCurrencies: " + counter);
         if (currencyEntities == null || currencyEntities.size() <= 0) {
             Log.e(TAG, "putCurrencies: failed: " + currencyEntities);
             return;
@@ -176,10 +179,6 @@ public class CurrencyDataSource implements BRDataSourceInterface {
             database = openDatabase();
 //            printTest();
 //            Log.e(TAG, "getCurrencyByCode: code: " + code + ", iso: " + walletManager.getIso(app));
-            if(iso.equalsIgnoreCase("TST")){
-                Log.e(TAG, "getCurrencyByCode: ");
-            }
-            //todo fix, token rate sometimes is 1???
             cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
                     allColumns, BRSQLiteHelper.CURRENCY_CODE + " = ? AND " + BRSQLiteHelper.CURRENCY_ISO + " = ? COLLATE NOCASE",
                     new String[]{code, iso.toUpperCase()}, null, null, null);

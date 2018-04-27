@@ -73,6 +73,7 @@ public class WalletsMaster {
     private static WalletsMaster instance;
 
     private List<BaseWalletManager> mWallets = new ArrayList<>();
+    private TokenListMetaData mTokenListMetaData;
 
     private WalletsMaster(Context app) {
     }
@@ -85,24 +86,25 @@ public class WalletsMaster {
     }
 
     public synchronized List<BaseWalletManager> getAllWallets(Context app) {
-        Log.e(TAG, "getAllWallets: 1");
+        long start = System.currentTimeMillis();
         WalletEthManager ethWallet = WalletEthManager.getInstance(app);
         if (ethWallet == null) {
             return mWallets; //return empty wallet list if ETH is null (meaning no public key yet)
         }
-        TokenListMetaData md = KVStoreManager.getInstance().getTokenListMetaData(app);
-        if (md == null) {
+        if (mTokenListMetaData == null)
+            mTokenListMetaData = KVStoreManager.getInstance().getTokenListMetaData(app);
+        if (mTokenListMetaData == null) {
             List<TokenListMetaData.TokenInfo> enabled = new ArrayList<>();
             enabled.add(new TokenListMetaData.TokenInfo("BTC", false, null));
             enabled.add(new TokenListMetaData.TokenInfo("BCH", false, null));
             enabled.add(new TokenListMetaData.TokenInfo("ETH", false, null));
-            md = new TokenListMetaData(enabled, null);
-            KVStoreManager.getInstance().putTokenListMetaData(app, md); //put default currencies if null
+            mTokenListMetaData = new TokenListMetaData(enabled, null);
+            KVStoreManager.getInstance().putTokenListMetaData(app, mTokenListMetaData); //put default currencies if null
         }
 
-        for (TokenListMetaData.TokenInfo enabled : md.enabledCurrencies) {
+        for (TokenListMetaData.TokenInfo enabled : mTokenListMetaData.enabledCurrencies) {
 
-            boolean isHidden = KVStoreManager.getInstance().getTokenListMetaData(app).isCurrencyHidden(enabled.symbol);
+            boolean isHidden = mTokenListMetaData.isCurrencyHidden(enabled.symbol);
 
             if (enabled.symbol.equalsIgnoreCase("BTC")) {
                 //BTC wallet
@@ -132,7 +134,7 @@ public class WalletsMaster {
                 if (tokenWallet != null)
                     if (!mWallets.contains(tokenWallet)) mWallets.add(tokenWallet);
 
-                for (TokenListMetaData.TokenInfo hidden : md.hiddenCurrencies) {
+                for (TokenListMetaData.TokenInfo hidden : mTokenListMetaData.hiddenCurrencies) {
 
                     if (tokenWallet != null && tokenWallet.getIso(app).equalsIgnoreCase(hidden.symbol)) {
                         mWallets.remove(tokenWallet);
@@ -142,7 +144,7 @@ public class WalletsMaster {
 
 
         }
-        Log.e(TAG, "getAllWallets: 2");
+        Log.e(TAG, "getAllWallets: took: " + (System.currentTimeMillis() - start) + ", ");
         return mWallets;
     }
 
@@ -260,7 +262,7 @@ public class WalletsMaster {
                 return true;
             }
         }
-        
+
         return false;
     }
 

@@ -7,15 +7,12 @@ import android.support.test.runner.AndroidJUnit4;
 import android.util.Log;
 
 import com.breadwallet.core.BRCoreMasterPubKey;
-import com.breadwallet.core.ethereum.BREthereumToken;
-import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.activities.settings.TestActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.CryptoRequest;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.util.CryptoUriParser;
@@ -33,7 +30,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.security.InvalidAlgorithmParameterException;
 import java.util.HashSet;
 import java.util.Set;
@@ -199,7 +195,7 @@ public class WalletTests {
         tmp.add(new CurrencyEntity("USD", "Dollar", btcRate, "BTC"));
         tmp.add(new CurrencyEntity("BTC", "Bitcoin", ethRate, "ETH"));
         tmp.add(new CurrencyEntity("BTC", "Bitcoin", brdRate, "BRD"));
-        CurrencyDataSource.getInstance(app).putCurrencies(app, tmp);
+        RatesDataSource.getInstance(app).putCurrencies(app, tmp);
 
         BRSharedPrefs.putCryptoDenomination(app, "BTC", BRConstants.CURRENT_UNIT_BITCOINS);
 

@@ -23,7 +23,6 @@ import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWallet;
 import com.breadwallet.core.BRCoreWalletManager;
 import com.breadwallet.core.ethereum.BREthereumAmount;
-import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.presenter.entities.BRMerkleBlockEntity;
 import com.breadwallet.presenter.entities.BRPeerEntity;
@@ -43,7 +42,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.sqlite.BtcBchTransactionDataStore;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.sqlite.MerkleBlockDataSource;
 import com.breadwallet.tools.sqlite.PeerDataSource;
 import com.breadwallet.tools.sqlite.TransactionStorageManager;
@@ -238,7 +237,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     public CryptoTransaction[] getTxs(Context app) {
         BRCoreTransaction[] txs = getWallet().getTransactions();
         CryptoTransaction[] arr = new CryptoTransaction[txs.length];
-        for(int i = 0; i < txs.length; i++){
+        for (int i = 0; i < txs.length; i++) {
             arr[i] = new CryptoTransaction(txs[i]);
         }
 
@@ -535,7 +534,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getFiatExchangeRate(Context app) {
-        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), BRSharedPrefs.getPreferredFiatIso(app));
+        CurrencyEntity ent = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), BRSharedPrefs.getPreferredFiatIso(app));
         return new BigDecimal(ent == null ? 0 : ent.rate); //dollars
     }
 
@@ -551,7 +550,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
         if (amount.doubleValue() == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         if (ent == null)
-            ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
+            ent = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
         if (ent == null)
             return null;
         double rate = ent.rate;
@@ -564,7 +563,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     public BigDecimal getCryptoForFiat(Context app, BigDecimal fiatAmount) {
         if (fiatAmount.doubleValue() == 0) return fiatAmount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
+        CurrencyEntity ent = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
         if (ent == null) return null;
         double rate = ent.rate;
         //convert c to $.
@@ -627,7 +626,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
         if (amount.doubleValue() == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        CurrencyEntity ent = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
+        CurrencyEntity ent = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), iso);
         if (ent == null) {
             Log.e(TAG, "getSmallestCryptoForFiat: no exchange rate data!");
             return amount;

@@ -4,15 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.NetworkOnMainThreadException;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -24,12 +22,9 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Currency;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -90,7 +85,7 @@ public class BRApiManager {
         return instance;
     }
 
-    private Set<CurrencyEntity> getCurrencies(Activity context, BaseWalletManager walletManager) {
+    private void updateRates(Context context, BaseWalletManager walletManager) {
         if (ActivityUTILS.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
@@ -119,7 +114,8 @@ public class BRApiManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return new LinkedHashSet<>(set);
+        if (set.size() > 0) RatesDataSource.getInstance(context).putCurrencies(context, set);
+
     }
 
 
@@ -140,35 +136,39 @@ public class BRApiManager {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                if (BreadApp.isAppInBackground(context)) {
-                    Log.e(TAG, "doInBackground: Stopping timer, no activity on.");
-                    stopTimerTask();
-                    return;
-                }
-                List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(context).getAllWallets(context));
-
-                for (final BaseWalletManager w : list) {
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            w.updateFee(context);
-                        }
-                    });
-                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            //get each wallet's rates
-                            Set<CurrencyEntity> tmp = getCurrencies((Activity) context, w);
-                            CurrencyDataSource.getInstance(context).putCurrencies(context, tmp);
-                        }
-                    });
-                }
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateErc20Rates(context);
-                    }
-                });
+//                if (BreadApp.isAppInBackground(context)) {
+//                    Log.e(TAG, "doInBackground: Stopping timer, no activity on.");
+//                    stopTimerTask();
+//                    return;
+//                }
+//                List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(context).getAllWallets(context));
+//
+//                for (final BaseWalletManager w : list) {
+//                    //only update stuff for non erc20 for now, API endpoint BUG
+//                    if (w.getIso(context).equalsIgnoreCase("BTC") || w.getIso(context).equalsIgnoreCase("BCH")
+//                            || w.getIso(context).equalsIgnoreCase("ETH")) {
+//                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                w.updateFee(context);
+//                            }
+//                        });
+//                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                //get each wallet's rates
+//                                updateRates(context, w);
+//
+//                            }
+//                        });
+//                    }
+//                }
+//                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        updateErc20Rates(context);
+//                    }
+//                });
             }
         });
     }
@@ -202,7 +202,7 @@ public class BRApiManager {
                 tmp.add(ent);
 
             }
-            CurrencyDataSource.getInstance(context).putCurrencies(context, tmp);
+            RatesDataSource.getInstance(context).putCurrencies(context, tmp);
             if (object != null)
                 BRReportsManager.reportBug(new IllegalArgumentException("JSONArray returns a wrong object: " + object));
         } catch (JSONException e) {
@@ -231,7 +231,7 @@ public class BRApiManager {
         }
     }
 
-    public static JSONArray fetchRates(Activity app, BaseWalletManager walletManager) {
+    public static JSONArray fetchRates(Context app, BaseWalletManager walletManager) {
         String url = "https://" + BreadApp.HOST + "/rates?currency=" + walletManager.getIso(app);
         String jsonString = urlGET(app, url);
         JSONArray jsonArray = null;
@@ -248,7 +248,7 @@ public class BRApiManager {
         return jsonArray == null ? backupFetchRates(app, walletManager) : jsonArray;
     }
 
-    public static JSONArray backupFetchRates(Activity app, BaseWalletManager walletManager) {
+    public static JSONArray backupFetchRates(Context app, BaseWalletManager walletManager) {
         if (!walletManager.getIso(app).equalsIgnoreCase(WalletBitcoinManager.getInstance(app).getIso(app))) {
             //todo add backup for BCH
             return null;

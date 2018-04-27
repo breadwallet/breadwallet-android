@@ -19,6 +19,7 @@ import com.breadwallet.wallet.wallets.CryptoTransaction;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 /**
  * BreadWallet
@@ -206,6 +207,7 @@ public interface BaseWalletManager {
      * @return - the wallet's Ui configuration
      */
     WalletUiConfiguration getUiConfiguration();
+
     /**
      * @return - the wallet's Settings configuration (Settings items)
      */

@@ -27,7 +27,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
@@ -55,6 +55,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
@@ -86,6 +87,7 @@ public class WalletEthManager implements BaseWalletManager,
         BREthereumLightNode.ClientJSON_RPC,
         BREthereumLightNode.Listener {
     private static final String TAG = WalletEthManager.class.getSimpleName();
+    AtomicInteger count = new AtomicInteger();
 
     private static String ISO = "ETH";
     public static final String ETH_SCHEME = "ethereum";
@@ -645,9 +647,9 @@ public class WalletEthManager implements BaseWalletManager,
     //ETH rates are in BTC (thus this math)
     private BigDecimal getFiatForEth(Context app, BigDecimal ethAmount, String code) {
         //fiat rate for btc
-        CurrencyEntity btcRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
+        CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
         //Btc rate for ether
-        CurrencyEntity ethBtcRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
+        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;
@@ -664,9 +666,9 @@ public class WalletEthManager implements BaseWalletManager,
     //ETH rates are in BTC (thus this math)
     private BigDecimal getEthForFiat(Context app, BigDecimal fiatAmount, String code) {
         //fiat rate for btc
-        CurrencyEntity btcRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
+        CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
         //Btc rate for ether
-        CurrencyEntity ethBtcRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
+        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;
@@ -702,9 +704,11 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     protected void getEtherBalance(final BREthereumWallet wallet, final int wid, final String address, final int rid) {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                Log.e(TAG, "Count:" + count.incrementAndGet());
+
                 final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
@@ -721,8 +725,7 @@ public class WalletEthManager implements BaseWalletManager,
                     e.printStackTrace();
                 }
 
-                final JsonRpcRequest request = new JsonRpcRequest();
-                request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
@@ -764,12 +767,13 @@ public class WalletEthManager implements BaseWalletManager,
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                Log.e(TAG, "Count:" + count.incrementAndGet());
+
                 final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
                 final String eth_rpc_url = host + "module=account&action=tokenbalance" +
                         "&address=" + address +
                         "&contractaddress=" + contractAddress;
 
-                Log.e(TAG, "run: " + eth_rpc_url);
                 final JSONObject payload = new JSONObject();
                 try {
                     payload.put("id", String.valueOf(rid));
@@ -777,7 +781,7 @@ public class WalletEthManager implements BaseWalletManager,
                     e.printStackTrace();
                 }
 
-                new JsonRpcRequest().makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
 
@@ -792,7 +796,6 @@ public class WalletEthManager implements BaseWalletManager,
                                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                         @Override
                                         public void run() {
-                                            Log.e(TAG, "run: " + wallet.getToken().getSymbol());
                                             for (OnBalanceChangedListener list : balanceListeners)
                                                 if (list != null)
                                                     list.onBalanceChanged(wallet.getToken().getSymbol(),
@@ -818,6 +821,8 @@ public class WalletEthManager implements BaseWalletManager,
             public void run() {
                 final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
                 Log.d(TAG, "Making rpc request to -> " + eth_url);
+                Log.e(TAG, "Count:" + count.incrementAndGet());
+
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
 
@@ -829,9 +834,8 @@ public class WalletEthManager implements BaseWalletManager,
                     e.printStackTrace();
                 }
 
-                final JsonRpcRequest request = new JsonRpcRequest();
 
-                request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         String gasPrice = "0x";
@@ -866,6 +870,8 @@ public class WalletEthManager implements BaseWalletManager,
             public void run() {
                 final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
                 Log.d(TAG, "Making rpc request to -> " + eth_url);
+                Log.e(TAG, "Count:" + count.incrementAndGet());
+
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
 
@@ -873,7 +879,6 @@ public class WalletEthManager implements BaseWalletManager,
                 params.put(amount);
                 params.put(data);
 
-                final JsonRpcRequest request = new JsonRpcRequest();
 
 
                 try {
@@ -885,7 +890,7 @@ public class WalletEthManager implements BaseWalletManager,
                     e.printStackTrace();
                 }
 
-                request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         String gasEstimate = "0x";
@@ -921,8 +926,8 @@ public class WalletEthManager implements BaseWalletManager,
             public void run() {
                 final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
                 Log.d(TAG, "Making rpc request to -> " + eth_url);
+                Log.e(TAG, "Count:" + count.incrementAndGet());
 
-                JsonRpcRequest request = new JsonRpcRequest();
                 JSONObject payload = new JSONObject();
                 JSONArray params = new JSONArray();
                 try {
@@ -935,7 +940,7 @@ public class WalletEthManager implements BaseWalletManager,
                     e.printStackTrace();
                 }
 
-                request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         String txHash = null;
@@ -1004,11 +1009,11 @@ public class WalletEthManager implements BaseWalletManager,
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                Log.e(TAG, "Count:" + count.incrementAndGet());
 
                 //final String eth_rpc_url = String.format(JsonRpcConstants.ETH_RPC_TX_LIST, mWallet.getAccount().getPrimaryAddress());
                 final String eth_rpc_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?module=account&action=txlist&address=" + address;
 
-                final JsonRpcRequest request = new JsonRpcRequest();
                 final JSONObject payload = new JSONObject();
                 try {
                     payload.put("id", String.valueOf(id));
@@ -1017,7 +1022,7 @@ public class WalletEthManager implements BaseWalletManager,
                     e.printStackTrace();
                 }
 
-                request.makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
 
@@ -1178,11 +1183,11 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-
     public void getLogs(final String address, final String event, final int rid) {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
+                Log.e(TAG, "Count:" + count.incrementAndGet());
                 final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
                 final String eth_rpc_url = host + "module=logs&action=getLogs" +
                         "&fromBlock=0&toBlock=latest" +
@@ -1191,7 +1196,7 @@ public class WalletEthManager implements BaseWalletManager,
                         "&topic1=" + address +
                         "&topic1_2_opr=or" +
                         "&topic2=" + address;
-                Log.e(TAG, "run: " + eth_rpc_url);
+                Log.d(TAG, "run: " + eth_rpc_url);
                 final JSONObject payload = new JSONObject();
                 try {
                     payload.put("id", String.valueOf(rid));
@@ -1200,8 +1205,7 @@ public class WalletEthManager implements BaseWalletManager,
                     e.printStackTrace();
                 }
 
-                new JsonRpcRequest()
-                        .makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                             @Override
                             public void onRpcRequestCompleted(String jsonResult) {
 

@@ -1,7 +1,6 @@
 package com.platform;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
@@ -11,14 +10,11 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
-import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.crypto.Base58;
-import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -46,11 +42,9 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -222,6 +216,8 @@ public class APIClient {
             }
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            if(res !=null) res.close();
         }
 
         if (response == null) throw new NullPointerException();
@@ -312,6 +308,7 @@ public class APIClient {
 
     }
 
+
     public Response sendRequest(Request locRequest, boolean needsAuth, int retryCount) {
         Log.d(TAG, "sendRequest, url -> " + locRequest.url().toString());
         if (retryCount > 1)
@@ -328,6 +325,7 @@ public class APIClient {
             String value = headers.get(key);
             newBuilder.header(key, value);
         }
+
 
         Request request = newBuilder.build();
         if (needsAuth) {
