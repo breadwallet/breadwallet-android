@@ -302,7 +302,11 @@ public class LoginActivity extends BRActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Class toGo = (BRSharedPrefs.wasAppBackgroundedFromHome(LoginActivity.this)) ? HomeActivity.class : WalletActivity.class;
+
+                        boolean showHomeActivity = (BRSharedPrefs.wasAppBackgroundedFromHome(LoginActivity.this)) ||
+                                BRSharedPrefs.isNewWallet(LoginActivity.this);
+
+                        Class toGo = showHomeActivity ? HomeActivity.class : WalletActivity.class;
                         Intent intent = new Intent(LoginActivity.this, toGo);
                         startActivity(intent);
                         overridePendingTransition(R.anim.fade_up, R.anim.fade_down);

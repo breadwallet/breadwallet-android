@@ -531,7 +531,8 @@ public class WalletTokenManager implements BaseWalletManager {
         }
         if (tokenBtcRate.rate == 0 || btcRate.rate == 0) return new BigDecimal(0);
 
-
+//        if (getIso(app).equalsIgnoreCase("knc"))
+//            Log.e(TAG, "getFiatForToken: btcRate:" + btcRate.rate + ", tokenBtcRate: " + tokenBtcRate.rate);
         return tokenAmount.multiply(new BigDecimal(tokenBtcRate.rate)).multiply(new BigDecimal(btcRate.rate));
     }
 

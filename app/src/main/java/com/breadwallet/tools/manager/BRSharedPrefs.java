@@ -441,6 +441,18 @@ public class BRSharedPrefs {
         editor.putBoolean("shareData", show);
         editor.apply();
     }
+    public static boolean isNewWallet(Context context) {
+        SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return settingsToGet.getBoolean("newWallet", true);
+    }
+
+    public static void putIsNewWallet(Context context, boolean newWallet) {
+        if (context == null) return;
+        SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("newWallet", newWallet);
+        editor.apply();
+    }
 
     public static boolean getPromptDismissed(Context context, String promptName) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);

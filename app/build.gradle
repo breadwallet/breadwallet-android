@@ -9,8 +9,8 @@ android {
         applicationId = 'com.breadwallet'
         minSdkVersion 23
         targetSdkVersion 27
-        versionCode 237
-        versionName "237"
+        versionCode 243
+        versionName "243"
         multiDexEnabled true
 
         // Similar to other properties in the defaultConfig block,

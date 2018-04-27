@@ -118,6 +118,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         setContentView(R.layout.activity_wallet);
 
+        BRSharedPrefs.putIsNewWallet(this, false);
+
         mCurrencyTitle = findViewById(R.id.currency_label);
         mCurrencyPriceUsd = findViewById(R.id.currency_usd_price);
         mBalancePrimary = findViewById(R.id.balance_primary);
@@ -277,7 +279,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             }
         });
 
-        Log.e(TAG, "updateUi: " + wallet.getIso(this) + ", exchange rate:" + wallet.getFiatExchangeRate(this));
         String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatExchangeRate(this));
         String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatBalance(this));
         String cryptoBalance = CurrencyUtils.getFormattedAmount(this, wallet.getIso(this), wallet.getCachedBalance(this));

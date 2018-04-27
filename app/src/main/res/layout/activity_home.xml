@@ -50,7 +50,7 @@
                 android:layout_alignParentEnd="true"
                 android:layout_below="@id/total_assets_label"
                 android:layout_marginEnd="@dimen/activity_vertical_margin"
-                android:text="$42,895.47"
+                android:text="---"
                 android:textColor="@color/total_assets_usd_color"
                 android:textSize="28sp"
                 app:customTFont="CircularPro-Bold.otf" />

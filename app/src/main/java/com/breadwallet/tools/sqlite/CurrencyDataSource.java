@@ -81,7 +81,6 @@ public class CurrencyDataSource implements BRDataSourceInterface {
             int failed = 0;
             for (CurrencyEntity c : currencyEntities) {
                 ContentValues values = new ContentValues();
-
                 if (Utils.isNullOrEmpty(c.code) || Utils.isNullOrEmpty(c.name) || c.rate <= 0) {
                     failed++;
                     continue;
@@ -170,13 +169,17 @@ public class CurrencyDataSource implements BRDataSourceInterface {
         return ISOs;
     }
 
-    public CurrencyEntity getCurrencyByCode(Context app, String iso, String code) {
+    public synchronized CurrencyEntity getCurrencyByCode(Context app, String iso, String code) {
         Cursor cursor = null;
         CurrencyEntity result = null;
         try {
             database = openDatabase();
 //            printTest();
 //            Log.e(TAG, "getCurrencyByCode: code: " + code + ", iso: " + walletManager.getIso(app));
+            if(iso.equalsIgnoreCase("TST")){
+                Log.e(TAG, "getCurrencyByCode: ");
+            }
+            //todo fix, token rate sometimes is 1???
             cursor = database.query(BRSQLiteHelper.CURRENCY_TABLE_NAME,
                     allColumns, BRSQLiteHelper.CURRENCY_CODE + " = ? AND " + BRSQLiteHelper.CURRENCY_ISO + " = ? COLLATE NOCASE",
                     new String[]{code, iso.toUpperCase()}, null, null, null);
@@ -185,6 +188,7 @@ public class CurrencyDataSource implements BRDataSourceInterface {
             if (!cursor.isAfterLast()) {
                 result = cursorToCurrency(cursor);
             }
+
             return result;
         } finally {
             if (cursor != null)
