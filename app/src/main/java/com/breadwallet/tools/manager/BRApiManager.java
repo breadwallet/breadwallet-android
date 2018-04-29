@@ -289,15 +289,15 @@ public class BRApiManager {
 
         Request request = builder.build();
         String response = null;
-        Response resp = APIClient.getInstance(app).sendRequest(request, false, 0);
+        APIClient.BRResponse resp = APIClient.getInstance(app).sendRequest(request, false, 0);
 
         try {
             if (resp == null) {
                 Log.e(TAG, "urlGET: " + myURL + ", resp is null");
                 return null;
             }
-            response = resp.body().string();
-            String strDate = resp.header("date");
+            response = resp.getBody();
+            String strDate = resp.getHeaders().get("date");
             if (strDate == null) {
                 Log.e(TAG, "urlGET: strDate is null!");
                 return response;
@@ -306,11 +306,8 @@ public class BRApiManager {
             Date date = formatter.parse(strDate);
             long timeStamp = date.getTime();
             BRSharedPrefs.putSecureTime(app, timeStamp);
-        } catch (ParseException | IOException e) {
+        } catch (ParseException e) {
             e.printStackTrace();
-        } finally {
-            if (resp != null) resp.close();
-
         }
         return response;
     }

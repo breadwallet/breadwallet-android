@@ -113,16 +113,7 @@ public class HTTPFileMiddleware implements Middleware {
             Request debugRequest = new Request.Builder()
                     .url(debugUrl)
                     .get().build();
-            Response debugResp = null;
-            try {
-                debugResp = APIClient.getInstance(app).sendRequest(debugRequest, false, 0);
-                if (debugResp != null)
-                    body = debugResp.body().bytes();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                if (debugResp != null) debugResp.close();
-            }
+            APIClient.BRResponse debugResp = APIClient.getInstance(app).sendRequest(debugRequest, false, 0);
 
         }
 

@@ -17,6 +17,7 @@ import com.breadwallet.presenter.customviews.BREdit;
 import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.adapter.AddTokenListAdapter;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.wallet.WalletsMaster;
 import com.platform.entities.TokenListMetaData;
 import com.platform.tools.KVStoreManager;
 
@@ -144,5 +145,11 @@ public class AddWalletsActivity extends BRActivity {
         mRecycler.setLayoutManager(new LinearLayoutManager(this));
         mRecycler.setAdapter(mAdapter);
 
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        WalletsMaster.getInstance(this).updateWallets(this);
     }
 }

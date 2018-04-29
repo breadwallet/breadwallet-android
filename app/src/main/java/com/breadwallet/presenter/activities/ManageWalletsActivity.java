@@ -17,6 +17,7 @@ import com.breadwallet.tools.adapter.ManageTokenListAdapter;
 import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.wallets.etherium.WalletTokenManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.tools.KVStoreManager;
@@ -93,9 +94,7 @@ public class ManageWalletsActivity extends BRActivity {
                         tokenItems.add(tokenItem);
                     }
 
-
                 }
-
 
             }
         });
@@ -139,7 +138,6 @@ public class ManageWalletsActivity extends BRActivity {
                 mAdapter.notifyDataSetChanged();
                 KVStoreManager.getInstance().putTokenListMetaData(ManageWalletsActivity.this, metaData);
 
-
             }
         });
 
@@ -149,5 +147,11 @@ public class ManageWalletsActivity extends BRActivity {
         ItemTouchHelper.Callback callback = new SimpleItemTouchHelperCallback(mAdapter);
         mItemTouchHelper = new ItemTouchHelper(callback);
         mItemTouchHelper.attachToRecyclerView(mTokenList);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        WalletsMaster.getInstance(this).updateWallets(this);
     }
 }

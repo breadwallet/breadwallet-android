@@ -85,14 +85,13 @@ public class WalletsMaster {
         return instance;
     }
 
-    public synchronized List<BaseWalletManager> getAllWallets(Context app) {
+    public synchronized void updateWallets(Context app) {
         long start = System.currentTimeMillis();
         WalletEthManager ethWallet = WalletEthManager.getInstance(app);
         if (ethWallet == null) {
-            return mWallets; //return empty wallet list if ETH is null (meaning no public key yet)
+            return; //return empty wallet list if ETH is null (meaning no public key yet)
         }
-        if (mTokenListMetaData == null)
-            mTokenListMetaData = KVStoreManager.getInstance().getTokenListMetaData(app);
+        mTokenListMetaData = KVStoreManager.getInstance().getTokenListMetaData(app);
         if (mTokenListMetaData == null) {
             List<TokenListMetaData.TokenInfo> enabled = new ArrayList<>();
             enabled.add(new TokenListMetaData.TokenInfo("BTC", false, null));
@@ -142,10 +141,16 @@ public class WalletsMaster {
                 }
             }
 
-
         }
-        Log.e(TAG, "getAllWallets: took: " + (System.currentTimeMillis() - start) + ", ");
+        Log.e(TAG, "updateWallets: took: " + (System.currentTimeMillis() - start) + ", ");
+    }
+
+    public synchronized List<BaseWalletManager> getAllWallets(Context app) {
+        if (mWallets == null || mWallets.size() == 0) {
+            updateWallets(app);
+        }
         return mWallets;
+
     }
 
     //return the needed wallet for the iso

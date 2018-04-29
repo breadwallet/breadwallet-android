@@ -15,6 +15,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -95,43 +96,26 @@ public class APIProxy implements Middleware {
             auth = true;
         }
 
-        Response res = apiInstance.sendRequest(req, auth, 0);
-        try {
-            ResponseBody body = res.body();
-            String cType = body.contentType() == null ? null : body.contentType().toString();
-            String resString = null;
-            byte[] bodyBytes = new byte[0];
-            try {
-                bodyBytes = body.bytes();
-                resString = new String(bodyBytes);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        APIClient.BRResponse res = apiInstance.sendRequest(req, auth, 0);
 
-            response.setContentType(cType);
-            Headers headers = res.headers();
-            for (String s : headers.names()) {
-                if (Arrays.asList(bannedReceiveHeaders).contains(s.toLowerCase())) continue;
-                response.addHeader(s, res.header(s));
-            }
-            response.setContentLength(bodyBytes.length);
+        Map<String, String> headers = res.getHeaders();
+        for (String s : headers.keySet()) {
+            if (Arrays.asList(bannedReceiveHeaders).contains(s.toLowerCase())) continue;
+            response.addHeader(s, res.getHeaders().get(s));
+        }
+        response.setContentLength(res.getBody().length());
 
-            if (!res.isSuccessful()) {
-                Log.e(TAG, "RES IS NOT SUCCESSFUL: " + res.request().url() + ": " + res.code() + "(" + res.message() + ")");
+        if (Utils.isNullOrEmpty(res.getBody())) {
+            Log.e(TAG, "RES IS NOT SUCCESSFUL: " + res.getUrl() + ": " + res.getCode() + "(" + res.getBody() + ")");
 //            return BRHTTPHelper.handleSuccess(res.code(), bodyBytes, baseRequest, response, null);
-            }
+        }
 
-            try {
-                response.setStatus(res.code());
-                if (cType != null && !cType.isEmpty())
-                    response.setContentType(cType);
-                response.getOutputStream().write(bodyBytes);
-                baseRequest.setHandled(true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } finally {
-            if (res != null) res.close();
+        try {
+            response.setStatus(res.getCode());
+            response.getOutputStream().write(res.getBody().getBytes());
+            baseRequest.setHandled(true);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return true;
 

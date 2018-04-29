@@ -276,7 +276,7 @@
             android:background="@color/currency_buttons_color"
             android:text="@string/Button.send"
             android:textColor="@color/white"
-            android:textSize="16sp"
+            android:textSize="14sp"
             app:buttonType="4"
             app:customTFont="CircularPro-Bold.otf"
             app:hasShadow="false"
@@ -295,7 +295,7 @@
             android:background="@color/currency_buttons_color"
             android:text="@string/Button.receive"
             android:textColor="@color/white"
-            android:textSize="16sp"
+            android:textSize="14sp"
             app:buttonType="4"
             app:customTFont="CircularPro-Bold.otf"
             app:hasShadow="false"
@@ -314,7 +314,7 @@
             android:paddingTop="3dp"
             android:text="@string/Button.buy"
             android:textColor="@color/white"
-            android:textSize="16sp"
+            android:textSize="14sp"
             app:buttonType="4"
             app:customTFont="CircularPro-Bold.otf"
             app:hasShadow="false"
@@ -333,13 +333,12 @@
             android:paddingTop="3dp"
             android:text="Sell"
             android:textColor="@color/white"
-            android:textSize="16sp"
+            android:textSize="14sp"
             app:buttonType="4"
             app:customTFont="CircularPro-Bold.otf"
             app:hasShadow="false"
             app:isBreadButton="true"/>
 
     </LinearLayout>
-
 
 </RelativeLayout>

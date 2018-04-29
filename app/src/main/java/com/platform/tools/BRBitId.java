@@ -151,7 +151,7 @@ public class BRBitId {
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            AuthManager.getInstance().authPrompt(app, _promptString, bitIdUri.getHost(), true,false, new BRAuthCompletion() {
+                            AuthManager.getInstance().authPrompt(app, _promptString, bitIdUri.getHost(), true, false, new BRAuthCompletion() {
                                 @Override
                                 public void onComplete() {
                                     PostAuth.getInstance().onBitIDAuth(app, true);
@@ -321,16 +321,10 @@ public class BRBitId {
                 .post(requestBody)
                 .header("Content-Type", "application/json")
                 .build();
-        Response res = APIClient.getInstance(app).sendRequest(request, true, 0);
-        Log.e(TAG, "completeBitID: res.code: " + res.code());
-        Log.e(TAG, "completeBitID: res.code: " + res.message());
-        try {
-            Log.e(TAG, "completeBitID: body: " + res.body().string());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } finally {
-            res.close();
-        }
+        APIClient.BRResponse res = APIClient.getInstance(app).sendRequest(request, true, 0);
+        Log.e(TAG, "completeBitID: res.code: " + res.getCode());
+        Log.e(TAG, "completeBitID: res.code: " + res.getBody());
+        Log.e(TAG, "completeBitID: body: " + res.getBody());
     }
 
     public static String newNonce(Activity app, String nonceKey) {

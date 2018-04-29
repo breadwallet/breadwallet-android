@@ -177,6 +177,14 @@ public class LoginActivity extends BRActivity {
             }
         });
 
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                //Preload the first time
+                WalletsMaster.getInstance(LoginActivity.this).getAllWallets(LoginActivity.this);
+            }
+        });
+
         final boolean useFingerprint = AuthManager.isFingerPrintAvailableAndSetup(this) && BRSharedPrefs.getUseFingerprint(this);
 //        Log.e(TAG, "onCreate: isFingerPrintAvailableAndSetup: " + useFingerprint);
         fingerPrint.setVisibility(useFingerprint ? View.VISIBLE : View.GONE);

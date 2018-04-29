@@ -78,6 +78,7 @@ public class WalletTokenManager implements BaseWalletManager {
     }
 
     private synchronized static WalletTokenManager getTokenWallet(WalletEthManager walletEthManager, BREthereumToken token) {
+        long start = System.currentTimeMillis();
         if (mTokenWallets.containsKey(token.getAddress().toLowerCase())) {
             return mTokenWallets.get(token.getAddress().toLowerCase());
         } else {
@@ -92,6 +93,7 @@ public class WalletTokenManager implements BaseWalletManager {
                 }
                 WalletTokenManager wm = new WalletTokenManager(walletEthManager, w);
                 mTokenWallets.put(w.getToken().getAddress().toLowerCase(), wm);
+                Log.e(TAG, "getTokenWallet: took: " + (System.currentTimeMillis() - start));
                 return wm;
             } else {
                 BRReportsManager.reportBug(new NullPointerException("Failed to find token by address: " + token.getAddress()), true);
@@ -100,7 +102,6 @@ public class WalletTokenManager implements BaseWalletManager {
         }
         return null;
     }
-
 
     //for testing only
     public static WalletTokenManager getBrdWallet(WalletEthManager walletEthManager) {

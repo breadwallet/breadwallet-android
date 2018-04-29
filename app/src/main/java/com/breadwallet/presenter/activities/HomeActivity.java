@@ -238,13 +238,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         RatesDataSource.getInstance(this).addOnDataChangedListener(new RatesDataSource.OnDataChanged() {
             @Override
             public void onChanged() {
-                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateUi();
-                    }
-                });
-
+                updateUi();
             }
         });
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -282,7 +276,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        mFiatTotal.setText(CurrencyUtils.getFormattedAmount(HomeActivity.this, BRSharedPrefs.getPreferredFiatIso(HomeActivity.this), fiatTotalAmount));
+                        mFiatTotal.setText(CurrencyUtils.getFormattedAmount(HomeActivity.this,
+                                BRSharedPrefs.getPreferredFiatIso(HomeActivity.this), fiatTotalAmount));
                         mAdapter.notifyDataSetChanged();
                     }
                 });

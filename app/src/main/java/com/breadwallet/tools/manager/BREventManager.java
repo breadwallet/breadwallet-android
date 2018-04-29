@@ -157,22 +157,14 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
                             .header("Accept", "application/json")
                             .post(requestBody).build();
                     String strResponse = null;
-                    Response response = null;
                     Log.d(TAG, "BREventManager TEST  2 -> ");
 
-                    try {
-                        Log.d(TAG, "Making request to -> " + strUtl);
+                    Log.d(TAG, "Making request to -> " + strUtl);
 
-                        response = APIClient.getInstance(app).sendRequest(request, true, 0);
-                        if (response != null)
-                            strResponse = response.body().string();
-                        Log.d(TAG, "Events response -> " + strResponse);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        fails++;
-                    } finally {
-                        if (response != null) response.close();
-                    }
+                    APIClient.BRResponse response = APIClient.getInstance(app).sendRequest(request, true, 0);
+                    if (response != null)
+                        strResponse = response.getBody();
+                    Log.d(TAG, "Events response -> " + strResponse);
                     if (Utils.isNullOrEmpty(strResponse)) {
                         Log.e(TAG, "pushToServer: response is empty");
                         fails++;

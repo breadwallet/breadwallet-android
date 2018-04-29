@@ -87,7 +87,6 @@ public class WalletEthManager implements BaseWalletManager,
         BREthereumLightNode.ClientJSON_RPC,
         BREthereumLightNode.Listener {
     private static final String TAG = WalletEthManager.class.getSimpleName();
-    AtomicInteger count = new AtomicInteger();
 
     private static String ISO = "ETH";
     public static final String ETH_SCHEME = "ethereum";
@@ -704,10 +703,9 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     protected void getEtherBalance(final BREthereumWallet wallet, final int wid, final String address, final int rid) {
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                Log.e(TAG, "Count:" + count.incrementAndGet());
 
                 final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
                 final JSONObject payload = new JSONObject();
@@ -737,13 +735,14 @@ public class WalletEthManager implements BaseWalletManager,
                                 if (responseObject.has("result")) {
                                     String balance = responseObject.getString("result");
                                     node.announceBalance(wid, balance, rid);
+                                    final BigDecimal amount = new BigDecimal(wallet.getBalance(getUnit()));
 
                                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                         @Override
                                         public void run() {
                                             for (OnBalanceChangedListener list : balanceListeners)
                                                 if (list != null)
-                                                    list.onBalanceChanged(ISO, new BigDecimal(wallet.getBalance(getUnit())));
+                                                    list.onBalanceChanged(ISO, amount);
                                         }
                                     });
                                 }
@@ -767,7 +766,6 @@ public class WalletEthManager implements BaseWalletManager,
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                Log.e(TAG, "Count:" + count.incrementAndGet());
 
                 final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
                 final String eth_rpc_url = host + "module=account&action=tokenbalance" +
@@ -792,14 +790,15 @@ public class WalletEthManager implements BaseWalletManager,
                                 if (responseObject.has("result")) {
                                     String balance = responseObject.getString("result");
                                     node.announceBalance(wid, balance, rid);
+                                    final BigDecimal uiBalance = new BigDecimal(wallet.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));
+                                    final String iso = wallet.getToken().getSymbol();
 
                                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                         @Override
                                         public void run() {
                                             for (OnBalanceChangedListener list : balanceListeners)
                                                 if (list != null)
-                                                    list.onBalanceChanged(wallet.getToken().getSymbol(),
-                                                            new BigDecimal(wallet.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL)));//use TOKEN_DECIMAL
+                                                    list.onBalanceChanged(iso, uiBalance);//use TOKEN_DECIMAL
                                         }
                                     });
                                 }
@@ -821,7 +820,6 @@ public class WalletEthManager implements BaseWalletManager,
             public void run() {
                 final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
                 Log.d(TAG, "Making rpc request to -> " + eth_url);
-                Log.e(TAG, "Count:" + count.incrementAndGet());
 
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
@@ -833,7 +831,6 @@ public class WalletEthManager implements BaseWalletManager,
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
 
                 JsonRpcRequest.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
@@ -870,7 +867,6 @@ public class WalletEthManager implements BaseWalletManager,
             public void run() {
                 final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
                 Log.d(TAG, "Making rpc request to -> " + eth_url);
-                Log.e(TAG, "Count:" + count.incrementAndGet());
 
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
@@ -878,8 +874,6 @@ public class WalletEthManager implements BaseWalletManager,
                 params.put(to);
                 params.put(amount);
                 params.put(data);
-
-
 
                 try {
                     payload.put("method", "eth_estimateGas");
@@ -893,20 +887,17 @@ public class WalletEthManager implements BaseWalletManager,
                 JsonRpcRequest.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
-                        String gasEstimate = "0x";
                         try {
                             JSONObject responseObject = new JSONObject(jsonResult);
 
                             if (responseObject.has("result")) {
-                                gasEstimate = responseObject.getString("result");
+                                String gasEstimate = responseObject.getString("result");
 
                                 node.announceGasEstimate(wid, tid, gasEstimate, rid);
-                                return;
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        node.announceGasEstimate(wid, tid, gasEstimate, rid);
                     }
                 });
             }
@@ -926,7 +917,6 @@ public class WalletEthManager implements BaseWalletManager,
             public void run() {
                 final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
                 Log.d(TAG, "Making rpc request to -> " + eth_url);
-                Log.e(TAG, "Count:" + count.incrementAndGet());
 
                 JSONObject payload = new JSONObject();
                 JSONArray params = new JSONArray();
@@ -1009,10 +999,9 @@ public class WalletEthManager implements BaseWalletManager,
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                Log.e(TAG, "Count:" + count.incrementAndGet());
-
                 //final String eth_rpc_url = String.format(JsonRpcConstants.ETH_RPC_TX_LIST, mWallet.getAccount().getPrimaryAddress());
-                final String eth_rpc_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?module=account&action=txlist&address=" + address;
+                final String eth_rpc_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT
+                        + "query?module=account&action=txlist&address=" + address;
 
                 final JSONObject payload = new JSONObject();
                 try {
@@ -1184,10 +1173,10 @@ public class WalletEthManager implements BaseWalletManager,
 
     @Override
     public void getLogs(final String address, final String event, final int rid) {
+        Log.e(TAG, "getLogs: " + address);
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                Log.e(TAG, "Count:" + count.incrementAndGet());
                 final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
                 final String eth_rpc_url = host + "module=logs&action=getLogs" +
                         "&fromBlock=0&toBlock=latest" +
@@ -1206,23 +1195,23 @@ public class WalletEthManager implements BaseWalletManager,
                 }
 
                 JsonRpcRequest.makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
-                            @Override
-                            public void onRpcRequestCompleted(String jsonResult) {
+                    @Override
+                    public void onRpcRequestCompleted(String jsonResult) {
 
-                                final String jsonRcpResponse = jsonResult;
+                        final String jsonRcpResponse = jsonResult;
 
-                                if (jsonRcpResponse != null) {
-                                    try {
-                                        // Convert response into JsonArray of logs
-                                        JSONObject logs = new JSONObject(jsonResult);
-                                        JSONArray logsArray = logs.getJSONArray("result");
+                        if (jsonRcpResponse != null) {
+                            try {
+                                // Convert response into JsonArray of logs
+                                JSONObject logs = new JSONObject(jsonResult);
+                                JSONArray logsArray = logs.getJSONArray("result");
 
-                                        // Iterate through the list of transactions and call node.announceTransaction()
-                                        // to notify the core
-                                        for (int i = 0; i < logsArray.length(); i++) {
-                                            JSONObject log = logsArray.getJSONObject(i);
+                                // Iterate through the list of transactions and call node.announceTransaction()
+                                // to notify the core
+                                for (int i = 0; i < logsArray.length(); i++) {
+                                    JSONObject log = logsArray.getJSONObject(i);
 
-                                            Log.d(TAG, "LogObject contains -> " + log.toString());
+                                    Log.d(TAG, "LogObject contains -> " + log.toString());
 
 //                                    { "address":"0x722dd3f80bac40c951b51bdd28dd19d435762180",
 //                                        "topics":["0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
@@ -1237,29 +1226,29 @@ public class WalletEthManager implements BaseWalletManager,
 //                                        "transactionHash":"0xa37bd8bd8b1fa2838ef65aec9f401f56a6279f99bb1cfb81fa84e923b1b60f2b",
 //                                        "transactionIndex":"0x"}
 
-                                            JSONArray topicsArray = log.getJSONArray("topics");
-                                            String[] topics = new String[topicsArray.length()];
-                                            for (int dex = 0; dex < topics.length; dex++)
-                                                topics[dex] = topicsArray.getString(dex);
+                                    JSONArray topicsArray = log.getJSONArray("topics");
+                                    String[] topics = new String[topicsArray.length()];
+                                    for (int dex = 0; dex < topics.length; dex++)
+                                        topics[dex] = topicsArray.getString(dex);
 
-                                            node.announceLog(rid,
-                                                    log.getString("transactionHash"),
-                                                    log.getString("address"), // contract
-                                                    topics,
-                                                    log.getString("data"),
-                                                    log.getString("gasPrice"),
-                                                    log.getString("gasUsed"),
-                                                    log.getString("logIndex"),
-                                                    log.getString("blockNumber"),
-                                                    log.getString("transactionIndex"),
-                                                    log.getString("timeStamp"));
-                                        }
-                                    } catch (JSONException e) {
-                                        e.printStackTrace();
-                                    }
+                                    node.announceLog(rid,
+                                            log.getString("transactionHash"),
+                                            log.getString("address"), // contract
+                                            topics,
+                                            log.getString("data"),
+                                            log.getString("gasPrice"),
+                                            log.getString("gasUsed"),
+                                            log.getString("logIndex"),
+                                            log.getString("blockNumber"),
+                                            log.getString("transactionIndex"),
+                                            log.getString("timeStamp"));
                                 }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        });
+                        }
+                    }
+                });
             }
         });
     }
