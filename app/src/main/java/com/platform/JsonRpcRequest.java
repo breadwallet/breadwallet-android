@@ -46,8 +46,7 @@ public class JsonRpcRequest {
 
 
         APIClient.BRResponse resp = APIClient.getInstance(app).sendRequest(request, true, 0);
-        if (resp == null) return;
-        String responseString = resp.getBody();
+        String responseString = resp.getBodyText();
 
         if (listener != null) {
             listener.onRpcRequestCompleted(responseString);

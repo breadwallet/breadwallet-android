@@ -163,7 +163,7 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
 
                     APIClient.BRResponse response = APIClient.getInstance(app).sendRequest(request, true, 0);
                     if (response != null)
-                        strResponse = response.getBody();
+                        strResponse = response.getBodyText();
                     Log.d(TAG, "Events response -> " + strResponse);
                     if (Utils.isNullOrEmpty(strResponse)) {
                         Log.e(TAG, "pushToServer: response is empty");

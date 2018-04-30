@@ -4,8 +4,8 @@ package com.platform;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
-import android.os.Handler;
 import android.os.NetworkOnMainThreadException;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -35,22 +35,18 @@ import org.json.JSONObject;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -185,7 +181,7 @@ public class APIClient {
             Request request = new Request.Builder().url(strUtl).get().build();
             BRResponse response = sendRequest(request, false, 0);
             JSONObject object = null;
-            object = new JSONObject(response.getBody());
+            object = new JSONObject(response.getBodyText());
             return (long) object.getInt("fee_per_kb");
         } catch (JSONException e) {
             e.printStackTrace();
@@ -209,7 +205,7 @@ public class APIClient {
 
         if (response == null) throw new NullPointerException();
 
-        return response.getBody();
+        return response.getBodyText();
     }
 
     public synchronized String getToken() {
@@ -235,12 +231,12 @@ public class APIClient {
                     .header("Accept", "application/json")
                     .post(requestBody).build();
             BRResponse response = sendRequest(request, false, 0);
-            if (Utils.isNullOrEmpty(response.getBody())) {
+            if (Utils.isNullOrEmpty(response.getBodyText())) {
                 Log.e(TAG, "getToken: retrieving token failed");
                 return null;
             }
             JSONObject obj = null;
-            obj = new JSONObject(response.getBody());
+            obj = new JSONObject(response.getBodyText());
             String token = obj.getString("token");
             if (!Utils.isNullOrEmpty(token))
                 BRKeyStore.putToken(token.getBytes(), ctx);
@@ -285,7 +281,7 @@ public class APIClient {
 
     }
 
-
+    @NonNull
     public BRResponse sendRequest(Request locRequest, boolean needsAuth, int retryCount) {
         Log.d(TAG, "sendRequest, url -> " + locRequest.url().toString());
         if (retryCount > 1)
@@ -306,7 +302,7 @@ public class APIClient {
         Request request = newBuilder.build();
         if (needsAuth) {
             request = authenticateRequest(request);
-            if (request == null) return null;
+            if (request == null) return new BRResponse();
         }
 
         Response response = null;
@@ -341,9 +337,13 @@ public class APIClient {
                 BRResponse strRest = resToBRResponse(response);
                 if (strRest == null) {
                     BRReportsManager.reportBug(new NullPointerException("string response is null for: " + request.url()));
-                    return null;
+                    return new BRResponse();
                 }
-                byte[] decompressed = gZipExtract(strRest.getBody().getBytes());
+                byte[] decompressed = gZipExtract(strRest.getBody());
+                if (decompressed == null) {
+                    BRReportsManager.reportBug(new IllegalArgumentException("failed to decrypt data!"));
+                    return new BRResponse();
+                }
                 postReqBody = ResponseBody.create(null, decompressed);
                 return resToBRResponse(response.newBuilder().body(postReqBody).build());
             } else {
@@ -388,12 +388,12 @@ public class APIClient {
             headers.put(name, res.header(name));
         }
 
-        String s = null;
+        byte[] s = null;
         String contentType = null;
         try {
             ResponseBody body = res.body();
-            contentType = body.contentType() == null? "" : body.contentType().type();
-            s = body.string();
+            contentType = body.contentType() == null ? "" : body.contentType().type();
+            s = body.bytes();
         } catch (IOException ex) {
             ex.printStackTrace();
         } finally {
@@ -503,7 +503,7 @@ public class APIClient {
             byte[] body;
             BRResponse response = sendRequest(request, false, 0);
             Log.d(TAG, bundleFile + ": updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
-            body = writeBundleToFile(response.getBody());
+            body = writeBundleToFile(response.getBodyText());
             if (Utils.isNullOrEmpty(body)) {
                 Log.e(TAG, "updateBundle: body is null, returning.");
                 return;
@@ -531,7 +531,7 @@ public class APIClient {
 
         if (response == null) return null;
         try {
-            JSONObject versionsJson = new JSONObject(response.getBody());
+            JSONObject versionsJson = new JSONObject(response.getBodyText());
             JSONArray jsonArray = versionsJson.getJSONArray("versions");
             if (jsonArray.length() == 0) return null;
             latestVersion = (String) jsonArray.get(jsonArray.length() - 1);
@@ -550,7 +550,7 @@ public class APIClient {
                 .url(String.format("%s/assets/bundles/%s/diff/%s", BASE_URL, BREAD_POINT, currentTarVersion))
                 .get().build();
         BRResponse resp = sendRequest(diffRequest, false, 0);
-        if (Utils.isNullOrEmpty(resp.getBody())) {
+        if (Utils.isNullOrEmpty(resp.getBodyText())) {
             Log.e(TAG, "downloadDiff: no response");
             return;
         }
@@ -559,7 +559,7 @@ public class APIClient {
         byte[] patchBytes = null;
         try {
             patchFile = new File(getBundleResource(ctx, BREAD_POINT + "-patch.diff"));
-            patchBytes = resp.getBody().getBytes();
+            patchBytes = resp.getBody();
             Log.e(TAG, "downloadDiff: trying to write to file");
             FileUtils.writeByteArrayToFile(patchFile, patchBytes);
             tempFile = new File(getBundleResource(ctx, BREAD_POINT + "-2temp.tar"));
@@ -655,7 +655,7 @@ public class APIClient {
         }
 
         try {
-            if (res.getBody().isEmpty()) {
+            if (res.getBodyText().isEmpty()) {
                 Log.e(TAG, "updateFeatureFlag: JSON empty");
                 return;
             }
@@ -880,16 +880,19 @@ public class APIClient {
     public static class BRResponse {
         private Map<String, String> headers;
         private int code;
-        private String body;
-        private String url;
-        private  String contentType;
+        private byte[] body = new byte[0];
+        private String url = "";
+        private String contentType = "";
 
-        public BRResponse(String body, int code, Map<String, String> headers, String url, String contentType) {
+        public BRResponse(byte[] body, int code, Map<String, String> headers, String url, String contentType) {
             this.headers = headers;
             this.code = code;
             this.body = body;
             this.url = url;
             this.contentType = contentType;
+        }
+
+        public BRResponse() {
         }
 
         public Map<String, String> getHeaders() {
@@ -900,8 +903,13 @@ public class APIClient {
             return code;
         }
 
-        public String getBody() {
+        public byte[] getBody() {
             return body;
+        }
+
+        public String getBodyText() {
+            if (!Utils.isNullOrEmpty(body)) return new String(body);
+            else return "";
         }
 
         public String getUrl() {

@@ -1,13 +1,11 @@
 package com.platform.middlewares;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
-import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Middleware;
 
 import org.apache.commons.io.IOUtils;
@@ -20,12 +18,9 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 
 /**
@@ -103,18 +98,18 @@ public class APIProxy implements Middleware {
             if (Arrays.asList(bannedReceiveHeaders).contains(s.toLowerCase())) continue;
             response.addHeader(s, res.getHeaders().get(s));
         }
-        response.setContentLength(res.getBody().length());
+        response.setContentLength(res.getBodyText().length());
 
 
-        if (Utils.isNullOrEmpty(res.getBody())) {
-            Log.e(TAG, "RES IS NOT SUCCESSFUL: " + res.getUrl() + ": " + res.getCode() + "(" + res.getBody() + ")");
+        if (Utils.isNullOrEmpty(res.getBodyText())) {
+            Log.e(TAG, "RES IS NOT SUCCESSFUL: " + res.getUrl() + ": " + res.getCode() + "(" + res.getBodyText() + ")");
 //            return BRHTTPHelper.handleSuccess(res.code(), bodyBytes, baseRequest, response, null);
         }
 
         try {
             response.setStatus(res.getCode());
             if(!Utils.isNullOrEmpty(res.getContentType())) response.setContentType(res.getContentType());
-            response.getOutputStream().write(res.getBody().getBytes());
+            response.getOutputStream().write(res.getBody());
             baseRequest.setHandled(true);
         } catch (IOException e) {
             e.printStackTrace();

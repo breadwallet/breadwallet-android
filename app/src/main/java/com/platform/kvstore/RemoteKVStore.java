@@ -7,16 +7,13 @@ import com.platform.APIClient;
 import com.platform.interfaces.KVStoreAdaptor;
 import com.platform.sqlite.KVItem;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-import static android.R.attr.required;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 
 import static android.R.attr.key;
 import static com.platform.kvstore.CompletionObject.RemoteKVStoreError.unknown;
@@ -75,7 +72,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 .build();
 
         APIClient.BRResponse res = apiClient.sendRequest(request, true, retryCount);
-        if (Utils.isNullOrEmpty(res.getBody())) {
+        if (Utils.isNullOrEmpty(res.getBodyText())) {
             Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
             return new CompletionObject(0, 0, unknown);
         }
@@ -151,7 +148,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
 
             v = extractVersion(res);
             t = extractDate(res);
-            value = res.getBody().getBytes();
+            value = res.getBody();
         } catch (Exception e) {
             e.printStackTrace();
             return new CompletionObject(unknown);
@@ -173,7 +170,7 @@ public class RemoteKVStore implements KVStoreAdaptor {
             return new CompletionObject(0, 0, unknown);
         }
 
-        byte[] reqData = res.getBody().getBytes();
+        byte[] reqData = res.getBody();
 
         ByteBuffer buffer = ByteBuffer.wrap(reqData).order(java.nio.ByteOrder.LITTLE_ENDIAN);
 

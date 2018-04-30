@@ -297,7 +297,7 @@ public class BRApiManager {
                 Log.e(TAG, "urlGET: " + myURL + ", resp is null");
                 return null;
             }
-            response = resp.getBody();
+            response = resp.getBodyText();
             String strDate = resp.getHeaders().get("date");
             if (strDate == null) {
                 Log.e(TAG, "urlGET: strDate is null!");
