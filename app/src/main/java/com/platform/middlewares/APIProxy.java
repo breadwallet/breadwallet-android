@@ -130,7 +130,7 @@ public class APIProxy implements Middleware {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String contentType = baseRequest.getContentType() == null ? null : baseRequest.getContentType();
+        String contentType = baseRequest.getContentType();
         RequestBody reqBody = RequestBody.create(contentType == null ? null : MediaType.parse(contentType), bodyText);
 
         switch (baseRequest.getMethod()) {
