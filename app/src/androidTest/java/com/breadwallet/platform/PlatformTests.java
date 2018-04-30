@@ -98,7 +98,7 @@ public class PlatformTests {
                 .get().build();
 
         APIClient.BRResponse response = apiClient.sendRequest(request, false, 0);
-        apiClient.writeBundleToFile(response.getBody());
+        apiClient.writeBundleToFile(response.getBodyText());
         String extractFolderName = apiClient.getExtractedPath(mActivityRule.getActivity(), null);
         apiClient.tryExtractTar();
         File temp = new File(extractFolderName);
@@ -122,7 +122,7 @@ public class PlatformTests {
                 .url("https://s3.amazonaws.com/breadwallet-assets/bread-buy/7f5bc5c6cc005df224a6ea4567e508491acaffdc2e4769e5262a52f5b785e261.tar").build();
         APIClient.BRResponse response = apiClient.sendRequest(request, false, 0);
             File bundleFile = new File(apiClient.getBundleResource(mActivityRule.getActivity(), BREAD_POINT + ".tar"));
-            apiClient.writeBundleToFile(response.getBody());
+            apiClient.writeBundleToFile(response.getBodyText());
             String latestVersion = apiClient.getLatestVersion();
             Assert.assertNotNull(latestVersion);
             String currentTarVersion = getCurrentVersion(bundleFile);

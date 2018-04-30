@@ -434,7 +434,7 @@ public class WalletEthManager implements BaseWalletManager,
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                BigDecimal balance = new BigDecimal(mWallet.getBalance());
+                BigDecimal balance = new BigDecimal(mWallet.getBalance(getUnit()));
                 BRSharedPrefs.putCachedBalance(app, ISO, balance);
             }
         });
@@ -963,7 +963,8 @@ public class WalletEthManager implements BaseWalletManager,
                                 if (app != null && app instanceof Activity) {
                                     if (!Utils.isNullOrEmpty(finalTxHash)) {
                                         PostAuth.stampMetaData(app, finalTxHash.getBytes());
-                                        BRAnimator.showBreadSignal((Activity) app, app.getString(R.string.Alerts_sendSuccess), app.getString(R.string.Alerts_sendSuccessSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
+                                        BRAnimator.showBreadSignal((Activity) app, app.getString(R.string.Alerts_sendSuccess),
+                                                app.getString(R.string.Alerts_sendSuccessSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                                             @Override
                                             public void onComplete() {
                                                 BRAnimator.killAllFragments((Activity) app);

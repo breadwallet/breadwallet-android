@@ -59,6 +59,8 @@ public class HTTPFileMiddleware implements Middleware {
         if (target.equals("/")) return false;
         if (target.equals("/favicon.ico")) {
             return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
+        } else if(target.equals("/_didload")){
+            return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
         }
 
         Context app = BreadApp.getBreadContext();

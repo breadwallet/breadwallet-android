@@ -100,12 +100,6 @@ public class APIProxy implements Middleware {
         }
         response.setContentLength(res.getBodyText().length());
 
-
-        if (Utils.isNullOrEmpty(res.getBodyText())) {
-            Log.e(TAG, "RES IS NOT SUCCESSFUL: " + res.getUrl() + ": " + res.getCode() + "(" + res.getBodyText() + ")");
-//            return BRHTTPHelper.handleSuccess(res.code(), bodyBytes, baseRequest, response, null);
-        }
-
         try {
             response.setStatus(res.getCode());
             if(!Utils.isNullOrEmpty(res.getContentType())) response.setContentType(res.getContentType());

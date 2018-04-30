@@ -59,8 +59,10 @@ public class BRHTTPHelper {
             resp.setStatus(code);
             if (contentType != null && !contentType.isEmpty())
                 resp.setContentType(contentType);
+            else resp.setContentType("text/plain");
             if (body != null)
                 resp.getOutputStream().write(body);
+
             baseRequest.setHandled(true);
         } catch (IOException e) {
             e.printStackTrace();

@@ -45,7 +45,6 @@ public class RatesDataSource implements BRDataSourceInterface {
     private static final String TAG = RatesDataSource.class.getName();
 
     List<OnDataChanged> onDataChangedListeners = new ArrayList<>();
-     static int counter = 0;
 
     // Database fields
     private SQLiteDatabase database;
@@ -71,8 +70,6 @@ public class RatesDataSource implements BRDataSourceInterface {
     }
 
     public void putCurrencies(Context app, Collection<CurrencyEntity> currencyEntities) {
-        counter++;
-        Log.e(TAG, "putCurrencies: " + counter);
         if (currencyEntities == null || currencyEntities.size() <= 0) {
             Log.e(TAG, "putCurrencies: failed: " + currencyEntities);
             return;

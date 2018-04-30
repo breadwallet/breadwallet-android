@@ -322,9 +322,6 @@ public class BRBitId {
                 .header("Content-Type", "application/json")
                 .build();
         APIClient.BRResponse res = APIClient.getInstance(app).sendRequest(request, true, 0);
-        Log.e(TAG, "completeBitID: res.code: " + res.getCode());
-        Log.e(TAG, "completeBitID: res.code: " + res.getBodyText());
-        Log.e(TAG, "completeBitID: body: " + res.getBodyText());
     }
 
     public static String newNonce(Activity app, String nonceKey) {

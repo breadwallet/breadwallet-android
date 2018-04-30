@@ -258,7 +258,7 @@ public class APIClient {
     }
 
     public String signRequest(String request) {
-        Log.d(TAG, "signRequest: " + request);
+//        Log.d(TAG, "signRequest: " + request);
         byte[] doubleSha256 = CryptoHelper.doubleSha256(request.getBytes(StandardCharsets.UTF_8));
         BRCoreKey key;
         try {
@@ -283,7 +283,7 @@ public class APIClient {
 
     @NonNull
     public BRResponse sendRequest(Request locRequest, boolean needsAuth, int retryCount) {
-        Log.d(TAG, "sendRequest, url -> " + locRequest.url().toString());
+//        Log.d(TAG, "sendRequest, url -> " + locRequest.url().toString());
         if (retryCount > 1)
             throw new RuntimeException("sendRequest: Warning retryCount is: " + retryCount);
         if (ActivityUTILS.isMainThread()) {
@@ -306,13 +306,13 @@ public class APIClient {
         }
 
         Response response = null;
-        byte[] data = new byte[0];
+        BRResponse mainBrResponse = null;
         try {
             if (mHTTPClient == null)
-                mHTTPClient = new OkHttpClient.Builder().followRedirects(false).connectTimeout(10, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
+                mHTTPClient = new OkHttpClient.Builder().followRedirects(false).connectTimeout(20, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
             request = request.newBuilder().header("User-agent", Utils.getAgentString(ctx, "OkHttp/3.4.1")).build();
             response = mHTTPClient.newCall(request).execute();
-
+            mainBrResponse = resToBRResponse(response);
             if (response.isRedirect()) {
                 String newLocation = request.url().scheme() + "://" + request.url().host() + response.header("location");
                 Uri newUri = Uri.parse(newLocation);
@@ -327,19 +327,18 @@ public class APIClient {
                 return resToBRResponse(new Response.Builder().code(500).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build());
             }
         } catch (IOException e) {
-            e.printStackTrace();
-            return resToBRResponse(new Response.Builder().code(599).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build());
+            Log.e(TAG, "sendRequest: ", e);
+            return resToBRResponse(new Response.Builder().code(599).request(request).body(ResponseBody.create(null, e.getMessage())).protocol(Protocol.HTTP_1_1).build());
         }
         ResponseBody postReqBody = null;
         try {
             if (response.header("content-encoding") != null && response.header("content-encoding").equalsIgnoreCase("gzip")) {
                 Log.d(TAG, "sendRequest: the content is gzip, unzipping");
-                BRResponse strRest = resToBRResponse(response);
-                if (strRest == null) {
+                if (Utils.isNullOrEmpty(mainBrResponse.getBody())) {
                     BRReportsManager.reportBug(new NullPointerException("string response is null for: " + request.url()));
                     return new BRResponse();
                 }
-                byte[] decompressed = gZipExtract(strRest.getBody());
+                byte[] decompressed = gZipExtract(mainBrResponse.getBody());
                 if (decompressed == null) {
                     BRReportsManager.reportBug(new IllegalArgumentException("failed to decrypt data!"));
                     return new BRResponse();
@@ -347,15 +346,16 @@ public class APIClient {
                 postReqBody = ResponseBody.create(null, decompressed);
                 return resToBRResponse(response.newBuilder().body(postReqBody).build());
             } else {
-                try {
-                    Log.d(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
-                            request.url(), response.code(), response.message(), new String(data, "utf-8")));
-                } catch (UnsupportedEncodingException e) {
-                    e.printStackTrace();
-                }
+                Log.d(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
+                        request.url(), response.code(), response.message(), mainBrResponse.getBodyText()));
             }
 
-            postReqBody = ResponseBody.create(null, data);
+            byte[] data = mainBrResponse.getBody();
+            if (Utils.isNullOrEmpty(data)) {
+                Log.e(TAG, "sendRequest: no data!");
+            }
+            if (data != null)
+                postReqBody = ResponseBody.create(null, data);
             if (needsAuth && isBreadChallenge(response)) {
                 Log.d(TAG, "sendRequest: got authentication challenge from API - will attempt to get token, url -> " + locRequest.url().toString());
                 byte[] bytesToken = getCachedToken();
@@ -372,6 +372,7 @@ public class APIClient {
         } finally {
             if (postReqBody != null) postReqBody.close();
         }
+        if (postReqBody == null) return new BRResponse();
 
         return resToBRResponse(response.newBuilder().body(postReqBody).build());
     }
@@ -431,12 +432,10 @@ public class APIClient {
         String requestString = createRequest(request.method(), base58Body, request.header("Content-Type"),
                 request.header("Date"), request.url().encodedPath()
                         + ((queryString != null && !queryString.isEmpty()) ? ("?" + queryString) : ""));
-        Log.d(TAG, "Request string -> " + requestString);
         String signedRequest = signRequest(requestString);
         if (signedRequest == null) return null;
         byte[] tokenBytes = getCachedToken();
         String token = tokenBytes == null ? "" : new String(tokenBytes);
-        Log.d(TAG, "Token from KeyStore -> " + token);
         if (token.isEmpty()) token = getToken();
         if (token == null || token.isEmpty()) {
             Log.e(TAG, "sendRequest: failed to retrieve token");
@@ -460,7 +459,6 @@ public class APIClient {
             throw new NetworkOnMainThreadException();
         }
         File bundleFile = new File(getBundleResource(ctx, BREAD_FILE));
-        Log.d(TAG, "updateBundle: " + bundleFile);
         if (bundleFile.exists()) {
             Log.d(TAG, bundleFile + ": updateBundle: exists");
 
@@ -649,10 +647,6 @@ public class APIClient {
                 .url(buildUrl(furl))
                 .get().build();
         BRResponse res = sendRequest(req, true, 0);
-        if (res == null) {
-            Log.e(TAG, "updateFeatureFlag: error fetching features");
-            return;
-        }
 
         try {
             if (res.getBodyText().isEmpty()) {
@@ -660,7 +654,7 @@ public class APIClient {
                 return;
             }
 
-            JSONArray arr = new JSONArray(res);
+            JSONArray arr = new JSONArray(res.getBodyText());
             for (int i = 0; i < arr.length(); i++) {
                 try {
                     JSONObject obj = arr.getJSONObject(i);
@@ -890,9 +884,15 @@ public class APIClient {
             this.body = body;
             this.url = url;
             this.contentType = contentType;
+
+            String logText = String.format(Locale.getDefault(), "%s (%d)|%s|", url, code, getBodyText());
+            if (isSuccessful())
+                Log.d(TAG, "BRResponse: " + logText);
+            else Log.e(TAG, "BRResponse: " + logText);
         }
 
         public BRResponse() {
+            Log.e(TAG, "BRResponse: Failed");
         }
 
         public Map<String, String> getHeaders() {
@@ -918,6 +918,10 @@ public class APIClient {
 
         public String getContentType() {
             return contentType;
+        }
+
+        public boolean isSuccessful() {
+            return code >= 200 && code < 300;
         }
     }
 
