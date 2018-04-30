@@ -1159,10 +1159,10 @@ public class WalletEthManager implements BaseWalletManager,
                                     }
                                 }
 
-
                                 Log.d(TAG, "Rpc Transactions array length -> " + transactionsArray.length());
                             } catch (JSONException e) {
-                                e.printStackTrace();
+                                Log.e(TAG, "onRpcRequestCompleted: ", e);
+
                             }
                         }
                     }

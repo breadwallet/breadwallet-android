@@ -183,7 +183,7 @@
   <!-- Email unavailable alert title -->
   <string name="ErrorMessages.emailUnavailableTitle">Email Unavailable</string>
   <!-- Message that gets shown when we've detected the user has encountered the looping lock-screen bug. (preserve [ ] characters) -->
-  <string name="ErrorMessages.loopingLockScreen.android">Bread can not be authenticated due to a bug in your version of Android. [Please tap here for more information.]</string>
+  <string name="ErrorMessages.loopingLockScreen.android">BRD can not be authenticated due to a bug in your version of Android. [Please tap here for more information.]</string>
   <!-- Messaging unavailable alert title -->
   <string name="ErrorMessages.messagingUnavailableMessage">This device isn\'t configured to send messages.</string>
   <!-- Messaging unavailable alert title -->

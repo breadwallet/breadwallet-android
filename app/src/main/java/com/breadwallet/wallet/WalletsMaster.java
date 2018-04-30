@@ -251,7 +251,6 @@ public class WalletsMaster {
     }
 
     public boolean isIsoCrypto(Context app, String iso) {
-        long start = System.currentTimeMillis();
         List<BaseWalletManager> list = new ArrayList<>(getAllWallets(app));
         for (BaseWalletManager w : list) {
             if (w.getIso(app).equalsIgnoreCase(iso)) {
@@ -262,7 +261,6 @@ public class WalletsMaster {
     }
 
     public boolean isIsoErc20(Context app, String iso) {
-        long start = System.currentTimeMillis();
         if (Utils.isNullOrEmpty(iso)) return false;
         for (BREthereumToken token : BREthereumToken.tokens) {
             if (token.getSymbol().equalsIgnoreCase(iso)) {
@@ -328,7 +326,6 @@ public class WalletsMaster {
                 for (BaseWalletManager wallet : list) {
                     wallet.wipeData(ctx);
                 }
-//                wipeAll(ctx);
             }
         });
     }
