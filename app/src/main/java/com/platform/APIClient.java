@@ -108,15 +108,13 @@ public class APIClient {
     //singleton instance
     private static APIClient ourInstance;
 
-    private static AtomicInteger count = new AtomicInteger();
-
     private byte[] mCachedToken;
     private byte[] mCachedAuthKey;
 
-    OkHttpClient mHTTPClient;
+    private OkHttpClient mHTTPClient;
 
-    private static final String BUNDLES = "bundles";
-    public static String BREAD_POINT = "bread-frontend";
+    public static final String BUNDLES = "bundles";
+    public static String BREAD_POINT = "brd-web";
 
     private static final String BUNDLES_FOLDER = String.format("/%s", BUNDLES);
 
@@ -501,7 +499,7 @@ public class APIClient {
             byte[] body;
             BRResponse response = sendRequest(request, false, 0);
             Log.d(TAG, bundleFile + ": updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
-            body = writeBundleToFile(response.getBodyText());
+            body = writeBundleToFile(response.getBody());
             if (Utils.isNullOrEmpty(body)) {
                 Log.e(TAG, "updateBundle: body is null, returning.");
                 return;
@@ -582,16 +580,15 @@ public class APIClient {
         logFiles("downloadDiff", ctx);
     }
 
-    public byte[] writeBundleToFile(String response) {
+    public byte[] writeBundleToFile(byte[] response) {
         try {
             if (response == null) {
                 Log.e(TAG, "writeBundleToFile: WARNING, response is null");
                 return null;
             }
-            byte[] bodyBytes = response.getBytes();
             File bundleFile = new File(getBundleResource(ctx, BREAD_POINT + ".tar"));
-            FileUtils.writeByteArrayToFile(bundleFile, bodyBytes);
-            return bodyBytes;
+            FileUtils.writeByteArrayToFile(bundleFile, response);
+            return response;
         } catch (IOException e) {
             e.printStackTrace();
         }

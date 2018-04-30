@@ -68,8 +68,8 @@ public class HTTPFileMiddleware implements Middleware {
             Log.e(TAG, "handle: app is null!");
             return true;
         }
-//        if (Utils.isEmulatorOrDebug(app))
-//            DEBUG_URL = "http://bw-platform-tests.s3-website.us-east-2.amazonaws.com";
+        if (Utils.isEmulatorOrDebug(app))
+            DEBUG_URL = "http://bw-platform-tests.s3-website.us-east-2.amazonaws.com";
 
         File temp = null;
         byte[] body = null;
@@ -116,7 +116,7 @@ public class HTTPFileMiddleware implements Middleware {
                     .url(debugUrl)
                     .get().build();
             APIClient.BRResponse debugResp = APIClient.getInstance(app).sendRequest(debugRequest, false, 0);
-
+            body = debugResp.getBody();
         }
 
         String rangeString = request.getHeader("range");

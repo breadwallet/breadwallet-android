@@ -5,6 +5,7 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
+import com.breadwallet.presenter.activities.settings.TestActivity;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.platform.entities.TxMetaData;
@@ -63,7 +64,7 @@ public class KVStoreTests {
     public static final String TAG = KVStoreTests.class.getName();
 
     @ClassRule
-    public static ActivityTestRule<WriteDownActivity> mActivityRule = new ActivityTestRule<>(WriteDownActivity.class);
+    public static ActivityTestRule<TestActivity> mActivityRule = new ActivityTestRule<>(TestActivity.class);
     private static KVStoreAdaptor remote = new MockUpAdapter();
     private static ReplicatedKVStore store;
 
@@ -605,7 +606,7 @@ public class KVStoreTests {
         Assert.assertEquals(newTx.comment, "hehey !");
         Assert.assertEquals(newTx.creationTime, 21324);
         Assert.assertEquals(newTx.deviceId, "someDevice2324");
-        Assert.assertEquals(newTx.fee, 234);
+        Assert.assertEquals(newTx.fee, "234");
         Assert.assertEquals(newTx.txSize, 23423);
         Assert.assertEquals(newTx.exchangeCurrency, "curr");
         Assert.assertEquals(newTx.exchangeRate, 23.4343, 0);

@@ -76,6 +76,10 @@ public class RemoteKVStore implements KVStoreAdaptor {
             Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
             return new CompletionObject(0, 0, unknown);
         }
+        if (!res.isSuccessful()) {
+            Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.getCode()));
+            return new CompletionObject(0, 0, unknown);
+        }
         v = extractVersion(res);
         t = extractDate(res);
         return new CompletionObject(v, t, extractErr(res));
@@ -96,8 +100,13 @@ public class RemoteKVStore implements KVStoreAdaptor {
         long v;
         long t;
         APIClient.BRResponse res = apiClient.sendRequest(request, true, retryCount);
-        if (res == null) {
+        if (Utils.isNullOrEmpty(res.getBody())) {
             Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
+            return new CompletionObject(0, 0, unknown);
+        }
+
+        if (!res.isSuccessful()) {
+            Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.getCode()));
             return new CompletionObject(0, 0, unknown);
         }
 
@@ -119,6 +128,11 @@ public class RemoteKVStore implements KVStoreAdaptor {
         APIClient.BRResponse res = apiClient.sendRequest(request, true, retryCount);
         if (res == null) {
             Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
+            return new CompletionObject(0, 0, unknown);
+        }
+
+        if (!res.isSuccessful()) {
+            Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.getCode()));
             return new CompletionObject(0, 0, unknown);
         }
 
@@ -146,6 +160,10 @@ public class RemoteKVStore implements KVStoreAdaptor {
                 return new CompletionObject(0, 0, unknown);
             }
 
+            if (!res.isSuccessful()) {
+                Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.getCode()));
+                return new CompletionObject(0, 0, unknown);
+            }
             v = extractVersion(res);
             t = extractDate(res);
             value = res.getBody();
@@ -169,8 +187,14 @@ public class RemoteKVStore implements KVStoreAdaptor {
             Log.d(TAG, "ver: [KV] PUT key=" + key + ", err= response is null (maybe auth challenge)");
             return new CompletionObject(0, 0, unknown);
         }
+        if (!res.isSuccessful()) {
+            Log.e(TAG, "ver: [KV] PUT key=" + key + ", err=" + (res.getCode()));
+            return new CompletionObject(0, 0, unknown);
+        }
 
         byte[] reqData = res.getBody();
+
+        if(Utils.isNullOrEmpty(reqData)) return new CompletionObject(unknown);
 
         ByteBuffer buffer = ByteBuffer.wrap(reqData).order(java.nio.ByteOrder.LITTLE_ENDIAN);
 
@@ -211,7 +235,9 @@ public class RemoteKVStore implements KVStoreAdaptor {
         long remoteVersion = 0;
         try {
             if (res != null) {
-                remoteVersion = Long.valueOf(res.getHeaders().get("ETag"));
+                String eTag = res.getHeaders().get("ETag");
+                if (!Utils.isNullOrEmpty(eTag))
+                    remoteVersion = Long.valueOf(eTag);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -224,7 +250,8 @@ public class RemoteKVStore implements KVStoreAdaptor {
         try {
             if (res != null) {
                 String lastModified = res.getHeaders().get("Last-Modified");
-                remoteTime = Date.parse(lastModified);
+                if (!Utils.isNullOrEmpty(lastModified))
+                    remoteTime = Date.parse(lastModified);
             }
         } catch (Exception e) {
             e.printStackTrace();
