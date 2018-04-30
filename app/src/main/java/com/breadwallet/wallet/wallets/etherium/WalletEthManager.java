@@ -496,8 +496,8 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-    public String getDenomination(Context app) {
-        throw new RuntimeException("not implemented");
+    public String getDenominator(Context app) {
+        return "1000000000000000000";
     }
 
     @Override

@@ -182,7 +182,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
             WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
 
-            uiConfig = new WalletUiConfiguration("f29500", null,  true);
+            uiConfig = new WalletUiConfiguration("f29500", null, true);
             settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
         } finally {
             isInitiatingWallet = false;
@@ -238,7 +238,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     public CryptoTransaction[] getTxs(Context app) {
         BRCoreTransaction[] txs = getWallet().getTransactions();
         CryptoTransaction[] arr = new CryptoTransaction[txs.length];
-        for(int i = 0; i < txs.length; i++){
+        for (int i = 0; i < txs.length; i++) {
             arr[i] = new CryptoTransaction(txs[i]);
         }
 
@@ -404,7 +404,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                     currencySymbolString = "m" + ISO;
                     break;
                 case BRConstants.CURRENT_UNIT_BITCOINS:
-                    currencySymbolString =  ISO;
+                    currencySymbolString = ISO;
                     break;
             }
         }
@@ -427,8 +427,8 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
-    public String getDenomination(Context app) {
-        throw new RuntimeException("not implemented");
+    public String getDenominator(Context app) {
+        return "100000000";
     }
 
     @Override

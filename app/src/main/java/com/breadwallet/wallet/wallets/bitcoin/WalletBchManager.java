@@ -426,8 +426,8 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     }
 
     @Override
-    public String getDenomination(Context app) {
-        throw new RuntimeException("not implemented");
+    public String getDenominator(Context app) {
+        return "100000000";
     }
 
     @Override

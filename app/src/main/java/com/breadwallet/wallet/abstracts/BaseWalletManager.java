@@ -163,7 +163,7 @@ public interface BaseWalletManager {
     String getName(Context app);
 
     //get the currency denomination e.g. BCH, mBCH, Bits
-    String getDenomination(Context app);
+    String getDenominator(Context app);
 
     @WorkerThread
         //get the wallet's receive address

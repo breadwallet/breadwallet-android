@@ -375,8 +375,8 @@ public class WalletTokenManager implements BaseWalletManager {
     }
 
     @Override
-    public String getDenomination(Context app) {
-        return null;
+    public String getDenominator(Context app) {
+        return "1";
     }
 
     @Override

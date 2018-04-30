@@ -1,11 +1,13 @@
 package com.platform.middlewares.plugins;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.manager.BREventManager;
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -27,6 +29,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
@@ -258,17 +262,68 @@ public class WalletPlugin implements Plugin {
                 return BRHTTPHelper.handleError(400, "failed to parse json", baseRequest, response);
             }
         } else if (target.startsWith("/_wallet/currencies")) {
-            JSONArray arr = new JSONArray();
-            List<BaseWalletManager> wallets =  WalletsMaster.getInstance(app).getAllWallets(app);
-            for (BaseWalletManager w : wallets){
-//                arr.put
+            JSONArray arr = getCurrencyData(app);
+            if (arr.length() == 0) {
+                BRReportsManager.reportBug(new IllegalArgumentException("_wallet/currencies created an empty json"));
+                return BRHTTPHelper.handleError(500, "Failed to create json", baseRequest, response);
             }
+            APIClient.BRResponse resp = new APIClient.BRResponse(arr.toString().getBytes(), 200, "application/json");
+            return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         }
 
         Log.e(TAG, "handle: WALLET PLUGIN DID NOT HANDLE: " + target + " " + baseRequest.getMethod());
         return true;
     }
 
+    public JSONArray getCurrencyData(Context app) {
+        JSONArray arr = new JSONArray();
+        List<BaseWalletManager> list = WalletsMaster.getInstance(app).getAllWallets(app);
+        for (BaseWalletManager w : list) {
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("id", w.getIso(app));
+                obj.put("ticker", w.getIso(app));
+                obj.put("name", w.getName(app));
+
+                //Colors
+                JSONArray colors = new JSONArray();
+                colors.put(w.getUiConfiguration().mStartColor);
+                colors.put(w.getUiConfiguration().mEndColor);
+
+                obj.put("colors", colors);
+
+                //Balance
+                JSONObject balance = new JSONObject();
+                balance.put("currency", w.getIso(app));
+                balance.put("numerator", w.getCachedBalance(app).toPlainString());
+                balance.put("denominator", String.valueOf(w.getDenominator(app)));
+
+                //Fiat balance
+                JSONObject fiatBalance = new JSONObject();
+
+                fiatBalance.put("currency", BRSharedPrefs.getPreferredFiatIso(app));
+                fiatBalance.put("numerator", w.getFiatBalance(app).multiply(new BigDecimal(100)).toPlainString());
+                fiatBalance.put("denominator", String.valueOf(100));
+
+                //Exchange
+                JSONObject exchange = new JSONObject();
+
+                exchange.put("currency", BRSharedPrefs.getPreferredFiatIso(app));
+                exchange.put("numerator", w.getFiatExchangeRate(app).multiply(new BigDecimal(100)).toPlainString());
+                exchange.put("denominator", String.valueOf(100));
+
+                obj.put("balance", balance);
+                obj.put("fiatBalance", fiatBalance);
+                obj.put("exchange", exchange);
+                arr.put(obj);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+        Log.e(TAG, "getCurrencyData: " + arr);
+        return arr;
+    }
 
     public static void sendBitIdResponse(final JSONObject restJson, final boolean authenticated) {
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
