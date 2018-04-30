@@ -18,6 +18,7 @@ import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.adapter.AddTokenListAdapter;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.tools.KVStoreManager;
 
@@ -92,7 +93,7 @@ public class AddWalletsActivity extends BRActivity {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                mTokens = BREthereumToken.tokens;
+                mTokens = WalletEthManager.getInstance(AddWalletsActivity.this).node.tokens;
 
 
                 for (BREthereumToken token : mTokens) {

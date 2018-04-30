@@ -18,6 +18,7 @@ import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
 import com.breadwallet.wallet.wallets.etherium.WalletTokenManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.tools.KVStoreManager;
@@ -69,7 +70,7 @@ public class ManageWalletsActivity extends BRActivity {
 
             if (!tokenSymbol.equalsIgnoreCase("btc") && !tokenSymbol.equalsIgnoreCase("bch") && !tokenSymbol.equalsIgnoreCase("eth")) {
 
-                BREthereumToken tk = BREthereumToken.lookup(info.contractAddress);
+                BREthereumToken tk = WalletEthManager.getInstance(this).node.lookupToken(info.contractAddress);
                 if (tk == null) {
                     BRReportsManager.reportBug(new NullPointerException("No token for contract: " + info.contractAddress));
 

@@ -26,6 +26,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
 
@@ -180,7 +181,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
         BREthereumToken tkn = null;
         if (wallet.getIso(mContext).equalsIgnoreCase("ETH"))
-            tkn = BREthereumToken.lookup(item.getTo());
+            tkn = WalletEthManager.getInstance(mContext).node.lookupToken(item.getTo());
         if (tkn != null) cryptoAmount = item.getFee(); // it's a token transfer ETH tx
         boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
         String preferredIso = isCryptoPreferred ? wallet.getIso(mContext) : BRSharedPrefs.getPreferredFiatIso(mContext);

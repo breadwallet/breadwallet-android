@@ -104,7 +104,7 @@ public class WalletTokenManager implements BaseWalletManager {
 
     //for testing only
     public static WalletTokenManager getBrdWallet(WalletEthManager walletEthManager) {
-        BREthereumWallet brdWallet = walletEthManager.node.getWallet(BREthereumToken.tokenBRD);
+        BREthereumWallet brdWallet = walletEthManager.node.getWallet(walletEthManager.node.tokenBRD);
         if (brdWallet.getToken() == null) {
             BRReportsManager.reportBug(new NullPointerException("getBrd failed"));
             return null;
@@ -112,9 +112,9 @@ public class WalletTokenManager implements BaseWalletManager {
         return new WalletTokenManager(walletEthManager, brdWallet);
     }
 
-    public synchronized static WalletTokenManager getTokenWalletByIso(WalletEthManager walletEthManager, String iso) {
+    public synchronized static WalletTokenManager getTokenWalletByIso(Context app, WalletEthManager walletEthManager, String iso) {
         long start = System.currentTimeMillis();
-        if (mTokenIsos.size() <= 0) mapTokenIsos();
+        if (mTokenIsos.size() <= 0) mapTokenIsos(app);
 
         String address = mTokenIsos.get(iso.toLowerCase());
         address = address == null ? null : address.toLowerCase();
@@ -127,7 +127,7 @@ public class WalletTokenManager implements BaseWalletManager {
             return mTokenWallets.get(address);
         }
 
-        BREthereumToken token = BREthereumToken.lookup(address);
+        BREthereumToken token = walletEthManager.node.lookupToken(address);
         if (token != null) {
             return getTokenWallet(walletEthManager, token);
         } else
@@ -135,8 +135,9 @@ public class WalletTokenManager implements BaseWalletManager {
         return null;
     }
 
-    public synchronized static void mapTokenIsos() {
-        for (BREthereumToken t : BREthereumToken.tokens) {
+    public synchronized static void mapTokenIsos(Context app) {
+        BREthereumToken[] tokens = WalletEthManager.getInstance(app).node.tokens;
+        for (BREthereumToken t : tokens) {
             if (!mTokenIsos.containsKey(t.getSymbol().toLowerCase())) {
                 mTokenIsos.put(t.getSymbol().toLowerCase(), t.getAddress().toLowerCase());
             }

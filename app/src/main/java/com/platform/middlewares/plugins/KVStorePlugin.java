@@ -90,7 +90,9 @@ public class KVStorePlugin implements Plugin {
                         Log.w(TAG, "handle: the key is gone: " + target + " " + baseRequest.getMethod());
                         return BRHTTPHelper.handleError(410, "Gone", baseRequest, decorateResponse(kv.version, kv.time, response));
                     }
-                    return BRHTTPHelper.handleSuccess(200, kv.value, baseRequest, decorateResponse(kv.version, kv.time, response), "application/json");
+                    APIClient.BRResponse resp = new APIClient.BRResponse(kv.value, 200, "application/json");
+
+                    return BRHTTPHelper.handleSuccess(resp, baseRequest, decorateResponse(kv.version, kv.time, response));
                 case "PUT":
                     Log.i(TAG, "handle:" + target + " " + baseRequest.getMethod() + ", key: " + key);
                     // Read from request
@@ -120,8 +122,8 @@ public class KVStorePlugin implements Plugin {
                         int errCode = transformErrorToResponseCode(setObj.err);
                         return BRHTTPHelper.handleError(errCode, null, baseRequest, response);
                     }
-
-                    return BRHTTPHelper.handleSuccess(204, null, baseRequest, decorateResponse(setObj.version, setObj.time, response), null);
+                    resp = new APIClient.BRResponse(null, 204, null);
+                    return BRHTTPHelper.handleSuccess(resp, baseRequest, decorateResponse(setObj.version, setObj.time, response));
                 case "DELETE":
                     Log.i(TAG, "handle: : " + target + " " + baseRequest.getMethod() + ", key: " + key);
                     strVersion = request.getHeader("if-none-match");
@@ -156,7 +158,9 @@ public class KVStorePlugin implements Plugin {
                             "EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
                     String rfc1123 = dateFormat.format(delObj.time);
                     response.setHeader("Last-Modified", rfc1123);
-                    return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
+                    resp = new APIClient.BRResponse(null, 204);
+
+                    return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
 
             }
         }

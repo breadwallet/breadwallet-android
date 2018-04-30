@@ -128,9 +128,10 @@ public class HTTPServer {
     public static void stopServer() {
         Log.d(TAG, "stopServer");
         try {
-            if (server != null){
+            if (server != null) {
 
-                server.stop();}
+                server.stop();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -164,7 +165,8 @@ public class HTTPServer {
                         ((Activity) app).onBackPressed();
                     }
                 });
-                return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
+                APIClient.BRResponse resp = new APIClient.BRResponse(null, 200);
+                return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
             }
             return true;
         } else if (target.toLowerCase().startsWith("/_email")) {
@@ -182,9 +184,11 @@ public class HTTPServer {
             email.setType("message/rfc822");
 
             app.startActivity(Intent.createChooser(email, "Choose an Email client :"));
-            return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
+            APIClient.BRResponse resp = new APIClient.BRResponse(null, 200);
+            return BRHTTPHelper.handleSuccess(resp,  baseRequest, response);
         } else if (target.toLowerCase().startsWith("/didload")) {
-            return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
+            APIClient.BRResponse resp = new APIClient.BRResponse(null, 200);
+            return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         }
 
         for (Middleware m : middlewares) {

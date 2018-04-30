@@ -100,7 +100,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
         BigDecimal tokenBalance;
         String iso = item.symbol.toUpperCase();
         WalletEthManager ethManager = WalletEthManager.getInstance(mContext);
-        WalletTokenManager tokenManager = WalletTokenManager.getTokenWalletByIso(ethManager, item.symbol);
+        WalletTokenManager tokenManager = WalletTokenManager.getTokenWalletByIso(mContext, ethManager, item.symbol);
 
         if (tokenManager != null) {
             tokenBalance = tokenManager.getCachedBalance(mContext);

@@ -128,7 +128,7 @@ public class WalletsMaster {
                 }
             } else {
                 //add ERC20 wallet
-                WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(ethWallet, enabled.symbol);
+                WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(app, ethWallet, enabled.symbol);
                 if (tokenWallet != null)
                     if (!mWallets.contains(tokenWallet)) mWallets.add(tokenWallet);
                 for (TokenListMetaData.TokenInfo hidden : mTokenListMetaData.hiddenCurrencies) {
@@ -162,7 +162,7 @@ public class WalletsMaster {
         if (iso.equalsIgnoreCase("ETH"))
             return WalletEthManager.getInstance(app);
         else if (isIsoErc20(app, iso)) {
-            return WalletTokenManager.getTokenWalletByIso(WalletEthManager.getInstance(app), iso);
+            return WalletTokenManager.getTokenWalletByIso(app, WalletEthManager.getInstance(app), iso);
         }
         return null;
     }
@@ -262,7 +262,8 @@ public class WalletsMaster {
 
     public boolean isIsoErc20(Context app, String iso) {
         if (Utils.isNullOrEmpty(iso)) return false;
-        for (BREthereumToken token : BREthereumToken.tokens) {
+        BREthereumToken[] tokens = WalletEthManager.getInstance(app).node.tokens;
+        for (BREthereumToken token : tokens) {
             if (token.getSymbol().equalsIgnoreCase(iso)) {
                 return true;
             }

@@ -13,6 +13,7 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
 import com.platform.GeoLocationManager;
 import com.platform.interfaces.Plugin;
@@ -133,7 +134,8 @@ public class GeoLocationPlugin implements Plugin {
                         jsonResult.put("status", status);
                         jsonResult.put("user_queried", permRequested);
                         jsonResult.put("location_enabled", enabled);
-                        return BRHTTPHelper.handleSuccess(200, jsonResult.toString().getBytes(), baseRequest, response, null);
+                        APIClient.BRResponse resp = new APIClient.BRResponse(jsonResult.toString().getBytes(), 200, "");
+                        return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "handle: failed to send permission status: " + target + " " + baseRequest.getMethod());

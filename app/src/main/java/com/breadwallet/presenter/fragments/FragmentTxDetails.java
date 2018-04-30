@@ -35,6 +35,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
 
@@ -256,7 +257,7 @@ public class FragmentTxDetails extends DialogFragment {
             BigDecimal cryptoAmount = mTransaction.getAmount();
             BREthereumToken tkn = null;
             if (walletManager.getIso(app).equalsIgnoreCase("ETH"))
-                tkn = BREthereumToken.lookup(mTransaction.getTo());
+                tkn = WalletEthManager.getInstance(app).node.lookupToken(mTransaction.getTo());
             if (tkn != null) cryptoAmount = mTransaction.getFee(); // it's a token transfer ETH tx
 
             BigDecimal fiatAmountNow = walletManager.getFiatForSmallestCrypto(app, cryptoAmount.abs(), null);

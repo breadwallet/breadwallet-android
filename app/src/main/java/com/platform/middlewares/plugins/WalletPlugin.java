@@ -12,6 +12,8 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
 import com.platform.tools.BRBitId;
@@ -20,12 +22,14 @@ import org.apache.commons.compress.utils.IOUtils;
 import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.continuation.ContinuationSupport;
 import org.eclipse.jetty.server.Request;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Currency;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -87,7 +91,9 @@ public class WalletPlugin implements Plugin {
 
                 /**the users native fiat currency as an ISO 4217 code. Should be uppercased */
                 jsonResp.put("local_currency_code", Currency.getInstance(Locale.getDefault()).getCurrencyCode().toUpperCase());
-                return BRHTTPHelper.handleSuccess(200, jsonResp.toString().getBytes(), baseRequest, response, "application/json");
+                APIClient.BRResponse resp = new APIClient.BRResponse(jsonResp.toString().getBytes(), 200, "application/json");
+
+                return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG, "handle: json error: " + target + " " + baseRequest.getMethod());
@@ -122,7 +128,8 @@ public class WalletPlugin implements Plugin {
             } else {
                 BREventManager.getInstance().pushEvent(name);
             }
-            return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
+            APIClient.BRResponse resp = new APIClient.BRResponse(null, 200);
+            return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
 
         } else if (target.startsWith("/_wallet/sign_bitid") && request.getMethod().equalsIgnoreCase("post")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
@@ -216,8 +223,10 @@ public class WalletPlugin implements Plugin {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                if (continuation != null)
-                                    BRHTTPHelper.handleSuccess(200, obj.toString().getBytes(), globalBaseRequest, (HttpServletResponse) continuation.getServletResponse(), "application/json");
+                                if (continuation != null) {
+                                    APIClient.BRResponse resp = new APIClient.BRResponse(obj.toString().getBytes(), 200, "application/json");
+                                    BRHTTPHelper.handleSuccess(resp, globalBaseRequest, (HttpServletResponse) continuation.getServletResponse());
+                                }
                                 cleanUp();
                             }
                         });
@@ -234,7 +243,8 @@ public class WalletPlugin implements Plugin {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                BRHTTPHelper.handleSuccess(200, obj.toString().getBytes(), globalBaseRequest, (HttpServletResponse) continuation.getServletResponse(), "application/json");
+                                APIClient.BRResponse resp = new APIClient.BRResponse(obj.toString().getBytes(), 200, "application/json");
+                                BRHTTPHelper.handleSuccess(resp, globalBaseRequest, (HttpServletResponse) continuation.getServletResponse());
                                 cleanUp();
                             }
                         });
@@ -246,6 +256,12 @@ public class WalletPlugin implements Plugin {
                 e.printStackTrace();
                 Log.e(TAG, "handle: Failed to parse Json request body: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(400, "failed to parse json", baseRequest, response);
+            }
+        } else if (target.startsWith("/_wallet/currencies")) {
+            JSONArray arr = new JSONArray();
+            List<BaseWalletManager> wallets =  WalletsMaster.getInstance(app).getAllWallets(app);
+            for (BaseWalletManager w : wallets){
+//                arr.put
             }
         }
 

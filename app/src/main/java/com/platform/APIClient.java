@@ -163,7 +163,7 @@ public class APIClient {
         ctx = context;
         itemsLeftToUpdate = new AtomicInteger(0);
         if (0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
-            BREAD_POINT = "bread-frontend-staging";
+            BREAD_POINT = "brd-web-staging";
             BREAD_FILE = String.format("/%s.tar", BREAD_POINT);
             BREAD_EXTRACTED = String.format("%s-extracted", BREAD_POINT);
         }
@@ -398,7 +398,9 @@ public class APIClient {
         } finally {
             res.close();
         }
-        return new BRResponse(s, code, headers, res.request().url().toString(), contentType);
+        BRResponse brRsp = new BRResponse(s, code, headers, res.request().url().toString(), contentType);
+        brRsp.print();
+        return brRsp;
     }
 
     public Request authenticateRequest(Request request) {
@@ -870,8 +872,8 @@ public class APIClient {
 
     public static class BRResponse {
         private Map<String, String> headers;
-        private int code;
-        private byte[] body = new byte[0];
+        public int code;
+        public byte[] body = new byte[0];
         private String url = "";
         private String contentType = "";
 
@@ -882,14 +884,23 @@ public class APIClient {
             this.url = url;
             this.contentType = contentType;
 
-            String logText = String.format(Locale.getDefault(), "%s (%d)|%s|", url, code, getBodyText());
-            if (isSuccessful())
-                Log.d(TAG, "BRResponse: " + logText);
-            else Log.e(TAG, "BRResponse: " + logText);
+        }
+
+        public BRResponse(byte[] body, int code, String contentType) {
+            this.headers = headers;
+            this.code = code;
+            this.body = body;
+            this.url = url;
+            this.contentType = contentType;
+
         }
 
         public BRResponse() {
-            Log.e(TAG, "BRResponse: Failed");
+        }
+
+        public BRResponse(String contentType, int code) {
+            this.contentType = contentType;
+            this.code = code;
         }
 
         public Map<String, String> getHeaders() {
@@ -919,6 +930,13 @@ public class APIClient {
 
         public boolean isSuccessful() {
             return code >= 200 && code < 300;
+        }
+
+        public void print() {
+            String logText = String.format(Locale.getDefault(), "%s (%d)|%s|", url, code, getBodyText());
+            if (isSuccessful())
+                Log.d(TAG, "BRResponse: " + logText);
+            else Log.e(TAG, "BRResponse: " + logText);
         }
     }
 
