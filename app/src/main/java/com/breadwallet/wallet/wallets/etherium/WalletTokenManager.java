@@ -78,7 +78,6 @@ public class WalletTokenManager implements BaseWalletManager {
     }
 
     private synchronized static WalletTokenManager getTokenWallet(WalletEthManager walletEthManager, BREthereumToken token) {
-        long start = System.currentTimeMillis();
         if (mTokenWallets.containsKey(token.getAddress().toLowerCase())) {
             return mTokenWallets.get(token.getAddress().toLowerCase());
         } else {
@@ -93,7 +92,7 @@ public class WalletTokenManager implements BaseWalletManager {
                 }
                 WalletTokenManager wm = new WalletTokenManager(walletEthManager, w);
                 mTokenWallets.put(w.getToken().getAddress().toLowerCase(), wm);
-                Log.e(TAG, "getTokenWallet: took: " + (System.currentTimeMillis() - start));
+
                 return wm;
             } else {
                 BRReportsManager.reportBug(new NullPointerException("Failed to find token by address: " + token.getAddress()), true);
@@ -114,6 +113,7 @@ public class WalletTokenManager implements BaseWalletManager {
     }
 
     public synchronized static WalletTokenManager getTokenWalletByIso(WalletEthManager walletEthManager, String iso) {
+        long start = System.currentTimeMillis();
         if (mTokenIsos.size() <= 0) mapTokenIsos();
 
         String address = mTokenIsos.get(iso.toLowerCase());
@@ -123,8 +123,9 @@ public class WalletTokenManager implements BaseWalletManager {
                 BRReportsManager.reportBug(new NullPointerException("getTokenWalletByIso: address is null for: " + iso));
             return null;
         }
-        if (mTokenWallets.containsKey(address))
+        if (mTokenWallets.containsKey(address)) {
             return mTokenWallets.get(address);
+        }
 
         BREthereumToken token = BREthereumToken.lookup(address);
         if (token != null) {
@@ -228,12 +229,12 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public CryptoTransaction[] getTxs(Context app) {
+        long start = System.currentTimeMillis();
         BREthereumTransaction[] txs = mWalletToken.getTransactions();
         CryptoTransaction[] arr = new CryptoTransaction[txs.length];
         for (int i = 0; i < txs.length; i++) {
             arr[i] = new CryptoTransaction(txs[i]);
         }
-
         return arr;
     }
 
@@ -244,6 +245,7 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public BigDecimal getEstimatedFee(BigDecimal amount, String address) {
+        long start = System.currentTimeMillis();
         BigDecimal fee;
         if (amount == null) return null;
         if (amount.compareTo(new BigDecimal(0)) == 0) {
@@ -292,6 +294,7 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public void refreshAddress(Context app) {
+        long start = System.currentTimeMillis();
         if (Utils.isNullOrEmpty(BRSharedPrefs.getReceiveAddress(app, getIso(app)))) {
             String address = getReceiveAddress(app).stringify();
             if (Utils.isNullOrEmpty(address)) {
@@ -315,6 +318,7 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public List<TxUiHolder> getTxUiHolders(Context app) {
+        long start = System.currentTimeMillis();
         BREthereumTransaction txs[] = mWalletToken.getTransactions();
         int blockHeight = (int) mWalletEthManager.node.getBlockHeight();
         if (app != null && blockHeight != Integer.MAX_VALUE && blockHeight > 0) {
@@ -331,7 +335,6 @@ public class WalletTokenManager implements BaseWalletManager {
                     tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
                     new BigDecimal(tx.getAmount(getUnit())), true));
         }
-
         return uiTxs;
     }
 
@@ -522,7 +525,6 @@ public class WalletTokenManager implements BaseWalletManager {
 
         //Btc rate for the token
         CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
-
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;

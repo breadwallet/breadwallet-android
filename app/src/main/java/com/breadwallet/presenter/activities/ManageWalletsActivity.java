@@ -59,45 +59,39 @@ public class ManageWalletsActivity extends BRActivity {
 
         final ArrayList<TokenItem> tokenItems = new ArrayList<>();
 
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                mTokens = KVStoreManager.getInstance().getTokenListMetaData(ManageWalletsActivity.this).enabledCurrencies;
+        mTokens = KVStoreManager.getInstance().getTokenListMetaData(ManageWalletsActivity.this).enabledCurrencies;
 
-                for (int i = 0; i < mTokens.size(); i++) {
+        for (int i = 0; i < mTokens.size(); i++) {
 
-                    TokenListMetaData.TokenInfo info = mTokens.get(i);
-                    TokenItem tokenItem = null;
-                    String tokenSymbol = mTokens.get(i).symbol;
+            TokenListMetaData.TokenInfo info = mTokens.get(i);
+            TokenItem tokenItem = null;
+            String tokenSymbol = mTokens.get(i).symbol;
 
+            if (!tokenSymbol.equalsIgnoreCase("btc") && !tokenSymbol.equalsIgnoreCase("bch") && !tokenSymbol.equalsIgnoreCase("eth")) {
 
-                    if (!tokenSymbol.equalsIgnoreCase("btc") && !tokenSymbol.equalsIgnoreCase("bch") && !tokenSymbol.equalsIgnoreCase("eth")) {
+                BREthereumToken tk = BREthereumToken.lookup(info.contractAddress);
+                if (tk == null) {
+                    BRReportsManager.reportBug(new NullPointerException("No token for contract: " + info.contractAddress));
 
-                        BREthereumToken tk = BREthereumToken.lookup(info.contractAddress);
-                        if (tk == null) {
-                            BRReportsManager.reportBug(new NullPointerException("No token for contract: " + info.contractAddress));
-
-                        } else
-                            tokenItem = new TokenItem(tk.getAddress(), tk.getSymbol(), tk.getName(), null);
+                } else
+                    tokenItem = new TokenItem(tk.getAddress(), tk.getSymbol(), tk.getName(), null);
 
 
-                    } else if (tokenSymbol.equalsIgnoreCase("btc"))
-                        tokenItem = new TokenItem(null, "BTC", "Bitcoin", null);
+            } else if (tokenSymbol.equalsIgnoreCase("btc"))
+                tokenItem = new TokenItem(null, "BTC", "Bitcoin", null);
 
-                    else if (tokenSymbol.equalsIgnoreCase("bch"))
-                        tokenItem = new TokenItem(null, "BCH", "Bitcoin Cash", null);
-                    else if (tokenSymbol.equalsIgnoreCase("eth"))
-                        tokenItem = new TokenItem(null, "ETH", "Ethereum", null);
+            else if (tokenSymbol.equalsIgnoreCase("bch"))
+                tokenItem = new TokenItem(null, "BCH", "Bitcoin Cash", null);
+            else if (tokenSymbol.equalsIgnoreCase("eth"))
+                tokenItem = new TokenItem(null, "ETH", "Ethereum", null);
 
 
-                    if (tokenItem != null) {
-                        tokenItems.add(tokenItem);
-                    }
-
-                }
-
+            if (tokenItem != null) {
+                tokenItems.add(tokenItem);
             }
-        });
+
+        }
+
 
         mAdapter = new ManageTokenListAdapter(ManageWalletsActivity.this, tokenItems, new ManageTokenListAdapter.OnTokenShowOrHideListener() {
             @Override
@@ -133,7 +127,6 @@ public class ManageWalletsActivity extends BRActivity {
                     metaData.hiddenCurrencies = new ArrayList<>();
 
                 metaData.hiddenCurrencies.add(item);
-
 
                 mAdapter.notifyDataSetChanged();
                 KVStoreManager.getInstance().putTokenListMetaData(ManageWalletsActivity.this, metaData);

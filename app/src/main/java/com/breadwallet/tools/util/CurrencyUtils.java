@@ -48,6 +48,7 @@ public class CurrencyUtils {
      * @return - the formatted amount e.g. $535.50 or b5000
      */
     public static String getFormattedAmount(Context app, String iso, BigDecimal amount) {
+        long start = System.currentTimeMillis();
         if (amount == null) return "---"; //to be able to detect in a bug
         if (iso == null) return "???"; //to be able to detect in a bug
 //        Log.e(TAG, "amount: " + amount);

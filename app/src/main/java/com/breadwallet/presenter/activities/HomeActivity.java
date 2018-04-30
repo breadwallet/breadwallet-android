@@ -209,6 +209,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     @Override
     protected void onResume() {
         super.onResume();
+        long start = System.currentTimeMillis();
         app = this;
 
         showNextPromptIfNeeded();
@@ -249,6 +250,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         });
 
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
+        Log.e(TAG, "onResume: took: " + (System.currentTimeMillis() - start));
     }
 
     private void populateWallets() {

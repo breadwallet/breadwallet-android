@@ -4,6 +4,7 @@ package com.platform;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
+import android.os.Handler;
 import android.os.NetworkOnMainThreadException;
 import android.util.Log;
 
@@ -110,6 +111,9 @@ public class APIClient {
 
     private static AtomicInteger count = new AtomicInteger();
 
+    private byte[] mCachedToken;
+    private byte[] mCachedAuthKey;
+
     OkHttpClient mHTTPClient;
 
     private static final String BUNDLES = "bundles";
@@ -215,7 +219,7 @@ public class APIClient {
             String strUtl = BASE_URL + TOKEN;
 
             JSONObject requestMessageJSON = new JSONObject();
-            String base58PubKey = BRCoreKey.getAuthPublicKeyForAPI(BRKeyStore.getAuthKey(ctx));
+            String base58PubKey = BRCoreKey.getAuthPublicKeyForAPI(getCachedAuthKey());
             requestMessageJSON.put("pubKey", base58PubKey);
             requestMessageJSON.put("deviceID", BRSharedPrefs.getDeviceId(ctx));
 
@@ -259,7 +263,7 @@ public class APIClient {
         byte[] doubleSha256 = CryptoHelper.doubleSha256(request.getBytes(StandardCharsets.UTF_8));
         BRCoreKey key;
         try {
-            byte[] authKey = BRKeyStore.getAuthKey(ctx);
+            byte[] authKey = getCachedAuthKey();
             if (Utils.isNullOrEmpty(authKey)) {
                 Log.e(TAG, "signRequest: authkey is null");
                 return null;
@@ -280,7 +284,7 @@ public class APIClient {
 
 
     public BRResponse sendRequest(Request locRequest, boolean needsAuth, int retryCount) {
-        Log.e(TAG, "sendRequest, url -> " + locRequest.url().toString());
+        Log.d(TAG, "sendRequest, url -> " + locRequest.url().toString());
         if (retryCount > 1)
             throw new RuntimeException("sendRequest: Warning retryCount is: " + retryCount);
         if (ActivityUTILS.isMainThread()) {
@@ -351,8 +355,8 @@ public class APIClient {
             postReqBody = ResponseBody.create(null, data);
             if (needsAuth && isBreadChallenge(response)) {
                 Log.d(TAG, "sendRequest: got authentication challenge from API - will attempt to get token, url -> " + locRequest.url().toString());
-                byte[] tokenBytes = BRKeyStore.getToken(ctx);
-                String token = tokenBytes == null ? "" : new String(tokenBytes);
+                byte[] bytesToken = getCachedToken();
+                String token = bytesToken == null ? "" : new String(bytesToken);
                 //Double check if we have the token
                 if (Utils.isNullOrEmpty(token))
                     getToken();
@@ -424,7 +428,7 @@ public class APIClient {
         Log.d(TAG, "Request string -> " + requestString);
         String signedRequest = signRequest(requestString);
         if (signedRequest == null) return null;
-        byte[] tokenBytes = BRKeyStore.getToken(ctx);
+        byte[] tokenBytes = getCachedToken();
         String token = tokenBytes == null ? "" : new String(tokenBytes);
         Log.d(TAG, "Token from KeyStore -> " + token);
         if (token.isEmpty()) token = getToken();
@@ -823,6 +827,33 @@ public class APIClient {
         }
     }
 
+    //too many requests will call too many BRKeyStore _getData, causing ui elements to freeze
+    private byte[] getCachedToken() {
+        if (mCachedToken == null) {
+            mCachedToken = BRKeyStore.getToken(ctx);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mCachedToken = null;
+                }
+            }, 3000); //cache for 3 sec
+        }
+        return mCachedToken;
+    }
+    //too many requests will call too many BRKeyStore _getData, causing ui elements to freeze
+    private byte[] getCachedAuthKey() {
+        if (mCachedAuthKey == null) {
+            mCachedAuthKey = BRKeyStore.getAuthKey(ctx);
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    mCachedAuthKey = null;
+                }
+            }, 3000); //cache for 3 sec
+        }
+        return mCachedAuthKey;
+    }
+
     public void logFiles(String tag, Context ctx) {
         if (PRINT_FILES) {
             Log.e(TAG, "logFiles " + tag + " : START LOGGING");
@@ -837,6 +868,7 @@ public class APIClient {
             Log.e(TAG, "logFiles " + tag + " : START LOGGING");
         }
     }
+
 
     public static class BRResponse {
         private Map<String, String> headers;

@@ -228,6 +228,7 @@ public class BreadApp extends Application {
     }
 
     public static void setBreadContext(Activity app) {
+        BreadApp.activityCounter.incrementAndGet();
         currentActivity = app;
     }
 

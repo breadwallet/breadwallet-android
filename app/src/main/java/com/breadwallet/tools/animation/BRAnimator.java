@@ -378,7 +378,6 @@ public class BRAnimator {
 
     public static void startBreadActivity(Activity from, boolean auth) {
         if (from == null) return;
-        Log.e(TAG, "startBreadActivity: " + from.getClass().getName());
         Class toStart = auth ? LoginActivity.class : WalletActivity.class;
 
         Intent intent = new Intent(from, toStart);

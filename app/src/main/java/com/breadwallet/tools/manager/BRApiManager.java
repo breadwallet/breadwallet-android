@@ -136,39 +136,39 @@ public class BRApiManager {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-//                if (BreadApp.isAppInBackground(context)) {
-//                    Log.e(TAG, "doInBackground: Stopping timer, no activity on.");
-//                    stopTimerTask();
-//                    return;
-//                }
-//                List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(context).getAllWallets(context));
-//
-//                for (final BaseWalletManager w : list) {
-//                    //only update stuff for non erc20 for now, API endpoint BUG
-//                    if (w.getIso(context).equalsIgnoreCase("BTC") || w.getIso(context).equalsIgnoreCase("BCH")
-//                            || w.getIso(context).equalsIgnoreCase("ETH")) {
-//                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                w.updateFee(context);
-//                            }
-//                        });
-//                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                //get each wallet's rates
-//                                updateRates(context, w);
-//
-//                            }
-//                        });
-//                    }
-//                }
-//                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        updateErc20Rates(context);
-//                    }
-//                });
+                if (BreadApp.isAppInBackground(context)) {
+                    Log.e(TAG, "doInBackground: Stopping timer, no activity on.");
+                    stopTimerTask();
+                    return;
+                }
+                List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(context).getAllWallets(context));
+
+                for (final BaseWalletManager w : list) {
+                    //only update stuff for non erc20 for now, API endpoint BUG
+                    if (w.getIso(context).equalsIgnoreCase("BTC") || w.getIso(context).equalsIgnoreCase("BCH")
+                            || w.getIso(context).equalsIgnoreCase("ETH")) {
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                w.updateFee(context);
+                            }
+                        });
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                //get each wallet's rates
+                                updateRates(context, w);
+
+                            }
+                        });
+                    }
+                }
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateErc20Rates(context);
+                    }
+                });
             }
         });
     }

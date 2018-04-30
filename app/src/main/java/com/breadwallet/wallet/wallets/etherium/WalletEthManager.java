@@ -1173,7 +1173,6 @@ public class WalletEthManager implements BaseWalletManager,
 
     @Override
     public void getLogs(final String address, final String event, final int rid) {
-        Log.e(TAG, "getLogs: " + address);
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {

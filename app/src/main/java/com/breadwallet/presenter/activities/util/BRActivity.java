@@ -238,29 +238,26 @@ public class BRActivity extends Activity {
         if (!ActivityUTILS.isAppSafe(app))
             if (AuthManager.getInstance().isWalletDisabled(app))
                 AuthManager.getInstance().setWalletDisabled(app);
-
-        BreadApp.activityCounter.incrementAndGet();
         BreadApp.setBreadContext(app);
 
-        if (!HTTPServer.isStarted())
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
+
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (!HTTPServer.isStarted())
                     HTTPServer.startServer();
-                }
-            });
-
+            }
+        });
         lockIfNeeded(this);
-
     }
 
     private void lockIfNeeded(Activity app) {
+        long start = System.currentTimeMillis();
         //lock wallet if 3 minutes passed
         if (BreadApp.backgroundedTime != 0
                 && ((System.currentTimeMillis() - BreadApp.backgroundedTime) >= 180 * 1000)
                 && !(app instanceof DisabledActivity)) {
             if (!BRKeyStore.getPinCode(app).isEmpty()) {
-                Log.e(TAG, "lockIfNeeded: " + BreadApp.backgroundedTime);
                 BRAnimator.startBreadActivity(app, true);
             }
         }

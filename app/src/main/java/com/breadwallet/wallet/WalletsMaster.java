@@ -86,7 +86,6 @@ public class WalletsMaster {
     }
 
     public synchronized void updateWallets(Context app) {
-        long start = System.currentTimeMillis();
         WalletEthManager ethWallet = WalletEthManager.getInstance(app);
         if (ethWallet == null) {
             return; //return empty wallet list if ETH is null (meaning no public key yet)
@@ -132,7 +131,6 @@ public class WalletsMaster {
                 WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(ethWallet, enabled.symbol);
                 if (tokenWallet != null)
                     if (!mWallets.contains(tokenWallet)) mWallets.add(tokenWallet);
-
                 for (TokenListMetaData.TokenInfo hidden : mTokenListMetaData.hiddenCurrencies) {
 
                     if (tokenWallet != null && tokenWallet.getIso(app).equalsIgnoreCase(hidden.symbol)) {
@@ -142,7 +140,6 @@ public class WalletsMaster {
             }
 
         }
-        Log.e(TAG, "updateWallets: took: " + (System.currentTimeMillis() - start) + ", ");
     }
 
     public synchronized List<BaseWalletManager> getAllWallets(Context app) {
@@ -176,6 +173,7 @@ public class WalletsMaster {
 
     //get the total fiat balance held in all the wallets in the smallest unit (e.g. cents)
     public BigDecimal getAggregatedFiatBalance(Context app) {
+        long start = System.currentTimeMillis();
         BigDecimal totalBalance = new BigDecimal(0);
         List<BaseWalletManager> list = new ArrayList<>(getAllWallets(app));
         for (BaseWalletManager wallet : list) {
@@ -253,21 +251,24 @@ public class WalletsMaster {
     }
 
     public boolean isIsoCrypto(Context app, String iso) {
+        long start = System.currentTimeMillis();
         List<BaseWalletManager> list = new ArrayList<>(getAllWallets(app));
         for (BaseWalletManager w : list) {
-            if (w.getIso(app).equalsIgnoreCase(iso)) return true;
+            if (w.getIso(app).equalsIgnoreCase(iso)) {
+                return true;
+            }
         }
         return false;
     }
 
     public boolean isIsoErc20(Context app, String iso) {
+        long start = System.currentTimeMillis();
         if (Utils.isNullOrEmpty(iso)) return false;
         for (BREthereumToken token : BREthereumToken.tokens) {
             if (token.getSymbol().equalsIgnoreCase(iso)) {
                 return true;
             }
         }
-
         return false;
     }
 
@@ -338,21 +339,22 @@ public class WalletsMaster {
     }
 
     public void refreshBalances(Context app) {
+        long start = System.currentTimeMillis();
+
         List<BaseWalletManager> list = new ArrayList<>(getAllWallets(app));
         for (BaseWalletManager wallet : list) {
             wallet.refreshCachedBalance(app);
         }
-
     }
 
     public void setSpendingLimitIfNotSet(final Context app, final BaseWalletManager wm) {
         if (app == null) return;
-
         BigDecimal limit = BRKeyStore.getTotalLimit(app, wm.getIso(app));
         if (limit.compareTo(new BigDecimal(0)) == 0) {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
+                    long start = System.currentTimeMillis();
                     BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
                     BigDecimal totalSpent = wallet == null ? new BigDecimal(0) : wallet.getTotalSent(app);
                     BigDecimal totalLimit = totalSpent.add(BRKeyStore.getSpendLimit(app, wm.getIso(app)));
@@ -365,6 +367,7 @@ public class WalletsMaster {
 
     @WorkerThread
     public void initLastWallet(Context app) {
+        long start = System.currentTimeMillis();
         if (app == null) {
             app = BreadApp.getBreadContext();
             if (app == null) {
