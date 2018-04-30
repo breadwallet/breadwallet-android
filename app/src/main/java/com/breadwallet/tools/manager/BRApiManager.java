@@ -178,6 +178,7 @@ public class BRApiManager {
         String url = "https://api.coinmarketcap.com/v1/ticker/?limit=1000&convert=BTC";
         String result = urlGET(context, url);
         try {
+            if (Utils.isNullOrEmpty(result)) return;
             JSONArray arr = new JSONArray(result);
             if (arr.length() == 0) {
                 Log.e(TAG, "updateErc20Rates: empty json");

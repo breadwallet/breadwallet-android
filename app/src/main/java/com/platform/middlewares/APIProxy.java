@@ -105,6 +105,7 @@ public class APIProxy implements Middleware {
         }
         response.setContentLength(res.getBody().length());
 
+
         if (Utils.isNullOrEmpty(res.getBody())) {
             Log.e(TAG, "RES IS NOT SUCCESSFUL: " + res.getUrl() + ": " + res.getCode() + "(" + res.getBody() + ")");
 //            return BRHTTPHelper.handleSuccess(res.code(), bodyBytes, baseRequest, response, null);
@@ -112,6 +113,7 @@ public class APIProxy implements Middleware {
 
         try {
             response.setStatus(res.getCode());
+            if(!Utils.isNullOrEmpty(res.getContentType())) response.setContentType(res.getContentType());
             response.getOutputStream().write(res.getBody().getBytes());
             baseRequest.setHandled(true);
         } catch (IOException e) {

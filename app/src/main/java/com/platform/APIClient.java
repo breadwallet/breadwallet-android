@@ -42,12 +42,15 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -386,14 +389,17 @@ public class APIClient {
         }
 
         String s = null;
+        String contentType = null;
         try {
-            s = res.body().string();
+            ResponseBody body = res.body();
+            contentType = body.contentType() == null? "" : body.contentType().type();
+            s = body.string();
         } catch (IOException ex) {
             ex.printStackTrace();
         } finally {
             res.close();
         }
-        return new BRResponse(s, code, headers, res.request().url().toString());
+        return new BRResponse(s, code, headers, res.request().url().toString(), contentType);
     }
 
     public Request authenticateRequest(Request request) {
@@ -831,25 +837,26 @@ public class APIClient {
     private byte[] getCachedToken() {
         if (mCachedToken == null) {
             mCachedToken = BRKeyStore.getToken(ctx);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mCachedToken = null;
-                }
-            }, 3000); //cache for 3 sec
+//            new Timer().schedule(new TimerTask() {
+//                @Override
+//                public void run() {
+//                    mCachedToken = null;
+//                }
+//            }, 3000);//cache for 3 sec
         }
         return mCachedToken;
     }
+
     //too many requests will call too many BRKeyStore _getData, causing ui elements to freeze
     private byte[] getCachedAuthKey() {
         if (mCachedAuthKey == null) {
             mCachedAuthKey = BRKeyStore.getAuthKey(ctx);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    mCachedAuthKey = null;
-                }
-            }, 3000); //cache for 3 sec
+//            new Timer().schedule(new TimerTask() {
+//                @Override
+//                public void run() {
+//                    mCachedAuthKey = null;
+//                }
+//            }, 3000);//cache for 3 sec
         }
         return mCachedAuthKey;
     }
@@ -875,12 +882,14 @@ public class APIClient {
         private int code;
         private String body;
         private String url;
+        private  String contentType;
 
-        public BRResponse(String body, int code, Map<String, String> headers, String url) {
+        public BRResponse(String body, int code, Map<String, String> headers, String url, String contentType) {
             this.headers = headers;
             this.code = code;
             this.body = body;
             this.url = url;
+            this.contentType = contentType;
         }
 
         public Map<String, String> getHeaders() {
@@ -897,6 +906,10 @@ public class APIClient {
 
         public String getUrl() {
             return url;
+        }
+
+        public String getContentType() {
+            return contentType;
         }
     }
 
