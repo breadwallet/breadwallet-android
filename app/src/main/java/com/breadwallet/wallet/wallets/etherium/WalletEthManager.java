@@ -1336,6 +1336,17 @@ public class WalletEthManager implements BaseWalletManager,
                     printInfo("Transaction signed: " + transaction.getAmount(), iso, event.name());
                     break;
                 case SUBMITTED:
+                    if (mWatchedTransaction != null) {
+                        Log.e(TAG, "handleTransactionEvent: mWatchedTransaction: " + mWatchedTransaction.getEtherTx().getNonce() + ", actual: " + transaction.getNonce());
+                        if (mWatchedTransaction.getEtherTx().getNonce() == transaction.getNonce()) {
+                            if (mWatchListener != null)
+                                mWatchListener.onUpdated(transaction.getHash());
+                            mWatchListener = null;
+                            mWatchedTransaction = null;
+                        }
+                    } else {
+                        Log.e(TAG, "handleTransactionEvent: tx is null");
+                    }
                     printInfo("Transaction submitted: " + transaction.getAmount(), iso, event.name());
                     break;
                 case BLOCKED:
@@ -1349,14 +1360,6 @@ public class WalletEthManager implements BaseWalletManager,
                     break;
                 case BLOCK_CONFIRMATIONS_UPDATED:
                     printInfo("Transaction confirmations updated: " + transaction.getBlockConfirmations(), iso, event.name());
-                    if (mWatchedTransaction != null) {
-                        if (mWatchedTransaction.getEtherTx().getNonce() == transaction.getNonce()) {
-                            if (mWatchListener != null)
-                                mWatchListener.onUpdated(transaction.getHash());
-                        }
-                    }
-                    mWatchListener = null;
-                    mWatchedTransaction = null;
                     break;
             }
         }

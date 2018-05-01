@@ -194,7 +194,8 @@ public class PostAuth {
     }
 
     public void onPublishTxAuth(final Context app, final boolean authAsked, final SendManager.SendCompletion completion) {
-        mSendCompletion = completion;
+        if (completion != null)
+            mSendCompletion = completion;
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -245,7 +246,9 @@ public class PostAuth {
                                     walletManager.watchTransactionForHash(tx, new BaseWalletManager.OnHashUpdated() {
                                         @Override
                                         public void onUpdated(String hash) {
-                                            completion.onCompleted(hash, true);
+                                            Log.e(TAG, "onUpdated: ");
+                                            if (mSendCompletion != null)
+                                                mSendCompletion.onCompleted(hash, true);
                                         }
                                     });
                                     return; // ignore ETH since txs do not have the hash right away
@@ -253,7 +256,8 @@ public class PostAuth {
                                 Log.e(TAG, "onPublishTxAuth: signAndPublishTransaction returned an empty txHash");
                                 BRDialog.showSimpleDialog(app, app.getString(R.string.Alerts_sendFailure), "Failed to create transaction");
                             } else {
-                                completion.onCompleted(tx.getHash(), true);
+                                if (mSendCompletion != null)
+                                    mSendCompletion.onCompleted(tx.getHash(), true);
                                 stampMetaData(app, txHash);
                             }
 

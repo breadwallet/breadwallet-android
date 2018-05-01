@@ -320,6 +320,7 @@ public class APIClient {
                     Log.e(TAG, "sendRequest: WARNING: redirect is NOT safe: " + newLocation);
                 } else {
                     Log.w(TAG, "redirecting: " + request.url() + " >>> " + newLocation);
+                    response.close();
                     return sendRequest(new Request.Builder().url(newLocation).get().build(), needsAuth, 0);
                 }
                 return resToBRResponse(new Response.Builder().code(500).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build());
@@ -365,6 +366,8 @@ public class APIClient {
                 if (retryCount < 1) {
                     response.close();
                     sendRequest(request, true, retryCount + 1);
+                } else {
+                    getToken(); //update token if it failed the second time.
                 }
             }
         } finally {
@@ -828,7 +831,7 @@ public class APIClient {
 
     //too many requests will call too many BRKeyStore _getData, causing ui elements to freeze
     private byte[] getCachedToken() {
-        if (mCachedToken == null) {
+        if (Utils.isNullOrEmpty(mCachedToken)) {
             mCachedToken = BRKeyStore.getToken(ctx);
 //            new Timer().schedule(new TimerTask() {
 //                @Override
@@ -842,7 +845,7 @@ public class APIClient {
 
     //too many requests will call too many BRKeyStore _getData, causing ui elements to freeze
     private byte[] getCachedAuthKey() {
-        if (mCachedAuthKey == null) {
+        if (Utils.isNullOrEmpty(mCachedAuthKey)) {
             mCachedAuthKey = BRKeyStore.getAuthKey(ctx);
 //            new Timer().schedule(new TimerTask() {
 //                @Override

@@ -411,7 +411,7 @@ public class WalletPlugin implements Plugin {
 
     public static void finalizeTx(final boolean succeed, final String hash){
         Log.e(TAG, "finalizeTx: " + hash + ", " + succeed);
-        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 try {
