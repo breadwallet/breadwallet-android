@@ -35,6 +35,7 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -42,6 +43,7 @@ import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
 import com.platform.HTTPServer;
 import com.platform.middlewares.plugins.LinkPlugin;
 
@@ -163,6 +165,8 @@ public class WebViewActivity extends BRActivity {
             if (!theUrl.contains("checkout")) {
                 bottomToolbar.setVisibility(View.INVISIBLE);
             }
+            if (theUrl.endsWith("/buy"))
+                theUrl = theUrl + "/currency=" + WalletsMaster.getInstance(this).getCurrentWallet(this).getIso(this).toLowerCase();
             webView.loadUrl(theUrl);
             if (articleId != null && !articleId.isEmpty())
                 navigate(articleId);
@@ -242,7 +246,6 @@ public class WebViewActivity extends BRActivity {
 
                     }
                 });
-
 
                 // Make the close button functional
                 mCloseButton.setOnClickListener(new View.OnClickListener() {

@@ -33,7 +33,6 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.fragments.FragmentGreetings;
-import com.breadwallet.presenter.fragments.FragmentMenu;
 import com.breadwallet.presenter.fragments.FragmentSignal;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
@@ -104,33 +103,33 @@ public class BRAnimator {
         t2Size = 16;
     }
 
-    public static void showFragmentByTag(Activity app, String tag) {
-        if (tag == null) return;
-        //catch animation duration, make it 0 for no animation, then restore it.
-        final int slideAnimation = SLIDE_ANIMATION_DURATION;
-        try {
-            SLIDE_ANIMATION_DURATION = 0;
-            if (tag.equalsIgnoreCase(FragmentSend.class.getName())) {
-                showSendFragment(app, null);
-            } else if (tag.equalsIgnoreCase(FragmentReceive.class.getName())) {
-                showReceiveFragment(app, true);
-            } else if (tag.equalsIgnoreCase(FragmentRequestAmount.class.getName())) {
-                showRequestFragment(app);
-            } else if (tag.equalsIgnoreCase(FragmentMenu.class.getName())) {
-                showMenuFragment(app);
-            } else {
-                Log.e(TAG, "showFragmentByTag: error, no such tag: " + tag);
-            }
-        } finally {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    SLIDE_ANIMATION_DURATION = slideAnimation;
-                }
-            }, 800);
-
-        }
-    }
+//    public static void showFragmentByTag(Activity app, String tag) {
+//        if (tag == null) return;
+//        //catch animation duration, make it 0 for no animation, then restore it.
+//        final int slideAnimation = SLIDE_ANIMATION_DURATION;
+//        try {
+//            SLIDE_ANIMATION_DURATION = 0;
+//            if (tag.equalsIgnoreCase(FragmentSend.class.getName())) {
+//                showSendFragment(app, null);
+//            } else if (tag.equalsIgnoreCase(FragmentReceive.class.getName())) {
+//                showReceiveFragment(app, true);
+//            } else if (tag.equalsIgnoreCase(FragmentRequestAmount.class.getName())) {
+//                showRequestFragment(app);
+//            } else if (tag.equalsIgnoreCase(FragmentMenu.class.getName())) {
+//                showMenuFragment(app);
+//            } else {
+//                Log.e(TAG, "showFragmentByTag: error, no such tag: " + tag);
+//            }
+//        } finally {
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    SLIDE_ANIMATION_DURATION = slideAnimation;
+//                }
+//            }, 800);
+//
+//        }
+//    }
 
     public static void showSendFragment(Activity app, final CryptoRequest request) {
         if (app == null) {
@@ -319,19 +318,6 @@ public class BRAnimator {
                 .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                 .add(android.R.id.content, fragmentReceive, FragmentReceive.class.getName())
                 .addToBackStack(FragmentReceive.class.getName()).commit();
-
-    }
-
-    public static void showMenuFragment(Activity app) {
-        if (app == null) {
-            Log.e(TAG, "showReceiveFragment: app is null");
-            return;
-        }
-        FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
-        transaction.add(android.R.id.content, new FragmentMenu(), FragmentMenu.class.getName());
-        transaction.addToBackStack(FragmentMenu.class.getName());
-        transaction.commit();
 
     }
 
