@@ -158,9 +158,10 @@ public class BreadApp extends Application {
     public static void generateWalletIfIfNeeded(Context app, String address) {
         if (BRSharedPrefs.getWalletRewardId(app) == null) {
             String rewardId = generateWalletId(app, address);
-            if (!Utils.isNullOrEmpty(rewardId))
-                BRSharedPrefs.putWalletRewardId(currentActivity, rewardId);
-            else BRReportsManager.reportBug(new NullPointerException("rewardId is empty"));
+            if (!Utils.isNullOrEmpty(rewardId)) {
+
+                BRSharedPrefs.putWalletRewardId(app, rewardId);
+            } else BRReportsManager.reportBug(new NullPointerException("rewardId is empty"));
         }
     }
 

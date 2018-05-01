@@ -244,8 +244,20 @@ public class BRActivity extends Activity {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                if (!HTTPServer.isStarted())
+                if (!HTTPServer.isStarted()) {
                     HTTPServer.startServer();
+                    BreadApp.addOnBackgroundedListener(new BreadApp.OnAppBackgrounded() {
+                        @Override
+                        public void onBackgrounded() {
+                            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                                @Override
+                                public void run() {
+                                    HTTPServer.stopServer();
+                                }
+                            });
+                        }
+                    });
+                }
             }
         });
         lockIfNeeded(this);

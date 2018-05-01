@@ -119,7 +119,6 @@ public class APIProxy implements Middleware {
                 .url(apiInstance.buildUrl(path));
 
         Enumeration<String> headerNames = baseRequest.getHeaderNames();
-        Log.e(TAG, "jettyToOkHttpRequest: " + headerNames);
         while (headerNames.hasMoreElements()) {
             String hName = headerNames.nextElement();
             if (Arrays.asList(bannedSendHeaders).contains(hName.toLowerCase())) continue;
