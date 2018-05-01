@@ -1271,7 +1271,9 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-    public void handleWalletEvent(BREthereumWallet wallet, WalletEvent event) {
+    public void handleWalletEvent(BREthereumWallet wallet, WalletEvent event,
+                                  Status status,
+                                  String errorDescription) {
         Context app = BreadApp.getBreadContext();
 
         if (app != null && Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
@@ -1305,7 +1307,9 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-    public void handleBlockEvent(BREthereumBlock block, BlockEvent event) {
+    public void handleBlockEvent(BREthereumBlock block, BlockEvent event,
+                                 Status status,
+                                 String errorDescription) {
         Log.e(TAG, "handleBlockEvent: " + block + ", event: " + event);
         Context app = BreadApp.getBreadContext();
         if (app != null && Utils.isEmulatorOrDebug(app)) {
@@ -1323,7 +1327,10 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-    public void handleTransactionEvent(BREthereumWallet wallet, BREthereumTransaction transaction, TransactionEvent event) {
+    public void handleTransactionEvent(BREthereumWallet wallet, BREthereumTransaction transaction,
+                                       TransactionEvent event,
+                                       Status status,
+                                       String errorDescription) {
         Context app = BreadApp.getBreadContext();
 
         if (app != null && Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
