@@ -5,10 +5,12 @@ import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
@@ -30,7 +32,6 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Currency;
 import java.util.HashMap;
 import java.util.List;
@@ -269,13 +270,98 @@ public class WalletPlugin implements Plugin {
             }
             APIClient.BRResponse resp = new APIClient.BRResponse(arr.toString().getBytes(), 200, "application/json");
             return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
+        } else if (target.startsWith("/_wallet/transaction")) {
+            String reqBody = null;
+            try {
+                reqBody = new String(IOUtils.toByteArray(request.getInputStream()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (Utils.isNullOrEmpty(reqBody)) {
+                Log.e(TAG, "handle: reqBody is empty: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(400, null, baseRequest, response);
+            }
+
+
+            try {
+                JSONObject obj = new JSONObject(reqBody);
+                JSONObject txObj = sendTx(app, obj);
+                if (txObj == null) {
+                    Log.e(TAG, "handle: txObj is null");
+                    return BRHTTPHelper.handleError(500, "Failed to create transaction: " + obj, baseRequest, response);
+
+                }
+                APIClient.BRResponse resp = new APIClient.BRResponse(txObj.toString().getBytes(), 200, "application/json");
+                return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return BRHTTPHelper.handleError(500, "Invalid json request", baseRequest, response);
+
+        } else if (target.startsWith("/_wallet/addresses")) {
+            String iso = target.substring(target.lastIndexOf("/") + 1);
+            BaseWalletManager w = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
+            if (w == null) {
+                return BRHTTPHelper.handleError(500, "Invalid iso for address: " + iso, baseRequest, response);
+            }
+
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("currency", w.getIso(app));
+                obj.put("address", w.getReceiveAddress(app));
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            APIClient.BRResponse resp = new APIClient.BRResponse(obj.toString().getBytes(), 200, "application/json");
+
+            return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         }
 
         Log.e(TAG, "handle: WALLET PLUGIN DID NOT HANDLE: " + target + " " + baseRequest.getMethod());
         return true;
     }
 
-    public JSONArray getCurrencyData(Context app) {
+    private JSONObject sendTx(Context app, JSONObject obj) {
+        String toAddress = null;
+        String toDescription = null;
+        String currency = null;
+        String numerator = null;
+        String denominator = null;
+        String txCurrency = null;
+        try {
+            toAddress = obj.getString("toAddress");
+            toDescription = obj.getString("toDescription");
+            currency = obj.getString("currency");
+            JSONObject amount = obj.getJSONObject("amount");
+            numerator = amount.getString("numerator");
+            denominator = amount.getString("denominator");
+            txCurrency = amount.getString("currency");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        if (Utils.isNullOrEmpty(toAddress) || Utils.isNullOrEmpty(toDescription) || Utils.isNullOrEmpty(currency)
+                || Utils.isNullOrEmpty(numerator) || Utils.isNullOrEmpty(denominator) || Utils.isNullOrEmpty(txCurrency)) {
+            return null;
+        }
+
+        BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, currency);
+
+        CryptoRequest item = new CryptoRequest(null, false, null, toAddress, new BigDecimal(denominator));
+        SendManager.sendTransaction(app, item, wm);
+        JSONObject result = new JSONObject();
+        try {
+            result.put("transmitted", true);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return result;
+
+    }
+
+    private JSONArray getCurrencyData(Context app) {
         JSONArray arr = new JSONArray();
         List<BaseWalletManager> list = WalletsMaster.getInstance(app).getAllWallets(app);
         for (BaseWalletManager w : list) {
@@ -325,7 +411,8 @@ public class WalletPlugin implements Plugin {
         return arr;
     }
 
-    public static void sendBitIdResponse(final JSONObject restJson, final boolean authenticated) {
+    public static void sendBitIdResponse(final JSONObject restJson,
+                                         final boolean authenticated) {
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {

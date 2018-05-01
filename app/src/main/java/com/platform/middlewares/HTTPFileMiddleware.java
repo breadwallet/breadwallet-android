@@ -72,8 +72,8 @@ public class HTTPFileMiddleware implements Middleware {
             Log.e(TAG, "handle: app is null!");
             return true;
         }
-//        if (Utils.isEmulatorOrDebug(app))
-//            DEBUG_URL = "http://bw-platform-tests.s3-website.us-east-2.amazonaws.com";
+        if (Utils.isEmulatorOrDebug(app))
+            DEBUG_URL = "http://bw-platform-tests.s3-website.us-east-2.amazonaws.com";
 
         File temp = null;
         APIClient.BRResponse brResp = new APIClient.BRResponse();
