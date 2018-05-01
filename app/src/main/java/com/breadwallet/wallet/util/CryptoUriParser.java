@@ -295,7 +295,7 @@ public class CryptoUriParser {
                 return true;
             }
 
-            SendManager.sendTransaction(app, requestObject, wallet);
+            SendManager.sendTransaction(app, requestObject, wallet, null);
         }
 
         return true;

@@ -88,6 +88,9 @@ public class WalletEthManager implements BaseWalletManager,
         BREthereumLightNode.Listener {
     private static final String TAG = WalletEthManager.class.getSimpleName();
 
+    private CryptoTransaction mWatchedTransaction;
+    private OnHashUpdated mWatchListener;
+
     private static String ISO = "ETH";
     public static final String ETH_SCHEME = "ethereum";
 
@@ -266,6 +269,12 @@ public class WalletEthManager implements BaseWalletManager,
     public void addTxListModifiedListener(OnTxListModified list) {
         if (list != null && !txModifiedListeners.contains(list))
             txModifiedListeners.add(list);
+    }
+
+    @Override
+    public void watchTransactionForHash(CryptoTransaction tx, OnHashUpdated listener) {
+        mWatchedTransaction = tx;
+        mWatchListener = listener;
     }
 
     @Override
@@ -965,20 +974,20 @@ public class WalletEthManager implements BaseWalletManager,
                                         PostAuth.stampMetaData(app, finalTxHash.getBytes());
                                         BRAnimator.showBreadSignal((Activity) app, app.getString(R.string.Alerts_sendSuccess),
                                                 app.getString(R.string.Alerts_sendSuccessSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
-                                            @Override
-                                            public void onComplete() {
-                                                BRAnimator.killAllFragments((Activity) app);
-                                                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                                                     @Override
-                                                    public void run() {
-                                                        for (OnTxStatusUpdatedListener list : txStatusUpdatedListeners)
-                                                            if (list != null)
-                                                                list.onTxStatusUpdated();
-                                                        mWallet.updateBalance();
+                                                    public void onComplete() {
+                                                        BRAnimator.killAllFragments((Activity) app);
+                                                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                for (OnTxStatusUpdatedListener list : txStatusUpdatedListeners)
+                                                                    if (list != null)
+                                                                        list.onTxStatusUpdated();
+                                                                mWallet.updateBalance();
+                                                            }
+                                                        });
                                                     }
                                                 });
-                                            }
-                                        });
                                     } else {
                                         BRDialog.showSimpleDialog(app, "Failed", String.format("(%d) %s", finalErrCode, finalErrMessage));
                                     }
@@ -1340,6 +1349,14 @@ public class WalletEthManager implements BaseWalletManager,
                     break;
                 case BLOCK_CONFIRMATIONS_UPDATED:
                     printInfo("Transaction confirmations updated: " + transaction.getBlockConfirmations(), iso, event.name());
+                    if (mWatchedTransaction != null) {
+                        if (mWatchedTransaction.getEtherTx().getNonce() == transaction.getNonce()) {
+                            if (mWatchListener != null)
+                                mWatchListener.onUpdated(transaction.getHash());
+                        }
+                    }
+                    mWatchListener = null;
+                    mWatchedTransaction = null;
                     break;
             }
         }

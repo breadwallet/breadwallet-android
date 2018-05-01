@@ -282,17 +282,15 @@ public class WalletPlugin implements Plugin {
                 return BRHTTPHelper.handleError(400, null, baseRequest, response);
             }
 
-
             try {
                 JSONObject obj = new JSONObject(reqBody);
-                JSONObject txObj = sendTx(app, obj);
-                if (txObj == null) {
-                    Log.e(TAG, "handle: txObj is null");
-                    return BRHTTPHelper.handleError(500, "Failed to create transaction: " + obj, baseRequest, response);
+                sendTx(app, obj);
 
-                }
-                APIClient.BRResponse resp = new APIClient.BRResponse(txObj.toString().getBytes(), 200, "application/json");
-                return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
+                continuation = ContinuationSupport.getContinuation(request);
+                continuation.suspend(response);
+                globalBaseRequest = baseRequest;
+
+                return true;
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -323,7 +321,7 @@ public class WalletPlugin implements Plugin {
         return true;
     }
 
-    private JSONObject sendTx(Context app, JSONObject obj) {
+    private void sendTx(Context app, JSONObject obj) {
         String toAddress = null;
         String toDescription = null;
         String currency = null;
@@ -341,23 +339,23 @@ public class WalletPlugin implements Plugin {
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        Log.e(TAG, "sendTx: " + String.format("address (%s), description (%s), currency (%s), numerator (%s), denominator(%s), txCurrency(%s)",
+                toAddress, toDescription, currency, numerator, denominator, txCurrency));
 
         if (Utils.isNullOrEmpty(toAddress) || Utils.isNullOrEmpty(toDescription) || Utils.isNullOrEmpty(currency)
                 || Utils.isNullOrEmpty(numerator) || Utils.isNullOrEmpty(denominator) || Utils.isNullOrEmpty(txCurrency)) {
-            return null;
+            return;
         }
 
         BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, currency);
 
-        CryptoRequest item = new CryptoRequest(null, false, null, toAddress, new BigDecimal(denominator));
-        SendManager.sendTransaction(app, item, wm);
-        JSONObject result = new JSONObject();
-        try {
-            result.put("transmitted", true);
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
-        return result;
+        CryptoRequest item = new CryptoRequest(null, false, null, toAddress, new BigDecimal(numerator));
+        SendManager.sendTransaction(app, item, wm, new SendManager.SendCompletion() {
+            @Override
+            public void onCompleted(String hash, boolean succeed) {
+                finalizeTx(succeed, hash);
+            }
+        });
 
     }
 
@@ -409,6 +407,51 @@ public class WalletPlugin implements Plugin {
         }
         Log.e(TAG, "getCurrencyData: " + arr);
         return arr;
+    }
+
+    public static void finalizeTx(final boolean succeed, final String hash){
+        Log.e(TAG, "finalizeTx: " + hash + ", " + succeed);
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (!succeed || Utils.isNullOrEmpty(hash)) {
+                        try {
+                            ((HttpServletResponse) continuation.getServletResponse()).sendError(500);
+                        } catch (IOException e) {
+                            Log.e(TAG, "finalizeTx: failed to send error 500: ", e);
+                            e.printStackTrace();
+                        }
+                        return;
+                    }
+                    if (continuation == null) {
+                        Log.e(TAG, "finalizeTx: WARNING continuation is null");
+                        return;
+                    }
+
+                    JSONObject result = new JSONObject();
+                    try {
+                        result.put("hash", hash);
+                        result.put("transmitted", true);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        continuation.getServletResponse().setContentType("application/json");
+                        continuation.getServletResponse().setCharacterEncoding("UTF-8");
+                        continuation.getServletResponse().getWriter().print(result.toString());
+                        Log.d(TAG, "finalizeTx: finished with writing to the response: " + result);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "sendBitIdResponse Failed to send json: ", e);
+                    }
+                    ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
+                } finally {
+                    cleanUp();
+                }
+            }
+        });
     }
 
     public static void sendBitIdResponse(final JSONObject restJson,

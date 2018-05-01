@@ -18,6 +18,7 @@ import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -64,6 +65,7 @@ public class PostAuth {
     public CryptoRequest mCryptoRequest;
     public static boolean isStuckWithAuthLoop;
     public static TxMetaData txMetaData;
+    public SendManager.SendCompletion mSendCompletion;
 
     private CryptoTransaction mPaymentProtocolTx;
     private static PostAuth instance;
@@ -191,7 +193,8 @@ public class PostAuth {
 
     }
 
-    public void onPublishTxAuth(final Context app, final boolean authAsked) {
+    public void onPublishTxAuth(final Context app, final boolean authAsked, final SendManager.SendCompletion completion) {
+        mSendCompletion = completion;
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -222,6 +225,7 @@ public class PostAuth {
                                         }, null, null, 0);
                                 return;
                             }
+
                             byte[] txHash = walletManager.signAndPublishTransaction(tx, rawPhrase);
 
                             txMetaData = new TxMetaData();
@@ -237,11 +241,19 @@ public class PostAuth {
                             txMetaData.classVersion = 1;
 
                             if (Utils.isNullOrEmpty(txHash)) {
-                                if (tx.getEtherTx() != null)
+                                if (tx.getEtherTx() != null) {
+                                    walletManager.watchTransactionForHash(tx, new BaseWalletManager.OnHashUpdated() {
+                                        @Override
+                                        public void onUpdated(String hash) {
+                                            completion.onCompleted(hash, true);
+                                        }
+                                    });
                                     return; // ignore ETH since txs do not have the hash right away
+                                }
                                 Log.e(TAG, "onPublishTxAuth: signAndPublishTransaction returned an empty txHash");
                                 BRDialog.showSimpleDialog(app, app.getString(R.string.Alerts_sendFailure), "Failed to create transaction");
                             } else {
+                                completion.onCompleted(tx.getHash(), true);
                                 stampMetaData(app, txHash);
                             }
 

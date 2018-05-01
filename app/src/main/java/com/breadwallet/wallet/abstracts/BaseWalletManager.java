@@ -51,6 +51,10 @@ public interface BaseWalletManager {
      * The methods that are annotated with @WorkerThread might block so can't be called in the UI Thread
      */
 
+    public interface OnHashUpdated{
+        void onUpdated(String hash);
+    }
+
     //get the core wallet
     int getForkId();
 
@@ -70,6 +74,8 @@ public interface BaseWalletManager {
     void addSyncListeners(SyncListener list);
 
     void addTxListModifiedListener(OnTxListModified list);
+
+    void watchTransactionForHash(CryptoTransaction tx, OnHashUpdated listener);
 
     @WorkerThread
         //get confirmation number

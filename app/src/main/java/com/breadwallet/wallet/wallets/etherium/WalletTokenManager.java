@@ -193,6 +193,11 @@ public class WalletTokenManager implements BaseWalletManager {
     }
 
     @Override
+    public void watchTransactionForHash(CryptoTransaction tx, OnHashUpdated listener) {
+        mWalletEthManager.watchTransactionForHash(tx, listener);
+    }
+
+    @Override
     public long getRelayCount(byte[] txHash) {
         return 3; // ready to go
     }

@@ -678,6 +678,11 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     }
 
     @Override
+    public void watchTransactionForHash(CryptoTransaction tx, OnHashUpdated listener) {
+        //only eth and erc20
+    }
+
+    @Override
     public long getRelayCount(byte[] txHash) {
         if (Utils.isNullOrEmpty(txHash)) return 0;
         return getPeerManager().getRelayCount(txHash);

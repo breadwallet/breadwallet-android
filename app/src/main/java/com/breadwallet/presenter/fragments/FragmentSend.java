@@ -481,7 +481,7 @@ public class FragmentSend extends Fragment {
 
                 if (allFilled) {
                     CryptoRequest item = new CryptoRequest(null, false, comment, req.address, cryptoAmount);
-                    SendManager.sendTransaction(getActivity(), item, wm);
+                    SendManager.sendTransaction(getActivity(), item, wm, null);
                 }
             }
         });

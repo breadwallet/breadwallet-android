@@ -26,6 +26,7 @@ import com.breadwallet.wallet.exceptions.InsufficientFundsException;
 import com.breadwallet.wallet.exceptions.SomethingWentWrong;
 import com.breadwallet.wallet.exceptions.SpendingNotAllowed;
 import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.firebase.crash.FirebaseCrash;
 
 import java.math.BigDecimal;
@@ -62,7 +63,8 @@ public class SendManager {
     private static boolean sending;
     private final static long FEE_EXPIRATION_MILLIS = 72 * 60 * 60 * 1000L;
 
-    public static boolean sendTransaction(final Context app, final CryptoRequest payment, final BaseWalletManager walletManager) {
+    public static boolean sendTransaction(final Context app, final CryptoRequest payment, final BaseWalletManager walletManager, final SendCompletion completion) {
+
         //array in order to be able to modify the first element from an inner block (can't be final)
         final String[] errTitle = {null};
         final String[] errMessage = {null};
@@ -102,7 +104,7 @@ public class SendManager {
                         }
                     }
                     if (!timedOut)
-                        tryPay(app, payment, walletManager);
+                        tryPay(app, payment, walletManager, completion);
                     else
                         FirebaseCrash.report(new NullPointerException("did not send, timedOut!"));
                     return; //return so no error is shown
@@ -130,7 +132,7 @@ public class SendManager {
                 } catch (FeeNeedsAdjust feeNeedsAdjust) {
                     //offer to change amount, so it would be enough for fee
 //                    showFailed(app); //just show failed for now
-                    showAdjustFee((Activity) app, payment, walletManager);
+                    showAdjustFee((Activity) app, payment, walletManager, completion);
                     return;
                 } catch (FeeOutOfDate ex) {
                     //Fee is out of date, show not connected error
@@ -191,7 +193,8 @@ public class SendManager {
      * Try transaction and throw appropriate exceptions if something was wrong
      * BLOCKS
      */
-    private static void tryPay(final Context app, final CryptoRequest paymentRequest, final BaseWalletManager walletManager) throws InsufficientFundsException,
+    private static void tryPay(final Context app, final CryptoRequest paymentRequest, final BaseWalletManager walletManager, final SendCompletion completion)
+            throws InsufficientFundsException,
             AmountSmallerThanMinException, SpendingNotAllowed, FeeNeedsAdjust, SomethingWentWrong {
         if (paymentRequest == null) {
             Log.e(TAG, "tryPay: ERROR: paymentRequest: null");
@@ -199,6 +202,7 @@ public class SendManager {
             BRReportsManager.reportBug(new RuntimeException("paymentRequest is malformed: " + message), true);
             throw new SomethingWentWrong("wrong parameters: paymentRequest");
         }
+        Log.e(TAG, "tryPay: " + paymentRequest.amount);
 //        long amount = paymentRequest.amount;
         BigDecimal balance = walletManager.getCachedBalance(app);
         BigDecimal minOutputAmount = walletManager.getMinOutputAmount(app);
@@ -239,13 +243,13 @@ public class SendManager {
             @Override
             public void run() {
                 PostAuth.getInstance().setPaymentItem(paymentRequest);
-                confirmPay(app, paymentRequest, walletManager);
+                confirmPay(app, paymentRequest, walletManager, completion);
             }
         });
 
     }
 
-    private static void showAdjustFee(final Activity app, final CryptoRequest item, final BaseWalletManager walletManager) {
+    private static void showAdjustFee(final Activity app, final CryptoRequest item, final BaseWalletManager walletManager, final SendCompletion completion) {
         BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
         BigDecimal maxAmountDouble = walletManager.getMaxOutputAmount(app);
         if (maxAmountDouble.compareTo(new BigDecimal(-1)) == 0) {
@@ -285,7 +289,7 @@ public class SendManager {
                 public void onClick(BRDialogView brDialogView) {
                     brDialogView.dismissWithAnimation();
                     PostAuth.getInstance().setPaymentItem(item);
-                    confirmPay(app, item, walletManager);
+                    confirmPay(app, item, walletManager,completion);
 
                 }
             }, new BRDialogView.BROnClickListener() {
@@ -298,7 +302,7 @@ public class SendManager {
 
     }
 
-    private static void confirmPay(final Context ctx, final CryptoRequest request, final BaseWalletManager wm) {
+    private static void confirmPay(final Context ctx, final CryptoRequest request, final BaseWalletManager wm, final SendCompletion completion) {
         if (ctx == null) {
             Log.e(TAG, "confirmPay: context is null");
             return;
@@ -346,7 +350,7 @@ public class SendManager {
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        PostAuth.getInstance().onPublishTxAuth(ctx, false);
+                        PostAuth.getInstance().onPublishTxAuth(ctx, false, completion);
                         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                             @Override
                             public void run() {
@@ -425,6 +429,10 @@ public class SendManager {
                 + "\n" + ctx.getString(R.string.Confirmation_feeLabel) + " " + formattedCryptoFee + " (" + formattedFee + ")"
                 + "\n" + ctx.getString(R.string.Confirmation_totalLabel) + " " + formattedCryptoTotal + " (" + formattedTotal + ")"
                 + (request.message == null ? "" : "\n\n" + request.message);
+    }
+
+    public interface SendCompletion {
+        void onCompleted(String hash, boolean succeed);
     }
 
 }

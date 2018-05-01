@@ -52,6 +52,12 @@ public class CryptoTransaction {
         else return null;
     }
 
+    public String getHash() {
+        if (mCoreTx != null) return mCoreTx.getReverseHash();
+        else if (mEtherTx != null) return mEtherTx.getHash();
+        else return null;
+    }
+
     public BRCoreTransaction getCoreTx() {
         return mCoreTx;
     }
