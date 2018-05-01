@@ -119,15 +119,13 @@ public class APIProxy implements Middleware {
                 .url(apiInstance.buildUrl(path));
 
         Enumeration<String> headerNames = baseRequest.getHeaderNames();
+        Log.e(TAG, "jettyToOkHttpRequest: " + headerNames);
         while (headerNames.hasMoreElements()) {
             String hName = headerNames.nextElement();
             if (Arrays.asList(bannedSendHeaders).contains(hName.toLowerCase())) continue;
             String h = baseRequest.getHeader(hName);
-            if (h != null)
-                builder.addHeader(hName, h);
-            else Log.e(TAG, "jettyToOkHttpRequest: Header is null for key: " + hName);
+            builder.addHeader(hName, h == null ? "" : h);
         }
-
         byte[] body = new byte[0];
         try {
             body = IOUtils.toByteArray(request.getInputStream());

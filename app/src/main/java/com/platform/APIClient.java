@@ -300,7 +300,8 @@ public class APIClient {
         Request request = newBuilder.build();
         if (needsAuth) {
             request = authenticateRequest(request);
-            if (request == null) return new BRResponse();
+            if (request == null) return resToBRResponse(null);
+            ;
         }
 
         Response response = null;
@@ -335,12 +336,12 @@ public class APIClient {
                 Log.d(TAG, "sendRequest: the content is gzip, unzipping");
                 if (Utils.isNullOrEmpty(mainBrResponse.getBody())) {
                     BRReportsManager.reportBug(new NullPointerException("string response is null for: " + request.url()));
-                    return new BRResponse();
+                    return resToBRResponse(response);
                 }
                 byte[] decompressed = gZipExtract(mainBrResponse.getBody());
                 if (decompressed == null) {
                     BRReportsManager.reportBug(new IllegalArgumentException("failed to decrypt data!"));
-                    return new BRResponse();
+                    return resToBRResponse(response);
                 }
                 postReqBody = ResponseBody.create(null, decompressed);
                 return resToBRResponse(response.newBuilder().body(postReqBody).build());
@@ -373,7 +374,7 @@ public class APIClient {
         } finally {
             if (postReqBody != null) postReqBody.close();
         }
-        if (postReqBody == null) return new BRResponse();
+        if (postReqBody == null) return resToBRResponse(response);
 
         return resToBRResponse(response.newBuilder().body(postReqBody).build());
     }
@@ -383,26 +384,32 @@ public class APIClient {
     }
 
     private BRResponse resToBRResponse(Response res) {
-        if (res == null) return null;
-        int code = res.code();
-        Map<String, String> headers = new HashMap<>();
-        for (String name : res.headers().names()) {
-            headers.put(name, res.header(name));
-        }
-
-        byte[] s = null;
-        String contentType = null;
+        BRResponse brRsp = new BRResponse();
         try {
-            ResponseBody body = res.body();
-            contentType = body.contentType() == null ? "" : body.contentType().type();
-            s = body.bytes();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            if (res != null) {
+                int code = res.code();
+                Map<String, String> headers = new HashMap<>();
+                for (String name : res.headers().names()) {
+                    headers.put(name, res.header(name));
+                }
+
+                byte[] s = null;
+                String contentType = null;
+                try {
+                    ResponseBody body = res.body();
+                    contentType = body.contentType() == null ? "" : body.contentType().type();
+                    s = body.bytes();
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                } finally {
+                    res.close();
+                }
+                brRsp = new BRResponse(s, code, headers, res.request().url().toString(), contentType);
+            }
+
         } finally {
-            res.close();
+            brRsp.print();
         }
-        BRResponse brRsp = new BRResponse(s, code, headers, res.request().url().toString(), contentType);
-        brRsp.print();
         return brRsp;
     }
 
@@ -911,6 +918,7 @@ public class APIClient {
         }
 
         public int getCode() {
+            if (code == 0) throw new RuntimeException("code can't be 0");
             return code;
         }
 
