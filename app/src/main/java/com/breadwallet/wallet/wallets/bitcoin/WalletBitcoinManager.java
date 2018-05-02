@@ -500,7 +500,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     public void refreshAddress(Context app) {
         BRCoreAddress address = getWallet().getReceiveAddress();
         if (Utils.isNullOrEmpty(address.stringify())) {
-            Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
+            Log.e(TAG, "refreshAddress: i, retrieved address:" + address);
         }
         BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso(app));
 
@@ -750,21 +750,33 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
     }
 
-    public void balanceChanged(long balance) {
+    public void balanceChanged(final long balance) {
         super.balanceChanged(balance);
-        Context app = BreadApp.getBreadContext();
-        setCachedBalance(app, new BigDecimal(balance));
-        for (OnTxListModified list : txModifiedListeners)
-            if (list != null) list.txListModified(null);
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                Context app = BreadApp.getBreadContext();
+                setCachedBalance(app, new BigDecimal(balance));
+                for (OnTxListModified list : txModifiedListeners)
+                    if (list != null) list.txListModified(null);
+            }
+        });
 
     }
 
     public void txStatusUpdate() {
         super.txStatusUpdate();
-        for (OnTxStatusUpdatedListener listener : txStatusUpdatedListeners)
-            if (listener != null) listener.onTxStatusUpdated();
-        for (OnTxListModified list : txModifiedListeners)
-            if (list != null) list.txListModified(null);
+
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                for (OnTxStatusUpdatedListener listener : txStatusUpdatedListeners)
+                    if (listener != null) listener.onTxStatusUpdated();
+                for (OnTxListModified list : txModifiedListeners)
+                    if (list != null) list.txListModified(null);
+            }
+        });
+
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -880,8 +892,6 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
                     Toast.makeText(app, "SyncStopped " + getIso(app) + " err(" + error + ") ", Toast.LENGTH_LONG).show();
                 }
             });
-
-        Log.e(TAG, "syncStopped: peerManager:" + getPeerManager().toString());
 
         if (!Utils.isNullOrEmpty(error)) {
             if (mSyncRetryCount < SYNC_MAX_RETRY) {

@@ -235,13 +235,12 @@ public class BreadApp extends Application {
 
     public static synchronized void fireListeners() {
         if (listeners == null) return;
-        List<OnAppBackgrounded> copy = listeners;
-        for (OnAppBackgrounded lis : copy) if (lis != null) lis.onBackgrounded();
+        for (OnAppBackgrounded lis : listeners) if (lis != null) lis.onBackgrounded();
     }
 
     public static void addOnBackgroundedListener(OnAppBackgrounded listener) {
         if (listeners == null) listeners = new ArrayList<>();
-        if (!listeners.contains(listener)) listeners.add(listener);
+        if (listener != null && !listeners.contains(listener)) listeners.add(listener);
     }
 
     public static boolean isAppInBackground(final Context context) {

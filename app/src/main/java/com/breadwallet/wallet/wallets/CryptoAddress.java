@@ -41,4 +41,9 @@ public class CryptoAddress {
     public Object getCoreObject() {
         return coreObject;
     }
+
+    @Override
+    public String toString() {
+        return address;
+    }
 }

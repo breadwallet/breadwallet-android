@@ -98,7 +98,7 @@ public class APIProxy implements Middleware {
             if (Arrays.asList(bannedReceiveHeaders).contains(s.toLowerCase())) continue;
             response.addHeader(s, res.getHeaders().get(s));
         }
-        response.setContentLength(res.getBodyText().length());
+
 
         try {
             response.setStatus(res.getCode());

@@ -9,6 +9,7 @@ import android.util.Log;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
+import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.presenter.activities.SetPinActivity;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
@@ -246,7 +247,6 @@ public class PostAuth {
                                     walletManager.watchTransactionForHash(tx, new BaseWalletManager.OnHashUpdated() {
                                         @Override
                                         public void onUpdated(String hash) {
-                                            Log.e(TAG, "onUpdated: ");
                                             if (mSendCompletion != null)
                                                 mSendCompletion.onCompleted(hash, true);
                                         }

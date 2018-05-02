@@ -262,6 +262,7 @@ public class APIClient {
         try {
             byte[] authKey = getCachedAuthKey();
             if (Utils.isNullOrEmpty(authKey)) {
+                BRReportsManager.reportBug(new IllegalArgumentException("Auth key is null!"));
                 Log.e(TAG, "signRequest: authkey is null");
                 return null;
             }
@@ -301,14 +302,13 @@ public class APIClient {
         if (needsAuth) {
             request = authenticateRequest(request);
             if (request == null) return resToBRResponse(null);
-            ;
         }
 
         Response response = null;
         BRResponse mainBrResponse = null;
         try {
             if (mHTTPClient == null)
-                mHTTPClient = new OkHttpClient.Builder().followRedirects(false).connectTimeout(20, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
+                mHTTPClient = new OkHttpClient.Builder().followRedirects(false).connectTimeout(5, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
             request = request.newBuilder().header("User-agent", Utils.getAgentString(ctx, "OkHttp/3.4.1")).build();
             response = mHTTPClient.newCall(request).execute();
             mainBrResponse = resToBRResponse(response);
@@ -840,12 +840,12 @@ public class APIClient {
     private byte[] getCachedToken() {
         if (Utils.isNullOrEmpty(mCachedToken)) {
             mCachedToken = BRKeyStore.getToken(ctx);
-//            new Timer().schedule(new TimerTask() {
-//                @Override
-//                public void run() {
-//                    mCachedToken = null;
-//                }
-//            }, 3000);//cache for 3 sec
+            BreadApp.addOnBackgroundedListener(new BreadApp.OnAppBackgrounded() {
+                @Override
+                public void onBackgrounded() {
+                    mCachedToken = null;
+                }
+            });
         }
         return mCachedToken;
     }
@@ -854,12 +854,12 @@ public class APIClient {
     private byte[] getCachedAuthKey() {
         if (Utils.isNullOrEmpty(mCachedAuthKey)) {
             mCachedAuthKey = BRKeyStore.getAuthKey(ctx);
-//            new Timer().schedule(new TimerTask() {
-//                @Override
-//                public void run() {
-//                    mCachedAuthKey = null;
-//                }
-//            }, 3000);//cache for 3 sec
+            BreadApp.addOnBackgroundedListener(new BreadApp.OnAppBackgrounded() {
+                @Override
+                public void onBackgrounded() {
+                    mCachedAuthKey = null;
+                }
+            });
         }
         return mCachedAuthKey;
     }
@@ -892,25 +892,28 @@ public class APIClient {
             this.code = code;
             this.body = body;
             this.url = url;
+            if (Utils.isNullOrEmpty(contentType)) {
+                if (headers != null && headers.containsKey("Content-Type")) {
+                    contentType = headers.get("Content-Type");
+                    if (Utils.isNullOrEmpty(contentType)) contentType = "application/json";
+                }
+            }
+
             this.contentType = contentType;
 
         }
 
         public BRResponse(byte[] body, int code, String contentType) {
-            this.headers = headers;
-            this.code = code;
-            this.body = body;
-            this.url = url;
-            this.contentType = contentType;
+            this(body, code, null, null, contentType);
 
         }
 
         public BRResponse() {
+            this(null, 0, null, null, null);
         }
 
         public BRResponse(String contentType, int code) {
-            this.contentType = contentType;
-            this.code = code;
+            this(null, code, null, null, contentType);
         }
 
         public Map<String, String> getHeaders() {

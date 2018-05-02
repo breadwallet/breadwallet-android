@@ -235,16 +235,17 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void showTransactionProgress(TxHolder holder, int progress) {
+        //todo FIX this!
         if (progress < 100) {
             holder.transactionProgress.setVisibility(View.VISIBLE);
             holder.transactionDate.setVisibility(View.GONE);
             holder.transactionProgress.setProgress(progress);
-
             RelativeLayout.LayoutParams detailParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
             detailParams.addRule(RelativeLayout.RIGHT_OF, holder.transactionProgress.getId());
             detailParams.addRule(RelativeLayout.CENTER_VERTICAL);
             detailParams.setMargins(Utils.getPixelsFromDps(mContext, 16), Utils.getPixelsFromDps(mContext, 36), 0, 0);
             holder.transactionDetail.setLayoutParams(detailParams);
+            holder.transactionDetail.setMaxWidth(Utils.getPixelsFromDps(mContext, 120));
         } else {
             holder.transactionProgress.setVisibility(View.INVISIBLE);
             holder.transactionDate.setVisibility(View.VISIBLE);

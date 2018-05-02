@@ -443,12 +443,13 @@ public class FragmentSend extends Fragment {
                 final Activity app = getActivity();
                 if (!wm.isAddressValid(req.address)) {
 
-                    BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_noAddress), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            brDialogView.dismissWithAnimation();
-                        }
-                    }, null, null, 0);
+                    BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_noAddress),
+                            app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                                @Override
+                                public void onClick(BRDialogView brDialogView) {
+                                    brDialogView.dismissWithAnimation();
+                                }
+                            }, null, null, 0);
                     return;
                 }
                 if (cryptoAmount.compareTo(new BigDecimal(0)) <= 0) {
@@ -608,7 +609,7 @@ public class FragmentSend extends Fragment {
                 }, null, null, 0);
     }
 
-    private void sayInsufficientEthereumForFee(final Activity app, String ethNeeded){
+    private void sayInsufficientEthereumForFee(final Activity app, String ethNeeded) {
         String message = String.format("You must have at least %s Ethereum in your wallet in order to transfer this type of token. " +
                 "Would you like to go to your Ethereum wallet now?", ethNeeded);
         BRDialog.showCustomDialog(app, "Insufficient Ethereum Balance", message, app.getString(R.string.Button_continueAction),
@@ -751,7 +752,7 @@ public class FragmentSend extends Fragment {
         curBalance = wm.getCachedBalance(app);
         if (!amountLabelOn)
             isoText.setText(CurrencyUtils.getSymbolByIso(app, selectedIso));
-        isoButton.setText(String.format("%s(%s)", selectedIso, CurrencyUtils.getSymbolByIso(app, selectedIso)));
+        isoButton.setText(selectedIso);
 
         //is the chosen ISO a crypto (could be also a fiat currency)
         boolean isIsoCrypto = WalletsMaster.getInstance(app).isIsoCrypto(app, selectedIso);

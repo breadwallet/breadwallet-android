@@ -258,7 +258,7 @@ public class WalletTokenManager implements BaseWalletManager {
             fee = new BigDecimal(0);
         } else {
             fee = new BigDecimal(mWalletToken.transactionEstimatedFee(amount.toPlainString(),
-                    BREthereumAmount.Unit.ETHER_WEI, BREthereumAmount.Unit.ETHER_WEI));
+                    BREthereumAmount.Unit.TOKEN_DECIMAL, BREthereumAmount.Unit.ETHER_WEI));
         }
         return fee;
     }
@@ -381,7 +381,7 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public String getDenominator(Context app) {
-        return "1";
+        return new BigDecimal(10).pow(mWalletToken.getToken().getDecimals()).toPlainString();
     }
 
     @Override

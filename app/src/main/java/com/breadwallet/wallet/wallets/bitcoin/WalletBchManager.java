@@ -753,21 +753,32 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
 
     }
 
-    public void balanceChanged(long balance) {
+    public void balanceChanged(final long balance) {
         super.balanceChanged(balance);
-        Context app = BreadApp.getBreadContext();
-        setCachedBalance(app, new BigDecimal(balance));
-        for (OnTxListModified list : txModifiedListeners)
-            if (list != null) list.txListModified(null);
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                Context app = BreadApp.getBreadContext();
+                setCachedBalance(app, new BigDecimal(balance));
+                for (OnTxListModified list : txModifiedListeners)
+                    if (list != null) list.txListModified(null);
+            }
+        });
 
     }
 
     public void txStatusUpdate() {
         super.txStatusUpdate();
-        for (OnTxStatusUpdatedListener listener : txStatusUpdatedListeners)
-            if (listener != null) listener.onTxStatusUpdated();
-        for (OnTxListModified list : txModifiedListeners)
-            if (list != null) list.txListModified(null);
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                for (OnTxStatusUpdatedListener listener : txStatusUpdatedListeners)
+                    if (listener != null) listener.onTxStatusUpdated();
+                for (OnTxListModified list : txModifiedListeners)
+                    if (list != null) list.txListModified(null);
+            }
+        });
+
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {

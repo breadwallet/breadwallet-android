@@ -56,9 +56,7 @@ public class BRHTTPHelper {
         try {
             if (brResp.getCode() == 0) throw new RuntimeException("http code can't be 0");
             resp.setStatus(brResp.getCode());
-            if (!Utils.isNullOrEmpty(brResp.getContentType()))
-                resp.setContentType(brResp.getContentType());
-            else resp.setContentType("text/plain");
+            resp.setContentType(brResp.getContentType());
             if (!Utils.isNullOrEmpty(brResp.getBody()))
                 resp.getOutputStream().write(brResp.getBody());
             for (String key : brResp.getHeaders().keySet()) {

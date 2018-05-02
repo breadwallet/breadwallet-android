@@ -844,7 +844,6 @@ public class WalletEthManager implements BaseWalletManager,
                 JsonRpcRequest.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
-                        String gasPrice = "0x";
 
                         try {
 
@@ -853,15 +852,16 @@ public class WalletEthManager implements BaseWalletManager,
                                 JSONObject responseObject = new JSONObject(jsonResult);
 
                                 if (responseObject.has("result")) {
-                                    gasPrice = responseObject.getString("result");
+                                    String gasPrice = responseObject.getString("result");
+                                    node.announceGasPrice(wid, gasPrice, rid);
                                 }
                             }
                         } catch (JSONException je) {
                             je.printStackTrace();
                         }
 
-                        Log.d(TAG, "gasPrice response -> " + jsonResult);
-                        node.announceGasPrice(wid, gasPrice, rid);
+
+
                     }
                 });
             }
@@ -1310,7 +1310,7 @@ public class WalletEthManager implements BaseWalletManager,
     public void handleBlockEvent(BREthereumBlock block, BlockEvent event,
                                  Status status,
                                  String errorDescription) {
-        Log.e(TAG, "handleBlockEvent: " + block + ", event: " + event);
+        Log.d(TAG, "handleBlockEvent: " + block + ", event: " + event);
         Context app = BreadApp.getBreadContext();
         if (app != null && Utils.isEmulatorOrDebug(app)) {
             //String iso = (null == wallet.getToken() ? "ETH" : wallet.getToken().getSymbol());

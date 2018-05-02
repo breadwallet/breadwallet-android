@@ -17,6 +17,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
@@ -83,16 +84,17 @@ public class WalletPlugin implements Plugin {
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
             WalletsMaster wm = WalletsMaster.getInstance(app);
+            BaseWalletManager w = WalletBitcoinManager.getInstance(app);
             JSONObject jsonResp = new JSONObject();
             try {
                 /**whether or not the users wallet is set up yet, or is currently locked*/
                 jsonResp.put("no_wallet", wm.noWalletForPlatform(app));
 
                 /**the current receive address*/
-                jsonResp.put("receive_address", BRSharedPrefs.getReceiveAddress(app, "BTC"));
+                jsonResp.put("receive_address", w == null ? "" : w.getReceiveAddress(app).stringify());
 
                 /**how digits after the decimal point. 2 = bits 8 = btc 6 = mbtc*/
-                jsonResp.put("btc_denomiation_digits", BRSharedPrefs.getCryptoDenomination(app, wm.getCurrentWallet(app).getIso(app)) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
+                jsonResp.put("btc_denomiation_digits", w == null ? "" : w.getMaxDecimalPlaces(app));
 
                 /**the users native fiat currency as an ISO 4217 code. Should be uppercased */
                 jsonResp.put("local_currency_code", Currency.getInstance(Locale.getDefault()).getCurrencyCode().toUpperCase());
@@ -307,7 +309,7 @@ public class WalletPlugin implements Plugin {
             JSONObject obj = new JSONObject();
             try {
                 obj.put("currency", w.getIso(app));
-                obj.put("address", w.getReceiveAddress(app));
+                obj.put("address", w.getReceiveAddress(app).stringify());
             } catch (JSONException e) {
                 e.printStackTrace();
             }
@@ -349,7 +351,8 @@ public class WalletPlugin implements Plugin {
 
         BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, currency);
 
-        CryptoRequest item = new CryptoRequest(null, false, null, toAddress, new BigDecimal(numerator));
+        CryptoRequest item = new CryptoRequest(null, false, null, toAddress,
+                new BigDecimal(numerator).divide(new BigDecimal(denominator), nrOfZeros(denominator), BRConstants.ROUNDING_MODE));
         SendManager.sendTransaction(app, item, wm, new SendManager.SendCompletion() {
             @Override
             public void onCompleted(String hash, boolean succeed) {
@@ -357,6 +360,15 @@ public class WalletPlugin implements Plugin {
             }
         });
 
+    }
+
+    private static int nrOfZeros(String n) {
+        int count = 0;
+        while (n.charAt(n.length() - 1) == '0') {
+            n = new BigDecimal(n).divide(new BigDecimal(10)).toPlainString();
+            count++;
+        }
+        return count;
     }
 
     private JSONArray getCurrencyData(Context app) {
@@ -378,9 +390,11 @@ public class WalletPlugin implements Plugin {
 
                 //Balance
                 JSONObject balance = new JSONObject();
+
+                String denominator = w.getDenominator(app);
                 balance.put("currency", w.getIso(app));
-                balance.put("numerator", w.getCachedBalance(app).toPlainString());
-                balance.put("denominator", String.valueOf(w.getDenominator(app)));
+                balance.put("numerator", w.getCachedBalance(app).multiply(new BigDecimal(denominator)).toPlainString());
+                balance.put("denominator", denominator);
 
                 //Fiat balance
                 JSONObject fiatBalance = new JSONObject();
@@ -405,12 +419,10 @@ public class WalletPlugin implements Plugin {
             }
 
         }
-        Log.e(TAG, "getCurrencyData: " + arr);
         return arr;
     }
 
-    public static void finalizeTx(final boolean succeed, final String hash){
-        Log.e(TAG, "finalizeTx: " + hash + ", " + succeed);
+    public static void finalizeTx(final boolean succeed, final String hash) {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {

@@ -289,7 +289,7 @@ public class SendManager {
                 public void onClick(BRDialogView brDialogView) {
                     brDialogView.dismissWithAnimation();
                     PostAuth.getInstance().setPaymentItem(item);
-                    confirmPay(app, item, walletManager,completion);
+                    confirmPay(app, item, walletManager, completion);
 
                 }
             }, new BRDialogView.BROnClickListener() {
@@ -309,6 +309,10 @@ public class SendManager {
         }
 
         String message = createConfirmation(ctx, request, wm);
+        if (message == null) {
+            BRDialog.showSimpleDialog(ctx, "Failed", "Confirmation message failed");
+            return;
+        }
 
         BigDecimal minOutput = request.isAmountRequested ? wm.getMinOutputAmountPossible() : wm.getMinOutputAmount(ctx);
 
@@ -400,11 +404,12 @@ public class SendManager {
 
                 return null;
             }
-            if (maxAmount != null) {
+            if (maxAmount != null && WalletsMaster.getInstance(ctx).isIsoErc20(ctx, wm.getIso(ctx))) {
                 feeForTx = wm.getEstimatedFee(request.amount, request.address);
                 feeForTx = feeForTx.add(wm.getCachedBalance(ctx).subtract(request.amount.abs()));
             }
         }
+        if (feeForTx.compareTo(new BigDecimal(0)) <= 0) return null;
         BigDecimal amount = request.amount.abs();
         final BigDecimal total = amount.add(feeForTx);
         String formattedCryptoAmount = CurrencyUtils.getFormattedAmount(ctx, wm.getIso(ctx), amount);
