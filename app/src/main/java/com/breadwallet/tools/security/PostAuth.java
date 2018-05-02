@@ -217,6 +217,7 @@ public class PostAuth {
                         if (mCryptoRequest != null && mCryptoRequest.amount != null && mCryptoRequest.address != null) {
 
                             CryptoTransaction tx = walletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address);
+
                             if (tx == null) {
                                 BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_insufficientFunds),
                                         app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
@@ -227,6 +228,8 @@ public class PostAuth {
                                         }, null, null, 0);
                                 return;
                             }
+                            Log.e(TAG, "onPublishTxAuth: amount:" + mCryptoRequest.amount);
+                            Log.e(TAG, "onPublishTxAuth: fee: " + tx.getEtherTx().getFee());
 
                             byte[] txHash = walletManager.signAndPublishTransaction(tx, rawPhrase);
 

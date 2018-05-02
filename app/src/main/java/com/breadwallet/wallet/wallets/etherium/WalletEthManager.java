@@ -799,7 +799,7 @@ public class WalletEthManager implements BaseWalletManager,
                                 if (responseObject.has("result")) {
                                     String balance = responseObject.getString("result");
                                     node.announceBalance(wid, balance, rid);
-                                    final BigDecimal uiBalance = new BigDecimal(wallet.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));
+                                    final BigDecimal uiBalance = new BigDecimal(wallet.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));//use TOKEN_DECIMAL
                                     final String iso = wallet.getToken().getSymbol();
 
                                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
@@ -807,7 +807,7 @@ public class WalletEthManager implements BaseWalletManager,
                                         public void run() {
                                             for (OnBalanceChangedListener list : balanceListeners)
                                                 if (list != null)
-                                                    list.onBalanceChanged(iso, uiBalance);//use TOKEN_DECIMAL
+                                                    list.onBalanceChanged(iso, uiBalance);
                                         }
                                     });
                                 }
@@ -853,14 +853,13 @@ public class WalletEthManager implements BaseWalletManager,
 
                                 if (responseObject.has("result")) {
                                     String gasPrice = responseObject.getString("result");
+                                    Log.e(TAG, "onRpcRequestCompleted: getGasPrice: " + gasPrice);
                                     node.announceGasPrice(wid, gasPrice, rid);
                                 }
                             }
                         } catch (JSONException je) {
                             je.printStackTrace();
                         }
-
-
 
                     }
                 });
@@ -901,7 +900,7 @@ public class WalletEthManager implements BaseWalletManager,
 
                             if (responseObject.has("result")) {
                                 String gasEstimate = responseObject.getString("result");
-
+                                Log.e(TAG, "onRpcRequestCompleted: getGasEstimate: " + gasEstimate);
                                 node.announceGasEstimate(wid, tid, gasEstimate, rid);
                             }
                         } catch (JSONException e) {
