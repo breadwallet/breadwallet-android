@@ -7,6 +7,7 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -350,10 +351,15 @@ public class WalletPlugin implements Plugin {
         }
 
         BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, currency);
+        String addr = wm.undecorateAddress(app, toAddress);
+        if (Utils.isNullOrEmpty(addr)) {
+            BRDialog.showSimpleDialog(app, "Failed to create tx for exchange!", "Invalid address: " + addr);
+            return;
+        }
         BigDecimal bigAmount = WalletsMaster.getInstance(app).isIsoErc20(app, currency) ?
                 new BigDecimal(numerator).divide(new BigDecimal(denominator), nrOfZeros(denominator), BRConstants.ROUNDING_MODE) :
                 new BigDecimal(numerator);
-        CryptoRequest item = new CryptoRequest(null, false, null, toAddress, bigAmount);
+        CryptoRequest item = new CryptoRequest(null, false, null, addr, bigAmount);
         SendManager.sendTransaction(app, item, wm, new SendManager.SendCompletion() {
             @Override
             public void onCompleted(String hash, boolean succeed) {

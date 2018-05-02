@@ -229,9 +229,6 @@ public class PostAuth {
                                         }, null, null, 0);
                                 return;
                             }
-                            Log.e(TAG, "onPublishTxAuth: amount:" + mCryptoRequest.amount);
-                            Log.e(TAG, "onPublishTxAuth: fee: " + tx.getEtherTx().getFee());
-
                             byte[] txHash = mWalletManager.signAndPublishTransaction(tx, rawPhrase);
 
                             txMetaData = new TxMetaData();
