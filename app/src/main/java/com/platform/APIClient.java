@@ -308,7 +308,7 @@ public class APIClient {
         BRResponse mainBrResponse = null;
         try {
             if (mHTTPClient == null)
-                mHTTPClient = new OkHttpClient.Builder().followRedirects(false).connectTimeout(5, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
+                mHTTPClient = new OkHttpClient.Builder().followRedirects(false).connectTimeout(20, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
             request = request.newBuilder().header("User-agent", Utils.getAgentString(ctx, "OkHttp/3.4.1")).build();
             response = mHTTPClient.newCall(request).execute();
             mainBrResponse = resToBRResponse(response);

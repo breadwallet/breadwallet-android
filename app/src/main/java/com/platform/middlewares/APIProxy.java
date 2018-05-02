@@ -99,7 +99,6 @@ public class APIProxy implements Middleware {
             response.addHeader(s, res.getHeaders().get(s));
         }
 
-
         try {
             response.setStatus(res.getCode());
             if (!Utils.isNullOrEmpty(res.getContentType()))

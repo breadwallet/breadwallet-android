@@ -109,7 +109,7 @@ public class BRActivity extends Activity {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onPublishTxAuth(BRActivity.this, true, null);
+                            PostAuth.getInstance().onPublishTxAuth(BRActivity.this, null,true, null);
                         }
                     });
                 }

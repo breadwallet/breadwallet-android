@@ -218,8 +218,7 @@ public class InputWordsActivity extends BRActivity {
                     } else {
                         Utils.hideKeyboard(app);
                         WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
-                        m.wipeWalletButKeystore(app);
-                        m.wipeKeyStore(app);
+                        m.wipeAll(InputWordsActivity.this);
                         PostAuth.getInstance().setPhraseForKeyStore(cleanPhrase);
                         BRSharedPrefs.putAllowSpend(app, BRSharedPrefs.getCurrentWalletIso(app), false);
                         PostAuth.getInstance().onRecoverWalletAuth(app, false);

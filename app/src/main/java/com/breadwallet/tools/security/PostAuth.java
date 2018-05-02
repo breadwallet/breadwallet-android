@@ -67,6 +67,7 @@ public class PostAuth {
     public static boolean isStuckWithAuthLoop;
     public static TxMetaData txMetaData;
     public SendManager.SendCompletion mSendCompletion;
+    private BaseWalletManager mWalletManager;
 
     private CryptoTransaction mPaymentProtocolTx;
     private static PostAuth instance;
@@ -194,13 +195,13 @@ public class PostAuth {
 
     }
 
-    public void onPublishTxAuth(final Context app, final boolean authAsked, final SendManager.SendCompletion completion) {
+    public void onPublishTxAuth(final Context app, final BaseWalletManager wm, final boolean authAsked, final SendManager.SendCompletion completion) {
         if (completion != null)
             mSendCompletion = completion;
+        if(wm != null) mWalletManager = wm;
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final BaseWalletManager walletManager = WalletsMaster.getInstance(app).getCurrentWallet(app);
                 byte[] rawPhrase;
                 try {
                     rawPhrase = BRKeyStore.getPhrase(app, BRConstants.PAY_REQUEST_CODE);
@@ -216,7 +217,7 @@ public class PostAuth {
                     if (rawPhrase.length != 0) {
                         if (mCryptoRequest != null && mCryptoRequest.amount != null && mCryptoRequest.address != null) {
 
-                            CryptoTransaction tx = walletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address);
+                            CryptoTransaction tx = mWalletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address);
 
                             if (tx == null) {
                                 BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_insufficientFunds),
@@ -231,23 +232,23 @@ public class PostAuth {
                             Log.e(TAG, "onPublishTxAuth: amount:" + mCryptoRequest.amount);
                             Log.e(TAG, "onPublishTxAuth: fee: " + tx.getEtherTx().getFee());
 
-                            byte[] txHash = walletManager.signAndPublishTransaction(tx, rawPhrase);
+                            byte[] txHash = mWalletManager.signAndPublishTransaction(tx, rawPhrase);
 
                             txMetaData = new TxMetaData();
                             txMetaData.comment = mCryptoRequest.message;
                             txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
-                            BigDecimal fiatExchangeRate = walletManager.getFiatExchangeRate(app);
+                            BigDecimal fiatExchangeRate = mWalletManager.getFiatExchangeRate(app);
                             txMetaData.exchangeRate = fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue();
-                            txMetaData.fee = walletManager.getTxFee(tx).toPlainString();
+                            txMetaData.fee = mWalletManager.getTxFee(tx).toPlainString();
                             txMetaData.txSize = tx.getTxSize().intValue();
-                            txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, walletManager.getIso(app));
+                            txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, mWalletManager.getIso(app));
                             txMetaData.creationTime = (int) (System.currentTimeMillis() / 1000);//seconds
                             txMetaData.deviceId = BRSharedPrefs.getDeviceId(app);
                             txMetaData.classVersion = 1;
 
                             if (Utils.isNullOrEmpty(txHash)) {
                                 if (tx.getEtherTx() != null) {
-                                    walletManager.watchTransactionForHash(tx, new BaseWalletManager.OnHashUpdated() {
+                                    mWalletManager.watchTransactionForHash(tx, new BaseWalletManager.OnHashUpdated() {
                                         @Override
                                         public void onUpdated(String hash) {
                                             if (mSendCompletion != null)

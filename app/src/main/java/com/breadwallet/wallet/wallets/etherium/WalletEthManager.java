@@ -116,34 +116,36 @@ public class WalletEthManager implements BaseWalletManager,
 
         if (Utils.isNullOrEmpty(ethPubKey)) {
             Log.e(TAG, "WalletEthManager: Using the paperKey to create");
+            String paperKey = null;
             try {
-                String paperKey = new String(BRKeyStore.getPhrase(app, 0));
-                if (Utils.isNullOrEmpty(paperKey)) {
-                    Log.e(TAG, "WalletEthManager: paper key is empty too, no wallet!");
-                    return;
-                }
-
-                String[] words = lookupWords(app, paperKey, Locale.getDefault().getLanguage());
-
-                if (null == words) {
-                    Log.e(TAG, "WalletEthManager: paper key does not validate with BIP39 Words for: " +
-                            Locale.getDefault().getLanguage());
-                    return;
-                }
-
-                new BREthereumLightNode.JSON_RPC(this, network, paperKey, words);
-                mWallet = node.getWallet();
-
-                if (null == mWallet) {
-                    Log.e(TAG, "WalletEthManager: failed to create the ETH wallet using paperKey.");
-                    return;
-                }
-
-                ethPubKey = mWallet.getAccount().getPrimaryAddressPublicKey();
-                BRKeyStore.putEthPublicKey(ethPubKey, app);
+                paperKey = new String(BRKeyStore.getPhrase(app, 0));
             } catch (UserNotAuthenticatedException e) {
                 e.printStackTrace();
+                return;
             }
+            if (Utils.isNullOrEmpty(paperKey)) {
+                Log.e(TAG, "WalletEthManager: paper key is empty too, no wallet!");
+                return;
+            }
+
+            String[] words = lookupWords(app, paperKey, Locale.getDefault().getLanguage());
+
+            if (null == words) {
+                Log.e(TAG, "WalletEthManager: paper key does not validate with BIP39 Words for: " +
+                        Locale.getDefault().getLanguage());
+                return;
+            }
+
+            new BREthereumLightNode.JSON_RPC(this, network, paperKey, words);
+            mWallet = node.getWallet();
+
+            if (null == mWallet) {
+                Log.e(TAG, "WalletEthManager: failed to create the ETH wallet using paperKey.");
+                return;
+            }
+
+            ethPubKey = mWallet.getAccount().getPrimaryAddressPublicKey();
+            BRKeyStore.putEthPublicKey(ethPubKey, app);
         } else {
             Log.e(TAG, "WalletEthManager: Using the pubkey to create");
             new BREthereumLightNode.JSON_RPC(this, network, ethPubKey);
@@ -824,6 +826,7 @@ public class WalletEthManager implements BaseWalletManager,
 
     @Override
     public void getGasPrice(final int wid, final int rid) {
+        Log.e(TAG, "getGasPrice: " + wid);
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -844,13 +847,9 @@ public class WalletEthManager implements BaseWalletManager,
                 JsonRpcRequest.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
-
                         try {
-
                             if (jsonResult != null) {
-
                                 JSONObject responseObject = new JSONObject(jsonResult);
-
                                 if (responseObject.has("result")) {
                                     String gasPrice = responseObject.getString("result");
                                     Log.e(TAG, "onRpcRequestCompleted: getGasPrice: " + gasPrice);
@@ -870,6 +869,7 @@ public class WalletEthManager implements BaseWalletManager,
 
     @Override
     public void getGasEstimate(final int wid, final int tid, final String to, final String amount, final String data, final int rid) {
+        Log.e(TAG, "getGasEstimate: " + wid);
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {

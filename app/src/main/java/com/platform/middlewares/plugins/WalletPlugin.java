@@ -350,9 +350,10 @@ public class WalletPlugin implements Plugin {
         }
 
         BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, currency);
-
-        CryptoRequest item = new CryptoRequest(null, false, null, toAddress,
-                new BigDecimal(numerator).divide(new BigDecimal(denominator), nrOfZeros(denominator), BRConstants.ROUNDING_MODE));
+        BigDecimal bigAmount = WalletsMaster.getInstance(app).isIsoErc20(app, currency) ?
+                new BigDecimal(numerator).divide(new BigDecimal(denominator), nrOfZeros(denominator), BRConstants.ROUNDING_MODE) :
+                new BigDecimal(numerator);
+        CryptoRequest item = new CryptoRequest(null, false, null, toAddress, bigAmount);
         SendManager.sendTransaction(app, item, wm, new SendManager.SendCompletion() {
             @Override
             public void onCompleted(String hash, boolean succeed) {

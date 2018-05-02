@@ -429,8 +429,8 @@ public class BRKeyStore {
         }, null, new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                WalletsMaster.getInstance(app).wipeWalletButKeystore(app);
                 WalletsMaster.getInstance(app).wipeKeyStore(app);
+                WalletsMaster.getInstance(app).wipeWalletButKeystore(app);
                 dialog.dismiss();
             }
         }, 0);
