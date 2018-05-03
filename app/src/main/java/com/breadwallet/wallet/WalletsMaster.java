@@ -104,27 +104,28 @@ public class WalletsMaster {
 
         for (TokenListMetaData.TokenInfo enabled : mTokenListMetaData.enabledCurrencies) {
 
+            int position = mTokenListMetaData.enabledCurrencies.indexOf(enabled);
+
             boolean isHidden = mTokenListMetaData.isCurrencyHidden(enabled.symbol);
 
             if (enabled.symbol.equalsIgnoreCase("BTC")) {
                 //BTC wallet
                 if (!mWallets.contains(WalletBitcoinManager.getInstance(app)) && !isHidden) {
-                    mWallets.add(WalletBitcoinManager.getInstance(app));
+                    mWallets.add(position, WalletBitcoinManager.getInstance(app));
                 } else if (mWallets.contains(WalletBitcoinManager.getInstance(app)) && isHidden) {
                     mWallets.remove(WalletBitcoinManager.getInstance(app));
                 }
             } else if (enabled.symbol.equalsIgnoreCase("BCH")) {
                 //BCH wallet
                 if (!mWallets.contains(WalletBchManager.getInstance(app)) && !isHidden) {
-                    mWallets.add(WalletBchManager.getInstance(app));
+                    mWallets.add(position, WalletBchManager.getInstance(app));
                 } else if (mWallets.contains(WalletBchManager.getInstance(app)) && isHidden) {
                     mWallets.remove(WalletBchManager.getInstance(app));
                 }
             } else if (enabled.symbol.equalsIgnoreCase("ETH")) {
                 //ETH wallet
                 if (!mWallets.contains(ethWallet) && !isHidden) {
-                    Log.d(TAG, "Adding ETH wallet to home screen");
-                    mWallets.add(ethWallet);
+                    mWallets.add(position, ethWallet);
                 } else if (mWallets.contains(ethWallet) && isHidden) {
                     mWallets.remove(ethWallet);
                 }
@@ -132,7 +133,7 @@ public class WalletsMaster {
                 //add ERC20 wallet
                 WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(app, ethWallet, enabled.symbol);
                 if (tokenWallet != null)
-                    if (!mWallets.contains(tokenWallet)) mWallets.add(tokenWallet);
+                    if (!mWallets.contains(tokenWallet)) mWallets.add(position, tokenWallet);
                 for (TokenListMetaData.TokenInfo hidden : mTokenListMetaData.hiddenCurrencies) {
 
                     if (tokenWallet != null && tokenWallet.getIso(app).equalsIgnoreCase(hidden.symbol)) {
@@ -145,9 +146,7 @@ public class WalletsMaster {
     }
 
     public synchronized List<BaseWalletManager> getAllWallets(Context app) {
-        if (mWallets == null || mWallets.size() == 0) {
-            updateWallets(app);
-        }
+
         return mWallets;
 
     }
