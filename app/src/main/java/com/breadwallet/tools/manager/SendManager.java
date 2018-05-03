@@ -420,7 +420,9 @@ public class SendManager {
         String formattedFee = CurrencyUtils.getFormattedAmount(ctx, iso, wm.getFiatForSmallestCrypto(ctx, feeForTx, null));
         String formattedTotal = CurrencyUtils.getFormattedAmount(ctx, iso, wm.getFiatForSmallestCrypto(ctx, total, null));
 
-        if (WalletsMaster.getInstance(ctx).isIsoErc20(ctx, wm.getIso(ctx))) {
+        boolean isErc20 = WalletsMaster.getInstance(ctx).isIsoErc20(ctx, wm.getIso(ctx));
+
+        if (isErc20) {
             formattedCryptoTotal = "";
             formattedTotal = "";
             BaseWalletManager ethWm = WalletEthManager.getInstance(ctx);
@@ -428,12 +430,14 @@ public class SendManager {
             formattedFee = CurrencyUtils.getFormattedAmount(ctx, iso, ethWm.getFiatForSmallestCrypto(ctx, feeForTx, null));
         }
 
+        String line1 = receiver + "\n\n";
+        String line2 = ctx.getString(R.string.Confirmation_amountLabel) + " " + formattedCryptoAmount + " (" + formattedAmount + ")\n";
+        String line3 = ctx.getString(R.string.Confirmation_feeLabel) + " " + formattedCryptoFee + " (" + formattedFee + ")\n";
+        String line4 = ctx.getString(R.string.Confirmation_totalLabel) + " " + formattedCryptoTotal + " (" + formattedTotal + ")";
+        String line5 = Utils.isNullOrEmpty(request.message) ? "" : "\n\n" + request.message;
+
         //formatted text
-        return receiver + "\n\n"
-                + ctx.getString(R.string.Confirmation_amountLabel) + " " + formattedCryptoAmount + " (" + formattedAmount + ")"
-                + "\n" + ctx.getString(R.string.Confirmation_feeLabel) + " " + formattedCryptoFee + " (" + formattedFee + ")"
-                + "\n" + ctx.getString(R.string.Confirmation_totalLabel) + " " + formattedCryptoTotal + " (" + formattedTotal + ")"
-                + (request.message == null ? "" : "\n\n" + request.message);
+        return line1 + line2 + line3 + line4 + (isErc20 ? "" : line5);
     }
 
     public interface SendCompletion {
