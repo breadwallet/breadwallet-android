@@ -8,7 +8,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="90dp"
+        android:layout_height="60dp"
         android:background="@color/add_wallets_header_color">
 
 
@@ -20,7 +20,7 @@
                 android:id="@+id/back_arrow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_arrow_left" />
+                android:background="@drawable/ic_arrow_left"/>
 
 
             <com.breadwallet.presenter.customviews.BRText
@@ -30,7 +30,7 @@
                 android:layout_centerHorizontal="true"
                 android:text="@string/MenuButton.addWallet"
                 android:textSize="18sp"
-                app:customTFont="CircularPro-Book.otf" />
+                app:customTFont="CircularPro-Book.otf"/>
 
 
         </RelativeLayout>
