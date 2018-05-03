@@ -146,7 +146,9 @@ public class WalletsMaster {
     }
 
     public synchronized List<BaseWalletManager> getAllWallets(Context app) {
-        mWallets.clear();
+        if (!mWallets.isEmpty()) {
+            mWallets.clear();
+        }
         updateWallets(app);
         return mWallets;
 
