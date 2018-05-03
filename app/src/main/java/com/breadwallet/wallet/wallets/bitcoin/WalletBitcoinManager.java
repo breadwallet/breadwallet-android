@@ -182,7 +182,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
 
             WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
 
-            uiConfig = new WalletUiConfiguration("f29500", null, true);
+            uiConfig = new WalletUiConfiguration("#f29500", null, true);
             settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
         } finally {
             isInitiatingWallet = false;

@@ -198,7 +198,7 @@ public class PostAuth {
     public void onPublishTxAuth(final Context app, final BaseWalletManager wm, final boolean authAsked, final SendManager.SendCompletion completion) {
         if (completion != null)
             mSendCompletion = completion;
-        if(wm != null) mWalletManager = wm;
+        if (wm != null) mWalletManager = wm;
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -248,8 +248,10 @@ public class PostAuth {
                                     mWalletManager.watchTransactionForHash(tx, new BaseWalletManager.OnHashUpdated() {
                                         @Override
                                         public void onUpdated(String hash) {
-                                            if (mSendCompletion != null)
+                                            if (mSendCompletion != null) {
                                                 mSendCompletion.onCompleted(hash, true);
+                                                mSendCompletion = null;
+                                            }
                                         }
                                     });
                                     return; // ignore ETH since txs do not have the hash right away
@@ -257,8 +259,10 @@ public class PostAuth {
                                 Log.e(TAG, "onPublishTxAuth: signAndPublishTransaction returned an empty txHash");
                                 BRDialog.showSimpleDialog(app, app.getString(R.string.Alerts_sendFailure), "Failed to create transaction");
                             } else {
-                                if (mSendCompletion != null)
+                                if (mSendCompletion != null) {
                                     mSendCompletion.onCompleted(tx.getHash(), true);
+                                    mSendCompletion = null;
+                                }
                                 stampMetaData(app, txHash);
                             }
 

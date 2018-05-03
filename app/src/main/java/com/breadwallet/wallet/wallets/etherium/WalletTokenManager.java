@@ -316,8 +316,10 @@ public class WalletTokenManager implements BaseWalletManager {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                BigDecimal balance = new BigDecimal(mWalletToken.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));
-                BRSharedPrefs.putCachedBalance(app, getIso(app), balance);
+                if (mWalletEthManager.wasBalanceUpdated(mWalletToken.getSymbol())) {
+                    BigDecimal balance = new BigDecimal(mWalletToken.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));
+                    BRSharedPrefs.putCachedBalance(app, getIso(app), balance);
+                }
             }
         });
     }

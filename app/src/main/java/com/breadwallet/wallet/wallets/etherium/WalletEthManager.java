@@ -53,8 +53,10 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
@@ -100,6 +102,7 @@ public class WalletEthManager implements BaseWalletManager,
     private List<OnTxStatusUpdatedListener> txStatusUpdatedListeners = new ArrayList<>();
     private List<SyncListener> syncListeners = new ArrayList<>();
     private List<OnTxListModified> txModifiedListeners = new ArrayList<>();
+    private Map<String, Boolean> balanceStatuses = new HashMap<>();
 
     private static WalletEthManager instance;
     private WalletUiConfiguration uiConfig;
@@ -111,7 +114,7 @@ public class WalletEthManager implements BaseWalletManager,
     private Context mContext;
 
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
-        uiConfig = new WalletUiConfiguration("5e70a3", null, true);
+        uiConfig = new WalletUiConfiguration("#5e6fa5", null, true);
         settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
 
         if (Utils.isNullOrEmpty(ethPubKey)) {
@@ -445,8 +448,10 @@ public class WalletEthManager implements BaseWalletManager,
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                BigDecimal balance = new BigDecimal(mWallet.getBalance(getUnit()));
-                BRSharedPrefs.putCachedBalance(app, ISO, balance);
+                if (wasBalanceUpdated("ETH")) {
+                    BigDecimal balance = new BigDecimal(mWallet.getBalance(getUnit()));
+                    BRSharedPrefs.putCachedBalance(app, ISO, balance);
+                }
             }
         });
     }
@@ -1221,19 +1226,6 @@ public class WalletEthManager implements BaseWalletManager,
 
                                     Log.d(TAG, "LogObject contains -> " + log.toString());
 
-//                                    { "address":"0x722dd3f80bac40c951b51bdd28dd19d435762180",
-//                                        "topics":["0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
-//                                            "0x0000000000000000000000000000000000000000000000000000000000000000",
-//                                            "0x000000000000000000000000bdfdad139440d2db9ba2aa3b7081c2de39291508"],
-//                                        "data":"0x0000000000000000000000000000000000000000000000000000000000002328",
-//                                        "blockNumber":"0x1e487e",
-//                                        "timeStamp":"0x59fa1ac9",
-//                                        "gasPrice":"0xba43b7400",
-//                                        "gasUsed":"0xc64e",
-//                                        "logIndex":"0x",
-//                                        "transactionHash":"0xa37bd8bd8b1fa2838ef65aec9f401f56a6279f99bb1cfb81fa84e923b1b60f2b",
-//                                        "transactionIndex":"0x"}
-
                                     JSONArray topicsArray = log.getJSONArray("topics");
                                     String[] topics = new String[topicsArray.length()];
                                     for (int dex = 0; dex < topics.length; dex++)
@@ -1283,6 +1275,7 @@ public class WalletEthManager implements BaseWalletManager,
                     break;
 
                 case BALANCE_UPDATED:
+                    balanceStatuses.put(iso, true);
                     printInfo("New Balance: " + wallet.getBalance(), iso, event.name());
                     break;
                 case DEFAULT_GAS_LIMIT_UPDATED:
@@ -1345,14 +1338,18 @@ public class WalletEthManager implements BaseWalletManager,
                     if (mWatchedTransaction != null) {
                         Log.e(TAG, "handleTransactionEvent: mWatchedTransaction: " + mWatchedTransaction.getEtherTx().getNonce() + ", actual: " + transaction.getNonce());
                         if (mWatchedTransaction.getEtherTx().getNonce() == transaction.getNonce()) {
-                            if (mWatchListener != null)
-                                mWatchListener.onUpdated(transaction.getHash());
-                            mWatchListener = null;
-                            mWatchedTransaction = null;
+                            String hash = transaction.getHash();
+                            if (!Utils.isNullOrEmpty(hash)) {
+                                if (mWatchListener != null)
+                                    mWatchListener.onUpdated(hash);
+                                mWatchListener = null;
+                                mWatchedTransaction = null;
+                            }
                         }
                     } else {
                         Log.e(TAG, "handleTransactionEvent: tx is null");
                     }
+                    Log.e(TAG, "handleTransactionEvent: SUBMITTED: " + transaction.getHash());
                     printInfo("Transaction submitted: " + transaction.getAmount(), iso, event.name());
                     break;
                 case BLOCKED:
@@ -1369,5 +1366,14 @@ public class WalletEthManager implements BaseWalletManager,
                     break;
             }
         }
+    }
+
+    public boolean wasBalanceUpdated(String iso) {
+        if (Utils.isNullOrEmpty(iso)) {
+            BRReportsManager.reportBug(new NullPointerException("Invalid iso: " + iso));
+            return false;
+        }
+        return balanceStatuses.containsKey(iso) && balanceStatuses.get(iso);
+
     }
 }
