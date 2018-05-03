@@ -437,7 +437,7 @@ public class SendManager {
         String line5 = Utils.isNullOrEmpty(request.message) ? "" : "\n\n" + request.message;
 
         //formatted text
-        return line1 + line2 + line3 + line4 + (isErc20 ? "" : line5);
+        return line1 + line2 + line3 + (isErc20 ? "" : line4) + line5;
     }
 
     public interface SendCompletion {
