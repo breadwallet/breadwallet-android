@@ -60,6 +60,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
+import okhttp3.internal.Util;
 
 /**
  * BreadWallet
@@ -853,7 +854,7 @@ public class WalletEthManager implements BaseWalletManager,
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
-                            if (jsonResult != null) {
+                            if (!Utils.isNullOrEmpty(jsonResult)) {
                                 JSONObject responseObject = new JSONObject(jsonResult);
                                 if (responseObject.has("result")) {
                                     String gasPrice = responseObject.getString("result");
@@ -949,7 +950,7 @@ public class WalletEthManager implements BaseWalletManager,
                         String txHash = null;
                         int errCode = 0;
                         String errMessage = "";
-                        if (jsonResult != null) {
+                        if (!Utils.isNullOrEmpty(jsonResult)) {
                             try {
                                 JSONObject responseObject = new JSONObject(jsonResult);
                                 Log.e(TAG, "onRpcRequestCompleted: " + responseObject);
@@ -1029,10 +1030,7 @@ public class WalletEthManager implements BaseWalletManager,
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
 
-
-                        final String jsonRcpResponse = jsonResult;
-
-                        if (jsonRcpResponse != null) {
+                        if (!Utils.isNullOrEmpty(jsonResult)) {
                             try {
                                 // Convert response into JsonArray of transactions
                                 JSONObject transactions = new JSONObject(jsonResult);
@@ -1211,9 +1209,7 @@ public class WalletEthManager implements BaseWalletManager,
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
 
-                        final String jsonRcpResponse = jsonResult;
-
-                        if (jsonRcpResponse != null) {
+                        if (!Utils.isNullOrEmpty(jsonResult)) {
                             try {
                                 // Convert response into JsonArray of logs
                                 JSONObject logs = new JSONObject(jsonResult);

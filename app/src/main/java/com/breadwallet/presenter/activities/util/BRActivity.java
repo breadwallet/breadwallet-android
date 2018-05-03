@@ -3,18 +3,24 @@ package com.breadwallet.presenter.activities.util;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.R;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
+import com.breadwallet.presenter.customviews.BRToast;
 import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
@@ -100,6 +106,28 @@ public class BRActivity extends Activity {
     }
 
     @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == BRConstants.CAMERA_REQUEST_ID) {
+            // BEGIN_INCLUDE(permission_result)
+            // Received permission result for camera permission.
+            Log.i(TAG, "Received response for CAMERA_REQUEST_ID permission request.");
+
+            // Check if the only required permission has been granted
+            if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                // Camera permission has been granted, preview can be displayed
+                Log.i(TAG, "CAMERA permission has now been granted. Showing preview.");
+                BRAnimator.openScanner(this, BRConstants.SCANNER_REQUEST);
+            } else {
+                Log.i(TAG, "CAMERA permission was NOT granted.");
+                BRDialog.showSimpleDialog(this, getString(R.string.Send_cameraUnavailabeTitle_android), getString(R.string.Send_cameraUnavailabeMessage_android));
+
+            }
+        }
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         // 123 is the qrCode result
         switch (requestCode) {
@@ -109,7 +137,7 @@ public class BRActivity extends Activity {
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            PostAuth.getInstance().onPublishTxAuth(BRActivity.this, null,true, null);
+                            PostAuth.getInstance().onPublishTxAuth(BRActivity.this, null, true, null);
                         }
                     });
                 }
