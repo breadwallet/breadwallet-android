@@ -229,7 +229,7 @@ public class PostAuth {
                                         }, null, null, 0);
                                 return;
                             }
-                            byte[] txHash = mWalletManager.signAndPublishTransaction(tx, rawPhrase);
+                            final byte[] txHash = mWalletManager.signAndPublishTransaction(tx, rawPhrase);
 
                             txMetaData = new TxMetaData();
                             txMetaData.comment = mCryptoRequest.message;
@@ -250,6 +250,7 @@ public class PostAuth {
                                         public void onUpdated(String hash) {
                                             if (mSendCompletion != null) {
                                                 mSendCompletion.onCompleted(hash, true);
+                                                stampMetaData(app, txHash);
                                                 mSendCompletion = null;
                                             }
                                         }

@@ -7,6 +7,7 @@ import android.util.Log;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
 
 import java.math.BigDecimal;
 
@@ -84,15 +85,37 @@ public class CryptoRequest {
                 && amount.abs().compareTo(new BigDecimal(0)) > 0;
     }
 
+    //not enough money for a tx + fee
     public boolean notEnoughForFee(Context app, BaseWalletManager walletManager) {
-        BigDecimal maxOutput = walletManager.getMaxOutputAmount(app);
         BigDecimal balance = walletManager.getCachedBalance(app);
-        BigDecimal feeForTx = walletManager.getEstimatedFee(maxOutput, null);
-        Log.e(TAG, "maxOutput: " + maxOutput);
-        Log.e(TAG, "balance: " + balance);
-        Log.e(TAG, "notEnoughForFee: " + feeForTx);
 
-        return WalletsMaster.getInstance(app).isIsoErc20(app, walletManager.getIso(app)) ? amount.compareTo(balance) > 0 : amount.add(feeForTx).compareTo(balance) > 0;
+        boolean isErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, walletManager.getIso(app));
+
+        if (isErc20) {
+            BigDecimal feeForTx = walletManager.getEstimatedFee(amount, null);
+            return amount.compareTo(balance) > 0 || feeForTx.compareTo(WalletEthManager.getInstance(app).getCachedBalance(app)) > 0;
+        } else {
+            BigDecimal minAmount = walletManager.getMinOutputAmount(app);
+            BigDecimal feeForTx = walletManager.getEstimatedFee(amount, null);
+            BigDecimal minAmountFee = walletManager.getEstimatedFee(minAmount, null);
+            return amount.add(feeForTx).compareTo(balance) > 0 && minAmount.add(minAmountFee).compareTo(balance) > 0;
+        }
+    }
+
+    //the fee needs adjustments (amount + fee > balance but possible to adjust the amount to create a tx)
+    public boolean feeOverBalance(Context app, BaseWalletManager walletManager) {
+        BigDecimal balance = walletManager.getCachedBalance(app);
+
+        boolean isErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, walletManager.getIso(app));
+
+        if (isErc20) {
+            return false; //never need adjustment for ERC20s (fee is in ETH)
+        } else {
+            BigDecimal minAmount = walletManager.getMinOutputAmount(app);
+            BigDecimal feeForTx = walletManager.getEstimatedFee(amount, null);
+            BigDecimal minAmountFee = walletManager.getEstimatedFee(minAmount, null);
+            return amount.add(feeForTx).compareTo(balance) > 0 && minAmount.add(minAmountFee).compareTo(balance) < 0;
+        }
     }
 
     public String getReceiver(BaseWalletManager walletManager) {

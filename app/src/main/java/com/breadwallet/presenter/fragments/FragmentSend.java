@@ -417,7 +417,7 @@ public class FragmentSend extends Fragment {
                 //not allowed now
                 if (!BRAnimator.isClickAllowed()) return;
                 WalletsMaster master = WalletsMaster.getInstance(getActivity());
-                BaseWalletManager wm = master.getCurrentWallet(getActivity());
+                final BaseWalletManager wm = master.getCurrentWallet(getActivity());
                 //get the current wallet used
                 if (wm == null) {
                     Log.e(TAG, "onClick: Wallet is null and it can't happen.");
@@ -481,8 +481,13 @@ public class FragmentSend extends Fragment {
                 }
 
                 if (allFilled) {
-                    CryptoRequest item = new CryptoRequest(null, false, comment, req.address, cryptoAmount);
-                    SendManager.sendTransaction(getActivity(), item, wm, null);
+                    final CryptoRequest item = new CryptoRequest(null, false, comment, req.address, cryptoAmount);
+                    BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            SendManager.sendTransaction(getActivity(), item, wm, null);
+                        }
+                    });
                 }
             }
         });

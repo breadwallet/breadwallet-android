@@ -2,6 +2,7 @@ package com.breadwallet.tools.manager;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.R;
@@ -63,129 +64,94 @@ public class SendManager {
     private static boolean sending;
     private final static long FEE_EXPIRATION_MILLIS = 72 * 60 * 60 * 1000L;
 
+
+    @WorkerThread
     public static boolean sendTransaction(final Context app, final CryptoRequest payment, final BaseWalletManager walletManager, final SendCompletion completion) {
+        try {
+            if (sending) {
+                Log.e(TAG, "sendTransaction: already sending..");
+                return false;
+            }
+            sending = true;
+            long now = System.currentTimeMillis();
+            //if the fee (for BTC and BCH only) was updated more than 24 hours ago then try updating the fee
+            if (walletManager.getIso(app).equalsIgnoreCase("BTC") || walletManager.getIso(app).equalsIgnoreCase("BCH")) {
+                if (now - BRSharedPrefs.getFeeTime(app, walletManager.getIso(app)) >= FEE_EXPIRATION_MILLIS) {
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                Thread.sleep(3000);
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                            }
 
-        //array in order to be able to modify the first element from an inner block (can't be final)
-        final String[] errTitle = {null};
-        final String[] errMessage = {null};
+                            if (sending) timedOut = true;
+                        }
+                    }).start();
+                    walletManager.updateFee(app);
+                    //if the fee is STILL out of date then fail with network problem message
+                    long time = BRSharedPrefs.getFeeTime(app, walletManager.getIso(app));
+                    if (time <= 0 || now - time >= FEE_EXPIRATION_MILLIS) {
+                        Log.e(TAG, "sendTransaction: fee out of date even after fetching...");
+                        throw new FeeOutOfDate(BRSharedPrefs.getFeeTime(app, walletManager.getIso(app)), now);
+                    }
+                }
+            }
+            if (!timedOut)
+                tryPay(app, payment, walletManager, completion);
+            else
+                FirebaseCrash.report(new NullPointerException("did not send, timedOut!"));
+            return true; //return so no error is shown
+        } catch (InsufficientFundsException ignored) {
+            sayError(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.Send_insufficientFunds));
+        } catch (AmountSmallerThanMinException e) {
+            BigDecimal minAmount = walletManager.getMinOutputAmount(app);
+            sayError(app, app.getString(R.string.Alerts_sendFailure), String.format(Locale.getDefault(), app.getString(R.string.PaymentProtocol_Errors_smallPayment),
+                    BRConstants.symbolBits + minAmount.divide(new BigDecimal(100), BRConstants.ROUNDING_MODE)));
+        } catch (SpendingNotAllowed spendingNotAllowed) {
+            ((Activity) app).runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_isRescanning), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismissWithAnimation();
+                        }
+                    }, null, null, 0);
+                }
+            });
+            return false;
+        } catch (FeeNeedsAdjust feeNeedsAdjust) {
+            //offer to change amount, so it would be enough for fee
+//                    showFailed(app); //just show failed for now
+            showAdjustFee((Activity) app, payment, walletManager, completion);
+            return false;
+        } catch (FeeOutOfDate ex) {
+            //Fee is out of date, show not connected error
+            FirebaseCrash.report(ex);
+            sayError(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.NodeSelector_notConnected));
+            return false;
+        } catch (SomethingWentWrong somethingWentWrong) {
+            somethingWentWrong.printStackTrace();
+            FirebaseCrash.report(somethingWentWrong);
+            sayError(app, app.getString(R.string.Alerts_sendFailure), "Something went wrong");
+            return false;
+        } finally {
+            sending = false;
+            timedOut = false;
+        }
 
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+        return true;
+    }
+
+    private static void sayError(final Context app, final String title, final String message) {
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-                try {
-                    if (sending) {
-                        Log.e(TAG, "sendTransaction: already sending..");
-                        return;
-                    }
-                    sending = true;
-                    long now = System.currentTimeMillis();
-                    //if the fee (for BTC and BCH only) was updated more than 24 hours ago then try updating the fee
-                    if (walletManager.getIso(app).equalsIgnoreCase("BTC") || walletManager.getIso(app).equalsIgnoreCase("BCH")) {
-                        if (now - BRSharedPrefs.getFeeTime(app, walletManager.getIso(app)) >= FEE_EXPIRATION_MILLIS) {
-                            new Thread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    try {
-                                        Thread.sleep(3000);
-                                    } catch (InterruptedException e) {
-                                        e.printStackTrace();
-                                    }
-
-                                    if (sending) timedOut = true;
-                                }
-                            }).start();
-                            walletManager.updateFee(app);
-                            //if the fee is STILL out of date then fail with network problem message
-                            long time = BRSharedPrefs.getFeeTime(app, walletManager.getIso(app));
-                            if (time <= 0 || now - time >= FEE_EXPIRATION_MILLIS) {
-                                Log.e(TAG, "sendTransaction: fee out of date even after fetching...");
-                                throw new FeeOutOfDate(BRSharedPrefs.getFeeTime(app, walletManager.getIso(app)), now);
-                            }
-                        }
-                    }
-                    if (!timedOut)
-                        tryPay(app, payment, walletManager, completion);
-                    else
-                        FirebaseCrash.report(new NullPointerException("did not send, timedOut!"));
-                    return; //return so no error is shown
-                } catch (InsufficientFundsException ignored) {
-                    errTitle[0] = app.getString(R.string.Alerts_sendFailure);
-                    errMessage[0] = "Insufficient Funds";
-                } catch (AmountSmallerThanMinException e) {
-                    BigDecimal minAmount = walletManager.getMinOutputAmount(app);
-                    errTitle[0] = app.getString(R.string.Alerts_sendFailure);
-                    errMessage[0] = String.format(Locale.getDefault(), app.getString(R.string.PaymentProtocol_Errors_smallPayment),
-                            BRConstants.symbolBits + minAmount.divide(new BigDecimal(100), BRConstants.ROUNDING_MODE));
-                } catch (SpendingNotAllowed spendingNotAllowed) {
-                    ((Activity) app).runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_isRescanning), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-                                @Override
-                                public void onClick(BRDialogView brDialogView) {
-                                    brDialogView.dismissWithAnimation();
-                                }
-                            }, null, null, 0);
-                        }
-                    });
-                    return;
-                } catch (FeeNeedsAdjust feeNeedsAdjust) {
-                    //offer to change amount, so it would be enough for fee
-//                    showFailed(app); //just show failed for now
-                    showAdjustFee((Activity) app, payment, walletManager, completion);
-                    return;
-                } catch (FeeOutOfDate ex) {
-                    //Fee is out of date, show not connected error
-                    FirebaseCrash.report(ex);
-                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.NodeSelector_notConnected), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-                                @Override
-                                public void onClick(BRDialogView brDialogView) {
-                                    brDialogView.dismiss();
-                                }
-                            }, null, null, 0);
-                        }
-                    });
-                    return;
-                } catch (SomethingWentWrong somethingWentWrong) {
-                    somethingWentWrong.printStackTrace();
-                    FirebaseCrash.report(somethingWentWrong);
-                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), "Something went wrong", app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-                                @Override
-                                public void onClick(BRDialogView brDialogView) {
-                                    brDialogView.dismiss();
-                                }
-                            }, null, null, 0);
-                        }
-                    });
-                    return;
-                } finally {
-                    sending = false;
-                    timedOut = false;
-                }
-
-                //show the message if we have one to show
-                if (errTitle[0] != null && errMessage[0] != null)
-                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            BRDialog.showCustomDialog(app, errTitle[0], errMessage[0], app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-                                @Override
-                                public void onClick(BRDialogView brDialogView) {
-                                    brDialogView.dismiss();
-                                }
-                            }, null, null, 0);
-                        }
-                    });
-
+                BRDialog.showSimpleDialog(app, title, message);
             }
         });
-        return true;
     }
 
 
@@ -206,20 +172,13 @@ public class SendManager {
 //        long amount = paymentRequest.amount;
         BigDecimal balance = walletManager.getCachedBalance(app);
         BigDecimal minOutputAmount = walletManager.getMinOutputAmount(app);
-        final BigDecimal maxOutputAmount = walletManager.getMaxOutputAmount(app);
 
         //not enough for fee
         if (paymentRequest.notEnoughForFee(app, walletManager)) {
-            //weird bug when the core WalletsMaster is NULL
-            if (maxOutputAmount.compareTo(new BigDecimal(-1)) == 0) {
-                BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
-                throw new SomethingWentWrong("getMaxOutputAmount is -1, meaning _wallet is NULL");
-            }
-            // max you can spend is smaller than the min you can spend
-            if (maxOutputAmount.compareTo(new BigDecimal(0)) == 0 || maxOutputAmount.compareTo(minOutputAmount) < 0) {
-                throw new InsufficientFundsException(paymentRequest.amount, balance);
-            }
+            throw new InsufficientFundsException(paymentRequest.amount, balance);
+        }
 
+        if (paymentRequest.feeOverBalance(app, walletManager)) {
             throw new FeeNeedsAdjust(paymentRequest.amount, balance, new BigDecimal(-1));
         }
 

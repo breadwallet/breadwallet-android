@@ -19,6 +19,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
 import com.breadwallet.tools.threads.PaymentProtocolTask;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -268,7 +269,7 @@ public class CryptoUriParser {
         }
         if (requestObject == null || requestObject.address == null || requestObject.address.isEmpty())
             return false;
-        BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
+        final BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
         if (requestObject.iso != null && !requestObject.iso.equalsIgnoreCase(wallet.getIso(app))) {
             if (!(WalletsMaster.getInstance(app).isIsoErc20(app, wallet.getIso(app)) && requestObject.iso.equalsIgnoreCase("ETH"))) {
                 BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error),
@@ -296,7 +297,13 @@ public class CryptoUriParser {
                 return true;
             }
 
-            SendManager.sendTransaction(app, requestObject, wallet, null);
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    SendManager.sendTransaction(app, requestObject, wallet, null);
+                }
+            });
+
         }
 
         return true;

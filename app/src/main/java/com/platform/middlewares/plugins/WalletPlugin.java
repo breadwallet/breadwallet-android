@@ -324,7 +324,7 @@ public class WalletPlugin implements Plugin {
         return true;
     }
 
-    private void sendTx(Context app, JSONObject obj) {
+    private void sendTx(final Context app, JSONObject obj) {
         String toAddress = null;
         String toDescription = null;
         String currency = null;
@@ -350,7 +350,7 @@ public class WalletPlugin implements Plugin {
             return;
         }
 
-        BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, currency);
+        final BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, currency);
         String addr = wm.undecorateAddress(app, toAddress);
         if (Utils.isNullOrEmpty(addr)) {
             BRDialog.showSimpleDialog(app, "Failed to create tx for exchange!", "Invalid address: " + addr);
@@ -359,11 +359,16 @@ public class WalletPlugin implements Plugin {
         BigDecimal bigAmount = WalletsMaster.getInstance(app).isIsoErc20(app, currency) ?
                 new BigDecimal(numerator).divide(new BigDecimal(denominator), nrOfZeros(denominator), BRConstants.ROUNDING_MODE) :
                 new BigDecimal(numerator);
-        CryptoRequest item = new CryptoRequest(null, false, null, addr, bigAmount);
-        SendManager.sendTransaction(app, item, wm, new SendManager.SendCompletion() {
+        final CryptoRequest item = new CryptoRequest(null, false, null, addr, bigAmount);
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
-            public void onCompleted(String hash, boolean succeed) {
-                finalizeTx(succeed, hash);
+            public void run() {
+                SendManager.sendTransaction(app, item, wm, new SendManager.SendCompletion() {
+                    @Override
+                    public void onCompleted(String hash, boolean succeed) {
+                        finalizeTx(succeed, hash);
+                    }
+                });
             }
         });
 
