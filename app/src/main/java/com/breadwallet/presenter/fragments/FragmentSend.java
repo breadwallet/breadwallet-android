@@ -779,7 +779,6 @@ public class FragmentSend extends Fragment {
         //format the fee to the selected ISO
         String formattedFee = CurrencyUtils.getFormattedAmount(app, selectedIso, isoFee);
 
-
         if (isWalletErc20) {
             BaseWalletManager ethWm = WalletEthManager.getInstance(app);
             isoFee = isIsoCrypto ? rawFee : ethWm.getFiatForSmallestCrypto(app, rawFee, null);

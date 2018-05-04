@@ -164,9 +164,9 @@ public class APIClient {
         itemsLeftToUpdate = new AtomicInteger(0);
         if (0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
             BREAD_POINT = "brd-web-staging";
-            BREAD_FILE = String.format("/%s.tar", BREAD_POINT);
-            BREAD_EXTRACTED = String.format("%s-extracted", BREAD_POINT);
         }
+        BREAD_FILE = String.format("/%s.tar", BREAD_POINT);
+        BREAD_EXTRACTED = String.format("%s-extracted", BREAD_POINT);
     }
 
     //returns the fee per kb or 0 if something went wrong
@@ -308,7 +308,8 @@ public class APIClient {
         BRResponse mainBrResponse = null;
         try {
             if (mHTTPClient == null)
-                mHTTPClient = new OkHttpClient.Builder().followRedirects(false).connectTimeout(20, TimeUnit.SECONDS)/*.addInterceptor(new LoggingInterceptor())*/.build();
+                mHTTPClient = new OkHttpClient.Builder().followRedirects(false).connectTimeout(20, TimeUnit.SECONDS)
+                        /*.addInterceptor(new LoggingInterceptor())*/.build();
             request = request.newBuilder().header("User-agent", Utils.getAgentString(ctx, "OkHttp/3.4.1")).build();
             response = mHTTPClient.newCall(request).execute();
             mainBrResponse = resToBRResponse(response);
@@ -324,11 +325,13 @@ public class APIClient {
                     response.close();
                     return sendRequest(new Request.Builder().url(newLocation).get().build(), needsAuth, 0);
                 }
-                return resToBRResponse(new Response.Builder().code(500).request(request).body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build());
+                return resToBRResponse(new Response.Builder().code(500).request(request)
+                        .body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build());
             }
         } catch (IOException e) {
             Log.e(TAG, "sendRequest: ", e);
-            return resToBRResponse(new Response.Builder().code(599).request(request).body(ResponseBody.create(null, e.getMessage())).protocol(Protocol.HTTP_1_1).build());
+            return resToBRResponse(new Response.Builder().code(599).request(request)
+                    .body(ResponseBody.create(null, e.getMessage())).protocol(Protocol.HTTP_1_1).build());
         }
         ResponseBody postReqBody = null;
         try {
@@ -464,7 +467,7 @@ public class APIClient {
         return request;
     }
 
-    public void updateBundle() {
+    public synchronized void updateBundle() {
         if (ActivityUTILS.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
