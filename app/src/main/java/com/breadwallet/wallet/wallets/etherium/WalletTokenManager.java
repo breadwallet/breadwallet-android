@@ -1,6 +1,7 @@
 package com.breadwallet.wallet.wallets.etherium;
 
 import android.content.Context;
+import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.core.ethereum.BREthereumAmount;
@@ -311,17 +312,13 @@ public class WalletTokenManager implements BaseWalletManager {
         }
     }
 
+    @WorkerThread
     @Override
     public void refreshCachedBalance(final Context app) {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                if (mWalletEthManager.wasBalanceUpdated(mWalletToken.getSymbol())) {
-                    BigDecimal balance = new BigDecimal(mWalletToken.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));
-                    BRSharedPrefs.putCachedBalance(app, getIso(app), balance);
-                }
-            }
-        });
+        if (mWalletEthManager.wasBalanceUpdated(mWalletToken.getSymbol())) {
+            BigDecimal balance = new BigDecimal(mWalletToken.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));
+            BRSharedPrefs.putCachedBalance(app, getIso(app), balance);
+        }
     }
 
     @Override

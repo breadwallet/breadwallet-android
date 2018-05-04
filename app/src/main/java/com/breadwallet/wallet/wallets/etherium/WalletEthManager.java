@@ -1371,7 +1371,7 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     public boolean wasBalanceUpdated(String iso) {
-        if(iso != null) return true; //temporary ignoring this approach
+        if (iso != null) return true; //temporary ignoring this approach
         if (Utils.isNullOrEmpty(iso)) {
             BRReportsManager.reportBug(new NullPointerException("Invalid iso: " + iso));
             return false;
