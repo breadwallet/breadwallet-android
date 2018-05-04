@@ -422,7 +422,13 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             @Override
             public void onBalanceChanged(String iso, BigDecimal newBalance) {
                 wallet.refreshCachedBalance(WalletActivity.this);
-                updateUi();
+                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateUi();
+                    }
+                });
+                
             }
         });
 

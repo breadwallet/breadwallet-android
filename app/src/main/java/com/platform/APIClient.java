@@ -12,6 +12,7 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.tools.crypto.Base58;
+import com.breadwallet.tools.exceptions.BRKeystoreErrorException;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.crypto.CryptoHelper;
@@ -282,7 +283,6 @@ public class APIClient {
 
     @NonNull
     public BRResponse sendRequest(Request locRequest, boolean needsAuth, int retryCount) {
-//        Log.d(TAG, "sendRequest, url -> " + locRequest.url().toString());
         if (retryCount > 1)
             throw new RuntimeException("sendRequest: Warning retryCount is: " + retryCount);
         if (ActivityUTILS.isMainThread()) {
@@ -843,6 +843,10 @@ public class APIClient {
     private byte[] getCachedToken() {
         if (Utils.isNullOrEmpty(mCachedToken)) {
             mCachedToken = BRKeyStore.getToken(ctx);
+            if (mCachedToken == null) {
+                getToken();
+                mCachedToken = BRKeyStore.getToken(ctx);
+            }
             BreadApp.addOnBackgroundedListener(new BreadApp.OnAppBackgrounded() {
                 @Override
                 public void onBackgrounded() {

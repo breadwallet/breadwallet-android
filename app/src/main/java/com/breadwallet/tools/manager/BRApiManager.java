@@ -141,6 +141,13 @@ public class BRApiManager {
                     stopTimerTask();
                     return;
                 }
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateErc20Rates(context);
+                    }
+                });
+
                 List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(context).getAllWallets(context));
 
                 for (final BaseWalletManager w : list) {
@@ -163,12 +170,7 @@ public class BRApiManager {
                         });
                     }
                 }
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateErc20Rates(context);
-                    }
-                });
+
             }
         });
     }

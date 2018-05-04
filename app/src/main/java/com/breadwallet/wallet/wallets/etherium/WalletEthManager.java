@@ -810,6 +810,12 @@ public class WalletEthManager implements BaseWalletManager,
                                     final BigDecimal uiBalance = new BigDecimal(wallet.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));//use TOKEN_DECIMAL
                                     final String iso = wallet.getToken().getSymbol();
 
+                                    Context app = BreadApp.getBreadContext();
+                                    if (app != null) {
+                                        BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
+                                        if (wm != null) wm.refreshCachedBalance(app);
+                                    }
+
                                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                         @Override
                                         public void run() {
@@ -1365,6 +1371,7 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     public boolean wasBalanceUpdated(String iso) {
+        if(iso != null) return true; //temporary ignoring this approach
         if (Utils.isNullOrEmpty(iso)) {
             BRReportsManager.reportBug(new NullPointerException("Invalid iso: " + iso));
             return false;
