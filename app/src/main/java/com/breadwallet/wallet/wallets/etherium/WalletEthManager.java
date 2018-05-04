@@ -466,7 +466,7 @@ public class WalletEthManager implements BaseWalletManager,
             BREthereumTransaction tx = txs[i];
             uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(mWallet.getAccount().getPrimaryAddress()), tx.getBlockTimestamp(),
                     (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null : tx.getHash().getBytes(), tx.getHash(),
-                    new BigDecimal(tx.getFee(BREthereumAmount.Unit.ETHER_WEI)), tx,
+                    new BigDecimal(tx.getFee(BREthereumAmount.Unit.ETHER_WEI)),
                     tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
                     new BigDecimal(tx.getAmount(BREthereumAmount.Unit.ETHER_WEI)), true));
         }

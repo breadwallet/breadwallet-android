@@ -20,12 +20,14 @@ import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
@@ -104,9 +106,23 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void updateData() {
         if (updatingData) return;
         Map<Integer, TxMetaData> localMDs = new HashMap<>();
+        BaseWalletManager wm = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
         for (int i = 0; i < backUpFeed.size(); i++) {
             TxUiHolder item = backUpFeed.get(i);
-            localMDs.put(i, KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash()));
+            TxMetaData md = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
+            if (System.currentTimeMillis() - item.getTimeStamp() < (60 * 60 * 1000)) {
+                if (md == null) {
+                    md = KVStoreManager.getInstance().createMetadata(mContext, wm,
+                            new CryptoTransaction(item.getTransaction()));
+                    KVStoreManager.getInstance().putTxMetaData(mContext, md, item.getTxHash());
+                } else if (md.exchangeRate == 0) {
+                    md.exchangeRate = wm.getFiatExchangeRate(mContext).doubleValue();
+                    md.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(mContext);
+                    Log.d(TAG, "MetaData not null");
+                    KVStoreManager.getInstance().putTxMetaData(mContext, md, item.getTxHash());
+                }
+            }
+            localMDs.put(i, md);
 
         }
         mMetaDatas.clear();

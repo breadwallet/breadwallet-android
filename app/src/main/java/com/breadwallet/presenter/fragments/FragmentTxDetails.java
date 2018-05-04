@@ -220,7 +220,9 @@ public class FragmentTxDetails extends DialogFragment {
 
             if (received) hideSentViews();
             else {
-                BREthereumTransaction ethTx = mTransaction.getEthTxHolder();
+                BREthereumTransaction ethTx = null;
+                if (mTransaction.getTransaction() instanceof BREthereumTransaction)
+                    ethTx = (BREthereumTransaction) mTransaction.getTransaction();
                 BigDecimal rawFee = mTransaction.getFee();
                 //meaning ETH
                 if (ethTx != null && !isErc20) {

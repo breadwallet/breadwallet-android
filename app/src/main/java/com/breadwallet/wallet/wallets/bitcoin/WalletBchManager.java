@@ -364,7 +364,7 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
                 }
             }
             uiTxs.add(new TxUiHolder(tx, getWallet().getTransactionAmountSent(tx) <= 0, tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
-                    tx.getReverseHash(), new BigDecimal(getWallet().getTransactionFee(tx)), null,
+                    tx.getReverseHash(), new BigDecimal(getWallet().getTransactionFee(tx)),
                     toAddress, tx.getInputAddresses()[0],
                     new BigDecimal(getWallet().getBalanceAfterTransaction(tx)), (int) tx.getSize(),
                     new BigDecimal(getWallet().getTransactionAmount(tx)), getWallet().transactionIsValid(tx)));

@@ -339,7 +339,7 @@ public class WalletTokenManager implements BaseWalletManager {
 //            printTxInfo(tx);
             uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(mWalletEthManager.getReceiveAddress(app).stringify()),
                     tx.getBlockTimestamp(), (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null :
-                    tx.getHash().getBytes(), tx.getHash(), new BigDecimal(tx.getFee(BREthereumAmount.Unit.ETHER_GWEI)), tx,
+                    tx.getHash().getBytes(), tx.getHash(), new BigDecimal(tx.getFee(BREthereumAmount.Unit.ETHER_GWEI)),
                     tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
                     new BigDecimal(tx.getAmount(getUnit())), true));
         }
