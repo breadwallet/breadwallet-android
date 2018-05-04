@@ -25,6 +25,7 @@ import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenListAdapter.ManageTokenItemViewHolder> implements ItemTouchHelperAdapter {
@@ -57,7 +58,6 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
             tickerName = "first";
         }
 
-
         String iconResourceName = tickerName;
         int iconResourceId = mContext.getResources().getIdentifier(tickerName, "drawable", mContext.getPackageName());
 
@@ -76,26 +76,18 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
         holder.showHide.setText(isHidden ? mContext.getString(R.string.TokenList_show) : mContext.getString(R.string.TokenList_hide));
         holder.showHide.setTextColor(mContext.getColor(isHidden ? R.color.dialog_button_positive : R.color.red));
 
-
         holder.showHide.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 // If token is already hidden, show it
                 if (KVStoreManager.getInstance().getTokenListMetaData(mContext).isCurrencyHidden(item.symbol)) {
-
                     mListener.onShowToken(item);
-
                     // If token is already showing, hide it
                 } else {
-
                     mListener.onHideToken(item);
-
-
                 }
             }
         });
-
 
         BigDecimal tokenBalance;
         String iso = item.symbol.toUpperCase();
@@ -111,7 +103,6 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
             }
 
         }
-
 
     }
 
@@ -164,7 +155,6 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
         }
     }
 
-
     @Override
     public void onItemDismiss(int position) {
 
@@ -172,20 +162,22 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-        TokenItem item = mTokens.remove(fromPosition);
-        mTokens.add(toPosition > fromPosition ? toPosition - 1 : toPosition, item);
+        Log.e(TAG, "onItemMove: " + fromPosition + " -> " + toPosition);
         notifyItemMoved(fromPosition, toPosition);
 
         TokenListMetaData currentMd = KVStoreManager.getInstance().getTokenListMetaData(mContext);
 
-        // Temporarily remove the dragged token from the list
-        TokenListMetaData.TokenInfo movedToken = new TokenListMetaData.TokenInfo(item.symbol, true, item.address);
-        currentMd.disableCurrency(movedToken.symbol);
+        Collections.swap(currentMd.enabledCurrencies, fromPosition, toPosition);
+
         KVStoreManager.getInstance().putTokenListMetaData(mContext, currentMd);
 
-        // Replace it, but in the new position
-        currentMd.enabledCurrencies.add(toPosition, movedToken);
-        KVStoreManager.getInstance().putTokenListMetaData(mContext, currentMd);
+
+        TokenListMetaData md = KVStoreManager.getInstance().getTokenListMetaData(mContext);
+        StringBuilder sb = new StringBuilder();
+        for (TokenListMetaData.TokenInfo in : md.enabledCurrencies) {
+            sb.append(in.symbol).append("->");
+        }
+        Log.e(TAG, "onItemMove: " + sb.toString());
 
     }
 }

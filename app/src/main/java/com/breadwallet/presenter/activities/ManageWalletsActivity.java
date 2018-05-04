@@ -95,11 +95,9 @@ public class ManageWalletsActivity extends BRActivity {
             public void onShowToken(TokenItem token) {
                 Log.d(TAG, "onShowToken");
 
-
                 TokenListMetaData metaData = KVStoreManager.getInstance().getTokenListMetaData(ManageWalletsActivity.this);
                 TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(token.symbol, true, token.address);
                 if (metaData == null) metaData = new TokenListMetaData(null, null);
-
 
                 if (metaData.hiddenCurrencies == null)
                     metaData.hiddenCurrencies = new ArrayList<>();
