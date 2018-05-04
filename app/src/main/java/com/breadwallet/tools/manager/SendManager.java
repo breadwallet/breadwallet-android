@@ -203,13 +203,8 @@ public class SendManager {
         }
 
         // payment successful
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                PostAuth.getInstance().setPaymentItem(paymentRequest);
-                confirmPay(app, paymentRequest, walletManager, completion);
-            }
-        });
+        PostAuth.getInstance().setPaymentItem(paymentRequest);
+        confirmPay(app, paymentRequest, walletManager, completion);
 
     }
 
