@@ -162,7 +162,6 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
 
     @Override
     public void onItemMove(int fromPosition, int toPosition) {
-        Log.e(TAG, "onItemMove: " + fromPosition + " -> " + toPosition);
         notifyItemMoved(fromPosition, toPosition);
 
         TokenListMetaData currentMd = KVStoreManager.getInstance().getTokenListMetaData(mContext);
@@ -170,14 +169,6 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
         Collections.swap(currentMd.enabledCurrencies, fromPosition, toPosition);
 
         KVStoreManager.getInstance().putTokenListMetaData(mContext, currentMd);
-
-
-        TokenListMetaData md = KVStoreManager.getInstance().getTokenListMetaData(mContext);
-        StringBuilder sb = new StringBuilder();
-        for (TokenListMetaData.TokenInfo in : md.enabledCurrencies) {
-            sb.append(in.symbol).append("->");
-        }
-        Log.e(TAG, "onItemMove: " + sb.toString());
 
     }
 }
