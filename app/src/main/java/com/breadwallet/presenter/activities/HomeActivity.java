@@ -257,6 +257,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         ArrayList<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(this).getAllWallets(this));
         mAdapter = new WalletListAdapter(this, list);
         mWalletRecycler.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override

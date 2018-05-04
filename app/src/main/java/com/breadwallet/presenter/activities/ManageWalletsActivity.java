@@ -28,14 +28,12 @@ import java.util.List;
 
 public class ManageWalletsActivity extends BRActivity {
 
-
     private static final String TAG = ManageWalletsActivity.class.getSimpleName();
     private ManageTokenListAdapter mAdapter;
     private RecyclerView mTokenList;
     private List<TokenListMetaData.TokenInfo> mTokens;
     private ItemTouchHelper mItemTouchHelper;
     private ImageButton mBackButton;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,7 +49,6 @@ public class ManageWalletsActivity extends BRActivity {
                 onBackPressed();
             }
         });
-
     }
 
     @Override
@@ -68,7 +65,8 @@ public class ManageWalletsActivity extends BRActivity {
             TokenItem tokenItem = null;
             String tokenSymbol = mTokens.get(i).symbol;
 
-            if (!tokenSymbol.equalsIgnoreCase("btc") && !tokenSymbol.equalsIgnoreCase("bch") && !tokenSymbol.equalsIgnoreCase("eth")) {
+            if (!tokenSymbol.equalsIgnoreCase("btc") && !tokenSymbol.equalsIgnoreCase("bch") &&
+                    !tokenSymbol.equalsIgnoreCase("eth")) {
 
                 BREthereumToken tk = WalletEthManager.getInstance(this).node.lookupToken(info.contractAddress);
                 if (tk == null) {
@@ -86,13 +84,11 @@ public class ManageWalletsActivity extends BRActivity {
             else if (tokenSymbol.equalsIgnoreCase("eth"))
                 tokenItem = new TokenItem(null, "ETH", "Ethereum", null);
 
-
             if (tokenItem != null) {
                 tokenItems.add(tokenItem);
             }
 
         }
-
 
         mAdapter = new ManageTokenListAdapter(ManageWalletsActivity.this, tokenItems, new ManageTokenListAdapter.OnTokenShowOrHideListener() {
             @Override
@@ -109,10 +105,9 @@ public class ManageWalletsActivity extends BRActivity {
                     metaData.hiddenCurrencies = new ArrayList<>();
                 metaData.showCurrency(item.symbol);
 
-
-                mAdapter.notifyDataSetChanged();
                 final TokenListMetaData finalMetaData = metaData;
                 KVStoreManager.getInstance().putTokenListMetaData(ManageWalletsActivity.this, finalMetaData);
+                mAdapter.notifyDataSetChanged();
 
             }
 
@@ -129,8 +124,8 @@ public class ManageWalletsActivity extends BRActivity {
 
                 metaData.hiddenCurrencies.add(item);
 
-                mAdapter.notifyDataSetChanged();
                 KVStoreManager.getInstance().putTokenListMetaData(ManageWalletsActivity.this, metaData);
+                mAdapter.notifyDataSetChanged();
 
             }
         });

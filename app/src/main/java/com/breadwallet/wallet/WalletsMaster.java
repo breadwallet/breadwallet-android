@@ -90,6 +90,8 @@ public class WalletsMaster {
         if (ethWallet == null) {
             return; //return empty wallet list if ETH is null (meaning no public key yet)
         }
+
+        mWallets.clear();
         mTokenListMetaData = KVStoreManager.getInstance().getTokenListMetaData(app);
         if (mTokenListMetaData == null) {
             List<TokenListMetaData.TokenInfo> enabled = new ArrayList<>();
@@ -104,52 +106,30 @@ public class WalletsMaster {
 
         for (TokenListMetaData.TokenInfo enabled : mTokenListMetaData.enabledCurrencies) {
 
-            int position = mTokenListMetaData.enabledCurrencies.indexOf(enabled);
-
             boolean isHidden = mTokenListMetaData.isCurrencyHidden(enabled.symbol);
 
-            if (enabled.symbol.equalsIgnoreCase("BTC")) {
+            if (enabled.symbol.equalsIgnoreCase("BTC") && !isHidden) {
                 //BTC wallet
-                if (!mWallets.contains(WalletBitcoinManager.getInstance(app)) && !isHidden) {
-                    mWallets.add(position, WalletBitcoinManager.getInstance(app));
-                } else if (mWallets.contains(WalletBitcoinManager.getInstance(app)) && isHidden) {
-                    mWallets.remove(WalletBitcoinManager.getInstance(app));
-                }
-            } else if (enabled.symbol.equalsIgnoreCase("BCH")) {
+                mWallets.add(WalletBitcoinManager.getInstance(app));
+            } else if (enabled.symbol.equalsIgnoreCase("BCH") && !isHidden) {
                 //BCH wallet
-                if (!mWallets.contains(WalletBchManager.getInstance(app)) && !isHidden) {
-                    mWallets.add(position, WalletBchManager.getInstance(app));
-                } else if (mWallets.contains(WalletBchManager.getInstance(app)) && isHidden) {
-                    mWallets.remove(WalletBchManager.getInstance(app));
-                }
-            } else if (enabled.symbol.equalsIgnoreCase("ETH")) {
+                mWallets.add(WalletBchManager.getInstance(app));
+            } else if (enabled.symbol.equalsIgnoreCase("ETH") && !isHidden) {
                 //ETH wallet
-                if (!mWallets.contains(ethWallet) && !isHidden) {
-                    mWallets.add(position, ethWallet);
-                } else if (mWallets.contains(ethWallet) && isHidden) {
-                    mWallets.remove(ethWallet);
-                }
+                mWallets.add(ethWallet);
             } else {
                 //add ERC20 wallet
                 WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(app, ethWallet, enabled.symbol);
-                if (tokenWallet != null)
-                    if (!mWallets.contains(tokenWallet)) mWallets.add(position, tokenWallet);
-                for (TokenListMetaData.TokenInfo hidden : mTokenListMetaData.hiddenCurrencies) {
-
-                    if (tokenWallet != null && tokenWallet.getIso(app).equalsIgnoreCase(hidden.symbol)) {
-                        mWallets.remove(tokenWallet);
-                    }
-                }
+                if (tokenWallet != null && !isHidden) mWallets.add(tokenWallet);
             }
 
         }
     }
 
     public synchronized List<BaseWalletManager> getAllWallets(Context app) {
-        if (!mWallets.isEmpty()) {
-            mWallets.clear();
+        if (mWallets == null || mWallets.size() == 0) {
+            updateWallets(app);
         }
-        updateWallets(app);
         return mWallets;
 
     }

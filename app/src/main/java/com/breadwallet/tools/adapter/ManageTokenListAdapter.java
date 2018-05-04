@@ -178,17 +178,14 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
 
         TokenListMetaData currentMd = KVStoreManager.getInstance().getTokenListMetaData(mContext);
 
-
         // Temporarily remove the dragged token from the list
         TokenListMetaData.TokenInfo movedToken = new TokenListMetaData.TokenInfo(item.symbol, true, item.address);
         currentMd.disableCurrency(movedToken.symbol);
         KVStoreManager.getInstance().putTokenListMetaData(mContext, currentMd);
 
-
         // Replace it, but in the new position
         currentMd.enabledCurrencies.add(toPosition, movedToken);
         KVStoreManager.getInstance().putTokenListMetaData(mContext, currentMd);
-
 
     }
 }
