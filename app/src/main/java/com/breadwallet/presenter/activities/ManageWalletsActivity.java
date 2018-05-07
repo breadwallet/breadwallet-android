@@ -146,6 +146,12 @@ public class ManageWalletsActivity extends BRActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        WalletsMaster.getInstance(this).updateWallets(this);
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                WalletsMaster.getInstance(ManageWalletsActivity.this).updateWallets(ManageWalletsActivity.this);
+
+            }
+        });
     }
 }

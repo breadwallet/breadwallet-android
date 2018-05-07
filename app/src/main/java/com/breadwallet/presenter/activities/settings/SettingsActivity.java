@@ -30,6 +30,8 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
+import com.platform.entities.TokenListMetaData;
+import com.platform.tools.KVStoreManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -102,7 +104,6 @@ public class SettingsActivity extends BRActivity {
         }, false, R.drawable.chevron_right_light));
 
 
-
         items.add(new BRSettingsItem(getString(R.string.Settings_wipe), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -171,6 +172,14 @@ public class SettingsActivity extends BRActivity {
             }, false, R.drawable.chevron_right_light));
 
 
+        items.add(new BRSettingsItem(getString(R.string.Tokens_Reset), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                resetToDefaultCurrencies();
+            }
+        }, false, 0));
+
         items.add(new BRSettingsItem(getString(R.string.Settings_other), "", null, true, 0));
 
         String shareAddOn = BRSharedPrefs.getShareData(SettingsActivity.this) ? getString(R.string.PushNotifications_on) : getString(R.string.PushNotifications_off);
@@ -218,6 +227,37 @@ public class SettingsActivity extends BRActivity {
         }, false, R.drawable.chevron_right_light));
 
 
+    }
+
+    private void resetToDefaultCurrencies() {
+
+        // Remove all currencies that are NOT btc, bch, eth or brd from enabled currencies list
+        TokenListMetaData tokenMeta = KVStoreManager.getInstance().getTokenListMetaData(this);
+
+        for (int i = 0; i < tokenMeta.enabledCurrencies.size(); i++) {
+            TokenListMetaData.TokenInfo tokenInfo = tokenMeta.enabledCurrencies.get(i);
+
+            if (!tokenInfo.symbol.equalsIgnoreCase("btc") || !tokenInfo.symbol.equalsIgnoreCase("bch") || !tokenInfo.symbol.equalsIgnoreCase("eth") || !tokenInfo.symbol.equalsIgnoreCase("brd")) {
+                tokenMeta.disableCurrency(tokenInfo.symbol);
+            }
+        }
+
+
+        // Remove all currencies that are NOT btc, bch, eth or brd from hidden currencies list
+       /* for (int i = 0; i < tokenMeta.hiddenCurrencies.size(); i++) {
+            TokenListMetaData.TokenInfo tokenInfo = tokenMeta.hiddenCurrencies.get(i);
+
+            if (!tokenInfo.symbol.equalsIgnoreCase("btc") || !tokenInfo.symbol.equalsIgnoreCase("bch") || !tokenInfo.symbol.equalsIgnoreCase("eth") || !tokenInfo.symbol.equalsIgnoreCase("brd")) {
+                tokenMeta.hiddenCurrencies.remove(tokenInfo);
+            }
+        }*/
+
+
+        // Publish the changes back to the KVStore
+        KVStoreManager.getInstance().putTokenListMetaData(this, tokenMeta);
+
+        // Go back to Home Screen
+        onBackPressed();
     }
 
     @Override
