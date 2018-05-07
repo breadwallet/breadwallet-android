@@ -237,9 +237,8 @@ public class SettingsActivity extends BRActivity {
         for (int i = 0; i < tokenMeta.enabledCurrencies.size(); i++) {
             TokenListMetaData.TokenInfo tokenInfo = tokenMeta.enabledCurrencies.get(i);
 
-            if (!tokenInfo.symbol.equalsIgnoreCase("btc") || !tokenInfo.symbol.equalsIgnoreCase("bch") || !tokenInfo.symbol.equalsIgnoreCase("eth") || !tokenInfo.symbol.equalsIgnoreCase("brd")) {
-                tokenMeta.disableCurrency(tokenInfo.symbol);
-            }
+            tokenMeta.disableCurrency(tokenInfo.symbol);
+
         }
 
 
