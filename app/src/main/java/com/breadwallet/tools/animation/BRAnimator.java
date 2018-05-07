@@ -238,11 +238,11 @@ public class BRAnimator {
                         Manifest.permission.CAMERA)) {
                     BRDialog.showCustomDialog(app, app.getString(R.string.Send_cameraUnavailabeTitle_android),
                             app.getString(R.string.Send_cameraUnavailabeMessage_android), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            brDialogView.dismiss();
-                        }
-                    }, null, null, 0);
+                                @Override
+                                public void onClick(BRDialogView brDialogView) {
+                                    brDialogView.dismiss();
+                                }
+                            }, null, null, 0);
                 } else {
                     // No explanation needed, we can request the permission.
                     ActivityCompat.requestPermissions(app,
@@ -366,6 +366,13 @@ public class BRAnimator {
     public static void startBreadActivity(Activity from, boolean auth) {
         if (from == null) return;
         Class toStart = auth ? LoginActivity.class : WalletActivity.class;
+
+        if (toStart.equals(WalletActivity.class)) {
+
+            if (BRSharedPrefs.isNewWallet(from)) {
+                toStart = HomeActivity.class;
+            }
+        }
 
         Intent intent = new Intent(from, toStart);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
