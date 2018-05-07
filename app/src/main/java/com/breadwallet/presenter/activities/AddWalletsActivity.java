@@ -5,9 +5,11 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 
 import com.breadwallet.R;
@@ -81,6 +83,7 @@ public class AddWalletsActivity extends BRActivity {
         });
 
     }
+
 
     @Override
     protected void onResume() {

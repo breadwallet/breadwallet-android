@@ -220,6 +220,7 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".presenter.activities.AddWalletsActivity"
+            android:windowSoftInputMode="stateAlwaysHidden"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
