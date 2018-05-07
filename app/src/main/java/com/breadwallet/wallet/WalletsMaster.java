@@ -74,6 +74,7 @@ public class WalletsMaster {
 
     private List<BaseWalletManager> mWallets = new ArrayList<>();
     private TokenListMetaData mTokenListMetaData;
+    private static boolean tokenResetToDefault;
 
     private WalletsMaster(Context app) {
     }
@@ -123,7 +124,6 @@ public class WalletsMaster {
             } else if (enabled.symbol.equalsIgnoreCase("ETH")) {
                 //ETH wallet
                 if (!mWallets.contains(ethWallet) && !isHidden) {
-                    Log.d(TAG, "Adding ETH wallet to home screen");
                     mWallets.add(ethWallet);
                 } else if (mWallets.contains(ethWallet) && isHidden) {
                     mWallets.remove(ethWallet);
@@ -144,8 +144,15 @@ public class WalletsMaster {
         }
     }
 
+    public void resetTokensToDefault() {
+        tokenResetToDefault = true;
+    }
+
     public synchronized List<BaseWalletManager> getAllWallets(Context app) {
         if (mWallets == null || mWallets.size() == 0) {
+            updateWallets(app);
+        } else if (tokenResetToDefault) {
+            mWallets.clear();
             updateWallets(app);
         }
         return mWallets;
