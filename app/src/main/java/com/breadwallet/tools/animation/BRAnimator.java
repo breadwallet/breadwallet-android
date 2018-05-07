@@ -367,6 +367,7 @@ public class BRAnimator {
         if (from == null) return;
         Class toStart = auth ? LoginActivity.class : WalletActivity.class;
 
+        // If this is a first launch(new wallet), ensure that we are starting on the Home Screen
         if (toStart.equals(WalletActivity.class)) {
 
             if (BRSharedPrefs.isNewWallet(from)) {
