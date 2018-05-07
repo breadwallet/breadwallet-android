@@ -235,7 +235,6 @@ public class SettingsActivity extends BRActivity {
 
     private void resetToDefaultCurrencies() {
 
-        // Remove all currencies that are NOT btc, bch, eth or brd from enabled currencies list
         TokenListMetaData tokenMeta = KVStoreManager.getInstance().getTokenListMetaData(this);
 
         tokenMeta.enabledCurrencies = new ArrayList<>();
@@ -254,6 +253,7 @@ public class SettingsActivity extends BRActivity {
         // Publish the changes back to the KVStore
         KVStoreManager.getInstance().putTokenListMetaData(this, tokenMeta);
 
+        // Notify WalletsMaster so the reset will be reflected on the Home Screen
         WalletsMaster.getInstance(this).resetTokensToDefault();
 
         // Go back to Home Screen
