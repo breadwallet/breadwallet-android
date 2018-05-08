@@ -76,6 +76,7 @@
     <color name="transaction_amount_received_color">#4cbf2c</color>
     <color name="transaction_failed_button_color">#f46b41</color>
     <color name="trans_white">#70ffffff</color>
+    <color name="balance_crypto_color">#b7ffffff</color>
 
 
     // Dialog button colors
