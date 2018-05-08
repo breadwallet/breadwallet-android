@@ -36,7 +36,7 @@
     <Button
         android:id="@+id/add_remove_button"
         android:layout_width="wrap_content"
-        android:layout_height="50dp"
+        android:layout_height="40dp"
         android:layout_alignParentEnd="true"
         android:layout_centerVertical="true"
         android:layout_marginEnd="12dp"
@@ -52,6 +52,6 @@
         android:layout_alignParentBottom="true"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:background="@color/total_assets_usd_color" />
+        android:background="@color/add_wallets_border_color" />
 
 </RelativeLayout>

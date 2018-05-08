@@ -85,5 +85,6 @@
     // Add Wallets
     <color name="add_wallets_header_color">#f9f9f9</color>
     <color name="add_wallets_searchbar_color">#ececec</color>
+    <color name="add_wallets_border_color">#e5e5e5</color>
 
 </resources>
