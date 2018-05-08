@@ -78,9 +78,8 @@
         android:id="@+id/wallet_balance_currency"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_below="@id/wallet_balance_usd"
-        android:layout_marginEnd="14sp"
+        android:layout_alignEnd="@id/wallet_balance_usd"
         android:textColor="@color/currency_subheading_color"
         android:textSize="14sp"
         app:customTFont="CircularPro-Bold.otf"/>
