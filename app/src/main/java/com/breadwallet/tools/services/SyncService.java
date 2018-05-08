@@ -56,7 +56,7 @@ public class SyncService extends IntentService {
     /**
      * Progress is identified as a double value between 0 and 1.
      */
-    public static final int PROGRESS_NOT_DEFINTED = -1;
+    public static final int PROGRESS_NOT_DEFINED = -1;
     public static final int PROGRESS_START = 0;
     public static final int PROGRESS_FINISH = 1;
 

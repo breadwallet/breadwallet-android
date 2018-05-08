@@ -290,7 +290,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         public void onReceive(Context context, Intent intent) {
             if (SyncService.ACTION_SYNC_PROGRESS_UPDATE.equals(intent.getAction())) {
                 String intentWalletIso = intent.getStringExtra(SyncService.EXTRA_WALLET_ISO);
-                double progress = intent.getDoubleExtra(SyncService.EXTRA_PROGRESS, SyncService.PROGRESS_NOT_DEFINTED);
+                double progress = intent.getDoubleExtra(SyncService.EXTRA_PROGRESS, SyncService.PROGRESS_NOT_DEFINED);
 
                 if (mCurrentWalletSyncing == null) {
                     Log.e(TAG, "SyncNotificationBroadcastReceiver.onReceive: mCurrentWalletSyncing is null. Wallet:" + intentWalletIso + " Progress:" + progress + " Ignored");
