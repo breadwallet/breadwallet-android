@@ -19,6 +19,7 @@
         android:textSize="18sp"
         app:customTFont="CircularPro-Bold.otf"/>
 
+
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/wallet_trade_price"
         android:layout_width="wrap_content"
