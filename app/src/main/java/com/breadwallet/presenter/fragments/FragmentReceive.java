@@ -36,6 +36,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.util.CryptoUriParser;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
 
@@ -91,6 +92,7 @@ public class FragmentReceive extends Fragment {
     private Handler copyCloseHandler = new Handler();
     private BRKeyboard keyboard;
     private View separator2;
+    private boolean isReceive;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -117,6 +119,7 @@ public class FragmentReceive extends Fragment {
         separator2 = rootView.findViewById(R.id.separator2);
         separator2.setVisibility(View.GONE);
         setListeners();
+        isReceive = getArguments().getBoolean("receive");
 
         WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(new OnBalanceChangedListener() {
             @Override
@@ -305,7 +308,15 @@ public class FragmentReceive extends Fragment {
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        mReceiveAddress = BRSharedPrefs.getReceiveAddress(ctx, wm.getIso(ctx));
+                        String walletIso;
+
+                        if (isReceive) {
+                            walletIso = BRSharedPrefs.getReceiveAddress(ctx, wm.getIso(ctx));
+                        } else {
+                            WalletBitcoinManager btcWm = WalletBitcoinManager.getInstance(ctx);
+                            walletIso = BRSharedPrefs.getReceiveAddress(ctx, btcWm.getIso(ctx));
+                        }
+                        mReceiveAddress = walletIso;
                         String decorated = wm.decorateAddress(ctx, mReceiveAddress);
                         mAddress.setText(decorated);
                         Utils.correctTextSizeIfNeeded(mAddress);
