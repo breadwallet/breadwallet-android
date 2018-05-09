@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.annotation.NonNull;
+import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -18,6 +20,7 @@ import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.animation.ItemTouchHelperAdapter;
 import com.breadwallet.tools.animation.ItemTouchHelperViewHolder;
+import com.breadwallet.tools.listeners.OnStartDragListener;
 import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
 import com.breadwallet.wallet.wallets.etherium.WalletTokenManager;
 import com.platform.entities.TokenListMetaData;
@@ -34,6 +37,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
     private Context mContext;
     private ArrayList<TokenItem> mTokens;
     private OnTokenShowOrHideListener mListener;
+    private OnStartDragListener mStartDragListener;
 
     public interface OnTokenShowOrHideListener {
 
@@ -42,10 +46,11 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
         void onHideToken(TokenItem item);
     }
 
-    public ManageTokenListAdapter(Context context, ArrayList<TokenItem> tokens, OnTokenShowOrHideListener listener) {
+    public ManageTokenListAdapter(Context context, ArrayList<TokenItem> tokens, OnTokenShowOrHideListener listener, OnStartDragListener dragListener) {
         this.mContext = context;
         this.mTokens = tokens;
         this.mListener = listener;
+        this.mStartDragListener = dragListener;
     }
 
     @Override
@@ -104,6 +109,17 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
 
         }
 
+        holder.dragHandle.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (MotionEventCompat.getActionMasked(event) ==
+                        MotionEvent.ACTION_DOWN) {
+                    mStartDragListener.onStartDrag(holder);
+                }
+                return false;
+            }
+        });
+
     }
 
     @NonNull
@@ -152,6 +168,10 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
         @Override
         public void onItemSelected() {
 
+        }
+
+        public void setDragHandle(ImageButton dragHandle) {
+            this.dragHandle = dragHandle;
         }
     }
 

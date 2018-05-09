@@ -15,6 +15,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.adapter.ManageTokenListAdapter;
 import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback;
+import com.breadwallet.tools.listeners.OnStartDragListener;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.wallet.WalletsMaster;
@@ -26,7 +27,7 @@ import com.platform.tools.KVStoreManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ManageWalletsActivity extends BRActivity {
+public class ManageWalletsActivity extends BRActivity implements OnStartDragListener {
 
     private static final String TAG = ManageWalletsActivity.class.getSimpleName();
     private ManageTokenListAdapter mAdapter;
@@ -126,7 +127,7 @@ public class ManageWalletsActivity extends BRActivity {
                 mAdapter.notifyDataSetChanged();
 
             }
-        });
+        }, this);
 
         mTokenList.setLayoutManager(new LinearLayoutManager(ManageWalletsActivity.this));
         mTokenList.setAdapter(mAdapter);
@@ -140,5 +141,10 @@ public class ManageWalletsActivity extends BRActivity {
     protected void onPause() {
         super.onPause();
         WalletsMaster.getInstance(this).updateWallets(this);
+    }
+
+    @Override
+    public void onStartDrag(RecyclerView.ViewHolder viewHolder) {
+        mItemTouchHelper.startDrag(viewHolder);
     }
 }
