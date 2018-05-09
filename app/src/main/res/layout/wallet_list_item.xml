@@ -19,6 +19,7 @@
         android:textSize="18sp"
         app:customTFont="CircularPro-Bold.otf"/>
 
+
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/wallet_trade_price"
         android:layout_width="wrap_content"
@@ -26,9 +27,9 @@
         android:layout_below="@id/wallet_name"
         android:layout_marginStart="16sp"
         android:layout_alignParentStart="true"
-        android:textColor="@color/currency_subheading_color"
+        android:textColor="@color/balance_crypto_color"
         android:textSize="14sp"
-        app:customTFont="CircularPro-Book.otf"/>
+        app:customTFont="CircularPro-Bold.otf"/>
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/wallet_balance_usd"
@@ -78,11 +79,10 @@
         android:id="@+id/wallet_balance_currency"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
         android:layout_below="@id/wallet_balance_usd"
-        android:layout_marginEnd="14sp"
-        android:textColor="@color/currency_subheading_color"
-        android:textSize="16sp"
-        app:customTFont="CircularPro-Book.otf"/>
+        android:layout_alignEnd="@id/wallet_balance_usd"
+        android:textColor="@color/balance_crypto_color"
+        android:textSize="14sp"
+        app:customTFont="CircularPro-Bold.otf"/>
 
 </RelativeLayout>

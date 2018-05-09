@@ -76,6 +76,7 @@
     <color name="transaction_amount_received_color">#4cbf2c</color>
     <color name="transaction_failed_button_color">#f46b41</color>
     <color name="trans_white">#70ffffff</color>
+    <color name="balance_crypto_color">#b7ffffff</color>
 
 
     // Dialog button colors
@@ -85,5 +86,6 @@
     // Add Wallets
     <color name="add_wallets_header_color">#f9f9f9</color>
     <color name="add_wallets_searchbar_color">#ececec</color>
+    <color name="add_wallets_border_color">#e5e5e5</color>
 
 </resources>
