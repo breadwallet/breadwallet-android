@@ -4,10 +4,8 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.net.ConnectivityManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -91,7 +89,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     private static WalletActivity app;
 
-    private InternetManager mConnectionReceiver;
     private SyncNotificationBroadcastReceiver mSyncNotificationBroadcastReceiver;
     private String mCurrentWalletIso;
 
@@ -216,15 +213,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         setPriceTags(cryptoPreferred, false);
 
-
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mConnectionReceiver != null)
-            unregisterReceiver(mConnectionReceiver);
 
     }
 
@@ -386,7 +374,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         super.onResume();
         app = this;
 
-        setupNetworking();
+        InternetManager.registerConnectionReceiver(this, this);
 
         TxManager.getInstance().onResume(this);
 
@@ -428,7 +416,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                         updateUi();
                     }
                 });
-                
+
             }
         });
 
@@ -457,7 +445,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     @Override
     protected void onPause() {
         super.onPause();
-        InternetManager.removeConnectionListener(this);
+        InternetManager.unregisterConnectionReceiver(this, this);
         SyncService.unregisterSyncNotificationBroadcastReceiver(WalletActivity.this.getApplicationContext(), mSyncNotificationBroadcastReceiver);
     }
 
@@ -470,17 +458,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         barFlipper.setDisplayedChild(0);
     }
 
-    private void setupNetworking() {
-        if (mConnectionReceiver == null)
-            mConnectionReceiver = InternetManager.getInstance();
-        IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(mConnectionReceiver, mNetworkStateFilter);
-        InternetManager.addConnectionListener(this);
-    }
 
     @Override
     public void onConnectionChanged(boolean isConnected) {
-        Log.d(TAG, "onConnectionChanged");
+        Log.d(TAG, "onConnectionChanged: isConnected: " + isConnected);
         if (isConnected) {
             if (barFlipper != null && barFlipper.getDisplayedChild() == 2) {
                 barFlipper.setDisplayedChild(0);

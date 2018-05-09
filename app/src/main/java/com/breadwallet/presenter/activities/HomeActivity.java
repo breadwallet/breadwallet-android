@@ -1,9 +1,7 @@
 package com.breadwallet.presenter.activities;
 
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -63,8 +61,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private CardView mPromptCard;
 
     private static HomeActivity app;
-
-    private InternetManager mConnectionReceiver;
 
     public static HomeActivity getApp() {
         return app;
@@ -199,13 +195,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         }
     }
 
-    private void setupNetworking() {
-        if (mConnectionReceiver == null) mConnectionReceiver = InternetManager.getInstance();
-        IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(mConnectionReceiver, mNetworkStateFilter);
-        InternetManager.addConnectionListener(this);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
@@ -223,17 +212,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             }
         }, 500);
 
-        setupNetworking();
-
-        InternetManager.addConnectionListener(new InternetManager.ConnectionReceiverListener() {
-            @Override
-            public void onConnectionChanged(boolean isConnected) {
-                Log.e(TAG, "onConnectionChanged: " + isConnected);
-                if (isConnected) {
-                    mAdapter.startObserving();
-                }
-            }
-        });
+        InternetManager.registerConnectionReceiver(this, this);
 
         updateUi();
         RatesDataSource.getInstance(this).addOnDataChangedListener(new RatesDataSource.OnDataChanged() {
@@ -263,7 +242,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     @Override
     protected void onPause() {
         super.onPause();
-        InternetManager.removeConnectionListener(this);
+        InternetManager.unregisterConnectionReceiver(this, this);
         mAdapter.stopObserving();
     }
 
@@ -290,26 +269,20 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mConnectionReceiver != null)
-            unregisterReceiver(mConnectionReceiver);
-    }
-
-    @Override
     public void onConnectionChanged(boolean isConnected) {
-        Log.d(TAG, "onConnectionChanged");
+        Log.d(TAG, "onConnectionChanged: isConnected: " + isConnected);
         if (isConnected) {
             if (mNotificationBar != null) {
                 mNotificationBar.setVisibility(View.INVISIBLE);
             }
 
-            if (mAdapter != null)
+            if (mAdapter != null) {
                 mAdapter.startObserving();
+            }
         } else {
-            if (mNotificationBar != null)
+            if (mNotificationBar != null) {
                 mNotificationBar.setVisibility(View.VISIBLE);
-
+            }
         }
 
     }
