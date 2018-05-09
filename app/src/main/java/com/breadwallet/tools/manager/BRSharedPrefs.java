@@ -383,7 +383,8 @@ public class BRSharedPrefs {
     // BTC, mBTC, Bits
     public static int getCryptoDenomination(Context context, String iso) {//ignore iso, using same denomination for both for now
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
-        return settingsToGet.getInt("currencyUnit", BRConstants.CURRENT_UNIT_BITS);
+        return settingsToGet.getInt("currencyUnit", BRConstants.CURRENT_UNIT_BITCOINS);
+
     }
 
     // BTC, mBTC, Bits
