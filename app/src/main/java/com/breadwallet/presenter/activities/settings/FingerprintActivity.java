@@ -31,6 +31,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
 
@@ -84,11 +85,11 @@ public class FingerprintActivity extends BRActivity {
                 if (isChecked && !Utils.isFingerprintEnrolled(app)) {
                     BRDialog.showCustomDialog(app, getString(R.string.TouchIdSettings_disabledWarning_title_android),
                             getString(R.string.TouchIdSettings_disabledWarning_body_android), getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            brDialogView.dismissWithAnimation();
-                        }
-                    }, null, null, 0);
+                                @Override
+                                public void onClick(BRDialogView brDialogView) {
+                                    brDialogView.dismissWithAnimation();
+                                }
+                            }, null, null, 0);
                     buttonView.setChecked(false);
                 } else {
                     BRSharedPrefs.putUseFingerprint(app, isChecked);
@@ -140,15 +141,14 @@ public class FingerprintActivity extends BRActivity {
         String iso = BRSharedPrefs.getPreferredFiatIso(this);
         //amount in satoshis
 
-        BaseWalletManager wm = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        WalletBitcoinManager wm = WalletBitcoinManager.getInstance(this);
         BigDecimal cryptoLimit = BRKeyStore.getSpendLimit(this, wm.getIso(this));
-        //amount in smallest crypto amount (satoshis, wei)
-        BigDecimal amount = wm.getFiatForSmallestCrypto(this, cryptoLimit, null);
+
         //amount in user preferred ISO (e.g. USD)
         BigDecimal curAmount = wm.getFiatForSmallestCrypto(this, cryptoLimit, null);
         //formatted string for the label
         return String.format(getString(R.string.TouchIdSettings_spendingLimit),
-                CurrencyUtils.getFormattedAmount(this, wm.getIso(this), amount), CurrencyUtils.getFormattedAmount(this, iso, curAmount));
+                CurrencyUtils.getFormattedAmount(this, wm.getIso(this), cryptoLimit), CurrencyUtils.getFormattedAmount(this, iso, curAmount));
     }
 
     @Override
