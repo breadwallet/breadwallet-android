@@ -146,6 +146,7 @@ public class WalletsMaster {
 
     public void resetTokensToDefault() {
         tokenResetToDefault = true;
+
     }
 
     public synchronized List<BaseWalletManager> getAllWallets(Context app) {

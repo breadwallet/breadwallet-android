@@ -67,7 +67,7 @@ public class ManageWalletsActivity extends BRActivity implements OnStartDragList
             String tokenSymbol = mTokens.get(i).symbol;
 
             if (!tokenSymbol.equalsIgnoreCase("btc") && !tokenSymbol.equalsIgnoreCase("bch") &&
-                    !tokenSymbol.equalsIgnoreCase("eth")) {
+                    !tokenSymbol.equalsIgnoreCase("eth") && !tokenSymbol.equalsIgnoreCase("brd")) {
 
                 BREthereumToken tk = WalletEthManager.getInstance(this).node.lookupToken(info.contractAddress);
                 if (tk == null) {
@@ -84,6 +84,9 @@ public class ManageWalletsActivity extends BRActivity implements OnStartDragList
                 tokenItem = new TokenItem(null, "BCH", "Bitcoin Cash", null);
             else if (tokenSymbol.equalsIgnoreCase("eth"))
                 tokenItem = new TokenItem(null, "ETH", "Ethereum", null);
+            else if (tokenSymbol.equalsIgnoreCase("brd"))
+                tokenItem = new TokenItem(null, "BRD", "BRD", null);
+
 
             if (tokenItem != null) {
                 tokenItems.add(tokenItem);
