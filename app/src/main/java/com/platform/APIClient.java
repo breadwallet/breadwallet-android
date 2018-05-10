@@ -949,6 +949,10 @@ public class APIClient {
             return contentType;
         }
 
+        public void setContentType(String contentType){
+            this.contentType = contentType;
+        }
+
         public boolean isSuccessful() {
             return code >= 200 && code < 300;
         }

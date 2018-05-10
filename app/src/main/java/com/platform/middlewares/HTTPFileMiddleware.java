@@ -80,6 +80,9 @@ public class HTTPFileMiddleware implements Middleware {
         if (DEBUG_URL == null) {
             // fetch the file locally
             String requestedFile = APIClient.getInstance(app).getExtractedPath(app, target);
+            Log.d(TAG, "Request local file -> " + requestedFile);
+            Log.d(TAG, "Request local file target -> " + target);
+
             temp = new File(requestedFile);
             if (temp.exists() && !temp.isDirectory()) {
                 Log.d(TAG, "handle: found bundle for:" + target);
@@ -113,6 +116,8 @@ public class HTTPFileMiddleware implements Middleware {
                 return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
             }
             response.setContentType(detectContentType(temp));
+            brResp.setContentType(detectContentType(temp));
+
         } else {
             // download the file from the debug endpoint
             String debugUrl = DEBUG_URL + target;
