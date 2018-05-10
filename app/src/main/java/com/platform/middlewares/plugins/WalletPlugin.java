@@ -405,7 +405,9 @@ public class WalletPlugin implements Plugin {
 
                 String denominator = w.getDenominator(app);
                 balance.put("currency", w.getIso(app));
-                balance.put("numerator", w.getCachedBalance(app).multiply(new BigDecimal(denominator)).toPlainString());
+                // TODO: cached balance is already multiplied by the denominator.  Figure out why and fix.
+//                balance.put("numerator", w.getCachedBalance(app).multiply(new BigDecimal(denominator)).toPlainString());
+                balance.put("numerator", w.getCachedBalance(app));
                 balance.put("denominator", denominator);
 
                 //Fiat balance
