@@ -359,7 +359,7 @@ public class WalletPlugin implements Plugin {
         final BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, currency);
         String addr = wm.undecorateAddress(app, toAddress);
         if (Utils.isNullOrEmpty(addr)) {
-            BRDialog.showSimpleDialog(app, "Failed to create tx for exchange!", "Invalid address: " + addr);
+            BRDialog.showSimpleDialog(app, "Failed to create tx for exchange!", "Address is empty");
             return;
         }
         BigDecimal bigAmount = WalletsMaster.getInstance(app).isIsoErc20(app, currency) ?
