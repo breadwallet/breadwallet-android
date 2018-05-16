@@ -131,6 +131,9 @@ public class WalletsMaster {
         if (mWallets == null || mWallets.size() == 0) {
             updateWallets(app);
         }
+        if (mWallets.size() == 0) {
+            BRReportsManager.reportBug(new IllegalArgumentException("getAllWallets returned 0 when it's not possible"));
+        }
         return mWallets;
 
     }
