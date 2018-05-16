@@ -81,7 +81,7 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
         cameraGuide.setImageResource(R.drawable.cameraguide);
         cameraGuide.setVisibility(View.GONE);
 
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+        if (android.support.v4.app.ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
                 == PackageManager.PERMISSION_GRANTED) {
             initQRCodeReaderView();
         } else {

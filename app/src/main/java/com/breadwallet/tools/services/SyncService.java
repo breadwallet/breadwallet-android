@@ -2,13 +2,11 @@ package com.breadwallet.tools.services;
 
 import android.app.AlarmManager;
 import android.app.IntentService;
-import android.app.Notification;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.os.Build;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -18,7 +16,6 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 
 /**
  * BreadWallet
@@ -57,11 +54,12 @@ public class SyncService extends IntentService {
     /**
      * Progress is identified as a double value between 0 and 1.
      */
-    public static final int PROGRESS_NOT_DEFINTED = -1;
+    public static final int PROGRESS_NOT_DEFINED = -1;
     public static final int PROGRESS_START = 0;
     public static final int PROGRESS_FINISH = 1;
 
-    private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
+    private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null
+            : BreadApp.getBreadContext().getApplicationContext().getPackageName();
 
     static {
         try {
@@ -69,7 +67,8 @@ public class SyncService extends IntentService {
         } catch (UnsatisfiedLinkError e) {
             e.printStackTrace();
             Log.d(TAG, "Native code library failed to load.\\n\" + " + e);
-            Log.d(TAG, "Installer Package Name -> " + (PACKAGE_NAME == null ? "null" : BreadApp.getBreadContext().getPackageManager().getInstallerPackageName(PACKAGE_NAME)));
+            Log.d(TAG, "Installer Package Name -> " + (PACKAGE_NAME == null ? "null"
+                    : BreadApp.getBreadContext().getPackageManager().getInstallerPackageName(PACKAGE_NAME)));
         }
     }
 
@@ -136,15 +135,8 @@ public class SyncService extends IntentService {
      * @param action    The action of the intent.
      * @param walletIso The wallet ISO used to identify which wallet is going to be acted upon.
      */
-    public static void startService(final Context context, final String action, final String walletIso) {
-//        if (!BreadApp.isAppInBackground(context))
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                context.startService(createIntent(context, action, walletIso));
-            }
-        });
-
+    public static void startService(Context context, String action, String walletIso) {
+        context.startService(createIntent(context, action, walletIso));
     }
 
     /**

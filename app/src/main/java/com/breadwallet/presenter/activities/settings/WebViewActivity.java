@@ -43,6 +43,7 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
 import com.platform.HTTPServer;
 import com.platform.middlewares.plugins.GeoLocationPlugin;
 import com.platform.middlewares.plugins.LinkPlugin;
@@ -96,7 +97,6 @@ public class WebViewActivity extends BRActivity {
 
         webView = findViewById(R.id.web_view);
         webView.setBackgroundColor(0);
-//        webView.setWebChromeClient(new BRWebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
 
             @Override
@@ -166,6 +166,8 @@ public class WebViewActivity extends BRActivity {
             if (!theUrl.contains("checkout")) {
                 bottomToolbar.setVisibility(View.INVISIBLE);
             }
+            if (theUrl.endsWith("/buy"))
+                theUrl = theUrl + "?currency=" + WalletsMaster.getInstance(this).getCurrentWallet(this).getIso(this).toLowerCase();
             webView.loadUrl(theUrl);
             if (articleId != null && !articleId.isEmpty())
                 navigate(articleId);
@@ -245,7 +247,6 @@ public class WebViewActivity extends BRActivity {
 
                     }
                 });
-
 
                 // Make the close button functional
                 mCloseButton.setOnClickListener(new View.OnClickListener() {

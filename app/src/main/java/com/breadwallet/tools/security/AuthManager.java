@@ -113,6 +113,7 @@ public class AuthManager {
     }
 
     public boolean isWalletDisabled(Activity app) {
+        long start = System.currentTimeMillis();
         int failCount = BRKeyStore.getFailCount(app);
         return failCount >= 3 && disabledUntil(app) > BRSharedPrefs.getSecureTime(app);
 

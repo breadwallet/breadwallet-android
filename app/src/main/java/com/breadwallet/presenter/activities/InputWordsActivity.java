@@ -72,6 +72,7 @@ public class InputWordsActivity extends BRActivity {
 //            debugPhrase = "zorro turismo mezcla nicho morir chico blanco pájaro alba esencia roer repetir";//spanish
 //            debugPhrase = "怨 贪 旁 扎 吹 音 决 廷 十 助 畜 怒";//chinese
 //            debugPhrase = "aim lawn sniff tenant coffee smoke meat hockey glow try also angle";
+            debugPhrase = "oído largo pensar grúa vampiro nación tomar agitar mano azote tarea miedo";
 
         }
 
@@ -181,7 +182,8 @@ public class InputWordsActivity extends BRActivity {
                             clearWords();
 
                             if (restore) {
-                                BRDialog.showCustomDialog(InputWordsActivity.this, getString(R.string.WipeWallet_alertTitle), getString(R.string.WipeWallet_alertMessage), getString(R.string.WipeWallet_wipe), getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
+                                BRDialog.showCustomDialog(InputWordsActivity.this, getString(R.string.WipeWallet_alertTitle),
+                                        getString(R.string.WipeWallet_alertMessage), getString(R.string.WipeWallet_wipe), getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
                                     @Override
                                     public void onClick(BRDialogView brDialogView) {
                                         brDialogView.dismissWithAnimation();
@@ -207,7 +209,8 @@ public class InputWordsActivity extends BRActivity {
 
 
                         } else {
-                            BRDialog.showCustomDialog(app, "", getString(R.string.RecoverWallet_invalid), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                            BRDialog.showCustomDialog(app, "", getString(R.string.RecoverWallet_invalid),
+                                    getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                                 @Override
                                 public void onClick(BRDialogView brDialogView) {
                                     brDialogView.dismissWithAnimation();
@@ -218,15 +221,15 @@ public class InputWordsActivity extends BRActivity {
                     } else {
                         Utils.hideKeyboard(app);
                         WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
-                        m.wipeWalletButKeystore(app);
-                        m.wipeKeyStore(app);
+                        m.wipeAll(InputWordsActivity.this);
                         PostAuth.getInstance().setPhraseForKeyStore(cleanPhrase);
                         BRSharedPrefs.putAllowSpend(app, BRSharedPrefs.getCurrentWalletIso(app), false);
                         PostAuth.getInstance().onRecoverWalletAuth(app, false);
                     }
 
                 } else {
-                    BRDialog.showCustomDialog(app, "", getResources().getString(R.string.RecoverWallet_invalid), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                    BRDialog.showCustomDialog(app, "", getResources().getString(R.string.RecoverWallet_invalid),
+                            getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
                             brDialogView.dismissWithAnimation();
@@ -334,7 +337,8 @@ public class InputWordsActivity extends BRActivity {
 
         if (!success) return null;
 
-        return w(w1) + " " + w(w2) + " " + w(w3) + " " + w(w4) + " " + w(w5) + " " + w(w6) + " " + w(w7) + " " + w(w8) + " " + w(w9) + " " + w(w10) + " " + w(w11) + " " + w(w12);
+        return w(w1) + " " + w(w2) + " " + w(w3) + " " + w(w4) + " " + w(w5) + " " + w(w6) + " "
+                + w(w7) + " " + w(w8) + " " + w(w9) + " " + w(w10) + " " + w(w11) + " " + w(w12);
     }
 
     private String w(String word) {

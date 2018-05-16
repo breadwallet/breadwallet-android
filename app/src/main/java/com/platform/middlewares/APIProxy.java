@@ -1,13 +1,11 @@
 package com.platform.middlewares;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
-import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Middleware;
 
 import org.apache.commons.io.IOUtils;
@@ -15,16 +13,14 @@ import org.apache.commons.io.IOUtils;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import okhttp3.Headers;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
 
 
 /**
@@ -88,56 +84,35 @@ public class APIProxy implements Middleware {
         if (queryString != null && queryString.length() > 0)
             path += "?" + queryString;
         boolean auth = false;
-        Request req = mapToOkHttpRequest(baseRequest, path, request);
+        Request req = jettyToOkHttpRequest(baseRequest, path, request);
         String authHeader = baseRequest.getHeader(SHOULD_AUTHENTICATE);
 
         if (authHeader != null && (authHeader.toLowerCase().equals("yes") || authHeader.toLowerCase().equals("true"))) {
             auth = true;
         }
 
-        Response res = apiInstance.sendRequest(req, auth, 0);
+        APIClient.BRResponse res = apiInstance.sendRequest(req, auth, 0);
+
+        Map<String, String> headers = res.getHeaders();
+        for (String s : headers.keySet()) {
+            if (Arrays.asList(bannedReceiveHeaders).contains(s.toLowerCase())) continue;
+            response.addHeader(s, res.getHeaders().get(s));
+        }
+
         try {
-            ResponseBody body = res.body();
-            String cType = body.contentType() == null ? null : body.contentType().toString();
-            String resString = null;
-            byte[] bodyBytes = new byte[0];
-            try {
-                bodyBytes = body.bytes();
-                resString = new String(bodyBytes);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            response.setContentType(cType);
-            Headers headers = res.headers();
-            for (String s : headers.names()) {
-                if (Arrays.asList(bannedReceiveHeaders).contains(s.toLowerCase())) continue;
-                response.addHeader(s, res.header(s));
-            }
-            response.setContentLength(bodyBytes.length);
-
-            if (!res.isSuccessful()) {
-                Log.e(TAG, "RES IS NOT SUCCESSFUL: " + res.request().url() + ": " + res.code() + "(" + res.message() + ")");
-//            return BRHTTPHelper.handleSuccess(res.code(), bodyBytes, baseRequest, response, null);
-            }
-
-            try {
-                response.setStatus(res.code());
-                if (cType != null && !cType.isEmpty())
-                    response.setContentType(cType);
-                response.getOutputStream().write(bodyBytes);
-                baseRequest.setHandled(true);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        } finally {
-            if (res != null) res.close();
+            response.setStatus(res.getCode());
+            if (!Utils.isNullOrEmpty(res.getContentType()))
+                response.setContentType(res.getContentType());
+            response.getOutputStream().write(res.getBody());
+            baseRequest.setHandled(true);
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return true;
 
     }
 
-    private Request mapToOkHttpRequest(org.eclipse.jetty.server.Request baseRequest, String path, HttpServletRequest request) {
+    private Request jettyToOkHttpRequest(org.eclipse.jetty.server.Request baseRequest, String path, HttpServletRequest request) {
         Request req;
         Request.Builder builder = new Request.Builder()
                 .url(apiInstance.buildUrl(path));
@@ -146,17 +121,17 @@ public class APIProxy implements Middleware {
         while (headerNames.hasMoreElements()) {
             String hName = headerNames.nextElement();
             if (Arrays.asList(bannedSendHeaders).contains(hName.toLowerCase())) continue;
-            builder.addHeader(hName, baseRequest.getHeader(hName));
+            String h = baseRequest.getHeader(hName);
+            builder.addHeader(hName, h == null ? "" : h);
         }
-
-        byte[] bodyText = new byte[0];
+        byte[] body = new byte[0];
         try {
-            bodyText = IOUtils.toByteArray(request.getInputStream());
+            body = IOUtils.toByteArray(request.getInputStream());
         } catch (IOException e) {
             e.printStackTrace();
         }
-        String contentType = baseRequest.getContentType() == null ? null : baseRequest.getContentType();
-        RequestBody reqBody = RequestBody.create(contentType == null ? null : MediaType.parse(contentType), bodyText);
+        String contentType = baseRequest.getContentType();
+        RequestBody reqBody = RequestBody.create(contentType == null ? null : MediaType.parse(contentType), body);
 
         switch (baseRequest.getMethod()) {
             case "GET":
@@ -172,7 +147,7 @@ public class APIProxy implements Middleware {
                 builder.put(reqBody);
                 break;
             default:
-                Log.e(TAG, "mapToOkHttpRequest: WARNING: method: " + baseRequest.getMethod());
+                Log.e(TAG, "jettyToOkHttpRequest: WARNING: method: " + baseRequest.getMethod());
                 break;
         }
 

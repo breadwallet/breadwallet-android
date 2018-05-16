@@ -58,7 +58,13 @@ public class HTTPFileMiddleware implements Middleware {
     public boolean handle(String target, org.eclipse.jetty.server.Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
         if (target.equals("/")) return false;
         if (target.equals("/favicon.ico")) {
-            return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
+            APIClient.BRResponse resp = new APIClient.BRResponse(null, 200, null);
+
+            return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
+        } else if (target.equals("/_didload")) {
+            APIClient.BRResponse resp = new APIClient.BRResponse(null, 200, null);
+
+            return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         }
 
         Context app = BreadApp.getBreadContext();
@@ -70,10 +76,13 @@ public class HTTPFileMiddleware implements Middleware {
 //            DEBUG_URL = "http://bw-platform-tests.s3-website.us-east-2.amazonaws.com";
 
         File temp = null;
-        byte[] body = null;
+        APIClient.BRResponse brResp = new APIClient.BRResponse();
         if (DEBUG_URL == null) {
             // fetch the file locally
             String requestedFile = APIClient.getInstance(app).getExtractedPath(app, target);
+            Log.d(TAG, "Request local file -> " + requestedFile);
+            Log.d(TAG, "Request local file target -> " + target);
+
             temp = new File(requestedFile);
             if (temp.exists() && !temp.isDirectory()) {
                 Log.d(TAG, "handle: found bundle for:" + target);
@@ -94,17 +103,20 @@ public class HTTPFileMiddleware implements Middleware {
 
             if (modified) {
                 try {
-                    body = FileUtils.readFileToByteArray(temp);
+                    brResp.body = FileUtils.readFileToByteArray(temp);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-                if (body == null) {
+                if (Utils.isNullOrEmpty(brResp.body)) {
                     return BRHTTPHelper.handleError(400, "could not read the file", baseRequest, response);
                 }
             } else {
-                return BRHTTPHelper.handleSuccess(304, null, baseRequest, response, null);
+                APIClient.BRResponse resp = new APIClient.BRResponse(null, 304);
+
+                return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
             }
             response.setContentType(detectContentType(temp));
+            brResp.setContentType(detectContentType(temp));
 
         } else {
             // download the file from the debug endpoint
@@ -113,28 +125,21 @@ public class HTTPFileMiddleware implements Middleware {
             Request debugRequest = new Request.Builder()
                     .url(debugUrl)
                     .get().build();
-            Response debugResp = null;
-            try {
-                debugResp = APIClient.getInstance(app).sendRequest(debugRequest, false, 0);
-                if (debugResp != null)
-                    body = debugResp.body().bytes();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                debugResp.close();
-            }
-
+            brResp = APIClient.getInstance(app).sendRequest(debugRequest, false, 0);
         }
+
+        brResp.code = 200;
 
         String rangeString = request.getHeader("range");
         if (!Utils.isNullOrEmpty(rangeString)) {
             // Range header should match format "bytes=n-n,n-n,n-n...". If not, then return 416.
             return handlePartialRequest(baseRequest, response, temp);
         } else {
-            if (body == null) {
+            if (Utils.isNullOrEmpty(brResp.getBody())) {
                 return BRHTTPHelper.handleError(404, "not found", baseRequest, response);
             } else {
-                return BRHTTPHelper.handleSuccess(200, body, baseRequest, response, null);
+
+                return BRHTTPHelper.handleSuccess(brResp, baseRequest, response);
             }
         }
 
@@ -166,7 +171,9 @@ public class HTTPFileMiddleware implements Middleware {
                 response.setHeader("Content-Range", "bytes " + start + "-"
                         + end + "/" + fileLength);
                 byte[] respBody = Arrays.copyOfRange(FileUtils.readFileToByteArray(file), start, contentLength);
-                return BRHTTPHelper.handleSuccess(206, respBody, request, response, detectContentType(file));
+                APIClient.BRResponse resp = new APIClient.BRResponse(respBody, 206, detectContentType(file));
+
+                return BRHTTPHelper.handleSuccess(resp, request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();

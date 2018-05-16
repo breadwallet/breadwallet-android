@@ -53,6 +53,8 @@ public class TxManager {
     private static TxManager instance;
     private RecyclerView txList;
     public TransactionListAdapter adapter;
+    private RecyclerItemClickListener mItemListener;
+
 
     public static TxManager getInstance() {
         if (instance == null) instance = new TxManager();
@@ -60,9 +62,7 @@ public class TxManager {
     }
 
     public void init(final WalletActivity app) {
-        txList = app.findViewById(R.id.tx_list);
-        txList.setLayoutManager(new CustomLinearLayoutManager(app));
-        txList.addOnItemTouchListener(new RecyclerItemClickListener(app,
+        mItemListener = new RecyclerItemClickListener(app,
                 txList, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
@@ -76,7 +76,10 @@ public class TxManager {
             public void onLongItemClick(View view, int position) {
 
             }
-        }));
+        });
+        txList = app.findViewById(R.id.tx_list);
+        txList.setLayoutManager(new CustomLinearLayoutManager(app));
+        txList.addOnItemTouchListener(mItemListener);
         if (adapter == null)
             adapter = new TransactionListAdapter(app, null);
         if (txList.getAdapter() == null)

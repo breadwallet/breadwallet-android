@@ -20,6 +20,7 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
 
@@ -37,6 +38,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -173,7 +175,7 @@ public class CameraPlugin implements Plugin {
                     return BRHTTPHelper.handleError(500, null, baseRequest, response);
                 }
             }
-            return BRHTTPHelper.handleSuccess(200, imgBytes, baseRequest, response, contentType);
+            return BRHTTPHelper.handleSuccess(new APIClient.BRResponse(imgBytes, 200, new HashMap<String, String>(), "", contentType), baseRequest, response);
         } else return false;
     }
 
@@ -215,7 +217,8 @@ public class CameraPlugin implements Plugin {
                         }
                         continuation.getServletResponse().setContentType("application/json");
                         ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
-                        BRHTTPHelper.handleSuccess(200, respJson.toString().getBytes(), globalBaseRequest, (HttpServletResponse) continuation.getServletResponse(), "application/json");
+                        APIClient.BRResponse brResp = new APIClient.BRResponse(respJson.toString().getBytes(), 200, "application/json");
+                        BRHTTPHelper.handleSuccess(brResp, globalBaseRequest, (HttpServletResponse) continuation.getServletResponse());
                         continuation.complete();
 
                     } else {

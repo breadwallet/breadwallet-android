@@ -15,16 +15,20 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.CryptoTransaction;
+import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
 
@@ -84,7 +88,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         mMetaDatas = new HashMap<>();
         items = new ArrayList<>();
         init(items);
-//        updateMetadata();
     }
 
     public void setItems(List<TxUiHolder> items) {
@@ -103,9 +106,23 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public void updateData() {
         if (updatingData) return;
         Map<Integer, TxMetaData> localMDs = new HashMap<>();
+        BaseWalletManager wm = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
         for (int i = 0; i < backUpFeed.size(); i++) {
             TxUiHolder item = backUpFeed.get(i);
-            localMDs.put(i, KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash()));
+            TxMetaData md = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
+            if (System.currentTimeMillis() - item.getTimeStamp() < (60 * 60 * 1000)) {
+                if (md == null) {
+                    md = KVStoreManager.getInstance().createMetadata(mContext, wm,
+                            new CryptoTransaction(item.getTransaction()));
+                    KVStoreManager.getInstance().putTxMetaData(mContext, md, item.getTxHash());
+                } else if (md.exchangeRate == 0) {
+                    md.exchangeRate = wm.getFiatExchangeRate(mContext).doubleValue();
+                    md.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(mContext);
+                    Log.d(TAG, "MetaData not null");
+                    KVStoreManager.getInstance().putTxMetaData(mContext, md, item.getTxHash());
+                }
+            }
+            localMDs.put(i, md);
 
         }
         mMetaDatas.clear();
@@ -158,7 +175,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private void setTexts(final TxHolder convertView, int position) {
         BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
         TxUiHolder item = itemFeed.get(position);
-//        item.metaData = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
 
         String commentString = "";
         TxMetaData md = mMetaDatas.size() > position ? mMetaDatas.get(position) : null;
@@ -178,19 +194,22 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             showTransactionFailed(convertView, item, received);
 
         BigDecimal cryptoAmount = item.getAmount().abs();
+
+        BREthereumToken tkn = null;
+        if (wallet.getIso(mContext).equalsIgnoreCase("ETH"))
+            tkn = WalletEthManager.getInstance(mContext).node.lookupToken(item.getTo());
+        if (tkn != null) cryptoAmount = item.getFee(); // it's a token transfer ETH tx
         boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
         String preferredIso = isCryptoPreferred ? wallet.getIso(mContext) : BRSharedPrefs.getPreferredFiatIso(mContext);
-
         BigDecimal amount = isCryptoPreferred ? cryptoAmount : wallet.getFiatForSmallestCrypto(mContext, cryptoAmount, null);
         convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, preferredIso, received ? amount : (amount == null ? null : amount.negate())));
-
         int blockHeight = item.getBlockHeight();
-        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : BRSharedPrefs.getLastBlockHeight(mContext, wallet.getIso(mContext)) - blockHeight + 1;
+        int lastBlockHeight = BRSharedPrefs.getLastBlockHeight(mContext, wallet.getIso(mContext));
+        int confirms = blockHeight == Integer.MAX_VALUE ? 0 : lastBlockHeight - blockHeight + 1;
 
         int level;
         if (confirms <= 0) {
             long relayCount = wallet.getRelayCount(item.getTxHash());
-            if (relayCount == -1) relayCount = 3; //Ethereum does not have relay count
             if (relayCount <= 0)
                 level = 0;
             else if (relayCount == 1)
@@ -209,13 +228,19 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
         if (level > 0 && level < 5)
             showTransactionProgress(convertView, level * 20);
+        String sentTo = String.format(mContext.getString(R.string.Transaction_sentTo), wallet.decorateAddress(mContext, item.getTo()));
+        String receivedVia = String.format(mContext.getString(R.string.TransactionDetails_receivedVia), wallet.decorateAddress(mContext, item.getTo()));
+
+        String sendingTo = String.format(mContext.getString(R.string.Transaction_sendingTo), wallet.decorateAddress(mContext, item.getTo()));
+        String receivingVia = String.format(mContext.getString(R.string.TransactionDetails_receivingVia), wallet.decorateAddress(mContext, item.getTo()));
 
         if (level > 4) {
-            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? "sent to " : "received via ") + wallet.decorateAddress(mContext, item.getTo()));
+            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? sentTo : receivedVia));
         } else {
-            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? "sending to " : "receiving via ") + wallet.decorateAddress(mContext, item.getTo()));
-
+            convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? sendingTo : receivingVia));
         }
+        if (tkn != null) // it's a token transfer ETH tx
+            convertView.transactionDetail.setText(String.format(mContext.getString(R.string.Transaction_tokenTransfer), tkn.getSymbol()));
 
         //if it's 0 we use the current time.
         long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * 1000;
@@ -223,20 +248,20 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         String shortDate = BRDateUtil.getShortDate(timeStamp);
 
         convertView.transactionDate.setText(shortDate);
-
     }
 
     private void showTransactionProgress(TxHolder holder, int progress) {
+        //todo FIX this!
         if (progress < 100) {
             holder.transactionProgress.setVisibility(View.VISIBLE);
             holder.transactionDate.setVisibility(View.GONE);
             holder.transactionProgress.setProgress(progress);
-
             RelativeLayout.LayoutParams detailParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT);
             detailParams.addRule(RelativeLayout.RIGHT_OF, holder.transactionProgress.getId());
             detailParams.addRule(RelativeLayout.CENTER_VERTICAL);
             detailParams.setMargins(Utils.getPixelsFromDps(mContext, 16), Utils.getPixelsFromDps(mContext, 36), 0, 0);
             holder.transactionDetail.setLayoutParams(detailParams);
+            holder.transactionDetail.setMaxWidth(Utils.getPixelsFromDps(mContext, 120));
         } else {
             holder.transactionProgress.setVisibility(View.INVISIBLE);
             holder.transactionDate.setVisibility(View.VISIBLE);

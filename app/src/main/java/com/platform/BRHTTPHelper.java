@@ -51,16 +51,17 @@ public class BRHTTPHelper {
         }
         return true;
     }
-//    return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
-//    return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
 
-    public static boolean handleSuccess(int code, byte[] body, Request baseRequest, HttpServletResponse resp, String contentType) {
+    public static boolean handleSuccess(APIClient.BRResponse brResp, Request baseRequest, HttpServletResponse resp) {
         try {
-            resp.setStatus(code);
-            if (contentType != null && !contentType.isEmpty())
-                resp.setContentType(contentType);
-            if (body != null)
-                resp.getOutputStream().write(body);
+            if (brResp.getCode() == 0) throw new RuntimeException("http code can't be 0");
+            resp.setStatus(brResp.getCode());
+            resp.setContentType(brResp.getContentType());
+            if (!Utils.isNullOrEmpty(brResp.getBody()))
+                resp.getOutputStream().write(brResp.getBody());
+            for (String key : brResp.getHeaders().keySet()) {
+                resp.setHeader(key, brResp.getHeaders().get(key));
+            }
             baseRequest.setHandled(true);
         } catch (IOException e) {
             e.printStackTrace();

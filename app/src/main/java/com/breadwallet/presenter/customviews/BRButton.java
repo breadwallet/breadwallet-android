@@ -7,9 +7,14 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
+import android.graphics.Shader;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -196,9 +201,7 @@ public class BRButton extends Button {
 
     public void setColor(int color) {
         bPaint.setColor(color);
-
         invalidate();
-
     }
 
     public void setType(int type) {
@@ -230,7 +233,21 @@ public class BRButton extends Button {
             bPaint.setColor(getContext().getColor(R.color.currency_buttons_color));
             bPaint.setStyle(Paint.Style.FILL);
         }
+        else if (type == 5){
+            bPaintStroke.setColor(getContext().getColor(R.color.blue));
+            bPaintStroke.setStyle(Paint.Style.STROKE);
+            bPaintStroke.setStrokeWidth(Utils.getPixelsFromDps(getContext(), 1));
+            setTextColor(getContext().getColor(R.color.blue));
+            bPaint.setColor(getContext().getColor(R.color.white));
+            bPaint.setStyle(Paint.Style.FILL);
+
+        }
         invalidate();
+    }
+
+    public void makeGradient(int startColor, int endColor){
+            bPaint.setShader(new LinearGradient(0, 0, getWidth(), 0, startColor, endColor, Shader.TileMode.MIRROR));
+            invalidate();
     }
 
     private void press(int duration) {

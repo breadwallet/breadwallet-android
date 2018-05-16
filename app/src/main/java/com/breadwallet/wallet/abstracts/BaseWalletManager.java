@@ -9,13 +9,17 @@ import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.core.BRCorePeerManager;
 import com.breadwallet.core.BRCoreTransaction;
 import com.breadwallet.core.BRCoreWallet;
+import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
+import com.breadwallet.wallet.wallets.CryptoAddress;
+import com.breadwallet.wallet.wallets.CryptoTransaction;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Set;
 
 /**
  * BreadWallet
@@ -47,14 +51,21 @@ public interface BaseWalletManager {
      * The methods that are annotated with @WorkerThread might block so can't be called in the UI Thread
      */
 
+    public interface OnHashUpdated{
+        void onUpdated(String hash);
+    }
+
     //get the core wallet
     int getForkId();
+
+    //get the currency unit ETHEREUM_WEI...
+    BREthereumAmount.Unit getUnit();
 
     boolean isAddressValid(String address);
 
     @WorkerThread
         //sign and publish the tx using the seed
-    byte[] signAndPublishTransaction(BaseTransaction tx, byte[] seed);
+    byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] seed);
 
     void addBalanceChangedListener(OnBalanceChangedListener list);
 
@@ -63,6 +74,8 @@ public interface BaseWalletManager {
     void addSyncListeners(SyncListener list);
 
     void addTxListModifiedListener(OnTxListModified list);
+
+    void watchTransactionForHash(CryptoTransaction tx, OnHashUpdated listener);
 
     @WorkerThread
         //get confirmation number
@@ -94,10 +107,10 @@ public interface BaseWalletManager {
 
     @WorkerThread
         //get a list of all the transactions sorted by timestamp (e.g. BRCoreTransaction[] for BTC)
-    BaseTransaction[] getTxs();
+    CryptoTransaction[] getTxs(Context app);
 
     //get the transaction fee
-    BigDecimal getTxFee(BaseTransaction tx);
+    BigDecimal getTxFee(CryptoTransaction tx);
 
     //get the transaction fee
     BigDecimal getEstimatedFee(BigDecimal amount, String address);
@@ -106,7 +119,7 @@ public interface BaseWalletManager {
     BigDecimal getFeeForTransactionSize(BigDecimal size);
 
     //get the transaction to address
-    BaseAddress getTxAddress(BaseTransaction tx);
+    String getTxAddress(CryptoTransaction tx);
 
     //get the maximum output amount possible for this wallet
     BigDecimal getMaxOutputAmount(Context app);
@@ -115,7 +128,7 @@ public interface BaseWalletManager {
     BigDecimal getMinOutputAmount(Context app);
 
     //get the transaction amount (negative if sent)
-    BigDecimal getTransactionAmount(BaseTransaction tx);
+    BigDecimal getTransactionAmount(CryptoTransaction tx);
 
     //get the reasonable minimum output amount (not smaller than dust)
     BigDecimal getMinOutputAmountPossible();
@@ -139,9 +152,6 @@ public interface BaseWalletManager {
     //return true if this wallet already used this address
     boolean addressIsUsed(String address);
 
-    //return the new address object
-    BaseAddress createAddress(String address);
-
     @WorkerThread
         //generate the wallet if needed
     boolean generateWallet(Context app);
@@ -159,13 +169,13 @@ public interface BaseWalletManager {
     String getName(Context app);
 
     //get the currency denomination e.g. BCH, mBCH, Bits
-    String getDenomination(Context app);
+    String getDenominator(Context app);
 
     @WorkerThread
         //get the wallet's receive address
-    BaseAddress getReceiveAddress(Context app);
+    CryptoAddress getReceiveAddress(Context app);
 
-    BaseTransaction createTransaction(BigDecimal amount, String address);
+    CryptoTransaction createTransaction(BigDecimal amount, String address);
 
     //decorate an address to a particular currency, if needed (like BCH address format)
     String decorateAddress(Context app, String addr);
@@ -203,6 +213,7 @@ public interface BaseWalletManager {
      * @return - the wallet's Ui configuration
      */
     WalletUiConfiguration getUiConfiguration();
+
     /**
      * @return - the wallet's Settings configuration (Settings items)
      */

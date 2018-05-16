@@ -70,7 +70,9 @@ public class HTTPIndexMiddleware implements Middleware {
             Assert.assertNotNull(body);
             Assert.assertNotSame(body.length, 0);
             response.setHeader("Content-Length", String.valueOf(body.length));
-            return BRHTTPHelper.handleSuccess(200, body, baseRequest, response, "text/html;charset=utf-8");
+            APIClient.BRResponse resp = new APIClient.BRResponse(body, 200,"text/html;charset=utf-8");
+
+            return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         } catch (IOException e) {
             e.printStackTrace();
             Log.d(TAG, "handle: error sending response: " + target + " " + baseRequest.getMethod());

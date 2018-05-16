@@ -2,9 +2,7 @@ package com.breadwallet.presenter.activities;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.graphics.Color;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -15,31 +13,25 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RelativeLayout;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.core.test.BRWalletManager;
 import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
-import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.PromptManager;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -50,7 +42,7 @@ import java.util.ArrayList;
  * Home activity that will show a list of a user's wallets
  */
 
-public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener {
+public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener , RatesDataSource.OnDataChanged{
 
     private static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -71,8 +63,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     private static HomeActivity app;
 
-    private InternetManager mConnectionReceiver;
-
     public static HomeActivity getApp() {
         return app;
     }
@@ -81,12 +71,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
-        WalletsMaster.getInstance(HomeActivity.this).initWallets(HomeActivity.this);
-
-        ArrayList<BaseWalletManager> walletList = new ArrayList<>();
-
-        walletList.addAll(WalletsMaster.getInstance(this).getAllWallets());
+        Log.e(TAG, "onCreate: 1");
 
         mWalletRecycler = findViewById(R.id.rv_wallet_list);
         mFiatTotal = findViewById(R.id.total_assets_usd);
@@ -102,21 +87,25 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mPromptContinue = findViewById(R.id.continue_button);
         mPromptDismiss = findViewById(R.id.dismiss_button);
 
-        mAdapter = new WalletListAdapter(this, walletList);
-
         mWalletRecycler.setLayoutManager(new LinearLayoutManager(this));
-        mWalletRecycler.setAdapter(mAdapter);
 
         mWalletRecycler.addOnItemTouchListener(new RecyclerItemClickListener(this, mWalletRecycler, new RecyclerItemClickListener.OnItemClickListener() {
             @Override
             public void onItemClick(View view, int position, float x, float y) {
                 if (position >= mAdapter.getItemCount() || position < 0) return;
-                BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, mAdapter.getItemAt(position).getIso(HomeActivity.this));
 //                Log.d("HomeActivity", "Saving current wallet ISO as " + mAdapter.getItemAt(position).getIso(HomeActivity.this));
 
-                Intent newIntent = new Intent(HomeActivity.this, WalletActivity.class);
-                startActivity(newIntent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                if (mAdapter.getItemViewType(position) == 0) {
+                    BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, mAdapter.getItemAt(position).getIso(HomeActivity.this));
+                    Intent newIntent = new Intent(HomeActivity.this, WalletActivity.class);
+                    startActivity(newIntent);
+                    overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                } else {
+                    Intent intent = new Intent(HomeActivity.this, AddWalletsActivity.class);
+                    startActivity(intent);
+                    overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+
+                }
             }
 
             @Override
@@ -151,7 +140,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             }
         });
 
-        onConnectionChanged(InternetManager.getInstance().isConnected(this));
 
         mPromptDismiss.setColor(Color.parseColor("#b3c0c8"));
         mPromptDismiss.setOnClickListener(new View.OnClickListener() {
@@ -174,9 +162,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                     Log.e(TAG, "Continue :" + info.title + " (FAILED)");
             }
         });
+        Log.e(TAG, "onCreate: 2");
 
     }
-
 
     public void hidePrompt() {
         mPromptCard.setVisibility(View.GONE);
@@ -208,19 +196,15 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         }
     }
 
-    private void setupNetworking() {
-        if (mConnectionReceiver == null) mConnectionReceiver = InternetManager.getInstance();
-        IntentFilter mNetworkStateFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(mConnectionReceiver, mNetworkStateFilter);
-        InternetManager.addConnectionListener(this);
-    }
-
     @Override
     protected void onResume() {
         super.onResume();
+        long start = System.currentTimeMillis();
         app = this;
 
         showNextPromptIfNeeded();
+
+        populateWallets();
 
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -229,32 +213,10 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             }
         }, 500);
 
-        setupNetworking();
-
-        InternetManager.addConnectionListener(new InternetManager.ConnectionReceiverListener() {
-            @Override
-            public void onConnectionChanged(boolean isConnected) {
-                Log.e(TAG, "onConnectionChanged: " + isConnected);
-                if (isConnected) {
-                    mAdapter.startObserving();
-                }
-            }
-        });
+        InternetManager.registerConnectionReceiver(this, this);
 
         updateUi();
-        CurrencyDataSource.getInstance(this).addOnDataChangedListener(new CurrencyDataSource.OnDataChanged() {
-            @Override
-            public void onChanged() {
-                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        Thread.currentThread().setName("UI:" + TAG + ":updateUi");
-                        updateUi();
-                    }
-                });
-
-            }
-        });
+        RatesDataSource.getInstance(this).addOnDataChangedListener(this);
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -264,51 +226,72 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 WalletsMaster.getInstance(app).getCurrentWallet(app).refreshAddress(app);
             }
         });
+
+        onConnectionChanged(InternetManager.getInstance().isConnected(this));
+        Log.e(TAG, "onResume: took: " + (System.currentTimeMillis() - start));
+    }
+
+    private void populateWallets() {
+        ArrayList<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(this).getAllWallets(this));
+        mAdapter = new WalletListAdapter(this, list);
+        mWalletRecycler.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        InternetManager.removeConnectionListener(this);
+        InternetManager.unregisterConnectionReceiver(this, this);
         mAdapter.stopObserving();
     }
 
     private void updateUi() {
-        BigDecimal fiatTotalAmount = WalletsMaster.getInstance(this).getAggregatedFiatBalance(this);
-        if (fiatTotalAmount == null) {
-            Log.e(TAG, "updateUi: fiatTotalAmount is null");
-            return;
-        }
-        mFiatTotal.setText(CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), fiatTotalAmount));
-        mAdapter.notifyDataSetChanged();
-    }
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                final BigDecimal fiatTotalAmount = WalletsMaster.getInstance(HomeActivity.this).getAggregatedFiatBalance(HomeActivity.this);
+                if (fiatTotalAmount == null) {
+                    Log.e(TAG, "updateUi: fiatTotalAmount is null");
+                    return;
+                }
+                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        mFiatTotal.setText(CurrencyUtils.getFormattedAmount(HomeActivity.this,
+                                BRSharedPrefs.getPreferredFiatIso(HomeActivity.this), fiatTotalAmount));
+                        mAdapter.notifyDataSetChanged();
+                    }
+                });
 
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mConnectionReceiver != null)
-            unregisterReceiver(mConnectionReceiver);
+            }
+        });
     }
 
     @Override
     public void onConnectionChanged(boolean isConnected) {
-        Log.d(TAG, "onConnectionChanged");
+        Log.d(TAG, "onConnectionChanged: isConnected: " + isConnected);
         if (isConnected) {
             if (mNotificationBar != null) {
                 mNotificationBar.setVisibility(View.INVISIBLE);
             }
 
-            mAdapter.startObserving();
+            if (mAdapter != null) {
+                mAdapter.startObserving();
+            }
         } else {
-            if (mNotificationBar != null)
+            if (mNotificationBar != null) {
                 mNotificationBar.setVisibility(View.VISIBLE);
-
+            }
         }
 
     }
 
     public void closeNotificationBar() {
         mNotificationBar.setVisibility(View.INVISIBLE);
+    }
+
+    @Override
+    public void onChanged() {
+        updateUi();
     }
 }

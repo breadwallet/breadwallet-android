@@ -27,6 +27,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
 
 import java.io.Serializable;
@@ -81,12 +82,12 @@ public class IntroActivity extends BRActivity implements Serializable {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
-        newWalletButton = (Button) findViewById(R.id.button_new_wallet);
-        recoverWalletButton = (Button) findViewById(R.id.button_recover_wallet);
+        newWalletButton = findViewById(R.id.button_new_wallet);
+        recoverWalletButton = findViewById(R.id.button_recover_wallet);
         splashScreen = findViewById(R.id.splash_screen);
         setListeners();
         updateBundles();
-        faq = (ImageButton) findViewById(R.id.faq_button);
+        faq = findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override

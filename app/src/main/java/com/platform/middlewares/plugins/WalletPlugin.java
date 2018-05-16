@@ -1,18 +1,25 @@
 package com.platform.middlewares.plugins;
 
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
 import com.platform.tools.BRBitId;
@@ -21,12 +28,15 @@ import org.apache.commons.compress.utils.IOUtils;
 import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.continuation.ContinuationSupport;
 import org.eclipse.jetty.server.Request;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Currency;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -75,6 +85,7 @@ public class WalletPlugin implements Plugin {
                 return BRHTTPHelper.handleError(500, "context is null", baseRequest, response);
             }
             WalletsMaster wm = WalletsMaster.getInstance(app);
+            BaseWalletManager w = WalletBitcoinManager.getInstance(app);
             JSONObject jsonResp = new JSONObject();
             try {
                 /**whether or not the users wallet is set up yet, or is currently locked*/
@@ -87,14 +98,16 @@ public class WalletPlugin implements Plugin {
                     addrs = wm.getCurrentWallet(app).getReceiveAddress(app).stringify();
                 }
                 /**the current receive address*/
-                jsonResp.put("receive_address", addrs);
+                jsonResp.put("receive_address", w == null ? "" : w.getReceiveAddress(app).stringify());
 
                 /**how digits after the decimal point. 2 = bits 8 = btc 6 = mbtc*/
-                jsonResp.put("btc_denomiation_digits", BRSharedPrefs.getCryptoDenomination(app, wm.getCurrentWallet(app).getIso(app)) == BRConstants.CURRENT_UNIT_BITCOINS ? 8 : 2);
+                jsonResp.put("btc_denomiation_digits", w == null ? "" : w.getMaxDecimalPlaces(app));
 
                 /**the users native fiat currency as an ISO 4217 code. Should be uppercased */
                 jsonResp.put("local_currency_code", Currency.getInstance(Locale.getDefault()).getCurrencyCode().toUpperCase());
-                return BRHTTPHelper.handleSuccess(200, jsonResp.toString().getBytes(), baseRequest, response, "application/json");
+                APIClient.BRResponse resp = new APIClient.BRResponse(jsonResp.toString().getBytes(), 200, "application/json");
+
+                return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
             } catch (JSONException e) {
                 e.printStackTrace();
                 Log.e(TAG, "handle: json error: " + target + " " + baseRequest.getMethod());
@@ -129,7 +142,8 @@ public class WalletPlugin implements Plugin {
             } else {
                 BREventManager.getInstance().pushEvent(name);
             }
-            return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
+            APIClient.BRResponse resp = new APIClient.BRResponse(null, 200);
+            return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
 
         } else if (target.startsWith("/_wallet/sign_bitid") && request.getMethod().equalsIgnoreCase("post")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
@@ -223,8 +237,10 @@ public class WalletPlugin implements Plugin {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                if (continuation != null)
-                                    BRHTTPHelper.handleSuccess(200, obj.toString().getBytes(), globalBaseRequest, (HttpServletResponse) continuation.getServletResponse(), "application/json");
+                                if (continuation != null) {
+                                    APIClient.BRResponse resp = new APIClient.BRResponse(obj.toString().getBytes(), 200, "application/json");
+                                    BRHTTPHelper.handleSuccess(resp, globalBaseRequest, (HttpServletResponse) continuation.getServletResponse());
+                                }
                                 cleanUp();
                             }
                         });
@@ -241,7 +257,8 @@ public class WalletPlugin implements Plugin {
                                 } catch (JSONException e) {
                                     e.printStackTrace();
                                 }
-                                BRHTTPHelper.handleSuccess(200, obj.toString().getBytes(), globalBaseRequest, (HttpServletResponse) continuation.getServletResponse(), "application/json");
+                                APIClient.BRResponse resp = new APIClient.BRResponse(obj.toString().getBytes(), 200, "application/json");
+                                BRHTTPHelper.handleSuccess(resp, globalBaseRequest, (HttpServletResponse) continuation.getServletResponse());
                                 cleanUp();
                             }
                         });
@@ -254,14 +271,223 @@ public class WalletPlugin implements Plugin {
                 Log.e(TAG, "handle: Failed to parse Json request body: " + target + " " + baseRequest.getMethod());
                 return BRHTTPHelper.handleError(400, "failed to parse json", baseRequest, response);
             }
+        } else if (target.startsWith("/_wallet/currencies")) {
+            JSONArray arr = getCurrencyData(app);
+            if (arr.length() == 0) {
+                BRReportsManager.reportBug(new IllegalArgumentException("_wallet/currencies created an empty json"));
+                return BRHTTPHelper.handleError(500, "Failed to create json", baseRequest, response);
+            }
+            APIClient.BRResponse resp = new APIClient.BRResponse(arr.toString().getBytes(), 200, "application/json");
+            return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
+        } else if (target.startsWith("/_wallet/transaction")) {
+            String reqBody = null;
+            try {
+                reqBody = new String(IOUtils.toByteArray(request.getInputStream()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if (Utils.isNullOrEmpty(reqBody)) {
+                Log.e(TAG, "handle: reqBody is empty: " + target + " " + baseRequest.getMethod());
+                return BRHTTPHelper.handleError(400, null, baseRequest, response);
+            }
+
+            try {
+                JSONObject obj = new JSONObject(reqBody);
+                sendTx(app, obj);
+
+                continuation = ContinuationSupport.getContinuation(request);
+                continuation.suspend(response);
+                globalBaseRequest = baseRequest;
+
+                return true;
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            return BRHTTPHelper.handleError(500, "Invalid json request", baseRequest, response);
+
+        } else if (target.startsWith("/_wallet/addresses")) {
+            String iso = target.substring(target.lastIndexOf("/") + 1);
+            BaseWalletManager w = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
+            if (w == null) {
+                return BRHTTPHelper.handleError(500, "Invalid iso for address: " + iso, baseRequest, response);
+            }
+
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("currency", w.getIso(app));
+                obj.put("address", w.getReceiveAddress(app).stringify());
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+            APIClient.BRResponse resp = new APIClient.BRResponse(obj.toString().getBytes(), 200, "application/json");
+
+            return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         }
 
         Log.e(TAG, "handle: WALLET PLUGIN DID NOT HANDLE: " + target + " " + baseRequest.getMethod());
         return true;
     }
 
+    private void sendTx(final Context app, JSONObject obj) {
+        String toAddress = null;
+        String toDescription = null;
+        String currency = null;
+        String numerator = null;
+        String denominator = null;
+        String txCurrency = null;
+        try {
+            toAddress = obj.getString("toAddress");
+            toDescription = obj.getString("toDescription");
+            currency = obj.getString("currency");
+            JSONObject amount = obj.getJSONObject("amount");
+            numerator = amount.getString("numerator");
+            denominator = amount.getString("denominator");
+            txCurrency = amount.getString("currency");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Log.e(TAG, "sendTx: " + String.format("address (%s), description (%s), currency (%s), numerator (%s), denominator(%s), txCurrency(%s)",
+                toAddress, toDescription, currency, numerator, denominator, txCurrency));
 
-    public static void sendBitIdResponse(final JSONObject restJson, final boolean authenticated) {
+        if (Utils.isNullOrEmpty(toAddress) || Utils.isNullOrEmpty(toDescription) || Utils.isNullOrEmpty(currency)
+                || Utils.isNullOrEmpty(numerator) || Utils.isNullOrEmpty(denominator) || Utils.isNullOrEmpty(txCurrency)) {
+            return;
+        }
+
+        final BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, currency);
+        String addr = wm.undecorateAddress(app, toAddress);
+        if (Utils.isNullOrEmpty(addr)) {
+            BRDialog.showSimpleDialog(app, "Failed to create tx for exchange!", "Invalid address: " + addr);
+            return;
+        }
+        BigDecimal bigAmount = WalletsMaster.getInstance(app).isIsoErc20(app, currency) ?
+                new BigDecimal(numerator).divide(new BigDecimal(denominator), nrOfZeros(denominator), BRConstants.ROUNDING_MODE) :
+                new BigDecimal(numerator);
+        final CryptoRequest item = new CryptoRequest(null, false, null, addr, bigAmount);
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                SendManager.sendTransaction(app, item, wm, new SendManager.SendCompletion() {
+                    @Override
+                    public void onCompleted(String hash, boolean succeed) {
+                        finalizeTx(succeed, hash);
+                    }
+                });
+            }
+        });
+
+    }
+
+    private static int nrOfZeros(String n) {
+        int count = 0;
+        while (n.charAt(n.length() - 1) == '0') {
+            n = new BigDecimal(n).divide(new BigDecimal(10)).toPlainString();
+            count++;
+        }
+        return count;
+    }
+
+    private JSONArray getCurrencyData(Context app) {
+        JSONArray arr = new JSONArray();
+        List<BaseWalletManager> list = WalletsMaster.getInstance(app).getAllWallets(app);
+        for (BaseWalletManager w : list) {
+            JSONObject obj = new JSONObject();
+            try {
+                obj.put("id", w.getIso(app));
+                obj.put("ticker", w.getIso(app));
+                obj.put("name", w.getName(app));
+
+                //Colors
+                JSONArray colors = new JSONArray();
+                colors.put(w.getUiConfiguration().mStartColor);
+                colors.put(w.getUiConfiguration().mEndColor);
+
+                obj.put("colors", colors);
+
+                //Balance
+                JSONObject balance = new JSONObject();
+
+                String denominator = w.getDenominator(app);
+                balance.put("currency", w.getIso(app));
+                // TODO: cached balance is already multiplied by the denominator.  Figure out why and fix.
+//                balance.put("numerator", w.getCachedBalance(app).multiply(new BigDecimal(denominator)).toPlainString());
+                balance.put("numerator", w.getCachedBalance(app).toPlainString());
+                balance.put("denominator", denominator);
+
+                //Fiat balance
+                JSONObject fiatBalance = new JSONObject();
+
+                fiatBalance.put("currency", BRSharedPrefs.getPreferredFiatIso(app));
+                fiatBalance.put("numerator", w.getFiatBalance(app).multiply(new BigDecimal(100)).toPlainString());
+                fiatBalance.put("denominator", String.valueOf(100));
+
+                //Exchange
+                JSONObject exchange = new JSONObject();
+
+                exchange.put("currency", BRSharedPrefs.getPreferredFiatIso(app));
+                exchange.put("numerator", w.getFiatExchangeRate(app).multiply(new BigDecimal(100)).toPlainString());
+                exchange.put("denominator", String.valueOf(100));
+
+                obj.put("balance", balance);
+                obj.put("fiatBalance", fiatBalance);
+                obj.put("exchange", exchange);
+                arr.put(obj);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+        return arr;
+    }
+
+    public static void finalizeTx(final boolean succeed, final String hash) {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    if (!succeed || Utils.isNullOrEmpty(hash)) {
+                        try {
+                            ((HttpServletResponse) continuation.getServletResponse()).sendError(500);
+                        } catch (IOException e) {
+                            Log.e(TAG, "finalizeTx: failed to send error 500: ", e);
+                            e.printStackTrace();
+                        }
+                        return;
+                    }
+                    if (continuation == null) {
+                        Log.e(TAG, "finalizeTx: WARNING continuation is null");
+                        return;
+                    }
+
+                    JSONObject result = new JSONObject();
+                    try {
+                        result.put("hash", hash);
+                        result.put("transmitted", true);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                    try {
+                        continuation.getServletResponse().setContentType("application/json");
+                        continuation.getServletResponse().setCharacterEncoding("UTF-8");
+                        continuation.getServletResponse().getWriter().print(result.toString());
+                        Log.d(TAG, "finalizeTx: finished with writing to the response: " + result);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "sendBitIdResponse Failed to send json: ", e);
+                    }
+                    ((HttpServletResponse) continuation.getServletResponse()).setStatus(200);
+                } finally {
+                    cleanUp();
+                }
+            }
+        });
+    }
+
+    public static void sendBitIdResponse(final JSONObject restJson,
+                                         final boolean authenticated) {
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {

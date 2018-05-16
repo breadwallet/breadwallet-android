@@ -13,8 +13,6 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.breadwallet.presenter.activities.HomeActivity;
-import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
@@ -22,15 +20,11 @@ import com.breadwallet.tools.listeners.SyncReceiver;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.google.firebase.crash.FirebaseCrash;
+import com.crashlytics.android.Crashlytics;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -38,12 +32,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.platform.APIClient.BREAD_POINT;
+import io.fabric.sdk.android.Fabric;
 
 /**
  * BreadWallet
@@ -104,16 +98,27 @@ public class BreadApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        if (Utils.isEmulatorOrDebug(this)) {
-//            BRKeyStore.putFailCount(0, this);
-            HOST = "stage2.breadwallet.com";
-            try {
-                FirebaseCrash.setCrashCollectionEnabled(false);
-            } catch (RejectedExecutionException ex) {
-                Log.e(TAG, "run: ", ex);
-            }
+        boolean debug = Utils.isEmulatorOrDebug(this);
+        HOST = "stage2.breadwallet.com";
+        final Fabric fabric = new Fabric.Builder(this)
+                .kits(new Crashlytics())
+                .debuggable(debug)// Enables Crashlytics debugger
+                .build();
+        Fabric.with(fabric);
 
-        }
+//            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
+//                    .detectDiskReads()
+//                    .detectDiskWrites()
+//                    .detectNetwork()   // or .detectAll() for all detectable problems
+//                    .penaltyLog()
+//                    .build());
+//            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
+//                    .detectLeakedSqlLiteObjects()
+//                    .detectLeakedClosableObjects()
+//                    .penaltyLog()
+//                    .penaltyDeath()
+//                    .build());
+
         mContext = this;
 
         if (!Utils.isEmulatorOrDebug(this) && IS_ALPHA)
@@ -141,18 +146,17 @@ public class BreadApp extends Application {
 
     }
 
-    public synchronized static void generateWalletIfIfNeeded(Context app, String address) {
+    public static void generateWalletIfIfNeeded(Context app, String address) {
         if (BRSharedPrefs.getWalletRewardId(app) == null) {
             String rewardId = generateWalletId(app, address);
             if (!Utils.isNullOrEmpty(rewardId)) {
-                BRSharedPrefs.putWalletRewardId(currentActivity, rewardId);
-                if (!mHeaders.containsKey("X-Wallet-ID")) mHeaders.put("X-Wallet-ID", rewardId);
+
+                BRSharedPrefs.putWalletRewardId(app, rewardId);
             } else BRReportsManager.reportBug(new NullPointerException("rewardId is empty"));
         }
-
     }
 
-    private static String generateWalletId(Context app, String address) {
+    private static synchronized String generateWalletId(Context app, String address) {
         if (app == null) {
             Log.e(TAG, "generateWalletId: app is null");
             return null;
@@ -174,7 +178,7 @@ public class BreadApp extends Application {
             // Get the first 10 bytes
             byte[] firstTenBytes = Arrays.copyOfRange(sha256Address, 0, 10);
 
-            String base32String = Base32.encode(firstTenBytes);
+            String base32String = new String(Base32.encode(firstTenBytes));
             base32String = base32String.toLowerCase();
 
             StringBuilder builder = new StringBuilder();
@@ -216,18 +220,19 @@ public class BreadApp extends Application {
     }
 
     public static void setBreadContext(Activity app) {
+        BreadApp.activityCounter.incrementAndGet();
         currentActivity = app;
     }
 
     public static synchronized void fireListeners() {
         if (listeners == null) return;
-        List<OnAppBackgrounded> copy = listeners;
+        List<OnAppBackgrounded> copy = new ArrayList<>(listeners);
         for (OnAppBackgrounded lis : copy) if (lis != null) lis.onBackgrounded();
     }
 
     public static void addOnBackgroundedListener(OnAppBackgrounded listener) {
         if (listeners == null) listeners = new ArrayList<>();
-        if (!listeners.contains(listener)) listeners.add(listener);
+        if (listener != null && !listeners.contains(listener)) listeners.add(listener);
     }
 
     public static boolean isAppInBackground(final Context context) {

@@ -14,6 +14,8 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
+import com.breadwallet.core.ethereum.BREthereumToken;
+import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
@@ -29,6 +31,8 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
+import com.breadwallet.wallet.wallets.etherium.WalletTokenManager;
+import com.platform.entities.TokenListMetaData;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
 
@@ -69,6 +73,7 @@ public class WalletsMaster {
     private static WalletsMaster instance;
 
     private List<BaseWalletManager> mWallets = new ArrayList<>();
+    private TokenListMetaData mTokenListMetaData;
 
     private WalletsMaster(Context app) {
     }
@@ -80,8 +85,54 @@ public class WalletsMaster {
         return instance;
     }
 
-    public List<BaseWalletManager> getAllWallets() {
+    //expensive operation (uses the KVStore), only update when needed and not in a loop.
+    public synchronized void updateWallets(Context app) {
+        WalletEthManager ethWallet = WalletEthManager.getInstance(app);
+        if (ethWallet == null) {
+            return; //return empty wallet list if ETH is null (meaning no public key yet)
+        }
+
+        mWallets.clear();
+        mTokenListMetaData = KVStoreManager.getInstance().getTokenListMetaData(app);
+        if (mTokenListMetaData == null) {
+            List<TokenListMetaData.TokenInfo> enabled = new ArrayList<>();
+            enabled.add(new TokenListMetaData.TokenInfo("BTC", false, null));
+            enabled.add(new TokenListMetaData.TokenInfo("BCH", false, null));
+            enabled.add(new TokenListMetaData.TokenInfo("ETH", false, null));
+            BREthereumWallet brdWallet = ethWallet.node.getWallet(ethWallet.node.tokenBRD);
+            enabled.add(new TokenListMetaData.TokenInfo(brdWallet.getToken().getSymbol(), true, brdWallet.getToken().getAddress()));
+            mTokenListMetaData = new TokenListMetaData(enabled, null);
+            KVStoreManager.getInstance().putTokenListMetaData(app, mTokenListMetaData); //put default currencies if null
+        }
+
+        for (TokenListMetaData.TokenInfo enabled : mTokenListMetaData.enabledCurrencies) {
+
+            boolean isHidden = mTokenListMetaData.isCurrencyHidden(enabled.symbol);
+
+            if (enabled.symbol.equalsIgnoreCase("BTC") && !isHidden) {
+                //BTC wallet
+                mWallets.add(WalletBitcoinManager.getInstance(app));
+            } else if (enabled.symbol.equalsIgnoreCase("BCH") && !isHidden) {
+                //BCH wallet
+                mWallets.add(WalletBchManager.getInstance(app));
+            } else if (enabled.symbol.equalsIgnoreCase("ETH") && !isHidden) {
+                //ETH wallet
+                mWallets.add(ethWallet);
+            } else {
+                //add ERC20 wallet
+                WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(app, ethWallet, enabled.symbol);
+                if (tokenWallet != null && !isHidden) mWallets.add(tokenWallet);
+            }
+
+        }
+    }
+
+    public synchronized List<BaseWalletManager> getAllWallets(Context app) {
+        if (mWallets == null || mWallets.size() == 0) {
+            updateWallets(app);
+        }
         return mWallets;
+
     }
 
     //return the needed wallet for the iso
@@ -95,6 +146,9 @@ public class WalletsMaster {
             return WalletBchManager.getInstance(app);
         if (iso.equalsIgnoreCase("ETH"))
             return WalletEthManager.getInstance(app);
+        else if (isIsoErc20(app, iso)) {
+            return WalletTokenManager.getTokenWalletByIso(app, WalletEthManager.getInstance(app), iso);
+        }
         return null;
     }
 
@@ -104,8 +158,10 @@ public class WalletsMaster {
 
     //get the total fiat balance held in all the wallets in the smallest unit (e.g. cents)
     public BigDecimal getAggregatedFiatBalance(Context app) {
+        long start = System.currentTimeMillis();
         BigDecimal totalBalance = new BigDecimal(0);
-        for (BaseWalletManager wallet : mWallets) {
+        List<BaseWalletManager> list = new ArrayList<>(getAllWallets(app));
+        for (BaseWalletManager wallet : list) {
             BigDecimal fiatBalance = wallet.getFiatBalance(app);
             if (fiatBalance != null)
                 totalBalance = totalBalance.add(fiatBalance);
@@ -164,12 +220,7 @@ public class WalletsMaster {
         BRKeyStore.putWalletCreationTime(walletCreationTime, ctx);
         final WalletInfo info = new WalletInfo();
         info.creationDate = walletCreationTime;
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                KVStoreManager.getInstance().putWalletInfo(ctx, info); //push the creation time to the kv store
-            }
-        });
+        KVStoreManager.getInstance().putWalletInfo(ctx, info); //push the creation time to the kv store
 
         //store the serialized in the KeyStore
         byte[] pubKey = new BRCoreMasterPubKey(paperKeyBytes, true).serialize();
@@ -180,8 +231,22 @@ public class WalletsMaster {
     }
 
     public boolean isIsoCrypto(Context app, String iso) {
-        for (BaseWalletManager w : mWallets) {
-            if (w.getIso(app).equalsIgnoreCase(iso)) return true;
+        List<BaseWalletManager> list = new ArrayList<>(getAllWallets(app));
+        for (BaseWalletManager w : list) {
+            if (w.getIso(app).equalsIgnoreCase(iso)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isIsoErc20(Context app, String iso) {
+        if (Utils.isNullOrEmpty(iso)) return false;
+        BREthereumToken[] tokens = WalletEthManager.getInstance(app).node.tokens;
+        for (BREthereumToken token : tokens) {
+            if (token.getSymbol().equalsIgnoreCase(iso)) {
+                return true;
+            }
         }
         return false;
     }
@@ -235,14 +300,13 @@ public class WalletsMaster {
     }
 
     public void wipeWalletButKeystore(final Context ctx) {
-        Log.d(TAG, "wipeWalletButKeystore");
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                for (BaseWalletManager wallet : mWallets) {
+                List<BaseWalletManager> list = new ArrayList<>(getAllWallets(ctx));
+                for (BaseWalletManager wallet : list) {
                     wallet.wipeData(ctx);
                 }
-//                wipeAll(ctx);
             }
         });
     }
@@ -253,44 +317,22 @@ public class WalletsMaster {
     }
 
     public void refreshBalances(Context app) {
-        for (BaseWalletManager wallet : mWallets) {
+        long start = System.currentTimeMillis();
+
+        List<BaseWalletManager> list = new ArrayList<>(getAllWallets(app));
+        for (BaseWalletManager wallet : list) {
             wallet.refreshCachedBalance(app);
         }
-
     }
 
-    public void initWallets(final Context app) {
-        if (!mWallets.contains(WalletBitcoinManager.getInstance(app)))
-            mWallets.add(WalletBitcoinManager.getInstance(app));
-        if (!mWallets.contains(WalletBchManager.getInstance(app)))
-            mWallets.add(WalletBchManager.getInstance(app));
-        if (!mWallets.contains(WalletEthManager.getInstance(app))) {
-            final BaseWalletManager ethWallet = WalletEthManager.getInstance(app);
-            mWallets.add(ethWallet);
-            if (ethWallet != null) {
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        BreadApp.generateWalletIfIfNeeded(app, ethWallet.getReceiveAddress(app).stringify()); //blocks
-                    }
-                });
-
-                for (BaseWalletManager wm : mWallets) {
-                    if (wm != null) setSpendingLimitIfNotSet(app, wm);
-                }
-            }
-
-        }
-    }
-
-    private void setSpendingLimitIfNotSet(final Context app, final BaseWalletManager wm) {
+    public void setSpendingLimitIfNotSet(final Context app, final BaseWalletManager wm) {
         if (app == null) return;
-
         BigDecimal limit = BRKeyStore.getTotalLimit(app, wm.getIso(app));
         if (limit.compareTo(new BigDecimal(0)) == 0) {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
+                    long start = System.currentTimeMillis();
                     BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
                     BigDecimal totalSpent = wallet == null ? new BigDecimal(0) : wallet.getTotalSent(app);
                     BigDecimal totalLimit = totalSpent.add(BRKeyStore.getSpendLimit(app, wm.getIso(app)));
@@ -303,6 +345,7 @@ public class WalletsMaster {
 
     @WorkerThread
     public void initLastWallet(Context app) {
+        long start = System.currentTimeMillis();
         if (app == null) {
             app = BreadApp.getBreadContext();
             if (app == null) {

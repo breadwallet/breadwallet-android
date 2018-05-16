@@ -130,6 +130,8 @@
   <string name="Button.ok">OK</string>
   <!-- receive button -->
   <string name="Button.receive">受取</string>
+  <!-- Click this button to sell an asset -->
+  <string name="Button.sell">売る</string>
   <!-- send button -->
   <string name="Button.send">送金する</string>
   <!-- Settings button label -->
@@ -290,6 +292,8 @@
   <string name="ManageWallet.textFeildLabel">ウォレットの名前</string>
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">ウォレットを管理</string>
+  <!-- "Add [a] Wallet [to the home screen]" -->
+  <string name="MenuButton.addWallet">ウォレットを追加する</string>
   <!-- Buy bitcoin title -->
   <string name="MenuButton.buy">ビットコインを購入</string>
   <!-- Menu button title -->
@@ -512,6 +516,10 @@
   <string name="Send.identityNotCertified">受取人の本人確認が行われていません。</string>
   <!-- Insufficient funds error -->
   <string name="Send.insufficientFunds">残高不足</string>
+  <!-- e,g, "You must have at least $2 in your wallet in order to transfer this type of token." In this case, "token" is an ethereum ERC20 token. -->
+  <string name="Send.insufficientGasMessage">このタイプのトークンを送金するには、ウォレットに%1$s以上保有していなければなりません。今すぐイーサリアムのウォレットに移動しますか?</string>
+  <!-- Your ethereum balance is insufficient to complete this action. -->
+  <string name="Send.insufficientGasTitle">イーサリアムの残高不足</string>
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">送金先のアドレスが無効な%1$sアドレスです。</string>
   <!-- Invalid address on pasteboard message -->
@@ -637,6 +645,18 @@
   <string name="TimeSince.minutes">%1$s分</string>
   <!-- 6 s (6 seconds) -->
   <string name="TimeSince.seconds">%1$s秒</string>
+  <!-- Add [this item to the list] -->
+  <string name="TokenList.add">追加する</string>
+  <!-- Add Wallets  [to your home screen] -->
+  <string name="TokenList.addTitle">ウォレットを追加する</string>
+  <!-- Hide [this token from view] -->
+  <string name="TokenList.hide">非表示にする</string>
+  <!-- [click here to] Manage [your] Wallets -->
+  <string name="TokenList.manageTitle">ウォレットを管理する</string>
+  <!-- Remove [this item from the list] -->
+  <string name="TokenList.remove">削除する</string>
+  <!-- Show [this item on your home screen] -->
+  <string name="TokenList.show">表示する</string>
   <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
   <string name="TouchIdSettings.customizeText">%1$sからTouch ID利用限度額を変更できます。</string>
   <!-- Fingerprint enabling description body -->
@@ -703,6 +723,8 @@
   <string name="Transaction.sentTo">%1$sに送金済み</string>
   <!-- eg. Starting balance: $50.00 -->
   <string name="Transaction.starting">期首残高: %1$s</string>
+  <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
+  <string name="Transaction.tokenTransfer">トークン送金の手数料: %1$s</string>
   <!-- Waiting to be confirmed string -->
   <string name="Transaction.waiting">承認を待っています。トランザクションの完了には承認が必要となる場合があります。推定時間: 1-2時間。</string>
   <!-- e.g. I received money from an account. -->

@@ -4,11 +4,13 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.security.keystore.UserNotAuthenticatedException;
+import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
+import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.presenter.activities.SetPinActivity;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
@@ -18,12 +20,13 @@ import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseTransaction;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.BRBitId;
 import com.platform.tools.KVStoreManager;
@@ -64,8 +67,10 @@ public class PostAuth {
     public CryptoRequest mCryptoRequest;
     public static boolean isStuckWithAuthLoop;
     public static TxMetaData txMetaData;
+    public SendManager.SendCompletion mSendCompletion;
+    private BaseWalletManager mWalletManager;
 
-    private BaseTransaction mPaymentProtocolTx;
+    private CryptoTransaction mPaymentProtocolTx;
     private static PostAuth instance;
 
     private PostAuth() {
@@ -83,12 +88,6 @@ public class PostAuth {
         long start = System.currentTimeMillis();
         boolean success = WalletsMaster.getInstance(app).generateRandomSeed(app);
         if (success) {
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    WalletsMaster.getInstance(app).initWallets(app);
-                }
-            });
             Intent intent = new Intent(app, WriteDownActivity.class);
             app.startActivity(intent);
             app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
@@ -197,73 +196,87 @@ public class PostAuth {
 
     }
 
-    public void onPublishTxAuth(final Context app, final boolean authAsked) {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                final BaseWalletManager walletManager = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                byte[] rawPhrase;
-                try {
-                    rawPhrase = BRKeyStore.getPhrase(app, BRConstants.PAY_REQUEST_CODE);
-                } catch (UserNotAuthenticatedException e) {
-                    if (authAsked) {
-                        Log.e(TAG, "onPublishTxAuth: WARNING!!!! LOOP");
-                        isStuckWithAuthLoop = true;
-                    }
-                    return;
-                }
-                if (rawPhrase.length < 10) return;
-                try {
-                    if (rawPhrase.length != 0) {
-                        if (mCryptoRequest != null && mCryptoRequest.amount != null && mCryptoRequest.address != null) {
+    @WorkerThread
+    public void onPublishTxAuth(final Context app, final BaseWalletManager wm, final boolean authAsked, final SendManager.SendCompletion completion) {
+        if (completion != null)
+            mSendCompletion = completion;
+        if (wm != null) mWalletManager = wm;
+        byte[] rawPhrase;
+        try {
+            rawPhrase = BRKeyStore.getPhrase(app, BRConstants.PAY_REQUEST_CODE);
+        } catch (UserNotAuthenticatedException e) {
+            if (authAsked) {
+                Log.e(TAG, "onPublishTxAuth: WARNING!!!! LOOP");
+                isStuckWithAuthLoop = true;
+            }
+            return;
+        }
+        try {
+            if (rawPhrase.length > 0) {
+                if (mCryptoRequest != null && mCryptoRequest.amount != null && mCryptoRequest.address != null) {
 
-                            BaseTransaction tx = walletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address);
-                            if (tx == null) {
-                                BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_insufficientFunds),
-                                        app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                                            @Override
-                                            public void onClick(BRDialogView brDialogView) {
-                                                brDialogView.dismiss();
-                                            }
-                                        }, null, null, 0);
-                                return;
-                            }
-                            byte[] txHash = walletManager.signAndPublishTransaction(tx, rawPhrase);
+                    CryptoTransaction tx = mWalletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address);
 
-                            txMetaData = new TxMetaData();
-                            txMetaData.comment = mCryptoRequest.message;
-                            txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
-                            BigDecimal fiatExchangeRate = walletManager.getFiatExchangeRate(app);
-                            txMetaData.exchangeRate = fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue();
-                            txMetaData.fee = walletManager.getTxFee(tx).toPlainString();
-                            txMetaData.txSize = tx.getTxSize().intValue();
-                            txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, walletManager.getIso(app));
-                            txMetaData.creationTime = (int) (System.currentTimeMillis() / 1000);//seconds
-                            txMetaData.deviceId = BRSharedPrefs.getDeviceId(app);
-                            txMetaData.classVersion = 1;
-
-                            if (Utils.isNullOrEmpty(txHash)) {
-                                if (tx.getEtherTx() != null)
-                                    return; // ignore ETH since txs do not have the hash right away
-                                Log.e(TAG, "onPublishTxAuth: signAndPublishTransaction returned an empty txHash");
-                                BRDialog.showSimpleDialog(app, app.getString(R.string.Alerts_sendFailure), "Failed to create transaction");
-                            } else {
-                                stampMetaData(app, txHash);
-                            }
-
-                        } else {
-                            throw new NullPointerException("payment item is null");
-                        }
-                    } else {
-                        Log.e(TAG, "onPublishTxAuth: seed length is 0!");
+                    if (tx == null) {
+                        BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_insufficientFunds),
+                                app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                                    @Override
+                                    public void onClick(BRDialogView brDialogView) {
+                                        brDialogView.dismiss();
+                                    }
+                                }, null, null, 0);
                         return;
                     }
-                } finally {
-                    Arrays.fill(rawPhrase, (byte) 0);
-                    mCryptoRequest = null;
+                    final byte[] txHash = mWalletManager.signAndPublishTransaction(tx, rawPhrase);
+
+                    txMetaData = new TxMetaData();
+                    txMetaData.comment = mCryptoRequest.message;
+                    txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
+                    BigDecimal fiatExchangeRate = mWalletManager.getFiatExchangeRate(app);
+                    txMetaData.exchangeRate = fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue();
+                    txMetaData.fee = mWalletManager.getTxFee(tx).toPlainString();
+                    txMetaData.txSize = tx.getTxSize().intValue();
+                    txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, mWalletManager.getIso(app));
+                    txMetaData.creationTime = (int) (System.currentTimeMillis() / 1000);//seconds
+                    txMetaData.deviceId = BRSharedPrefs.getDeviceId(app);
+                    txMetaData.classVersion = 1;
+
+                    if (Utils.isNullOrEmpty(txHash)) {
+                        if (tx.getEtherTx() != null) {
+                            mWalletManager.watchTransactionForHash(tx, new BaseWalletManager.OnHashUpdated() {
+                                @Override
+                                public void onUpdated(String hash) {
+                                    if (mSendCompletion != null) {
+                                        mSendCompletion.onCompleted(hash, true);
+                                        stampMetaData(app, txHash);
+                                        mSendCompletion = null;
+                                    }
+                                }
+                            });
+                            return; // ignore ETH since txs do not have the hash right away
+                        }
+                        Log.e(TAG, "onPublishTxAuth: signAndPublishTransaction returned an empty txHash");
+                        BRDialog.showSimpleDialog(app, app.getString(R.string.Alerts_sendFailure), "Failed to create transaction");
+                    } else {
+                        if (mSendCompletion != null) {
+                            mSendCompletion.onCompleted(tx.getHash(), true);
+                            mSendCompletion = null;
+                        }
+                        stampMetaData(app, txHash);
+                    }
+
+                } else {
+                    throw new NullPointerException("payment item is null");
                 }
+            } else {
+                Log.e(TAG, "onPublishTxAuth: paperKey length is 0!");
+                BRReportsManager.reportBug(new NullPointerException("onPublishTxAuth: paperKey length is 0"));
+                return;
             }
-        });
+        } finally {
+            Arrays.fill(rawPhrase, (byte) 0);
+            mCryptoRequest = null;
+        }
 
     }
 
@@ -313,7 +326,7 @@ public class PostAuth {
         this.mCryptoRequest = cryptoRequest;
     }
 
-    public void setTmpPaymentRequestTx(BaseTransaction tx) {
+    public void setTmpPaymentRequestTx(CryptoTransaction tx) {
         this.mPaymentProtocolTx = tx;
     }
 

@@ -130,6 +130,8 @@
   <string name="Button.ok">確定</string>
   <!-- receive button -->
   <string name="Button.receive">接收</string>
+  <!-- Click this button to sell an asset -->
+  <string name="Button.sell">賣出</string>
   <!-- send button -->
   <string name="Button.send">寄出</string>
   <!-- Settings button label -->
@@ -290,6 +292,8 @@
   <string name="ManageWallet.textFeildLabel">電子錢包名稱</string>
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">管理電子錢包</string>
+  <!-- "Add [a] Wallet [to the home screen]" -->
+  <string name="MenuButton.addWallet">增加錢包</string>
   <!-- Buy bitcoin title -->
   <string name="MenuButton.buy">購買比特幣</string>
   <!-- Menu button title -->
@@ -512,6 +516,10 @@
   <string name="Send.identityNotCertified">受款人身分未經認證。</string>
   <!-- Insufficient funds error -->
   <string name="Send.insufficientFunds">資金不足</string>
+  <!-- e,g, "You must have at least $2 in your wallet in order to transfer this type of token." In this case, "token" is an ethereum ERC20 token. -->
+  <string name="Send.insufficientGasMessage">欲傳送此類代幣，您錢包中至少須有 %1$s。請問您現在要前往以太坊錢包嗎？</string>
+  <!-- Your ethereum balance is insufficient to complete this action. -->
+  <string name="Send.insufficientGasTitle">以太坊餘額不足</string>
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">目的地址不是一個有效的%1$s地址。</string>
   <!-- Invalid address on pasteboard message -->
@@ -637,6 +645,18 @@
   <string name="TimeSince.minutes">%1$s 分鐘</string>
   <!-- 6 s (6 seconds) -->
   <string name="TimeSince.seconds">%1$s 秒</string>
+  <!-- Add [this item to the list] -->
+  <string name="TokenList.add">增加</string>
+  <!-- Add Wallets  [to your home screen] -->
+  <string name="TokenList.addTitle">增加錢包</string>
+  <!-- Hide [this token from view] -->
+  <string name="TokenList.hide">隱藏</string>
+  <!-- [click here to] Manage [your] Wallets -->
+  <string name="TokenList.manageTitle">管理錢包</string>
+  <!-- Remove [this item from the list] -->
+  <string name="TokenList.remove">移除</string>
+  <!-- Show [this item on your home screen] -->
+  <string name="TokenList.show">顯示</string>
   <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
   <string name="TouchIdSettings.customizeText">你可以在%1$s自訂你的 Touch ID 支出限額。</string>
   <!-- Fingerprint enabling description body -->
@@ -703,6 +723,8 @@
   <string name="Transaction.sentTo">寄送至 %1$s</string>
   <!-- eg. Starting balance: $50.00 -->
   <string name="Transaction.starting">開始餘額：%1$s</string>
+  <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
+  <string name="Transaction.tokenTransfer">代幣傳送費用：%1$s</string>
   <!-- Waiting to be confirmed string -->
   <string name="Transaction.waiting">正在等待確認。部分商家要求確認完成交易。預估時間：1-2 小時。</string>
   <!-- e.g. I received money from an account. -->

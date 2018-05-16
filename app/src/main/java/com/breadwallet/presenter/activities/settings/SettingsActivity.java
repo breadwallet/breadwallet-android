@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.LayoutRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,17 +19,23 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.CurrencySettingsActivity;
+import com.breadwallet.presenter.activities.ManageWalletsActivity;
 import com.breadwallet.presenter.activities.UpdatePinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
+import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.adapter.SettingsAdapter;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
+import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
+import com.breadwallet.wallet.wallets.etherium.WalletTokenManager;
+import com.platform.entities.TokenListMetaData;
+import com.platform.tools.KVStoreManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +98,14 @@ public class SettingsActivity extends BRActivity {
     private void populateItems() {
 
         items.add(new BRSettingsItem(getString(R.string.Settings_wallet), "", null, true, 0));
+        items.add(new BRSettingsItem(getString(R.string.TokenList_manageTitle), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingsActivity.this, ManageWalletsActivity.class);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            }
+        }, false, R.drawable.chevron_right_light));
 
 
         items.add(new BRSettingsItem(getString(R.string.Settings_wipe), "", new View.OnClickListener() {
@@ -161,6 +176,14 @@ public class SettingsActivity extends BRActivity {
             }, false, R.drawable.chevron_right_light));
 
 
+        items.add(new BRSettingsItem(getString(R.string.Tokens_Reset), "", new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                resetToDefaultCurrencies();
+            }
+        }, false, 0));
+
         items.add(new BRSettingsItem(getString(R.string.Settings_other), "", null, true, 0));
 
         String shareAddOn = BRSharedPrefs.getShareData(SettingsActivity.this) ? getString(R.string.PushNotifications_on) : getString(R.string.PushNotifications_off);
@@ -208,6 +231,33 @@ public class SettingsActivity extends BRActivity {
         }, false, R.drawable.chevron_right_light));
 
 
+    }
+
+    private void resetToDefaultCurrencies() {
+
+        TokenListMetaData tokenMeta = KVStoreManager.getInstance().getTokenListMetaData(this);
+
+        tokenMeta.enabledCurrencies = new ArrayList<>();
+
+        TokenListMetaData.TokenInfo btc = new TokenListMetaData.TokenInfo("BTC", false, null);
+        TokenListMetaData.TokenInfo bch = new TokenListMetaData.TokenInfo("BCH", false, null);
+        TokenListMetaData.TokenInfo eth = new TokenListMetaData.TokenInfo("ETH", false, null);
+        TokenListMetaData.TokenInfo brd = new TokenListMetaData.TokenInfo("BRD", true, null);
+
+        tokenMeta.enabledCurrencies.add(btc);
+        tokenMeta.enabledCurrencies.add(bch);
+        tokenMeta.enabledCurrencies.add(eth);
+        tokenMeta.enabledCurrencies.add(brd);
+
+
+        // Publish the changes back to the KVStore
+        KVStoreManager.getInstance().putTokenListMetaData(this, tokenMeta);
+
+        // Notify WalletsMaster so the reset will be reflected on the Home Screen
+        WalletsMaster.getInstance(this).updateWallets(this);
+
+        // Go back to Home Screen
+        onBackPressed();
     }
 
     @Override

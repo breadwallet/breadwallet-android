@@ -69,6 +69,7 @@ public class HTTPServer {
     public static final int PORT = 31120;
     public static final String URL_EA = "http://localhost:" + PORT + "/ea";
     public static final String URL_BUY = "http://localhost:" + PORT + "/buy";
+    public static final String URL_SELL = "http://localhost:" + PORT + "/sell";
     public static final String URL_SUPPORT = "http://localhost:" + PORT + "/support";
     public static ServerMode mode;
 
@@ -127,8 +128,10 @@ public class HTTPServer {
     public static void stopServer() {
         Log.d(TAG, "stopServer");
         try {
-            if (server != null)
+            if (server != null) {
+
                 server.stop();
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -162,7 +165,8 @@ public class HTTPServer {
                         ((Activity) app).onBackPressed();
                     }
                 });
-                return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
+                APIClient.BRResponse resp = new APIClient.BRResponse(null, 200);
+                return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
             }
             return true;
         } else if (target.toLowerCase().startsWith("/_email")) {
@@ -180,9 +184,11 @@ public class HTTPServer {
             email.setType("message/rfc822");
 
             app.startActivity(Intent.createChooser(email, "Choose an Email client :"));
-            return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
+            APIClient.BRResponse resp = new APIClient.BRResponse(null, 200);
+            return BRHTTPHelper.handleSuccess(resp,  baseRequest, response);
         } else if (target.toLowerCase().startsWith("/didload")) {
-            return BRHTTPHelper.handleSuccess(200, null, baseRequest, response, null);
+            APIClient.BRResponse resp = new APIClient.BRResponse(null, 200);
+            return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         }
 
         for (Middleware m : middlewares) {

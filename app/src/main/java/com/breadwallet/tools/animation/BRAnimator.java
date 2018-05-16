@@ -33,7 +33,6 @@ import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.fragments.FragmentGreetings;
-import com.breadwallet.presenter.fragments.FragmentMenu;
 import com.breadwallet.presenter.fragments.FragmentSignal;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
@@ -104,33 +103,33 @@ public class BRAnimator {
         t2Size = 16;
     }
 
-    public static void showFragmentByTag(Activity app, String tag) {
-        if (tag == null) return;
-        //catch animation duration, make it 0 for no animation, then restore it.
-        final int slideAnimation = SLIDE_ANIMATION_DURATION;
-        try {
-            SLIDE_ANIMATION_DURATION = 0;
-            if (tag.equalsIgnoreCase(FragmentSend.class.getName())) {
-                showSendFragment(app, null);
-            } else if (tag.equalsIgnoreCase(FragmentReceive.class.getName())) {
-                showReceiveFragment(app, true);
-            } else if (tag.equalsIgnoreCase(FragmentRequestAmount.class.getName())) {
-                showRequestFragment(app);
-            } else if (tag.equalsIgnoreCase(FragmentMenu.class.getName())) {
-                showMenuFragment(app);
-            } else {
-                Log.e(TAG, "showFragmentByTag: error, no such tag: " + tag);
-            }
-        } finally {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    SLIDE_ANIMATION_DURATION = slideAnimation;
-                }
-            }, 800);
-
-        }
-    }
+//    public static void showFragmentByTag(Activity app, String tag) {
+//        if (tag == null) return;
+//        //catch animation duration, make it 0 for no animation, then restore it.
+//        final int slideAnimation = SLIDE_ANIMATION_DURATION;
+//        try {
+//            SLIDE_ANIMATION_DURATION = 0;
+//            if (tag.equalsIgnoreCase(FragmentSend.class.getName())) {
+//                showSendFragment(app, null);
+//            } else if (tag.equalsIgnoreCase(FragmentReceive.class.getName())) {
+//                showReceiveFragment(app, true);
+//            } else if (tag.equalsIgnoreCase(FragmentRequestAmount.class.getName())) {
+//                showRequestFragment(app);
+//            } else if (tag.equalsIgnoreCase(FragmentMenu.class.getName())) {
+//                showMenuFragment(app);
+//            } else {
+//                Log.e(TAG, "showFragmentByTag: error, no such tag: " + tag);
+//            }
+//        } finally {
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    SLIDE_ANIMATION_DURATION = slideAnimation;
+//                }
+//            }, 800);
+//
+//        }
+//    }
 
     public static void showSendFragment(Activity app, final CryptoRequest request) {
         if (app == null) {
@@ -237,12 +236,13 @@ public class BRAnimator {
                 // Should we show an explanation?
                 if (ActivityCompat.shouldShowRequestPermissionRationale(app,
                         Manifest.permission.CAMERA)) {
-                    BRDialog.showCustomDialog(app, app.getString(R.string.Send_cameraUnavailabeTitle_android), app.getString(R.string.Send_cameraUnavailabeMessage_android), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            brDialogView.dismiss();
-                        }
-                    }, null, null, 0);
+                    BRDialog.showCustomDialog(app, app.getString(R.string.Send_cameraUnavailabeTitle_android),
+                            app.getString(R.string.Send_cameraUnavailabeMessage_android), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                                @Override
+                                public void onClick(BRDialogView brDialogView) {
+                                    brDialogView.dismiss();
+                                }
+                            }, null, null, 0);
                 } else {
                     // No explanation needed, we can request the permission.
                     ActivityCompat.requestPermissions(app,
@@ -322,19 +322,6 @@ public class BRAnimator {
 
     }
 
-    public static void showMenuFragment(Activity app) {
-        if (app == null) {
-            Log.e(TAG, "showReceiveFragment: app is null");
-            return;
-        }
-        FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
-        transaction.add(android.R.id.content, new FragmentMenu(), FragmentMenu.class.getName());
-        transaction.addToBackStack(FragmentMenu.class.getName());
-        transaction.commit();
-
-    }
-
     public static void showGreetingsMessage(Activity app) {
         if (app == null) {
             Log.e(TAG, "showGreetingsMessage: app is null");
@@ -378,8 +365,15 @@ public class BRAnimator {
 
     public static void startBreadActivity(Activity from, boolean auth) {
         if (from == null) return;
-        Log.e(TAG, "startBreadActivity: " + from.getClass().getName());
         Class toStart = auth ? LoginActivity.class : WalletActivity.class;
+
+        // If this is a first launch(new wallet), ensure that we are starting on the Home Screen
+        if (toStart.equals(WalletActivity.class)) {
+
+            if (BRSharedPrefs.isNewWallet(from)) {
+                toStart = HomeActivity.class;
+            }
+        }
 
         Intent intent = new Intent(from, toStart);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

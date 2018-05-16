@@ -87,20 +87,20 @@ public class JUnit4StyleTests {
 
     @Test
     public void testTakeScreenshot() {
-        sleep(1000);
-        Screengrab.screenshot("transaction_list");
-        onView(withId(R.id.menu_layout)).perform(click());
-        clickMenu(0);
 //        sleep(1000);
-        Screengrab.screenshot("security_center");
-        Espresso.pressBack();
-        clickMenu(1);
-        sleep(1000);
-        Screengrab.screenshot("support");
-        Espresso.pressBack();
-        clickMenu(3);
+//        Screengrab.screenshot("transaction_list");
+//        onView(withId(R.id.menu_layout)).perform(click());
+//        clickMenu(0);
+////        sleep(1000);
+//        Screengrab.screenshot("security_center");
+//        Espresso.pressBack();
+//        clickMenu(1);
 //        sleep(1000);
-        Screengrab.screenshot("unlock_screen");
+//        Screengrab.screenshot("support");
+//        Espresso.pressBack();
+//        clickMenu(3);
+////        sleep(1000);
+//        Screengrab.screenshot("unlock_screen");
 
     }
 

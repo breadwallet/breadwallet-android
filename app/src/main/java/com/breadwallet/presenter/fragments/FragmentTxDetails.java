@@ -9,21 +9,19 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.core.ethereum.BREthereumAmount;
+import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.presenter.customviews.BREdit;
 import com.breadwallet.presenter.customviews.BRText;
@@ -32,12 +30,12 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.TxManager;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
 
@@ -210,6 +208,7 @@ public class FragmentTxDetails extends DialogFragment {
             boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(app);
             String cryptoIso = walletManager.getIso(app);
             String fiatIso = BRSharedPrefs.getPreferredFiatIso(getContext());
+            boolean isErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, cryptoIso);
 
             String iso = isCryptoPreferred ? cryptoIso : fiatIso;
 
@@ -221,14 +220,19 @@ public class FragmentTxDetails extends DialogFragment {
 
             if (received) hideSentViews();
             else {
-                BREthereumTransaction ethTx = mTransaction.getEthTxHolder();
+                BREthereumTransaction ethTx = null;
+                if (mTransaction.getTransaction() instanceof BREthereumTransaction)
+                    ethTx = (BREthereumTransaction) mTransaction.getTransaction();
                 BigDecimal rawFee = mTransaction.getFee();
-                if (ethTx != null) {
-                    mGasPrice.setText(String.format("%s %s", new BigDecimal(ethTx.getGasPrice(BREthereumAmount.Unit.ETHER_GWEI)).setScale(2, BRConstants.ROUNDING_MODE).toPlainString(), "gwei"));
+                //meaning ETH
+                if (ethTx != null && !isErc20) {
+                    mGasPrice.setText(String.format("%s %s", new BigDecimal(ethTx.getGasPrice(BREthereumAmount.Unit.ETHER_GWEI)).stripTrailingZeros().toPlainString(), "gwei"));
                     mGasLimit.setText(new BigDecimal(ethTx.getGasLimit()).toPlainString());
-                    rawFee = new BigDecimal(ethTx.isConfirmed() ? ethTx.getGasUsed() : ethTx.getGasLimit()).multiply(new BigDecimal(ethTx.getGasPrice(BREthereumAmount.Unit.ETHER_WEI)));
+                    rawFee = new BigDecimal(ethTx.isConfirmed() ? ethTx.getGasUsed() :
+                            ethTx.getGasLimit()).multiply(new BigDecimal(ethTx.getGasPrice(walletManager.getUnit())));
                 } else {
                     hideEthViews();
+
                 }
 
                 BigDecimal fee = isCryptoPreferred ? rawFee.abs() : walletManager.getFiatForSmallestCrypto(app, rawFee, null).abs();
@@ -238,6 +242,12 @@ public class FragmentTxDetails extends DialogFragment {
                 mFeePrimary.setText(CurrencyUtils.getFormattedAmount(app, iso, fee));
                 mFeePrimaryLabel.setText(String.format(getString(R.string.Send_fee), ""));
                 mFeeSecondaryLabel.setText(getString(R.string.Confirmation_totalLabel));
+
+                //erc20s
+                if (isErc20) {
+                    hideTotalCost();
+                    mFeePrimary.setText(String.format("%s %s", mTransaction.getFee().stripTrailingZeros().toPlainString(), "gwei"));
+                }
             }
 
             if (mTransaction.getBlockHeight() == Integer.MAX_VALUE)
@@ -248,6 +258,10 @@ public class FragmentTxDetails extends DialogFragment {
             }
 
             BigDecimal cryptoAmount = mTransaction.getAmount();
+            BREthereumToken tkn = null;
+            if (walletManager.getIso(app).equalsIgnoreCase("ETH"))
+                tkn = WalletEthManager.getInstance(app).node.lookupToken(mTransaction.getTo());
+            if (tkn != null) cryptoAmount = mTransaction.getFee(); // it's a token transfer ETH tx
 
             BigDecimal fiatAmountNow = walletManager.getFiatForSmallestCrypto(app, cryptoAmount.abs(), null);
 
@@ -269,11 +283,10 @@ public class FragmentTxDetails extends DialogFragment {
             mAmountNow.setText(amountNow);
 
             // If 'amount when sent' is 0 or unavailable, show fiat tx amount on its own
-            if (amountWhenSent.equals("$0.00") || amountWhenSent.equals("") || amountWhenSent == null) {
+            if (fiatAmountWhenSent.compareTo(new BigDecimal(0)) == 0) {
                 mAmountWhenSent.setVisibility(View.INVISIBLE);
                 mWhenSentLabel.setVisibility(View.INVISIBLE);
                 mNowLabel.setVisibility(View.INVISIBLE);
-                mAmountNow.setVisibility(View.INVISIBLE);
 
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 params.addRule(RelativeLayout.CENTER_HORIZONTAL);
@@ -314,15 +327,11 @@ public class FragmentTxDetails extends DialogFragment {
                 @Override
                 public void onPaused() {
                     // Update the memo field on the transaction and save it
-                    if (mTxMetaData != null) {
-                        mTxMetaData.comment = mMemoText.getText().toString();
-                        Log.d(TAG, "MetaData not null");
-                        KVStoreManager.getInstance().putTxMetaData(getContext(), mTxMetaData, mTransaction.getTxHash());
-                        mTxMetaData = null;
-
-                    } else {
-                        Log.d(TAG, "MetaData is null");
-                    }
+                    if (mTxMetaData == null) mTxMetaData = new TxMetaData();
+                    mTxMetaData.comment = mMemoText.getText().toString();
+                    Log.d(TAG, "MetaData not null");
+                    KVStoreManager.getInstance().putTxMetaData(getContext(), mTxMetaData, mTransaction.getTxHash());
+                    mTxMetaData = null;
 
                     // Hide softkeyboard if it's visible
                     InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -358,9 +367,13 @@ public class FragmentTxDetails extends DialogFragment {
                 mMemoText.setText("");
 
             }
+            if (tkn != null) { // it's a token transfer ETH tx
+                mMemoText.setText(String.format(app.getString(R.string.Transaction_tokenTransfer), tkn.getSymbol()));
+                mMemoText.setFocusable(false);
+            }
 
             // timestamp is 0 if it's not confirmed in a block yet so make it now
-            mTxDate.setText(BRDateUtil.getLongDate(mTransaction.getTimeStamp() == 0 ? System.currentTimeMillis() : (mTransaction.getTimeStamp() * 1000)));
+            mTxDate.setText(BRDateUtil.getFullDate(mTransaction.getTimeStamp() == 0 ? System.currentTimeMillis() : (mTransaction.getTimeStamp() * 1000)));
 
             // Set the transaction id
             mTransactionId.setText(mTransaction.getHashReversed());
@@ -410,6 +423,11 @@ public class FragmentTxDetails extends DialogFragment {
         mDetailsContainer.removeView(mGasLimitContainer);
         mDetailsContainer.removeView(mGasPriceDivider);
         mDetailsContainer.removeView(mGasLimitDivider);
+    }
+
+    private void hideTotalCost() {
+        mDetailsContainer.removeView(mFeeSecondaryContainer);
+        mDetailsContainer.removeView(mFeeSecondaryDivider);
     }
 
     private void hideConfirmedView() {

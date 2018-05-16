@@ -35,7 +35,6 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.interfaces.KVStoreAdaptor;
@@ -52,7 +51,7 @@ import java.util.regex.Pattern;
 
 import static com.platform.sqlite.PlatformSqliteHelper.KV_STORE_TABLE_NAME;
 
-public class ReplicatedKVStore {
+public class ReplicatedKVStore implements BreadApp.OnAppBackgrounded {
     private static final String TAG = ReplicatedKVStore.class.getName();
 
     //    private AtomicInteger mOpenCounter = new AtomicInteger();
@@ -859,7 +858,7 @@ public class ReplicatedKVStore {
             Log.e(TAG, "encrypt: app is null");
             return null;
         }
-        if (tempAuthKey == null) retrieveAuthKey(app);
+        if (tempAuthKey == null) cacheKeyIfNeeded(app);
         if (Utils.isNullOrEmpty(tempAuthKey)) {
             Log.e(TAG, "encrypt: authKey is empty: " + (tempAuthKey == null ? null : tempAuthKey.length));
             return null;
@@ -882,10 +881,6 @@ public class ReplicatedKVStore {
         return result;
     }
 
-//    public static byte[] decrypt(byte[] data, Context app) {
-//        return decrypt(data, app, null);
-//    }
-
     /**
      * decrypt some data using key
      */
@@ -897,31 +892,17 @@ public class ReplicatedKVStore {
         if (app == null) app = BreadApp.getBreadContext();
         if (app == null) return null;
         if (tempAuthKey == null)
-            retrieveAuthKey(app);
+            cacheKeyIfNeeded(app);
         BRCoreKey key = new BRCoreKey(tempAuthKey);
         //12 bytes is the nonce
         return key.decryptNative(Arrays.copyOfRange(data, 12, data.length), Arrays.copyOfRange(data, 0, 12));
     }
 
-    //store the authKey for 10 seconds (expensive operation)
-    private static void retrieveAuthKey(Context context) {
+    private static void cacheKeyIfNeeded(Context context) {
         if (Utils.isNullOrEmpty(tempAuthKey)) {
             tempAuthKey = BRKeyStore.getAuthKey(context);
-            if (tempAuthKey == null) Log.e(TAG, "retrieveAuthKey: FAILED, still null!");
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Thread.sleep(10000);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    if (tempAuthKey != null)
-                        Arrays.fill(tempAuthKey, (byte) 0);
-                    tempAuthKey = null;
-                }
-            });
-
+            if (tempAuthKey == null) Log.e(TAG, "cacheKeyIfNeeded: FAILED, still null!");
+            BreadApp.addOnBackgroundedListener(instance);
         }
     }
 
@@ -940,4 +921,8 @@ public class ReplicatedKVStore {
         return false;
     }
 
+    @Override
+    public void onBackgrounded() {
+        tempAuthKey = null;
+    }
 }

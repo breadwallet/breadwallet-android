@@ -3,6 +3,8 @@ package com.breadwallet.presenter.activities;
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.GradientDrawable;
@@ -41,12 +43,13 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.APIClient;
 
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.breadwallet.R.color.white;
 import static com.breadwallet.tools.util.BRConstants.SCANNER_REQUEST;
 
-public class LoginActivity extends BRActivity {
+public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgrounded {
     private static final String TAG = LoginActivity.class.getName();
     private BRKeyboard keyboard;
     private LinearLayout pinLayout;
@@ -172,6 +175,14 @@ public class LoginActivity extends BRActivity {
             }
         });
 
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                //Preload the first time
+                WalletsMaster.getInstance(LoginActivity.this).getAllWallets(LoginActivity.this);
+            }
+        });
+
         final boolean useFingerprint = AuthManager.isFingerPrintAvailableAndSetup(this) && BRSharedPrefs.getUseFingerprint(this);
 //        Log.e(TAG, "onCreate: isFingerPrintAvailableAndSetup: " + useFingerprint);
         fingerPrint.setVisibility(useFingerprint ? View.VISIBLE : View.GONE);
@@ -203,39 +214,19 @@ public class LoginActivity extends BRActivity {
             }
         }, 500);
 
-        BreadApp.addOnBackgroundedListener(new BreadApp.OnAppBackgrounded() {
-            @Override
-            public void onBackgrounded() {
-                //disconnect all wallets on backgrounded
-                List<BaseWalletManager> wallets = WalletsMaster.getInstance(LoginActivity.this).getAllWallets();
-                for (BaseWalletManager w : wallets) {
-                    if (w != null)
-                        w.disconnect(LoginActivity.this);
-                }
-
-            }
-        });
+        BreadApp.addOnBackgroundedListener(this);
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        Log.e(TAG, "onResume: 1");
 
         appVisible = true;
         app = this;
         inputAllowed = true;
 
         updateDots();
-
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                Thread.currentThread().setName("BG:" + TAG + ":initWallets");
-                WalletsMaster.getInstance(app).initWallets(app);
-            }
-        });
 
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
@@ -245,7 +236,6 @@ public class LoginActivity extends BRActivity {
             }
         });
         APIClient.getInstance(this).updatePlatform(this);
-        Log.e(TAG, "onResume: 2");
     }
 
     @Override
@@ -308,7 +298,11 @@ public class LoginActivity extends BRActivity {
                 new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        Class toGo = (BRSharedPrefs.wasAppBackgroundedFromHome(LoginActivity.this)) ? HomeActivity.class : WalletActivity.class;
+
+                        boolean showHomeActivity = (BRSharedPrefs.wasAppBackgroundedFromHome(LoginActivity.this)) ||
+                                BRSharedPrefs.isNewWallet(LoginActivity.this);
+
+                        Class toGo = showHomeActivity ? HomeActivity.class : WalletActivity.class;
                         Intent intent = new Intent(LoginActivity.this, toGo);
                         startActivity(intent);
                         overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
@@ -398,4 +392,12 @@ public class LoginActivity extends BRActivity {
     protected void onSaveInstanceState(Bundle outState) {
     }
 
+    @Override
+    public void onBackgrounded() {
+        //disconnect all wallets on backgrounded
+        List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(LoginActivity.this).getAllWallets(LoginActivity.this));
+        for (BaseWalletManager w : list) {
+            w.disconnect(LoginActivity.this);
+        }
+    }
 }
