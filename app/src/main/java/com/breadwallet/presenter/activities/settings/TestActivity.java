@@ -9,7 +9,7 @@ import com.breadwallet.R;
 /**
  * Used for Unit testing onlyg
  */
-public class TestActivity extends Activity {
+public class TestActivity extends Activity { //extends Activity, not BRActivity!
     private static final String TAG = TestActivity.class.getName();
 
 

@@ -14,8 +14,8 @@ import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.core.ethereum.BREthereumNetwork;
 import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
+import com.breadwallet.core.ethereum.BREthereumBlock;
 import com.breadwallet.core.ethereum.BREthereumWallet;
-import com.breadwallet.core.ethereum.test.BREthereumLightNodeClientTest;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
@@ -27,13 +27,12 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
-import com.breadwallet.tools.sqlite.CurrencyDataSource;
+import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.abstracts.BaseAddress;
-import com.breadwallet.wallet.abstracts.BaseTransaction;
+import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
@@ -41,13 +40,11 @@ import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
+import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
-import com.google.firebase.crash.FirebaseCrash;
 
 import com.platform.JsonRpcConstants;
 import com.platform.JsonRpcRequest;
-import com.platform.entities.TxMetaData;
-import com.platform.tools.KVStoreManager;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,10 +52,14 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
+import okhttp3.internal.Util;
 
 /**
  * BreadWallet
@@ -84,8 +85,13 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.ClientJSON_RPC {
+public class WalletEthManager implements BaseWalletManager,
+        BREthereumLightNode.ClientJSON_RPC,
+        BREthereumLightNode.Listener {
     private static final String TAG = WalletEthManager.class.getSimpleName();
+
+    private CryptoTransaction mWatchedTransaction;
+    private OnHashUpdated mWatchListener;
 
     private static String ISO = "ETH";
     public static final String ETH_SCHEME = "ethereum";
@@ -96,6 +102,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     private List<OnTxStatusUpdatedListener> txStatusUpdatedListeners = new ArrayList<>();
     private List<SyncListener> syncListeners = new ArrayList<>();
     private List<OnTxListModified> txModifiedListeners = new ArrayList<>();
+    private Map<String, Boolean> balanceStatuses = new HashMap<>();
 
     private static WalletEthManager instance;
     private WalletUiConfiguration uiConfig;
@@ -103,48 +110,45 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     private final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // 90m ETH * 18 (WEI)
     private final BigDecimal ONE_ETH = new BigDecimal("1000000000000000000"); //1ETH = 1000000000000000000 WEI
     private BREthereumWallet mWallet;
-    BREthereumLightNode.JSON_RPC node;
+    public BREthereumLightNode.JSON_RPC node;
     private Context mContext;
 
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
-        uiConfig = new WalletUiConfiguration("#5e70a3", true, true, false, true);
+        uiConfig = new WalletUiConfiguration("#5e6fa5", null, true);
         settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
 
         if (Utils.isNullOrEmpty(ethPubKey)) {
             Log.e(TAG, "WalletEthManager: Using the paperKey to create");
+            String paperKey = null;
             try {
-                String paperKey = new String(BRKeyStore.getPhrase(app, 0));
-                if (Utils.isNullOrEmpty(paperKey)) {
-                    Log.e(TAG, "WalletEthManager: paper key is empty too, no wallet!");
-                    instance = null;
-                    return;
-                }
-
-                String[] words = lookupWords(app, paperKey, Locale.getDefault().getLanguage());
-
-                if (null == words) {
-                    Log.e(TAG, "WalletEthManager: paper key does not validate with BIP39 Words for: " +
-                            Locale.getDefault().getLanguage());
-                    instance = null;
-                    return;
-                }
-
-                new BREthereumLightNode.JSON_RPC(this, network, paperKey, words);
-                mWallet = node.getWallet();
-
-                if (null == mWallet) {
-                    Log.e(TAG, "WalletEthManager: failed to create the ETH wallet using paperKey.");
-                    instance = null;
-                    return;
-                }
-
-                ethPubKey = mWallet.getAccount().getPrimaryAddressPublicKey();
-                BRKeyStore.putEthPublicKey(ethPubKey, app);
+                paperKey = new String(BRKeyStore.getPhrase(app, 0));
             } catch (UserNotAuthenticatedException e) {
                 e.printStackTrace();
-                instance = null;
                 return;
             }
+            if (Utils.isNullOrEmpty(paperKey)) {
+                Log.e(TAG, "WalletEthManager: paper key is empty too, no wallet!");
+                return;
+            }
+
+            String[] words = lookupWords(app, paperKey, Locale.getDefault().getLanguage());
+
+            if (null == words) {
+                Log.e(TAG, "WalletEthManager: paper key does not validate with BIP39 Words for: " +
+                        Locale.getDefault().getLanguage());
+                return;
+            }
+
+            new BREthereumLightNode.JSON_RPC(this, network, paperKey, words);
+            mWallet = node.getWallet();
+
+            if (null == mWallet) {
+                Log.e(TAG, "WalletEthManager: failed to create the ETH wallet using paperKey.");
+                return;
+            }
+
+            ethPubKey = mWallet.getAccount().getPrimaryAddressPublicKey();
+            BRKeyStore.putEthPublicKey(ethPubKey, app);
         } else {
             Log.e(TAG, "WalletEthManager: Using the pubkey to create");
             new BREthereumLightNode.JSON_RPC(this, network, ethPubKey);
@@ -152,15 +156,18 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
             if (null == mWallet) {
                 Log.e(TAG, "WalletEthManager: failed to create the ETH wallet using saved publicKey.");
-                instance = null;
                 return;
             }
         }
+
+        BreadApp.generateWalletIfIfNeeded(app, getReceiveAddress(app).stringify());
+        WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
 
         mContext = app;
         mWallet.estimateGasPrice();
         mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
         node.connect();
+
     }
 
     public synchronized static WalletEthManager getInstance(Context app) {
@@ -183,28 +190,26 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         return instance;
     }
 
-    private String[] lookupWords(Context app, String paperKey, String language) {
-        if (null == language) language = "en";
+    private String[] lookupWords(Context app, String paperKey, String l) {
+        //ignore l since it can be english but the phrase in other language.
 
-        List<String> list = Bip39Reader.bip39List(app, language);
-        String[] words = list.toArray(new String[list.size()]);
-
-        if (words.length % Bip39Reader.WORD_LIST_SIZE != 0) {
-            Log.e(TAG, "isPaperKeyValid: " + "The list size should divide by " + Bip39Reader.WORD_LIST_SIZE);
-            BRReportsManager.reportBug(new IllegalArgumentException("words.length is not dividable by " + Bip39Reader.WORD_LIST_SIZE), true);
+        List<String> list = Bip39Reader.detectWords(app, paperKey);
+        if (Utils.isNullOrEmpty(list) || (list.size() % Bip39Reader.WORD_LIST_SIZE != 0)) {
+            String message = "lookupWords: " + "Failed: " + list + ", size: " + (list == null ? "null" : list.size());
+            Log.e(TAG, message);
+            BRReportsManager.reportBug(new IllegalArgumentException(message), true);
+            return null;
         }
+        String[] words = list.toArray(new String[list.size()]);
 
         // If the paperKey is valid for `words`, then return `words`
         if (BRCoreMasterPubKey.validateRecoveryPhrase(words, paperKey))
             return words;
-
-            // Otherwise if not English, then try English
-        else if (!"en".equals(language))
-            return lookupWords(app, paperKey, "en");
-
             // Otherwise, nothing
-        else
+        else {
+            BRReportsManager.reportBug(new NullPointerException("invalid paper key for words:" + paperKey.substring(0, 10))); //see a piece of it
             return null;
+        }
     }
 
     private List<BigDecimal> getFingerprintLimits(Context app) {
@@ -217,10 +222,19 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         return result;
     }
 
+    public BREthereumWallet getEthWallet() {
+        return mWallet;
+    }
+
     @Override
     public int getForkId() {
         //No need for ETH
         return -1;
+    }
+
+    @Override
+    public BREthereumAmount.Unit getUnit() {
+        return BREthereumAmount.Unit.ETHER_WEI;
     }
 
     @Override
@@ -229,10 +243,9 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public byte[] signAndPublishTransaction(BaseTransaction tx, byte[] phrase) {
-        CryptoTransaction cryptoTransaction = (CryptoTransaction) tx;
-        mWallet.sign(cryptoTransaction.getEtherTx(), new String(phrase));
-        mWallet.submit(cryptoTransaction.getEtherTx());
+    public byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] phrase) {
+        mWallet.sign(tx.getEtherTx(), new String(phrase));
+        mWallet.submit(tx.getEtherTx());
         String hash = tx.getEtherTx().getHash();
         return hash == null ? new byte[0] : hash.getBytes();
     }
@@ -262,9 +275,14 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
+    public void watchTransactionForHash(CryptoTransaction tx, OnHashUpdated listener) {
+        mWatchedTransaction = tx;
+        mWatchListener = listener;
+    }
+
+    @Override
     public long getRelayCount(byte[] txHash) {
-        //todo implement
-        return -1;
+        return 3;
     }
 
     @Override
@@ -301,14 +319,19 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public BaseTransaction[] getTxs() {
-        return (BaseTransaction[]) mWallet.getTransactions();
+    public CryptoTransaction[] getTxs(Context app) {
+        BREthereumTransaction[] txs = mWallet.getTransactions();
+        CryptoTransaction[] arr = new CryptoTransaction[txs.length];
+        for (int i = 0; i < txs.length; i++) {
+            arr[i] = new CryptoTransaction(txs[i]);
+        }
+
+        return arr;
     }
 
     @Override
-    public BigDecimal getTxFee(BaseTransaction tx) {
-        return new BigDecimal(tx.getEtherTx().getGasLimit())
-                .multiply(new BigDecimal(tx.getEtherTx().getGasPrice(BREthereumAmount.Unit.ETHER_WEI)));
+    public BigDecimal getTxFee(CryptoTransaction tx) {
+        return new BigDecimal(tx.getEtherTx().getFee(BREthereumAmount.Unit.ETHER_WEI));
     }
 
     @Override
@@ -329,8 +352,8 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public BaseAddress getTxAddress(BaseTransaction tx) {
-        return new ETHAddress(tx.getEtherTx().getTargetAddress());
+    public String getTxAddress(CryptoTransaction tx) {
+        return tx.getEtherTx().getTargetAddress();
     }
 
     @Override
@@ -348,7 +371,7 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public BigDecimal getTransactionAmount(BaseTransaction tx) {
+    public BigDecimal getTransactionAmount(CryptoTransaction tx) {
         return new BigDecimal(tx.getEtherTx().getAmount());
     }
 
@@ -388,14 +411,14 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                 BRSharedPrefs.putFeeRate(app, getIso(app), fee);
                 BRSharedPrefs.putFeeTime(app, getIso(app), System.currentTimeMillis()); //store the time of the last successful fee fetch
             } else {
-                FirebaseCrash.report(new NullPointerException("Fee is weird:" + fee));
+                BRReportsManager.reportBug(new NullPointerException("Fee is weird:" + fee));
                 Log.d(TAG, "Error: Fee is unexpected value");
 
             }
             if (economyFee.compareTo(new BigDecimal(0)) > 0) {
                 BRSharedPrefs.putEconomyFeeRate(app, getIso(app), economyFee);
             } else {
-                FirebaseCrash.report(new NullPointerException("Economy fee is weird:" + economyFee));
+                BRReportsManager.reportBug(new NullPointerException("Economy fee is weird:" + economyFee));
                 Log.d(TAG, "Error: Economy fee is unexpected value");
             }
         } catch (JSONException e) {
@@ -408,13 +431,14 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public void refreshAddress(Context app) {
-        Log.e(TAG, "refreshAddress: start");
-        BaseAddress address = getReceiveAddress(app);
-        Log.e(TAG, "refreshAddress: end");
-        if (Utils.isNullOrEmpty(address.stringify())) {
-            Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
+        if (Utils.isNullOrEmpty(BRSharedPrefs.getReceiveAddress(app, getIso(app)))) {
+            CryptoAddress address = getReceiveAddress(app);
+            if (Utils.isNullOrEmpty(address.stringify())) {
+                Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
+                BRReportsManager.reportBug(new NullPointerException("empty address!"));
+            }
+            BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso(app));
         }
-        BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso(app));
     }
 
     @Override
@@ -422,8 +446,10 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                BigDecimal balance = new BigDecimal(mWallet.getBalance());
-                BRSharedPrefs.putCachedBalance(app, ISO, balance);
+                if (wasBalanceUpdated("ETH")) {
+                    BigDecimal balance = new BigDecimal(mWallet.getBalance(getUnit()));
+                    BRSharedPrefs.putCachedBalance(app, ISO, balance);
+                }
             }
         });
     }
@@ -435,16 +461,11 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         List<TxUiHolder> uiTxs = new ArrayList<>();
         for (int i = txs.length - 1; i >= 0; i--) { //revere order
             BREthereumTransaction tx = txs[i];
-//            TxMetaData md = KVStoreManager.getInstance().getTxMetaData(app, tx.getHash().getBytes()); //EXPENSIVE OPERATION
-            //if the txMetaData isn't saved - SAVE IT!
-//            if (md == null)
-//                md = KVStoreManager.getInstance().createMetadata(app, this, new CryptoTransaction(tx));
-//            if (md != null)
-//                KVStoreManager.getInstance().putTxMetaData(app, md, tx.getHash().getBytes());
             uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(mWallet.getAccount().getPrimaryAddress()), tx.getBlockTimestamp(),
-                    (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null : tx.getHash().getBytes(), tx.getHash(), null, tx,
+                    (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null : tx.getHash().getBytes(), tx.getHash(),
+                    new BigDecimal(tx.getFee(BREthereumAmount.Unit.ETHER_WEI)),
                     tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
-                    new BigDecimal(tx.getAmount()), true));
+                    new BigDecimal(tx.getAmount(BREthereumAmount.Unit.ETHER_WEI)), true));
         }
 
         return uiTxs;
@@ -459,11 +480,6 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     public boolean addressIsUsed(String address) {
         //Not needed for ETH
         return false;
-    }
-
-    @Override
-    public BaseAddress createAddress(String address) {
-        return new ETHAddress(address);
     }
 
     @Override
@@ -494,17 +510,17 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public String getDenomination(Context app) {
-        throw new RuntimeException("not implemented");
+    public String getDenominator(Context app) {
+        return "1000000000000000000";
     }
 
     @Override
-    public BaseAddress getReceiveAddress(Context app) {
-        return new ETHAddress(mWallet.getAccount().getPrimaryAddress());
+    public CryptoAddress getReceiveAddress(Context app) {
+        return new CryptoAddress(mWallet.getAccount().getPrimaryAddress(), null);
     }
 
     @Override
-    public BaseTransaction createTransaction(BigDecimal amount, String address) {
+    public CryptoTransaction createTransaction(BigDecimal amount, String address) {
         BREthereumTransaction tx = mWallet.createTransaction(address, amount.toPlainString(), BREthereumAmount.Unit.ETHER_WEI);
         return new CryptoTransaction(tx);
     }
@@ -644,9 +660,9 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     //ETH rates are in BTC (thus this math)
     private BigDecimal getFiatForEth(Context app, BigDecimal ethAmount, String code) {
         //fiat rate for btc
-        CurrencyEntity btcRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
+        CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
         //Btc rate for ether
-        CurrencyEntity ethBtcRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
+        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;
@@ -663,9 +679,9 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     //ETH rates are in BTC (thus this math)
     private BigDecimal getEthForFiat(Context app, BigDecimal fiatAmount, String code) {
         //fiat rate for btc
-        CurrencyEntity btcRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
+        CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
         //Btc rate for ether
-        CurrencyEntity ethBtcRate = CurrencyDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
+        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;
@@ -687,15 +703,24 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     @Override
     public void assignNode(BREthereumLightNode node) {
         this.node = (BREthereumLightNode.JSON_RPC) node;
+        this.node.addListener(this);
     }
 
     @Override
     public void getBalance(final int wid, final String address, final int rid) {
+        BREthereumWallet wallet = this.node.getWalletByIdentifier(wid);
+        BREthereumToken token = wallet.getToken();
+        if (null == token)
+            getEtherBalance(wallet, wid, address, rid);
+        else
+            getTokenBalance(wallet, wid, token.getAddress(), address, rid);
+    }
+
+    protected void getEtherBalance(final BREthereumWallet wallet, final int wid, final String address, final int rid) {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
-//        Log.d(TAG, "Making rpc request to " + eth_url);
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
 
@@ -711,11 +736,9 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                     e.printStackTrace();
                 }
 
-                final JsonRpcRequest request = new JsonRpcRequest();
-                request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
-                        String balance = "0x";
                         try {
                             if (!Utils.isNullOrEmpty(jsonResult)) {
 
@@ -723,8 +746,18 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                                 Log.d(TAG, "getBalance response -> " + responseObject.toString());
 
                                 if (responseObject.has("result")) {
-                                    balance = responseObject.getString("result");
-                                    Log.e(TAG, "RPC:getBalance: " + balance);
+                                    String balance = responseObject.getString("result");
+                                    node.announceBalance(wid, balance, rid);
+                                    final BigDecimal amount = new BigDecimal(wallet.getBalance(getUnit()));
+
+                                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            for (OnBalanceChangedListener list : balanceListeners)
+                                                if (list != null)
+                                                    list.onBalanceChanged(ISO, amount);
+                                        }
+                                    });
                                 }
                             } else {
                                 Log.e(TAG, "onRpcRequestCompleted: jsonResult is null");
@@ -732,32 +765,82 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                         } catch (JSONException je) {
                             je.printStackTrace();
                         }
-                        node.announceBalance(wid, balance, rid);
-                        final BigDecimal uiBalance = new BigDecimal(mWallet.getBalance());
-                        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                for (OnBalanceChangedListener list : balanceListeners)
-                                    if (list != null)
-                                        list.onBalanceChanged(ISO, uiBalance);
-                            }
-                        });
 
                     }
                 });
-
             }
         });
+    }
 
+    protected void getTokenBalance(final BREthereumWallet wallet, final int wid,
+                                   final String contractAddress,
+                                   final String address,
+                                   final int rid) {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+
+                final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
+                final String eth_rpc_url = host + "module=account&action=tokenbalance" +
+                        "&address=" + address +
+                        "&contractaddress=" + contractAddress;
+
+                final JSONObject payload = new JSONObject();
+                try {
+                    payload.put("id", String.valueOf(rid));
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                JsonRpcRequest.makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                    @Override
+                    public void onRpcRequestCompleted(String jsonResult) {
+
+                        try {
+                            if (!Utils.isNullOrEmpty(jsonResult)) {
+                                JSONObject responseObject = new JSONObject(jsonResult);
+
+                                if (responseObject.has("result")) {
+                                    String balance = responseObject.getString("result");
+                                    node.announceBalance(wid, balance, rid);
+                                    final BigDecimal uiBalance = new BigDecimal(wallet.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));//use TOKEN_DECIMAL
+                                    final String iso = wallet.getToken().getSymbol();
+
+                                    Context app = BreadApp.getBreadContext();
+                                    if (app != null) {
+                                        BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
+                                        if (wm != null) wm.refreshCachedBalance(app);
+                                    }
+
+                                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            for (OnBalanceChangedListener list : balanceListeners)
+                                                if (list != null)
+                                                    list.onBalanceChanged(iso, uiBalance);
+                                        }
+                                    });
+                                }
+                            }
+                        } catch (JSONException je) {
+                            je.printStackTrace();
+                        }
+
+                    }
+                });
+            }
+        });
     }
 
     @Override
     public void getGasPrice(final int wid, final int rid) {
+        Log.e(TAG, "getGasPrice: " + wid);
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
                 Log.d(TAG, "Making rpc request to -> " + eth_url);
+
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
 
@@ -769,29 +852,22 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                     e.printStackTrace();
                 }
 
-                final JsonRpcRequest request = new JsonRpcRequest();
-
-                request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
-                        String gasPrice = "0x";
-
                         try {
-
-                            if (jsonResult != null) {
-
+                            if (!Utils.isNullOrEmpty(jsonResult)) {
                                 JSONObject responseObject = new JSONObject(jsonResult);
-
                                 if (responseObject.has("result")) {
-                                    gasPrice = responseObject.getString("result");
+                                    String gasPrice = responseObject.getString("result");
+                                    Log.e(TAG, "onRpcRequestCompleted: getGasPrice: " + gasPrice);
+                                    node.announceGasPrice(wid, gasPrice, rid);
                                 }
                             }
                         } catch (JSONException je) {
                             je.printStackTrace();
                         }
 
-                        Log.d(TAG, "gasPrice response -> " + jsonResult);
-                        node.announceGasPrice(wid, gasPrice, rid);
                     }
                 });
             }
@@ -801,20 +877,19 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
     @Override
     public void getGasEstimate(final int wid, final int tid, final String to, final String amount, final String data, final int rid) {
+        Log.e(TAG, "getGasEstimate: " + wid);
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
                 Log.d(TAG, "Making rpc request to -> " + eth_url);
+
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
 
                 params.put(to);
                 params.put(amount);
                 params.put(data);
-
-                final JsonRpcRequest request = new JsonRpcRequest();
-
 
                 try {
                     payload.put("method", "eth_estimateGas");
@@ -825,23 +900,20 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                     e.printStackTrace();
                 }
 
-                request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
-                        String gasEstimate = "0x";
                         try {
                             JSONObject responseObject = new JSONObject(jsonResult);
 
                             if (responseObject.has("result")) {
-                                gasEstimate = responseObject.getString("result");
-
+                                String gasEstimate = responseObject.getString("result");
+                                Log.e(TAG, "onRpcRequestCompleted: getGasEstimate: " + gasEstimate);
                                 node.announceGasEstimate(wid, tid, gasEstimate, rid);
-                                return;
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
                         }
-                        node.announceGasEstimate(wid, tid, gasEstimate, rid);
                     }
                 });
             }
@@ -864,7 +936,6 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                 final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
                 Log.d(TAG, "Making rpc request to -> " + eth_url);
 
-                JsonRpcRequest request = new JsonRpcRequest();
                 JSONObject payload = new JSONObject();
                 JSONArray params = new JSONArray();
                 try {
@@ -877,13 +948,13 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                     e.printStackTrace();
                 }
 
-                request.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         String txHash = null;
                         int errCode = 0;
                         String errMessage = "";
-                        if (jsonResult != null) {
+                        if (!Utils.isNullOrEmpty(jsonResult)) {
                             try {
                                 JSONObject responseObject = new JSONObject(jsonResult);
                                 Log.e(TAG, "onRpcRequestCompleted: " + responseObject);
@@ -910,21 +981,22 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                                 if (app != null && app instanceof Activity) {
                                     if (!Utils.isNullOrEmpty(finalTxHash)) {
                                         PostAuth.stampMetaData(app, finalTxHash.getBytes());
-                                        BRAnimator.showBreadSignal((Activity) app, app.getString(R.string.Alerts_sendSuccess), app.getString(R.string.Alerts_sendSuccessSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
-                                            @Override
-                                            public void onComplete() {
-                                                BRAnimator.killAllFragments((Activity) app);
-                                                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                                        BRAnimator.showBreadSignal((Activity) app, app.getString(R.string.Alerts_sendSuccess),
+                                                app.getString(R.string.Alerts_sendSuccessSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                                                     @Override
-                                                    public void run() {
-                                                        for (OnTxStatusUpdatedListener list : txStatusUpdatedListeners)
-                                                            if (list != null)
-                                                                list.onTxStatusUpdated();
-                                                        mWallet.updateBalance();
+                                                    public void onComplete() {
+                                                        BRAnimator.killAllFragments((Activity) app);
+                                                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                                                            @Override
+                                                            public void run() {
+                                                                for (OnTxStatusUpdatedListener list : txStatusUpdatedListeners)
+                                                                    if (list != null)
+                                                                        list.onTxStatusUpdated();
+                                                                mWallet.updateBalance();
+                                                            }
+                                                        });
                                                     }
                                                 });
-                                            }
-                                        });
                                     } else {
                                         BRDialog.showSimpleDialog(app, "Failed", String.format("(%d) %s", finalErrCode, finalErrMessage));
                                     }
@@ -946,11 +1018,10 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-
                 //final String eth_rpc_url = String.format(JsonRpcConstants.ETH_RPC_TX_LIST, mWallet.getAccount().getPrimaryAddress());
-                final String eth_rpc_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?module=account&action=txlist&address=" + address;
+                final String eth_rpc_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT
+                        + "query?module=account&action=txlist&address=" + address;
 
-                final JsonRpcRequest request = new JsonRpcRequest();
                 final JSONObject payload = new JSONObject();
                 try {
                     payload.put("id", String.valueOf(id));
@@ -959,14 +1030,11 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                     e.printStackTrace();
                 }
 
-                request.makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
 
-
-                        final String jsonRcpResponse = jsonResult;
-
-                        if (jsonRcpResponse != null) {
+                        if (!Utils.isNullOrEmpty(jsonResult)) {
                             try {
                                 // Convert response into JsonArray of transactions
                                 JSONObject transactions = new JSONObject(jsonResult);
@@ -999,98 +1067,98 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
 
                                     if (txObject.has("hash")) {
                                         txHash = txObject.getString("hash");
-                                        Log.d(TAG, "TxObject Hash -> " + txHash);
+                                        // Log.d(TAG, "TxObject Hash -> " + txHash);
 
                                     }
 
                                     if (txObject.has("to")) {
                                         txTo = txObject.getString("to");
-                                        Log.d(TAG, "TxObject to -> " + txTo);
+                                        // Log.d(TAG, "TxObject to -> " + txTo);
 
                                     }
 
                                     if (txObject.has("from")) {
                                         txFrom = txObject.getString("from");
-                                        Log.d(TAG, "TxObject from -> " + txFrom);
+                                        // Log.d(TAG, "TxObject from -> " + txFrom);
 
                                     }
 
                                     if (txObject.has("contractAddress")) {
                                         txContract = txObject.getString("contractAddress");
-                                        Log.d(TAG, "TxObject contractAddress -> " + txContract);
+                                        // Log.d(TAG, "TxObject contractAddress -> " + txContract);
 
                                     }
 
                                     if (txObject.has("value")) {
                                         txValue = txObject.getString("value");
-                                        Log.d(TAG, "TxObject value -> " + txValue);
+                                        // Log.d(TAG, "TxObject value -> " + txValue);
 
                                     }
 
                                     if (txObject.has("gas")) {
                                         txGas = txObject.getString("gas");
-                                        Log.d(TAG, "TxObject gas -> " + txGas);
+                                        // Log.d(TAG, "TxObject gas -> " + txGas);
 
 
                                     }
 
                                     if (txObject.has("gasPrice")) {
                                         txGasPrice = txObject.getString("gasPrice");
-                                        Log.d(TAG, "TxObject gasPrice -> " + txGasPrice);
+                                        // Log.d(TAG, "TxObject gasPrice -> " + txGasPrice);
 
                                     }
 
                                     if (txObject.has("nonce")) {
                                         txNonce = txObject.getString("nonce");
-                                        Log.d(TAG, "TxObject nonce -> " + txNonce);
+                                        // Log.d(TAG, "TxObject nonce -> " + txNonce);
 
                                     }
 
                                     if (txObject.has("gasUsed")) {
                                         txGasUsed = txObject.getString("gasUsed");
-                                        Log.d(TAG, "TxObject gasUsed -> " + txGasUsed);
+                                        // Log.d(TAG, "TxObject gasUsed -> " + txGasUsed);
 
                                     }
 
                                     if (txObject.has("blockNumber")) {
                                         txBlockNumber = txObject.getString("blockNumber");
-                                        Log.d(TAG, "TxObject blockNumber -> " + txBlockNumber);
+                                        // Log.d(TAG, "TxObject blockNumber -> " + txBlockNumber);
 
                                     }
 
                                     if (txObject.has("blockHash")) {
                                         txBlockHash = txObject.getString("blockHash");
-                                        Log.d(TAG, "TxObject blockHash -> " + txBlockHash);
+                                        // Log.d(TAG, "TxObject blockHash -> " + txBlockHash);
 
                                     }
 
                                     if (txObject.has("input")) {
                                         txData = txObject.getString("input");
-                                        Log.d(TAG, "TxObject input -> " + txData);
+                                        // Log.d(TAG, "TxObject input -> " + txData);
 
                                     }
 
                                     if (txObject.has("confirmations")) {
                                         txBlockConfirmations = txObject.getString("confirmations");
-                                        Log.d(TAG, "TxObject confirmations -> " + txBlockConfirmations);
+                                        // Log.d(TAG, "TxObject confirmations -> " + txBlockConfirmations);
 
                                     }
 
                                     if (txObject.has("transactionIndex")) {
                                         txBlockTransactionIndex = txObject.getString("transactionIndex");
-                                        Log.d(TAG, "TxObject transactionIndex -> " + txBlockTransactionIndex);
+                                        // Log.d(TAG, "TxObject transactionIndex -> " + txBlockTransactionIndex);
 
                                     }
 
                                     if (txObject.has("timeStamp")) {
                                         txBlockTimestamp = txObject.getString("timeStamp");
-                                        Log.d(TAG, "TxObject blockTimestamp -> " + txBlockTimestamp);
+                                        // Log.d(TAG, "TxObject blockTimestamp -> " + txBlockTimestamp);
 
                                     }
 
                                     if (txObject.has("isError")) {
                                         txIsError = txObject.getString("isError");
-                                        Log.d(TAG, "TxObject isError -> " + txIsError);
+                                        // Log.d(TAG, "TxObject isError -> " + txIsError);
 
                                     }
 
@@ -1099,17 +1167,17 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
                                             (mWallet.getAccount().getPrimaryAddress().equalsIgnoreCase(txTo) ? address : txTo),
                                             txContract, txValue, txGas, txGasPrice, txData, txNonce, txGasUsed, txBlockNumber, txBlockHash, txBlockConfirmations, txBlockTransactionIndex, txBlockTimestamp, txIsError);
                                     Context app = BreadApp.getBreadContext();
-                                    int blockHeight = Integer.valueOf(txBlockNumber) + Integer.valueOf(txBlockConfirmations);
+
+                                    int blockHeight = (int) node.getBlockHeight();
                                     if (app != null && blockHeight != Integer.MAX_VALUE && blockHeight > 0) {
-                                        Log.e(TAG, "onRpcRequestCompleted: putLastBlockHeight: " + blockHeight);
                                         BRSharedPrefs.putLastBlockHeight(app, getIso(app), blockHeight);
                                     }
                                 }
 
-
                                 Log.d(TAG, "Rpc Transactions array length -> " + transactionsArray.length());
                             } catch (JSONException e) {
-                                e.printStackTrace();
+                                Log.e(TAG, "onRpcRequestCompleted: ", e);
+
                             }
                         }
                     }
@@ -1120,7 +1188,193 @@ public class WalletEthManager implements BaseWalletManager, BREthereumLightNode.
     }
 
     @Override
-    public void getLogs(String address, String event, int rid) {
-        //implement for tokens
+    public void getLogs(final String address, final String event, final int rid) {
+        BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
+                final String eth_rpc_url = host + "module=logs&action=getLogs" +
+                        "&fromBlock=0&toBlock=latest" +
+//                         "&address=" + ... not needed since we're asking for all the contracts
+                        "&topic0=" + event +
+                        "&topic1=" + address +
+                        "&topic1_2_opr=or" +
+                        "&topic2=" + address;
+                Log.d(TAG, "run: " + eth_rpc_url);
+                final JSONObject payload = new JSONObject();
+                try {
+                    payload.put("id", String.valueOf(rid));
+                    // ?? payload.put("account", address);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                JsonRpcRequest.makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                    @Override
+                    public void onRpcRequestCompleted(String jsonResult) {
+
+                        if (!Utils.isNullOrEmpty(jsonResult)) {
+                            try {
+                                // Convert response into JsonArray of logs
+                                JSONObject logs = new JSONObject(jsonResult);
+                                JSONArray logsArray = logs.getJSONArray("result");
+
+                                // Iterate through the list of transactions and call node.announceTransaction()
+                                // to notify the core
+                                for (int i = 0; i < logsArray.length(); i++) {
+                                    JSONObject log = logsArray.getJSONObject(i);
+
+                                    Log.d(TAG, "LogObject contains -> " + log.toString());
+
+                                    JSONArray topicsArray = log.getJSONArray("topics");
+                                    String[] topics = new String[topicsArray.length()];
+                                    for (int dex = 0; dex < topics.length; dex++)
+                                        topics[dex] = topicsArray.getString(dex);
+
+                                    node.announceLog(rid,
+                                            log.getString("transactionHash"),
+                                            log.getString("address"), // contract
+                                            topics,
+                                            log.getString("data"),
+                                            log.getString("gasPrice"),
+                                            log.getString("gasUsed"),
+                                            log.getString("logIndex"),
+                                            log.getString("blockNumber"),
+                                            log.getString("transactionIndex"),
+                                            log.getString("timeStamp"));
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    }
+
+    public BREthereumLightNode.JSON_RPC getNode() {
+        return node;
+    }
+
+    private void printInfo(String infoText, String walletIso, String eventName) {
+        Log.d(TAG, String.format("%s (%s): %s", eventName, walletIso, infoText));
+    }
+
+    @Override
+    public void handleWalletEvent(BREthereumWallet wallet, WalletEvent event,
+                                  Status status,
+                                  String errorDescription) {
+        Context app = BreadApp.getBreadContext();
+
+        if (app != null && Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
+            String iso = (null == wallet.getToken() ? "ETH" : wallet.getToken().getSymbol());
+            switch (event) {
+                case CREATED:
+                    printInfo("Wallet Created", iso, event.name());
+                    break;
+
+                case BALANCE_UPDATED:
+                    balanceStatuses.put(iso, true);
+                    printInfo("New Balance: " + wallet.getBalance(), iso, event.name());
+                    break;
+                case DEFAULT_GAS_LIMIT_UPDATED:
+                    printInfo("New Gas Limit: ...", iso, event.name());
+                    break;
+                case DEFAULT_GAS_PRICE_UPDATED:
+                    printInfo("New Gas Price: " + BRSharedPrefs.getFeeRate(app, getIso(app)), iso, event.name());
+                    break;
+                case TRANSACTION_ADDED:
+                    printInfo("New transaction added: ", iso, event.name());
+                    break;
+                case TRANSACTION_REMOVED:
+                    printInfo("Transaction removed: ", iso, event.name());
+                    break;
+                case DELETED:
+                    BRReportsManager.reportBug(new NullPointerException("Wallet was deleted:" + event.name()));
+                    printInfo("Deleted: ", iso, event.name());
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void handleBlockEvent(BREthereumBlock block, BlockEvent event,
+                                 Status status,
+                                 String errorDescription) {
+        Log.d(TAG, "handleBlockEvent: " + block + ", event: " + event);
+        Context app = BreadApp.getBreadContext();
+        if (app != null && Utils.isEmulatorOrDebug(app)) {
+            //String iso = (null == wallet.getToken() ? "ETH" : wallet.getToken().getSymbol());
+
+            switch (event) {
+                case CREATED:
+                    printInfo("Block created: " + block.getNumber(), "UNK", event.name());
+                    break;
+                case DELETED:
+                    printInfo("Block deleted: " + block.getNumber(), "UNK", event.name());
+                    break;
+            }
+        }
+    }
+
+    @Override
+    public void handleTransactionEvent(BREthereumWallet wallet, BREthereumTransaction transaction,
+                                       TransactionEvent event,
+                                       Status status,
+                                       String errorDescription) {
+        Context app = BreadApp.getBreadContext();
+
+        if (app != null && Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
+            String iso = (null == wallet.getToken() ? "ETH" : wallet.getToken().getSymbol());
+            switch (event) {
+                case CREATED:
+                    printInfo("Transaction created: " + transaction.getAmount(), iso, event.name());
+                    break;
+                case SIGNED:
+                    printInfo("Transaction signed: " + transaction.getAmount(), iso, event.name());
+                    break;
+                case SUBMITTED:
+                    if (mWatchedTransaction != null) {
+                        Log.e(TAG, "handleTransactionEvent: mWatchedTransaction: " + mWatchedTransaction.getEtherTx().getNonce() + ", actual: " + transaction.getNonce());
+                        if (mWatchedTransaction.getEtherTx().getNonce() == transaction.getNonce()) {
+                            String hash = transaction.getHash();
+                            if (!Utils.isNullOrEmpty(hash)) {
+                                if (mWatchListener != null)
+                                    mWatchListener.onUpdated(hash);
+                                mWatchListener = null;
+                                mWatchedTransaction = null;
+                            }
+                        }
+                    } else {
+                        Log.e(TAG, "handleTransactionEvent: tx is null");
+                    }
+                    Log.e(TAG, "handleTransactionEvent: SUBMITTED: " + transaction.getHash());
+                    printInfo("Transaction submitted: " + transaction.getAmount(), iso, event.name());
+                    break;
+                case BLOCKED:
+                    printInfo("Transaction blocked: " + transaction.getAmount(), iso, event.name());
+                    break;
+                case ERRORED:
+                    printInfo("Transaction error: " + transaction.getAmount(), iso, event.name());
+                    break;
+                case GAS_ESTIMATE_UPDATED:
+                    printInfo("Transaction gas estimate updated: " + transaction.getAmount(), iso, event.name());
+                    break;
+                case BLOCK_CONFIRMATIONS_UPDATED:
+                    printInfo("Transaction confirmations updated: " + transaction.getBlockConfirmations(), iso, event.name());
+                    break;
+            }
+        }
+    }
+
+    public boolean wasBalanceUpdated(String iso) {
+        if (iso != null) return true; //temporary ignoring this approach
+        if (Utils.isNullOrEmpty(iso)) {
+            BRReportsManager.reportBug(new NullPointerException("Invalid iso: " + iso));
+            return false;
+        }
+        return balanceStatuses.containsKey(iso) && balanceStatuses.get(iso);
+
     }
 }

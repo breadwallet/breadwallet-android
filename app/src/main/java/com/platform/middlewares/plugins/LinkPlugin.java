@@ -11,6 +11,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.Utils;
+import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
 import com.platform.interfaces.Plugin;
 
@@ -68,8 +69,8 @@ public class LinkPlugin implements Plugin {
                 Log.e(TAG, "handle: could not handle url: " + url);
                 BRReportsManager.reportBug(new RuntimeException("could not handle url: " + url));
             }
-
-            return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
+            APIClient.BRResponse resp = new APIClient.BRResponse(null, 204);
+            return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         } else if (target.startsWith("/_open_maps")) {
             Log.i(TAG, "handling: " + target + " " + baseRequest.getMethod());
             Context app = BreadApp.getBreadContext();
@@ -86,7 +87,9 @@ public class LinkPlugin implements Plugin {
             String uri = "http://maps.google.com/maps?q=" + fromPoint + "&daddr=" + address + "&mode=driving";
             Intent intent = new Intent(android.content.Intent.ACTION_VIEW, Uri.parse(uri));
             app.startActivity(Intent.createChooser(intent, "Select an application"));
-            return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
+            APIClient.BRResponse resp = new APIClient.BRResponse(null, 204);
+
+            return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         } else if (target.startsWith("/_browser")) {
             Context app = BreadApp.getBreadContext();
             if (app == null) {
@@ -112,8 +115,10 @@ public class LinkPlugin implements Plugin {
                     Intent getInt = new Intent(app, WebViewActivity.class);
                     getInt.putExtra("url", getUri.toString());
                     app.startActivity(getInt);
-                    ((Activity)app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
-                    return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
+                    ((Activity) app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                    APIClient.BRResponse resp = new APIClient.BRResponse(null, 204);
+
+                    return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
                 case "POST":
                     // opens a browser with a customized request object
                     // params:
@@ -171,8 +176,9 @@ public class LinkPlugin implements Plugin {
                     Intent postInt = new Intent(app, WebViewActivity.class);
                     postInt.putExtra("json", json.toString());
                     app.startActivity(postInt);
-                    ((Activity)app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
-                    return BRHTTPHelper.handleSuccess(204, null, baseRequest, response, null);
+                    ((Activity) app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                    APIClient.BRResponse brResp = new APIClient.BRResponse(null, 204);
+                    return BRHTTPHelper.handleSuccess(brResp, baseRequest, response);
 
             }
         }

@@ -104,6 +104,7 @@ add_library( # The name of the library.
 
              # Ethereum files
              src/main/jni/breadwallet-core/ethereum/BREthereum.h
+             src/main/jni/breadwallet-core/ethereum/BREthereum.c
              src/main/jni/breadwallet-core/ethereum/BREthereumAccount.c
              src/main/jni/breadwallet-core/ethereum/BREthereumAccount.h
              src/main/jni/breadwallet-core/ethereum/BREthereumAmount.c

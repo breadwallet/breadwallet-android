@@ -129,7 +129,9 @@
   <!-- OK button label -->
   <string name="Button.ok">OK</string>
   <!-- receive button -->
-  <string name="Button.receive">ontvangen</string>
+  <string name="Button.receive">Ontvangen</string>
+  <!-- Click this button to sell an asset -->
+  <string name="Button.sell">Verkoop</string>
   <!-- send button -->
   <string name="Button.send">versturen</string>
   <!-- Settings button label -->
@@ -253,7 +255,7 @@
   <!-- Caption for graphics -->
   <string name="Import.rightCaption">Jouw Bread Portemonnee</string>
   <!-- Scan Private key button label -->
-  <string name="Import.scan">Scan private key </string>
+  <string name="Import.scan">"Scan private key "</string>
   <!-- Import wallet success alert title -->
   <string name="Import.success">Succes</string>
   <!-- Successfully imported wallet message body -->
@@ -290,6 +292,8 @@
   <string name="ManageWallet.textFeildLabel">Portemonnee Naam</string>
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">Portemonnee Beheren</string>
+  <!-- "Add [a] Wallet [to the home screen]" -->
+  <string name="MenuButton.addWallet">Voeg Wallet toe</string>
   <!-- Buy bitcoin title -->
   <string name="MenuButton.buy">Bitcoins Kopen</string>
   <!-- Menu button title -->
@@ -512,6 +516,10 @@
   <string name="Send.identityNotCertified">Begunstigde is niet gecertifcieerd.</string>
   <!-- Insufficient funds error -->
   <string name="Send.insufficientFunds">Onvoldoende middelen</string>
+  <!-- e,g, "You must have at least $2 in your wallet in order to transfer this type of token." In this case, "token" is an ethereum ERC20 token. -->
+  <string name="Send.insufficientGasMessage">Je moet minstens %1$s in je wallet hebben om dit type token te versturen. Wil je graag nu naar je Ethereum wallet gaan?</string>
+  <!-- Your ethereum balance is insufficient to complete this action. -->
+  <string name="Send.insufficientGasTitle">Onvoldoende Ethereum Saldo</string>
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">Het bestemmingsadres is geen geldig %1$s-adres.</string>
   <!-- Invalid address on pasteboard message -->
@@ -638,6 +646,18 @@
   <string name="TimeSince.minutes">%1$s m</string>
   <!-- 6 s (6 seconds) -->
   <string name="TimeSince.seconds">%1$s s</string>
+  <!-- Add [this item to the list] -->
+  <string name="TokenList.add">Toevoegen</string>
+  <!-- Add Wallets  [to your home screen] -->
+  <string name="TokenList.addTitle">Voeg Wallets toe</string>
+  <!-- Hide [this token from view] -->
+  <string name="TokenList.hide">Verbergen</string>
+  <!-- [click here to] Manage [your] Wallets -->
+  <string name="TokenList.manageTitle">Beheer Wallets</string>
+  <!-- Remove [this item from the list] -->
+  <string name="TokenList.remove">Verwijderen</string>
+  <!-- Show [this item on your home screen] -->
+  <string name="TokenList.show">Laat zien</string>
   <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
   <string name="TouchIdSettings.customizeText">Je kunt je Touch-ID uitgavenlimiet aanpassen van de %1$s.</string>
   <!-- Fingerprint enabling description body -->
@@ -704,6 +724,8 @@
   <string name="Transaction.sentTo">verstuurd naar %1$s</string>
   <!-- eg. Starting balance: $50.00 -->
   <string name="Transaction.starting">Startbalans: %1$s</string>
+  <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
+  <string name="Transaction.tokenTransfer">Fee voor token verzending: %1$s</string>
   <!-- Waiting to be confirmed string -->
   <string name="Transaction.waiting">Wachtend op bevestiging. Sommige handelaren willen bevestiging om een transactie af te roden. Geschatte tijd: 1-2 uur.</string>
   <!-- e.g. I received money from an account. -->

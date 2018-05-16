@@ -175,7 +175,8 @@ public class ReEnterPinActivity extends BRActivity {
             if (getIntent().getBooleanExtra("noPin", false)) {
                 BRAnimator.startBreadActivity(this, false);
             } else {
-                BRAnimator.showBreadSignal(this, getString(R.string.Alerts_pinSet), getString(R.string.UpdatePin_createInstruction), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
+                BRAnimator.showBreadSignal(this, getString(R.string.Alerts_pinSet),
+                        getString(R.string.UpdatePin_createInstruction), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                     @Override
                     public void onComplete() {
                         PostAuth.getInstance().onCreateWalletAuth(ReEnterPinActivity.this, false);

@@ -129,7 +129,9 @@
   <!-- OK button label -->
   <string name="Button.ok">OK</string>
   <!-- receive button -->
-  <string name="Button.receive">ricevi</string>
+  <string name="Button.receive">Ricevi</string>
+  <!-- Click this button to sell an asset -->
+  <string name="Button.sell">Vendi</string>
   <!-- send button -->
   <string name="Button.send">invia</string>
   <!-- Settings button label -->
@@ -290,6 +292,8 @@
   <string name="ManageWallet.textFeildLabel">Nome Portafoglio</string>
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">Gestisci Portafoglio</string>
+  <!-- "Add [a] Wallet [to the home screen]" -->
+  <string name="MenuButton.addWallet">Aggiungi portafoglio</string>
   <!-- Buy bitcoin title -->
   <string name="MenuButton.buy">Acquista Bitcoin</string>
   <!-- Menu button title -->
@@ -365,7 +369,7 @@
   <!-- Transaction rejected prompt title -->
   <string name="Prompts.RecommendRescan.title">Transazione Rifiutata</string>
   <!-- Share data prompt body -->
-  <string name="Prompts.ShareData.body">Aiutaci a migliorare Bread condividendo i tuoi dati anonimi con noi </string>
+  <string name="Prompts.ShareData.body">"Aiutaci a migliorare Bread condividendo i tuoi dati anonimi con noi "</string>
   <!-- Share data prompt title -->
   <string name="Prompts.ShareData.title">Condividi dati anonimi</string>
   <!-- Enable touch ID prompt body -->
@@ -512,6 +516,10 @@
   <string name="Send.identityNotCertified">L\'Identità del beneficiario non certificata.</string>
   <!-- Insufficient funds error -->
   <string name="Send.insufficientFunds">Fondi insufficienti</string>
+  <!-- e,g, "You must have at least $2 in your wallet in order to transfer this type of token." In this case, "token" is an ethereum ERC20 token. -->
+  <string name="Send.insufficientGasMessage">Devi avere almeno %1$s nel tuo portafoglio per poter trasferire questo tipo di gettone. Vuoi andare al tuo portafoglio Ethereum adesso?</string>
+  <!-- Your ethereum balance is insufficient to complete this action. -->
+  <string name="Send.insufficientGasTitle">Saldo Ethereum insufficiente</string>
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">L\'indirizzo di destinazione non è un indirizzo %1$s valido.</string>
   <!-- Invalid address on pasteboard message -->
@@ -638,6 +646,18 @@
   <string name="TimeSince.minutes">%1$s minuti</string>
   <!-- 6 s (6 seconds) -->
   <string name="TimeSince.seconds">%1$s secondi</string>
+  <!-- Add [this item to the list] -->
+  <string name="TokenList.add">Aggiungi</string>
+  <!-- Add Wallets  [to your home screen] -->
+  <string name="TokenList.addTitle">Aggiungi portafogli</string>
+  <!-- Hide [this token from view] -->
+  <string name="TokenList.hide">Nascondi</string>
+  <!-- [click here to] Manage [your] Wallets -->
+  <string name="TokenList.manageTitle">Gestisci portafogli</string>
+  <!-- Remove [this item from the list] -->
+  <string name="TokenList.remove">Rimuovi</string>
+  <!-- Show [this item on your home screen] -->
+  <string name="TokenList.show">Mostra</string>
   <!-- You can customize your Touch ID Spending Limit from the [TouchIdSettings.linkText gets added here as a button] -->
   <string name="TouchIdSettings.customizeText">Puoi personalizzare il tuo limite di spesa tramite Touch ID %1$s.</string>
   <!-- Fingerprint enabling description body -->
@@ -704,6 +724,8 @@
   <string name="Transaction.sentTo">invio effettuato a %1$s</string>
   <!-- eg. Starting balance: $50.00 -->
   <string name="Transaction.starting">Saldo iniziale: %1$s</string>
+  <!-- e.g. "[The money you paid was a] Fee for token transfer: BRD" (BRD is the token that was transfered) -->
+  <string name="Transaction.tokenTransfer">Commissione per il trasferimento del gettone: %1$s</string>
   <!-- Waiting to be confirmed string -->
   <string name="Transaction.waiting">In attesa di conferma. Alcuni commercianti richiedono la conferma per completare una transazione. Tempo stimato: 1-2 ore.</string>
   <!-- e.g. I received money from an account. -->

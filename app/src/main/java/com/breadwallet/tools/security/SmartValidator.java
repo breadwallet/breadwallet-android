@@ -100,7 +100,8 @@ public class SmartValidator {
     }
 
     public static String cleanPaperKey(Context activity, String phraseToCheck) {
-        return Normalizer.normalize(phraseToCheck.replace("　", " ").replace("\n", " ").trim().replaceAll(" +", " "), Normalizer.Form.NFKD);
+        return Normalizer.normalize(phraseToCheck.replace("　", " ")
+                .replace("\n", " ").trim().replaceAll(" +", " "), Normalizer.Form.NFKD);
     }
 
     public static boolean isWordValid(Context ctx, String word) {

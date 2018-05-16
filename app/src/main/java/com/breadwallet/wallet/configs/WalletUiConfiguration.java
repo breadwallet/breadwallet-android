@@ -25,20 +25,14 @@ package com.breadwallet.wallet.configs;
  * THE SOFTWARE.
  */
 public class WalletUiConfiguration {
-    public String colorHex;
-
-    public boolean sendVisible;
-    public boolean receiveVisible;
-    public boolean buyVisible;
+    public String mStartColor;
+    public String mEndColor;
 
     public boolean showRequestAnAmount;
 
-    //todo refactor to receive objects tied to specific screens
-    public WalletUiConfiguration(String colorHex, boolean sendVisible, boolean receiveVisible, boolean buyVisible,  boolean showRequestAnAmount) {
-        this.colorHex = colorHex;
-        this.sendVisible = sendVisible;
-        this.receiveVisible = receiveVisible;
-        this.buyVisible = buyVisible;
+    public WalletUiConfiguration(String startColor, String endColor, boolean showRequestAnAmount) {
+        this.mStartColor = startColor.contains("#") ? startColor : "#" + startColor;
+        this.mEndColor = endColor != null ? (endColor.contains("#") ? endColor : "#" + endColor) : this.mStartColor;
         this.showRequestAnAmount = showRequestAnAmount;
     }
 

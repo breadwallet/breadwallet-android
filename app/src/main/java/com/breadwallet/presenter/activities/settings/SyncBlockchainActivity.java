@@ -61,8 +61,10 @@ public class SyncBlockchainActivity extends BRActivity {
                                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                                     @Override
                                     public void run() {
-                                        BRSharedPrefs.putStartHeight(SyncBlockchainActivity.this, BRSharedPrefs.getCurrentWalletIso(SyncBlockchainActivity.this), 0);
-                                        BRSharedPrefs.putAllowSpend(SyncBlockchainActivity.this, BRSharedPrefs.getCurrentWalletIso(SyncBlockchainActivity.this), false);
+                                        BRSharedPrefs.putStartHeight(SyncBlockchainActivity.this,
+                                                BRSharedPrefs.getCurrentWalletIso(SyncBlockchainActivity.this), 0);
+                                        BRSharedPrefs.putAllowSpend(SyncBlockchainActivity.this,
+                                                BRSharedPrefs.getCurrentWalletIso(SyncBlockchainActivity.this), false);
                                         WalletsMaster.getInstance(SyncBlockchainActivity.this).getCurrentWallet(SyncBlockchainActivity.this).rescan();
                                         BRAnimator.startBreadActivity(SyncBlockchainActivity.this, false);
 

@@ -13,6 +13,7 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
 import com.platform.GeoLocationManager;
 import com.platform.interfaces.Plugin;
@@ -70,12 +71,14 @@ public class GeoLocationPlugin implements Plugin {
                 try {
                     if (granted) {
                         Log.e(TAG, "handleGeoPermission: granted");
-                        BRHTTPHelper.handleSuccess(204, null, globalBaseRequest, (HttpServletResponse) continuation.getServletResponse(), "application/json");
+                        APIClient.BRResponse resp = new APIClient.BRResponse(null, 204, "application/json");
+                        BRHTTPHelper.handleSuccess(resp, globalBaseRequest, (HttpServletResponse) continuation.getServletResponse());
                         globalBaseRequest.setHandled(true);
 
                     } else {
                         Log.e(TAG, "handleGeoPermission: granted is false");
-                        BRHTTPHelper.handleError(400, "Not granted", globalBaseRequest, (HttpServletResponse) continuation.getServletResponse());
+                        BRHTTPHelper.handleError(400, "Not granted", globalBaseRequest,
+                                (HttpServletResponse) continuation.getServletResponse());
 
                     }
                 } finally {
@@ -87,7 +90,6 @@ public class GeoLocationPlugin implements Plugin {
         });
 
     }
-
 
     @Override
     public boolean handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
@@ -130,7 +132,8 @@ public class GeoLocationPlugin implements Plugin {
                         jsonResult.put("status", status);
                         jsonResult.put("user_queried", permRequested);
                         jsonResult.put("location_enabled", enabled);
-                        return BRHTTPHelper.handleSuccess(200, jsonResult.toString().getBytes(), baseRequest, response, "application/json");
+                        APIClient.BRResponse resp = new APIClient.BRResponse(jsonResult.toString().getBytes(), 200, "application/json");
+                        return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
                     } catch (JSONException e) {
                         e.printStackTrace();
                         Log.e(TAG, "handle: failed to send permission status: " + target + " " + baseRequest.getMethod());

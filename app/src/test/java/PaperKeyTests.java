@@ -104,9 +104,9 @@ public class PaperKeyTests {
         return cleanList;
     }
 
-    private boolean isValid(String phrase, List<String> words) {
-
-        return WalletsMaster.getInstance().validateRecoveryPhrase((String[]) words.toArray(), phrase);
-    }
+//    private boolean isValid(String phrase, List<String> words) {
+//
+//        return WalletsMaster.getInstance(null).validateRecoveryPhrase((String[]) words.toArray(), phrase);
+//    }
 
 }

@@ -383,7 +383,8 @@ public class BRSharedPrefs {
     // BTC, mBTC, Bits
     public static int getCryptoDenomination(Context context, String iso) {//ignore iso, using same denomination for both for now
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
-        return settingsToGet.getInt("currencyUnit", BRConstants.CURRENT_UNIT_BITS);
+        return settingsToGet.getInt("currencyUnit", BRConstants.CURRENT_UNIT_BITCOINS);
+
     }
 
     // BTC, mBTC, Bits
@@ -439,6 +440,18 @@ public class BRSharedPrefs {
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("shareData", show);
+        editor.apply();
+    }
+    public static boolean isNewWallet(Context context) {
+        SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return settingsToGet.getBoolean("newWallet", true);
+    }
+
+    public static void putIsNewWallet(Context context, boolean newWallet) {
+        if (context == null) return;
+        SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean("newWallet", newWallet);
         editor.apply();
     }
 

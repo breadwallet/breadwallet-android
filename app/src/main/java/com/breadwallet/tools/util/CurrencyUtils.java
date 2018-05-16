@@ -1,6 +1,7 @@
 package com.breadwallet.tools.util;
 
 import android.content.Context;
+import android.util.Log;
 
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -47,6 +48,7 @@ public class CurrencyUtils {
      * @return - the formatted amount e.g. $535.50 or b5000
      */
     public static String getFormattedAmount(Context app, String iso, BigDecimal amount) {
+        long start = System.currentTimeMillis();
         if (amount == null) return "---"; //to be able to detect in a bug
         if (iso == null) return "???"; //to be able to detect in a bug
 //        Log.e(TAG, "amount: " + amount);
@@ -80,7 +82,38 @@ public class CurrencyUtils {
         currencyFormat.setMinimumFractionDigits(currency != null ? currency.getDefaultFractionDigits() : 0);
         currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
         currencyFormat.setNegativePrefix("-" + decimalFormatSymbols.getCurrencySymbol());
+
         return currencyFormat.format(amount);
+    }
+
+    public static String getFormattedAmountWithoutSymbol(Context app, String iso, BigDecimal amount) {
+        if (amount == null) return "---"; //to be able to detect in a bug
+        DecimalFormat currencyFormat;
+
+        currencyFormat = (DecimalFormat) DecimalFormat.getNumberInstance();
+        Currency currency = null;
+
+        BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
+
+        if (wallet != null) {
+            amount = wallet.getCryptoForSmallestCrypto(app, amount);
+
+        } else {
+            try {
+                currency = Currency.getInstance(iso);
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            }
+        }
+
+        currencyFormat.setGroupingUsed(true);
+        currencyFormat.setMaximumFractionDigits(currency != null ? currency.getDefaultFractionDigits() : wallet.getMaxDecimalPlaces(app));
+        currencyFormat.setMinimumFractionDigits(currency != null ? currency.getDefaultFractionDigits() : 0);
+        currencyFormat.setDecimalFormatSymbols(null);
+        currencyFormat.setNegativePrefix("-");
+
+        return currencyFormat.format(amount) + " " + iso.toUpperCase();
+
     }
 
     public static String getSymbolByIso(Context app, String iso) {

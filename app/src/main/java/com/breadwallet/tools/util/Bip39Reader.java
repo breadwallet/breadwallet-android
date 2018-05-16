@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.res.AssetManager;
 
 import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.tools.security.SmartValidator;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -45,53 +46,74 @@ public class Bip39Reader {
     public static String[] LANGS = {"en", "es", "fr", "ja", "zh"};
 
     //if lang is null then all the lists
-    public static List<String> bip39List(Context context, String lang) {
+    public static List<String> bip39List(Context app, String lang) {
 
-        String[] langs = null;
         if (lang == null)
-            langs = LANGS; //return all the words for all langs
+            return getAllWords(app); //return all the words for all langs
         else {
             boolean exists = false;
             for (String s : LANGS) if (s.equalsIgnoreCase(lang)) exists = true;
-            if (exists)
-                langs = new String[]{lang};//if lang is one of the language we support for paper key creation, then use it
-            else
-                langs = new String[]{"en"};// if not than return 'en'
+            if (!exists) {
+                lang = "en"; //use en if not a supported lang
+            }
         }
 
-        List<String> result = new ArrayList<>();
+        return getList(app, lang);
+    }
 
-        for (String l : langs) {
-            String fileName = "words/" + l + "-BIP39Words.txt";
-            List<String> wordList = new ArrayList<>();
-            BufferedReader reader = null;
+    private static List<String> getAllWords(Context app) {
+        List<String> words = new ArrayList<>();
+        for (String lang : LANGS) {
+            words.addAll(getList(app, lang));
+        }
+        return words;
+    }
+
+    private static List<String> getList(Context app, String lang) {
+        String fileName = "words/" + lang + "-BIP39Words.txt";
+        List<String> wordList = new ArrayList<>();
+        BufferedReader reader = null;
+        try {
+            AssetManager assetManager = app.getResources().getAssets();
+            InputStream inputStream = assetManager.open(fileName);
+            reader = new BufferedReader(new InputStreamReader(inputStream));
+            String line;
+
+            while ((line = reader.readLine()) != null) {
+                wordList.add(cleanWord(line));
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+
+        } finally {
             try {
-                AssetManager assetManager = context.getResources().getAssets();
-                InputStream inputStream = assetManager.open(fileName);
-                reader = new BufferedReader(new InputStreamReader(inputStream));
-                String line;
-
-                while ((line = reader.readLine()) != null) {
-                    wordList.add(cleanWord(line));
-                }
-            } catch (Exception ex) {
-                ex.printStackTrace();
-
-            } finally {
-                try {
-                    if (reader != null)
-                        reader.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                if (reader != null)
+                    reader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-            if (wordList.size() % WORD_LIST_SIZE != 0) {
-                BRReportsManager.reportBug(new IllegalArgumentException("The list size should divide by " + WORD_LIST_SIZE), true);
-            }
-            result.addAll(wordList);
-
         }
-        return result;
+        if (wordList.size() % WORD_LIST_SIZE != 0) {
+            BRReportsManager.reportBug(new IllegalArgumentException("The list size should divide by " + WORD_LIST_SIZE), true);
+        }
+        return new ArrayList<>(wordList);
+    }
+
+
+    public static List<String> detectWords(Context app, String paperKey) {
+        if (Utils.isNullOrEmpty(paperKey)) {
+            return null;
+        }
+        String cleanPaperKey = SmartValidator.cleanPaperKey(app, paperKey);
+        String firstWord = cleanPaperKey.split(" ")[0];
+
+        for (String s : LANGS) {
+            List<String> words = getList(app, s);
+            if (words.contains(firstWord)) {
+                return words;
+            }
+        }
+        return null;
     }
 
     public static String cleanWord(String word) {

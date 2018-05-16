@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@color/add_wallets_header_color">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <ImageButton
+                android:id="@+id/back_arrow"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/ic_arrow_left" />
+
+
+            <com.breadwallet.presenter.customviews.BRText
+                android:id="@+id/add_wallets_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:text="@string/TokenList.manageTitle"
+                android:textSize="18sp"
+                app:customTFont="CircularPro-Book.otf" />
+
+
+        </RelativeLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="2px"
+        android:layout_below="@id/toolbar"
+        android:background="@color/add_wallets_searchbar_color">
+
+    </View>
+
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/token_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/toolbar"
+        android:layout_marginTop="18dp"></android.support.v7.widget.RecyclerView>
+
+
+</RelativeLayout>
+

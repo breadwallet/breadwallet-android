@@ -80,9 +80,9 @@ public class BRDateUtil {
         return dateString;
     }
 
-    public static String getLongDate(long timestamp){
+    public static String getFullDate(long timestamp){
 
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(timestamp);
 
         String dateString = new SimpleDateFormat("MMMM dd, yyyy, hh:mm a", Locale.getDefault()).format(calendar.getTimeInMillis());

@@ -38,7 +38,6 @@ public class TxUiHolder {
     private int blockHeight;
     private byte[] txHash;
     private BigDecimal fee;//satoshis or gas paid
-    private BREthereumTransaction ethTxHolder;
     private String to;
     private String from;
     public String txReversed;
@@ -52,7 +51,7 @@ public class TxUiHolder {
 
     //todo refactor this useless class
     public TxUiHolder(Object transaction, boolean isReceived, long timeStamp, int blockHeight, byte[] hash, String txReversed,
-                      BigDecimal fee, BREthereumTransaction ethTxHolder, String to, String from,
+                      BigDecimal fee,  String to, String from,
                       BigDecimal balanceAfterTx, int txSize, BigDecimal amount, boolean isValid) {
         this.transaction = transaction;
         this.timeStamp = timeStamp;
@@ -67,7 +66,6 @@ public class TxUiHolder {
         this.amount = amount;
         this.isValid = isValid;
         this.txSize = txSize;
-        this.ethTxHolder = ethTxHolder;
     }
 
     public int getBlockHeight() {
@@ -134,8 +132,6 @@ public class TxUiHolder {
         return isReceived;
     }
 
-    public BREthereumTransaction getEthTxHolder() {
-        return ethTxHolder;
-    }
+
 
 }
