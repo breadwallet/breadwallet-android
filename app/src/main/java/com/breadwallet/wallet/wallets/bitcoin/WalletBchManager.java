@@ -449,7 +449,10 @@ public class WalletBchManager extends BRCoreWalletManager implements BaseWalletM
     public String decorateAddress(Context app, String addr) {
         if (Utils.isNullOrEmpty(addr)) return null;
         String result = BRCoreAddress.bcashEncodeBitcoin(addr);
-        return Utils.isNullOrEmpty(result) ? null : result;
+        if (Utils.isNullOrEmpty(result)) return null;
+        if (result.contains(":")) return result.split(":")[1]; //bitcoincash:q24fs34....
+        return result;
+
     }
 
     @Override

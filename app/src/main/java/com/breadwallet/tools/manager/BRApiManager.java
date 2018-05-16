@@ -175,7 +175,7 @@ public class BRApiManager {
         });
     }
 
-    private void updateErc20Rates(Context context) {
+    private synchronized void updateErc20Rates(Context context) {
         //get all erc20 rates.
         String url = "https://api.coinmarketcap.com/v1/ticker/?limit=1000&convert=BTC";
         String result = urlGET(context, url);
@@ -274,11 +274,6 @@ public class BRApiManager {
     }
 
     public static String urlGET(Context app, String myURL) {
-//        System.out.println("Requested URL_EA:" + myURL);
-        if (ActivityUTILS.isMainThread()) {
-            Log.e(TAG, "urlGET: network on main thread");
-            throw new RuntimeException("network on main thread");
-        }
         Map<String, String> headers = BreadApp.getBreadHeaders();
 
         Request.Builder builder = new Request.Builder()
