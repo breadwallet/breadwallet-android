@@ -292,7 +292,7 @@ public class SendManager {
         }
 
         //successfully created the transaction, authenticate user
-        AuthManager.getInstance().authPrompt(ctx, "", message, forcePin, false, new BRAuthCompletion() {
+        AuthManager.getInstance().authPrompt(ctx, ctx.getString(R.string.VerifyPin_touchIdMessage), message, forcePin, false, new BRAuthCompletion() {
             @Override
             public void onComplete() {
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
