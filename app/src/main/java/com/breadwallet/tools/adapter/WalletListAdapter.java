@@ -90,6 +90,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
     @Override
     public void onBindViewHolder(final WalletItemViewHolder holder, int position) {
+        Log.d(TAG, "onBindViewHolder");
 
         if (getItemViewType(position) == VIEW_TYPE_WALLET) {
 
@@ -97,6 +98,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             final BaseWalletManager wallet = item.walletManager;
             String name = wallet.getName(mContext);
             final String iso = wallet.getIso(mContext);
+
             String exchangeRate = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatExchangeRate(mContext));
             String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatBalance(mContext));
             String cryptoBalance = CurrencyUtils.getFormattedAmountWithoutSymbol(mContext, wallet.getIso(mContext), wallet.getCachedBalance(mContext));
