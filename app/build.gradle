@@ -119,6 +119,7 @@ android {
             debuggable = true
             jniDebuggable = true
             minifyEnabled = false
+            ext.enableCrashlytics = false
 
             externalNativeBuild {
                 cmake {
