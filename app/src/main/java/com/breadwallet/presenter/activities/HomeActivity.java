@@ -93,7 +93,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             @Override
             public void onItemClick(View view, int position, float x, float y) {
                 if (position >= mAdapter.getItemCount() || position < 0) return;
-//                Log.d("HomeActivity", "Saving current wallet ISO as " + mAdapter.getItemAt(position).getIso(HomeActivity.this));
 
                 if (mAdapter.getItemViewType(position) == 0) {
                     BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, mAdapter.getItemAt(position).getIso(HomeActivity.this));
