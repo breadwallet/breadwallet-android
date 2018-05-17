@@ -85,7 +85,6 @@ public class TxManager {
         if (txList.getAdapter() == null)
             txList.setAdapter(adapter);
         adapter.notifyDataSetChanged();
-        //setupSwipe(app);
     }
 
     private TxManager() {
@@ -103,20 +102,15 @@ public class TxManager {
             Log.e(TAG, "updateTxList: wallet is null");
             return;
         }
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                if (TxManager.getInstance().adapter != null)
-                    TxManager.getInstance().adapter.updateData();
-            }
-        });
+        if (TxManager.getInstance().adapter != null)
+            TxManager.getInstance().adapter.updateData();
         final List<TxUiHolder> items = wallet.getTxUiHolders(app);
 
         long took = (System.currentTimeMillis() - start);
         if (took > 500)
             Log.e(TAG, "updateTxList: took: " + took);
         if (adapter != null) {
-            ((Activity) app).runOnUiThread(new Runnable() {
+            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     adapter.setItems(items);

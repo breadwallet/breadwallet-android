@@ -30,6 +30,7 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.TxManager;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
@@ -338,7 +339,13 @@ public class FragmentTxDetails extends DialogFragment {
                     imm.hideSoftInputFromWindow(mMemoText.getWindowToken(), 0);
 
                     // Update Tx list to reflect the memo change
-                    TxManager.getInstance().updateTxList(getContext());
+                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            TxManager.getInstance().updateTxList(getContext());
+                        }
+                    });
+
 
                 }
             };

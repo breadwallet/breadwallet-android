@@ -38,6 +38,9 @@ import android.util.Log;
 public class BRNotificationManager {
     public static final String TAG = BRNotificationManager.class.getName();
 
+    private BRNotificationManager() {
+    }
+
     public static void sendNotification(Activity ctx, int icon, String title, String message, int mId) {
         if (ctx == null) {
             Log.e(TAG, "sendNotification: ctx is null");
