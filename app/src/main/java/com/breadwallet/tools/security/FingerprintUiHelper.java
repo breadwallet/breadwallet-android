@@ -1,17 +1,17 @@
-/* 
- * Copyright (C) 2015 The Android Open Source Project 
- * 
- * Licensed under the Apache License, Version 2.0 (the "License"); 
- * you may not use this file except in compliance with the License. 
- * You may obtain a copy of the License at 
- * 
- *      http://www.apache.org/licenses/LICENSE-2.0 
- * 
- * Unless required by applicable law or agreed to in writing, software 
- * distributed under the License is distributed on an "AS IS" BASIS, 
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
- * See the License for the specific language governing permissions and 
- * limitations under the License 
+/*
+ * Copyright (C) 2015 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License
  */
 
 package com.breadwallet.tools.security;
@@ -29,8 +29,8 @@ import android.widget.TextView;
  */
 public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallback {
 
-    static final long ERROR_TIMEOUT_MILLIS = 1600;
-    static final long SUCCESS_DELAY_MILLIS = 1300;
+    private static final long ERROR_TIMEOUT_MILLIS = 1600;
+    private static final long SUCCESS_DELAY_MILLIS = 1300;
 
     private final FingerprintManager mFingerprintManager;
     private final ImageView mIcon;
@@ -39,7 +39,17 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
     private CancellationSignal mCancellationSignal;
     private Context mContext;
 
-    boolean mSelfCancelled;
+    private boolean mSelfCancelled;
+
+    private Runnable mResetErrorTextRunnable = new Runnable() {
+        @Override
+        public void run() {
+            mErrorTextView.setTextColor(
+                    mErrorTextView.getResources().getColor(R.color.hint_color, null));
+            mErrorTextView.setText(mContext.getString(R.string.UnlockScreen_touchIdInstructions_android));
+            mIcon.setImageResource(R.drawable.ic_fp_40px);
+        }
+    };
 
     /**
      * Builder class for {@link FingerprintUiHelper} in which injected fields from Dagger
@@ -70,21 +80,19 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
         mCallback = callback;
         this.mContext = context;
     }
-    @SuppressWarnings("MissingPermission")
+
     public boolean isFingerprintAuthAvailable() {
         return mFingerprintManager.isHardwareDetected()
                 && mFingerprintManager.hasEnrolledFingerprints();
     }
 
-    @SuppressWarnings("MissingPermission")
     public void startListening(FingerprintManager.CryptoObject cryptoObject) {
         if (!isFingerprintAuthAvailable()) {
             return;
         }
         mCancellationSignal = new CancellationSignal();
         mSelfCancelled = false;
-        mFingerprintManager
-                .authenticate(cryptoObject, mCancellationSignal, 0 /* flags */, this, null);
+        mFingerprintManager.authenticate(cryptoObject, mCancellationSignal, 0 /* flags */, this, null);
         mIcon.setImageResource(R.drawable.ic_fp_40px);
     }
 
@@ -143,15 +151,7 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
         mErrorTextView.postDelayed(mResetErrorTextRunnable, ERROR_TIMEOUT_MILLIS);
     }
 
-    Runnable mResetErrorTextRunnable = new Runnable() {
-        @Override
-        public void run() {
-            mErrorTextView.setTextColor(
-                    mErrorTextView.getResources().getColor(R.color.hint_color, null));
-            mErrorTextView.setText(mContext.getString(R.string.UnlockScreen_touchIdInstructions_android));
-            mIcon.setImageResource(R.drawable.ic_fp_40px);
-        }
-    };
+
 
     public interface Callback {
 

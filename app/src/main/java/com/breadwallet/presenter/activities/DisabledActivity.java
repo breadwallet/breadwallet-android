@@ -52,7 +52,7 @@ public class DisabledActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(DisabledActivity.this).getCurrentWallet(DisabledActivity.this);
-                BRAnimator.showSupportFragment(DisabledActivity.this, BRConstants.walletDisabled, wm);
+                BRAnimator.showSupportFragment(DisabledActivity.this, BRConstants.FAQ_WALLET_DISABLE, wm);
             }
         });
 

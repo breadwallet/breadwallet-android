@@ -75,7 +75,7 @@ public class PlatformSqliteHelper extends SQLiteOpenHelper {
 
     private PlatformSqliteHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
-        setWriteAheadLoggingEnabled(BRConstants.WAL);
+        setWriteAheadLoggingEnabled(BRConstants.WRITE_AHEAD_LOGGING);
     }
 
     @Override

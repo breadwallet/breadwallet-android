@@ -72,7 +72,7 @@ public class InputWordsActivity extends BRActivity {
 //            debugPhrase = "zorro turismo mezcla nicho morir chico blanco pájaro alba esencia roer repetir";//spanish
 //            debugPhrase = "怨 贪 旁 扎 吹 音 决 廷 十 助 畜 怒";//chinese
 //            debugPhrase = "aim lawn sniff tenant coffee smoke meat hockey glow try also angle";
-            debugPhrase = "oído largo pensar grúa vampiro nación tomar agitar mano azote tarea miedo";
+//            debugPhrase = "oído largo pensar grúa vampiro nación tomar agitar mano azote tarea miedo";
 
         }
 
@@ -102,7 +102,7 @@ public class InputWordsActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(InputWordsActivity.this).getCurrentWallet(InputWordsActivity.this);
-                BRAnimator.showSupportFragment(InputWordsActivity.this, BRConstants.paperKey, wm);
+                BRAnimator.showSupportFragment(InputWordsActivity.this, BRConstants.FAQ_PAPER_KEY, wm);
             }
         });
 
@@ -222,7 +222,7 @@ public class InputWordsActivity extends BRActivity {
                         Utils.hideKeyboard(app);
                         WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
                         m.wipeAll(InputWordsActivity.this);
-                        PostAuth.getInstance().setPhraseForKeyStore(cleanPhrase);
+                        PostAuth.getInstance().setCachedPaperKey(cleanPhrase);
                         BRSharedPrefs.putAllowSpend(app, BRSharedPrefs.getCurrentWalletIso(app), false);
                         PostAuth.getInstance().onRecoverWalletAuth(app, false);
                     }

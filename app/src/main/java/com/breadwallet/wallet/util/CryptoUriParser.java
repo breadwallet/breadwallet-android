@@ -7,7 +7,6 @@ import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
-import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -27,7 +26,6 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -61,31 +59,27 @@ import java.util.Map;
 
 public class CryptoUriParser {
     private static final String TAG = CryptoUriParser.class.getName();
-    private static final Object lockObject = new Object();
+    private static final Object LOCK_OBJECT = new Object();
 
     public static synchronized boolean processRequest(Context app, String url, BaseWalletManager walletManager) {
         Log.d(TAG, "processRequest -> " + url);
+        if (app == null) {
+            Log.e(TAG, "processRequest: app is null");
+            return false;
+        }
         if (url == null) {
             Log.e(TAG, "processRequest: url is null");
             return false;
         }
 
-        if (ImportPrivKeyTask.trySweepWallet(app, url, walletManager)) return true;
-
-        if (tryBreadUrl(app, url)) return true; //see if it's a bread url
+        if (ImportPrivKeyTask.trySweepWallet(app, url, walletManager) || tryBreadUrl(app, url)) {
+            return true;
+        }
 
         CryptoRequest requestObject = parseRequest(app, url);
 
         if (requestObject == null) {
-            if (app != null) {
-                BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
-                        app.getString(R.string.Send_invalidAddressTitle), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismissWithAnimation();
-                            }
-                        }, null, null, 0);
-            }
+            BRDialog.showSimpleDialog(app, app.getString(R.string.JailbreakWarnings_title), app.getString(R.string.Send_invalidAddressTitle));
             return false;
         }
         if (requestObject.isPaymentProtocol()) {
@@ -93,15 +87,7 @@ public class CryptoUriParser {
         } else if (requestObject.address != null) {
             return tryCryptoUrl(requestObject, app);
         } else {
-            if (app != null) {
-                BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
-                        app.getString(R.string.Send_remoteRequestError), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
-                            @Override
-                            public void onClick(BRDialogView brDialogView) {
-                                brDialogView.dismissWithAnimation();
-                            }
-                        }, null, null, 0);
-            }
+            BRDialog.showSimpleDialog(app, app.getString(R.string.JailbreakWarnings_title), app.getString(R.string.Send_remoteRequestError));
             return false;
         }
     }
@@ -115,7 +101,9 @@ public class CryptoUriParser {
     }
 
     public static boolean isCryptoUrl(Context app, String url) {
-        if (Utils.isNullOrEmpty(url)) return false;
+        if (Utils.isNullOrEmpty(url)) {
+            return false;
+        }
         if (BRCoreKey.isValidBitcoinBIP38Key(url) || BRCoreKey.isValidBitcoinPrivateKey(url))
             return true;
 
@@ -130,7 +118,7 @@ public class CryptoUriParser {
         if (str == null || str.isEmpty()) return null;
         CryptoRequest obj = new CryptoRequest();
 
-        String tmp = str.trim().replaceAll("\n", "").replaceAll(" ", "%20");
+        String tmp = cleanUrl(str);
 
         Uri u = Uri.parse(tmp);
         String scheme = u.getScheme();
@@ -161,7 +149,6 @@ public class CryptoUriParser {
 
         u = Uri.parse(scheme + "://" + schemeSpecific);
 
-
         String host = u.getHost();
         if (host != null) {
             String trimmedHost = host.trim();
@@ -174,12 +161,15 @@ public class CryptoUriParser {
         }
         String query = u.getQuery();
         pushUrlEvent(u);
-        if (query == null) return obj;
+        if (query == null) {
+            return obj;
+        }
         String[] params = query.split("&");
         for (String s : params) {
             String[] keyValue = s.split("=", 2);
-            if (keyValue.length != 2)
+            if (keyValue.length != 2) {
                 continue;
+            }
             if (keyValue[0].trim().equals("amount")) {
                 try {
                     BigDecimal bigDecimal = new BigDecimal(keyValue[1].trim());
@@ -189,8 +179,7 @@ public class CryptoUriParser {
                 }
                 // ETH payment request amounts are called `value`
             } else if (keyValue[0].trim().equals("value")) {
-                BigDecimal bigDecimal = new BigDecimal(keyValue[1].trim());
-                obj.value = bigDecimal;
+                obj.value = new BigDecimal(keyValue[1].trim());
             } else if (keyValue[0].trim().equals("label")) {
                 obj.label = keyValue[1].trim();
             } else if (keyValue[0].trim().equals("message")) {
@@ -206,7 +195,8 @@ public class CryptoUriParser {
 
     private static boolean tryBreadUrl(Context app, String url) {
         if (Utils.isNullOrEmpty(url)) return false;
-        String tmp = url.trim().replaceAll("\n", "").replaceAll(" ", "%20");
+
+        String tmp = cleanUrl(url);
 
         Uri u = Uri.parse(tmp);
         String scheme = u.getScheme();
@@ -236,7 +226,6 @@ public class CryptoUriParser {
 
                     break;
             }
-
             return true;
         }
         return false;
@@ -246,7 +235,7 @@ public class CryptoUriParser {
     private static boolean tryPaymentRequest(CryptoRequest requestObject) {
         String theURL = null;
         String url = requestObject.r;
-        synchronized (lockObject) {
+        synchronized (LOCK_OBJECT) {
             try {
                 theURL = URLDecoder.decode(url, "UTF-8");
             } catch (UnsupportedEncodingException e) {
@@ -320,26 +309,36 @@ public class CryptoUriParser {
             cleanAddress = addr.split(":")[1];
         }
         builder = builder.scheme(walletScheme);
-        if (!Utils.isNullOrEmpty(cleanAddress))
+        if (!Utils.isNullOrEmpty(cleanAddress)) {
             builder = builder.appendPath(cleanAddress);
-        if (cryptoAmount.compareTo(new BigDecimal(0)) != 0)
-            if (iso.equals("ETH")) {
-
-                BigDecimal ethAmount = cryptoAmount.divide(new BigDecimal("1000000000000000000"), 3, RoundingMode.HALF_EVEN);
+        }
+        if (cryptoAmount.compareTo(new BigDecimal(0)) != 0) {
+            if (iso.equalsIgnoreCase("ETH")) {
+                BigDecimal ethAmount = cryptoAmount.divide(new BigDecimal(BRConstants.ETHEREUM_WEI), 3, BRConstants.ROUNDING_MODE);
                 builder = builder.appendQueryParameter("value", ethAmount.toPlainString() + "e18");
-
+            } else if (iso.equalsIgnoreCase("BTC") || iso.equalsIgnoreCase("BCH")) {
+                BigDecimal amount = cryptoAmount.divide(new BigDecimal(BRConstants.BITCOIN_SATOSHIS), 8, BRConstants.ROUNDING_MODE);
+                builder = builder.appendQueryParameter("amount", amount.toPlainString());
             } else {
-                builder = builder.appendQueryParameter("amount", cryptoAmount.divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE).toPlainString());
+                throw new RuntimeException("URI not supported for: " + iso);
             }
-        if (label != null && !label.isEmpty())
+        }
+        if (label != null && !label.isEmpty()) {
             builder = builder.appendQueryParameter("label", label);
-        if (message != null && !message.isEmpty())
+        }
+        if (message != null && !message.isEmpty()) {
             builder = builder.appendQueryParameter("message", message);
-        if (rURL != null && !rURL.isEmpty())
+        }
+        if (rURL != null && !rURL.isEmpty()) {
             builder = builder.appendQueryParameter("r", rURL);
+        }
 
         return Uri.parse(builder.build().toString().replace("/", ""));
 
+    }
+
+    private static String cleanUrl(String url) {
+        return url.trim().replaceAll("\n", "").replaceAll(" ", "%20");
     }
 
 }

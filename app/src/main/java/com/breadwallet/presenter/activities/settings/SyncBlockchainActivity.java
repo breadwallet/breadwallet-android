@@ -43,7 +43,7 @@ public class SyncBlockchainActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(SyncBlockchainActivity.this).getCurrentWallet(SyncBlockchainActivity.this);
-                BRAnimator.showSupportFragment(SyncBlockchainActivity.this, BRConstants.reScan, wm);
+                BRAnimator.showSupportFragment(SyncBlockchainActivity.this, BRConstants.FAQ_RESCAN, wm);
             }
         });
 

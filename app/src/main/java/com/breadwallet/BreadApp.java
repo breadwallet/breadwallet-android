@@ -38,6 +38,7 @@ import java.util.regex.Pattern;
 
 import static com.platform.APIClient.BREAD_POINT;
 import io.fabric.sdk.android.Fabric;
+import io.fabric.sdk.android.services.common.Crash;
 
 /**
  * BreadWallet

@@ -9,7 +9,6 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -70,7 +69,7 @@ public class FingerprintActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(FingerprintActivity.this).getCurrentWallet(FingerprintActivity.this);
-                BRAnimator.showSupportFragment(FingerprintActivity.this, BRConstants.enableFingerprint, wm);
+                BRAnimator.showSupportFragment(FingerprintActivity.this, BRConstants.FAQ_ENABLE_FINGERPRINT, wm);
             }
         });
 

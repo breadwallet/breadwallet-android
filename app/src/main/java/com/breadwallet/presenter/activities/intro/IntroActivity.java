@@ -94,7 +94,7 @@ public class IntroActivity extends BRActivity implements Serializable {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(IntroActivity.this).getCurrentWallet(IntroActivity.this);
-                BRAnimator.showSupportFragment(IntroActivity.this, BRConstants.startView, wm);
+                BRAnimator.showSupportFragment(IntroActivity.this, BRConstants.FAQ_START_VIEW, wm);
             }
         });
 

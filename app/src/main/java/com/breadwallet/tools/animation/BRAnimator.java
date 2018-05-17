@@ -14,7 +14,6 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
@@ -74,62 +73,27 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 public class BRAnimator {
     private static final String TAG = BRAnimator.class.getName();
-    private static FragmentSignal fragmentSignal;
+    private static FragmentSignal mFragmentSignal;
     private static boolean clickAllowed = true;
-    public static int SLIDE_ANIMATION_DURATION = 300;
-    public static float t1Size;
-    public static float t2Size;
+    public static final int SLIDE_ANIMATION_DURATION = BRConstants.THREE_HUNDRED_MILLISECONDS;
+
     public static boolean supportIsShowing;
 
     public static void showBreadSignal(Activity activity, String title, String iconDescription, int drawableId, BROnSignalCompletion completion) {
-        fragmentSignal = new FragmentSignal();
+        mFragmentSignal = new FragmentSignal();
         Bundle bundle = new Bundle();
         bundle.putString(FragmentSignal.TITLE, title);
         bundle.putString(FragmentSignal.ICON_DESCRIPTION, iconDescription);
-        fragmentSignal.setCompletion(completion);
+        mFragmentSignal.setCompletion(completion);
         bundle.putInt(FragmentSignal.RES_ID, drawableId);
-        fragmentSignal.setArguments(bundle);
+        mFragmentSignal.setArguments(bundle);
         FragmentTransaction transaction = activity.getFragmentManager().beginTransaction();
         transaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_bottom, R.animator.from_bottom, R.animator.to_bottom);
-        transaction.add(android.R.id.content, fragmentSignal, fragmentSignal.getClass().getName());
+        transaction.add(android.R.id.content, mFragmentSignal, mFragmentSignal.getClass().getName());
         transaction.addToBackStack(null);
         if (!activity.isDestroyed())
             transaction.commit();
     }
-
-    public static void init(Activity app) {
-        if (app == null) return;
-        t1Size = 30;
-        t2Size = 16;
-    }
-
-//    public static void showFragmentByTag(Activity app, String tag) {
-//        if (tag == null) return;
-//        //catch animation duration, make it 0 for no animation, then restore it.
-//        final int slideAnimation = SLIDE_ANIMATION_DURATION;
-//        try {
-//            SLIDE_ANIMATION_DURATION = 0;
-//            if (tag.equalsIgnoreCase(FragmentSend.class.getName())) {
-//                showSendFragment(app, null);
-//            } else if (tag.equalsIgnoreCase(FragmentReceive.class.getName())) {
-//                showReceiveFragment(app, true);
-//            } else if (tag.equalsIgnoreCase(FragmentRequestAmount.class.getName())) {
-//                showRequestFragment(app);
-//            } else if (tag.equalsIgnoreCase(FragmentMenu.class.getName())) {
-//                showMenuFragment(app);
-//            } else {
-//                Log.e(TAG, "showFragmentByTag: error, no such tag: " + tag);
-//            }
-//        } finally {
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    SLIDE_ANIMATION_DURATION = slideAnimation;
-//                }
-//            }, 800);
-//
-//        }
-//    }
 
     public static void showSendFragment(Activity app, final CryptoRequest request) {
         if (app == null) {

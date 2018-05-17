@@ -191,7 +191,7 @@ public class FragmentSend extends Fragment {
                     return;
                 }
                 BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                BRAnimator.showSupportFragment(app, BRConstants.send, wm);
+                BRAnimator.showSupportFragment(app, BRConstants.FAQ_SEND, wm);
             }
         });
 

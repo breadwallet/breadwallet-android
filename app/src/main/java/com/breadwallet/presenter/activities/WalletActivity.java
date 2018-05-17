@@ -38,7 +38,9 @@ import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.services.SyncService;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.SyncTestLogger;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -49,11 +51,6 @@ import com.breadwallet.wallet.util.CryptoUriParser;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import static com.breadwallet.tools.animation.BRAnimator.t1Size;
-import static com.breadwallet.tools.animation.BRAnimator.t2Size;
 
 /**
  * Created by byfieldj on 1/16/18.
@@ -65,42 +62,46 @@ import static com.breadwallet.tools.animation.BRAnimator.t2Size;
 
 public class WalletActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, OnTxListModified, RatesDataSource.OnDataChanged {
     private static final String TAG = WalletActivity.class.getName();
-    BRText mCurrencyTitle;
-    BRText mCurrencyPriceUsd;
-    BRText mBalancePrimary;
-    BRText mBalanceSecondary;
-    Toolbar mToolbar;
-    ImageButton mBackButton;
-    BRButton mSendButton;
-    BRButton mReceiveButton;
-    BRButton mBuyButton;
-    BRButton mSellButton;
-    BRText mBalanceLabel;
-    BRText mProgressLabel;
-    ProgressBar mProgressBar;
 
+    private static WalletActivity mThis;
+
+    private BRText mCurrencyTitle;
+    private BRText mCurrencyPriceUsd;
+    private BRText mBalancePrimary;
+    private BRText mBalanceSecondary;
+    private Toolbar mToolbar;
+    private ImageButton mBackButton;
+    private BRButton mSendButton;
+    private BRButton mReceiveButton;
+    private BRButton mBuyButton;
+    private BRButton mSellButton;
+    private BRText mBalanceLabel;
+    private BRText mProgressLabel;
+    private ProgressBar mProgressBar;
     public ViewFlipper barFlipper;
     private BRSearchBar searchBar;
     private ImageButton mSearchIcon;
     private ImageButton mSwap;
     private ConstraintLayout toolBarConstraintLayout;
-
     private BRNotificationBar mNotificationBar;
 
-    private static WalletActivity app;
+    private static final float PRIMARY_TEXT_SIZE = 30;
+    private static final float SECONDARY_TEXT_SIZE = 16;
+
+
+
+    private static final boolean RUN_LOGGER = false;
+
+    private SyncTestLogger mTestLogger;
 
     private SyncNotificationBroadcastReceiver mSyncNotificationBroadcastReceiver;
     private String mCurrentWalletIso;
 
-    private TestLogger logger;
-
     public static WalletActivity getApp() {
-        return app;
+        return mThis;
     }
 
-
     private BaseWalletManager mWallet;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -130,22 +131,11 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mProgressBar = findViewById(R.id.sync_progress);
         mNotificationBar = findViewById(R.id.notification_bar);
 
-//        if (Utils.isEmulatorOrDebug(this)) {
-//            if (logger != null) logger.interrupt();
-//            logger = new TestLogger(); //Sync logger
-//            logger.start();
-//        }
+        startSyncLoggerIfNeeded();
 
         setUpBarFlipper();
-
-        BRAnimator.init(this);
-        mBalancePrimary.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);//make it the size it should be after animation to get the X
-        mBalanceSecondary.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);//make it the size it should be after animation to get the X
-
-        BRAnimator.init(this);
-        mBalancePrimary.setTextSize(TypedValue.COMPLEX_UNIT_SP, 28);//make it the size it should be after animation to get the X
-        mBalanceSecondary.setTextSize(TypedValue.COMPLEX_UNIT_SP, 14);//make it the size it should be after animation to get the X
-
+        mBalancePrimary.setTextSize(TypedValue.COMPLEX_UNIT_SP, PRIMARY_TEXT_SIZE);
+        mBalanceSecondary.setTextSize(TypedValue.COMPLEX_UNIT_SP, SECONDARY_TEXT_SIZE);
 
         mSendButton.setHasShadow(false);
         mSendButton.setOnClickListener(new View.OnClickListener() {
@@ -224,6 +214,16 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         setPriceTags(cryptoPreferred, false);
 
 
+    }
+
+    private void startSyncLoggerIfNeeded(){
+        if (Utils.isEmulatorOrDebug(this) && RUN_LOGGER) {
+            if (mTestLogger != null) {
+                mTestLogger.interrupt();
+            }
+            mTestLogger = new SyncTestLogger(this); //Sync logger
+            mTestLogger.start();
+        }
     }
 
     @Override
@@ -339,15 +339,13 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             // Align usd balance to left of swap icon
             set.connect(R.id.balance_primary, ConstraintSet.END, R.id.swap, ConstraintSet.START, px8);
 
-            mBalanceSecondary.setTextSize(t1Size);
-            mBalancePrimary.setTextSize(t2Size);
+            mBalanceSecondary.setTextSize(PRIMARY_TEXT_SIZE);
+            mBalancePrimary.setTextSize(SECONDARY_TEXT_SIZE);
 
             set.applyTo(toolBarConstraintLayout);
 
-        }
-
-        // CRYPTO on LEFT
-        else {
+        } else {
+            // CRYPTO on LEFT
             // Align primary to right of parent
             set.connect(R.id.balance_primary, ConstraintSet.END, ConstraintSet.PARENT_ID, ConstraintSet.END, px8);
 
@@ -361,8 +359,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             mBalanceSecondary.setPadding(0, Utils.getPixelsFromDps(WalletActivity.this, 22), 0, 0);
 
 
-            mBalanceSecondary.setTextSize(t2Size);
-            mBalancePrimary.setTextSize(t1Size);
+            mBalanceSecondary.setTextSize(SECONDARY_TEXT_SIZE);
+            mBalancePrimary.setTextSize(PRIMARY_TEXT_SIZE);
 
             set.applyTo(toolBarConstraintLayout);
         }
@@ -377,13 +375,13 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                     public void run() {
                         updateUi();
                     }
-                }, 300);
+                }, BRConstants.THREE_HUNDRED_MILLISECONDS);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        app = this;
+        mThis = this;
 
         InternetManager.registerConnectionReceiver(this, this);
 
@@ -395,16 +393,16 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                wallet.refreshCachedBalance(app);
+                wallet.refreshCachedBalance(WalletActivity.this);
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        Thread.currentThread().setName("UI:" + TAG + ":updateUi");
                         updateUi();
                     }
                 });
-                if (wallet.getConnectStatus() != 2)
+                if (wallet.getConnectStatus() != 2) {
                     wallet.connect(WalletActivity.this);
+                }
 
             }
         });
@@ -509,7 +507,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     public void updateSyncProgress(double progress) {
-        mProgressBar.setProgress((int) (progress * 100));
+        mProgressBar.setProgress((int) (progress * BRConstants.HUNDRED_MILLISECONDS));
         if (progress == 1) {
             mProgressBar.setVisibility(View.GONE);
             mProgressLabel.setVisibility(View.GONE);
@@ -549,46 +547,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                             + mCurrentWalletIso + " Actual:" + intentWalletIso + " Progress:" + progress);
                 }
             }
-        }
-    }
-
-    //test logger
-    class TestLogger extends Thread {
-        private static final String TAG = "TestLogger";
-
-        @Override
-        public void run() {
-            super.run();
-
-            while (true) {
-                boolean needsLog = false;
-                StringBuilder builder = new StringBuilder();
-                List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(WalletActivity.this).getAllWallets(WalletActivity.this));
-                for (BaseWalletManager w : list) {
-                    builder.append("   " + w.getIso(WalletActivity.this));
-                    String connectionStatus = "";
-                    if (w.getConnectStatus() == 2)
-                        connectionStatus = "Connected";
-                    else if (w.getConnectStatus() == 0)
-                        connectionStatus = "Disconnected";
-                    else if (w.getConnectStatus() == 1)
-                        connectionStatus = "Connecting";
-
-                    double progress = w.getSyncProgress(BRSharedPrefs.getStartHeight(WalletActivity.this, w.getIso(WalletActivity.this)));
-                    if (progress != 1) needsLog = true;
-                    builder.append(" - " + connectionStatus + " " + progress * 100 + "%     ");
-
-                }
-                if (needsLog)
-                    Log.e(TAG, "testLog: " + builder.toString());
-
-                try {
-                    Thread.sleep(3000);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-
         }
     }
 
