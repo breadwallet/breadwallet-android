@@ -111,7 +111,7 @@ public class SendManager {
         } catch (AmountSmallerThanMinException e) {
             BigDecimal minAmount = walletManager.getMinOutputAmount(app);
             sayError(app, app.getString(R.string.Alerts_sendFailure), String.format(Locale.getDefault(), app.getString(R.string.PaymentProtocol_Errors_smallPayment),
-                    BRConstants.symbolBits + minAmount.divide(new BigDecimal(100), BRConstants.ROUNDING_MODE)));
+                    BRConstants.BITS_SYMBOL + minAmount.divide(new BigDecimal(100), BRConstants.ROUNDING_MODE)));
         } catch (SpendingNotAllowed spendingNotAllowed) {
             sayError(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_isRescanning));
             return false;

@@ -80,8 +80,7 @@ public class BRDateUtil {
         return dateString;
     }
 
-    public static String getFullDate(long timestamp){
-
+    public static String getFullDate(long timestamp) {
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTimeInMillis(timestamp);
 

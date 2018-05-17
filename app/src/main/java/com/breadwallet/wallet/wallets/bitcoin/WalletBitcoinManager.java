@@ -393,7 +393,7 @@ public class WalletBitcoinManager extends BRCoreWalletManager implements BaseWal
     @Override
     public String getSymbol(Context app) {
 
-        String currencySymbolString = BRConstants.symbolBits;
+        String currencySymbolString = BRConstants.BITS_SYMBOL;
         if (app != null) {
             int unit = BRSharedPrefs.getCryptoDenomination(app, getIso(app));
             switch (unit) {

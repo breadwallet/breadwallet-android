@@ -148,7 +148,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 //        printTableStructures(database, PEER_TABLE_NAME);
 //        printTableStructures(database, CURRENCY_TABLE_NAME);
 
-//        database.execSQL("PRAGMA journal_mode=WAL;");
+//        database.execSQL("PRAGMA journal_mode=WRITE_AHEAD_LOGGING;");
     }
 
     @Override
@@ -166,7 +166,7 @@ public class BRSQLiteHelper extends SQLiteOpenHelper {
 //            db.execSQL("DROP TABLE IF EXISTS " + TX_TABLE_NAME);
 //            db.execSQL("DROP TABLE IF EXISTS " + PEER_TABLE_NAME);
 //            db.execSQL("DROP TABLE IF EXISTS " + CURRENCY_TABLE_NAME);
-//            db.execSQL("PRAGMA journal_mode=WAL;");
+//            db.execSQL("PRAGMA journal_mode=WRITE_AHEAD_LOGGING;");
         }
         //recreate if needed
 

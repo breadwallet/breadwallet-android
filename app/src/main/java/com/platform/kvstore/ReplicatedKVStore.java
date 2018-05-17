@@ -102,7 +102,7 @@ public class ReplicatedKVStore implements BreadApp.OnAppBackgrounded {
 //        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         if (mDatabase == null || !mDatabase.isOpen())
             mDatabase = dbHelper.getWritableDatabase();
-        dbHelper.setWriteAheadLoggingEnabled(BRConstants.WAL);
+        dbHelper.setWriteAheadLoggingEnabled(BRConstants.WRITE_AHEAD_LOGGING);
 //        }
 //        Log.d(TAG, "getWritable open counter: " + String.valueOf(mOpenCounter.get()));
         return mDatabase;

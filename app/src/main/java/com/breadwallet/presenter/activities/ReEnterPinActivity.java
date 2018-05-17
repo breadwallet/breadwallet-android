@@ -60,7 +60,7 @@ public class ReEnterPinActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(ReEnterPinActivity.this).getCurrentWallet(ReEnterPinActivity.this);
-                BRAnimator.showSupportFragment(ReEnterPinActivity.this, BRConstants.setPin, wm);
+                BRAnimator.showSupportFragment(ReEnterPinActivity.this, BRConstants.FAQ_SET_PIN, wm);
             }
         });
 

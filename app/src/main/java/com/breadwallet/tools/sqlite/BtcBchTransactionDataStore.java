@@ -185,7 +185,7 @@ public class BtcBchTransactionDataStore implements BRDataSourceInterface {
         // Opening new database
         if (database == null || !database.isOpen())
             database = dbHelper.getWritableDatabase();
-        dbHelper.setWriteAheadLoggingEnabled(BRConstants.WAL);
+        dbHelper.setWriteAheadLoggingEnabled(BRConstants.WRITE_AHEAD_LOGGING);
 //        }
 //        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
         return database;

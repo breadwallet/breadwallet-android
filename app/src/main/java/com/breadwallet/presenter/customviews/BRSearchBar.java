@@ -45,7 +45,6 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
     private static final String TAG = BRSearchBar.class.getName();
 
     private EditText searchEdit;
-    //    private LinearLayout filterButtonsLayout;
     private BRButton sentFilter;
     private BRButton receivedFilter;
     private BRButton pendingFilter;
@@ -69,7 +68,6 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
         super(context, attrs, defStyleAttr);
         init();
     }
-
 
     private void init() {
         inflate(getContext(), R.layout.search_bar, this);

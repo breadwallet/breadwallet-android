@@ -78,8 +78,7 @@ public class Utils {
             if (imi.getId().equals(
                     Settings.Secure.getString(context.getContentResolver(),
                             Settings.Secure.DEFAULT_INPUT_METHOD))) {
-                if ((imi.getServiceInfo().applicationInfo.flags &
-                        ApplicationInfo.FLAG_SYSTEM) == 0) {
+                if ((imi.getServiceInfo().applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) == 0) {
                     return true;
                 }
             }

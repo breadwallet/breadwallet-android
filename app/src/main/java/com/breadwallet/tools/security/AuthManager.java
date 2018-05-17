@@ -20,11 +20,11 @@ import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
-import java.math.BigDecimal;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -56,14 +56,18 @@ public class AuthManager {
     public static final String TAG = AuthManager.class.getName();
     private static AuthManager instance;
     private String previousTry;
+    private static final int LOCK_FAIL_ATTEMPT_COUNT = 3;
+    private static final int PIN_DIGITS = 6;
+
 
     private AuthManager() {
         previousTry = "";
     }
 
     public static AuthManager getInstance() {
-        if (instance == null)
+        if (instance == null) {
             instance = new AuthManager();
+        }
         return instance;
     }
 
@@ -79,7 +83,7 @@ public class AuthManager {
         String pass = BRKeyStore.getPinCode(context);
         boolean match = pass != null && tempPass.equals(pass);
         if (!match) {
-            if (BRKeyStore.getFailCount(context) >= 3) {
+            if (BRKeyStore.getFailCount(context) >= LOCK_FAIL_ATTEMPT_COUNT) {
                 setWalletDisabled((Activity) context);
             }
         }
@@ -89,18 +93,19 @@ public class AuthManager {
 
     //when pin auth success
     public void authSuccess(final Context app) {
-        //put the new total limit in 3 seconds, leave some time for the core to register any new tx
+        //put the new total limit in 1 seconds, leave some time for the core to register any new tx
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(2000);
+                    Thread.sleep(BRConstants.ONE_SECOND);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
                 BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                if (wm != null)
+                if (wm != null) {
                     BRKeyStore.putTotalLimit(app, wm.getTotalSent(app).add(BRKeyStore.getSpendLimit(app, wm.getIso(app))), wm.getIso(app));
+                }
             }
         });
 
@@ -115,20 +120,21 @@ public class AuthManager {
     public boolean isWalletDisabled(Activity app) {
         long start = System.currentTimeMillis();
         int failCount = BRKeyStore.getFailCount(app);
-        return failCount >= 3 && disabledUntil(app) > BRSharedPrefs.getSecureTime(app);
+        return failCount >= LOCK_FAIL_ATTEMPT_COUNT && disabledUntil(app) > BRSharedPrefs.getSecureTime(app);
 
     }
 
     public long disabledUntil(Activity app) {
         int failCount = BRKeyStore.getFailCount(app);
         long failTimestamp = BRKeyStore.getFailTimeStamp(app);
-        double pow = Math.pow(6, failCount - 3) * 60;
-        return (long) ((failTimestamp + pow * 1000));
+        double pow = Math.pow(PIN_DIGITS, failCount - LOCK_FAIL_ATTEMPT_COUNT) * 60;
+        return (long) ((failTimestamp + pow * BRConstants.ONE_SECOND));
     }
 
     public void setWalletDisabled(Activity app) {
-        if (!(app instanceof DisabledActivity))
+        if (!(app instanceof DisabledActivity)) {
             ActivityUTILS.showWalletDisabled(app);
+        }
     }
 
     public void setPinCode(String pass, Activity context) {
@@ -137,11 +143,14 @@ public class AuthManager {
         BRKeyStore.putLastPinUsedTime(System.currentTimeMillis(), context);
     }
 
-    public void updateDots(Context context, int pinLimit, String pin, View dot1, View dot2, View dot3, View dot4, View dot5, View dot6, int emptyPinRes, final OnPinSuccess onPinSuccess) {
-        if (dot1 == null || context == null) return;
+    public void updateDots(Context context, int pinLimit, String pin, View dot1, View dot2, View dot3, View dot4, View dot5, View dot6,
+                           int emptyPinRes, final OnPinSuccess onPinSuccess) {
+        if (dot1 == null || context == null) {
+            return;
+        }
         int selectedDots = pin.length();
 
-        if (pinLimit == 6) {
+        if (pinLimit == PIN_DIGITS) {
             dot6.setVisibility(View.VISIBLE);
             dot1.setVisibility(View.VISIBLE);
             dot1.setBackground(context.getDrawable(selectedDots <= 0 ? emptyPinRes : R.drawable.ic_pin_dot_black));
@@ -170,7 +179,7 @@ public class AuthManager {
                     onPinSuccess.onSuccess();
 
                 }
-            }, 100);
+            }, BRConstants.HUNDRED_MILLISECONDS);
 
         }
     }
@@ -184,20 +193,20 @@ public class AuthManager {
 
         boolean useFingerPrint = isFingerPrintAvailableAndSetup(context);
 
-        if (BRKeyStore.getFailCount(context) != 0) {
-            useFingerPrint = false;
-        }
         long passTime = BRKeyStore.getLastPinUsedTime(context);
+        long twoDays = TimeUnit.MILLISECONDS.convert(2, TimeUnit.DAYS);
 
-        if (passTime + TimeUnit.MILLISECONDS.convert(2, TimeUnit.DAYS) <= System.currentTimeMillis()) {
+        if (BRKeyStore.getFailCount(context) != 0 || (passTime + twoDays <= System.currentTimeMillis())) {
             useFingerPrint = false;
         }
 
-        if (forceFingerprint)
+        if (forceFingerprint) {
             useFingerPrint = true;
+        }
 
-        if (forcePin)
+        if (forcePin) {
             useFingerPrint = false;
+        }
 
         final Activity app = (Activity) context;
 
@@ -234,24 +243,28 @@ public class AuthManager {
                 }
             }
         } else {
-            BRDialog.showCustomDialog(app,
-                    "",
-                    app.getString(R.string.Prompts_NoScreenLock_body_android),
-                    app.getString(R.string.AccessibilityLabels_close),
-                    null,
-                    new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            app.finish();
-                        }
-                    }, null, new DialogInterface.OnDismissListener() {
-                        @Override
-                        public void onDismiss(DialogInterface dialog) {
-                            app.finish();
-                        }
-                    }, 0);
+            sayNoScreenLock(app);
         }
 
+    }
+
+    private void sayNoScreenLock(final Activity app) {
+        BRDialog.showCustomDialog(app,
+                "",
+                app.getString(R.string.Prompts_NoScreenLock_body_android),
+                app.getString(R.string.AccessibilityLabels_close),
+                null,
+                new BRDialogView.BROnClickListener() {
+                    @Override
+                    public void onClick(BRDialogView brDialogView) {
+                        app.finish();
+                    }
+                }, null, new DialogInterface.OnDismissListener() {
+                    @Override
+                    public void onDismiss(DialogInterface dialog) {
+                        app.finish();
+                    }
+                }, 0);
     }
 
     public static boolean isFingerPrintAvailableAndSetup(Context context) {

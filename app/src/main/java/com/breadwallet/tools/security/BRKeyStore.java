@@ -442,7 +442,7 @@ public class BRKeyStore {
     }
 
     public  static boolean putPhrase(byte[] strToStore, Context context, int requestCode) throws UserNotAuthenticatedException {
-        if (PostAuth.isStuckWithAuthLoop) {
+        if (PostAuth.mAuthLoopBugHappened) {
             showLoopBugMessage(context);
             throw new UserNotAuthenticatedException();
         }
@@ -451,7 +451,7 @@ public class BRKeyStore {
     }
 
     public  static byte[] getPhrase(final Context context, int requestCode) throws UserNotAuthenticatedException {
-        if (PostAuth.isStuckWithAuthLoop) {
+        if (PostAuth.mAuthLoopBugHappened) {
             showLoopBugMessage(context);
             throw new UserNotAuthenticatedException();
         }
@@ -460,7 +460,7 @@ public class BRKeyStore {
     }
 
     public  static boolean putCanary(String strToStore, Context context, int requestCode) throws UserNotAuthenticatedException {
-        if (PostAuth.isStuckWithAuthLoop) {
+        if (PostAuth.mAuthLoopBugHappened) {
             showLoopBugMessage(context);
             throw new UserNotAuthenticatedException();
         }
@@ -476,7 +476,7 @@ public class BRKeyStore {
     }
 
     public  static String getCanary(final Context context, int requestCode) throws UserNotAuthenticatedException {
-        if (PostAuth.isStuckWithAuthLoop) {
+        if (PostAuth.mAuthLoopBugHappened) {
             showLoopBugMessage(context);
             throw new UserNotAuthenticatedException();
         }
@@ -1058,7 +1058,7 @@ public class BRKeyStore {
                     public void run() {
                         BRDialog.hideDialog();
                         BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                        BRAnimator.showSupportFragment((Activity) app, BRConstants.loopBug, wm);
+                        BRAnimator.showSupportFragment((Activity) app, BRConstants.FAQ_LOOP_BUG, wm);
                     }
                 });
 

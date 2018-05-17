@@ -33,7 +33,7 @@ public class BRConstants {
     /**
      * Native library name
      */
-    public static final String NATIVE_LIB_NAME =  "core";
+    public static final String NATIVE_LIB_NAME = "core";
 
     /**
      * Permissions
@@ -52,7 +52,6 @@ public class BRConstants {
     public static final int PUT_PHRASE_RECOVERY_WALLET_REQUEST_CODE = 115;
     public static final int PAYMENT_PROTOCOL_REQUEST_CODE = 116;
     public static final int REQUEST_PHRASE_BITID = 117;
-    public static final int SEND_BCH_REQUEST = 118;
     public static final int PROVE_PHRASE_REQUEST = 119;
     public static final int UPLOAD_FILE_REQUEST = 120;
 
@@ -60,20 +59,9 @@ public class BRConstants {
      * Request codes for take picture
      */
     public static final int SCANNER_REQUEST = 201;
-    public static final int SCANNER_BCH_REQUEST = 202;
     public static final int REQUEST_IMAGE_CAPTURE = 203;
 
     public static final String CANARY_STRING = "canary";
-//    public static final String FIRST_ADDRESS = "firstAddress";
-//    public static final String SECURE_TIME_PREFS = "secureTime";
-//    public static final String FEE_KB_PREFS = "feeKb";
-//    public static final String ECONOMY_FEE_KB_PREFS = "EconomyFeeKb";
-    public static final String LITTLE_CIRCLE = "\u2022";
-    public static String SUPPORT_EMAIL = "support@breadwallet.com";
-
-
-    public static final int ONE_ETH = 100000000;
-    public static final int HUNDRED_BITS = 10000000;
 
     /**
      * Currency units
@@ -82,41 +70,55 @@ public class BRConstants {
     public static final int CURRENT_UNIT_MBITS = 1;
     public static final int CURRENT_UNIT_BITCOINS = 2;
 
-    public static final String symbolBits = "\u0180";
-    public static final String symbolEther = "\u039E";
-    public static final String symbolBitcoinSecondary = "\u0243";
-    public static final String symbolBitcoinPrimary = "\u20BF";
-
-    public static final long PASS_CODE_TIME_LIMIT = TimeUnit.MILLISECONDS.convert(6, TimeUnit.DAYS);
+    public static final String BITS_SYMBOL = "\u0180";
+    public static final String ETH_SYMBOL = "\u039E";
+    public static final String BITCOIN_SYBMOL_OLD = "\u0243";
+    public static final String BITCOIN_SYMBOL = "\u20BF";
 
     public static final RoundingMode ROUNDING_MODE = RoundingMode.CEILING;
-    public static final boolean WAL = true;
+    public static final boolean WRITE_AHEAD_LOGGING = true;
 
     /**
      * Support Center article ids.
      */
-    public static final String displayCurrency = "display-currency";
-    public static final String recoverWallet = "recover-wallet";
-    public static final String reScan = "re-scan";
-    public static final String securityCenter = "security-center";
-    public static final String paperKey = "paper-key";
-    public static final String enableFingerprint = "enable-fingerprint-authentication";
-    public static final String fingerprintSpendingLimit = "fingerprint-spending-limit";
-    public static final String transactionDetails = "transaction-details";
-//    public static final String manageWallet = "manage-wallet";
-    public static final String receive = "receive-bitcoin";
-    public static final String requestAmount = "request-amount";
-    public static final String send = "send-bitcoin";
-    public static final String walletDisabled = "wallet-disabled";
-    public static final String resetPinWithPaperKey = "reset-pin-paper-key";
-    public static final String setPin = "set-pin";
-    public static final String importWallet = "import-wallet";
-    public static final String writePhrase = "write-phrase";
-//    public static final String confirmPhrase = "confirm-phrase";
-    public static final String startView = "start-view";
-    public static final String wipeWallet = "wipe-wallet";
-    public static final String loopBug = "android-loop-bug";
-    public static final String bchFaq = "bitcoin-cash";
+    public static final String FAQ_DISPLAY_CURRENCY = "display-currency";
+    public static final String FAQ_RECOVER_WALLET = "recover-wallet";
+    public static final String FAQ_RESCAN = "re-scan";
+    public static final String FAQ_SECURITY_CENTER = "security-center";
+    public static final String FAQ_PAPER_KEY = "paper-key";
+    public static final String FAQ_ENABLE_FINGERPRINT = "enable-fingerprint-authentication";
+    public static final String FAQ_FINGERPRINT_SPENDING_LIMIT = "fingerprint-spending-limit";
+    public static final String FAQ_TRANSACTION_DETAILS = "transaction-details";
+    public static final String FAQ_RECEIVE = "receive-bitcoin";
+    public static final String FAQ_REQUEST_AMOUNT = "request-amount";
+    public static final String FAQ_SEND = "send-bitcoin";
+    public static final String FAQ_WALLET_DISABLE = "wallet-disabled";
+    public static final String FAQ_RESET_PIN_WITH_PAPER_KEY = "reset-pin-paper-key";
+    public static final String FAQ_SET_PIN = "set-pin";
+    public static final String FAQ_IMPORT_WALLET = "import-wallet";
+    public static final String FAQ_WRITE_PAPER_KEY = "write-phrase";
+    public static final String FAQ_START_VIEW = "start-view";
+    public static final String FAQ_WIPE_WALLET = "wipe-wallet";
+    public static final String FAQ_LOOP_BUG = "android-loop-bug";
+    public static final String FAQ_BCH = "bitcoin-cash";
+
+    /**
+     * Time units
+     */
+    public static final int ONE_SECOND = 1;
+    public static final int TWO_SECONDS = 2;
+    public static final int THREE_SECONDS = 3;
+
+    public static final int HUNDRED_MILLISECONDS = 100;
+    public static final int THREE_HUNDRED_MILLISECONDS = 300;
+
+
+    /**
+     * Crypto units
+     */
+    public static final String BITCOIN_SATOSHIS = "100000000";
+    public static final String ETHEREUM_WEI = "1000000000000000000";
+
 
     private BRConstants() {
     }
