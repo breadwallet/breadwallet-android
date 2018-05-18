@@ -98,7 +98,7 @@ public class APIClient {
     private static final String PROTO = "https";
 
     // convenience getter for the API endpoint
-    public static String BASE_URL = PROTO + "://" + BreadApp.HOST;
+    public static final String BASE_URL = PROTO + "://" + BreadApp.HOST;
     //feePerKb url
     private static final String FEE_PER_KB_URL = "/v1/fee-per-kb";
     //token
@@ -114,7 +114,7 @@ public class APIClient {
 
     private OkHttpClient mHTTPClient;
 
-    public static final String BUNDLES = "bundles";
+    private static final String BUNDLES = "bundles";
     public static String BREAD_POINT = "brd-web";
 
     private static final String BUNDLES_FOLDER = String.format("/%s", BUNDLES);
@@ -255,11 +255,11 @@ public class APIClient {
     }
 
     private String createRequest(String reqMethod, String base58Body, String contentType, String dateHeader, String url) {
-        return (reqMethod == null ? "" : reqMethod) + "\n" +
-                (base58Body == null ? "" : base58Body) + "\n" +
-                (contentType == null ? "" : contentType) + "\n" +
-                (dateHeader == null ? "" : dateHeader) + "\n" +
-                (url == null ? "" : url);
+        return (reqMethod == null ? "" : reqMethod) + "\n"
+                + (base58Body == null ? "" : base58Body) + "\n"
+                + (contentType == null ? "" : contentType) + "\n"
+                + (dateHeader == null ? "" : dateHeader) + "\n"
+                + (url == null ? "" : url);
     }
 
     public String signRequest(String request) {
@@ -313,9 +313,10 @@ public class APIClient {
         Response response = null;
         BRResponse mainBrResponse = null;
         try {
-            if (mHTTPClient == null)
+            if (mHTTPClient == null) {
                 mHTTPClient = new OkHttpClient.Builder().followRedirects(false).connectTimeout(30, TimeUnit.SECONDS)
                         /*.addInterceptor(new LoggingInterceptor())*/.build();
+            }
             request = request.newBuilder().header("User-agent", Utils.getAgentString(ctx, "OkHttp/3.4.1")).build();
             response = mHTTPClient.newCall(request).execute();
             mainBrResponse = resToBRResponse(response);
@@ -379,7 +380,9 @@ public class APIClient {
     }
 
     private void cleanRespones(Response res) {
-        if (res != null) res.close();
+        if (res != null) {
+            res.close();
+        }
     }
 
     private BRResponse resToBRResponse(Response res) {
@@ -479,10 +482,9 @@ public class APIClient {
             String latestVersion = getLatestVersion();
             String currentTarVersion = null;
             byte[] hash = CryptoHelper.sha256(bFile);
-
+            assert hash != null;
             currentTarVersion = Utils.bytesToHex(hash);
             Log.d(TAG, bundleFile + ": updateBundle: version of the current tar: " + currentTarVersion);
-//            FileHelper.printDirectoryTree(new File(getExtractedPath(ctx, null)));
             if (latestVersion != null) {
                 if (latestVersion.equals(currentTarVersion)) {
                     Log.d(TAG, bundleFile + ": updateBundle: have the latest version");
@@ -495,7 +497,6 @@ public class APIClient {
             } else {
                 Log.d(TAG, bundleFile + ": updateBundle: latestVersion is null");
             }
-//            FileHelper.printDirectoryTree(new File(getExtractedPath(ctx, null)));
 
         } else {
             Log.d(TAG, bundleFile + ": updateBundle: bundle doesn't exist, downloading new copy");
@@ -532,11 +533,12 @@ public class APIClient {
                 .url(String.format("%s/assets/bundles/%s/versions", BASE_URL, BREAD_POINT))
                 .build(), false, 0);
 
-        if (response == null) return null;
         try {
             JSONObject versionsJson = new JSONObject(response.getBodyText());
             JSONArray jsonArray = versionsJson.getJSONArray("versions");
-            if (jsonArray.length() == 0) return null;
+            if (jsonArray.length() == 0) {
+                return null;
+            }
             latestVersion = (String) jsonArray.get(jsonArray.length() - 1);
 
         } catch (JSONException e) {
@@ -578,10 +580,12 @@ public class APIClient {
             Log.e(TAG, "downloadDiff: ", e);
             new File(getBundleResource(ctx, BREAD_POINT + ".tar")).delete();
         } finally {
-            if (patchFile != null)
+            if (patchFile != null) {
                 patchFile.delete();
-            if (tempFile != null)
+            }
+            if (tempFile != null) {
                 tempFile.delete();
+            }
         }
 
         logFiles("downloadDiff", ctx);
@@ -631,8 +635,9 @@ public class APIClient {
             e.printStackTrace();
         } finally {
             try {
-                if (debInputStream != null)
+                if (debInputStream != null) {
                     debInputStream.close();
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -642,7 +647,7 @@ public class APIClient {
 
     }
 
-    public void updateFeatureFlag() {
+    private void updateFeatureFlag() {
         if (ActivityUTILS.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
@@ -686,9 +691,7 @@ public class APIClient {
     }
 
     public boolean isFeatureEnabled(String feature) {
-        boolean b = BRSharedPrefs.getFeatureEnabled(ctx, feature);
-//        Log.e(TAG, "isFeatureEnabled: " + feature + " - " + b);
-        return b;
+        return BRSharedPrefs.getFeatureEnabled(ctx, feature);
     }
 
     public String buildUrl(String path) {
@@ -794,7 +797,7 @@ public class APIClient {
         }
     }
 
-    public void syncKvStore() {
+    private void syncKvStore() {
         if (ActivityUTILS.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
@@ -839,7 +842,7 @@ public class APIClient {
         return mCachedAuthKey;
     }
 
-    public void logFiles(String tag, Context ctx) {
+    private void logFiles(String tag, Context ctx) {
         if (PRINT_FILES) {
             Log.e(TAG, "logFiles " + tag + " : START LOGGING");
             String path = getExtractedPath(ctx, null);
