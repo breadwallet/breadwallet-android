@@ -22,6 +22,7 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
@@ -74,10 +75,8 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private List<TxUiHolder> itemFeed;
     private Map<Integer, TxMetaData> mMetaDatas;
 
-    private final int txType = 0;
-    private final int promptType = 1;
-    private boolean updatingData;
-
+    private final int TX_TYPE = 0;
+    private boolean mIsUpdatingData;
 
     public TransactionListAdapter(Context mContext, List<TxUiHolder> items) {
         this.txResId = R.layout.tx_item;
@@ -104,7 +103,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public void updateData() {
-        if (updatingData) return;
+        if (mIsUpdatingData) return;
         Map<Integer, TxMetaData> localMDs = new HashMap<>();
         BaseWalletManager wm = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
         for (int i = 0; i < backUpFeed.size(); i++) {
@@ -127,7 +126,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
         mMetaDatas.clear();
         mMetaDatas.putAll(localMDs);
-        updatingData = false;
+        mIsUpdatingData = false;
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -151,12 +150,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         switch (holder.getItemViewType()) {
-            case txType:
+            case TX_TYPE:
                 holder.setIsRecyclable(false);
                 setTexts((TxHolder) holder, position);
-                break;
-            case promptType:
-                //setPrompt((PromptHolder) holder);
                 break;
         }
 
@@ -164,7 +160,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public int getItemViewType(int position) {
-        return txType;
+        return TX_TYPE;
     }
 
     @Override
@@ -185,9 +181,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
 
         boolean received = item.isReceived();
+        int amountColor = received ? R.color.transaction_amount_received_color : R.color.total_assets_usd_color;
 
-        convertView.transactionAmount.setTextColor(mContext.getResources().getColor(received ?
-                R.color.transaction_amount_received_color : R.color.total_assets_usd_color, null));
+        convertView.transactionAmount.setTextColor(mContext.getResources().getColor(amountColor, null));
 
         // If this transaction failed, show the "FAILED" indicator in the cell
         if (!item.isValid())
@@ -198,7 +194,10 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         BREthereumToken tkn = null;
         if (wallet.getIso(mContext).equalsIgnoreCase("ETH"))
             tkn = WalletEthManager.getInstance(mContext).node.lookupToken(item.getTo());
-        if (tkn != null) cryptoAmount = item.getFee(); // it's a token transfer ETH tx
+        // it's a token transfer ETH tx
+        if (tkn != null) {
+            cryptoAmount = item.getFee();
+        }
         boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
         String preferredIso = isCryptoPreferred ? wallet.getIso(mContext) : BRSharedPrefs.getPreferredFiatIso(mContext);
         BigDecimal amount = isCryptoPreferred ? cryptoAmount : wallet.getFiatForSmallestCrypto(mContext, cryptoAmount, null);
@@ -217,17 +216,15 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             else
                 level = 2;
         } else {
-            if (confirms == 1)
-                level = 3;
-            else if (confirms == 2)
-                level = 4;
-            else if (confirms == 3)
-                level = 5;
-            else
+            if (confirms >= 4) {
                 level = 6;
+            } else {
+                level = confirms + 2;
+            }
         }
-        if (level > 0 && level < 5)
+        if (level > 0 && level < 5) {
             showTransactionProgress(convertView, level * 20);
+        }
         String sentTo = String.format(mContext.getString(R.string.Transaction_sentTo), wallet.decorateAddress(mContext, item.getTo()));
         String receivedVia = String.format(mContext.getString(R.string.TransactionDetails_receivedVia), wallet.decorateAddress(mContext, item.getTo()));
 
@@ -243,7 +240,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             convertView.transactionDetail.setText(String.format(mContext.getString(R.string.Transaction_tokenTransfer), tkn.getSymbol()));
 
         //if it's 0 we use the current time.
-        long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * 1000;
+        long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * BRConstants.ONE_SECOND;
 
         String shortDate = BRDateUtil.getShortDate(timeStamp);
 
@@ -251,7 +248,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void showTransactionProgress(TxHolder holder, int progress) {
-        //todo FIX this!
         if (progress < 100) {
             holder.transactionProgress.setVisibility(View.VISIBLE);
             holder.transactionDate.setVisibility(View.GONE);
@@ -275,9 +271,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void showTransactionFailed(TxHolder holder, TxUiHolder tx, boolean received) {
-
         holder.transactionDate.setVisibility(View.INVISIBLE);
-
         RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         params.addRule(RelativeLayout.RIGHT_OF, holder.transactionFailed.getId());
         params.setMargins(16, 0, 0, 0);
@@ -285,8 +279,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         holder.transactionDetail.setLayoutParams(params);
         BaseWalletManager wm = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
 
-        if (!received)
+        if (!received) {
             holder.transactionDetail.setText(String.format(mContext.getString(R.string.Transaction_sendingTo), wm.decorateAddress(mContext, tx.getTo())));
+        }
 
     }
 
@@ -300,12 +295,16 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void filter(final String query, final boolean[] switches) {
-        long start = System.currentTimeMillis();
         String lowerQuery = query.toLowerCase().trim();
-        if (Utils.isNullOrEmpty(lowerQuery) && !switches[0] && !switches[1] && !switches[2] && !switches[3])
+        if (Utils.isNullOrEmpty(lowerQuery) && !switches[0] && !switches[1] && !switches[2] && !switches[3]) {
             return;
+        }
         int switchesON = 0;
-        for (boolean i : switches) if (i) switchesON++;
+        for (boolean i : switches) {
+            if (i) {
+                switchesON++;
+            }
+        }
 
         final List<TxUiHolder> filteredList = new ArrayList<>();
         TxUiHolder item;
@@ -349,8 +348,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         }
         itemFeed = filteredList;
         notifyDataSetChanged();
-
-//        Log.e(TAG, "filter: " + query + " took: " + (System.currentTimeMillis() - start));
     }
 
     private class TxHolder extends RecyclerView.ViewHolder {

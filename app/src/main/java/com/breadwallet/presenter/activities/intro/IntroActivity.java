@@ -63,11 +63,9 @@ public class IntroActivity extends BRActivity implements Serializable {
     private static final String TAG = IntroActivity.class.getName();
     public Button newWalletButton;
     public Button recoverWalletButton;
-    public static IntroActivity introActivity;
     public static boolean appVisible = false;
     private static IntroActivity app;
     private View splashScreen;
-    private ImageButton faq;
 
     public static IntroActivity getApp() {
         return app;
@@ -87,7 +85,7 @@ public class IntroActivity extends BRActivity implements Serializable {
         splashScreen = findViewById(R.id.splash_screen);
         setListeners();
         updateBundles();
-        faq = findViewById(R.id.faq_button);
+        ImageButton faq = findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,16 +97,15 @@ public class IntroActivity extends BRActivity implements Serializable {
         });
 
 
-        if (!BuildConfig.DEBUG && BRKeyStore.AUTH_DURATION_SEC != 300) {
+        if (!BuildConfig.DEBUG && BRKeyStore.AUTH_DURATION_SEC != BRConstants.THREE_HUNDRED_MILLISECONDS) {
             Log.e(TAG, "onCreate: BRKeyStore.AUTH_DURATION_SEC != 300");
             BRReportsManager.reportBug(new RuntimeException("AUTH_DURATION_SEC should be 300"), true);
         }
-        introActivity = this;
-
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
 
-        if (Utils.isEmulatorOrDebug(this))
+        if (Utils.isEmulatorOrDebug(this)) {
             Utils.printPhoneSpecs();
+        }
 
         byte[] masterPubKey = BRKeyStore.getMasterPublicKey(this);
 
@@ -126,7 +123,7 @@ public class IntroActivity extends BRActivity implements Serializable {
             public void run() {
                 splashScreen.setVisibility(View.GONE);
             }
-        }, 1000);
+        }, BRConstants.ONE_SECOND);
 
     }
 
@@ -134,8 +131,6 @@ public class IntroActivity extends BRActivity implements Serializable {
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                Thread.currentThread().setName("BG:" + TAG + ":updateBundles");
-
                 final long startTime = System.currentTimeMillis();
                 APIClient apiClient = APIClient.getInstance(IntroActivity.this);
                 apiClient.updateBundle();
@@ -177,7 +172,6 @@ public class IntroActivity extends BRActivity implements Serializable {
         super.onResume();
         appVisible = true;
         app = this;
-
     }
 
     @Override
@@ -196,11 +190,8 @@ public class IntroActivity extends BRActivity implements Serializable {
         super.onStop();
     }
 
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
     }
-
 }

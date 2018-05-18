@@ -110,6 +110,7 @@ public class BRConstants {
     public static final int THREE_SECONDS = 3;
 
     public static final int HUNDRED_MILLISECONDS = 100;
+    public static final int TWO_HUNDRED_MILLISECONDS = 200;
     public static final int THREE_HUNDRED_MILLISECONDS = 300;
 
 
