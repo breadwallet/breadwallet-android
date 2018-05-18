@@ -407,7 +407,9 @@ public class APIClient {
             }
 
         } finally {
-            brRsp.print();
+            if (!brRsp.isSuccessful()) {
+                brRsp.print();
+            }
         }
         return brRsp;
     }
