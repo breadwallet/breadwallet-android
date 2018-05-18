@@ -19,9 +19,6 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 public class WriteDownActivity extends BRActivity {
     private static final String TAG = WriteDownActivity.class.getName();
-    private Button writeButton;
-    private ImageButton close;
-    public static boolean appVisible = false;
     private static WriteDownActivity app;
 
     public static WriteDownActivity getApp() {
@@ -33,15 +30,15 @@ public class WriteDownActivity extends BRActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_write_down);
 
-        writeButton = (Button) findViewById(R.id.button_write_down);
-        close = (ImageButton) findViewById(R.id.close_button);
+        Button writeButton = findViewById(R.id.button_write_down);
+        ImageButton close = findViewById(R.id.close_button);
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 close();
             }
         });
-        ImageButton faq = (ImageButton) findViewById(R.id.faq_button);
+        ImageButton faq = findViewById(R.id.faq_button);
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,14 +71,7 @@ public class WriteDownActivity extends BRActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        appVisible = true;
         app = this;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        appVisible = false;
     }
 
     @Override
@@ -94,11 +84,11 @@ public class WriteDownActivity extends BRActivity {
     }
 
     private void close() {
-        Log.e(TAG, "close: ");
         BRAnimator.startBreadActivity(this, false);
         overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
-        if (!isDestroyed()) finish();
-        //additional code
+        if (!isDestroyed()) {
+            finish();
+        }
     }
 
     @Override

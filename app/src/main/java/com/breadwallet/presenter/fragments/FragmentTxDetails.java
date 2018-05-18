@@ -31,6 +31,7 @@ import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
@@ -67,10 +68,10 @@ public class FragmentTxDetails extends DialogFragment {
     private View mGasPriceDivider;
     private View mGasLimitDivider;
 
-    ConstraintLayout mFeePrimaryContainer;
-    ConstraintLayout mFeeSecondaryContainer;
-    ConstraintLayout mGasPriceContainer;
-    ConstraintLayout mGasLimitContainer;
+    private ConstraintLayout mFeePrimaryContainer;
+    private ConstraintLayout mFeeSecondaryContainer;
+    private ConstraintLayout mGasPriceContainer;
+    private ConstraintLayout mGasLimitContainer;
 
     private BRText mFeePrimaryLabel;
     private BRText mFeePrimary;
@@ -182,7 +183,6 @@ public class FragmentTxDetails extends DialogFragment {
         int color = mToFromAddress.getTextColors().getDefaultColor();
         mMemoText.setTextColor(color);
 
-
         updateUi();
         return rootView;
     }
@@ -193,9 +193,7 @@ public class FragmentTxDetails extends DialogFragment {
     }
 
     public void setTransaction(TxUiHolder item) {
-
         this.mTransaction = item;
-
     }
 
     private void updateUi() {
@@ -229,8 +227,8 @@ public class FragmentTxDetails extends DialogFragment {
                 if (ethTx != null && !isErc20) {
                     mGasPrice.setText(String.format("%s %s", new BigDecimal(ethTx.getGasPrice(BREthereumAmount.Unit.ETHER_GWEI)).stripTrailingZeros().toPlainString(), "gwei"));
                     mGasLimit.setText(new BigDecimal(ethTx.getGasLimit()).toPlainString());
-                    rawFee = new BigDecimal(ethTx.isConfirmed() ? ethTx.getGasUsed() :
-                            ethTx.getGasLimit()).multiply(new BigDecimal(ethTx.getGasPrice(walletManager.getUnit())));
+                    long gas = ethTx.isConfirmed() ? ethTx.getGasUsed() : ethTx.getGasLimit();
+                    rawFee = new BigDecimal(gas).multiply(new BigDecimal(ethTx.getGasPrice(walletManager.getUnit())));
                 } else {
                     hideEthViews();
 
@@ -251,8 +249,9 @@ public class FragmentTxDetails extends DialogFragment {
                 }
             }
 
-            if (mTransaction.getBlockHeight() == Integer.MAX_VALUE)
+            if (mTransaction.getBlockHeight() == Integer.MAX_VALUE) {
                 hideConfirmedView();
+            }
 
             if (!mTransaction.isValid()) {
                 mTxStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
@@ -270,15 +269,18 @@ public class FragmentTxDetails extends DialogFragment {
             TxMetaData metaData = KVStoreManager.getInstance().getTxMetaData(app, mTransaction.getTxHash());
             if (metaData == null || metaData.exchangeRate == 0 || Utils.isNullOrEmpty(metaData.exchangeCurrency)) {
                 fiatAmountWhenSent = new BigDecimal(0);
-                amountWhenSent = CurrencyUtils.getFormattedAmount(app, fiatIso, fiatAmountWhenSent);//always fiat amount
+                //always fiat amount
+                amountWhenSent = CurrencyUtils.getFormattedAmount(app, fiatIso, fiatAmountWhenSent);
             } else {
                 CurrencyEntity ent = new CurrencyEntity(metaData.exchangeCurrency, null, (float) metaData.exchangeRate, walletManager.getIso(app));
                 fiatAmountWhenSent = walletManager.getFiatForSmallestCrypto(app, cryptoAmount.abs(), ent);
-                amountWhenSent = CurrencyUtils.getFormattedAmount(app, ent.code, fiatAmountWhenSent);//always fiat amount
+                //always fiat amount
+                amountWhenSent = CurrencyUtils.getFormattedAmount(app, ent.code, fiatAmountWhenSent);
 
             }
 
-            amountNow = CurrencyUtils.getFormattedAmount(app, fiatIso, fiatAmountNow);//always fiat amount
+            //always fiat amount
+            amountNow = CurrencyUtils.getFormattedAmount(app, fiatIso, fiatAmountNow);
 
             mAmountWhenSent.setText(amountWhenSent);
             mAmountNow.setText(amountNow);
@@ -319,11 +321,12 @@ public class FragmentTxDetails extends DialogFragment {
                             mToFromAddress.setTextColor(color);
 
                         }
-                    }, 200);
+                    }, BRConstants.TWO_HUNDRED_MILLISECONDS);
 
 
                 }
             });
+
             mOnPauseListener = new OnPauseListener() {
                 @Override
                 public void onPaused() {
@@ -346,14 +349,15 @@ public class FragmentTxDetails extends DialogFragment {
                         }
                     });
 
-
                 }
             };
 
-            mTxAmount.setText(CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), received ? cryptoAmount : cryptoAmount.negate()));//this is always crypto amount
+            //this is always crypto amount
+            mTxAmount.setText(CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), received ? cryptoAmount : cryptoAmount.negate()));
 
-            if (received)
+            if (received) {
                 mTxAmount.setTextColor(getContext().getColor(R.color.transaction_amount_received_color));
+            }
 
             // Set the memo text if one is available
             String memo;
@@ -404,7 +408,7 @@ public class FragmentTxDetails extends DialogFragment {
                             mTransactionId.setTextColor(color);
 
                         }
-                    }, 200);
+                    }, BRConstants.TWO_HUNDRED_MILLISECONDS);
                 }
             });
 
