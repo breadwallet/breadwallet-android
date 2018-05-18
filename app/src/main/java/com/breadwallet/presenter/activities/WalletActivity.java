@@ -523,7 +523,12 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     @Override
     public void onChanged() {
-        updateUi();
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                updateUi();
+            }
+        });
     }
 
     /**
