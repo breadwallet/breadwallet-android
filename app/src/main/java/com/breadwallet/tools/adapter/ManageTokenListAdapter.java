@@ -21,15 +21,14 @@ import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.animation.ItemTouchHelperAdapter;
 import com.breadwallet.tools.animation.ItemTouchHelperViewHolder;
 import com.breadwallet.tools.listeners.OnStartDragListener;
-import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
-import com.breadwallet.wallet.wallets.etherium.WalletTokenManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenListAdapter.ManageTokenItemViewHolder> implements ItemTouchHelperAdapter {
 

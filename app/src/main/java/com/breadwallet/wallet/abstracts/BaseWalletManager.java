@@ -69,7 +69,7 @@ public interface BaseWalletManager {
 
     void addBalanceChangedListener(OnBalanceChangedListener list);
 
-    void addTxStatusUpdatedListener(OnTxStatusUpdatedListener list);
+//    void addTxStatusUpdatedListener(OnTxStatusUpdatedListener list);
 
     void addSyncListeners(SyncListener list);
 
@@ -169,7 +169,7 @@ public interface BaseWalletManager {
     String getName(Context app);
 
     //get the currency denomination e.g. BCH, mBCH, Bits
-    String getDenominator(Context app);
+    String getDenominator();
 
     @WorkerThread
         //get the wallet's receive address

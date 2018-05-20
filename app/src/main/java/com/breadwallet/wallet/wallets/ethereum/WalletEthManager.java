@@ -1,4 +1,4 @@
-package com.breadwallet.wallet.wallets.etherium;
+package com.breadwallet.wallet.wallets.ethereum;
 
 import android.app.Activity;
 import android.content.Context;
@@ -34,10 +34,6 @@ import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
-import com.breadwallet.wallet.abstracts.OnTxListModified;
-import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
-import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
@@ -56,10 +52,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
-import okhttp3.internal.Util;
 
 /**
  * BreadWallet
@@ -85,7 +79,7 @@ import okhttp3.internal.Util;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletEthManager implements BaseWalletManager,
+public class WalletEthManager extends BaseEthereumWalletManager implements BaseWalletManager,
         BREthereumLightNode.ClientJSON_RPC,
         BREthereumLightNode.Listener {
     private static final String TAG = WalletEthManager.class.getSimpleName();
@@ -98,10 +92,7 @@ public class WalletEthManager implements BaseWalletManager,
 
     private static final String mName = "Ethereum";
 
-    private List<OnBalanceChangedListener> balanceListeners = new ArrayList<>();
-    private List<OnTxStatusUpdatedListener> txStatusUpdatedListeners = new ArrayList<>();
-    private List<SyncListener> syncListeners = new ArrayList<>();
-    private List<OnTxListModified> txModifiedListeners = new ArrayList<>();
+
     private Map<String, Boolean> balanceStatuses = new HashMap<>();
 
     private static WalletEthManager instance;
@@ -225,12 +216,6 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-    public int getForkId() {
-        //No need for ETH
-        return -1;
-    }
-
-    @Override
     public BREthereumAmount.Unit getUnit() {
         return BREthereumAmount.Unit.ETHER_WEI;
     }
@@ -246,30 +231,6 @@ public class WalletEthManager implements BaseWalletManager,
         mWallet.submit(tx.getEtherTx());
         String hash = tx.getEtherTx().getHash();
         return hash == null ? new byte[0] : hash.getBytes();
-    }
-
-    @Override
-    public void addBalanceChangedListener(OnBalanceChangedListener listener) {
-        if (listener != null && !balanceListeners.contains(listener))
-            balanceListeners.add(listener);
-    }
-
-    @Override
-    public void addTxStatusUpdatedListener(OnTxStatusUpdatedListener list) {
-        if (list != null && !txStatusUpdatedListeners.contains(list))
-            txStatusUpdatedListeners.add(list);
-    }
-
-    @Override
-    public void addSyncListeners(SyncListener list) {
-        if (list != null && !syncListeners.contains(list))
-            syncListeners.add(list);
-    }
-
-    @Override
-    public void addTxListModifiedListener(OnTxListModified list) {
-        if (list != null && !txModifiedListeners.contains(list))
-            txModifiedListeners.add(list);
     }
 
     @Override
@@ -506,7 +467,7 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-    public String getDenominator(Context app) {
+    public String getDenominator() {
         return "1000000000000000000";
     }
 
@@ -565,15 +526,6 @@ public class WalletEthManager implements BaseWalletManager,
     public boolean networkIsReachable() {
         Context app = BreadApp.getBreadContext();
         return InternetManager.getInstance().isConnected(app);
-    }
-
-    @Override
-    public void setCachedBalance(Context app, BigDecimal balance) {
-        BRSharedPrefs.putCachedBalance(app, getIso(app), balance);
-        for (OnBalanceChangedListener listener : balanceListeners) {
-            if (listener != null) listener.onBalanceChanged(getIso(app), balance);
-        }
-
     }
 
     @Override
@@ -752,9 +704,7 @@ public class WalletEthManager implements BaseWalletManager,
                                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                         @Override
                                         public void run() {
-                                            for (OnBalanceChangedListener list : balanceListeners)
-                                                if (list != null)
-                                                    list.onBalanceChanged(ISO, amount);
+                                            onBalanceChanged(ISO, amount);
                                         }
                                     });
                                 }
@@ -819,9 +769,7 @@ public class WalletEthManager implements BaseWalletManager,
                                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                         @Override
                                         public void run() {
-                                            for (OnBalanceChangedListener list : balanceListeners)
-                                                if (list != null)
-                                                    list.onBalanceChanged(iso, uiBalance);
+                                            onBalanceChanged(iso, uiBalance);
                                         }
                                     });
                                 }
@@ -1000,9 +948,10 @@ public class WalletEthManager implements BaseWalletManager,
                                                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                                                             @Override
                                                             public void run() {
-                                                                for (OnTxStatusUpdatedListener list : txStatusUpdatedListeners)
-                                                                    if (list != null)
-                                                                        list.onTxStatusUpdated();
+                                                                // TODO this is never added
+//                                                                for (OnTxStatusUpdatedListener list : txStatusUpdatedListeners)
+//                                                                    if (list != null)
+//                                                                        list.onTxStatusUpdated();
                                                                 mWallet.updateBalance();
                                                             }
                                                         });

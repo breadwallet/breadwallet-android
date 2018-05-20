@@ -409,7 +409,7 @@ public class WalletPlugin implements Plugin {
                 //Balance
                 JSONObject balance = new JSONObject();
 
-                String denominator = w.getDenominator(app);
+                String denominator = w.getDenominator();
                 balance.put("currency", w.getIso(app));
                 balance.put("numerator", w.getCachedBalance(app).toPlainString()); // raw, since we store the balance in the smallest amount
                 balance.put("denominator", denominator);
