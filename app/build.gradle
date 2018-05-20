@@ -120,7 +120,7 @@ android {
             jniDebuggable = true
             minifyEnabled = false
             ext.enableCrashlytics = false
-
+            ext.alwaysUpdateBuildId = false
             externalNativeBuild {
                 cmake {
                     cFlags "-DBITCOIN_DEBUG=1"
