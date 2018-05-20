@@ -99,11 +99,10 @@ public class BreadApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        boolean debug = Utils.isEmulatorOrDebug(this);
         HOST = "stage2.breadwallet.com";
         final Fabric fabric = new Fabric.Builder(this)
-                .kits(new Crashlytics())
-                .debuggable(debug)// Enables Crashlytics debugger
+                .kits(new Crashlytics.Builder().disabled(BuildConfig.DEBUG).build())
+                .debuggable(BuildConfig.DEBUG)// Enables Crashlytics debugger
                 .build();
         Fabric.with(fabric);
 
