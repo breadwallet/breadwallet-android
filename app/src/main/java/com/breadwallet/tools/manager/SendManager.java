@@ -26,7 +26,7 @@ import com.breadwallet.wallet.exceptions.FeeOutOfDate;
 import com.breadwallet.wallet.exceptions.InsufficientFundsException;
 import com.breadwallet.wallet.exceptions.SomethingWentWrong;
 import com.breadwallet.wallet.exceptions.SpendingNotAllowed;
-import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 import java.math.BigDecimal;
 import java.util.Locale;

@@ -50,7 +50,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;

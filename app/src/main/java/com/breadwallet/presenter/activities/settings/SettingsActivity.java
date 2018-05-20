@@ -1,21 +1,11 @@
 package com.breadwallet.presenter.activities.settings;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.CurrencySettingsActivity;
@@ -23,25 +13,17 @@ import com.breadwallet.presenter.activities.ManageWalletsActivity;
 import com.breadwallet.presenter.activities.UpdatePinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
-import com.breadwallet.presenter.entities.TokenItem;
-import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.adapter.SettingsAdapter;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
-import com.breadwallet.wallet.wallets.etherium.WalletTokenManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.tools.KVStoreManager;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.breadwallet.R.layout.settings_list_item;
-import static com.breadwallet.R.layout.settings_list_section;
 
 public class SettingsActivity extends BRActivity {
     private static final String TAG = SettingsActivity.class.getName();

@@ -16,11 +16,9 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.core.ethereum.BREthereumToken;
-import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
@@ -29,7 +27,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
-import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
 
