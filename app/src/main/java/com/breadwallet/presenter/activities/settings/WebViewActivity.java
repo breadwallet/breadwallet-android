@@ -176,6 +176,9 @@ public class WebViewActivity extends BRActivity {
 
         }
 
+        webView.setWebChromeClient(new BRWebChromeClient());
+
+
     }
 
     private ViewTreeObserver.OnGlobalLayoutListener keyboardLayoutListener = new ViewTreeObserver.OnGlobalLayoutListener() {
