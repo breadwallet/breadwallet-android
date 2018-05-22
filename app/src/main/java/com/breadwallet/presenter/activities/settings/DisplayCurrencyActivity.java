@@ -30,6 +30,8 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.math.BigDecimal;
 import java.util.Currency;
+import java.util.Iterator;
+import java.util.List;
 
 
 public class DisplayCurrencyActivity extends BRActivity {
@@ -71,7 +73,9 @@ public class DisplayCurrencyActivity extends BRActivity {
         exchangeText = findViewById(R.id.exchange_text);
         listView = findViewById(R.id.currency_list_view);
         adapter = new CurrencyListAdapter(this);
-        adapter.addAll(RatesDataSource.getInstance(this).getAllCurrencies(this, "BTC"));
+        List<CurrencyEntity> currencies = RatesDataSource.getInstance(this).getAllCurrencies(this, "BTC");
+        List<CurrencyEntity> cleanList = cleanList(currencies);
+        adapter.addAll(cleanList);
         leftButton = findViewById(R.id.left_button);
         rightButton = findViewById(R.id.right_button);
         leftButton.setOnClickListener(new View.OnClickListener() {
@@ -114,6 +118,18 @@ public class DisplayCurrencyActivity extends BRActivity {
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
+    }
+
+    private List<CurrencyEntity> cleanList(List<CurrencyEntity> list) {
+
+        Iterator<CurrencyEntity> iter = list.iterator();
+        while (iter.hasNext()) {
+            CurrencyEntity ent = iter.next();
+            if (WalletsMaster.getInstance(this).isIsoCrypto(this, ent.name)) {
+                iter.remove();
+            }
+        }
+        return list;
     }
 
     private void updateExchangeRate() {
