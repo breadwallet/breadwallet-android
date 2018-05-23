@@ -22,6 +22,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
+import com.platform.tools.TokenHolder;
 
 import org.apache.commons.compress.archivers.ArchiveStreamFactory;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
@@ -89,7 +90,7 @@ import static com.breadwallet.tools.util.BRCompressor.gZipExtract;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class APIClient implements BreadApp.OnAppBackgrounded {
+public class APIClient {
 
     public static final String TAG = APIClient.class.getName();
 
@@ -107,8 +108,9 @@ public class APIClient implements BreadApp.OnAppBackgrounded {
     //singleton instance
     private static APIClient ourInstance;
 
-    private byte[] mCachedToken;
     private byte[] mCachedAuthKey;
+
+    private boolean mIsFetchingToken;
 
     private OkHttpClient mHTTPClient;
 
@@ -121,6 +123,8 @@ public class APIClient implements BreadApp.OnAppBackgrounded {
     private static String BREAD_EXTRACTED;
     private static final boolean PRINT_FILES = false;
 
+    private static final int MAX_RETRY = 3;
+
     private SimpleDateFormat sdf = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
 
     private boolean platformUpdating = false;
@@ -129,12 +133,6 @@ public class APIClient implements BreadApp.OnAppBackgrounded {
     public static HTTPServer server;
 
     private Context ctx;
-
-    @Override
-    public void onBackgrounded() {
-        mCachedToken = null;
-        mCachedAuthKey = null;
-    }
 
     public enum FeatureFlags {
         BUY_BITCOIN("buy-bitcoin"),
@@ -206,12 +204,16 @@ public class APIClient implements BreadApp.OnAppBackgrounded {
                 .build();
         BRResponse response = sendRequest(request, true, 0);
 
-        if (response == null) throw new NullPointerException();
-
         return response.getBodyText();
     }
 
-    public synchronized String getToken() {
+    public String getToken() {
+        Log.e(TAG, "getToken: ");
+        if (mIsFetchingToken) {
+            return null;
+        }
+        mIsFetchingToken = true;
+
         if (ActivityUTILS.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
@@ -240,13 +242,13 @@ public class APIClient implements BreadApp.OnAppBackgrounded {
             }
             JSONObject obj = null;
             obj = new JSONObject(response.getBodyText());
-            String token = obj.getString("token");
-            if (!Utils.isNullOrEmpty(token))
-                BRKeyStore.putToken(token.getBytes(), ctx);
-            return token;
+
+            return obj.getString("token");
         } catch (JSONException e) {
             e.printStackTrace();
 
+        } finally {
+            mIsFetchingToken = false;
         }
         return null;
 
@@ -287,13 +289,10 @@ public class APIClient implements BreadApp.OnAppBackgrounded {
 
     @NonNull
     public BRResponse sendRequest(Request locRequest, boolean needsAuth, int retryCount) {
-        if (retryCount > 1)
-            throw new RuntimeException("sendRequest: Warning retryCount is: " + retryCount);
         if (ActivityUTILS.isMainThread()) {
             Log.e(TAG, "urlGET: network on main thread");
             throw new RuntimeException("network on main thread");
         }
-
         Map<String, String> headers = new HashMap<>(BreadApp.getBreadHeaders());
 
         Request.Builder newBuilder = locRequest.newBuilder();
@@ -303,8 +302,11 @@ public class APIClient implements BreadApp.OnAppBackgrounded {
         }
 
         Request request = newBuilder.build();
+        String tokenUsed = null;
         if (needsAuth) {
-            request = authenticateRequest(request);
+            AuthenticatedRequest authenticatedRequest = authenticateRequest(request);
+            request = authenticatedRequest.mRequest;
+            tokenUsed = authenticatedRequest.tokenUsed;
             if (request == null) return resToBRResponse(null);
         }
 
@@ -338,48 +340,38 @@ public class APIClient implements BreadApp.OnAppBackgrounded {
                     .body(ResponseBody.create(null, e.getMessage())).protocol(Protocol.HTTP_1_1).build());
         }
         ResponseBody postReqBody = null;
-        try {
-            if (response.header("content-encoding") != null && response.header("content-encoding").equalsIgnoreCase("gzip")) {
-                Log.d(TAG, "sendRequest: the content is gzip, unzipping");
-                if (Utils.isNullOrEmpty(mainBrResponse.getBody())) {
-                    BRReportsManager.reportBug(new NullPointerException("string response is null for: " + request.url()));
-                    return resToBRResponse(response);
-                }
-                byte[] decompressed = gZipExtract(mainBrResponse.getBody());
-                if (decompressed == null) {
-                    BRReportsManager.reportBug(new IllegalArgumentException("failed to decrypt data!"));
-                    return resToBRResponse(response);
-                }
-                postReqBody = ResponseBody.create(null, decompressed);
-                return resToBRResponse(response.newBuilder().body(postReqBody).build());
-            } else {
-                Log.d(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
-                        request.url(), response.code(), response.message(), mainBrResponse.getBodyText()));
+        if (response.header("content-encoding") != null && response.header("content-encoding").equalsIgnoreCase("gzip")) {
+            Log.d(TAG, "sendRequest: the content is gzip, unzipping");
+            if (Utils.isNullOrEmpty(mainBrResponse.getBody())) {
+                BRReportsManager.reportBug(new NullPointerException("string response is null for: " + request.url()));
+                return resToBRResponse(response);
             }
+            byte[] decompressed = gZipExtract(mainBrResponse.getBody());
+            if (decompressed == null) {
+                BRReportsManager.reportBug(new IllegalArgumentException("failed to decrypt data!"));
+                return resToBRResponse(response);
+            }
+            postReqBody = ResponseBody.create(null, decompressed);
+            return resToBRResponse(response.newBuilder().body(postReqBody).build());
+        } else {
+            Log.d(TAG, "sendRequest: " + String.format(Locale.getDefault(), "(%s)%s, code (%d), mess (%s), body (%s)", request.method(),
+                    request.url(), response.code(), response.message(), mainBrResponse.getBodyText()));
+        }
 
-            byte[] data = mainBrResponse.getBody();
-            if (Utils.isNullOrEmpty(data)) {
-                Log.e(TAG, "sendRequest: no data!");
-            }
-            if (data != null)
-                postReqBody = ResponseBody.create(null, data);
-            if (needsAuth && isBreadChallenge(response)) {
-                Log.d(TAG, "sendRequest: got authentication challenge from API - will attempt to get token, url -> " + locRequest.url().toString());
-                byte[] bytesToken = getCachedToken();
-                String token = bytesToken == null ? "" : new String(bytesToken);
-                //Double check if we have the token
-                if (Utils.isNullOrEmpty(token))
-                    getToken();
+        byte[] data = mainBrResponse.getBody();
+        if (Utils.isNullOrEmpty(data)) {
+            Log.e(TAG, "sendRequest: no data!");
+        }
+        if (data != null)
+            postReqBody = ResponseBody.create(null, data);
+        if (needsAuth && isBreadChallenge(response)) {
+            Log.d(TAG, "sendRequest: got authentication challenge from API - will attempt to get token, url -> " + locRequest.url().toString());
 
-                if (retryCount < 1) {
-                    response.close();
-                    sendRequest(request, true, retryCount + 1);
-                } else {
-                    getToken(); //update token if it failed the second time.
-                }
+            if (retryCount < MAX_RETRY) {
+                TokenHolder.updateToken(ctx, tokenUsed);
+                response.close();
+                sendRequest(request, true, retryCount + 1);
             }
-        } finally {
-            if (postReqBody != null) postReqBody.close();
         }
         if (postReqBody == null) return resToBRResponse(response);
 
@@ -420,7 +412,7 @@ public class APIClient implements BreadApp.OnAppBackgrounded {
         return brRsp;
     }
 
-    public Request authenticateRequest(Request request) {
+    public AuthenticatedRequest authenticateRequest(Request request) {
         Request.Builder modifiedRequest = request.newBuilder();
         String base58Body = "";
         RequestBody body = request.body();
@@ -451,13 +443,7 @@ public class APIClient implements BreadApp.OnAppBackgrounded {
                         + ((queryString != null && !queryString.isEmpty()) ? ("?" + queryString) : ""));
         String signedRequest = signRequest(requestString);
         if (signedRequest == null) return null;
-        byte[] tokenBytes = getCachedToken();
-        String token = tokenBytes == null ? "" : new String(tokenBytes);
-        if (token.isEmpty()) token = getToken();
-        if (token == null || token.isEmpty()) {
-            Log.e(TAG, "sendRequest: failed to retrieve token");
-            return null;
-        }
+        String token = TokenHolder.retrieveToken(ctx);
         String authValue = "bread " + token + ":" + signedRequest;
 //            Log.e(TAG, "sendRequest: authValue: " + authValue);
         modifiedRequest = request.newBuilder();
@@ -468,7 +454,7 @@ public class APIClient implements BreadApp.OnAppBackgrounded {
             BRReportsManager.reportBug(e);
             return null;
         }
-        return request;
+        return new AuthenticatedRequest(request, token);
     }
 
     public synchronized void updateBundle() {
@@ -844,23 +830,9 @@ public class APIClient implements BreadApp.OnAppBackgrounded {
     }
 
     //too many requests will call too many BRKeyStore _getData, causing ui elements to freeze
-    private byte[] getCachedToken() {
-        if (Utils.isNullOrEmpty(mCachedToken)) {
-            mCachedToken = BRKeyStore.getToken(ctx);
-            if (mCachedToken == null) {
-                getToken();
-                mCachedToken = BRKeyStore.getToken(ctx);
-            }
-            BreadApp.addOnBackgroundedListener(this);
-        }
-        return mCachedToken;
-    }
-
-    //too many requests will call too many BRKeyStore _getData, causing ui elements to freeze
-    private byte[] getCachedAuthKey() {
+    private synchronized byte[] getCachedAuthKey() {
         if (Utils.isNullOrEmpty(mCachedAuthKey)) {
             mCachedAuthKey = BRKeyStore.getAuthKey(ctx);
-            BreadApp.addOnBackgroundedListener(this);
         }
         return mCachedAuthKey;
     }
@@ -878,6 +850,17 @@ public class APIClient implements BreadApp.OnAppBackgrounded {
             }
             Log.e(TAG, "logFiles " + tag + " : START LOGGING");
         }
+    }
+
+    public static class AuthenticatedRequest {
+        private Request mRequest;
+        private String tokenUsed;
+
+        public AuthenticatedRequest(Request mRequest, String tokenUsed) {
+            this.mRequest = mRequest;
+            this.tokenUsed = tokenUsed;
+        }
+
     }
 
 

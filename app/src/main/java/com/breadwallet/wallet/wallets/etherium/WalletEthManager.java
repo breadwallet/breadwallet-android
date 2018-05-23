@@ -779,7 +779,7 @@ public class WalletEthManager implements BaseWalletManager,
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-
+                Log.e(TAG, "getTokenBalance: " + wid);
                 final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
                 final String eth_rpc_url = host + "module=account&action=tokenbalance" +
                         "&address=" + address +
