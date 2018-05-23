@@ -258,8 +258,9 @@ public class WalletTokenManager implements BaseWalletManager {
         if (amount.compareTo(new BigDecimal(0)) == 0) {
             fee = new BigDecimal(0);
         } else {
-            fee = new BigDecimal(mWalletToken.transactionEstimatedFee(amount.toPlainString(),
-                    BREthereumAmount.Unit.TOKEN_DECIMAL, BREthereumAmount.Unit.ETHER_WEI));
+            String feeString = mWalletToken.transactionEstimatedFee(amount.toPlainString(),
+                    BREthereumAmount.Unit.TOKEN_DECIMAL, BREthereumAmount.Unit.ETHER_WEI);
+            fee = Utils.isNullOrEmpty(feeString) ? BigDecimal.ZERO : new BigDecimal(feeString);
         }
         return fee;
     }
