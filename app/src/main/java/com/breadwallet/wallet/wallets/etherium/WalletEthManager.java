@@ -111,7 +111,6 @@ public class WalletEthManager implements BaseWalletManager,
     private final BigDecimal ONE_ETH = new BigDecimal("1000000000000000000"); //1ETH = 1000000000000000000 WEI
     private BREthereumWallet mWallet;
     public BREthereumLightNode.JSON_RPC node;
-    private Context mContext;
 
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
         uiConfig = new WalletUiConfiguration("#5e6fa5", null, true);
@@ -163,7 +162,6 @@ public class WalletEthManager implements BaseWalletManager,
         BreadApp.generateWalletIfIfNeeded(app, getReceiveAddress(app).stringify());
         WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
 
-        mContext = app;
         mWallet.estimateGasPrice();
         mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
         node.connect();
@@ -717,6 +715,9 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     protected void getEtherBalance(final BREthereumWallet wallet, final int wid, final String address, final int rid) {
+        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
+            return;
+        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -736,7 +737,7 @@ public class WalletEthManager implements BaseWalletManager,
                     e.printStackTrace();
                 }
 
-                JsonRpcRequest.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(BreadApp.getBreadContext(), eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
@@ -776,6 +777,11 @@ public class WalletEthManager implements BaseWalletManager,
                                    final String contractAddress,
                                    final String address,
                                    final int rid) {
+        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
+            Log.e(TAG, "getTokenBalance: App in background!");
+            return;
+        }
+        Log.e(TAG, "getTokenBalance: ..");
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -792,7 +798,7 @@ public class WalletEthManager implements BaseWalletManager,
                     e.printStackTrace();
                 }
 
-                JsonRpcRequest.makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(BreadApp.getBreadContext(), eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
 
@@ -834,7 +840,9 @@ public class WalletEthManager implements BaseWalletManager,
 
     @Override
     public void getGasPrice(final int wid, final int rid) {
-        Log.e(TAG, "getGasPrice: " + wid);
+        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
+            return;
+        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -852,7 +860,7 @@ public class WalletEthManager implements BaseWalletManager,
                     e.printStackTrace();
                 }
 
-                JsonRpcRequest.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(BreadApp.getBreadContext(), eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
@@ -877,7 +885,9 @@ public class WalletEthManager implements BaseWalletManager,
 
     @Override
     public void getGasEstimate(final int wid, final int tid, final String to, final String amount, final String data, final int rid) {
-        Log.e(TAG, "getGasEstimate: " + wid);
+        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
+            return;
+        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -900,7 +910,7 @@ public class WalletEthManager implements BaseWalletManager,
                     e.printStackTrace();
                 }
 
-                JsonRpcRequest.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(BreadApp.getBreadContext(), eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
@@ -923,6 +933,9 @@ public class WalletEthManager implements BaseWalletManager,
 
     @Override
     public void submitTransaction(final int wid, final int tid, final String rawTransaction, final int rid) {
+        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
+            return;
+        }
         if (Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
             Log.e(TAG, "submitTransaction: wid:" + wid);
             Log.e(TAG, "submitTransaction: tid:" + tid);
@@ -948,7 +961,7 @@ public class WalletEthManager implements BaseWalletManager,
                     e.printStackTrace();
                 }
 
-                JsonRpcRequest.makeRpcRequest(mContext, eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(BreadApp.getBreadContext(), eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         String txHash = null;
@@ -1015,6 +1028,9 @@ public class WalletEthManager implements BaseWalletManager,
 
     @Override
     public void getTransactions(final String address, final int id) {
+        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
+            return;
+        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -1030,7 +1046,7 @@ public class WalletEthManager implements BaseWalletManager,
                     e.printStackTrace();
                 }
 
-                JsonRpcRequest.makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(BreadApp.getBreadContext(), eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
 
@@ -1189,6 +1205,9 @@ public class WalletEthManager implements BaseWalletManager,
 
     @Override
     public void getLogs(final String address, final String event, final int rid) {
+        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
+            return;
+        }
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -1209,7 +1228,7 @@ public class WalletEthManager implements BaseWalletManager,
                     e.printStackTrace();
                 }
 
-                JsonRpcRequest.makeRpcRequest(mContext, eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcRequest.makeRpcRequest(BreadApp.getBreadContext(), eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
 
