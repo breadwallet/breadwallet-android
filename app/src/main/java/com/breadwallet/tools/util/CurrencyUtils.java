@@ -57,13 +57,13 @@ public class CurrencyUtils {
         currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.getDefault());
         // This specifies the actual currency that the value is in, and provide
         // s the currency symbol.
-        DecimalFormatSymbols decimalFormatSymbols;
-        decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
+        DecimalFormatSymbols decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
         BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
         currencyFormat.setGroupingUsed(true);
         if (wallet != null) {
             amount = wallet.getCryptoForSmallestCrypto(app, amount);
-            currencyFormat.setDecimalFormatSymbols(null);
+            decimalFormatSymbols.setCurrencySymbol("");
+            currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
             currencyFormat.setMaximumFractionDigits(wallet.getMaxDecimalPlaces(app));
             currencyFormat.setMinimumFractionDigits(0);
             return String.format("%s %s", currencyFormat.format(amount), iso.toUpperCase());
