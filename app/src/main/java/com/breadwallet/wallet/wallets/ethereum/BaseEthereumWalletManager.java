@@ -46,9 +46,11 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
 
     // TODO not used by ETH, ERC20
     @Override
-    public void addSyncListeners(SyncListener listener) {
-//        mWalletManagerHelper.addSyncListeners(listener);
-    }
+    public void addSyncListener(SyncListener listener) { }
+
+    // TODO not used by ETH, ERC20
+    @Override
+    public void removeSyncListener(SyncListener listener) { }
 
     // TODO not used by ETH, ERC20
     @Override

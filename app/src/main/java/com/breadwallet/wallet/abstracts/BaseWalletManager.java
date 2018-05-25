@@ -64,7 +64,9 @@ public interface BaseWalletManager {
 
 //    void addTxStatusUpdatedListener(OnTxStatusUpdatedListener list);
 
-    void addSyncListeners(SyncListener list);
+    void addSyncListener(SyncListener listener);
+
+    void removeSyncListener(SyncListener listener);
 
     void addTxListModifiedListener(OnTxListModified list);
 

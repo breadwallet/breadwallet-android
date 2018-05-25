@@ -35,9 +35,15 @@ public class WalletManagerHelper {
 //            mOnTxStatusUpdatedListeners.add(listener);
 //    }
 
-    public void addSyncListeners(SyncListener listener) {
+    public void addSyncListener(SyncListener listener) {
         if (listener != null && !mSyncListeners.contains(listener)) {
             mSyncListeners.add(listener);
+        }
+    }
+
+    public void removeSyncListener(SyncListener listener) {
+        if (listener != null && mSyncListeners.contains(listener)) {
+            mSyncListeners.remove(listener);
         }
     }
 
