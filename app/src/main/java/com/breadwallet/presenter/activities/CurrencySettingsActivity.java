@@ -47,7 +47,7 @@ public class CurrencySettingsActivity extends BRActivity {
 
         final BaseWalletManager wm = WalletsMaster.getInstance(this).getCurrentWallet(this);
 
-        mTitle.setText(String.format("%s %s", wm.getName(this), CurrencySettingsActivity.this.getString(R.string.Button_settings)));
+        mTitle.setText(String.format("%s %s", wm.getName(), CurrencySettingsActivity.this.getString(R.string.Button_settings)));
     }
 
     @Override

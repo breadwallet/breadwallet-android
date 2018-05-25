@@ -60,7 +60,7 @@ import java.math.BigDecimal;
  * (BTC, BCH, ETH)
  */
 
-public class WalletActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, OnTxListModified, RatesDataSource.OnDataChanged {
+public class WalletActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, OnTxListModified, RatesDataSource.OnDataChanged, SyncListener {
     private static final String TAG = WalletActivity.class.getName();
 
     private static WalletActivity mThis;
@@ -272,10 +272,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatExchangeRate(this));
         String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wallet.getFiatBalance(this));
-        String cryptoBalance = CurrencyUtils.getFormattedAmount(this, wallet.getIso(this), wallet.getCachedBalance(this));
+        String cryptoBalance = CurrencyUtils.getFormattedAmount(this, wallet.getIso(), wallet.getCachedBalance(this));
 
-        mCurrencyTitle.setText(wallet.getName(this));
-        mCurrencyPriceUsd.setText(String.format("%s per %s", fiatExchangeRate, wallet.getIso(this)));
+        mCurrencyTitle.setText(wallet.getName());
+        mCurrencyPriceUsd.setText(String.format("%s per %s", fiatExchangeRate, wallet.getIso()));
         mBalancePrimary.setText(fiatBalance);
         mBalanceSecondary.setText(cryptoBalance);
 
@@ -420,24 +420,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             }
         });
 
-        mCurrentWalletIso = wallet.getIso(WalletActivity.this);
+        mCurrentWalletIso = wallet.getIso();
 
-        wallet.addSyncListeners(new SyncListener() {
-            @Override
-            public void syncStopped(String err) {
-
-            }
-
-            @Override
-            public void syncStarted() {
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        SyncService.startService(WalletActivity.this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletIso);
-                    }
-                });
-            }
-        });
+        wallet.addSyncListener(this);
 
         mSyncNotificationBroadcastReceiver = new SyncNotificationBroadcastReceiver();
         SyncService.registerSyncNotificationBroadcastReceiver(WalletActivity.this.getApplicationContext(), mSyncNotificationBroadcastReceiver);
@@ -451,8 +436,24 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     protected void onPause() {
         super.onPause();
         InternetManager.unregisterConnectionReceiver(this, this);
+        mWallet.removeSyncListener(this);
         SyncService.unregisterSyncNotificationBroadcastReceiver(WalletActivity.this.getApplicationContext(), mSyncNotificationBroadcastReceiver);
     }
+
+    /* SyncListener methods */
+    @Override
+    public void syncStopped(String err) { }
+
+    @Override
+    public void syncStarted() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                SyncService.startService(WalletActivity.this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletIso);
+            }
+        });
+    }
+    /* SyncListener methods End*/
 
     private void setUpBarFlipper() {
         barFlipper.setInAnimation(AnimationUtils.loadAnimation(this, R.anim.flipper_enter));

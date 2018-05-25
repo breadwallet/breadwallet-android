@@ -50,7 +50,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -151,7 +151,7 @@ public class FragmentSend extends Fragment {
         economy = rootView.findViewById(R.id.right_button);
         close = rootView.findViewById(R.id.close_button);
         BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-        selectedIso = BRSharedPrefs.isCryptoPreferred(getActivity()) ? wm.getIso(getActivity()) : BRSharedPrefs.getPreferredFiatIso(getContext());
+        selectedIso = BRSharedPrefs.isCryptoPreferred(getActivity()) ? wm.getIso() : BRSharedPrefs.getPreferredFiatIso(getContext());
 
         amountBuilder = new StringBuilder(0);
         setListeners();
@@ -302,7 +302,7 @@ public class FragmentSend extends Fragment {
 
 
                 if (Utils.isEmulatorOrDebug(getActivity()) && BuildConfig.BITCOIN_TESTNET) {
-                    theUrl = wm.decorateAddress(getActivity(), theUrl);
+                    theUrl = wm.decorateAddress(theUrl);
                 }
 
                 final CryptoRequest obj = parseRequest(getActivity(), theUrl);
@@ -317,7 +317,7 @@ public class FragmentSend extends Fragment {
                     Log.d(TAG, "Send Amount -> " + obj.amount);
                 }
 
-                if (obj.iso != null && !obj.iso.equalsIgnoreCase(wm.getIso(getActivity()))) {
+                if (obj.iso != null && !obj.iso.equalsIgnoreCase(wm.getIso())) {
                     sayInvalidAddress(); //invalid if the screen is Bitcoin and scanning BitcoinCash for instance
                     return;
                 }
@@ -351,13 +351,13 @@ public class FragmentSend extends Fragment {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        String title = String.format("%1$s addresses are intended for single use only.", wm.getName(getActivity()));
+                                        String title = String.format("%1$s addresses are intended for single use only.", wm.getName());
                                         BRDialog.showCustomDialog(getActivity(), title, getString(R.string.Send_UsedAddress_secondLIne),
                                                 "Ignore", "Cancel", new BRDialogView.BROnClickListener() {
                                                     @Override
                                                     public void onClick(BRDialogView brDialogView) {
                                                         brDialogView.dismiss();
-                                                        addressEdit.setText(wm.decorateAddress(getActivity(), obj.address));
+                                                        addressEdit.setText(wm.decorateAddress(obj.address));
                                                     }
                                                 }, new BRDialogView.BROnClickListener() {
                                                     @Override
@@ -372,8 +372,8 @@ public class FragmentSend extends Fragment {
                                 app.runOnUiThread(new Runnable() {
                                     @Override
                                     public void run() {
-                                        Log.e(TAG, "run: " + wm.getIso(getActivity()));
-                                        addressEdit.setText(wm.decorateAddress(getActivity(), obj.address));
+                                        Log.e(TAG, "run: " + wm.getIso());
+                                        addressEdit.setText(wm.decorateAddress(obj.address));
 
                                     }
                                 });
@@ -393,7 +393,7 @@ public class FragmentSend extends Fragment {
             public void onClick(View v) {
                 if (selectedIso.equalsIgnoreCase(BRSharedPrefs.getPreferredFiatIso(getContext()))) {
                     Activity app = getActivity();
-                    selectedIso = WalletsMaster.getInstance(app).getCurrentWallet(app).getIso(app);
+                    selectedIso = WalletsMaster.getInstance(app).getCurrentWallet(app).getIso();
                 } else {
                     selectedIso = BRSharedPrefs.getPreferredFiatIso(getContext());
                 }
@@ -463,7 +463,7 @@ public class FragmentSend extends Fragment {
                     SpringAnimator.failShakeAnimation(getActivity(), feeText);
                 }
 
-                if (WalletsMaster.getInstance(getActivity()).isIsoErc20(getActivity(), wm.getIso(app))) {
+                if (WalletsMaster.getInstance(getActivity()).isIsoErc20(getActivity(), wm.getIso())) {
 
                     BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, addressEdit.getText().toString());
                     BaseWalletManager ethWm = WalletEthManager.getInstance(app);
@@ -752,7 +752,7 @@ public class FragmentSend extends Fragment {
         BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
         String balanceString;
         if (selectedIso == null)
-            selectedIso = wm.getIso(app);
+            selectedIso = wm.getIso();
         //String iso = selectedIso;
         curBalance = wm.getCachedBalance(app);
         if (!amountLabelOn)
@@ -761,7 +761,7 @@ public class FragmentSend extends Fragment {
 
         //is the chosen ISO a crypto (could be also a fiat currency)
         boolean isIsoCrypto = WalletsMaster.getInstance(app).isIsoCrypto(app, selectedIso);
-        boolean isWalletErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, wm.getIso(app));
+        boolean isWalletErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, wm.getIso());
         BigDecimal inputAmount = new BigDecimal(Utils.isNullOrEmpty(stringAmount) || stringAmount.equalsIgnoreCase(".") ? "0" : stringAmount);
 
         //smallest crypto e.g. satoshis
@@ -782,7 +782,7 @@ public class FragmentSend extends Fragment {
         if (isWalletErc20) {
             BaseWalletManager ethWm = WalletEthManager.getInstance(app);
             isoFee = isIsoCrypto ? rawFee : ethWm.getFiatForSmallestCrypto(app, rawFee, null);
-            formattedFee = CurrencyUtils.getFormattedAmount(app, isIsoCrypto ? ethWm.getIso(app) : selectedIso, isoFee);
+            formattedFee = CurrencyUtils.getFormattedAmount(app, isIsoCrypto ? ethWm.getIso() : selectedIso, isoFee);
 
         }
 
@@ -825,7 +825,7 @@ public class FragmentSend extends Fragment {
                 }
                 BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
                 if (obj.address != null && addressEdit != null) {
-                    addressEdit.setText(wm.decorateAddress(getActivity(), obj.address.trim()));
+                    addressEdit.setText(wm.decorateAddress(obj.address.trim()));
                 }
                 if (obj.message != null && commentEdit != null) {
                     commentEdit.setText(obj.message);
@@ -880,7 +880,7 @@ public class FragmentSend extends Fragment {
 
     private void setButton(boolean isRegular) {
         BaseWalletManager wallet = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-        String iso = wallet.getIso(getActivity());
+        String iso = wallet.getIso();
         if (isRegular) {
             BRSharedPrefs.putFavorStandardFee(getActivity(), iso, true);
             regular.setTextColor(getContext().getColor(R.color.white));

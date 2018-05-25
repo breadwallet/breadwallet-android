@@ -202,7 +202,7 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
                     try {
                         cameraGuide.setImageResource(R.drawable.cameraguide_red);
                         lastUpdated = System.currentTimeMillis();
-                        descriptionText.setText("Not a valid " + WalletsMaster.getInstance(app).getCurrentWallet(app).getName(app) + " address");
+                        descriptionText.setText("Not a valid " + WalletsMaster.getInstance(app).getCurrentWallet(app).getName() + " address");
                     } finally {
                         handlingCode = false;
                     }

@@ -486,11 +486,11 @@ public class KVStoreManager {
     public TxMetaData createMetadata(Context app, BaseWalletManager wm, CryptoTransaction tx) {
         TxMetaData txMetaData = new TxMetaData();
         txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(app);
-        CurrencyEntity ent = RatesDataSource.getInstance(app).getCurrencyByCode(app, wm.getIso(app), txMetaData.exchangeCurrency);
+        CurrencyEntity ent = RatesDataSource.getInstance(app).getCurrencyByCode(app, wm.getIso(), txMetaData.exchangeCurrency);
         txMetaData.exchangeRate = ent == null ? 0 : new BigDecimal(ent.rate).setScale(8, BRConstants.ROUNDING_MODE).stripTrailingZeros().doubleValue();
         txMetaData.fee = wm.getTxFee(tx).toPlainString();
         txMetaData.txSize = tx.getTxSize().intValue();
-        txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, wm.getIso(app));
+        txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, wm.getIso());
         txMetaData.creationTime = (int) (System.currentTimeMillis() / 1000);//seconds
         txMetaData.deviceId = BRSharedPrefs.getDeviceId(app);
         txMetaData.classVersion = 1;

@@ -163,7 +163,7 @@ public class FragmentReceive extends Fragment {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
-                        walletManager.decorateAddress(getActivity(), mReceiveAddress),
+                        walletManager.decorateAddress(mReceiveAddress),
                         new BigDecimal(0), null, null, null);
                 QRUtils.share("mailto:", getActivity(), cryptoUri.toString());
 
@@ -176,7 +176,7 @@ public class FragmentReceive extends Fragment {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
-                        walletManager.decorateAddress(getActivity(), mReceiveAddress),
+                        walletManager.decorateAddress(mReceiveAddress),
                         new BigDecimal(0), null, null, null);
                 QRUtils.share("sms:", getActivity(), cryptoUri.toString());
             }
@@ -311,13 +311,13 @@ public class FragmentReceive extends Fragment {
                         String walletIso;
 
                         if (isReceive) {
-                            walletIso = BRSharedPrefs.getReceiveAddress(ctx, wm.getIso(ctx));
+                            walletIso = BRSharedPrefs.getReceiveAddress(ctx, wm.getIso());
                         } else {
                             WalletBitcoinManager btcWm = WalletBitcoinManager.getInstance(ctx);
-                            walletIso = BRSharedPrefs.getReceiveAddress(ctx, btcWm.getIso(ctx));
+                            walletIso = BRSharedPrefs.getReceiveAddress(ctx, btcWm.getIso());
                         }
                         mReceiveAddress = walletIso;
-                        String decorated = wm.decorateAddress(ctx, mReceiveAddress);
+                        String decorated = wm.decorateAddress(mReceiveAddress);
                         mAddress.setText(decorated);
                         Utils.correctTextSizeIfNeeded(mAddress);
                         Uri uri = CryptoUriParser.createCryptoUrl(ctx, wm, decorated, new BigDecimal(0), null, null, null);
@@ -336,7 +336,7 @@ public class FragmentReceive extends Fragment {
         BRClipboardManager.putClipboard(app, mAddress.getText().toString());
         //copy the legacy for testing purposes (testnet faucet money receiving)
         if (Utils.isEmulatorOrDebug(app) && BuildConfig.BITCOIN_TESTNET)
-            BRClipboardManager.putClipboard(app, WalletsMaster.getInstance(app).getCurrentWallet(app).undecorateAddress(app, mAddress.getText().toString()));
+            BRClipboardManager.putClipboard(app, WalletsMaster.getInstance(app).getCurrentWallet(app).undecorateAddress(mAddress.getText().toString()));
 
         showCopiedLayout(true);
     }

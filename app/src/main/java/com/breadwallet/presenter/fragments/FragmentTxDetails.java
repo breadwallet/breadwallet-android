@@ -37,7 +37,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
 
@@ -205,7 +205,7 @@ public class FragmentTxDetails extends DialogFragment {
         if (mTransaction != null) {
             //user prefers crypto (or fiat)
             boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(app);
-            String cryptoIso = walletManager.getIso(app);
+            String cryptoIso = walletManager.getIso();
             String fiatIso = BRSharedPrefs.getPreferredFiatIso(getContext());
             boolean isErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, cryptoIso);
 
@@ -259,7 +259,7 @@ public class FragmentTxDetails extends DialogFragment {
 
             BigDecimal cryptoAmount = mTransaction.getAmount();
             BREthereumToken tkn = null;
-            if (walletManager.getIso(app).equalsIgnoreCase("ETH"))
+            if (walletManager.getIso().equalsIgnoreCase("ETH"))
                 tkn = WalletEthManager.getInstance(app).node.lookupToken(mTransaction.getTo());
             if (tkn != null) cryptoAmount = mTransaction.getFee(); // it's a token transfer ETH tx
 
@@ -272,7 +272,7 @@ public class FragmentTxDetails extends DialogFragment {
                 //always fiat amount
                 amountWhenSent = CurrencyUtils.getFormattedAmount(app, fiatIso, fiatAmountWhenSent);
             } else {
-                CurrencyEntity ent = new CurrencyEntity(metaData.exchangeCurrency, null, (float) metaData.exchangeRate, walletManager.getIso(app));
+                CurrencyEntity ent = new CurrencyEntity(metaData.exchangeCurrency, null, (float) metaData.exchangeRate, walletManager.getIso());
                 fiatAmountWhenSent = walletManager.getFiatForSmallestCrypto(app, cryptoAmount.abs(), ent);
                 //always fiat amount
                 amountWhenSent = CurrencyUtils.getFormattedAmount(app, ent.code, fiatAmountWhenSent);
@@ -301,7 +301,7 @@ public class FragmentTxDetails extends DialogFragment {
             mTxAction.setText(!received ? getString(R.string.TransactionDetails_titleSent) : getString(R.string.TransactionDetails_titleReceived));
             mToFrom.setText(!received ? getString(R.string.Confirmation_to) + " " : getString(R.string.TransactionDetails_addressViaHeader) + " ");
 
-            mToFromAddress.setText(walletManager.decorateAddress(app, mTransaction.getTo())); //showing only the destination address
+            mToFromAddress.setText(walletManager.decorateAddress(mTransaction.getTo())); //showing only the destination address
 
             // Allow the to/from address to be copyable
             mToFromAddress.setOnClickListener(new View.OnClickListener() {
@@ -353,7 +353,7 @@ public class FragmentTxDetails extends DialogFragment {
             };
 
             //this is always crypto amount
-            mTxAmount.setText(CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), received ? cryptoAmount : cryptoAmount.negate()));
+            mTxAmount.setText(CurrencyUtils.getFormattedAmount(app, walletManager.getIso(), received ? cryptoAmount : cryptoAmount.negate()));
 
             if (received) {
                 mTxAmount.setTextColor(getContext().getColor(R.color.transaction_amount_received_color));
