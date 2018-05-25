@@ -170,7 +170,7 @@ public class QRUtils {
         } else {
             intent.setAction(Intent.ACTION_SEND);
             intent.setType("image/*");
-            intent.putExtra(Intent.EXTRA_SUBJECT, WalletsMaster.getInstance(app).getCurrentWallet(app).getName(app) + " Address");
+            intent.putExtra(Intent.EXTRA_SUBJECT, WalletsMaster.getInstance(app).getCurrentWallet(app).getName() + " Address");
             intent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
             intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
             if (uri != null) {

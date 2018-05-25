@@ -3,12 +3,6 @@ package com.breadwallet.wallet.abstracts;
 import android.content.Context;
 import android.support.annotation.WorkerThread;
 
-import com.breadwallet.core.BRCoreAddress;
-import com.breadwallet.core.BRCoreMerkleBlock;
-import com.breadwallet.core.BRCorePeer;
-import com.breadwallet.core.BRCorePeerManager;
-import com.breadwallet.core.BRCoreTransaction;
-import com.breadwallet.core.BRCoreWallet;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
@@ -19,7 +13,6 @@ import com.breadwallet.wallet.wallets.CryptoTransaction;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 /**
  * BreadWallet
@@ -160,13 +153,13 @@ public interface BaseWalletManager {
     String getSymbol(Context app);
 
     //get the currency denomination e.g. Bitcoin - BTC, Ether - ETH
-    String getIso(Context app);
+    String getIso();
 
     //get the currency scheme (bitcoin or bitcoincash)
-    String getScheme(Context app);
+    String getScheme();
 
     //get the currency name e.g. Bitcoin
-    String getName(Context app);
+    String getName();
 
     //get the currency denomination e.g. BCH, mBCH, Bits
     String getDenominator();
@@ -178,10 +171,10 @@ public interface BaseWalletManager {
     CryptoTransaction createTransaction(BigDecimal amount, String address);
 
     //decorate an address to a particular currency, if needed (like BCH address format)
-    String decorateAddress(Context app, String addr);
+    String decorateAddress(String addr);
 
     //convert to raw address to a particular currency, if needed (like BCH address format)
-    String undecorateAddress(Context app, String addr);
+    String undecorateAddress(String addr);
 
     //get the number of decimal places to use for this currency
     int getMaxDecimalPlaces(Context app);

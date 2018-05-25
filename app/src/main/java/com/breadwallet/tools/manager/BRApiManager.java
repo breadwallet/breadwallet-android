@@ -100,7 +100,7 @@ public class BRApiManager {
                         tmp.name = tmpObj.getString("name");
                         tmp.code = tmpObj.getString("code");
                         tmp.rate = Float.valueOf(tmpObj.getString("rate"));
-                        tmp.iso = walletManager.getIso(context);
+                        tmp.iso = walletManager.getIso();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -155,8 +155,8 @@ public class BRApiManager {
 
         for (final BaseWalletManager w : list) {
             //only update stuff for non erc20 for now, API endpoint BUG
-            if (w.getIso(context).equalsIgnoreCase("BTC") || w.getIso(context).equalsIgnoreCase("BCH")
-                    || w.getIso(context).equalsIgnoreCase("ETH")) {
+            if (w.getIso().equalsIgnoreCase("BTC") || w.getIso().equalsIgnoreCase("BCH")
+                    || w.getIso().equalsIgnoreCase("ETH")) {
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -241,7 +241,7 @@ public class BRApiManager {
 
     @WorkerThread
     public static JSONArray fetchRates(Context app, BaseWalletManager walletManager) {
-        String url = "https://" + BreadApp.HOST + "/rates?currency=" + walletManager.getIso(app);
+        String url = "https://" + BreadApp.HOST + "/rates?currency=" + walletManager.getIso();
         String jsonString = urlGET(app, url);
         JSONArray jsonArray = null;
         if (jsonString == null) {
@@ -259,7 +259,7 @@ public class BRApiManager {
 
     @WorkerThread
     public static JSONArray backupFetchRates(Context app, BaseWalletManager walletManager) {
-        if (!walletManager.getIso(app).equalsIgnoreCase(WalletBitcoinManager.getInstance(app).getIso(app))) {
+        if (!walletManager.getIso().equalsIgnoreCase(WalletBitcoinManager.getInstance(app).getIso())) {
             //todo add backup for BCH
             return null;
         }

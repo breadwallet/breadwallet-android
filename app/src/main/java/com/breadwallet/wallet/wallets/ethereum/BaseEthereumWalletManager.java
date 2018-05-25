@@ -6,7 +6,6 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
-import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
 
@@ -59,8 +58,8 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
 
     @Override
     public void setCachedBalance(Context app, BigDecimal balance) {
-        BRSharedPrefs.putCachedBalance(app, getIso(app), balance);
-        onBalanceChanged(getIso(app), balance);
+        BRSharedPrefs.putCachedBalance(app, getIso(), balance);
+        onBalanceChanged(getIso(), balance);
     }
 
 }

@@ -351,7 +351,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
             }
         }
 
-        String jsonString = BRApiManager.urlGET(app, "https://" + BreadApp.HOST + "/fee-per-kb?currency=" + getIso(app));
+        String jsonString = BRApiManager.urlGET(app, "https://" + BreadApp.HOST + "/fee-per-kb?currency=" + getIso());
 
         if (jsonString == null || jsonString.isEmpty()) {
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
@@ -364,18 +364,18 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
             JSONObject obj = new JSONObject(jsonString);
             fee = new BigDecimal(obj.getString("fee_per_kb"));
             economyFee = new BigDecimal(obj.getString("fee_per_kb_economy"));
-            Log.d(TAG, "updateFee: " + getIso(app) + ":" + fee + "|" + economyFee);
+            Log.d(TAG, "updateFee: " + getIso() + ":" + fee + "|" + economyFee);
 
             if (fee.compareTo(new BigDecimal(0)) > 0) {
-                BRSharedPrefs.putFeeRate(app, getIso(app), fee);
-                BRSharedPrefs.putFeeTime(app, getIso(app), System.currentTimeMillis()); //store the time of the last successful fee fetch
+                BRSharedPrefs.putFeeRate(app, getIso(), fee);
+                BRSharedPrefs.putFeeTime(app, getIso(), System.currentTimeMillis()); //store the time of the last successful fee fetch
             } else {
                 BRReportsManager.reportBug(new NullPointerException("Fee is weird:" + fee));
                 Log.d(TAG, "Error: Fee is unexpected value");
 
             }
             if (economyFee.compareTo(new BigDecimal(0)) > 0) {
-                BRSharedPrefs.putEconomyFeeRate(app, getIso(app), economyFee);
+                BRSharedPrefs.putEconomyFeeRate(app, getIso(), economyFee);
             } else {
                 BRReportsManager.reportBug(new NullPointerException("Economy fee is weird:" + economyFee));
                 Log.d(TAG, "Error: Economy fee is unexpected value");
@@ -388,13 +388,13 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
 
     @Override
     public void refreshAddress(Context app) {
-        if (Utils.isNullOrEmpty(BRSharedPrefs.getReceiveAddress(app, getIso(app)))) {
+        if (Utils.isNullOrEmpty(BRSharedPrefs.getReceiveAddress(app, getIso()))) {
             CryptoAddress address = getReceiveAddress(app);
             if (Utils.isNullOrEmpty(address.stringify())) {
                 Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
                 BRReportsManager.reportBug(new NullPointerException("empty address!"));
             }
-            BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso(app));
+            BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso());
         }
     }
 
@@ -452,17 +452,17 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
     }
 
     @Override
-    public String getIso(Context app) {
+    public String getIso() {
         return ISO;
     }
 
     @Override
-    public String getScheme(Context app) {
+    public String getScheme() {
         return ETH_SCHEME;
     }
 
     @Override
-    public String getName(Context app) {
+    public String getName() {
         return mName;
     }
 
@@ -483,12 +483,12 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
     }
 
     @Override
-    public String decorateAddress(Context app, String addr) {
+    public String decorateAddress(String addr) {
         return addr;
     }
 
     @Override
-    public String undecorateAddress(Context app, String addr) {
+    public String undecorateAddress(String addr) {
         return addr;
     }
 
@@ -499,7 +499,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
 
     @Override
     public BigDecimal getCachedBalance(Context app) {
-        return BRSharedPrefs.getCachedBalance(app, getIso(app));
+        return BRSharedPrefs.getCachedBalance(app, getIso());
     }
 
     @Override
@@ -610,7 +610,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         //fiat rate for btc
         CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
         //Btc rate for ether
-        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
+        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), "BTC");
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;
@@ -629,7 +629,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         //fiat rate for btc
         CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
         //Btc rate for ether
-        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
+        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), "BTC");
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;
@@ -1133,7 +1133,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
 
                                     int blockHeight = (int) node.getBlockHeight();
                                     if (app != null && blockHeight != Integer.MAX_VALUE && blockHeight > 0) {
-                                        BRSharedPrefs.putLastBlockHeight(app, getIso(app), blockHeight);
+                                        BRSharedPrefs.putLastBlockHeight(app, getIso(), blockHeight);
                                     }
                                 }
 
@@ -1248,7 +1248,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                     printInfo("New Gas Limit: ...", iso, event.name());
                     break;
                 case DEFAULT_GAS_PRICE_UPDATED:
-                    printInfo("New Gas Price: " + BRSharedPrefs.getFeeRate(app, getIso(app)), iso, event.name());
+                    printInfo("New Gas Price: " + BRSharedPrefs.getFeeRate(app, getIso()), iso, event.name());
                     break;
                 case TRANSACTION_ADDED:
                     printInfo("New transaction added: ", iso, event.name());
