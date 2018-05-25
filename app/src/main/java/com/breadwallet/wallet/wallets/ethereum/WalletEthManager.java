@@ -1,4 +1,4 @@
-package com.breadwallet.wallet.wallets.etherium;
+package com.breadwallet.wallet.wallets.ethereum;
 
 import android.app.Activity;
 import android.content.Context;
@@ -34,10 +34,6 @@ import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
-import com.breadwallet.wallet.abstracts.OnTxListModified;
-import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
-import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
@@ -56,10 +52,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
-import okhttp3.internal.Util;
 
 /**
  * BreadWallet
@@ -85,7 +79,7 @@ import okhttp3.internal.Util;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletEthManager implements BaseWalletManager,
+public class WalletEthManager extends BaseEthereumWalletManager implements BaseWalletManager,
         BREthereumLightNode.ClientJSON_RPC,
         BREthereumLightNode.Listener {
     private static final String TAG = WalletEthManager.class.getSimpleName();
@@ -98,10 +92,7 @@ public class WalletEthManager implements BaseWalletManager,
 
     private static final String mName = "Ethereum";
 
-    private List<OnBalanceChangedListener> balanceListeners = new ArrayList<>();
-    private List<OnTxStatusUpdatedListener> txStatusUpdatedListeners = new ArrayList<>();
-    private List<SyncListener> syncListeners = new ArrayList<>();
-    private List<OnTxListModified> txModifiedListeners = new ArrayList<>();
+
     private Map<String, Boolean> balanceStatuses = new HashMap<>();
 
     private static WalletEthManager instance;
@@ -225,12 +216,6 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-    public int getForkId() {
-        //No need for ETH
-        return -1;
-    }
-
-    @Override
     public BREthereumAmount.Unit getUnit() {
         return BREthereumAmount.Unit.ETHER_WEI;
     }
@@ -246,30 +231,6 @@ public class WalletEthManager implements BaseWalletManager,
         mWallet.submit(tx.getEtherTx());
         String hash = tx.getEtherTx().getHash();
         return hash == null ? new byte[0] : hash.getBytes();
-    }
-
-    @Override
-    public void addBalanceChangedListener(OnBalanceChangedListener listener) {
-        if (listener != null && !balanceListeners.contains(listener))
-            balanceListeners.add(listener);
-    }
-
-    @Override
-    public void addTxStatusUpdatedListener(OnTxStatusUpdatedListener list) {
-        if (list != null && !txStatusUpdatedListeners.contains(list))
-            txStatusUpdatedListeners.add(list);
-    }
-
-    @Override
-    public void addSyncListeners(SyncListener list) {
-        if (list != null && !syncListeners.contains(list))
-            syncListeners.add(list);
-    }
-
-    @Override
-    public void addTxListModifiedListener(OnTxListModified list) {
-        if (list != null && !txModifiedListeners.contains(list))
-            txModifiedListeners.add(list);
     }
 
     @Override
@@ -390,7 +351,7 @@ public class WalletEthManager implements BaseWalletManager,
             }
         }
 
-        String jsonString = BRApiManager.urlGET(app, "https://" + BreadApp.HOST + "/fee-per-kb?currency=" + getIso(app));
+        String jsonString = BRApiManager.urlGET(app, "https://" + BreadApp.HOST + "/fee-per-kb?currency=" + getIso());
 
         if (jsonString == null || jsonString.isEmpty()) {
             Log.e(TAG, "updateFeePerKb: failed to update fee, response string: " + jsonString);
@@ -403,18 +364,18 @@ public class WalletEthManager implements BaseWalletManager,
             JSONObject obj = new JSONObject(jsonString);
             fee = new BigDecimal(obj.getString("fee_per_kb"));
             economyFee = new BigDecimal(obj.getString("fee_per_kb_economy"));
-            Log.d(TAG, "updateFee: " + getIso(app) + ":" + fee + "|" + economyFee);
+            Log.d(TAG, "updateFee: " + getIso() + ":" + fee + "|" + economyFee);
 
             if (fee.compareTo(new BigDecimal(0)) > 0) {
-                BRSharedPrefs.putFeeRate(app, getIso(app), fee);
-                BRSharedPrefs.putFeeTime(app, getIso(app), System.currentTimeMillis()); //store the time of the last successful fee fetch
+                BRSharedPrefs.putFeeRate(app, getIso(), fee);
+                BRSharedPrefs.putFeeTime(app, getIso(), System.currentTimeMillis()); //store the time of the last successful fee fetch
             } else {
                 BRReportsManager.reportBug(new NullPointerException("Fee is weird:" + fee));
                 Log.d(TAG, "Error: Fee is unexpected value");
 
             }
             if (economyFee.compareTo(new BigDecimal(0)) > 0) {
-                BRSharedPrefs.putEconomyFeeRate(app, getIso(app), economyFee);
+                BRSharedPrefs.putEconomyFeeRate(app, getIso(), economyFee);
             } else {
                 BRReportsManager.reportBug(new NullPointerException("Economy fee is weird:" + economyFee));
                 Log.d(TAG, "Error: Economy fee is unexpected value");
@@ -427,13 +388,13 @@ public class WalletEthManager implements BaseWalletManager,
 
     @Override
     public void refreshAddress(Context app) {
-        if (Utils.isNullOrEmpty(BRSharedPrefs.getReceiveAddress(app, getIso(app)))) {
+        if (Utils.isNullOrEmpty(BRSharedPrefs.getReceiveAddress(app, getIso()))) {
             CryptoAddress address = getReceiveAddress(app);
             if (Utils.isNullOrEmpty(address.stringify())) {
                 Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
                 BRReportsManager.reportBug(new NullPointerException("empty address!"));
             }
-            BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso(app));
+            BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso());
         }
     }
 
@@ -491,22 +452,22 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-    public String getIso(Context app) {
+    public String getIso() {
         return ISO;
     }
 
     @Override
-    public String getScheme(Context app) {
+    public String getScheme() {
         return ETH_SCHEME;
     }
 
     @Override
-    public String getName(Context app) {
+    public String getName() {
         return mName;
     }
 
     @Override
-    public String getDenominator(Context app) {
+    public String getDenominator() {
         return "1000000000000000000";
     }
 
@@ -522,12 +483,12 @@ public class WalletEthManager implements BaseWalletManager,
     }
 
     @Override
-    public String decorateAddress(Context app, String addr) {
+    public String decorateAddress(String addr) {
         return addr;
     }
 
     @Override
-    public String undecorateAddress(Context app, String addr) {
+    public String undecorateAddress(String addr) {
         return addr;
     }
 
@@ -538,7 +499,7 @@ public class WalletEthManager implements BaseWalletManager,
 
     @Override
     public BigDecimal getCachedBalance(Context app) {
-        return BRSharedPrefs.getCachedBalance(app, getIso(app));
+        return BRSharedPrefs.getCachedBalance(app, getIso());
     }
 
     @Override
@@ -565,15 +526,6 @@ public class WalletEthManager implements BaseWalletManager,
     public boolean networkIsReachable() {
         Context app = BreadApp.getBreadContext();
         return InternetManager.getInstance().isConnected(app);
-    }
-
-    @Override
-    public void setCachedBalance(Context app, BigDecimal balance) {
-        BRSharedPrefs.putCachedBalance(app, getIso(app), balance);
-        for (OnBalanceChangedListener listener : balanceListeners) {
-            if (listener != null) listener.onBalanceChanged(getIso(app), balance);
-        }
-
     }
 
     @Override
@@ -658,7 +610,7 @@ public class WalletEthManager implements BaseWalletManager,
         //fiat rate for btc
         CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
         //Btc rate for ether
-        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
+        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), "BTC");
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;
@@ -677,7 +629,7 @@ public class WalletEthManager implements BaseWalletManager,
         //fiat rate for btc
         CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
         //Btc rate for ether
-        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
+        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), "BTC");
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;
@@ -752,9 +704,7 @@ public class WalletEthManager implements BaseWalletManager,
                                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                         @Override
                                         public void run() {
-                                            for (OnBalanceChangedListener list : balanceListeners)
-                                                if (list != null)
-                                                    list.onBalanceChanged(ISO, amount);
+                                            onBalanceChanged(ISO, amount);
                                         }
                                     });
                                 }
@@ -819,9 +769,7 @@ public class WalletEthManager implements BaseWalletManager,
                                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                         @Override
                                         public void run() {
-                                            for (OnBalanceChangedListener list : balanceListeners)
-                                                if (list != null)
-                                                    list.onBalanceChanged(iso, uiBalance);
+                                            onBalanceChanged(iso, uiBalance);
                                         }
                                     });
                                 }
@@ -1000,9 +948,10 @@ public class WalletEthManager implements BaseWalletManager,
                                                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                                                             @Override
                                                             public void run() {
-                                                                for (OnTxStatusUpdatedListener list : txStatusUpdatedListeners)
-                                                                    if (list != null)
-                                                                        list.onTxStatusUpdated();
+                                                                // TODO this is never added
+//                                                                for (OnTxStatusUpdatedListener list : txStatusUpdatedListeners)
+//                                                                    if (list != null)
+//                                                                        list.onTxStatusUpdated();
                                                                 mWallet.updateBalance();
                                                             }
                                                         });
@@ -1184,7 +1133,7 @@ public class WalletEthManager implements BaseWalletManager,
 
                                     int blockHeight = (int) node.getBlockHeight();
                                     if (app != null && blockHeight != Integer.MAX_VALUE && blockHeight > 0) {
-                                        BRSharedPrefs.putLastBlockHeight(app, getIso(app), blockHeight);
+                                        BRSharedPrefs.putLastBlockHeight(app, getIso(), blockHeight);
                                     }
                                 }
 
@@ -1299,7 +1248,7 @@ public class WalletEthManager implements BaseWalletManager,
                     printInfo("New Gas Limit: ...", iso, event.name());
                     break;
                 case DEFAULT_GAS_PRICE_UPDATED:
-                    printInfo("New Gas Price: " + BRSharedPrefs.getFeeRate(app, getIso(app)), iso, event.name());
+                    printInfo("New Gas Price: " + BRSharedPrefs.getFeeRate(app, getIso()), iso, event.name());
                     break;
                 case TRANSACTION_ADDED:
                     printInfo("New transaction added: ", iso, event.name());

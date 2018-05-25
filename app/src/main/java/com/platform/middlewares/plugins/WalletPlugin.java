@@ -91,7 +91,7 @@ public class WalletPlugin implements Plugin {
                 /**whether or not the users wallet is set up yet, or is currently locked*/
                 jsonResp.put("no_wallet", wm.noWalletForPlatform(app));
 
-                String addrs = BRSharedPrefs.getReceiveAddress(app, wm.getCurrentWallet(app).getIso(app));
+                String addrs = BRSharedPrefs.getReceiveAddress(app, wm.getCurrentWallet(app).getIso());
                 if (Utils.isNullOrEmpty(addrs)) {
                     BRReportsManager.reportBug(new NullPointerException("Address is null for simplex!"));
                     Log.e(TAG, "handle: Address is null for simplex!");
@@ -315,7 +315,7 @@ public class WalletPlugin implements Plugin {
 
             JSONObject obj = new JSONObject();
             try {
-                obj.put("currency", w.getIso(app));
+                obj.put("currency", w.getIso());
                 obj.put("address", w.getReceiveAddress(app).stringify());
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -357,7 +357,7 @@ public class WalletPlugin implements Plugin {
         }
 
         final BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, currency);
-        String addr = wm.undecorateAddress(app, toAddress);
+        String addr = wm.undecorateAddress(toAddress);
         if (Utils.isNullOrEmpty(addr)) {
             BRDialog.showSimpleDialog(app, "Failed to create tx for exchange!", "Address is empty");
             return;
@@ -395,9 +395,9 @@ public class WalletPlugin implements Plugin {
         for (BaseWalletManager w : list) {
             JSONObject obj = new JSONObject();
             try {
-                obj.put("id", w.getIso(app));
-                obj.put("ticker", w.getIso(app));
-                obj.put("name", w.getName(app));
+                obj.put("id", w.getIso());
+                obj.put("ticker", w.getIso());
+                obj.put("name", w.getName());
 
                 //Colors
                 JSONArray colors = new JSONArray();
@@ -409,8 +409,8 @@ public class WalletPlugin implements Plugin {
                 //Balance
                 JSONObject balance = new JSONObject();
 
-                String denominator = w.getDenominator(app);
-                balance.put("currency", w.getIso(app));
+                String denominator = w.getDenominator();
+                balance.put("currency", w.getIso());
                 balance.put("numerator", w.getCachedBalance(app).toPlainString()); // raw, since we store the balance in the smallest amount
                 balance.put("denominator", denominator);
 

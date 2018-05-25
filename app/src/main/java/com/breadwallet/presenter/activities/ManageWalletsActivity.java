@@ -17,10 +17,8 @@ import com.breadwallet.tools.adapter.ManageTokenListAdapter;
 import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback;
 import com.breadwallet.tools.listeners.OnStartDragListener;
 import com.breadwallet.tools.manager.BRReportsManager;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
-import com.breadwallet.wallet.wallets.etherium.WalletTokenManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.tools.KVStoreManager;
 

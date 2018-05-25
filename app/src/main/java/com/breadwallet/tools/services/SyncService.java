@@ -12,7 +12,6 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -163,7 +162,7 @@ public class SyncService extends IntentService {
                     pendingIntent);
         }
 
-        broadcastSyncProgressUpdate(context, walletManager.getIso(context), progress);
+        broadcastSyncProgressUpdate(context, walletManager.getIso(), progress);
     }
 
     /**

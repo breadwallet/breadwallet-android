@@ -95,7 +95,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                 if (position >= mAdapter.getItemCount() || position < 0) return;
 
                 if (mAdapter.getItemViewType(position) == 0) {
-                    BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, mAdapter.getItemAt(position).getIso(HomeActivity.this));
+                    BRSharedPrefs.putCurrentWalletIso(HomeActivity.this, mAdapter.getItemAt(position).getIso());
                     Intent newIntent = new Intent(HomeActivity.this, WalletActivity.class);
                     startActivity(newIntent);
                     overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);

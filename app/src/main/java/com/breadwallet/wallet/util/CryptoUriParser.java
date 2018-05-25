@@ -126,14 +126,14 @@ public class CryptoUriParser {
         BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
 
         if (scheme == null) {
-            scheme = wm.getScheme(app);
-            obj.iso = wm.getIso(app);
+            scheme = wm.getScheme();
+            obj.iso = wm.getIso();
 
         } else {
             List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(app).getAllWallets(app));
             for (BaseWalletManager walletManager : list) {
-                if (scheme.equalsIgnoreCase(walletManager.getScheme(app))) {
-                    obj.iso = walletManager.getIso(app);
+                if (scheme.equalsIgnoreCase(walletManager.getScheme())) {
+                    obj.iso = walletManager.getIso();
                     break;
                 }
             }
@@ -154,7 +154,7 @@ public class CryptoUriParser {
             String trimmedHost = host.trim();
             if (obj.iso.equalsIgnoreCase("bch"))
                 trimmedHost = scheme + ":" + trimmedHost; //bitcoin cash has the scheme attached to the address
-            String addrs = wm.undecorateAddress(app, trimmedHost);
+            String addrs = wm.undecorateAddress(trimmedHost);
             if (!Utils.isNullOrEmpty(addrs) && wm.isAddressValid(addrs)) {
                 obj.address = addrs;
             }
@@ -222,7 +222,7 @@ public class CryptoUriParser {
                     //todo implement
                     break;
                 case "address":
-                    BRClipboardManager.putClipboard(app, wm.decorateAddress(app, BRSharedPrefs.getReceiveAddress(app, wm.getIso(app))));
+                    BRClipboardManager.putClipboard(app, wm.decorateAddress(BRSharedPrefs.getReceiveAddress(app, wm.getIso())));
 
                     break;
             }
@@ -259,10 +259,10 @@ public class CryptoUriParser {
         if (requestObject == null || requestObject.address == null || requestObject.address.isEmpty())
             return false;
         final BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
-        if (requestObject.iso != null && !requestObject.iso.equalsIgnoreCase(wallet.getIso(app))) {
-            if (!(WalletsMaster.getInstance(app).isIsoErc20(app, wallet.getIso(app)) && requestObject.iso.equalsIgnoreCase("ETH"))) {
+        if (requestObject.iso != null && !requestObject.iso.equalsIgnoreCase(wallet.getIso())) {
+            if (!(WalletsMaster.getInstance(app).isIsoErc20(app, wallet.getIso()) && requestObject.iso.equalsIgnoreCase("ETH"))) {
                 BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error),
-                        String.format(app.getString(R.string.Send_invalidAddressMessage), wallet.getName(app)), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                        String.format(app.getString(R.string.Send_invalidAddressMessage), wallet.getName()), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                             @Override
                             public void onClick(BRDialogView brDialogView) {
                                 brDialogView.dismiss();
@@ -301,9 +301,9 @@ public class CryptoUriParser {
 
     public static Uri createCryptoUrl(Context app, BaseWalletManager wm, String
             addr, BigDecimal cryptoAmount, String label, String message, String rURL) {
-        String iso = wm.getIso(app);
+        String iso = wm.getIso();
         Uri.Builder builder = new Uri.Builder();
-        String walletScheme = wm.getScheme(app);
+        String walletScheme = wm.getScheme();
         String cleanAddress = addr;
         if (addr.contains(":")) {
             cleanAddress = addr.split(":")[1];

@@ -3,7 +3,6 @@ package com.breadwallet.tools.util;
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -52,7 +51,7 @@ public class SyncTestLogger extends Thread {
             StringBuilder builder = new StringBuilder();
             List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(mContext).getAllWallets(mContext));
             for (BaseWalletManager w : list) {
-                builder.append("   " + w.getIso(mContext));
+                builder.append("   " + w.getIso());
                 String connectionStatus = "";
                 if (w.getConnectStatus() == 2)
                     connectionStatus = "Connected";
@@ -61,7 +60,7 @@ public class SyncTestLogger extends Thread {
                 else if (w.getConnectStatus() == 1)
                     connectionStatus = "Connecting";
 
-                double progress = w.getSyncProgress(BRSharedPrefs.getStartHeight(mContext, w.getIso(mContext)));
+                double progress = w.getSyncProgress(BRSharedPrefs.getStartHeight(mContext, w.getIso()));
                 if (progress != 1) needsLog = true;
                 builder.append(" - " + connectionStatus + " " + progress * 100 + "%     ");
 

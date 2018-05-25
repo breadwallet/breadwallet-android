@@ -7,7 +7,7 @@ import android.util.Log;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 import java.math.BigDecimal;
 
@@ -89,7 +89,7 @@ public class CryptoRequest {
     public boolean notEnoughForFee(Context app, BaseWalletManager walletManager) {
         BigDecimal balance = walletManager.getCachedBalance(app);
 
-        boolean isErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, walletManager.getIso(app));
+        boolean isErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, walletManager.getIso());
 
         if (isErc20) {
             BigDecimal feeForTx = walletManager.getEstimatedFee(amount, null);
@@ -106,7 +106,7 @@ public class CryptoRequest {
     public boolean feeOverBalance(Context app, BaseWalletManager walletManager) {
         BigDecimal balance = walletManager.getCachedBalance(app);
 
-        boolean isErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, walletManager.getIso(app));
+        boolean isErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, walletManager.getIso());
 
         if (isErc20) {
             return false; //never need adjustment for ERC20s (fee is in ETH)

@@ -1,4 +1,4 @@
-package com.breadwallet.wallet.wallets.etherium;
+package com.breadwallet.wallet.wallets.ethereum;
 
 import android.content.Context;
 import android.support.annotation.WorkerThread;
@@ -13,14 +13,9 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.RatesDataSource;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
-import com.breadwallet.wallet.abstracts.OnTxListModified;
-import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
-import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
@@ -56,7 +51,7 @@ import java.util.Map;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletTokenManager implements BaseWalletManager {
+public class WalletTokenManager extends BaseEthereumWalletManager implements BaseWalletManager {
 
     private static final String TAG = WalletTokenManager.class.getSimpleName();
 
@@ -65,10 +60,6 @@ public class WalletTokenManager implements BaseWalletManager {
     private static Map<String, WalletTokenManager> mTokenWallets = new HashMap<>();
     private BREthereumWallet mWalletToken;
 
-    private List<OnBalanceChangedListener> balanceListeners = new ArrayList<>();
-    private List<OnTxStatusUpdatedListener> txStatusUpdatedListeners = new ArrayList<>();
-    private List<SyncListener> syncListeners = new ArrayList<>();
-    private List<OnTxListModified> txModifiedListeners = new ArrayList<>();
     private WalletUiConfiguration uiConfig;
 
     private WalletTokenManager(WalletEthManager walletEthManager, BREthereumWallet tokenWallet) {
@@ -146,12 +137,6 @@ public class WalletTokenManager implements BaseWalletManager {
     }
 
     @Override
-    public int getForkId() {
-        //no need for Tokens
-        return -1;
-    }
-
-    @Override
     public BREthereumAmount.Unit getUnit() {
         return BREthereumAmount.Unit.TOKEN_DECIMAL;
     }
@@ -167,30 +152,6 @@ public class WalletTokenManager implements BaseWalletManager {
         mWalletToken.submit(tx.getEtherTx());
         String hash = tx.getEtherTx().getHash();
         return hash == null ? new byte[0] : hash.getBytes();
-    }
-
-    @Override
-    public void addBalanceChangedListener(OnBalanceChangedListener listener) {
-        if (listener != null && !balanceListeners.contains(listener))
-            balanceListeners.add(listener);
-    }
-
-    @Override
-    public void addTxStatusUpdatedListener(OnTxStatusUpdatedListener list) {
-        if (list != null && !txStatusUpdatedListeners.contains(list))
-            txStatusUpdatedListeners.add(list);
-    }
-
-    @Override
-    public void addSyncListeners(SyncListener list) {
-        if (list != null && !syncListeners.contains(list))
-            syncListeners.add(list);
-    }
-
-    @Override
-    public void addTxListModifiedListener(OnTxListModified list) {
-        if (list != null && !txModifiedListeners.contains(list))
-            txModifiedListeners.add(list);
     }
 
     @Override
@@ -303,13 +264,13 @@ public class WalletTokenManager implements BaseWalletManager {
     @Override
     public void refreshAddress(Context app) {
         long start = System.currentTimeMillis();
-        if (Utils.isNullOrEmpty(BRSharedPrefs.getReceiveAddress(app, getIso(app)))) {
+        if (Utils.isNullOrEmpty(BRSharedPrefs.getReceiveAddress(app, getIso()))) {
             String address = getReceiveAddress(app).stringify();
             if (Utils.isNullOrEmpty(address)) {
                 Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
                 BRReportsManager.reportBug(new NullPointerException("empty address!"));
             }
-            BRSharedPrefs.putReceiveAddress(app, address, getIso(app));
+            BRSharedPrefs.putReceiveAddress(app, address, getIso());
         }
     }
 
@@ -318,7 +279,7 @@ public class WalletTokenManager implements BaseWalletManager {
     public void refreshCachedBalance(final Context app) {
         if (mWalletEthManager.wasBalanceUpdated(mWalletToken.getSymbol())) {
             BigDecimal balance = new BigDecimal(mWalletToken.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));
-            BRSharedPrefs.putCachedBalance(app, getIso(app), balance);
+            BRSharedPrefs.putCachedBalance(app, getIso(), balance);
         }
     }
 
@@ -328,7 +289,7 @@ public class WalletTokenManager implements BaseWalletManager {
         BREthereumTransaction txs[] = mWalletToken.getTransactions();
         int blockHeight = (int) mWalletEthManager.node.getBlockHeight();
         if (app != null && blockHeight != Integer.MAX_VALUE && blockHeight > 0) {
-            BRSharedPrefs.putLastBlockHeight(app, getIso(app), blockHeight);
+            BRSharedPrefs.putLastBlockHeight(app, getIso(), blockHeight);
         }
         if (txs == null || txs.length <= 0) return null;
         List<TxUiHolder> uiTxs = new ArrayList<>();
@@ -365,22 +326,22 @@ public class WalletTokenManager implements BaseWalletManager {
     }
 
     @Override
-    public String getIso(Context app) {
+    public String getIso() {
         return mWalletToken.getToken().getSymbol();
     }
 
     @Override
-    public String getScheme(Context app) {
+    public String getScheme() {
         return null;
     }
 
     @Override
-    public String getName(Context app) {
+    public String getName() {
         return mWalletToken.getToken().getName();
     }
 
     @Override
-    public String getDenominator(Context app) {
+    public String getDenominator() {
         return new BigDecimal(10).pow(mWalletToken.getToken().getDecimals()).toPlainString();
     }
 
@@ -396,12 +357,12 @@ public class WalletTokenManager implements BaseWalletManager {
     }
 
     @Override
-    public String decorateAddress(Context app, String addr) {
+    public String decorateAddress(String addr) {
         return addr;
     }
 
     @Override
-    public String undecorateAddress(Context app, String addr) {
+    public String undecorateAddress(String addr) {
         return addr;
     }
 
@@ -412,7 +373,7 @@ public class WalletTokenManager implements BaseWalletManager {
 
     @Override
     public BigDecimal getCachedBalance(Context app) {
-        return BRSharedPrefs.getCachedBalance(app, getIso(app));
+        return BRSharedPrefs.getCachedBalance(app, getIso());
     }
 
     @Override
@@ -438,14 +399,6 @@ public class WalletTokenManager implements BaseWalletManager {
     @Override
     public boolean networkIsReachable() {
         return mWalletEthManager.networkIsReachable();
-    }
-
-    @Override
-    public void setCachedBalance(Context app, BigDecimal balance) {
-        BRSharedPrefs.putCachedBalance(app, getIso(app), balance);
-        for (OnBalanceChangedListener listener : balanceListeners) {
-            if (listener != null) listener.onBalanceChanged(getIso(app), balance);
-        }
     }
 
     @Override
@@ -530,7 +483,7 @@ public class WalletTokenManager implements BaseWalletManager {
         CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
 
         //Btc rate for the token
-        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
+        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), "BTC");
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;
@@ -552,7 +505,7 @@ public class WalletTokenManager implements BaseWalletManager {
         //fiat rate for btc
         CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
         //Btc rate for token
-        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
+        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), "BTC");
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;

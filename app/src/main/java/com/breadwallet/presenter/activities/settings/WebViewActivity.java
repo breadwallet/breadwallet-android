@@ -167,7 +167,7 @@ public class WebViewActivity extends BRActivity {
                 bottomToolbar.setVisibility(View.INVISIBLE);
             }
             if (theUrl.endsWith("/buy"))
-                theUrl = theUrl + "?currency=" + WalletsMaster.getInstance(this).getCurrentWallet(this).getIso(this).toLowerCase();
+                theUrl = theUrl + "?currency=" + WalletsMaster.getInstance(this).getCurrentWallet(this).getIso().toLowerCase();
             webView.loadUrl(theUrl);
             if (articleId != null && !articleId.isEmpty())
                 navigate(articleId);

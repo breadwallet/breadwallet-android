@@ -234,7 +234,7 @@ public class PostAuth {
                     txMetaData.exchangeRate = fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue();
                     txMetaData.fee = mWalletManager.getTxFee(tx).toPlainString();
                     txMetaData.txSize = tx.getTxSize().intValue();
-                    txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, mWalletManager.getIso(app));
+                    txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(app, mWalletManager.getIso());
                     txMetaData.creationTime = (int) (System.currentTimeMillis() / 1000);//seconds
                     txMetaData.deviceId = BRSharedPrefs.getDeviceId(app);
                     txMetaData.classVersion = 1;
