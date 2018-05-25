@@ -88,7 +88,6 @@ public class FragmentTxDetails extends DialogFragment {
     private BRText mAmountNow;
     private BRText mWhenSentLabel;
     private BRText mNowLabel;
-    private OnPauseListener mOnPauseListener;
 
     private ConstraintLayout mConfirmedContainer;
     private View mConfirmedDivider;
@@ -327,31 +326,6 @@ public class FragmentTxDetails extends DialogFragment {
                 }
             });
 
-            mOnPauseListener = new OnPauseListener() {
-                @Override
-                public void onPaused() {
-                    // Update the memo field on the transaction and save it
-                    if (mTxMetaData == null) mTxMetaData = new TxMetaData();
-                    mTxMetaData.comment = mMemoText.getText().toString();
-                    Log.d(TAG, "MetaData not null");
-                    KVStoreManager.getInstance().putTxMetaData(getContext(), mTxMetaData, mTransaction.getTxHash());
-                    mTxMetaData = null;
-
-                    // Hide softkeyboard if it's visible
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(mMemoText.getWindowToken(), 0);
-
-                    // Update Tx list to reflect the memo change
-                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            TxManager.getInstance().updateTxList(getContext());
-                        }
-                    });
-
-                }
-            };
-
             //this is always crypto amount
             mTxAmount.setText(CurrencyUtils.getFormattedAmount(app, walletManager.getIso(), received ? cryptoAmount : cryptoAmount.negate()));
 
@@ -454,10 +428,19 @@ public class FragmentTxDetails extends DialogFragment {
 
     @Override
     public void onPause() {
-        if (mOnPauseListener != null) mOnPauseListener.onPaused();
-
         super.onPause();
+        // Update the memo field on the transaction and save it
+        if (mTxMetaData == null) mTxMetaData = new TxMetaData();
+        mTxMetaData.comment = mMemoText.getText().toString();
+        KVStoreManager.getInstance().putTxMetaData(getContext(), mTxMetaData, mTransaction.getTxHash());
+        mTxMetaData = null;
 
+        // Hide softkeyboard if it's visible
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mMemoText.getWindowToken(), 0);
+
+        // Update Tx list to reflect the memo change
+        TxManager.getInstance().updateTxList(getActivity());
     }
 
     public interface OnPauseListener {
