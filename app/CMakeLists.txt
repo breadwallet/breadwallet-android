@@ -107,19 +107,29 @@ add_library( # The name of the library.
              src/main/jni/breadwallet-core/ethereum/BREthereum.c
              src/main/jni/breadwallet-core/ethereum/BREthereumAccount.c
              src/main/jni/breadwallet-core/ethereum/BREthereumAccount.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumAccountState.c
+             src/main/jni/breadwallet-core/ethereum/BREthereumAccountState.h
              src/main/jni/breadwallet-core/ethereum/BREthereumAmount.c
              src/main/jni/breadwallet-core/ethereum/BREthereumAmount.h
              src/main/jni/breadwallet-core/ethereum/BREthereumBase.h
              src/main/jni/breadwallet-core/ethereum/BREthereumBlock.c
              src/main/jni/breadwallet-core/ethereum/BREthereumBlock.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumBloomFilter.c
+             src/main/jni/breadwallet-core/ethereum/BREthereumBloomFilter.h
              src/main/jni/breadwallet-core/ethereum/BREthereumContract.c
              src/main/jni/breadwallet-core/ethereum/BREthereumContract.h
              src/main/jni/breadwallet-core/ethereum/BREthereumEther.c
              src/main/jni/breadwallet-core/ethereum/BREthereumEther.h
              src/main/jni/breadwallet-core/ethereum/BREthereumGas.c
              src/main/jni/breadwallet-core/ethereum/BREthereumGas.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumHash.c
              src/main/jni/breadwallet-core/ethereum/BREthereumLightNode.c
              src/main/jni/breadwallet-core/ethereum/BREthereumLightNode.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumLightNodeAnnounce.c
+             src/main/jni/breadwallet-core/ethereum/BREthereumLightNodeListen.c
+             src/main/jni/breadwallet-core/ethereum/BREthereumLightNodePrivate.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumLog.c
+             src/main/jni/breadwallet-core/ethereum/BREthereumLog.h
              src/main/jni/breadwallet-core/ethereum/BREthereumNetwork.c
              src/main/jni/breadwallet-core/ethereum/BREthereumNetwork.h
              src/main/jni/breadwallet-core/ethereum/BREthereumPrivate.h
@@ -127,8 +137,16 @@ add_library( # The name of the library.
              src/main/jni/breadwallet-core/ethereum/BREthereumToken.h
              src/main/jni/breadwallet-core/ethereum/BREthereumTransaction.c
              src/main/jni/breadwallet-core/ethereum/BREthereumTransaction.h
+             src/main/jni/breadwallet-core/ethereum/BREthereumTransactionReceipt.c
+             src/main/jni/breadwallet-core/ethereum/BREthereumTransactionReceipt.h
              src/main/jni/breadwallet-core/ethereum/BREthereumWallet.c
              src/main/jni/breadwallet-core/ethereum/BREthereumWallet.h
+
+             # Ethereum Event
+             src/main/jni/breadwallet-core/ethereum/event/BREvent.c
+             src/main/jni/breadwallet-core/ethereum/event/BREvent.h
+             src/main/jni/breadwallet-core/ethereum/event/BREventQueue.c
+             src/main/jni/breadwallet-core/ethereum/event/BREventQueue.h
 
              #Ethereum RLP
              src/main/jni/breadwallet-core/ethereum/rlp/BRRlp.h
