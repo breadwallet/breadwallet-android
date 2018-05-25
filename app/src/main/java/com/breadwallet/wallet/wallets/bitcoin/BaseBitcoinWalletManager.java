@@ -713,8 +713,13 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 //    }
 
     @Override
-    public void addSyncListeners(SyncListener listener) {
-        mWalletManagerHelper.addSyncListeners(listener);
+    public void addSyncListener(SyncListener listener) {
+        mWalletManagerHelper.addSyncListener(listener);
+    }
+
+    @Override
+    public void removeSyncListener(SyncListener listener) {
+        mWalletManagerHelper.removeSyncListener(listener);
     }
 
     public void onSyncStarted() {
@@ -942,7 +947,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 //
 //    public abstract void addTxStatusUpdatedListener(OnTxStatusUpdatedListener list);
 //
-//    public abstract void addSyncListeners(SyncListener list);
+//    public abstract void addSyncListener(SyncListener list);
 //
 //    public abstract void addTxListModifiedListener(OnTxListModified list);
 //
