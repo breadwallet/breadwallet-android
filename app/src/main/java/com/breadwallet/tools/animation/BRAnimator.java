@@ -135,7 +135,7 @@ public class BRAnimator {
         }
         try {
             String iso = "BTC";
-            if (wm != null) wm.getIso(app);
+            if (wm != null) wm.getIso();
             fragmentSupport = new FragmentSupport();
             Bundle bundle = new Bundle();
             bundle.putString("walletIso", iso);

@@ -24,7 +24,6 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -74,13 +73,13 @@ public class SpendLimitActivity extends BRActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 BigDecimal limit = adapter.getItem(position);
                 if (limit == null) {
-                    BRReportsManager.reportBug(new RuntimeException("limit is null for: " + wm.getIso(SpendLimitActivity.this) + ", pos:" + position));
+                    BRReportsManager.reportBug(new RuntimeException("limit is null for: " + wm.getIso() + ", pos:" + position));
                     Log.e(TAG, "onItemClick: limit is null!");
                     return;
                 }
-                BRKeyStore.putSpendLimit(app, limit, wm.getIso(app));
+                BRKeyStore.putSpendLimit(app, limit, wm.getIso());
                 BigDecimal totalSent = wm.getTotalSent(app);
-                BRKeyStore.putTotalLimit(app, totalSent.add(BRKeyStore.getSpendLimit(app, wm.getIso(app))), wm.getIso(app));
+                BRKeyStore.putTotalLimit(app, totalSent.add(BRKeyStore.getSpendLimit(app, wm.getIso())), wm.getIso());
                 adapter.notifyDataSetChanged();
             }
 
@@ -135,7 +134,7 @@ public class SpendLimitActivity extends BRActivity {
         @Override
         public View getView(int position, View convertView, @NonNull ViewGroup parent) {
             BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-            final BigDecimal limit = BRKeyStore.getSpendLimit(app, wm.getIso(app));
+            final BigDecimal limit = BRKeyStore.getSpendLimit(app, wm.getIso());
             if (convertView == null) {
                 // inflate the layout
                 LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
@@ -146,7 +145,7 @@ public class SpendLimitActivity extends BRActivity {
             BigDecimal item = getItem(position);
             BaseWalletManager walletManager = WalletsMaster.getInstance(app).getCurrentWallet(app);
 
-            String cryptoAmount = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), item);
+            String cryptoAmount = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(), item);
 
             String text = String.format(item.compareTo(new BigDecimal(0)) == 0 ? app.getString(R.string.TouchIdSpendingLimit) : "%s", cryptoAmount);
             textViewItem.setText(text);

@@ -264,13 +264,13 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
     @Override
     public void refreshAddress(Context app) {
         long start = System.currentTimeMillis();
-        if (Utils.isNullOrEmpty(BRSharedPrefs.getReceiveAddress(app, getIso(app)))) {
+        if (Utils.isNullOrEmpty(BRSharedPrefs.getReceiveAddress(app, getIso()))) {
             String address = getReceiveAddress(app).stringify();
             if (Utils.isNullOrEmpty(address)) {
                 Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
                 BRReportsManager.reportBug(new NullPointerException("empty address!"));
             }
-            BRSharedPrefs.putReceiveAddress(app, address, getIso(app));
+            BRSharedPrefs.putReceiveAddress(app, address, getIso());
         }
     }
 
@@ -279,7 +279,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
     public void refreshCachedBalance(final Context app) {
         if (mWalletEthManager.wasBalanceUpdated(mWalletToken.getSymbol())) {
             BigDecimal balance = new BigDecimal(mWalletToken.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));
-            BRSharedPrefs.putCachedBalance(app, getIso(app), balance);
+            BRSharedPrefs.putCachedBalance(app, getIso(), balance);
         }
     }
 
@@ -289,7 +289,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
         BREthereumTransaction txs[] = mWalletToken.getTransactions();
         int blockHeight = (int) mWalletEthManager.node.getBlockHeight();
         if (app != null && blockHeight != Integer.MAX_VALUE && blockHeight > 0) {
-            BRSharedPrefs.putLastBlockHeight(app, getIso(app), blockHeight);
+            BRSharedPrefs.putLastBlockHeight(app, getIso(), blockHeight);
         }
         if (txs == null || txs.length <= 0) return null;
         List<TxUiHolder> uiTxs = new ArrayList<>();
@@ -326,17 +326,17 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
     }
 
     @Override
-    public String getIso(Context app) {
+    public String getIso() {
         return mWalletToken.getToken().getSymbol();
     }
 
     @Override
-    public String getScheme(Context app) {
+    public String getScheme() {
         return null;
     }
 
     @Override
-    public String getName(Context app) {
+    public String getName() {
         return mWalletToken.getToken().getName();
     }
 
@@ -357,12 +357,12 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
     }
 
     @Override
-    public String decorateAddress(Context app, String addr) {
+    public String decorateAddress(String addr) {
         return addr;
     }
 
     @Override
-    public String undecorateAddress(Context app, String addr) {
+    public String undecorateAddress(String addr) {
         return addr;
     }
 
@@ -373,7 +373,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
 
     @Override
     public BigDecimal getCachedBalance(Context app) {
-        return BRSharedPrefs.getCachedBalance(app, getIso(app));
+        return BRSharedPrefs.getCachedBalance(app, getIso());
     }
 
     @Override
@@ -483,7 +483,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
         CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
 
         //Btc rate for the token
-        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
+        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), "BTC");
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;
@@ -505,7 +505,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
         //fiat rate for btc
         CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
         //Btc rate for token
-        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(app), "BTC");
+        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), "BTC");
         if (btcRate == null) {
             Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
             return null;

@@ -6,8 +6,6 @@ import android.util.Log;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.core.BRCoreChainParams;
 import com.breadwallet.core.BRCoreMasterPubKey;
-import com.breadwallet.core.BRCoreTransaction;
-import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -15,9 +13,6 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
-import com.breadwallet.wallet.configs.WalletUiConfiguration;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -79,16 +74,16 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                if (BRSharedPrefs.getStartHeight(app, getIso(app)) == 0)
-                    BRSharedPrefs.putStartHeight(app, getIso(app), getPeerManager().getLastBlockHeight());
+                if (BRSharedPrefs.getStartHeight(app, getIso()) == 0)
+                    BRSharedPrefs.putStartHeight(app, getIso(), getPeerManager().getLastBlockHeight());
 
-                BigDecimal fee = BRSharedPrefs.getFeeRate(app, getIso(app));
-                BigDecimal economyFee = BRSharedPrefs.getEconomyFeeRate(app, getIso(app));
+                BigDecimal fee = BRSharedPrefs.getFeeRate(app, getIso());
+                BigDecimal economyFee = BRSharedPrefs.getEconomyFeeRate(app, getIso());
                 if (fee.compareTo(new BigDecimal(0)) == 0) {
                     fee = new BigDecimal(getWallet().getDefaultFeePerKb());
                     BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
                 }
-                getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app, getIso(app)) ? fee.longValue() : economyFee.longValue());
+                getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app, getIso()) ? fee.longValue() : economyFee.longValue());
                 WalletsMaster.getInstance(app).updateFixedPeer(app, WalletBitcoinManager.this);
             }
         });
@@ -116,27 +111,27 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
     }
 
     @Override
-    public String getIso(Context app) {
+    public String getIso() {
         return ISO;
     }
 
     @Override
-    public String getScheme(Context app) {
+    public String getScheme() {
         return SCHEME;
     }
 
     @Override
-    public String getName(Context app) {
+    public String getName() {
         return NAME;
     }
 
     @Override
-    public String decorateAddress(Context app, String addr) {
+    public String decorateAddress(String addr) {
         return addr; // no need to decorate
     }
 
     @Override
-    public String undecorateAddress(Context app, String addr) {
+    public String undecorateAddress(String addr) {
         return addr; //no need to undecorate
     }
 

@@ -125,33 +125,33 @@ public class SettingsActivity extends BRActivity {
 
         final WalletBitcoinManager btcWallet = WalletBitcoinManager.getInstance(app);
         if (btcWallet.getSettingsConfiguration().mSettingList.size() > 0)
-            items.add(new BRSettingsItem(btcWallet.getName(app), "", new View.OnClickListener() {
+            items.add(new BRSettingsItem(btcWallet.getName(), "", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(SettingsActivity.this, CurrencySettingsActivity.class);
-                    BRSharedPrefs.putCurrentWalletIso(app, btcWallet.getIso(app)); //change the current wallet to the one they enter settings to
+                    BRSharedPrefs.putCurrentWalletIso(app, btcWallet.getIso()); //change the current wallet to the one they enter settings to
                     startActivity(intent);
                     overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 }
             }, false, R.drawable.chevron_right_light));
         final WalletBchManager bchWallet = WalletBchManager.getInstance(app);
         if (bchWallet.getSettingsConfiguration().mSettingList.size() > 0)
-            items.add(new BRSettingsItem(WalletBchManager.getInstance(app).getName(app), "", new View.OnClickListener() {
+            items.add(new BRSettingsItem(WalletBchManager.getInstance(app).getName(), "", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(SettingsActivity.this, CurrencySettingsActivity.class);
-                    BRSharedPrefs.putCurrentWalletIso(app, bchWallet.getIso(app));//change the current wallet to the one they enter settings to
+                    BRSharedPrefs.putCurrentWalletIso(app, bchWallet.getIso());//change the current wallet to the one they enter settings to
                     startActivity(intent);
                     overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 }
             }, false, R.drawable.chevron_right_light));
         final WalletEthManager ethWallet = WalletEthManager.getInstance(app);
         if (ethWallet.getSettingsConfiguration().mSettingList.size() > 0)
-            items.add(new BRSettingsItem(WalletEthManager.getInstance(app).getName(app), "", new View.OnClickListener() {
+            items.add(new BRSettingsItem(WalletEthManager.getInstance(app).getName(), "", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(SettingsActivity.this, CurrencySettingsActivity.class);
-                    BRSharedPrefs.putCurrentWalletIso(app, ethWallet.getIso(app));//change the current wallet to the one they enter settings to
+                    BRSharedPrefs.putCurrentWalletIso(app, ethWallet.getIso());//change the current wallet to the one they enter settings to
                     startActivity(intent);
                     overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 }
