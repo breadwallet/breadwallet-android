@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -256,7 +257,7 @@ public class FragmentTxDetails extends DialogFragment {
                 mTxStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             }
 
-            BigDecimal cryptoAmount = mTransaction.getAmount();
+            BigDecimal cryptoAmount = mTransaction.getAmount().setScale(walletManager.getUiConfiguration().getMaxDecimalPlacesForUi(), BRConstants.ROUNDING_MODE);
             BREthereumToken tkn = null;
             if (walletManager.getIso().equalsIgnoreCase("ETH"))
                 tkn = WalletEthManager.getInstance(app).node.lookupToken(mTransaction.getTo());
@@ -314,13 +315,7 @@ public class FragmentTxDetails extends DialogFragment {
                     BRClipboardManager.putClipboard(getContext(), address);
                     Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_LONG).show();
 
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mToFromAddress.setTextColor(color);
-
-                        }
-                    }, BRConstants.TWO_HUNDRED_MILLISECONDS);
+                    mToFromAddress.setTextColor(color);
 
 
                 }
@@ -358,7 +353,7 @@ public class FragmentTxDetails extends DialogFragment {
             }
 
             // timestamp is 0 if it's not confirmed in a block yet so make it now
-            mTxDate.setText(BRDateUtil.getFullDate(mTransaction.getTimeStamp() == 0 ? System.currentTimeMillis() : (mTransaction.getTimeStamp() * 1000)));
+            mTxDate.setText(BRDateUtil.getFullDate(mTransaction.getTimeStamp() == 0 ? System.currentTimeMillis() : (mTransaction.getTimeStamp() * DateUtils.SECOND_IN_MILLIS)));
 
             // Set the transaction id
             mTransactionId.setText(mTransaction.getHashReversed());
@@ -376,13 +371,8 @@ public class FragmentTxDetails extends DialogFragment {
                     BRClipboardManager.putClipboard(getContext(), id);
                     Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_LONG).show();
 
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mTransactionId.setTextColor(color);
+                    mTransactionId.setTextColor(color);
 
-                        }
-                    }, BRConstants.TWO_HUNDRED_MILLISECONDS);
                 }
             });
 

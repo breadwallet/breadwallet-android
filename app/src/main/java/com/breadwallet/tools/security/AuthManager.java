@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 
@@ -25,6 +26,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -98,7 +100,7 @@ public class AuthManager {
             @Override
             public void run() {
                 try {
-                    Thread.sleep(BRConstants.ONE_SECOND);
+                    Thread.sleep(DateUtils.SECOND_IN_MILLIS);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -127,8 +129,8 @@ public class AuthManager {
     public long disabledUntil(Activity app) {
         int failCount = BRKeyStore.getFailCount(app);
         long failTimestamp = BRKeyStore.getFailTimeStamp(app);
-        double pow = Math.pow(PIN_DIGITS, failCount - LOCK_FAIL_ATTEMPT_COUNT) * 60;
-        return (long) ((failTimestamp + pow * BRConstants.ONE_SECOND));
+        double pow = Math.pow(PIN_DIGITS, failCount - LOCK_FAIL_ATTEMPT_COUNT) * (DateUtils.MINUTE_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
+        return (long) ((failTimestamp + pow * DateUtils.SECOND_IN_MILLIS));
     }
 
     public void setWalletDisabled(Activity app) {
@@ -173,13 +175,7 @@ public class AuthManager {
         }
 
         if (pin.length() == pinLimit) {
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    onPinSuccess.onSuccess();
-
-                }
-            }, BRConstants.HUNDRED_MILLISECONDS);
+            onPinSuccess.onSuccess();
 
         }
     }

@@ -35,6 +35,7 @@ import android.widget.Toast;
 import android.widget.Toolbar;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -148,7 +149,7 @@ public class WebViewActivity extends BRActivity {
         webSettings.setDomStorageEnabled(true);
         webSettings.setJavaScriptEnabled(true);
 
-        theUrl = getIntent().getStringExtra("url");
+        theUrl = getIntent().getStringExtra(WalletActivity.EXTRA_URL);
         String json = getIntent().getStringExtra("json");
 //        webView.loadUrl("https://upload.photobox.com/en/");
 

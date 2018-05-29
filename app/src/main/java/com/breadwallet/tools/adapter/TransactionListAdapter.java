@@ -2,8 +2,10 @@ package com.breadwallet.tools.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -67,8 +69,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     public static final String TAG = TransactionListAdapter.class.getName();
 
     private final Context mContext;
-    private final int txResId;
-    private final int promptResId;
+    private final int mTxResourceId;
     private List<TxUiHolder> backUpFeed;
     private List<TxUiHolder> itemFeed;
     private Map<Integer, TxMetaData> mMetaDatas;
@@ -76,10 +77,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     private final int TX_TYPE = 0;
     private boolean mIsUpdatingData;
 
-    public TransactionListAdapter(Context mContext, List<TxUiHolder> items) {
-        this.txResId = R.layout.tx_item;
-        this.promptResId = R.layout.prompt_item;
-        this.mContext = mContext;
+    public TransactionListAdapter(Context context, List<TxUiHolder> items) {
+        this.mTxResourceId = R.layout.tx_item;
+        this.mContext = context;
         backUpFeed = items;
         itemFeed = items;
         mMetaDatas = new HashMap<>();
@@ -92,22 +92,30 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void init(List<TxUiHolder> items) {
-        if (items == null) items = new ArrayList<>();
-        if (itemFeed == null) itemFeed = new ArrayList<>();
-        if (backUpFeed == null) backUpFeed = new ArrayList<>();
+        if (items == null) {
+            items = new ArrayList<>();
+        }
+        if (itemFeed == null) {
+            itemFeed = new ArrayList<>();
+        }
+        if (backUpFeed == null) {
+            backUpFeed = new ArrayList<>();
+        }
         this.itemFeed = items;
         this.backUpFeed = items;
 
     }
 
     public void updateData() {
-        if (mIsUpdatingData) return;
+        if (mIsUpdatingData) {
+            return;
+        }
         Map<Integer, TxMetaData> localMDs = new HashMap<>();
         BaseWalletManager wm = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
         for (int i = 0; i < backUpFeed.size(); i++) {
             TxUiHolder item = backUpFeed.get(i);
             TxMetaData md = KVStoreManager.getInstance().getTxMetaData(mContext, item.getTxHash());
-            if (System.currentTimeMillis() - item.getTimeStamp() < (60 * 60 * 1000)) {
+            if (System.currentTimeMillis() - item.getTimeStamp() < DateUtils.HOUR_IN_MILLIS) {
                 if (md == null) {
                     md = KVStoreManager.getInstance().createMetadata(mContext, wm,
                             new CryptoTransaction(item.getTransaction()));
@@ -139,19 +147,17 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         // inflate the layout
         LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
-        return new TxHolder(inflater.inflate(txResId, parent, false));
+        return new TxHolder(inflater.inflate(mTxResourceId, parent, false));
     }
 
     @Override
-    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
-        switch (holder.getItemViewType()) {
-            case TX_TYPE:
-                holder.setIsRecyclable(false);
-                setTexts((TxHolder) holder, position);
-                break;
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (holder.getItemViewType() == TX_TYPE) {
+            holder.setIsRecyclable(false);
+            setTexts((TxHolder) holder, position);
         }
 
     }
@@ -167,7 +173,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     private void setTexts(final TxHolder convertView, int position) {
-        BaseWalletManager wallet = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
+        BaseWalletManager wm = WalletsMaster.getInstance(mContext).getCurrentWallet(mContext);
         TxUiHolder item = itemFeed.get(position);
 
         String commentString = "";
@@ -187,26 +193,26 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         if (!item.isValid())
             showTransactionFailed(convertView, item, received);
 
-        BigDecimal cryptoAmount = item.getAmount().abs();
+        BigDecimal cryptoAmount = item.getAmount().setScale(wm.getUiConfiguration().getMaxDecimalPlacesForUi(), BRConstants.ROUNDING_MODE).abs();
 
         BREthereumToken tkn = null;
-        if (wallet.getIso().equalsIgnoreCase("ETH"))
+        if (wm.getIso().equalsIgnoreCase("ETH"))
             tkn = WalletEthManager.getInstance(mContext).node.lookupToken(item.getTo());
         // it's a token transfer ETH tx
         if (tkn != null) {
             cryptoAmount = item.getFee();
         }
         boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
-        String preferredIso = isCryptoPreferred ? wallet.getIso() : BRSharedPrefs.getPreferredFiatIso(mContext);
-        BigDecimal amount = isCryptoPreferred ? cryptoAmount : wallet.getFiatForSmallestCrypto(mContext, cryptoAmount, null);
+        String preferredIso = isCryptoPreferred ? wm.getIso() : BRSharedPrefs.getPreferredFiatIso(mContext);
+        BigDecimal amount = isCryptoPreferred ? cryptoAmount : wm.getFiatForSmallestCrypto(mContext, cryptoAmount, null);
         convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, preferredIso, received ? amount : (amount == null ? null : amount.negate())));
         int blockHeight = item.getBlockHeight();
-        int lastBlockHeight = BRSharedPrefs.getLastBlockHeight(mContext, wallet.getIso());
+        int lastBlockHeight = BRSharedPrefs.getLastBlockHeight(mContext, wm.getIso());
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : lastBlockHeight - blockHeight + 1;
 
         int level;
         if (confirms <= 0) {
-            long relayCount = wallet.getRelayCount(item.getTxHash());
+            long relayCount = wm.getRelayCount(item.getTxHash());
             if (relayCount <= 0)
                 level = 0;
             else if (relayCount == 1)
@@ -223,11 +229,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         if (level > 0 && level < 5) {
             showTransactionProgress(convertView, level * 20);
         }
-        String sentTo = String.format(mContext.getString(R.string.Transaction_sentTo), wallet.decorateAddress(item.getTo()));
-        String receivedVia = String.format(mContext.getString(R.string.TransactionDetails_receivedVia), wallet.decorateAddress(item.getTo()));
+        String sentTo = String.format(mContext.getString(R.string.Transaction_sentTo), wm.decorateAddress(item.getTo()));
+        String receivedVia = String.format(mContext.getString(R.string.TransactionDetails_receivedVia), wm.decorateAddress(item.getTo()));
 
-        String sendingTo = String.format(mContext.getString(R.string.Transaction_sendingTo), wallet.decorateAddress(item.getTo()));
-        String receivingVia = String.format(mContext.getString(R.string.TransactionDetails_receivingVia), wallet.decorateAddress(item.getTo()));
+        String sendingTo = String.format(mContext.getString(R.string.Transaction_sendingTo), wm.decorateAddress(item.getTo()));
+        String receivingVia = String.format(mContext.getString(R.string.TransactionDetails_receivingVia), wm.decorateAddress(item.getTo()));
 
         if (level > 4) {
             convertView.transactionDetail.setText(!commentString.isEmpty() ? commentString : (!received ? sentTo : receivedVia));
@@ -238,7 +244,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
             convertView.transactionDetail.setText(String.format(mContext.getString(R.string.Transaction_tokenTransfer), tkn.getSymbol()));
 
         //if it's 0 we use the current time.
-        long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * BRConstants.ONE_SECOND;
+        long timeStamp = item.getTimeStamp() == 0 ? System.currentTimeMillis() : item.getTimeStamp() * DateUtils.SECOND_IN_MILLIS;
 
         String shortDate = BRDateUtil.getShortDate(timeStamp);
 

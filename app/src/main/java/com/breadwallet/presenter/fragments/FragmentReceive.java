@@ -282,7 +282,7 @@ public class FragmentReceive extends Fragment {
 
         Bundle extras = getArguments();
         boolean isReceive = extras.getBoolean("receive");
-        showRequestAnAmount = isReceive && wm.getUiConfiguration().showRequestAnAmount;
+        showRequestAnAmount = isReceive && wm.getUiConfiguration().isShowRequestedAmount();
         if (!showRequestAnAmount) {
             signalLayout.removeView(separator);
             signalLayout.removeView(requestButton);

@@ -39,6 +39,7 @@ import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 
+import com.breadwallet.wallet.wallets.WalletManagerHelper;
 import com.platform.JsonRpcConstants;
 import com.platform.JsonRpcRequest;
 
@@ -104,7 +105,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
     public BREthereumLightNode node;
 
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
-        uiConfig = new WalletUiConfiguration("#5e6fa5", null, true);
+        uiConfig = new WalletUiConfiguration("#5e6fa5", null,
+                true, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
         settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
 
         if (Utils.isNullOrEmpty(ethPubKey)) {
@@ -498,7 +500,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
 
     @Override
     public int getMaxDecimalPlaces(Context app) {
-        return 5;
+        return WalletManagerHelper.MAX_DECIMAL_PLACES;
     }
 
     @Override
