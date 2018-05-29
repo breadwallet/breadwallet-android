@@ -80,7 +80,7 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  * THE SOFTWARE.
  */
 public class WalletEthManager extends BaseEthereumWalletManager implements BaseWalletManager,
-        BREthereumLightNode.ClientJSON_RPC,
+        BREthereumLightNode.Client,
         BREthereumLightNode.Listener {
     private static final String TAG = WalletEthManager.class.getSimpleName();
 
@@ -101,7 +101,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
     private final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // 90m ETH * 18 (WEI)
     private final BigDecimal ONE_ETH = new BigDecimal("1000000000000000000"); //1ETH = 1000000000000000000 WEI
     private BREthereumWallet mWallet;
-    public BREthereumLightNode.JSON_RPC node;
+    public BREthereumLightNode node;
 
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
         uiConfig = new WalletUiConfiguration("#5e6fa5", null, true);
@@ -129,7 +129,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                 return;
             }
 
-            new BREthereumLightNode.JSON_RPC(this, network, paperKey, words);
+            node = new BREthereumLightNode(this, network, paperKey, words);
+            node.addListener(this);
+
             mWallet = node.getWallet();
 
             if (null == mWallet) {
@@ -141,7 +143,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
             BRKeyStore.putEthPublicKey(ethPubKey, app);
         } else {
             Log.e(TAG, "WalletEthManager: Using the pubkey to create");
-            new BREthereumLightNode.JSON_RPC(this, network, ethPubKey);
+            node = new BREthereumLightNode(this, network, ethPubKey);
+            node.addListener(this);
+
             mWallet = node.getWallet();
 
             if (null == mWallet) {
@@ -649,12 +653,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
      */
 
     @Override
-    public void assignNode(BREthereumLightNode node) {
-        this.node = (BREthereumLightNode.JSON_RPC) node;
-        this.node.addListener(this);
-    }
-
-    @Override
     public void getBalance(final int wid, final String address, final int rid) {
         BREthereumWallet wallet = this.node.getWalletByIdentifier(wid);
         BREthereumToken token = wallet.getToken();
@@ -1151,7 +1149,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
     }
 
     @Override
-    public void getLogs(final String address, final String event, final int rid) {
+    public void getLogs(final String contract, final String address, final String event, final int rid) {
         if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
             return;
         }
@@ -1161,7 +1159,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                 final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
                 final String eth_rpc_url = host + "module=logs&action=getLogs" +
                         "&fromBlock=0&toBlock=latest" +
-//                         "&address=" + ... not needed since we're asking for all the contracts
+                        (null == contract ? "" : ("&address=" + contract)) +
                         "&topic0=" + event +
                         "&topic1=" + address +
                         "&topic1_2_opr=or" +
@@ -1262,7 +1260,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         });
     }
 
-    public BREthereumLightNode.JSON_RPC getNode() {
+    public BREthereumLightNode getNode() {
         return node;
     }
 
@@ -1293,12 +1291,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                 case DEFAULT_GAS_PRICE_UPDATED:
                     printInfo("New Gas Price: " + BRSharedPrefs.getFeeRate(app, getIso()), iso, event.name());
                     break;
-                case TRANSACTION_ADDED:
-                    printInfo("New transaction added: ", iso, event.name());
-                    break;
-                case TRANSACTION_REMOVED:
-                    printInfo("Transaction removed: ", iso, event.name());
-                    break;
                 case DELETED:
                     BRReportsManager.reportBug(new NullPointerException("Wallet was deleted:" + event.name()));
                     printInfo("Deleted: ", iso, event.name());
@@ -1328,7 +1320,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
     }
 
     @Override
-    public void handleTransactionEvent(BREthereumWallet wallet, BREthereumTransaction transaction,
+    public void handleTransactionEvent(BREthereumWallet wallet,
+                                       BREthereumTransaction transaction,
                                        TransactionEvent event,
                                        Status status,
                                        String errorDescription) {
@@ -1337,6 +1330,13 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         if (app != null && Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
             String iso = (null == wallet.getToken() ? "ETH" : wallet.getToken().getSymbol());
             switch (event) {
+                case ADDED:
+                    printInfo("New transaction added: ", iso, event.name());
+                    break;
+                case REMOVED:
+                    printInfo("Transaction removed: ", iso, event.name());
+                    break;
+
                 case CREATED:
                     printInfo("Transaction created: " + transaction.getAmount(), iso, event.name());
                     break;
