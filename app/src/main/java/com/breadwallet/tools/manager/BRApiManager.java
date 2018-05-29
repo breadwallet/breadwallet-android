@@ -71,6 +71,12 @@ public class BRApiManager {
 
     private Handler handler;
 
+    public static final String HEADER_WALLET_ID = "X-Wallet-Id";
+    public static final String HEADER_IS_INTERNAL = "X-Is-Internal";
+    public static final String HEADER_TESTFLIGHT = "X-Testflight";
+    public static final String HEADER_TESTNET = "X-Bitcoin-Testnet";
+    public static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
+
     private BRApiManager() {
         handler = new Handler();
     }
