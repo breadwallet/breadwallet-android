@@ -1219,6 +1219,49 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         });
     }
 
+    @Override
+    public void getBlockNumber(final int rid) {
+        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
+            return;
+        }
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
+                Log.d(TAG, "Making rpc request to -> " + eth_url);
+
+                final JSONObject payload = new JSONObject();
+                final JSONArray params = new JSONArray();
+
+                try {
+                    payload.put("method", "eth_blockNumber");
+                    payload.put("params", params);
+                    payload.put("id", rid);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                JsonRpcRequest.makeRpcRequest(BreadApp.getBreadContext(), eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                    @Override
+                    public void onRpcRequestCompleted(String jsonResult) {
+                        try {
+                            JSONObject responseObject = new JSONObject(jsonResult);
+
+                            if (responseObject.has("result")) {
+                                String blockNumber = responseObject.getString("result");
+                                Log.e(TAG, "onRpcRequestCompleted: getBlockNumber: " + blockNumber);
+                                node.announceBlockNumber(blockNumber, rid);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
+    }
+
     public BREthereumLightNode.JSON_RPC getNode() {
         return node;
     }
