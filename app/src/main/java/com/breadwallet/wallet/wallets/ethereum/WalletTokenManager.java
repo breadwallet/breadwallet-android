@@ -15,11 +15,13 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
+import com.breadwallet.wallet.wallets.WalletManagerHelper;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -65,7 +67,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
     private WalletTokenManager(WalletEthManager walletEthManager, BREthereumWallet tokenWallet) {
         this.mWalletEthManager = walletEthManager;
         this.mWalletToken = tokenWallet;
-        uiConfig = new WalletUiConfiguration(tokenWallet.getToken().getColorLeft(), tokenWallet.getToken().getColorRight(), false);
+        uiConfig = new WalletUiConfiguration(tokenWallet.getToken().getColorLeft(), tokenWallet.getToken().getColorRight(), false, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
 
     }
 
@@ -368,7 +370,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
 
     @Override
     public int getMaxDecimalPlaces(Context app) {
-        return 5;
+        return WalletManagerHelper.MAX_DECIMAL_PLACES;
     }
 
     @Override

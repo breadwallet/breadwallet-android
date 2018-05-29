@@ -401,8 +401,8 @@ public class WalletPlugin implements Plugin {
 
                 //Colors
                 JSONArray colors = new JSONArray();
-                colors.put(w.getUiConfiguration().mStartColor);
-                colors.put(w.getUiConfiguration().mEndColor);
+                colors.put(w.getUiConfiguration().getStartColor());
+                colors.put(w.getUiConfiguration().getEndColor());
 
                 obj.put("colors", colors);
 
