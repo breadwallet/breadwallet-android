@@ -17,6 +17,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.listeners.SyncReceiver;
+import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
@@ -128,11 +129,10 @@ public class BreadApp extends Application {
         boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
         String lang = getCurrentLocale(this);
 
-        mHeaders.put("X-Is-Internal", IS_ALPHA ? "true" : "false");
-        mHeaders.put("X-Testflight", isTestVersion ? "true" : "false");
-        mHeaders.put("X-Bitcoin-Testnet", isTestNet ? "true" : "false");
-        mHeaders.put("Accept-Language", lang);
-
+        mHeaders.put(BRApiManager.HEADER_IS_INTERNAL, IS_ALPHA ? "true" : "false");
+        mHeaders.put(BRApiManager.HEADER_TESTFLIGHT, isTestVersion ? "true" : "false");
+        mHeaders.put(BRApiManager.HEADER_TESTNET, isTestNet ? "true" : "false");
+        mHeaders.put(BRApiManager.HEADER_ACCEPT_LANGUAGE, lang);
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
