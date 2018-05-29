@@ -75,9 +75,9 @@ public class BRAnimator {
     private static final String TAG = BRAnimator.class.getName();
     private static FragmentSignal mFragmentSignal;
     private static boolean clickAllowed = true;
-    public static final int SLIDE_ANIMATION_DURATION = BRConstants.THREE_HUNDRED_MILLISECONDS;
+    public static final int SLIDE_ANIMATION_DURATION = 300;
 
-    public static boolean supportIsShowing;
+    public static boolean mSupportIsShowing;
 
     public static void showBreadSignal(Activity activity, String title, String iconDescription, int drawableId, BROnSignalCompletion completion) {
         mFragmentSignal = new FragmentSignal();
@@ -122,8 +122,8 @@ public class BRAnimator {
 
     public static void showSupportFragment(Activity app, String articleId, BaseWalletManager wm) {
 
-        if (supportIsShowing) return;
-        supportIsShowing = true;
+        if (mSupportIsShowing) return;
+        mSupportIsShowing = true;
         if (app == null) {
             Log.e(TAG, "showSupportFragment: app is null");
             return;

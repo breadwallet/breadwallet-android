@@ -117,8 +117,8 @@ public class BRSearchBar extends android.support.v7.widget.Toolbar {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 if (!hasFocus) {
-                    if (breadActivity.barFlipper != null) {
-                        breadActivity.barFlipper.setDisplayedChild(0);
+                    if (breadActivity.mBarFlipper != null) {
+                        breadActivity.mBarFlipper.setDisplayedChild(0);
                         clearSwitches();
                     }
                 }

@@ -11,6 +11,10 @@ import java.util.List;
 
 public class WalletManagerHelper {
 
+    public static final int MAX_DECIMAL_PLACES = 8;
+    //Show this number of decimal places in transaction info.
+    public static final int MAX_DECIMAL_PLACES_FOR_UI = 5;
+
     private List<OnBalanceChangedListener> mOnBalanceChangedListeners = new ArrayList<>();
 //    private List<OnTxStatusUpdatedListener> mOnTxStatusUpdatedListeners = new ArrayList<>();
     private List<SyncListener> mSyncListeners = new ArrayList<>();
