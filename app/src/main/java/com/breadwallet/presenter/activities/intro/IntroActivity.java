@@ -4,7 +4,7 @@ package com.breadwallet.presenter.activities.intro;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.security.keystore.UserNotAuthenticatedException;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,9 +12,7 @@ import android.widget.ImageButton;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.presenter.activities.HomeActivity;
-import com.breadwallet.presenter.activities.ReEnterPinActivity;
 import com.breadwallet.presenter.activities.SetPinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -27,11 +25,9 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 
 /**
@@ -96,11 +92,6 @@ public class IntroActivity extends BRActivity implements Serializable {
             }
         });
 
-
-        if (!BuildConfig.DEBUG && BRKeyStore.AUTH_DURATION_SEC != BRConstants.THREE_HUNDRED_MILLISECONDS) {
-            Log.e(TAG, "onCreate: BRKeyStore.AUTH_DURATION_SEC != 300");
-            BRReportsManager.reportBug(new RuntimeException("AUTH_DURATION_SEC should be 300"), true);
-        }
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
 
         if (Utils.isEmulatorOrDebug(this)) {
@@ -123,7 +114,7 @@ public class IntroActivity extends BRActivity implements Serializable {
             public void run() {
                 splashScreen.setVisibility(View.GONE);
             }
-        }, BRConstants.ONE_SECOND);
+        }, DateUtils.SECOND_IN_MILLIS);
 
     }
 

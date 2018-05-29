@@ -97,7 +97,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         String firstAddress = masterPubKey.getPubKeyAsCoreKey().address();
         BRSharedPrefs.putFirstAddress(context, firstAddress);
 
-        mUiConfig = new WalletUiConfiguration(getColor(), null, true);
+        mUiConfig = new WalletUiConfiguration(getColor(), null, true, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
         mSettingsConfig = new WalletSettingsConfiguration(context, getIso(), getFingerprintLimits(context));
     }
 
@@ -109,7 +109,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
     protected abstract String getColor();
 
-    protected abstract  List<BigDecimal> getFingerprintLimits(Context context);
+    protected abstract List<BigDecimal> getFingerprintLimits(Context context);
 
     protected BRCoreWallet createWalletRetry() {
         Context app = BreadApp.getBreadContext();
@@ -365,7 +365,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
             case BRConstants.CURRENT_UNIT_BITS:
                 return 2;
             default:
-                return 5;
+                return WalletManagerHelper.MAX_DECIMAL_PLACES;
         }
     }
 

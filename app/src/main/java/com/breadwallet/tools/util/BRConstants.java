@@ -102,17 +102,6 @@ public class BRConstants {
     public static final String FAQ_LOOP_BUG = "android-loop-bug";
     public static final String FAQ_BCH = "bitcoin-cash";
 
-    /**
-     * Time units
-     */
-    public static final int ONE_SECOND = 1;
-    public static final int TWO_SECONDS = 2;
-    public static final int THREE_SECONDS = 3;
-
-    public static final int HUNDRED_MILLISECONDS = 100;
-    public static final int TWO_HUNDRED_MILLISECONDS = 200;
-    public static final int THREE_HUNDRED_MILLISECONDS = 300;
-
 
     /**
      * Crypto units

@@ -25,15 +25,34 @@ package com.breadwallet.wallet.configs;
  * THE SOFTWARE.
  */
 public class WalletUiConfiguration {
-    public String mStartColor;
-    public String mEndColor;
+    private String mStartColor;
+    private String mEndColor;
 
-    public boolean showRequestAnAmount;
+    private int mMaxDecimalPlacesForUi;
 
-    public WalletUiConfiguration(String startColor, String endColor, boolean showRequestAnAmount) {
+    private boolean mShowRequestedAmount;
+
+    public WalletUiConfiguration(String startColor, String endColor,
+                                 boolean showRequestAnAmount, int maxDecimalPLacesForUi) {
         this.mStartColor = startColor.contains("#") ? startColor : "#" + startColor;
         this.mEndColor = endColor != null ? (endColor.contains("#") ? endColor : "#" + endColor) : this.mStartColor;
-        this.showRequestAnAmount = showRequestAnAmount;
+        this.mShowRequestedAmount = showRequestAnAmount;
+        this.mMaxDecimalPlacesForUi = maxDecimalPLacesForUi;
     }
 
+    public String getStartColor() {
+        return mStartColor;
+    }
+
+    public String getEndColor() {
+        return mEndColor;
+    }
+
+    public int getMaxDecimalPlacesForUi() {
+        return mMaxDecimalPlacesForUi;
+    }
+
+    public boolean isShowRequestedAmount() {
+        return mShowRequestedAmount;
+    }
 }

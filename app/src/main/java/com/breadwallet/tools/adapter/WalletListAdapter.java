@@ -114,8 +114,8 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             holder.mSyncingLabel.setText(item.mLabelText);
             holder.mWalletBalanceCurrency.setVisibility(item.mShowBalance ? View.VISIBLE : View.INVISIBLE);
 
-            String startColor = wallet.getUiConfiguration().mStartColor;
-            String endColor = wallet.getUiConfiguration().mEndColor;
+            String startColor = wallet.getUiConfiguration().getStartColor();
+            String endColor = wallet.getUiConfiguration().getEndColor();
 
         Drawable drawable = mContext.getResources().getDrawable(R.drawable.crypto_card_shape, null).mutate();
         //create gradient with 2 colors if exist
