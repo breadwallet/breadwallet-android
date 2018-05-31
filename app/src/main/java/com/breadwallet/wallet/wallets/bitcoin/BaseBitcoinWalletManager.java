@@ -264,7 +264,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
             BRCoreTransaction tx = txs[i];
             String toAddress = null;
             //if sent
-            if (getWallet().getTransactionAmountSent(tx) > 0) {
+            if (getWallet().getTransactionAmount(tx) < 0) {
                 toAddress = tx.getOutputAddresses()[0];
             } else {
                 for (String to : tx.getOutputAddresses()) {
@@ -275,7 +275,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                 }
             }
             if (toAddress == null) throw new NullPointerException("Failed to retrieve toAddress");
-            uiTxs.add(new TxUiHolder(tx, getWallet().getTransactionAmountSent(tx) <= 0, tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
+            uiTxs.add(new TxUiHolder(tx, getWallet().getTransactionAmount(tx) > 0, tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
                     tx.getReverseHash(), new BigDecimal(getWallet().getTransactionFee(tx)),
                     toAddress, tx.getInputAddresses()[0],
                     new BigDecimal(getWallet().getBalanceAfterTransaction(tx)), (int) tx.getSize(),
