@@ -916,5 +916,7 @@
   <string name="WritePaperPhrase.step">%1$d of %2$d</string>
   <string name="Tokens.Reset">Reset to Default Currencies</string>
 
+  <string name="QRUtils.ShareTitle">Share Address</string>
+
 
 </resources>
