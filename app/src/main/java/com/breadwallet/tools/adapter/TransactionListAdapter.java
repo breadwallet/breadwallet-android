@@ -209,7 +209,6 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         int blockHeight = item.getBlockHeight();
         int lastBlockHeight = BRSharedPrefs.getLastBlockHeight(mContext, wm.getIso());
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : lastBlockHeight - blockHeight + 1;
-
         int level;
         if (confirms <= 0) {
             long relayCount = wm.getRelayCount(item.getTxHash());

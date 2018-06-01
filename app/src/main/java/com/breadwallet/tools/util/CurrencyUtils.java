@@ -52,7 +52,6 @@ public class CurrencyUtils {
         if (amount == null) return "---"; //to be able to detect in a bug
         if (Utils.isNullOrEmpty(iso)) throw new RuntimeException("need iso for formatting!");
         DecimalFormat currencyFormat;
-
         // This formats currency values as the user expects to read them (default locale).
         currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.getDefault());
         // This specifies the actual currency that the value is in, and provide
@@ -60,6 +59,7 @@ public class CurrencyUtils {
         DecimalFormatSymbols decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
         BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
         currencyFormat.setGroupingUsed(true);
+        currencyFormat.setRoundingMode(BRConstants.ROUNDING_MODE);
         if (wallet != null) {
             amount = wallet.getCryptoForSmallestCrypto(app, amount);
             decimalFormatSymbols.setCurrencySymbol("");
@@ -70,9 +70,10 @@ public class CurrencyUtils {
         } else {
             try {
                 Currency currency = Currency.getInstance(iso);
-                decimalFormatSymbols.setCurrencySymbol(currency.getSymbol());
+                String symbol = currency.getSymbol();
+                decimalFormatSymbols.setCurrencySymbol(symbol);
                 currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
-                currencyFormat.setNegativePrefix("-");
+                currencyFormat.setNegativePrefix("-" + symbol);
                 currencyFormat.setMaximumFractionDigits(currency.getDefaultFractionDigits());
                 currencyFormat.setMinimumFractionDigits(currency.getDefaultFractionDigits());
             } catch (IllegalArgumentException e) {

@@ -268,7 +268,7 @@ public class FragmentTxDetails extends DialogFragment {
             BigDecimal fiatAmountWhenSent;
             TxMetaData metaData = KVStoreManager.getInstance().getTxMetaData(app, mTransaction.getTxHash());
             if (metaData == null || metaData.exchangeRate == 0 || Utils.isNullOrEmpty(metaData.exchangeCurrency)) {
-                fiatAmountWhenSent = new BigDecimal(0);
+                fiatAmountWhenSent = BigDecimal.ZERO;
                 //always fiat amount
                 amountWhenSent = CurrencyUtils.getFormattedAmount(app, fiatIso, fiatAmountWhenSent);
             } else {
@@ -286,7 +286,7 @@ public class FragmentTxDetails extends DialogFragment {
             mAmountNow.setText(amountNow);
 
             // If 'amount when sent' is 0 or unavailable, show fiat tx amount on its own
-            if (fiatAmountWhenSent.compareTo(new BigDecimal(0)) == 0) {
+            if (fiatAmountWhenSent.compareTo(BigDecimal.ZERO) == 0) {
                 mAmountWhenSent.setVisibility(View.INVISIBLE);
                 mWhenSentLabel.setVisibility(View.INVISIBLE);
                 mNowLabel.setVisibility(View.INVISIBLE);

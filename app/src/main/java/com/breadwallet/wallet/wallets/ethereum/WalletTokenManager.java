@@ -13,6 +13,7 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.RatesDataSource;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -218,8 +219,8 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
         long start = System.currentTimeMillis();
         BigDecimal fee;
         if (amount == null) return null;
-        if (amount.compareTo(new BigDecimal(0)) == 0) {
-            fee = new BigDecimal(0);
+        if (amount.compareTo(BigDecimal.ZERO) == 0) {
+            fee = BigDecimal.ZERO;
         } else {
             String feeString = mWalletToken.transactionEstimatedFee(amount.toPlainString(),
                     BREthereumAmount.Unit.TOKEN_DECIMAL, BREthereumAmount.Unit.ETHER_WEI);
@@ -245,7 +246,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
 
     @Override
     public BigDecimal getMinOutputAmount(Context app) {
-        return new BigDecimal(0);
+        return BigDecimal.ZERO;
     }
 
     @Override
@@ -280,7 +281,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
     @Override
     public void refreshCachedBalance(final Context app) {
         if (mWalletEthManager.wasBalanceUpdated(mWalletToken.getSymbol())) {
-            BigDecimal balance = new BigDecimal(mWalletToken.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));
+            final BigDecimal balance = new BigDecimal(mWalletToken.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));
             BRSharedPrefs.putCachedBalance(app, getIso(), balance);
         }
     }
@@ -370,7 +371,10 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
 
     @Override
     public int getMaxDecimalPlaces(Context app) {
-        return WalletManagerHelper.MAX_DECIMAL_PLACES;
+        int tokenDecimals = mWalletToken.getToken().getDecimals();
+        boolean isMaxDecimalLargerThanTokenDecimals = WalletManagerHelper.MAX_DECIMAL_PLACES > tokenDecimals;
+
+        return isMaxDecimalLargerThanTokenDecimals ? tokenDecimals : WalletManagerHelper.MAX_DECIMAL_PLACES;
     }
 
     @Override
@@ -434,7 +438,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
 
     @Override
     public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount, CurrencyEntity ent) {
-        if (amount == null || amount.compareTo(new BigDecimal(0)) == 0) return amount;
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         if (ent != null) {
             //passed in a custom CurrencyEntity
@@ -450,7 +454,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
 
     @Override
     public BigDecimal getCryptoForFiat(Context app, BigDecimal fiatAmount) {
-        if (fiatAmount == null || fiatAmount.compareTo(new BigDecimal(0)) == 0) return fiatAmount;
+        if (fiatAmount == null || fiatAmount.compareTo(BigDecimal.ZERO) == 0) return fiatAmount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         return getTokensForFiat(app, fiatAmount, iso);
     }
@@ -461,13 +465,6 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
         return amount; //only using Tokens
     }
 
-//    private boolean isWei(BigDecimal amount) {
-//        amount = amount.stripTrailingZeros();
-//        //if the maount has more than 18 digits, then it's probably WEI (ETH fee amount)
-//        //Use ETH wallet to convert
-//        return amount.precision() - amount.scale() >= 10;
-//    }
-
     @Override
     public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
         return amount; //only using Tokens
@@ -475,7 +472,12 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
 
     @Override
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
-        return getCryptoForFiat(app, amount);
+        BigDecimal convertedCryptoAmount = getCryptoForFiat(app, amount);
+        //Round the amount up for situations when the decimals of a token is smaller than the precision we're using.
+        if (convertedCryptoAmount != null) {
+            convertedCryptoAmount = convertedCryptoAmount.setScale(getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE);
+        }
+        return convertedCryptoAmount;
     }
 
     //pass in a token amount and return the specified amount in fiat
@@ -494,10 +496,8 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
             Log.e(TAG, "getUsdFromBtc: No BTC rates for ETH");
             return null;
         }
-        if (tokenBtcRate.rate == 0 || btcRate.rate == 0) return new BigDecimal(0);
+        if (tokenBtcRate.rate == 0 || btcRate.rate == 0) return BigDecimal.ZERO;
 
-//        if (getIso(app).equalsIgnoreCase("knc"))
-//            Log.e(TAG, "getFiatForToken: btcRate:" + btcRate.rate + ", tokenBtcRate: " + tokenBtcRate.rate);
         return tokenAmount.multiply(new BigDecimal(tokenBtcRate.rate)).multiply(new BigDecimal(btcRate.rate));
     }
 
