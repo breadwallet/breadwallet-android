@@ -70,7 +70,7 @@ import static com.platform.HTTPServer.URL_SUPPORT;
  * THE SOFTWARE.
  */
 
-public class FragmentReceive extends Fragment {
+public class FragmentReceive extends Fragment implements OnBalanceChangedListener {
     private static final String TAG = FragmentReceive.class.getName();
 
     public TextView mTitle;
@@ -121,12 +121,7 @@ public class FragmentReceive extends Fragment {
         setListeners();
         isReceive = getArguments().getBoolean("receive");
 
-        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(new OnBalanceChangedListener() {
-            @Override
-            public void onBalanceChanged(String iso, BigDecimal newBalance) {
-                updateQr();
-            }
-        });
+        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(this);
 
         ImageButton faq = rootView.findViewById(R.id.faq_button);
 
@@ -164,7 +159,7 @@ public class FragmentReceive extends Fragment {
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
                         walletManager.decorateAddress(mReceiveAddress),
-                        new BigDecimal(0), null, null, null);
+                        BigDecimal.ZERO, null, null, null);
                 QRUtils.share("mailto:", getActivity(), cryptoUri.toString());
 
 
@@ -177,7 +172,7 @@ public class FragmentReceive extends Fragment {
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
                         walletManager.decorateAddress(mReceiveAddress),
-                        new BigDecimal(0), null, null, null);
+                        BigDecimal.ZERO, null, null, null);
                 QRUtils.share("sms:", getActivity(), cryptoUri.toString());
             }
         });
@@ -320,7 +315,7 @@ public class FragmentReceive extends Fragment {
                         String decorated = wm.decorateAddress(mReceiveAddress);
                         mAddress.setText(decorated);
                         Utils.correctTextSizeIfNeeded(mAddress);
-                        Uri uri = CryptoUriParser.createCryptoUrl(ctx, wm, decorated, new BigDecimal(0), null, null, null);
+                        Uri uri = CryptoUriParser.createCryptoUrl(ctx, wm, decorated, BigDecimal.ZERO, null, null, null);
                         boolean generated = QRUtils.generateQR(ctx, uri.toString(), mQrImage);
                         if (!generated)
                             throw new RuntimeException("failed to generate qr image for address");
@@ -365,4 +360,8 @@ public class FragmentReceive extends Fragment {
         super.onPause();
     }
 
+    @Override
+    public void onBalanceChanged(BigDecimal newBalance) {
+        updateQr();
+    }
 }

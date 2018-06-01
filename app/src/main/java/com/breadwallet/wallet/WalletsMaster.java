@@ -131,9 +131,6 @@ public class WalletsMaster {
         if (mWallets == null || mWallets.size() == 0) {
             updateWallets(app);
         }
-        if (mWallets.size() == 0) {
-            BRReportsManager.reportBug(new IllegalArgumentException("getAllWallets returned 0 when it's not possible"));
-        }
         return mWallets;
 
     }
@@ -162,7 +159,7 @@ public class WalletsMaster {
     //get the total fiat balance held in all the wallets in the smallest unit (e.g. cents)
     public BigDecimal getAggregatedFiatBalance(Context app) {
         long start = System.currentTimeMillis();
-        BigDecimal totalBalance = new BigDecimal(0);
+        BigDecimal totalBalance = BigDecimal.ZERO;
         List<BaseWalletManager> list = new ArrayList<>(getAllWallets(app));
         for (BaseWalletManager wallet : list) {
             BigDecimal fiatBalance = wallet.getFiatBalance(app);
@@ -331,13 +328,13 @@ public class WalletsMaster {
     public void setSpendingLimitIfNotSet(final Context app, final BaseWalletManager wm) {
         if (app == null) return;
         BigDecimal limit = BRKeyStore.getTotalLimit(app, wm.getIso());
-        if (limit.compareTo(new BigDecimal(0)) == 0) {
+        if (limit.compareTo(BigDecimal.ZERO) == 0) {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     long start = System.currentTimeMillis();
                     BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                    BigDecimal totalSpent = wallet == null ? new BigDecimal(0) : wallet.getTotalSent(app);
+                    BigDecimal totalSpent = wallet == null ? BigDecimal.ZERO : wallet.getTotalSent(app);
                     BigDecimal totalLimit = totalSpent.add(BRKeyStore.getSpendLimit(app, wm.getIso()));
                     BRKeyStore.putTotalLimit(app, totalLimit, wm.getIso());
                 }

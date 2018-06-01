@@ -15,6 +15,8 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
 
     private WalletManagerHelper mWalletManagerHelper;
 
+    public static final String ETHEREUM_WEI = "1000000000000000000";
+
     public BaseEthereumWalletManager() {
         mWalletManagerHelper = new WalletManagerHelper();
     }
@@ -34,9 +36,9 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
         mWalletManagerHelper.addBalanceChangedListener(listener);
     }
 
-    // TODO Not Used by ERC20
-    protected void onBalanceChanged(String uid, BigDecimal balance) {
-        mWalletManagerHelper.onBalanceChanged(uid, balance);
+    @Override
+    public void onBalanceChanged(BigDecimal balance) {
+        mWalletManagerHelper.onBalanceChanged(balance);
     }
 
 //    @Override
@@ -46,11 +48,13 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
 
     // TODO not used by ETH, ERC20
     @Override
-    public void addSyncListener(SyncListener listener) { }
+    public void addSyncListener(SyncListener listener) {
+    }
 
     // TODO not used by ETH, ERC20
     @Override
-    public void removeSyncListener(SyncListener listener) { }
+    public void removeSyncListener(SyncListener listener) {
+    }
 
     // TODO not used by ETH, ERC20
     @Override
@@ -61,7 +65,6 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
     @Override
     public void setCachedBalance(Context app, BigDecimal balance) {
         BRSharedPrefs.putCachedBalance(app, getIso(), balance);
-        onBalanceChanged(getIso(), balance);
     }
 
 }
