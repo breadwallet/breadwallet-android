@@ -1,5 +1,6 @@
 package com.breadwallet.wallet.wallets;
 
+
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 //import com.breadwallet.wallet.abstracts.OnTxStatusUpdatedListener;
@@ -16,7 +17,7 @@ public class WalletManagerHelper {
     public static final int MAX_DECIMAL_PLACES_FOR_UI = 5;
 
     private List<OnBalanceChangedListener> mOnBalanceChangedListeners = new ArrayList<>();
-//    private List<OnTxStatusUpdatedListener> mOnTxStatusUpdatedListeners = new ArrayList<>();
+    //    private List<OnTxStatusUpdatedListener> mOnTxStatusUpdatedListeners = new ArrayList<>();
     private List<SyncListener> mSyncListeners = new ArrayList<>();
     private List<OnTxListModified> mOntxListModifiedListeners = new ArrayList<>();
 
@@ -26,10 +27,10 @@ public class WalletManagerHelper {
         }
     }
 
-    public void onBalanceChanged(String uid, BigDecimal balance) {
+    public void onBalanceChanged(BigDecimal balance) {
         for (OnBalanceChangedListener listener : mOnBalanceChangedListeners) {
             if (listener != null) {
-                listener.onBalanceChanged(uid, balance);
+                listener.onBalanceChanged(balance);
             }
         }
     }

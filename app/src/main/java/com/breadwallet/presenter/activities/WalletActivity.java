@@ -60,7 +60,8 @@ import java.math.BigDecimal;
  * (BTC, BCH, ETH)
  */
 
-public class WalletActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, OnTxListModified, RatesDataSource.OnDataChanged, SyncListener {
+public class WalletActivity extends BRActivity implements InternetManager.ConnectionReceiverListener,
+        OnTxListModified, RatesDataSource.OnDataChanged, SyncListener, OnBalanceChangedListener {
     private static final String TAG = WalletActivity.class.getName();
 
     private BRText mCurrencyTitle;
@@ -233,7 +234,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
     }
 
-
     private void startSyncLoggerIfNeeded() {
         if (Utils.isEmulatorOrDebug(this) && RUN_LOGGER) {
             if (mTestLogger != null) {
@@ -397,19 +397,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             }
         });
-        wallet.addBalanceChangedListener(new OnBalanceChangedListener() {
-            @Override
-            public void onBalanceChanged(String iso, BigDecimal newBalance) {
-                wallet.refreshCachedBalance(WalletActivity.this);
-                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateUi();
-                    }
-                });
-
-            }
-        });
+        wallet.addBalanceChangedListener(this);
 
         mCurrentWalletIso = wallet.getIso();
 
@@ -510,6 +498,16 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     @Override
     public void onChanged() {
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                updateUi();
+            }
+        });
+    }
+
+    @Override
+    public void onBalanceChanged(BigDecimal newBalance) {
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {

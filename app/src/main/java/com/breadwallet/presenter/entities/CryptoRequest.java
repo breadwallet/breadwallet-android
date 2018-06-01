@@ -82,7 +82,7 @@ public class CryptoRequest {
 
     public boolean isLargerThanBalance(Context app, BaseWalletManager walletManager) {
         return amount.abs().compareTo(walletManager.getCachedBalance(app)) > 0
-                && amount.abs().compareTo(new BigDecimal(0)) > 0;
+                && amount.abs().compareTo(BigDecimal.ZERO) > 0;
     }
 
     //not enough money for a tx + fee

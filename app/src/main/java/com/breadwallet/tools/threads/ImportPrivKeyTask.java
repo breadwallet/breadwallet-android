@@ -150,7 +150,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         final BaseWalletManager walletManager = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
 
         BigDecimal bigAmount = walletManager.getTransactionAmount(mTransaction);
-        BigDecimal bigFee = new BigDecimal(0);
+        BigDecimal bigFee = BigDecimal.ZERO;
 
         for (BRCoreTransactionInput in : mTransaction.getCoreTx().getInputs())
             bigFee = bigFee.add(new BigDecimal(in.getAmount()));

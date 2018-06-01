@@ -44,7 +44,7 @@ public interface BaseWalletManager {
      * The methods that are annotated with @WorkerThread might block so can't be called in the UI Thread
      */
 
-    public interface OnHashUpdated{
+    public interface OnHashUpdated {
         void onUpdated(String hash);
     }
 
@@ -61,6 +61,8 @@ public interface BaseWalletManager {
     byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] seed);
 
     void addBalanceChangedListener(OnBalanceChangedListener list);
+
+    void onBalanceChanged(BigDecimal balance);
 
 //    void addTxStatusUpdatedListener(OnTxStatusUpdatedListener list);
 

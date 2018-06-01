@@ -74,7 +74,7 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
 public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager implements BaseWalletManager {
 
-    protected static final int ONE_BITCOIN = 100000000; // 1 Bitcoin in satoshis
+    public static final int ONE_BITCOIN = 100000000; // 1 Bitcoin in satoshis
     private static final long MAXIMUM_AMOUNT = 21000000; // Maximum number of coins available
     private static final int SYNC_MAX_RETRY = 3;
 
@@ -166,7 +166,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         BigDecimal fee;
         if (amount == null) return null;
         if (amount.longValue() == 0) {
-            fee = new BigDecimal(0);
+            fee = BigDecimal.ZERO;
         } else {
             CryptoTransaction tx = null;
             if (isAddressValid(address)) {
@@ -177,7 +177,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                 fee = new BigDecimal(getWallet().getFeeForTransactionAmount(amount.longValue()));
             } else {
                 fee = getTxFee(tx);
-                if (fee == null || fee.compareTo(new BigDecimal(0)) <= 0)
+                if (fee == null || fee.compareTo(BigDecimal.ZERO) <= 0)
                     fee = new BigDecimal(getWallet().getFeeForTransactionAmount(amount.longValue()));
             }
         }
@@ -236,14 +236,14 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
             economyFee = new BigDecimal(obj.getString("fee_per_kb_economy"));
             Log.d(getTag(), "updateFee: " + getIso() + ":" + fee + "|" + economyFee);
 
-            if (fee.compareTo(new BigDecimal(0)) > 0 && fee.compareTo(new BigDecimal(getWallet().getMaxFeePerKb())) < 0) {
+            if (fee.compareTo(BigDecimal.ZERO) > 0 && fee.compareTo(new BigDecimal(getWallet().getMaxFeePerKb())) < 0) {
                 BRSharedPrefs.putFeeRate(app, getIso(), fee);
                 getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app, getIso()) ? fee.longValue() : economyFee.longValue());
                 BRSharedPrefs.putFeeTime(app, getIso(), System.currentTimeMillis()); //store the time of the last successful fee fetch
             } else {
                 BRReportsManager.reportBug(new NullPointerException("Fee is weird:" + fee));
             }
-            if (economyFee.compareTo(new BigDecimal(0)) > 0 && economyFee.compareTo(new BigDecimal(getWallet().getMaxFeePerKb())) < 0) {
+            if (economyFee.compareTo(BigDecimal.ZERO) > 0 && economyFee.compareTo(new BigDecimal(getWallet().getMaxFeePerKb())) < 0) {
                 BRSharedPrefs.putEconomyFeeRate(app, getIso(), economyFee);
             } else {
                 BRReportsManager.reportBug(new NullPointerException("Economy fee is weird:" + economyFee));
@@ -390,14 +390,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     @Override
     public void setCachedBalance(final Context app, BigDecimal balance) {
         BRSharedPrefs.putCachedBalance(app, getIso(), balance);
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                refreshAddress(app);
-            }
-        });
-
-        onBalanceChanged(getIso(), balance);
     }
 
     @Override
@@ -467,7 +459,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         double rate = ent.rate;
         //convert c to $.
         int unit = BRSharedPrefs.getCryptoDenomination(app, getIso());
-        BigDecimal result = new BigDecimal(0);
+        BigDecimal result = BigDecimal.ZERO;
         switch (unit) {
             case BRConstants.CURRENT_UNIT_BITS:
                 result = fiatAmount.divide(new BigDecimal(rate), 2, ROUNDING_MODE).multiply(new BigDecimal("1000000"));
@@ -486,7 +478,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     @Override
     public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
         if (amount.doubleValue() == 0) return amount;
-        BigDecimal result = new BigDecimal(0);
+        BigDecimal result = BigDecimal.ZERO;
         int unit = BRSharedPrefs.getCryptoDenomination(app, getIso());
         switch (unit) {
             case BRConstants.CURRENT_UNIT_BITS:
@@ -505,7 +497,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     @Override
     public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
         if (amount.doubleValue() == 0) return amount;
-        BigDecimal result = new BigDecimal(0);
+        BigDecimal result = BigDecimal.ZERO;
         int unit = BRSharedPrefs.getCryptoDenomination(app, getIso());
         switch (unit) {
             case BRConstants.CURRENT_UNIT_BITS:
@@ -703,8 +695,9 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         mWalletManagerHelper.addBalanceChangedListener(listener);
     }
 
-    protected void onBalanceChanged(String uid, BigDecimal balance) {
-        mWalletManagerHelper.onBalanceChanged(uid, balance);
+    @Override
+    public void onBalanceChanged(BigDecimal balance) {
+        mWalletManagerHelper.onBalanceChanged(balance);
     }
 
 //    @Override
@@ -744,9 +737,15 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-                Context app = BreadApp.getBreadContext();
+                final Context app = BreadApp.getBreadContext();
                 setCachedBalance(app, new BigDecimal(balance));
                 onTxListModified(null);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        refreshAddress(app);
+                    }
+                });
             }
         });
     }
@@ -858,7 +857,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                 public void run() {
                     String am = CurrencyUtils.getFormattedAmount(ctx, getIso(), getCryptoForSmallestCrypto(ctx, new BigDecimal(amount)));
                     BigDecimal bigAmount = master.getCurrentWallet(ctx).getFiatForSmallestCrypto(ctx, new BigDecimal(amount), null);
-                    String amCur = CurrencyUtils.getFormattedAmount(ctx, BRSharedPrefs.getPreferredFiatIso(ctx), bigAmount == null ? new BigDecimal(0) : bigAmount);
+                    String amCur = CurrencyUtils.getFormattedAmount(ctx, BRSharedPrefs.getPreferredFiatIso(ctx), bigAmount == null ? BigDecimal.ZERO : bigAmount);
                     String formatted = String.format("%s (%s)", am, amCur);
                     final String strToShow = String.format(ctx.getString(R.string.TransactionDetails_received), formatted);
 

@@ -79,7 +79,7 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
 
                 BigDecimal fee = BRSharedPrefs.getFeeRate(app, getIso());
                 BigDecimal economyFee = BRSharedPrefs.getEconomyFeeRate(app, getIso());
-                if (fee.compareTo(new BigDecimal(0)) == 0) {
+                if (fee.compareTo(BigDecimal.ZERO) == 0) {
                     fee = new BigDecimal(getWallet().getDefaultFeePerKb());
                     BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
                 }

@@ -200,7 +200,7 @@ public class SendManager {
             BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"));
             return;
         }
-        if (maxAmountDouble.compareTo(new BigDecimal(0)) == 0) {
+        if (maxAmountDouble.compareTo(BigDecimal.ZERO) == 0) {
             BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.Send_nilFeeError), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                 @Override
                 public void onClick(BRDialogView brDialogView) {
@@ -210,7 +210,7 @@ public class SendManager {
         } else {
             if (Utils.isNullOrEmpty(item.address)) throw new RuntimeException("can't happen");
             BigDecimal fee = wm.getEstimatedFee(maxAmountDouble, item.address);
-            if (fee.compareTo(new BigDecimal(0)) <= 0) {
+            if (fee.compareTo(BigDecimal.ZERO) <= 0) {
                 BRReportsManager.reportBug(new RuntimeException("fee is weird:  " + fee));
                 BRDialog.showCustomDialog(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.Send_nilFeeError), app.getString(R.string.Button_ok), null, new BRDialogView.BROnClickListener() {
                     @Override
@@ -333,28 +333,33 @@ public class SendManager {
 
         String iso = BRSharedPrefs.getPreferredFiatIso(ctx);
         BigDecimal feeForTx = wm.getEstimatedFee(request.amount, request.address);
-        if (feeForTx.compareTo(new BigDecimal(0)) <= 0) {
+        if (feeForTx.compareTo(BigDecimal.ZERO) <= 0) {
             BigDecimal maxAmount = wm.getMaxOutputAmount(ctx);
             if (maxAmount != null && maxAmount.compareTo(new BigDecimal(-1)) == 0) {
                 BRReportsManager.reportBug(new RuntimeException("getMaxOutputAmount is -1, meaning _wallet is NULL"), true);
             }
-            if (maxAmount != null && maxAmount.compareTo(new BigDecimal(0)) == 0) {
+            if (maxAmount != null && maxAmount.compareTo(BigDecimal.ZERO) == 0) {
                 BRDialog.showCustomDialog(ctx, "", ctx.getString(R.string.Alerts_sendFailure),
                         ctx.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-                        brDialogView.dismiss();
-                    }
-                }, null, null, 0);
+                            @Override
+                            public void onClick(BRDialogView brDialogView) {
+                                brDialogView.dismiss();
+                            }
+                        }, null, null, 0);
 
                 return null;
             }
-            if (maxAmount != null && WalletsMaster.getInstance(ctx).isIsoErc20(ctx, wm.getIso())) {
-                feeForTx = wm.getEstimatedFee(request.amount, request.address);
-                feeForTx = feeForTx.add(wm.getCachedBalance(ctx).subtract(request.amount.abs()));
-            }
         }
-        if (feeForTx.compareTo(new BigDecimal(0)) <= 0) return null;
+        if (feeForTx.compareTo(BigDecimal.ZERO) <= 0) {
+            BRDialog.showCustomDialog(ctx, "", ctx.getString(R.string.Send_nilFeeError),
+                    ctx.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                        @Override
+                        public void onClick(BRDialogView brDialogView) {
+                            brDialogView.dismiss();
+                        }
+                    }, null, null, 0);
+            return null;
+        }
         BigDecimal amount = request.amount.abs();
         final BigDecimal total = amount.add(feeForTx);
         String formattedCryptoAmount = CurrencyUtils.getFormattedAmount(ctx, wm.getIso(), amount);

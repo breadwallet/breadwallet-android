@@ -694,7 +694,7 @@ public class BRKeyStore {
         WalletSettingsConfiguration configs = wm.getSettingsConfiguration();
         return (result != null && result.length > 0) ?
                 new BigDecimal(new String(result)) :
-                (configs.mFingerprintLimits.size() != 0 ? configs.mFingerprintLimits.get(1) : new BigDecimal(0));
+                (configs.mFingerprintLimits.size() != 0 ? configs.mFingerprintLimits.get(1) : BigDecimal.ZERO);
     }
 
     public  static boolean putTotalLimit(Context context, BigDecimal totalLimit, String iso) {
@@ -716,7 +716,7 @@ public class BRKeyStore {
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
-        return (result != null && result.length > 0) ? new BigDecimal(new String(result)) : new BigDecimal(0);
+        return (result != null && result.length > 0) ? new BigDecimal(new String(result)) : BigDecimal.ZERO;
     }
 
     public  static boolean putFailTimeStamp(long spendLimit, Context context) {

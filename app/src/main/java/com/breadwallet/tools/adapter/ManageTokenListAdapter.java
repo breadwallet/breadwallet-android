@@ -100,7 +100,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
 
         if (tokenManager != null) {
             tokenBalance = tokenManager.getCachedBalance(mContext);
-            if (tokenBalance.compareTo(new BigDecimal(0)) == 0) {
+            if (tokenBalance.compareTo(BigDecimal.ZERO) == 0) {
                 holder.tokenBalance.setText("");
             } else {
                 holder.tokenBalance.setText(tokenBalance.toPlainString() + iso);

@@ -435,6 +435,7 @@ public class FragmentSend extends Fragment {
                 boolean isIsoCrypto = master.isIsoCrypto(getActivity(), selectedIso);
 
                 BigDecimal cryptoAmount = isIsoCrypto ? wm.getSmallestCryptoForCrypto(getActivity(), rawAmount) : wm.getSmallestCryptoForFiat(getActivity(), rawAmount);
+
                 CryptoRequest req = CryptoUriParser.parseRequest(getActivity(), rawAddress);
                 if (req == null || Utils.isNullOrEmpty(req.address)) {
                     sayInvalidClipboardData();
@@ -452,7 +453,7 @@ public class FragmentSend extends Fragment {
                             }, null, null, 0);
                     return;
                 }
-                if (cryptoAmount.compareTo(new BigDecimal(0)) <= 0) {
+                if (cryptoAmount.compareTo(BigDecimal.ZERO) <= 0) {
                     allFilled = false;
                     SpringAnimator.failShakeAnimation(getActivity(), amountEdit);
                 }
@@ -769,7 +770,7 @@ public class FragmentSend extends Fragment {
 
         //wallet's balance for the selected ISO
         BigDecimal isoBalance = isIsoCrypto ? wm.getCryptoForSmallestCrypto(app, curBalance) : wm.getFiatForSmallestCrypto(app, curBalance, null);
-        if (isoBalance == null) isoBalance = new BigDecimal(0);
+        if (isoBalance == null) isoBalance = BigDecimal.ZERO;
 
         BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, addressEdit.getText().toString());
 
@@ -783,7 +784,6 @@ public class FragmentSend extends Fragment {
             BaseWalletManager ethWm = WalletEthManager.getInstance(app);
             isoFee = isIsoCrypto ? rawFee : ethWm.getFiatForSmallestCrypto(app, rawFee, null);
             formattedFee = CurrencyUtils.getFormattedAmount(app, isIsoCrypto ? ethWm.getIso() : selectedIso, isoFee);
-
         }
 
         boolean isOverTheBalance = inputAmount.compareTo(isoBalance) > 0;
