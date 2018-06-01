@@ -257,7 +257,7 @@ public class FragmentTxDetails extends DialogFragment {
                 mTxStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             }
 
-            BigDecimal cryptoAmount = mTransaction.getAmount().setScale(walletManager.getUiConfiguration().getMaxDecimalPlacesForUi(), BRConstants.ROUNDING_MODE);
+            BigDecimal cryptoAmount = mTransaction.getAmount().setScale(walletManager.getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE);
             BREthereumToken tkn = null;
             if (walletManager.getIso().equalsIgnoreCase("ETH"))
                 tkn = WalletEthManager.getInstance(app).node.lookupToken(mTransaction.getTo());

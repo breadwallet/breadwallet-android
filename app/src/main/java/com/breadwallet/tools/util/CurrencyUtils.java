@@ -41,14 +41,19 @@ import java.util.Locale;
 public class CurrencyUtils {
     public static final String TAG = CurrencyUtils.class.getName();
 
+    public static String getFormattedAmount(Context app, String iso, BigDecimal amount) {
+        //Use default (wallet's maxDecimal places)
+        return getFormattedAmount(app, iso, amount, -1);
+    }
 
     /**
      * @param app    - the Context
      * @param iso    - the iso for the currency we want to format the amount for
      * @param amount - the smallest denomination currency (e.g. dollars or satoshis)
+     * @param maxDecimalPlacesForCrypto - max decimal places to use or -1 for wallet's default
      * @return - the formatted amount e.g. $535.50 or b5000
      */
-    public static String getFormattedAmount(Context app, String iso, BigDecimal amount) {
+    public static String getFormattedAmount(Context app, String iso, BigDecimal amount, int maxDecimalPlacesForCrypto) {
         if (amount == null) return "---"; //to be able to detect in a bug
         if (Utils.isNullOrEmpty(iso)) throw new RuntimeException("need iso for formatting!");
         DecimalFormat currencyFormat;
@@ -64,7 +69,7 @@ public class CurrencyUtils {
             amount = wallet.getCryptoForSmallestCrypto(app, amount);
             decimalFormatSymbols.setCurrencySymbol("");
             currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
-            currencyFormat.setMaximumFractionDigits(wallet.getMaxDecimalPlaces(app));
+            currencyFormat.setMaximumFractionDigits(maxDecimalPlacesForCrypto == -1 ? wallet.getMaxDecimalPlaces(app) : maxDecimalPlacesForCrypto);
             currencyFormat.setMinimumFractionDigits(0);
             return String.format("%s %s", currencyFormat.format(amount), iso.toUpperCase());
         } else {
