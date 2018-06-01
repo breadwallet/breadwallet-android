@@ -102,14 +102,6 @@ public class BRConstants {
     public static final String FAQ_LOOP_BUG = "android-loop-bug";
     public static final String FAQ_BCH = "bitcoin-cash";
 
-
-    /**
-     * Crypto units
-     */
-    public static final String BITCOIN_SATOSHIS = "100000000";
-    public static final String ETHEREUM_WEI = "1000000000000000000";
-
-
     private BRConstants() {
     }
 

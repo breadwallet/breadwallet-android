@@ -126,8 +126,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
             String[] words = lookupWords(app, paperKey, Locale.getDefault().getLanguage());
 
             if (null == words) {
-                Log.e(TAG, "WalletEthManager: paper key does not validate with BIP39 Words for: " +
-                        Locale.getDefault().getLanguage());
+                Log.e(TAG, "WalletEthManager: paper key does not validate with BIP39 Words for: "
+                        + Locale.getDefault().getLanguage());
                 return;
             }
 
@@ -197,11 +197,11 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         }
         String[] words = list.toArray(new String[list.size()]);
 
-        // If the paperKey is valid for `words`, then return `words`
-        if (BRCoreMasterPubKey.validateRecoveryPhrase(words, paperKey))
+        if (BRCoreMasterPubKey.validateRecoveryPhrase(words, paperKey)) {
+            // If the paperKey is valid for `words`, then return `words`
             return words;
+        } else {
             // Otherwise, nothing
-        else {
             BRReportsManager.reportBug(new NullPointerException("invalid paper key for words:" + paperKey.substring(0, 10))); //see a piece of it
             return null;
         }
@@ -303,8 +303,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
     public BigDecimal getEstimatedFee(BigDecimal amount, String address) {
         BigDecimal fee;
         if (amount == null) return null;
-        if (amount.compareTo(new BigDecimal(0)) == 0) {
-            fee = new BigDecimal(0);
+        if (amount.compareTo(BigDecimal.ZERO) == 0) {
+            fee = BigDecimal.ZERO;
         } else {
             fee = new BigDecimal(mWallet.transactionEstimatedFee(amount.toPlainString()));
         }
@@ -324,9 +324,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
     @Override
     public BigDecimal getMaxOutputAmount(Context app) {
         BigDecimal balance = getCachedBalance(app);
-        if (balance.compareTo(new BigDecimal(0)) == 0) return new BigDecimal(0);
+        if (balance.compareTo(BigDecimal.ZERO) == 0) return BigDecimal.ZERO;
         BigDecimal fee = new BigDecimal(mWallet.transactionEstimatedFee(balance.toPlainString()));
-        if (fee.compareTo(balance) > 0) return new BigDecimal(0);
+        if (fee.compareTo(balance) > 0) return BigDecimal.ZERO;
         return balance.subtract(fee);
     }
 
@@ -372,7 +372,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
             economyFee = new BigDecimal(obj.getString("fee_per_kb_economy"));
             Log.d(TAG, "updateFee: " + getIso() + ":" + fee + "|" + economyFee);
 
-            if (fee.compareTo(new BigDecimal(0)) > 0) {
+            if (fee.compareTo(BigDecimal.ZERO) > 0) {
                 BRSharedPrefs.putFeeRate(app, getIso(), fee);
                 BRSharedPrefs.putFeeTime(app, getIso(), System.currentTimeMillis()); //store the time of the last successful fee fetch
             } else {
@@ -380,7 +380,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                 Log.d(TAG, "Error: Fee is unexpected value");
 
             }
-            if (economyFee.compareTo(new BigDecimal(0)) > 0) {
+            if (economyFee.compareTo(BigDecimal.ZERO) > 0) {
                 BRSharedPrefs.putEconomyFeeRate(app, getIso(), economyFee);
             } else {
                 BRReportsManager.reportBug(new NullPointerException("Economy fee is weird:" + economyFee));
@@ -406,15 +406,11 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
 
     @Override
     public void refreshCachedBalance(final Context app) {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                if (wasBalanceUpdated("ETH")) {
-                    BigDecimal balance = new BigDecimal(mWallet.getBalance(getUnit()));
-                    BRSharedPrefs.putCachedBalance(app, ISO, balance);
-                }
-            }
-        });
+        if (wasBalanceUpdated(getIso())) {
+            final BigDecimal balance = new BigDecimal(mWallet.getBalance(getUnit()));
+            BRSharedPrefs.putCachedBalance(app, getIso(), balance);
+        }
+
     }
 
     @Override
@@ -510,7 +506,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
 
     @Override
     public BigDecimal getTotalSent(Context app) {
-        return new BigDecimal(0);
+        return BigDecimal.ZERO;
     }
 
     @Override
@@ -564,7 +560,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
 
     @Override
     public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount, CurrencyEntity ent) {
-        if (amount == null || amount.compareTo(new BigDecimal(0)) == 0) return amount;
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         if (ent != null) {
             //passed in a custom CurrencyEntity
@@ -583,7 +579,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
 
     @Override
     public BigDecimal getCryptoForFiat(Context app, BigDecimal fiatAmount) {
-        if (fiatAmount == null || fiatAmount.compareTo(new BigDecimal(0)) == 0) return fiatAmount;
+        if (fiatAmount == null || fiatAmount.compareTo(BigDecimal.ZERO) == 0) return fiatAmount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         return getEthForFiat(app, fiatAmount, iso);
 
@@ -591,19 +587,19 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
 
     @Override
     public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
-        if (amount == null || amount.compareTo(new BigDecimal(0)) == 0) return amount;
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) return amount;
         return amount.divide(ONE_ETH, 8, ROUNDING_MODE);
     }
 
     @Override
     public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
-        if (amount == null || amount.compareTo(new BigDecimal(0)) == 0) return amount;
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) return amount;
         return amount.multiply(ONE_ETH);
     }
 
     @Override
     public BigDecimal getSmallestCryptoForFiat(Context app, BigDecimal amount) {
-        if (amount == null || amount.compareTo(new BigDecimal(0)) == 0) return amount;
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) return amount;
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         BigDecimal ethAmount = getEthForFiat(app, amount, iso);
         if (ethAmount == null) return null;
@@ -699,14 +695,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                                 if (responseObject.has("result")) {
                                     String balance = responseObject.getString("result");
                                     node.announceBalance(wid, balance, rid);
-                                    final BigDecimal amount = new BigDecimal(wallet.getBalance(getUnit()));
-
-                                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            onBalanceChanged(ISO, amount);
-                                        }
-                                    });
                                 }
                             } else {
                                 Log.e(TAG, "onRpcRequestCompleted: jsonResult is null");
@@ -729,15 +717,12 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
             Log.e(TAG, "getTokenBalance: App in background!");
             return;
         }
-        Log.e(TAG, "getTokenBalance: ..");
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                Log.e(TAG, "getTokenBalance: " + wid);
                 final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
-                final String eth_rpc_url = host + "module=account&action=tokenbalance" +
-                        "&address=" + address +
-                        "&contractaddress=" + contractAddress;
+                final String eth_rpc_url = host + "module=account&action=tokenbalance"
+                        + "&address=" + address + "&contractaddress=" + contractAddress;
 
                 final JSONObject payload = new JSONObject();
                 try {
@@ -749,7 +734,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                 JsonRpcRequest.makeRpcRequest(BreadApp.getBreadContext(), eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
-
                         try {
                             if (!Utils.isNullOrEmpty(jsonResult)) {
                                 JSONObject responseObject = new JSONObject(jsonResult);
@@ -757,21 +741,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                                 if (responseObject.has("result")) {
                                     String balance = responseObject.getString("result");
                                     node.announceBalance(wid, balance, rid);
-                                    final BigDecimal uiBalance = new BigDecimal(wallet.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));//use TOKEN_DECIMAL
-                                    final String iso = wallet.getToken().getSymbol();
 
-                                    Context app = BreadApp.getBreadContext();
-                                    if (app != null) {
-                                        BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
-                                        if (wm != null) wm.refreshCachedBalance(app);
-                                    }
-
-                                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            onBalanceChanged(iso, uiBalance);
-                                        }
-                                    });
+                                } else {
+                                    Log.e(TAG, "onRpcRequestCompleted: Response does not contain the key 'result'.");
                                 }
                             }
                         } catch (JSONException je) {
@@ -948,17 +920,14 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                                                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                                                             @Override
                                                             public void run() {
-                                                                // TODO this is never added
-//                                                                for (OnTxStatusUpdatedListener list : txStatusUpdatedListeners)
-//                                                                    if (list != null)
-//                                                                        list.onTxStatusUpdated();
                                                                 mWallet.updateBalance();
                                                             }
                                                         });
                                                     }
                                                 });
                                     } else {
-                                        BRDialog.showSimpleDialog(app, "Failed", String.format("(%d) %s", finalErrCode, finalErrMessage));
+                                        String message = String.format(Locale.getDefault(), "(%d) %s", finalErrCode, finalErrMessage);
+                                        BRDialog.showSimpleDialog(app, "Failed", message);
                                     }
                                 } else {
                                     Log.e(TAG, "submitTransaction: app is null or not an activity");
@@ -1159,13 +1128,13 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
             @Override
             public void run() {
                 final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
-                final String eth_rpc_url = host + "module=logs&action=getLogs" +
-                        "&fromBlock=0&toBlock=latest" +
-                        (null == contract ? "" : ("&address=" + contract)) +
-                        "&topic0=" + event +
-                        "&topic1=" + address +
-                        "&topic1_2_opr=or" +
-                        "&topic2=" + address;
+                final String eth_rpc_url = host + "module=logs&action=getLogs"
+                        + "&fromBlock=0&toBlock=latest"
+                        + (null == contract ? "" : ("&address=" + contract))
+                        + "&topic0=" + event
+                        + "&topic1=" + address
+                        + "&topic1_2_opr=or"
+                        + "&topic2=" + address;
                 Log.d(TAG, "run: " + eth_rpc_url);
                 final JSONObject payload = new JSONObject();
                 try {
@@ -1277,14 +1246,15 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         Context app = BreadApp.getBreadContext();
 
         if (app != null && Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
-            String iso = (null == wallet.getToken() ? "ETH" : wallet.getToken().getSymbol());
+            String iso = (null == wallet.getToken() ? getIso() : wallet.getToken().getSymbol());
             switch (event) {
                 case CREATED:
                     printInfo("Wallet Created", iso, event.name());
                     break;
 
                 case BALANCE_UPDATED:
-                    balanceStatuses.put(iso, true);
+                    notifyBalanceWasUpdated(wallet, iso);
+                    setBalanceUpdated(iso);
                     printInfo("New Balance: " + wallet.getBalance(), iso, event.name());
                     break;
                 case DEFAULT_GAS_LIMIT_UPDATED:
@@ -1330,7 +1300,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         Context app = BreadApp.getBreadContext();
 
         if (app != null && Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
-            String iso = (null == wallet.getToken() ? "ETH" : wallet.getToken().getSymbol());
+            String iso = (null == wallet.getToken() ? getIso() : wallet.getToken().getSymbol());
             switch (event) {
                 case ADDED:
                     printInfo("New transaction added: ", iso, event.name());
@@ -1379,13 +1349,74 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         }
     }
 
-    public boolean wasBalanceUpdated(String iso) {
-        if (iso != null) return true; //temporary ignoring this approach
-        if (Utils.isNullOrEmpty(iso)) {
-            BRReportsManager.reportBug(new NullPointerException("Invalid iso: " + iso));
+    /**
+     * refresh current wallet's balance by code
+     *
+     * @param code - wallet code for which the balance was updated
+     */
+    private void notifyBalanceWasUpdated(BREthereumWallet wallet, String code) {
+        if (Utils.isNullOrEmpty(code)) {
+            BRReportsManager.reportBug(new NullPointerException("Invalid code: " + code));
+            return;
+        }
+        final Context app = BreadApp.getBreadContext();
+
+        if (getIso().equalsIgnoreCase(code)) {
+            //ETH wallet balance was updated
+
+            final BigDecimal balance = new BigDecimal(wallet.getBalance(getUnit()));
+
+            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    refreshCachedBalance(app);
+                    onBalanceChanged(balance); //this, Eth wallet.
+                }
+            });
+
+        } else {
+            //ERC20 wallet balance was updated
+
+            final BigDecimal balance = new BigDecimal(wallet.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL)); //use TOKEN_DECIMAL
+            final String iso = wallet.getToken().getSymbol();
+            if (app != null) {
+                BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, iso); //the token wallet being updated.
+                if (wm != null) {
+                    wm.refreshCachedBalance(app);
+                    wm.onBalanceChanged(balance);
+                }
+            }
+        }
+    }
+
+    /**
+     * Store this wallet's code along with a boolean value that specifies
+     * if the balance was updated in this particular launch
+     *
+     * @param code - wallet code for which the balance was updated
+     */
+    private void setBalanceUpdated(String code) {
+        if (Utils.isNullOrEmpty(code)) {
+            BRReportsManager.reportBug(new NullPointerException("Invalid code: " + code));
+            return;
+        }
+        String upperCode = code.toUpperCase();
+        balanceStatuses.put(upperCode, true);
+    }
+
+    /**
+     * Get stored boolean value for this wallet's code that specifies
+     * if the balance was updated in this particular launch
+     *
+     * @param code - wallet code for which the balance was updated
+     */
+    public boolean wasBalanceUpdated(String code) {
+        if (Utils.isNullOrEmpty(code)) {
+            BRReportsManager.reportBug(new NullPointerException("Invalid code: " + code));
             return false;
         }
-        return balanceStatuses.containsKey(iso) && balanceStatuses.get(iso);
+        String upperCode = code.toUpperCase();
+        return balanceStatuses.containsKey(upperCode) && balanceStatuses.get(upperCode);
 
     }
 }

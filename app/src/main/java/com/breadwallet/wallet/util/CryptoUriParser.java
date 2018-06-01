@@ -23,6 +23,8 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
+import com.breadwallet.wallet.wallets.ethereum.BaseEthereumWalletManager;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
@@ -272,7 +274,7 @@ public class CryptoUriParser {
             } //  else ->   //allow tokens to scan ETH so continue ..
         }
 
-        if (requestObject.amount == null || requestObject.amount.compareTo(new BigDecimal(0)) == 0) {
+        if (requestObject.amount == null || requestObject.amount.compareTo(BigDecimal.ZERO) == 0) {
             app.runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
@@ -312,12 +314,12 @@ public class CryptoUriParser {
         if (!Utils.isNullOrEmpty(cleanAddress)) {
             builder = builder.appendPath(cleanAddress);
         }
-        if (cryptoAmount.compareTo(new BigDecimal(0)) != 0) {
+        if (cryptoAmount.compareTo(BigDecimal.ZERO) != 0) {
             if (iso.equalsIgnoreCase("ETH")) {
-                BigDecimal ethAmount = cryptoAmount.divide(new BigDecimal(BRConstants.ETHEREUM_WEI), 3, BRConstants.ROUNDING_MODE);
+                BigDecimal ethAmount = cryptoAmount.divide(new BigDecimal(BaseEthereumWalletManager.ETHEREUM_WEI), 3, BRConstants.ROUNDING_MODE);
                 builder = builder.appendQueryParameter("value", ethAmount.toPlainString() + "e18");
             } else if (iso.equalsIgnoreCase("BTC") || iso.equalsIgnoreCase("BCH")) {
-                BigDecimal amount = cryptoAmount.divide(new BigDecimal(BRConstants.BITCOIN_SATOSHIS), 8, BRConstants.ROUNDING_MODE);
+                BigDecimal amount = cryptoAmount.divide(new BigDecimal(BaseBitcoinWalletManager.ONE_BITCOIN), 8, BRConstants.ROUNDING_MODE);
                 builder = builder.appendQueryParameter("amount", amount.toPlainString());
             } else {
                 throw new RuntimeException("URI not supported for: " + iso);

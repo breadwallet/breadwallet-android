@@ -147,7 +147,7 @@ public class SpendLimitActivity extends BRActivity {
 
             String cryptoAmount = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(), item);
 
-            String text = String.format(item.compareTo(new BigDecimal(0)) == 0 ? app.getString(R.string.TouchIdSpendingLimit) : "%s", cryptoAmount);
+            String text = String.format(item.compareTo(BigDecimal.ZERO) == 0 ? app.getString(R.string.TouchIdSpendingLimit) : "%s", cryptoAmount);
             textViewItem.setText(text);
             ImageView checkMark = convertView.findViewById(R.id.currency_checkmark);
 
