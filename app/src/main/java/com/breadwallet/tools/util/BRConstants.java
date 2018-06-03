@@ -75,7 +75,7 @@ public class BRConstants {
     public static final String BITCOIN_SYBMOL_OLD = "\u0243";
     public static final String BITCOIN_SYMBOL = "\u20BF";
 
-    public static final RoundingMode ROUNDING_MODE = RoundingMode.CEILING;
+    public static final RoundingMode ROUNDING_MODE = RoundingMode.HALF_EVEN;
     public static final boolean WRITE_AHEAD_LOGGING = true;
 
     /**

@@ -193,7 +193,7 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         if (!item.isValid())
             showTransactionFailed(convertView, item, received);
 
-        BigDecimal cryptoAmount = item.getAmount().setScale(wm.getUiConfiguration().getMaxDecimalPlacesForUi(), BRConstants.ROUNDING_MODE).abs();
+        BigDecimal cryptoAmount = item.getAmount().abs();
 
         BREthereumToken tkn = null;
         if (wm.getIso().equalsIgnoreCase("ETH"))
@@ -205,7 +205,11 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(mContext);
         String preferredIso = isCryptoPreferred ? wm.getIso() : BRSharedPrefs.getPreferredFiatIso(mContext);
         BigDecimal amount = isCryptoPreferred ? cryptoAmount : wm.getFiatForSmallestCrypto(mContext, cryptoAmount, null);
-        convertView.transactionAmount.setText(CurrencyUtils.getFormattedAmount(mContext, preferredIso, received ? amount : (amount == null ? null : amount.negate())));
+        if (!received && amount != null) {
+            amount = amount.negate();
+        }
+        String formattedAmount = CurrencyUtils.getFormattedAmount(mContext, preferredIso, amount, wm.getUiConfiguration().getMaxDecimalPlacesForUi());
+        convertView.transactionAmount.setText(formattedAmount);
         int blockHeight = item.getBlockHeight();
         int lastBlockHeight = BRSharedPrefs.getLastBlockHeight(mContext, wm.getIso());
         int confirms = blockHeight == Integer.MAX_VALUE ? 0 : lastBlockHeight - blockHeight + 1;
