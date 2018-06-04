@@ -116,19 +116,14 @@
 
                     <ProgressBar
                         android:id="@+id/sync_progress"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="30dp"
-                        android:layout_height="3dp"
+                        android:layout_width="9dp"
+                        android:layout_height="9dp"
                         android:layout_alignParentEnd="true"
                         android:layout_marginBottom="62dp"
                         android:layout_marginEnd="15dp"
-                        android:indeterminate="false"
+                        android:indeterminate="true"
                         android:keepScreenOn="true"
-                        android:max="100"
-                        android:progress="0"
-                        android:progressBackgroundTint="#88ffffff"
-                        android:progressDrawable="@drawable/wallet_sync_progress_bar"
-                        android:progressTint="#ffffff"
+                        android:indeterminateDrawable="@drawable/wallet_sync_progress_bar"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"/>
 
