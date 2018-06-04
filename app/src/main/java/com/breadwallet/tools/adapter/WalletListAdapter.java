@@ -178,7 +178,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             int progress = (int) (syncProgress * 100);
 //            Log.d(TAG, "ISO: " + currentWallet.walletManager.getIso(mContext) + " (" + progress + "%)");
 
-            mCurrentWalletSyncing.updateData(true, true, false, progress, "Syncing");
+            mCurrentWalletSyncing.updateData(true, true, false, progress, String.format("%s %d%%", "Syncing", progress));
             notifyDataSetChanged();
         }
 
