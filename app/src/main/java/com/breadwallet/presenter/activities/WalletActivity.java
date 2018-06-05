@@ -19,6 +19,7 @@ import android.util.TypedValue;
 import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.ViewFlipper;
 
@@ -51,6 +52,7 @@ import com.breadwallet.wallet.util.CryptoUriParser;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
+import java.text.NumberFormat;
 
 /**
  * Created by byfieldj on 1/16/18.
@@ -74,7 +76,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private BRButton mReceiveButton;
     private BRButton mBuyButton;
     private BRButton mSellButton;
-    private BRText mBalanceLabel;
+    private LinearLayout mProgressLayout;
     private BRText mProgressLabel;
     private ProgressBar mProgressBar;
     public ViewFlipper mBarFlipper;
@@ -88,8 +90,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     private static final float PRIMARY_TEXT_SIZE = 30;
     private static final float SECONDARY_TEXT_SIZE = 16;
-
-    private static final int ONE_HUNDRED = 100;
 
     private static final boolean RUN_LOGGER = false;
 
@@ -123,7 +123,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mSearchIcon = findViewById(R.id.search_icon);
         mToolBarConstraintLayout = findViewById(R.id.bread_toolbar);
         mSwap = findViewById(R.id.swap);
-        mBalanceLabel = findViewById(R.id.balance_label);
+        mProgressLayout = findViewById(R.id.progress_layout);
         mProgressLabel = findViewById(R.id.syncing_label);
         mProgressBar = findViewById(R.id.sync_progress);
         mNotificationBar = findViewById(R.id.notification_bar);
@@ -489,10 +489,18 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     public void updateSyncProgress(double progress) {
-        mProgressBar.setProgress((int) (progress * ONE_HUNDRED));
-        mProgressBar.setVisibility(progress == 1 ? View.GONE : View.VISIBLE);
-        mProgressLabel.setVisibility(progress == 1 ? View.GONE : View.VISIBLE);
-        mBalanceLabel.setVisibility(progress == 1 ? View.VISIBLE : View.GONE);
+        boolean showProgress = progress != BRConstants.SYNC_PROGRESS_FINISH;
+
+        if (showProgress) {
+            StringBuffer labelText = new StringBuffer(getString(R.string.SyncingView_syncing));
+            labelText.append(' ')
+                     .append(NumberFormat.getPercentInstance().format(progress));
+            mProgressLabel.setText(labelText);
+        }
+
+        mProgressLayout.setVisibility(showProgress ? View.VISIBLE : View.GONE);
+        mProgressBar.setVisibility(showProgress ? View.VISIBLE : View.GONE);
+        mProgressLabel.setVisibility(showProgress ? View.VISIBLE : View.GONE);
         mProgressBar.invalidate();
     }
 

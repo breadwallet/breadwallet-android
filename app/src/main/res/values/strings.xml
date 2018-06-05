@@ -633,6 +633,8 @@
   <!-- Retry button label -->
   <string name="SyncingView.retry">Retry</string>
   <!-- Syncing view syncing state header text -->
+  <string name="SyncingView.failed">Sync Failed</string>
+  <string name="SyncingView.syncedThrough">Synced Though %1$s</string>
   <string name="SyncingView.syncing">Syncing</string>
   <!-- 6 d (6 days) -->
   <string name="TimeSince.days">%1$s d</string>
