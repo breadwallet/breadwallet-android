@@ -10,6 +10,7 @@ import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
+import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -74,33 +75,33 @@ public interface BaseWalletManager {
 
     void watchTransactionForHash(CryptoTransaction tx, OnHashUpdated listener);
 
+    //get confirmation number
     @WorkerThread
-        //get confirmation number
     long getRelayCount(byte[] txHash);
 
+    //get the syncing progress
     @WorkerThread
-        //get the syncing progress
     double getSyncProgress(long startHeight);
+    //get the connection status 0 - Disconnected, 1 - Connecting, 2 - Connected, 3 - Unknown
 
     @WorkerThread
-        //get the connection status 0 - Disconnected, 1 - Connecting, 2 - Connected, 3 - Unknown
     double getConnectStatus();
 
+    //Connect the wallet (PeerManager for Bitcoin)
     @WorkerThread
-        //Connect the wallet (PeerManager for Bitcoin)
     void connect(Context app);
 
+    //Disconnect the wallet (PeerManager for Bitcoin)
     @WorkerThread
-        //Disconnect the wallet (PeerManager for Bitcoin)
     void disconnect(Context app);
 
+    //Use a fixed favorite node to connect
     @WorkerThread
-        //Use a fixed favorite node to connect
     boolean useFixedNode(String node, int port);
 
+    //Rescan the wallet (PeerManager for Bitcoin)
     @WorkerThread
-        //Rescan the wallet (PeerManager for Bitcoin)
-    void rescan();
+    void rescan(Context app);
 
     @WorkerThread
         //get a list of all the transactions sorted by timestamp (e.g. BRCoreTransaction[] for BTC)
@@ -168,8 +169,8 @@ public interface BaseWalletManager {
     //get the currency denomination e.g. BCH, mBCH, Bits
     String getDenominator();
 
+    //get the wallet's receive address
     @WorkerThread
-        //get the wallet's receive address
     CryptoAddress getReceiveAddress(Context app);
 
     CryptoTransaction createTransaction(BigDecimal amount, String address);
