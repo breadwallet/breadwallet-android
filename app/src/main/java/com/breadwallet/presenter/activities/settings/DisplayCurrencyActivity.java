@@ -17,7 +17,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -34,7 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 
 
-public class DisplayCurrencyActivity extends BRActivity {
+public class DisplayCurrencyActivity extends BaseSettingsActivity {
     private static final String TAG = DisplayCurrencyActivity.class.getName();
     private TextView exchangeText;
     private ListView listView;
@@ -55,10 +54,13 @@ public class DisplayCurrencyActivity extends BRActivity {
     }
 
     @Override
+    public int getLayoutId() {
+        return R.layout.activity_display_currency;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display_currency);
-
         ImageButton faq = findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
@@ -84,6 +86,7 @@ public class DisplayCurrencyActivity extends BRActivity {
                 setButton(true);
             }
         });
+
 
         rightButton.setOnClickListener(new View.OnClickListener() {
             @Override
