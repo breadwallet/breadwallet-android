@@ -281,7 +281,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
     }
 
     @Override
-    public void rescan() {
+    public void rescan(Context app) {
         //Not needed for ETH
     }
 

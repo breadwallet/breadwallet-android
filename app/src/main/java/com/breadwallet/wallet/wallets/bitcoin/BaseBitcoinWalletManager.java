@@ -75,6 +75,8 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
 public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager implements BaseWalletManager {
 
+    private static final String TAG = BaseBitcoinWalletManager.class.getSimpleName();
+
     public static final int ONE_BITCOIN_IN_SATOSHIS = 100000000; // 1 Bitcoin in satoshis, 100 millions
     public static final int ONE_BITCOIN_IN_BITS = 1000000; // 1 Bitcoin in bits, 1 millions
     private static final long MAXIMUM_AMOUNT = 21000000; // Maximum number of coins available
@@ -641,7 +643,8 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         //the last successful send transaction's blockheight (if there is one, 0 otherwise)
         long lastSentTransactionBlockheight = BRSharedPrefs.getLastSendTransactionBlockheight(app, getIso());
         //was the rescan used within the last 24 hours
-        boolean wasLastRescanWithin24h = now - lastRescanTime <= DateUtils.DAY_IN_MILLIS;
+//        boolean wasLastRescanWithin24h = now - lastRescanTime <= DateUtils.DAY_IN_MILLIS;
+        boolean wasLastRescanWithin24h = now - lastRescanTime <= 10000;//TODO remove, TESTING
 
         if (wasLastRescanWithin24h) {
             if (isModeSame(RescanMode.FROM_BLOCK, lastRescanModeUsedValue)) {
@@ -656,7 +659,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                 rescan(app, RescanMode.FROM_CHECKPOINT);
             }
         }
-
     }
 
     /**
@@ -668,10 +670,13 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     private void rescan(Context app, RescanMode mode) {
         if (RescanMode.FROM_BLOCK == mode) {
             long lastSentTransactionBlockheight = BRSharedPrefs.getLastSendTransactionBlockheight(app, getIso());
+            Log.d(TAG, "rescan: with last block: " + lastSentTransactionBlockheight);
             getPeerManager().rescanFromBlock(lastSentTransactionBlockheight);
         } else if (RescanMode.FROM_CHECKPOINT == mode) {
+            Log.e(TAG, "rescan: from checkpoint");
             getPeerManager().rescanFromCheckPoint();
         } else if (RescanMode.FULL == mode) {
+            Log.e(TAG, "rescan: full");
             getPeerManager().rescan();
         } else {
             throw new IllegalArgumentException("RescanMode is invalid, mode -> " + mode);

@@ -194,7 +194,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
     }
 
     @Override
-    public void rescan() {
+    public void rescan(Context app) {
         //no need for tokens
     }
 
