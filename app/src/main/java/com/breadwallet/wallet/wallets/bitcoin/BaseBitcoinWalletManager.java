@@ -6,6 +6,7 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -74,7 +75,8 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
 public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager implements BaseWalletManager {
 
-    public static final int ONE_BITCOIN = 100000000; // 1 Bitcoin in satoshis
+    public static final int ONE_BITCOIN_IN_SATOSHIS = 100000000; // 1 Bitcoin in satoshis, 100 millions
+    public static final int ONE_BITCOIN_IN_BITS = 1000000; // 1 Bitcoin in bits, 1 millions
     private static final long MAXIMUM_AMOUNT = 21000000; // Maximum number of coins available
     private static final int SYNC_MAX_RETRY = 3;
 
@@ -83,12 +85,17 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
     private WalletManagerHelper mWalletManagerHelper;
     private int mSyncRetryCount = 0;
-    private int mCreateWalletAllowedRetries = 3;
+    private static final int CREATE_WALLET_MAX_RETRY = 3;
+    private int mCreateWalletAllowedRetries = CREATE_WALLET_MAX_RETRY;
     private WalletUiConfiguration mUiConfig;
     private WalletSettingsConfiguration mSettingsConfig;
     private Executor mListenerExecutor = Executors.newSingleThreadExecutor();
 
-    public BaseBitcoinWalletManager(Context context, BRCoreMasterPubKey masterPubKey, BRCoreChainParams chainParams, double earliestPeerTime) {
+    public enum RescanMode {
+        FROM_BLOCK, FROM_CHECKPOINT, FULL
+    }
+
+    BaseBitcoinWalletManager(Context context, BRCoreMasterPubKey masterPubKey, BRCoreChainParams chainParams, double earliestPeerTime) {
         super(masterPubKey, chainParams, earliestPeerTime);
         mWalletManagerHelper = new WalletManagerHelper();
 
@@ -123,7 +130,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
         // clear out the SQL data - ensure that loadTransaction returns an empty array
         // mark this Manager a needing a sync.
-
         BtcBchTransactionDataStore.getInstance(app).deleteAllTransactions(app, getIso());
         BRReportsManager.reportBug(new RuntimeException("Wallet creation failed, after clearing tx size: " + loadTransactions().length));
         // Try again
@@ -163,7 +169,9 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     @Override
     public BigDecimal getEstimatedFee(BigDecimal amount, String address) {
         BigDecimal fee;
-        if (amount == null) return null;
+        if (amount == null) {
+            return null;
+        }
         if (amount.longValue() == 0) {
             fee = BigDecimal.ZERO;
         } else {
@@ -176,8 +184,9 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                 fee = new BigDecimal(getWallet().getFeeForTransactionAmount(amount.longValue()));
             } else {
                 fee = getTxFee(tx);
-                if (fee == null || fee.compareTo(BigDecimal.ZERO) <= 0)
+                if (fee == null || fee.compareTo(BigDecimal.ZERO) <= 0) {
                     fee = new BigDecimal(getWallet().getFeeForTransactionAmount(amount.longValue()));
+                }
             }
         }
         return fee;
@@ -237,7 +246,8 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
             if (fee.compareTo(BigDecimal.ZERO) > 0 && fee.compareTo(new BigDecimal(getWallet().getMaxFeePerKb())) < 0) {
                 BRSharedPrefs.putFeeRate(app, getIso(), fee);
-                getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app, getIso()) ? fee.longValue() : economyFee.longValue());
+                boolean favorStandardFee = BRSharedPrefs.getFavorStandardFee(app, getIso());
+                getWallet().setFeePerKb(favorStandardFee ? fee.longValue() : economyFee.longValue());
                 BRSharedPrefs.putFeeTime(app, getIso(), System.currentTimeMillis()); //store the time of the last successful fee fetch
             } else {
                 BRReportsManager.reportBug(new NullPointerException("Fee is weird:" + fee));
@@ -256,8 +266,10 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
     @Override
     public List<TxUiHolder> getTxUiHolders(Context app) {
-        BRCoreTransaction txs[] = getWallet().getTransactions();
-        if (txs == null || txs.length <= 0) return null;
+        BRCoreTransaction[] txs = getWallet().getTransactions();
+        if (txs == null || txs.length <= 0) {
+            return null;
+        }
         List<TxUiHolder> uiTxs = new ArrayList<>();
         for (int i = txs.length - 1; i >= 0; i--) { //revere order
             BRCoreTransaction tx = txs[i];
@@ -273,8 +285,15 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                     }
                 }
             }
-            if (toAddress == null) throw new NullPointerException("Failed to retrieve toAddress");
-            uiTxs.add(new TxUiHolder(tx, getWallet().getTransactionAmount(tx) > 0, tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
+            if (toAddress == null) {
+                throw new NullPointerException("Failed to retrieve toAddress");
+            }
+            boolean isReceived = getWallet().getTransactionAmount(tx) > 0;
+            if (!isReceived) {
+                //store the latest send transaction blockheight
+                BRSharedPrefs.putLastSendTransactionBlockheight(app, getIso(), tx.getBlockHeight());
+            }
+            uiTxs.add(new TxUiHolder(tx, isReceived, tx.getTimestamp(), (int) tx.getBlockHeight(), tx.getHash(),
                     tx.getReverseHash(), new BigDecimal(getWallet().getTransactionFee(tx)),
                     toAddress, tx.getInputAddresses()[0],
                     new BigDecimal(getWallet().getBalanceAfterTransaction(tx)), (int) tx.getSize(),
@@ -332,8 +351,8 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
     @Override
     public String getDenominator() {
-        return "100000000";
-    } //TODO Shouldn't this be ONE_BITCOIN?
+        return String.valueOf(ONE_BITCOIN_IN_SATOSHIS);
+    }
 
     @Override
     public CryptoAddress getReceiveAddress(Context app) {
@@ -352,10 +371,10 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     }
 
     @Override
-    public abstract String decorateAddress(String addr);
+    public abstract String decorateAddress(String address);
 
     @Override
-    public abstract String undecorateAddress(String addr);
+    public abstract String undecorateAddress(String address);
 
     @Override
     public int getMaxDecimalPlaces(Context app) {
@@ -395,7 +414,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     public void refreshAddress(Context app) {
         BRCoreAddress address = getWallet().getReceiveAddress();
         if (Utils.isNullOrEmpty(address.stringify())) {
-            Log.e(getTag(), "refreshAddress: WARNING, retrieved address:" + address);  // TODO was Log.e(TAG, "refreshAddress: i, retrieved address:" + address); in BTC wallet
+            Log.e(getTag(), "refreshAddress: WARNING, retrieved address:" + address);
         }
         BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso());
 
@@ -425,36 +444,52 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     @Override
     public BigDecimal getFiatExchangeRate(Context app) {
         CurrencyEntity ent = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), BRSharedPrefs.getPreferredFiatIso(app));
-        return new BigDecimal(ent == null ? 0 : ent.rate); //dollars
+        if (ent == null) {
+            return BigDecimal.ZERO;
+        }
+        return new BigDecimal(ent.rate); //dollars
     }
 
     @Override
     public BigDecimal getFiatBalance(Context app) {
-        if (app == null) return null;
-        BigDecimal bal = getFiatForSmallestCrypto(app, getCachedBalance(app), null);
-        return new BigDecimal(bal == null ? 0 : bal.doubleValue());
+        if (app == null) {
+            return null;
+        }
+        BigDecimal balance = getFiatForSmallestCrypto(app, getCachedBalance(app), null);
+        if (balance == null) {
+            return BigDecimal.ZERO;
+        }
+        return new BigDecimal(balance.doubleValue());
     }
 
     @Override
     public BigDecimal getFiatForSmallestCrypto(Context app, BigDecimal amount, CurrencyEntity ent) {
-        if (amount.doubleValue() == 0) return amount;
+        if (amount.doubleValue() == 0) {
+            return amount;
+        }
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
-        if (ent == null)
+        if (ent == null) {
             ent = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), iso);
-        if (ent == null)
+        }
+        if (ent == null) {
             return null;
+        }
         double rate = ent.rate;
         //get crypto amount
-        BigDecimal cryptoAmount = amount.divide(new BigDecimal(100000000), 8, BRConstants.ROUNDING_MODE);
+        BigDecimal cryptoAmount = amount.divide(new BigDecimal(ONE_BITCOIN_IN_SATOSHIS), getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE);
         return cryptoAmount.multiply(new BigDecimal(rate));
     }
 
     @Override
     public BigDecimal getCryptoForFiat(Context app, BigDecimal fiatAmount) {
-        if (fiatAmount.doubleValue() == 0) return fiatAmount;
+        if (fiatAmount.doubleValue() == 0) {
+            return fiatAmount;
+        }
         String iso = BRSharedPrefs.getPreferredFiatIso(app);
         CurrencyEntity ent = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), iso);
-        if (ent == null) return null;
+        if (ent == null) {
+            return null;
+        }
         double rate = ent.rate;
         //convert c to $.
         int unit = BRSharedPrefs.getCryptoDenomination(app, getIso());
@@ -463,11 +498,8 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
             case BRConstants.CURRENT_UNIT_BITS:
                 result = fiatAmount.divide(new BigDecimal(rate), 2, ROUNDING_MODE).multiply(new BigDecimal("1000000"));
                 break;
-            case BRConstants.CURRENT_UNIT_MBITS:
-                result = fiatAmount.divide(new BigDecimal(rate), 5, ROUNDING_MODE).multiply(new BigDecimal("1000"));
-                break;
             case BRConstants.CURRENT_UNIT_BITCOINS:
-                result = fiatAmount.divide(new BigDecimal(rate), 8, ROUNDING_MODE);
+                result = fiatAmount.divide(new BigDecimal(rate), getMaxDecimalPlaces(app), ROUNDING_MODE);
                 break;
         }
         return result;
@@ -588,9 +620,86 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         return false;
     }
 
+    /**
+     * The rescan now operates in 3 modes (Stage 1: Incremental rescan):
+     * <p>
+     * 1)The latest block in which a send transaction originating from the user's wallet was confirmed.
+     * If there are no sends, only the following two starting points will be used.
+     * 2)The latest block checkpoint that is hardcoded in the app.
+     * 3)500 blocks before the the block height at which the wallet was created (from KV store),
+     * or the first block after the introduction of BIP39 if there is no date stored in the KV store.
+     *
+     * @param app
+     */
     @Override
-    public void rescan() {
-        getPeerManager().rescan();
+    public void rescan(Context app) {
+        //the last time the app has done a rescan (not a regular scan)
+        long lastRescanTime = BRSharedPrefs.getLastRescanTime(app, getIso());
+        long now = System.currentTimeMillis();
+        //the last rescan mode that was used for rescan
+        String lastRescanModeUsedValue = BRSharedPrefs.getLastRescanModeUsed(app, getIso());
+        //the last successful send transaction's blockheight (if there is one, 0 otherwise)
+        long lastSentTransactionBlockheight = BRSharedPrefs.getLastSendTransactionBlockheight(app, getIso());
+        //was the rescan used within the last 24 hours
+        boolean wasLastRescanWithin24h = now - lastRescanTime <= DateUtils.DAY_IN_MILLIS;
+
+        if (wasLastRescanWithin24h) {
+            if (isModeSame(RescanMode.FROM_BLOCK, lastRescanModeUsedValue)) {
+                rescan(app, RescanMode.FROM_CHECKPOINT);
+            } else if (isModeSame(RescanMode.FROM_CHECKPOINT, lastRescanModeUsedValue)) {
+                rescan(app, RescanMode.FULL);
+            }
+        } else {
+            if (lastSentTransactionBlockheight > 0) {
+                rescan(app, RescanMode.FROM_BLOCK);
+            } else {
+                rescan(app, RescanMode.FROM_CHECKPOINT);
+            }
+        }
+
+    }
+
+    /**
+     * Trigger the appropriate rescan and save the name and time to BRSharedPrefs
+     *
+     * @param app  android context to use
+     * @param mode the RescanMode to be used
+     */
+    private void rescan(Context app, RescanMode mode) {
+        if (RescanMode.FROM_BLOCK == mode) {
+            long lastSentTransactionBlockheight = BRSharedPrefs.getLastSendTransactionBlockheight(app, getIso());
+            getPeerManager().rescanFromBlock(lastSentTransactionBlockheight);
+        } else if (RescanMode.FROM_CHECKPOINT == mode) {
+            getPeerManager().rescanFromCheckPoint();
+        } else if (RescanMode.FULL == mode) {
+            getPeerManager().rescan();
+        } else {
+            throw new IllegalArgumentException("RescanMode is invalid, mode -> " + mode);
+        }
+        long now = System.currentTimeMillis();
+        BRSharedPrefs.putLastRescanModeUsed(app, getIso(), mode.name());
+        BRSharedPrefs.putLastRescanTime(app, getIso(), now);
+    }
+
+    /**
+     * @param mode       the RescanMode enum to compare to
+     * @param stringMode the stored enum value
+     * @return true if the same mode
+     */
+    private boolean isModeSame(RescanMode mode, String stringMode) {
+        if (stringMode == null) {
+            //prevent NPE
+            stringMode = "";
+        }
+        try {
+            if (mode == RescanMode.valueOf(stringMode)) {
+                return true;
+            }
+        } catch (IllegalArgumentException ex) {
+            //do nothing, illegal argument
+        }
+        return false;
+
     }
 
 
@@ -882,7 +991,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                                     Log.e(getTag(), "onTxAdded: ctx is not activity");
                             }
                         }
-                    }, 1000);
+                    }, DateUtils.SECOND_IN_MILLIS);
 
 
                 }

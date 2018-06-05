@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities.settings;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -19,13 +20,7 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 public class SyncBlockchainActivity extends BRActivity {
     private static final String TAG = SyncBlockchainActivity.class.getName();
-    private Button scanButton;
-    public static boolean appVisible = false;
-    private static SyncBlockchainActivity app;
-
-    public static SyncBlockchainActivity getApp() {
-        return app;
-    }
+    private Button mRescanButton;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
@@ -41,35 +36,28 @@ public class SyncBlockchainActivity extends BRActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) {
+                    return;
+                }
                 BaseWalletManager wm = WalletsMaster.getInstance(SyncBlockchainActivity.this).getCurrentWallet(SyncBlockchainActivity.this);
                 BRAnimator.showSupportFragment(SyncBlockchainActivity.this, BRConstants.FAQ_RESCAN, wm);
             }
         });
 
-        scanButton = findViewById(R.id.button_scan);
-        scanButton.setOnClickListener(new View.OnClickListener() {
+        mRescanButton = findViewById(R.id.button_scan);
+        mRescanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) {
+                    return;
+                }
                 BRDialog.showCustomDialog(SyncBlockchainActivity.this, getString(R.string.ReScan_alertTitle),
                         getString(R.string.ReScan_footer), getString(R.string.ReScan_alertAction), getString(R.string.Button_cancel),
                         new BRDialogView.BROnClickListener() {
                             @Override
                             public void onClick(BRDialogView brDialogView) {
                                 brDialogView.dismissWithAnimation();
-                                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        BRSharedPrefs.putStartHeight(SyncBlockchainActivity.this,
-                                                BRSharedPrefs.getCurrentWalletIso(SyncBlockchainActivity.this), 0);
-                                        BRSharedPrefs.putAllowSpend(SyncBlockchainActivity.this,
-                                                BRSharedPrefs.getCurrentWalletIso(SyncBlockchainActivity.this), false);
-                                        WalletsMaster.getInstance(SyncBlockchainActivity.this).getCurrentWallet(SyncBlockchainActivity.this).rescan();
-                                        BRAnimator.startBreadActivity(SyncBlockchainActivity.this, false);
-
-                                    }
-                                });
+                                rescanClicked();
                             }
                         }, new BRDialogView.BROnClickListener() {
                             @Override
@@ -78,24 +66,33 @@ public class SyncBlockchainActivity extends BRActivity {
                             }
                         }, null, 0);
 
-
-
             }
         });
 
     }
 
+    private void rescanClicked() {
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                Activity thisApp = SyncBlockchainActivity.this;
+                BRSharedPrefs.putStartHeight(thisApp, BRSharedPrefs.getCurrentWalletIso(thisApp), 0);
+                BRSharedPrefs.putAllowSpend(thisApp, BRSharedPrefs.getCurrentWalletIso(thisApp), false);
+                WalletsMaster.getInstance(thisApp).getCurrentWallet(thisApp).rescan(thisApp);
+                BRAnimator.startBreadActivity(thisApp, false);
+
+            }
+        });
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
-        appVisible = true;
-        app = this;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        appVisible = false;
     }
 
     @Override
