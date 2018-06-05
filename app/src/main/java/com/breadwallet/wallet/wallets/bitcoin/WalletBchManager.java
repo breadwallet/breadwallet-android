@@ -108,11 +108,11 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
 
     protected List<BigDecimal> getFingerprintLimits(Context app) {
         List<BigDecimal> result = new ArrayList<>();
-        result.add(new BigDecimal(ONE_BITCOIN).divide(new BigDecimal(100), getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE));
-        result.add(new BigDecimal(ONE_BITCOIN).divide(new BigDecimal(10), getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE));
-        result.add(new BigDecimal(ONE_BITCOIN));
-        result.add(new BigDecimal(ONE_BITCOIN).multiply(new BigDecimal(10)));
-        result.add(new BigDecimal(ONE_BITCOIN).multiply(new BigDecimal(100)));
+        result.add(new BigDecimal(ONE_BITCOIN_IN_SATOSHIS).divide(new BigDecimal(100), getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE));
+        result.add(new BigDecimal(ONE_BITCOIN_IN_SATOSHIS).divide(new BigDecimal(10), getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE));
+        result.add(new BigDecimal(ONE_BITCOIN_IN_SATOSHIS));
+        result.add(new BigDecimal(ONE_BITCOIN_IN_SATOSHIS).multiply(new BigDecimal(10)));
+        result.add(new BigDecimal(ONE_BITCOIN_IN_SATOSHIS).multiply(new BigDecimal(100)));
         return result;
     }
 
