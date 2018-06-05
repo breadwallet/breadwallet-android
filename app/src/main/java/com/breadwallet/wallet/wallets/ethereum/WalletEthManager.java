@@ -157,7 +157,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         BreadApp.generateWalletIfIfNeeded(app, getReceiveAddress(app).stringify());
         WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
 
-        mWallet.estimateGasPrice();
+        estimateGasPrice();
         mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
         node.connect();
 
@@ -181,6 +181,10 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
 
         }
         return instance;
+    }
+
+    public void estimateGasPrice() {
+        mWallet.estimateGasPrice();
     }
 
     private String[] lookupWords(Context app, String paperKey, String l) {
