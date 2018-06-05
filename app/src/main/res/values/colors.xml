@@ -78,6 +78,9 @@
     <color name="trans_white">#70ffffff</color>
     <color name="balance_crypto_color">#b7ffffff</color>
 
+    // Wallet Screen
+    <item name="sync_toolbar" type="color">#cccccc</item>
+    <item name="sync_toolbar_text" type="color">#666666</item>
 
     // Dialog button colors
     <color name="dialog_button_positive">#4b77f3</color>
