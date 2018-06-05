@@ -150,7 +150,7 @@ public class WebViewActivity extends BRActivity {
 
         theUrl = getIntent().getStringExtra("url");
         String json = getIntent().getStringExtra("json");
-//        webView.loadUrl("https://upload.photobox.com/en/");
+        // webView.loadUrl("https://upload.photobox.com/en/");
 
         if (json == null) {
             if (!setupServerMode(theUrl)) {
@@ -175,6 +175,9 @@ public class WebViewActivity extends BRActivity {
             request(webView, json);
 
         }
+
+        webView.setWebChromeClient(new BRWebChromeClient());
+
 
     }
 
@@ -227,6 +230,8 @@ public class WebViewActivity extends BRActivity {
             String url = json.getString("url");
             Log.d(TAG, "Loading -> " + url);
             if (url != null && url.contains("checkout")) {
+
+
                 attachKeyboardListeners();
 
                 // Make the top and bottom toolbars visible for Simplex flow
@@ -392,17 +397,13 @@ public class WebViewActivity extends BRActivity {
         public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePath, FileChooserParams fileChooserParams) {
 
             Log.d(TAG, "onShowFileChooser");
+
+
             // Double check that we don't have any existing callbacks
             if (mFilePathCallback != null) {
                 mFilePathCallback.onReceiveValue(null);
             }
             mFilePathCallback = filePath;
-
-            //request the permissions beforehand
-            Log.d(TAG, "Request permission for Storage");
-            requestImageFilePermission();
-            Log.d(TAG, "Request permission for Camera");
-            requestCameraPermission();
 
             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
             if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -433,12 +434,10 @@ public class WebViewActivity extends BRActivity {
 
             }
 
-            Intent contentSelectionIntent = new Intent(Intent.ACTION_GET_CONTENT);
-            contentSelectionIntent.addCategory(Intent.CATEGORY_OPENABLE);
-            contentSelectionIntent.setType("image/*");
 
+            requestImageFilePermission();
+            requestCameraPermission();
 
-            startActivityForResult(getPickImageChooserIntent(), REQUEST_CHOOSE_IMAGE);
 
             return true;
         }
@@ -557,67 +556,57 @@ public class WebViewActivity extends BRActivity {
     }
 
     private void requestCameraPermission() {
-        // Check if the camera permission is granted
+        Log.d(TAG, "requestCameraPermission");
+
+
+        // Camera permission is NOT granted, request it
         if (ContextCompat.checkSelfPermission(app,
                 Manifest.permission.CAMERA)
                 != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (android.support.v4.app.ActivityCompat.shouldShowRequestPermissionRationale(app,
-                    Manifest.permission.CAMERA)) {
-                BRDialog.showCustomDialog(app, app.getString(R.string.Send_cameraUnavailabeTitle_android), app.getString(R.string.Send_cameraUnavailabeMessage_android), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                    @Override
-                    public void onClick(BRDialogView brDialogView) {
-                        brDialogView.dismiss();
-                    }
-                }, null, null, 0);
-            } else {
-                // No explanation needed, we can request the permission.
-                android.support.v4.app.ActivityCompat.requestPermissions(app,
-                        new String[]{Manifest.permission.CAMERA},
-                        REQUEST_CAMERA_PERMISSION);
-            }
+
+            Log.d(TAG, "CAMERA permission NOT granted");
+            android.support.v4.app.ActivityCompat.requestPermissions(app,
+                    new String[]{Manifest.permission.CAMERA},
+                    REQUEST_CAMERA_PERMISSION);
+
         }
 
+        // Camera permission already granted, start the camera
+        else {
+            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            app.startActivityForResult(intent, REQUEST_CAMERA_PERMISSION);
+            app.overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
+
+        }
     }
 
-    private void requestImageFilePermission() {
 
-        // Here, thisActivity is the current activity
+    private void requestImageFilePermission() {
+        Log.d(TAG, "requestImageFilePermission");
+
+        // Image File permission is not granted, request it now
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
 
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
 
-                if (android.support.v4.app.ActivityCompat.shouldShowRequestPermissionRationale(app,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-                    BRDialog.showCustomDialog(app, "", app.getString(R.string.Android_allowFileSystemAccess), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                        @Override
-                        public void onClick(BRDialogView brDialogView) {
-                            brDialogView.dismiss();
-                        }
-                    }, null, null, 0);
-                }
-
-            } else {
-
-                // No explanation needed, we can request the permission.
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
-                        REQUEST_WRITE_EXTERNAL_STORAGE);
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                    REQUEST_WRITE_EXTERNAL_STORAGE);
 
 
-            }
+        } else {
+
+            startActivityForResult(getPickImageChooserIntent(), REQUEST_CHOOSE_IMAGE);
+
         }
     }
 
+
     private File createImageFile() throws IOException {
 
-        ActivityCompat.requestPermissions(WebViewActivity.this,
-                new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+        // ActivityCompat.requestPermissions(WebViewActivity.this,
+        //new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
 
         // Create an image file name
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
@@ -642,7 +631,6 @@ public class WebViewActivity extends BRActivity {
         switch (requestCode) {
             case REQUEST_CAMERA_PERMISSION: {
 
-                Log.d(TAG, "ALLOWED camera permission");
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     // Permission is granted, open camera
@@ -658,8 +646,19 @@ public class WebViewActivity extends BRActivity {
             }
 
             case REQUEST_WRITE_EXTERNAL_STORAGE: {
+
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "Storage permission GRANTED");
+
+                    startActivityForResult(getPickImageChooserIntent(), REQUEST_CHOOSE_IMAGE);
+
+
+                }
+
+
                 break;
             }
+
 
             case BRConstants.GEO_REQUEST_ID: {
                 // If request is cancelled, the result arrays are empty.
@@ -674,6 +673,7 @@ public class WebViewActivity extends BRActivity {
                 break;
             }
         }
+
     }
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -693,6 +693,8 @@ public class WebViewActivity extends BRActivity {
         super.onResume();
         appVisible = true;
         app = this;
+
+
     }
 
     private String rTrim(String s, char c) {
