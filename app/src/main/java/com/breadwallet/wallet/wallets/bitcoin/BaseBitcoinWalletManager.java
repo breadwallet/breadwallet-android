@@ -643,8 +643,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         //the last successful send transaction's blockheight (if there is one, 0 otherwise)
         long lastSentTransactionBlockheight = BRSharedPrefs.getLastSendTransactionBlockheight(app, getIso());
         //was the rescan used within the last 24 hours
-//        boolean wasLastRescanWithin24h = now - lastRescanTime <= DateUtils.DAY_IN_MILLIS;
-        boolean wasLastRescanWithin24h = now - lastRescanTime <= 10000;//TODO remove, TESTING
+        boolean wasLastRescanWithin24h = now - lastRescanTime <= DateUtils.DAY_IN_MILLIS;
 
         if (wasLastRescanWithin24h) {
             if (isModeSame(RescanMode.FROM_BLOCK, lastRescanModeUsedValue)) {
@@ -670,13 +669,13 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     private void rescan(Context app, RescanMode mode) {
         if (RescanMode.FROM_BLOCK == mode) {
             long lastSentTransactionBlockheight = BRSharedPrefs.getLastSendTransactionBlockheight(app, getIso());
-            Log.d(TAG, "rescan: with last block: " + lastSentTransactionBlockheight);
+            Log.d(TAG, "rescan -> with last block: " + lastSentTransactionBlockheight);
             getPeerManager().rescanFromBlock(lastSentTransactionBlockheight);
         } else if (RescanMode.FROM_CHECKPOINT == mode) {
-            Log.e(TAG, "rescan: from checkpoint");
+            Log.e(TAG, "rescan -> from checkpoint");
             getPeerManager().rescanFromCheckPoint();
         } else if (RescanMode.FULL == mode) {
-            Log.e(TAG, "rescan: full");
+            Log.e(TAG, "rescan -> full");
             getPeerManager().rescan();
         } else {
             throw new IllegalArgumentException("RescanMode is invalid, mode -> " + mode);
