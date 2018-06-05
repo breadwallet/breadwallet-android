@@ -28,6 +28,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +40,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
     private static final int NUMBER_OF_WORDS = 12;
     private static final int LAST_WORD_INDEX = 11;
 
-    public static final String EXTRA_RESTORE = "com.breadwallet.EXTRA_RESTORE";
+    public static final String EXTRA_UNLINK = "com.breadwallet.EXTRA_UNLINK";
     public static final String EXTRA_RESET_PIN = "com.breadwallet.EXTRA_RESET_PIN";
 
     private List<EditText> mEditWords = new ArrayList<>(NUMBER_OF_WORDS);
@@ -118,7 +119,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            mIsRestoring = extras.getBoolean(EXTRA_RESTORE);
+            mIsRestoring = extras.getBoolean(EXTRA_UNLINK);
             mIsResettingPin = extras.getBoolean(EXTRA_RESET_PIN);
         }
 
@@ -208,7 +209,10 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                         WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
                         m.wipeAll(InputWordsActivity.this);
                         PostAuth.getInstance().setCachedPaperKey(cleanPhrase);
-                        BRSharedPrefs.putAllowSpend(app, BRSharedPrefs.getCurrentWalletIso(app), false);
+                        //Disallow BTC and BCH sending.
+                        BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCASH_SYMBOL, false);
+                        BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCOIN_SYMBOL, false);
+
                         PostAuth.getInstance().onRecoverWalletAuth(app, false);
                     }
 

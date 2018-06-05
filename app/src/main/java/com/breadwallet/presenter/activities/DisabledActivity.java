@@ -60,7 +60,7 @@ public class DisabledActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(DisabledActivity.this, InputWordsActivity.class);
-                intent.putExtra("resetPin", true);
+                intent.putExtra(InputWordsActivity.EXTRA_RESET_PIN, true);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }

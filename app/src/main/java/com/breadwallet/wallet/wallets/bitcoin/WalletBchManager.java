@@ -47,7 +47,7 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
 
     private static final String TAG = WalletBchManager.class.getName();
 
-    private static final String ISO = "BCH";
+    private static final String ISO = BITCASH_SYMBOL;
     private static final String NAME = "Bitcoin Cash";
     private static final String SCHEME = BuildConfig.BITCOIN_TESTNET ? "bchtest" : "bitcoincash";
     private static final String COLOR = "#478559";
@@ -56,7 +56,7 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
 
     private static WalletBchManager mInstance;
 
-    public static synchronized  WalletBchManager getInstance(Context app) {
+    public static synchronized WalletBchManager getInstance(Context app) {
         if (mInstance == null) {
             byte[] rawPubKey = BRKeyStore.getMasterPublicKey(app);
             if (Utils.isNullOrEmpty(rawPubKey)) {

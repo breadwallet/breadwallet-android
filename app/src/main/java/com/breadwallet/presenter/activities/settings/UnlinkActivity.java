@@ -8,7 +8,6 @@ import android.widget.ImageButton;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.InputWordsActivity;
-import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.util.BRConstants;
@@ -50,7 +49,7 @@ public class UnlinkActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 Intent intent = new Intent(UnlinkActivity.this, InputWordsActivity.class);
-                intent.putExtra("restore", true);
+                intent.putExtra(InputWordsActivity.EXTRA_UNLINK, true);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 if (!UnlinkActivity.this.isDestroyed()) finish();

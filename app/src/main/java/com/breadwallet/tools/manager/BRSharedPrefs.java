@@ -44,28 +44,7 @@ import java.util.UUID;
 public class BRSharedPrefs {
     public static final String TAG = BRSharedPrefs.class.getName();
 
-//    public static List<OnIsoChangedListener> isoChangedListeners = new ArrayList<>();
     public static final String PREFS_NAME = "MyPrefsFile";
-
-//    public interface OnIsoChangedListener {
-//        void onIsoChanged(String iso);
-//    }
-//
-//    public static void addIsoChangedListener(OnIsoChangedListener listener) {
-//        if (isoChangedListeners == null) {
-//            isoChangedListeners = new ArrayList<>();
-//        }
-//        if (!isoChangedListeners.contains(listener))
-//            isoChangedListeners.add(listener);
-//    }
-//
-//    public static void removeListener(OnIsoChangedListener listener) {
-//        if (isoChangedListeners == null) {
-//            isoChangedListeners = new ArrayList<>();
-//        }
-//        isoChangedListeners.remove(listener);
-//
-//    }
 
     public static String getPreferredFiatIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
