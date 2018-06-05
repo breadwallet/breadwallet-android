@@ -36,12 +36,11 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
+import com.breadwallet.wallet.util.JsonRpcHelper;
 import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
-import com.platform.JsonRpcConstants;
-import com.platform.JsonRpcRequest;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -92,7 +91,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
     public static final String ETH_SCHEME = "ethereum";
 
     private static final String mName = "Ethereum";
-
 
     private Map<String, Boolean> balanceStatuses = new HashMap<>();
 
@@ -165,7 +163,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
 
     }
 
-    public synchronized static WalletEthManager getInstance(Context app) {
+    public static synchronized WalletEthManager getInstance(Context app) {
         if (instance == null) {
             byte[] rawPubKey = BRKeyStore.getMasterPublicKey(app);
             if (Utils.isNullOrEmpty(rawPubKey)) {
@@ -667,23 +665,22 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
+                final String ethRpcUrl = JsonRpcHelper.getEthereumRpcUrl();
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
 
                 try {
-                    String currentTime = String.valueOf(System.currentTimeMillis());
-                    payload.put("jsonrpc", "2.0");
-                    payload.put("method", "eth_getBalance");
+                    payload.put(JsonRpcHelper.JSONRPC, "2.0");
+                    payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_BALANCE);
                     params.put(address);
-                    params.put("latest");
-                    payload.put("params", params);
-                    payload.put("id", rid);
+                    params.put(JsonRpcHelper.LATEST);
+                    payload.put(JsonRpcHelper.PARAMS, params);
+                    payload.put(JsonRpcHelper.ID, rid);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                JsonRpcRequest.makeRpcRequest(BreadApp.getBreadContext(), eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethRpcUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
@@ -692,8 +689,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                                 JSONObject responseObject = new JSONObject(jsonResult);
                                 Log.d(TAG, "getBalance response -> " + responseObject.toString());
 
-                                if (responseObject.has("result")) {
-                                    String balance = responseObject.getString("result");
+                                if (responseObject.has(JsonRpcHelper.RESULT)) {
+                                    String balance = responseObject.getString(JsonRpcHelper.RESULT);
                                     node.announceBalance(wid, balance, rid);
                                 }
                             } else {
@@ -720,26 +717,26 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
-                final String eth_rpc_url = host + "module=account&action=tokenbalance"
-                        + "&address=" + address + "&contractaddress=" + contractAddress;
+
+                String ethRpcUrl = JsonRpcHelper.createTokenTransactionsUrl(address, contractAddress);
+
 
                 final JSONObject payload = new JSONObject();
                 try {
-                    payload.put("id", String.valueOf(rid));
+                    payload.put(JsonRpcHelper.ID, String.valueOf(rid));
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                JsonRpcRequest.makeRpcRequest(BreadApp.getBreadContext(), eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethRpcUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
                             if (!Utils.isNullOrEmpty(jsonResult)) {
                                 JSONObject responseObject = new JSONObject(jsonResult);
 
-                                if (responseObject.has("result")) {
-                                    String balance = responseObject.getString("result");
+                                if (responseObject.has(JsonRpcHelper.RESULT)) {
+                                    String balance = responseObject.getString(JsonRpcHelper.RESULT);
                                     node.announceBalance(wid, balance, rid);
 
                                 } else {
@@ -764,29 +761,29 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
-                Log.d(TAG, "Making rpc request to -> " + eth_url);
+                final String ethUrl = JsonRpcHelper.getEthereumRpcUrl();
+                Log.d(TAG, "Making rpc request to -> " + ethUrl);
 
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
 
                 try {
-                    payload.put("method", "eth_gasPrice");
-                    payload.put("params", params);
-                    payload.put("id", rid);
+                    payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_GAS_PRICE);
+                    payload.put(JsonRpcHelper.PARAMS, params);
+                    payload.put(JsonRpcHelper.ID, rid);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                JsonRpcRequest.makeRpcRequest(BreadApp.getBreadContext(), eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
                             if (!Utils.isNullOrEmpty(jsonResult)) {
                                 JSONObject responseObject = new JSONObject(jsonResult);
-                                if (responseObject.has("result")) {
-                                    String gasPrice = responseObject.getString("result");
-                                    Log.e(TAG, "onRpcRequestCompleted: getGasPrice: " + gasPrice);
+                                if (responseObject.has(JsonRpcHelper.RESULT)) {
+                                    String gasPrice = responseObject.getString(JsonRpcHelper.RESULT);
+                                    Log.d(TAG, "onRpcRequestCompleted: getGasPrice: " + gasPrice);
                                     node.announceGasPrice(wid, gasPrice, rid);
                                 }
                             }
@@ -809,8 +806,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
-                Log.d(TAG, "Making rpc request to -> " + eth_url);
+                final String ethUrl = JsonRpcHelper.getEthereumRpcUrl();
+                Log.d(TAG, "Making rpc request to -> " + ethUrl);
 
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
@@ -820,23 +817,23 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                 params.put(data);
 
                 try {
-                    payload.put("method", "eth_estimateGas");
-                    payload.put("params", params);
-                    payload.put("id", rid);
+                    payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_ESTIMATE_GAS);
+                    payload.put(JsonRpcHelper.PARAMS, params);
+                    payload.put(JsonRpcHelper.ID, rid);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                JsonRpcRequest.makeRpcRequest(BreadApp.getBreadContext(), eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
                             JSONObject responseObject = new JSONObject(jsonResult);
 
-                            if (responseObject.has("result")) {
-                                String gasEstimate = responseObject.getString("result");
-                                Log.e(TAG, "onRpcRequestCompleted: getGasEstimate: " + gasEstimate);
+                            if (responseObject.has(JsonRpcHelper.RESULT)) {
+                                String gasEstimate = responseObject.getString(JsonRpcHelper.RESULT);
+                                Log.d(TAG, "onRpcRequestCompleted: getGasEstimate: " + gasEstimate);
                                 node.announceGasEstimate(wid, tid, gasEstimate, rid);
                             }
                         } catch (JSONException e) {
@@ -864,22 +861,22 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
+                final String eth_url = JsonRpcHelper.getEthereumRpcUrl();
                 Log.d(TAG, "Making rpc request to -> " + eth_url);
 
                 JSONObject payload = new JSONObject();
                 JSONArray params = new JSONArray();
                 try {
-                    payload.put("jsonrpc", "2.0");
-                    payload.put("method", "eth_sendRawTransaction");
+                    payload.put(JsonRpcHelper.JSONRPC, "2.0");
+                    payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_SEND_RAW_TRANSACTION);
                     params.put(rawTransaction);
-                    payload.put("params", params);
-                    payload.put("id", rid);
+                    payload.put(JsonRpcHelper.PARAMS, params);
+                    payload.put(JsonRpcHelper.ID, rid);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                JsonRpcRequest.makeRpcRequest(BreadApp.getBreadContext(), eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), eth_url, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         String txHash = null;
@@ -888,15 +885,15 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                         if (!Utils.isNullOrEmpty(jsonResult)) {
                             try {
                                 JSONObject responseObject = new JSONObject(jsonResult);
-                                Log.e(TAG, "onRpcRequestCompleted: " + responseObject);
-                                if (responseObject.has("result")) {
-                                    txHash = responseObject.getString("result");
-                                    Log.e(TAG, "onRpcRequestCompleted: " + txHash);
+                                Log.d(TAG, "onRpcRequestCompleted: " + responseObject);
+                                if (responseObject.has(JsonRpcHelper.RESULT)) {
+                                    txHash = responseObject.getString(JsonRpcHelper.RESULT);
+                                    Log.d(TAG, "onRpcRequestCompleted: " + txHash);
                                     node.announceSubmitTransaction(wid, tid, txHash, rid);
-                                } else if (responseObject.has("error")) {
-                                    JSONObject errObj = responseObject.getJSONObject("error");
-                                    errCode = errObj.getInt("code");
-                                    errMessage = errObj.getString("message");
+                                } else if (responseObject.has(JsonRpcHelper.ERROR)) {
+                                    JSONObject errObj = responseObject.getJSONObject(JsonRpcHelper.ERROR);
+                                    errCode = errObj.getInt(JsonRpcHelper.CODE);
+                                    errMessage = errObj.getString(JsonRpcHelper.MESSAGE);
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -927,7 +924,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                                                 });
                                     } else {
                                         String message = String.format(Locale.getDefault(), "(%d) %s", finalErrCode, finalErrMessage);
-                                        BRDialog.showSimpleDialog(app, "Failed", message);
+                                        BRDialog.showSimpleDialog(app, app.getString(R.string.WipeWallet_failedTitle), message);
                                     }
                                 } else {
                                     Log.e(TAG, "submitTransaction: app is null or not an activity");
@@ -950,19 +947,17 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                //final String eth_rpc_url = String.format(JsonRpcConstants.ETH_RPC_TX_LIST, mWallet.getAccount().getPrimaryAddress());
-                final String eth_rpc_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT
-                        + "query?module=account&action=txlist&address=" + address;
+                final String ethRpcUrl = JsonRpcHelper.createEthereumTransactionsUrl(address);
 
                 final JSONObject payload = new JSONObject();
                 try {
-                    payload.put("id", String.valueOf(id));
-                    payload.put("account", address);
+                    payload.put(JsonRpcHelper.ID, String.valueOf(id));
+                    payload.put(JsonRpcHelper.ACCOUNT, address);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                JsonRpcRequest.makeRpcRequest(BreadApp.getBreadContext(), eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethRpcUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
 
@@ -971,7 +966,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                                 // Convert response into JsonArray of transactions
                                 JSONObject transactions = new JSONObject(jsonResult);
 
-                                JSONArray transactionsArray = transactions.getJSONArray("result");
+                                JSONArray transactionsArray = transactions.getJSONArray(JsonRpcHelper.RESULT);
 
                                 String txHash = "";
                                 String txTo = "";
@@ -997,99 +992,99 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
 
                                     Log.d(TAG, "TxObject contains -> " + txObject.toString());
 
-                                    if (txObject.has("hash")) {
-                                        txHash = txObject.getString("hash");
+                                    if (txObject.has(JsonRpcHelper.HASH)) {
+                                        txHash = txObject.getString(JsonRpcHelper.HASH);
                                         // Log.d(TAG, "TxObject Hash -> " + txHash);
 
                                     }
 
-                                    if (txObject.has("to")) {
-                                        txTo = txObject.getString("to");
+                                    if (txObject.has(JsonRpcHelper.TO)) {
+                                        txTo = txObject.getString(JsonRpcHelper.TO);
                                         // Log.d(TAG, "TxObject to -> " + txTo);
 
                                     }
 
-                                    if (txObject.has("from")) {
-                                        txFrom = txObject.getString("from");
+                                    if (txObject.has(JsonRpcHelper.FROM)) {
+                                        txFrom = txObject.getString(JsonRpcHelper.FROM);
                                         // Log.d(TAG, "TxObject from -> " + txFrom);
 
                                     }
 
-                                    if (txObject.has("contractAddress")) {
-                                        txContract = txObject.getString("contractAddress");
+                                    if (txObject.has(JsonRpcHelper.CONTRACT_ADDRESS)) {
+                                        txContract = txObject.getString(JsonRpcHelper.CONTRACT_ADDRESS);
                                         // Log.d(TAG, "TxObject contractAddress -> " + txContract);
 
                                     }
 
-                                    if (txObject.has("value")) {
-                                        txValue = txObject.getString("value");
+                                    if (txObject.has(JsonRpcHelper.VALUE)) {
+                                        txValue = txObject.getString(JsonRpcHelper.VALUE);
                                         // Log.d(TAG, "TxObject value -> " + txValue);
 
                                     }
 
-                                    if (txObject.has("gas")) {
-                                        txGas = txObject.getString("gas");
+                                    if (txObject.has(JsonRpcHelper.GAS)) {
+                                        txGas = txObject.getString(JsonRpcHelper.GAS);
                                         // Log.d(TAG, "TxObject gas -> " + txGas);
 
 
                                     }
 
-                                    if (txObject.has("gasPrice")) {
-                                        txGasPrice = txObject.getString("gasPrice");
+                                    if (txObject.has(JsonRpcHelper.GAS_PRICE)) {
+                                        txGasPrice = txObject.getString(JsonRpcHelper.GAS_PRICE);
                                         // Log.d(TAG, "TxObject gasPrice -> " + txGasPrice);
 
                                     }
 
-                                    if (txObject.has("nonce")) {
-                                        txNonce = txObject.getString("nonce");
+                                    if (txObject.has(JsonRpcHelper.NONCE)) {
+                                        txNonce = txObject.getString(JsonRpcHelper.NONCE);
                                         // Log.d(TAG, "TxObject nonce -> " + txNonce);
 
                                     }
 
-                                    if (txObject.has("gasUsed")) {
-                                        txGasUsed = txObject.getString("gasUsed");
+                                    if (txObject.has(JsonRpcHelper.GAS_USED)) {
+                                        txGasUsed = txObject.getString(JsonRpcHelper.GAS_USED);
                                         // Log.d(TAG, "TxObject gasUsed -> " + txGasUsed);
 
                                     }
 
-                                    if (txObject.has("blockNumber")) {
-                                        txBlockNumber = txObject.getString("blockNumber");
+                                    if (txObject.has(JsonRpcHelper.BLOCK_NUMBER)) {
+                                        txBlockNumber = txObject.getString(JsonRpcHelper.BLOCK_NUMBER);
                                         // Log.d(TAG, "TxObject blockNumber -> " + txBlockNumber);
 
                                     }
 
-                                    if (txObject.has("blockHash")) {
-                                        txBlockHash = txObject.getString("blockHash");
+                                    if (txObject.has(JsonRpcHelper.BLOCK_HASH)) {
+                                        txBlockHash = txObject.getString(JsonRpcHelper.BLOCK_HASH);
                                         // Log.d(TAG, "TxObject blockHash -> " + txBlockHash);
 
                                     }
 
-                                    if (txObject.has("input")) {
-                                        txData = txObject.getString("input");
+                                    if (txObject.has(JsonRpcHelper.INPUT)) {
+                                        txData = txObject.getString(JsonRpcHelper.INPUT);
                                         // Log.d(TAG, "TxObject input -> " + txData);
 
                                     }
 
-                                    if (txObject.has("confirmations")) {
-                                        txBlockConfirmations = txObject.getString("confirmations");
+                                    if (txObject.has(JsonRpcHelper.CONFIRMATIONS)) {
+                                        txBlockConfirmations = txObject.getString(JsonRpcHelper.CONFIRMATIONS);
                                         // Log.d(TAG, "TxObject confirmations -> " + txBlockConfirmations);
 
                                     }
 
-                                    if (txObject.has("transactionIndex")) {
-                                        txBlockTransactionIndex = txObject.getString("transactionIndex");
+                                    if (txObject.has(JsonRpcHelper.TRANSACTION_INDEX)) {
+                                        txBlockTransactionIndex = txObject.getString(JsonRpcHelper.TRANSACTION_INDEX);
                                         // Log.d(TAG, "TxObject transactionIndex -> " + txBlockTransactionIndex);
 
                                     }
 
-                                    if (txObject.has("timeStamp")) {
-                                        txBlockTimestamp = txObject.getString("timeStamp");
+                                    if (txObject.has(JsonRpcHelper.TIMESTAMP)) {
+                                        txBlockTimestamp = txObject.getString(JsonRpcHelper.TIMESTAMP);
                                         // Log.d(TAG, "TxObject blockTimestamp -> " + txBlockTimestamp);
 
                                     }
 
-                                    if (txObject.has("isError")) {
-                                        txIsError = txObject.getString("isError");
+                                    if (txObject.has(JsonRpcHelper.IS_ERROR)) {
+                                        txIsError = txObject.getString(JsonRpcHelper.IS_ERROR);
                                         // Log.d(TAG, "TxObject isError -> " + txIsError);
 
                                     }
@@ -1127,24 +1122,17 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
-                final String eth_rpc_url = host + "module=logs&action=getLogs"
-                        + "&fromBlock=0&toBlock=latest"
-                        + (null == contract ? "" : ("&address=" + contract))
-                        + "&topic0=" + event
-                        + "&topic1=" + address
-                        + "&topic1_2_opr=or"
-                        + "&topic2=" + address;
-                Log.d(TAG, "run: " + eth_rpc_url);
+                final String ethRpcUtl = JsonRpcHelper.createLogsUrl(address, contract, event);
+                Log.d(TAG, "getLogs: " + ethRpcUtl);
                 final JSONObject payload = new JSONObject();
                 try {
-                    payload.put("id", String.valueOf(rid));
+                    payload.put(JsonRpcHelper.ID, String.valueOf(rid));
                     // ?? payload.put("account", address);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                JsonRpcRequest.makeRpcRequest(BreadApp.getBreadContext(), eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethRpcUtl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
 
@@ -1152,7 +1140,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                             try {
                                 // Convert response into JsonArray of logs
                                 JSONObject logs = new JSONObject(jsonResult);
-                                JSONArray logsArray = logs.getJSONArray("result");
+                                JSONArray logsArray = logs.getJSONArray(JsonRpcHelper.RESULT);
 
                                 // Iterate through the list of transactions and call node.announceTransaction()
                                 // to notify the core
@@ -1161,22 +1149,23 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
 
                                     Log.d(TAG, "LogObject contains -> " + log.toString());
 
-                                    JSONArray topicsArray = log.getJSONArray("topics");
+                                    JSONArray topicsArray = log.getJSONArray(JsonRpcHelper.TOPICS);
                                     String[] topics = new String[topicsArray.length()];
-                                    for (int dex = 0; dex < topics.length; dex++)
+                                    for (int dex = 0; dex < topics.length; dex++) {
                                         topics[dex] = topicsArray.getString(dex);
+                                    }
 
                                     node.announceLog(rid,
-                                            log.getString("transactionHash"),
-                                            log.getString("address"), // contract
+                                            log.getString(JsonRpcHelper.TRANSACTION_HASH),
+                                            log.getString(JsonRpcHelper.ADDRESS), // contract
                                             topics,
-                                            log.getString("data"),
-                                            log.getString("gasPrice"),
-                                            log.getString("gasUsed"),
-                                            log.getString("logIndex"),
-                                            log.getString("blockNumber"),
-                                            log.getString("transactionIndex"),
-                                            log.getString("timeStamp"));
+                                            log.getString(JsonRpcHelper.DATA),
+                                            log.getString(JsonRpcHelper.GAS_PRICE),
+                                            log.getString(JsonRpcHelper.GAS_USED),
+                                            log.getString(JsonRpcHelper.LOG_INDEX),
+                                            log.getString(JsonRpcHelper.BLOCK_NUMBER),
+                                            log.getString(JsonRpcHelper.TRANSACTION_INDEX),
+                                            log.getString(JsonRpcHelper.TIMESTAMP));
                                 }
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -1196,29 +1185,29 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                final String eth_url = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_RPC_ENDPOINT;
+                final String eth_url = JsonRpcHelper.getEthereumRpcUrl();
                 Log.d(TAG, "Making rpc request to -> " + eth_url);
 
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
 
                 try {
-                    payload.put("method", "eth_blockNumber");
-                    payload.put("params", params);
-                    payload.put("id", rid);
+                    payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_BLOCK_NUMBER);
+                    payload.put(JsonRpcHelper.PARAMS, params);
+                    payload.put(JsonRpcHelper.ID, rid);
 
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
 
-                JsonRpcRequest.makeRpcRequest(BreadApp.getBreadContext(), eth_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), eth_url, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
                         try {
                             JSONObject responseObject = new JSONObject(jsonResult);
 
-                            if (responseObject.has("result")) {
-                                String blockNumber = responseObject.getString("result");
+                            if (responseObject.has(JsonRpcHelper.RESULT)) {
+                                String blockNumber = responseObject.getString(JsonRpcHelper.RESULT);
                                 Log.e(TAG, "onRpcRequestCompleted: getBlockNumber: " + blockNumber);
                                 node.announceBlockNumber(blockNumber, rid);
                             }
@@ -1317,7 +1306,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                     break;
                 case SUBMITTED:
                     if (mWatchedTransaction != null) {
-                        Log.e(TAG, "handleTransactionEvent: mWatchedTransaction: " + mWatchedTransaction.getEtherTx().getNonce() + ", actual: " + transaction.getNonce());
+                        Log.e(TAG, "handleTransactionEvent: mWatchedTransaction: " + mWatchedTransaction.getEtherTx().getNonce()
+                                + ", actual: " + transaction.getNonce());
                         if (mWatchedTransaction.getEtherTx().getNonce() == transaction.getNonce()) {
                             String hash = transaction.getHash();
                             if (!Utils.isNullOrEmpty(hash)) {
@@ -1348,6 +1338,53 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
             }
         }
     }
+
+    @Override
+    public void getNonce(final String address, final int rid) {
+        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
+            return;
+        }
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                final String ethUrl = JsonRpcHelper.getEthereumRpcUrl();
+                Log.d(TAG, "Making rpc request to -> " + ethUrl);
+
+                final JSONObject payload = new JSONObject();
+                final JSONArray params = new JSONArray();
+
+                try {
+                    payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_TRANSACTION_COUNT);
+                    params.put(address);
+                    params.put(JsonRpcHelper.LATEST);  // or "pending" ?
+                    payload.put(JsonRpcHelper.PARAMS, params);
+                    payload.put(JsonRpcHelper.ID, rid);
+
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+
+                JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
+                    @Override
+                    public void onRpcRequestCompleted(String jsonResult) {
+                        try {
+                            JSONObject responseObject = new JSONObject(jsonResult);
+
+                            if (responseObject.has(JsonRpcHelper.RESULT)) {
+                                String nonce = responseObject.getString(JsonRpcHelper.RESULT);
+                                Log.d(TAG, "onRpcRequestCompleted: getNonce: " + nonce);
+                                node.announceNonce(address, nonce, rid);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
+            }
+        });
+
+    }
+
 
     /**
      * refresh current wallet's balance by code

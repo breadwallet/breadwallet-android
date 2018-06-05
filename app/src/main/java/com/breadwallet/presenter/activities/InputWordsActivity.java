@@ -122,10 +122,6 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
             mIsResettingPin = extras.getBoolean(EXTRA_RESET_PIN);
         }
 
-        if (!mIsRestoring && !mIsResettingPin) {
-            BRReportsManager.reportBug(new IllegalArgumentException("no extra for InputWordsActivity, can't happen"), true);
-        }
-
         if (mIsRestoring) {
             //change the labels
             title.setText(getString(R.string.MenuViewController_recoverButton));
