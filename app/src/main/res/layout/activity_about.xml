@@ -9,6 +9,17 @@
     tools:context="com.breadwallet.presenter.activities.SetPinActivity">
 
 
+    <ImageButton
+        android:id="@+id/back_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_arrow_left"
+        app:layout_constraintTop_toTopOf="@id/title"
+        app:layout_constraintStart_toStartOf="@id/brd_rewards_id"
+        tools:layout_editor_absoluteX="16dp"
+        tools:layout_editor_absoluteY="16dp" />
+
+
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/brd_rewards"
         android:layout_width="wrap_content"
@@ -75,8 +86,8 @@
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/bread_margin"
-        android:layout_marginTop="32dp"
+        android:layout_marginLeft="148dp"
+        android:layout_marginTop="36dp"
         android:text="@string/About.title"
         android:textColor="@color/almost_black"
         android:textSize="@dimen/header"

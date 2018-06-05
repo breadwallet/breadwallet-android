@@ -3,15 +3,15 @@ package com.breadwallet.presenter.activities.settings;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.CurrencySettingsActivity;
 import com.breadwallet.presenter.activities.ManageWalletsActivity;
 import com.breadwallet.presenter.activities.UpdatePinActivity;
-import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.tools.adapter.SettingsAdapter;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -25,7 +25,7 @@ import com.platform.tools.KVStoreManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SettingsActivity extends BRActivity {
+public class SettingsActivity extends BaseSettingsActivity {
     private static final String TAG = SettingsActivity.class.getName();
     private ListView listView;
     public List<BRSettingsItem> items;
@@ -36,23 +36,17 @@ public class SettingsActivity extends BRActivity {
         return app;
     }
 
-    private ImageButton mBackButton;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+    public int getLayoutId() {
+        return R.layout.activity_settings;
+    }
 
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         listView = findViewById(R.id.settings_list);
 
-        mBackButton = findViewById(R.id.back_button);
-
-        mBackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
 
     }
 

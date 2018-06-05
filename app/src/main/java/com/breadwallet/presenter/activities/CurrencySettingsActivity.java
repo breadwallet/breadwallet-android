@@ -3,11 +3,10 @@ package com.breadwallet.presenter.activities;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.View;
-import android.widget.ImageButton;
 import android.widget.ListView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.tools.adapter.SettingsAdapter;
@@ -21,29 +20,24 @@ import java.util.List;
  * Created by byfieldj on 2/5/18.
  */
 
-public class CurrencySettingsActivity extends BRActivity {
+public class CurrencySettingsActivity extends BaseSettingsActivity {
 
     private BRText mTitle;
-    private ImageButton mBackButton;
     private ListView listView;
     public List<BRSettingsItem> items;
     private static CurrencySettingsActivity app;
 
+
+    @Override
+    public int getLayoutId() {
+        return R.layout.activity_currency_settings;
+    }
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_currency_settings);
-
         mTitle = findViewById(R.id.title);
         listView = findViewById(R.id.settings_list);
-        mBackButton = findViewById(R.id.back_button);
-
-        mBackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
 
         final BaseWalletManager wm = WalletsMaster.getInstance(this).getCurrentWallet(this);
 

@@ -10,10 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
-import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
@@ -21,7 +19,7 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 
 import java.util.Locale;
 
-public class AboutActivity extends BRActivity {
+public class AboutActivity extends BaseSettingsActivity {
     private static final String TAG = AboutActivity.class.getName();
 
     private static AboutActivity app;
@@ -37,12 +35,17 @@ public class AboutActivity extends BRActivity {
     }
 
     @Override
+    public int getLayoutId() {
+        return R.layout.activity_about;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
 
         TextView infoText = findViewById(R.id.info_text);
         TextView policyText = findViewById(R.id.policy_text);
+
 
         PackageInfo pInfo = null;
         try {
