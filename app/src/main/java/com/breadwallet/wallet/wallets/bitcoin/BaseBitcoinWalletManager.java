@@ -78,6 +78,9 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     private static final long MAXIMUM_AMOUNT = 21000000; // Maximum number of coins available
     private static final int SYNC_MAX_RETRY = 3;
 
+    public static final String BITCOIN_SYMBOL = "BTC";
+    public static final String BITCASH_SYMBOL = "BCH";
+
     private WalletManagerHelper mWalletManagerHelper;
     private int mSyncRetryCount = 0;
     private int mCreateWalletAllowedRetries = 3;
@@ -100,10 +103,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         mUiConfig = new WalletUiConfiguration(getColor(), null, true, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
         mSettingsConfig = new WalletSettingsConfiguration(context, getIso(), getFingerprintLimits(context));
     }
-
-//    protected WalletManagerHelper getWalletManagerHelper() {
-//        return mWalletManagerHelper;
-//    }
 
     protected abstract String getTag();
 
@@ -930,4 +929,5 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         }
         onTxListModified(hash);
     }
+
 }
