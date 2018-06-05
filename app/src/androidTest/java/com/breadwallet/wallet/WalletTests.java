@@ -22,8 +22,6 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
-import com.platform.JsonRpcConstants;
-import com.platform.JsonRpcRequest;
 
 
 import org.json.JSONException;
