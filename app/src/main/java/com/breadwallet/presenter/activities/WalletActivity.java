@@ -8,11 +8,11 @@ import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateUtils;
 import android.transition.TransitionManager;
 import android.util.Log;
 import android.util.TypedValue;
@@ -20,14 +20,12 @@ import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
-import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -39,7 +37,6 @@ import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.services.SyncService;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.SyncTestLogger;
 import com.breadwallet.tools.util.Utils;
@@ -49,11 +46,13 @@ import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.SyncListener;
 import com.breadwallet.wallet.util.CryptoUriParser;
+import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 
 /**
  * Created by byfieldj on 1/16/18.
@@ -67,6 +66,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         OnTxListModified, RatesDataSource.OnDataChanged, SyncListener, OnBalanceChangedListener {
     private static final String TAG = WalletActivity.class.getName();
 
+    private static final String SYNCED_THROUGH_DATE_FORMAT = "MM/dd/yy HH:mm";
+
     private BRText mCurrencyTitle;
     private BRText mCurrencyPriceUsd;
     private BRText mBalancePrimary;
@@ -78,14 +79,12 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private BRButton mBuyButton;
     private BRButton mSellButton;
     private LinearLayout mProgressLayout;
+    private BRText mSyncStatusLabel;
     private BRText mProgressLabel;
-    private ProgressBar mProgressBar;
     public ViewFlipper mBarFlipper;
     private BRSearchBar mSearchBar;
     private ImageButton mSearchIcon;
-    private ImageButton mSwap;
     private ConstraintLayout mToolBarConstraintLayout;
-    private BRNotificationBar mNotificationBar;
 
     public static final String EXTRA_URL = "com.breadwallet.EXTRA_URL";
 
@@ -123,11 +122,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mSearchBar = findViewById(R.id.search_bar);
         mSearchIcon = findViewById(R.id.search_icon);
         mToolBarConstraintLayout = findViewById(R.id.bread_toolbar);
-        mSwap = findViewById(R.id.swap);
         mProgressLayout = findViewById(R.id.progress_layout);
+        mSyncStatusLabel = findViewById(R.id.sync_status_label);
         mProgressLabel = findViewById(R.id.syncing_label);
-        mProgressBar = findViewById(R.id.sync_progress);
-        mNotificationBar = findViewById(R.id.notification_bar);
 
         startSyncLoggerIfNeeded();
 
@@ -164,7 +161,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mSearchIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!BRAnimator.isClickAllowed()) {
+                    return;
+                }
                 mBarFlipper.setDisplayedChild(1); //search bar
                 mSearchBar.onShow(true);
             }
@@ -224,7 +223,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         boolean cryptoPreferred = BRSharedPrefs.isCryptoPreferred(this);
 
         setPriceTags(cryptoPreferred, false);
-
 
     }
 
@@ -321,8 +319,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private void setPriceTags(final boolean cryptoPreferred, boolean animate) {
         ConstraintSet set = new ConstraintSet();
         set.clone(mToolBarConstraintLayout);
-        if (animate)
+        if (animate) {
             TransitionManager.beginDelayedTransition(mToolBarConstraintLayout);
+        }
         int px8 = Utils.getPixelsFromDps(this, 8);
 
         // CRYPTO on RIGHT
@@ -423,7 +422,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     /* SyncListener methods */
     @Override
-    public void syncStopped(String err) {
+    public void syncStopped(String error) {
+
     }
 
     @Override
@@ -491,7 +491,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     public void updateSyncProgress(double progress) {
-        boolean showProgress = progress != BRConstants.SYNC_PROGRESS_FINISH;
+        boolean showProgress = progress != SyncService.PROGRESS_FINISH;
 
         if (showProgress) {
             StringBuffer labelText = new StringBuffer(getString(R.string.SyncingView_syncing));
@@ -501,9 +501,13 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         }
 
         mProgressLayout.setVisibility(showProgress ? View.VISIBLE : View.GONE);
-        mProgressBar.setVisibility(showProgress ? View.VISIBLE : View.GONE);
-        mProgressLabel.setVisibility(showProgress ? View.VISIBLE : View.GONE);
-        mProgressBar.invalidate();
+
+        if (mWallet instanceof BaseBitcoinWalletManager) {
+            BaseBitcoinWalletManager baseBitcoinWalletManager = (BaseBitcoinWalletManager) mWallet;
+            long syncThroughDateInMillis = baseBitcoinWalletManager.getPeerManager().getLastBlockTimestamp() * DateUtils.SECOND_IN_MILLIS;
+            String syncedThroughDate = new SimpleDateFormat(SYNCED_THROUGH_DATE_FORMAT).format(syncThroughDateInMillis);
+            mSyncStatusLabel.setText(String.format(getString(R.string.SyncingView_syncedThrough), syncedThroughDate));
+        }
     }
 
     @Override
