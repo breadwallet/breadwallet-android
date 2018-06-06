@@ -124,56 +124,6 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
         keyboard.setCustomButtonBackgroundColor(10, getColor(android.R.color.transparent));
         keyboard.setDeleteImage(getDrawable(R.drawable.ic_delete_white));
 
-        leftButton = findViewById(R.id.left_button);
-        rightButton = findViewById(R.id.right_button);
-
-        setUpOfflineButtons();
-
-        leftButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.showReceiveFragment(LoginActivity.this, false);
-//                chooseWordsSize(true);
-            }
-        });
-
-        rightButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                try {
-                    // Check if the camera permission is granted
-                    if (ContextCompat.checkSelfPermission(app,
-                            Manifest.permission.CAMERA)
-                            != PackageManager.PERMISSION_GRANTED) {
-                        // Should we show an expgetString(R.string.ConfirmPaperPhrase_word)lanation?
-                        if (ActivityCompat.shouldShowRequestPermissionRationale(app,
-                                Manifest.permission.CAMERA)) {
-                            BRDialog.showCustomDialog(app, getString(R.string.Send_cameraUnavailabeTitle_android),
-                                    getString(R.string.Send_cameraUnavailabeMessage_android), getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                                        @Override
-                                        public void onClick(BRDialogView brDialogView) {
-                                            brDialogView.dismiss();
-                                        }
-                                    }, null, null, 0);
-                        } else {
-                            // No explanation needed, we can request the permission.
-                            ActivityCompat.requestPermissions(app,
-                                    new String[]{Manifest.permission.CAMERA},
-                                    BRConstants.CAMERA_REQUEST_ID);
-                        }
-                    } else {
-                        // Permission is granted, open camera
-                        Intent intent = new Intent(app, ScanQRActivity.class);
-                        app.startActivityForResult(intent, SCANNER_REQUEST);
-                        app.overridePendingTransition(R.anim.fade_up, 0);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        });
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -345,22 +295,6 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
                 });
     }
 
-    private void setUpOfflineButtons() {
-        int activeColor = getColor(white);
-        GradientDrawable leftDrawable = (GradientDrawable) leftButton.getBackground().getCurrent();
-        GradientDrawable rightDrawable = (GradientDrawable) rightButton.getBackground().getCurrent();
-
-        int rad = Utils.getPixelsFromDps(this, (int) getResources().getDimension(R.dimen.radius) / 2);
-        int stoke = 2;
-
-        leftDrawable.setCornerRadii(new float[]{rad, rad, 0, 0, 0, 0, rad, rad});
-        rightDrawable.setCornerRadii(new float[]{0, 0, rad, rad, rad, rad, 0, 0});
-
-        leftDrawable.setStroke(stoke, activeColor, 0, 0);
-        rightDrawable.setStroke(stoke, activeColor, 0, 0);
-        leftButton.setTextColor(activeColor);
-        rightButton.setTextColor(activeColor);
-    }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
