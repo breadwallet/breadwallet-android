@@ -407,15 +407,13 @@ public class WalletPlugin implements Plugin {
                 obj.put("colors", colors);
 
                 //Balance
-                //TODO Temporary solution due to the fact that the erc20 balances are stored in Decimals rather than smallest currency (WEI, SATOSHIS)
                 JSONObject balance = new JSONObject();
 
-                boolean isErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, w.getIso(app));
+                boolean isErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, w.getIso());
                 BigDecimal rawBalance = w.getCachedBalance(app);
-                String denominator = w.getDenominator(app);
-                balance.put("currency", w.getIso(app));
+                String denominator = w.getDenominator();
+                balance.put("currency", w.getIso());
                 balance.put("numerator", isErc20 ? rawBalance.multiply(new BigDecimal(denominator)).toPlainString() : rawBalance.toPlainString());
-
                 balance.put("denominator", denominator);
 
                 //Fiat balance
