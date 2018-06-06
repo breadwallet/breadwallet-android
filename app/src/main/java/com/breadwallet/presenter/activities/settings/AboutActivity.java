@@ -25,6 +25,8 @@ public class AboutActivity extends BaseSettingsActivity {
     private static AboutActivity app;
     private BRText mCopy;
     private BRText mRewardsId;
+    private static final int DEFAULT_VERSION_CODE = 0;
+    private static final String DEFAULT_VERSION_NAME = "0";
 
     public static AboutActivity getApp() {
         return app;
@@ -47,15 +49,16 @@ public class AboutActivity extends BaseSettingsActivity {
         TextView policyText = findViewById(R.id.policy_text);
 
 
-        PackageInfo pInfo = null;
+        PackageInfo packageInfo = null;
         try {
-            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        int verCode = pInfo != null ? pInfo.versionCode : 0;
+        int versionCode = packageInfo != null ? packageInfo.versionCode : DEFAULT_VERSION_CODE;
+        String versionName = packageInfo != null ? packageInfo.versionName : DEFAULT_VERSION_NAME;
 
-        infoText.setText(String.format(Locale.getDefault(), getString(R.string.About_footer), verCode));
+        infoText.setText(String.format(Locale.getDefault(), getString(R.string.About_footer), versionName, versionCode));
 
         ImageView redditShare = findViewById(R.id.reddit_share_button);
         ImageView twitterShare = findViewById(R.id.twitter_share_button);
