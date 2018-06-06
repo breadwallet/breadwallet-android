@@ -101,14 +101,6 @@ public final class BRConstants {
     public static final String FAQ_LOOP_BUG = "android-loop-bug";
     public static final String FAQ_BCH = "bitcoin-cash";
 
-    /**
-     * Sync constants
-     */
-
-    public static final int SYNC_PROGRESS_START = 0;
-    public static final int SYNC_PROGRESS_FINISH = 1;
-    public static final int SYNC_PROGRESS_MULTIPLIER  = 100; /* Multiplier to convert progress to value for UI. */
-
     private BRConstants() {
     }
 
