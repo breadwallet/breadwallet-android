@@ -52,7 +52,7 @@ public interface BaseWalletManager {
     //get the core wallet
     int getForkId();
 
-    //get the currency unit ETHEREUM_WEI...
+    //get the currency unit ETHER_WEI...
     BREthereumAmount.Unit getUnit();
 
     boolean isAddressValid(String address);
