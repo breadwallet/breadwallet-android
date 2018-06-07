@@ -517,6 +517,7 @@ public class APIClient {
             String latestVersion = getLatestVersion();
             String currentTarVersion = null;
             byte[] hash = CryptoHelper.sha256(bFile);
+            UserMetricsManager.setBundleHash(hash);
             assert hash != null;
             currentTarVersion = Utils.bytesToHex(hash);
             Log.d(TAG, bundleFile + ": updateBundle: version of the current tar: " + currentTarVersion);
