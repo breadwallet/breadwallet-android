@@ -15,8 +15,6 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
 
     private WalletManagerHelper mWalletManagerHelper;
 
-    public static final String ETHEREUM_WEI = "1000000000000000000";
-
     public BaseEthereumWalletManager() {
         mWalletManagerHelper = new WalletManagerHelper();
     }
@@ -41,11 +39,6 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
         mWalletManagerHelper.onBalanceChanged(balance);
     }
 
-//    @Override
-//    public void addTxStatusUpdatedListener(OnTxStatusUpdatedListener listener) {
-//        mWalletManagerHelper.addTxStatusUpdatedListener(listener);
-//    }
-
     // TODO not used by ETH, ERC20
     @Override
     public void addSyncListener(SyncListener listener) {
@@ -56,10 +49,9 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
     public void removeSyncListener(SyncListener listener) {
     }
 
-    // TODO not used by ETH, ERC20
     @Override
     public void addTxListModifiedListener(OnTxListModified listener) {
-//        mWalletManagerHelper.addTxListModifiedListener(listener);
+        mWalletManagerHelper.addTxListModifiedListener(listener);
     }
 
     @Override

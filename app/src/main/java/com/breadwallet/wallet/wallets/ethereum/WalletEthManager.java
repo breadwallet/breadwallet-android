@@ -80,32 +80,35 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  * THE SOFTWARE.
  */
 public class WalletEthManager extends BaseEthereumWalletManager implements BaseWalletManager,
-        BREthereumLightNode.Client,
-        BREthereumLightNode.Listener {
+        BREthereumLightNode.Client, BREthereumLightNode.Listener {
     private static final String TAG = WalletEthManager.class.getSimpleName();
 
     private CryptoTransaction mWatchedTransaction;
     private OnHashUpdated mWatchListener;
 
-    private static String ISO = "ETH";
+    private static final String ISO = "ETH";
     public static final String ETH_SCHEME = "ethereum";
+    //1ETH = 1000000000000000000 WEI
+    public static final String ETHER_WEI = "1000000000000000000";
+    //Max amount in ether
+    public static final String MAX_ETH = "90000000";
+    private final BigDecimal MAX_WEI = new BigDecimal(MAX_ETH).multiply(new BigDecimal(ETHER_WEI)); // 90m ETH * 18 (WEI)
+    private final BigDecimal ONE_ETH = new BigDecimal(ETHER_WEI);
+    private static final String NAME = "Ethereum";
 
-    private static final String mName = "Ethereum";
+    private Map<String, Boolean> mBalanceStatuses = new HashMap<>();
+    private static WalletEthManager mInstance;
 
-    private Map<String, Boolean> balanceStatuses = new HashMap<>();
+    private WalletUiConfiguration mUiConfig;
+    private WalletSettingsConfiguration mSettingsConfig;
 
-    private static WalletEthManager instance;
-    private WalletUiConfiguration uiConfig;
-    private WalletSettingsConfiguration settingsConfig;
-    private final BigDecimal MAX_ETH = new BigDecimal("90000000000000000000000000"); // 90m ETH * 18 (WEI)
-    private final BigDecimal ONE_ETH = new BigDecimal("1000000000000000000"); //1ETH = 1000000000000000000 WEI
     private BREthereumWallet mWallet;
     public BREthereumLightNode node;
 
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
-        uiConfig = new WalletUiConfiguration("#5e6fa5", null,
+        mUiConfig = new WalletUiConfiguration("#5e6fa5", null,
                 true, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
-        settingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
+        mSettingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
 
         if (Utils.isNullOrEmpty(ethPubKey)) {
             Log.e(TAG, "WalletEthManager: Using the paperKey to create");
@@ -164,7 +167,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
     }
 
     public static synchronized WalletEthManager getInstance(Context app) {
-        if (instance == null) {
+        if (mInstance == null) {
             byte[] rawPubKey = BRKeyStore.getMasterPublicKey(app);
             if (Utils.isNullOrEmpty(rawPubKey)) {
                 Log.e(TAG, "getInstance: rawPubKey is null");
@@ -177,10 +180,10 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                     return null;
                 }
             }
-            instance = new WalletEthManager(app, ethPubKey, BuildConfig.BITCOIN_TESTNET ? BREthereumNetwork.testnet : BREthereumNetwork.mainnet);
+            mInstance = new WalletEthManager(app, ethPubKey, BuildConfig.BITCOIN_TESTNET ? BREthereumNetwork.testnet : BREthereumNetwork.mainnet);
 
         }
-        return instance;
+        return mInstance;
     }
 
     public void estimateGasPrice() {
@@ -467,7 +470,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
 
     @Override
     public String getName() {
-        return mName;
+        return NAME;
     }
 
     @Override
@@ -534,17 +537,17 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
 
     @Override
     public BigDecimal getMaxAmount(Context app) {
-        return MAX_ETH;
+        return MAX_WEI;
     }
 
     @Override
     public WalletUiConfiguration getUiConfiguration() {
-        return uiConfig;
+        return mUiConfig;
     }
 
     @Override
     public WalletSettingsConfiguration getSettingsConfiguration() {
-        return settingsConfig;
+        return mSettingsConfig;
     }
 
     @Override
@@ -1297,11 +1300,12 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
             switch (event) {
                 case ADDED:
                     printInfo("New transaction added: ", iso, event.name());
+                    getWalletManagerHelper().onTxListModified(transaction.getHash());
                     break;
                 case REMOVED:
                     printInfo("Transaction removed: ", iso, event.name());
+                    getWalletManagerHelper().onTxListModified(transaction.getHash());
                     break;
-
                 case CREATED:
                     printInfo("Transaction created: " + transaction.getAmount(), iso, event.name());
                     break;
@@ -1442,7 +1446,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
             return;
         }
         String upperCode = code.toUpperCase();
-        balanceStatuses.put(upperCode, true);
+        mBalanceStatuses.put(upperCode, true);
     }
 
     /**
@@ -1457,7 +1461,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
             return false;
         }
         String upperCode = code.toUpperCase();
-        return balanceStatuses.containsKey(upperCode) && balanceStatuses.get(upperCode);
+        return mBalanceStatuses.containsKey(upperCode) && mBalanceStatuses.get(upperCode);
 
     }
 }
