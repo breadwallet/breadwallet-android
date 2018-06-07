@@ -101,6 +101,16 @@ public final class BRConstants {
     public static final String FAQ_LOOP_BUG = "android-loop-bug";
     public static final String FAQ_BCH = "bitcoin-cash";
 
+    /**
+     * API Constants
+     */
+
+    public static final String HTTPS_PROTOCOL = "https://";
+    public static final String HEADER_CONTENT_TYPE = "Content-Type";
+    public static final String HEADER_ACCEPT = "Accept";
+    public static final String HEADER_VALUE_CONTENT_TYPE = "application/json; charset=utf-8";
+    public static final String HEADER_VALUE_ACCEPT = "application/json";
+
     private BRConstants() {
     }
 
