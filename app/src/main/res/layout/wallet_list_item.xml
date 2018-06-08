@@ -32,7 +32,7 @@
         app:customTFont="CircularPro-Bold.otf"/>
 
     <com.breadwallet.presenter.customviews.BRText
-        android:id="@+id/wallet_balance_usd"
+        android:id="@+id/wallet_balance_fiat"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
@@ -40,7 +40,7 @@
         android:layout_marginStart="16sp"
         android:layout_marginTop="16sp"
         android:text="$12.00"
-        android:textColor="@color/white"
+        android:textColor="@color/wallet_balance_fiat"
         android:textSize="18sp"
         app:customTFont="CircularPro-Bold.otf"/>
 
@@ -49,33 +49,34 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toStartOf="@id/sync_progress"
-        android:layout_below="@id/wallet_balance_usd"
+        android:layout_below="@id/wallet_balance_fiat"
         android:layout_marginBottom="16dp"
-        android:layout_marginEnd="5dp"
-        android:layout_marginTop="4dp"
-        android:text="Syncing"
-        android:textColor="#88ffffff"
-        android:textSize="10sp"
+        android:layout_marginEnd="3dp"
+        android:layout_marginTop="3dp"
+        android:text="@string/SyncingView.syncing"
+        android:textColor="@color/sync_text"
+        android:textSize="14sp"
         app:customTFont="CircularPro-Bold.otf"/>
 
     <ProgressBar
         android:id="@+id/sync_progress"
-        android:layout_width="9dp"
-        android:layout_height="9dp"
+        android:layout_width="14dp"
+        android:layout_height="14dp"
         android:layout_alignParentEnd="true"
-        android:layout_below="@id/wallet_balance_usd"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="6dp"
+        android:layout_below="@id/wallet_balance_fiat"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="3dp"
         android:indeterminate="true"
-        android:keepScreenOn="true"
-        android:indeterminateDrawable="@drawable/wallet_sync_progress_bar"/>
+        android:indeterminateDrawable="@drawable/wallet_sync_progress_bar"
+        android:indeterminateTint="@color/sync_text"
+        android:keepScreenOn="true"/>
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/wallet_balance_currency"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@id/wallet_balance_usd"
-        android:layout_below="@id/wallet_balance_usd"
+        android:layout_alignEnd="@id/wallet_balance_fiat"
+        android:layout_below="@id/wallet_balance_fiat"
         android:textColor="@color/balance_crypto_color"
         android:textSize="14sp"
         app:customTFont="CircularPro-Bold.otf"/>

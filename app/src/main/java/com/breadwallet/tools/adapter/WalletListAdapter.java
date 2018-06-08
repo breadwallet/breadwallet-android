@@ -26,6 +26,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
 /**
@@ -77,7 +78,9 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     public int getItemViewType(int position) {
         if (position < mWalletItems.size()) {
             return VIEW_TYPE_WALLET;
-        } else return VIEW_TYPE_ADD_WALLET;
+        } else {
+            return VIEW_TYPE_ADD_WALLET;
+        }
     }
 
     public BaseWalletManager getItemAt(int pos) {
@@ -106,13 +109,13 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             // Set wallet fields
             holder.mWalletName.setText(name);
             holder.mTradePrice.setText(mContext.getString(R.string.Account_exchangeRate, exchangeRate, iso));
-            holder.mWalletBalanceUSD.setText(fiatBalance);
+            holder.mWalletBalanceFiat.setText(fiatBalance);
+            holder.mWalletBalanceFiat.setTextColor(mContext.getResources().getColor(item.mShowSyncProgress ? R.color.wallet_balance_fiat_syncing : R.color.wallet_balance_fiat));
             holder.mWalletBalanceCurrency.setText(cryptoBalance);
-            holder.mSyncingProgressBar.setVisibility(item.mShowSyncing ? View.VISIBLE : View.INVISIBLE);
-            holder.mSyncingProgressBar.setProgress(item.mProgress);
-            holder.mSyncingLabel.setVisibility(item.mShowSyncingLabel ? View.VISIBLE : View.INVISIBLE);
+            holder.mWalletBalanceCurrency.setVisibility(!item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
+            holder.mSyncingProgressBar.setVisibility(item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
+            holder.mSyncingLabel.setVisibility(item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
             holder.mSyncingLabel.setText(item.mLabelText);
-            holder.mWalletBalanceCurrency.setVisibility(item.mShowBalance ? View.VISIBLE : View.INVISIBLE);
 
             String startColor = wallet.getUiConfiguration().getStartColor();
             String endColor = wallet.getUiConfiguration().getEndColor();
@@ -131,7 +134,9 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     }
 
     public void startObserving() {
-        if (mObesrverIsStarting) return;
+        if (mObesrverIsStarting) {
+            return;
+        }
         mObesrverIsStarting = true;
 
         SyncService.registerSyncNotificationBroadcastReceiver(mContext.getApplicationContext(), mSyncNotificationBroadcastReceiver);
@@ -146,10 +151,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                             @Override
                             public void run() {
                                 for (WalletItem item : mWalletItems) {
-
-                                    item.updateData(false, false, true, 100, "Done");
-                                    notifyDataSetChanged();
-
+                                    item.updateData(false);
                                 }
                             }
                         });
@@ -169,33 +171,22 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
     }
 
     private boolean updateUi(WalletItem currentWallet, double syncProgress) {
-
         if (mCurrentWalletSyncing == null || mCurrentWalletSyncing.walletManager == null) {
             Log.e(TAG, "run: should not happen but ok, ignore it.");
             return false;
         }
-        if (syncProgress > 0.0 && syncProgress < 1.0) {
-            int progress = (int) (syncProgress * 100);
+        if (syncProgress > SyncService.PROGRESS_START && syncProgress < SyncService.PROGRESS_FINISH) {
 //            Log.d(TAG, "ISO: " + currentWallet.walletManager.getIso(mContext) + " (" + progress + "%)");
+            StringBuffer labelText = new StringBuffer(mContext.getString(R.string.SyncingView_syncing));
+            labelText.append(' ')
+                    .append(NumberFormat.getPercentInstance().format(syncProgress));
 
-            mCurrentWalletSyncing.updateData(true, true, false, progress, String.format("%s %d%%", "Syncing", progress));
-            notifyDataSetChanged();
-        }
-
-        // HAS NOT STARTED SYNCING
-        else if (syncProgress == 0.0) {
-//            Log.d(TAG, "ISO: " + currentWallet.walletManager.getIso(mContext) + " (0%)");
-            mCurrentWalletSyncing.updateData(false, true, false, 0, "Waiting to Sync");
-            notifyDataSetChanged();
-        }
-
-        // FINISHED SYNCING
-        else if (syncProgress == 1.0) {
+            mCurrentWalletSyncing.updateData(true, labelText.toString());
+        } else if (syncProgress == SyncService.PROGRESS_FINISH) {
 //            Log.d(TAG, "ISO: " + currentWallet.walletManager.getIso(mContext) + " (100%)");
 
             //Done should not be seen but if it is because of a bug or something, then let if be a decent explanation
-            mCurrentWalletSyncing.updateData(false, false, true, 100, "Done");
-            notifyDataSetChanged();
+            mCurrentWalletSyncing.updateData(false);
 
             //start from beginning
             startObserving();
@@ -214,14 +205,15 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
         for (WalletItem w : mWalletItems) {
             if (currentWallet == null) {
-                if (w.walletManager.getSyncProgress(BRSharedPrefs.getStartHeight(mContext, w.walletManager.getIso())) < 1 ||
-                        w.walletManager.getConnectStatus() != 2) {
+                if (w.walletManager.getSyncProgress(BRSharedPrefs.getStartHeight(mContext, w.walletManager.getIso())) < 1
+                        || w.walletManager.getConnectStatus() != 2) {
                     w.walletManager.connect(mContext);
                     return w;
                 }
             } else {
-                if (w.walletManager.getIso().equalsIgnoreCase(currentWallet.getIso()))
+                if (w.walletManager.getIso().equalsIgnoreCase(currentWallet.getIso())) {
                     return w;
+                }
             }
         }
         return null;
@@ -234,20 +226,20 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
     public class WalletItemViewHolder extends RecyclerView.ViewHolder {
 
-        public BRText mWalletName;
-        public BRText mTradePrice;
-        public BRText mWalletBalanceUSD;
-        public BRText mWalletBalanceCurrency;
-        public RelativeLayout mParent;
-        public BRText mSyncingLabel;
-        public ProgressBar mSyncingProgressBar;
+        private BRText mWalletName;
+        private BRText mTradePrice;
+        private BRText mWalletBalanceFiat;
+        private BRText mWalletBalanceCurrency;
+        private RelativeLayout mParent;
+        private BRText mSyncingLabel;
+        private ProgressBar mSyncingProgressBar;
 
         public WalletItemViewHolder(View view) {
             super(view);
 
             mWalletName = view.findViewById(R.id.wallet_name);
             mTradePrice = view.findViewById(R.id.wallet_trade_price);
-            mWalletBalanceUSD = view.findViewById(R.id.wallet_balance_usd);
+            mWalletBalanceFiat = view.findViewById(R.id.wallet_balance_fiat);
             mWalletBalanceCurrency = view.findViewById(R.id.wallet_balance_currency);
             mParent = view.findViewById(R.id.wallet_card);
             mSyncingLabel = view.findViewById(R.id.syncing_label);
@@ -264,22 +256,25 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
     private class WalletItem {
         public BaseWalletManager walletManager;
-        private boolean mShowSyncing = false;
-        private boolean mShowSyncingLabel = false;
-        private boolean mShowBalance = true;
-        private int mProgress = 1; //1 - 100%
-        private String mLabelText = "Done";
+        private boolean mShowSyncProgress = false;
+        private String mLabelText;
 
-        public WalletItem(BaseWalletManager walletManager) {
+        WalletItem(BaseWalletManager walletManager) {
             this.walletManager = walletManager;
         }
 
-        public void updateData(boolean showSyncing, boolean showSyncingLabel, boolean showBalance, int progress, String labelText) {
-            mShowSyncing = showSyncing;
-            mShowSyncingLabel = showSyncingLabel;
-            mShowBalance = showBalance;
-            mProgress = progress;
-            mLabelText = labelText;
+        public void updateData(boolean showSyncProgress) {
+           updateData(showSyncProgress, null);
+        }
+
+        public void updateData(boolean showSyncProgress, String labelText) {
+            mShowSyncProgress = showSyncProgress;
+
+            if (labelText != null) {
+                mLabelText = labelText;
+            }
+
+            notifyDataSetChanged();
         }
     }
 

@@ -77,10 +77,14 @@
     <color name="transaction_failed_button_color">#f46b41</color>
     <color name="trans_white">#70ffffff</color>
     <color name="balance_crypto_color">#b7ffffff</color>
+    <color name="wallet_balance_fiat">#ffffff</color>
+    <color name="wallet_balance_fiat_syncing">#4dffffff</color>
+    <color name="sync_text">#ffffff</color>
 
     // Wallet Screen
-    <item name="sync_toolbar" type="color">#cccccc</item>
-    <item name="sync_toolbar_text" type="color">#666666</item>
+    <color name="sync_toolbar">#e5e5e5</color>
+    <color name="sync_toolbar_text">#828282</color>
+    <color name="sync_toolbar_retry_text">#29abe2</color>
 
     // Dialog button colors
     <color name="dialog_button_positive">#4b77f3</color>
