@@ -3,6 +3,7 @@ package com.breadwallet;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
+import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.graphics.Point;
@@ -14,6 +15,7 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.activities.util.ApplicationLifecycleObserver;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.listeners.SyncReceiver;
@@ -25,7 +27,6 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
-
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,6 +78,7 @@ public class BreadApp extends Application {
     public static AtomicInteger activityCounter = new AtomicInteger();
     public static long backgroundedTime;
     private static Context mContext;
+    private ApplicationLifecycleObserver mObserver;
 
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
 
@@ -143,6 +145,9 @@ public class BreadApp extends Application {
 
         registerReceiver(InternetManager.getInstance(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
+        mObserver = new ApplicationLifecycleObserver();
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(mObserver);
+
     }
 
     public static void generateWalletIfIfNeeded(Context app, String address) {
@@ -153,6 +158,7 @@ public class BreadApp extends Application {
                 BRSharedPrefs.putWalletRewardId(app, rewardId);
             } else BRReportsManager.reportBug(new NullPointerException("rewardId is empty"));
         }
+
     }
 
     private static synchronized String generateWalletId(Context app, String address) {
@@ -263,4 +269,6 @@ public class BreadApp extends Application {
     public interface OnAppBackgrounded {
         void onBackgrounded();
     }
+
+
 }
