@@ -6,6 +6,7 @@ import android.arch.lifecycle.OnLifecycleEvent;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.platform.UserMetricsManager;
 
@@ -17,8 +18,14 @@ public class ApplicationLifecycleObserver implements LifecycleObserver {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                UserMetricsManager.makeUserMetricsRequest(BreadApp.getBreadContext(), UserMetricsManager.METRIC_LAUNCH);
 
+                //First, check if we have a wallet ID already stored in SharedPrefs
+                String walletId = BRSharedPrefs.getWalletRewardId(BreadApp.getBreadContext());
+
+                // Only make this request if we have a valid wallet ID
+                if (walletId != null && !walletId.isEmpty()) {
+                    UserMetricsManager.makeUserMetricsRequest(BreadApp.getBreadContext(), UserMetricsManager.METRIC_LAUNCH);
+                }
             }
         });
     }
