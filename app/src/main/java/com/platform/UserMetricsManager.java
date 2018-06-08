@@ -62,7 +62,7 @@ public class UserMetricsManager {
                 .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.HEADER_VALUE_CONTENT_TYPE)
                 .header(BRConstants.HEADER_ACCEPT, BRConstants.HEADER_VALUE_ACCEPT).post(requestBody).build();
 
-        APIClient.BRResponse resp = APIClient.getInstance(context).sendRequest(request, true, 0);
+        APIClient.getInstance(context).sendRequest(request, true);
 
     }
 
