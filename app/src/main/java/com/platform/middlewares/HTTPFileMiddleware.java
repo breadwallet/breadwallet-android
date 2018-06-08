@@ -125,7 +125,7 @@ public class HTTPFileMiddleware implements Middleware {
             Request debugRequest = new Request.Builder()
                     .url(debugUrl)
                     .get().build();
-            brResp = APIClient.getInstance(app).sendRequest(debugRequest, false, 0);
+            brResp = APIClient.getInstance(app).sendRequest(debugRequest, false);
         }
 
         brResp.code = 200;
