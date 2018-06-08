@@ -127,7 +127,7 @@ public class JsonRpcHelper {
                 .post(requestBody).build();
 
 
-        APIClient.BRResponse resp = APIClient.getInstance(app).sendRequest(request, true, 0);
+        APIClient.BRResponse resp = APIClient.getInstance(app).sendRequest(request, true);
         String responseString = resp.getBodyText();
 
         if (listener != null) {
