@@ -321,7 +321,7 @@ public class BRBitId {
                 .post(requestBody)
                 .header("Content-Type", "application/json")
                 .build();
-        APIClient.BRResponse res = APIClient.getInstance(app).sendRequest(request, true, 0);
+        APIClient.BRResponse res = APIClient.getInstance(app).sendRequest(request, true);
     }
 
     public static String newNonce(Activity app, String nonceKey) {
