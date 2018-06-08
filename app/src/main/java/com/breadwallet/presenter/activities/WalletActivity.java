@@ -1,5 +1,7 @@
 package com.breadwallet.presenter.activities;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -67,6 +69,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private static final String TAG = WalletActivity.class.getName();
 
     private static final String SYNCED_THROUGH_DATE_FORMAT = "MM/dd/yy HH:mm";
+    private static final float SYNC_PROGRESS_LAYOUT_ANIMATION_ALPHA = 0.0f;
 
     private BRText mCurrencyTitle;
     private BRText mCurrencyPriceUsd;
@@ -491,22 +494,31 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     public void updateSyncProgress(double progress) {
-        boolean showProgress = progress != SyncService.PROGRESS_FINISH;
-
-        if (showProgress) {
+        if (progress != SyncService.PROGRESS_FINISH) {
             StringBuffer labelText = new StringBuffer(getString(R.string.SyncingView_syncing));
             labelText.append(' ')
                      .append(NumberFormat.getPercentInstance().format(progress));
             mProgressLabel.setText(labelText);
-        }
+            mProgressLayout.setVisibility(View.VISIBLE);
 
-        mProgressLayout.setVisibility(showProgress ? View.VISIBLE : View.GONE);
-
-        if (mWallet instanceof BaseBitcoinWalletManager) {
-            BaseBitcoinWalletManager baseBitcoinWalletManager = (BaseBitcoinWalletManager) mWallet;
-            long syncThroughDateInMillis = baseBitcoinWalletManager.getPeerManager().getLastBlockTimestamp() * DateUtils.SECOND_IN_MILLIS;
-            String syncedThroughDate = new SimpleDateFormat(SYNCED_THROUGH_DATE_FORMAT).format(syncThroughDateInMillis);
-            mSyncStatusLabel.setText(String.format(getString(R.string.SyncingView_syncedThrough), syncedThroughDate));
+            if (mWallet instanceof BaseBitcoinWalletManager) {
+                BaseBitcoinWalletManager baseBitcoinWalletManager = (BaseBitcoinWalletManager) mWallet;
+                long syncThroughDateInMillis = baseBitcoinWalletManager.getPeerManager().getLastBlockTimestamp() * DateUtils.SECOND_IN_MILLIS;
+                String syncedThroughDate = new SimpleDateFormat(SYNCED_THROUGH_DATE_FORMAT).format(syncThroughDateInMillis);
+                mSyncStatusLabel.setText(String.format(getString(R.string.SyncingView_syncedThrough), syncedThroughDate));
+            }
+        } else {
+            mProgressLayout.animate()
+                    .translationY(-mProgressLayout.getHeight())
+                    .alpha(SYNC_PROGRESS_LAYOUT_ANIMATION_ALPHA)
+                    .setDuration(DateUtils.SECOND_IN_MILLIS)
+                    .setListener(new AnimatorListenerAdapter() {
+                        @Override
+                        public void onAnimationEnd(Animator animation) {
+                            super.onAnimationEnd(animation);
+                            mProgressLayout.setVisibility(View.GONE);
+                        }
+                    });
         }
     }
 
