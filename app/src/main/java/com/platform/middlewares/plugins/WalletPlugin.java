@@ -91,20 +91,28 @@ public class WalletPlugin implements Plugin {
                 /**whether or not the users wallet is set up yet, or is currently locked*/
                 jsonResp.put("no_wallet", wm.noWalletForPlatform(app));
 
-                String addrs = BRSharedPrefs.getReceiveAddress(app, wm.getCurrentWallet(app).getIso());
-                if (Utils.isNullOrEmpty(addrs)) {
-                    BRReportsManager.reportBug(new NullPointerException("Address is null for simplex!"));
-                    Log.e(TAG, "handle: Address is null for simplex!");
-                    addrs = wm.getCurrentWallet(app).getReceiveAddress(app).stringify();
+                String address = w.getReceiveAddress(app).stringify();
+                if (Utils.isNullOrEmpty(address)) {
+                    throw new IllegalArgumentException("Bitcoin address is empty");
                 }
+
                 /**the current receive address*/
-                jsonResp.put("receive_address", w == null ? "" : w.getReceiveAddress(app).stringify());
+                jsonResp.put("receive_address", address);
 
                 /**how digits after the decimal point. 2 = bits 8 = btc 6 = mbtc*/
-                jsonResp.put("btc_denomiation_digits", w == null ? "" : w.getMaxDecimalPlaces(app));
+                jsonResp.put("btc_denomiation_digits", w.getMaxDecimalPlaces(app));
+                String preferredCode = BRSharedPrefs.getPreferredFiatIso(app);
+                Currency fiatCurrency = Currency.getInstance(preferredCode);
 
                 /**the users native fiat currency as an ISO 4217 code. Should be uppercased */
-                jsonResp.put("local_currency_code", Currency.getInstance(Locale.getDefault()).getCurrencyCode().toUpperCase());
+                jsonResp.put("local_currency_code", fiatCurrency.getCurrencyCode().toUpperCase());
+
+                /**the user's fiat precision (e.g. 2 for USD, 0 for JPY, etc)*/
+                jsonResp.put("local_currency_precision", fiatCurrency.getDefaultFractionDigits());
+
+                /**the user's native fiat currency symbol*/
+                jsonResp.put("local_currency_symbol", fiatCurrency.getSymbol());
+
                 APIClient.BRResponse resp = new APIClient.BRResponse(jsonResp.toString().getBytes(), 200, "application/json");
 
                 return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
