@@ -14,8 +14,8 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.activities.util.ApplicationLifecycleObserver;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.listeners.SyncReceiver;
@@ -27,6 +27,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
+
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
