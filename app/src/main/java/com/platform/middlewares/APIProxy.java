@@ -91,7 +91,7 @@ public class APIProxy implements Middleware {
             auth = true;
         }
 
-        APIClient.BRResponse res = apiInstance.sendRequest(req, auth, 0);
+        APIClient.BRResponse res = apiInstance.sendRequest(req, auth);
 
         Map<String, String> headers = res.getHeaders();
         for (String s : headers.keySet()) {

@@ -24,6 +24,7 @@ import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.crashlytics.android.Crashlytics;
+import com.platform.APIClient;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -37,9 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.platform.APIClient.BREAD_POINT;
 import io.fabric.sdk.android.Fabric;
-import io.fabric.sdk.android.services.common.Crash;
 
 /**
  * BreadWallet
@@ -125,7 +124,7 @@ public class BreadApp extends Application {
         if (!Utils.isEmulatorOrDebug(this) && IS_ALPHA)
             throw new RuntimeException("can't be alpha for release");
 
-        boolean isTestVersion = BREAD_POINT.contains("staging") || BREAD_POINT.contains("stage");
+        boolean isTestVersion = APIClient.getInstance(this).isStaging();
         boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
         String lang = getCurrentLocale(this);
 

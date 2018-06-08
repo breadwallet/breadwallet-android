@@ -301,7 +301,7 @@ public class BRApiManager {
 
         Request request = builder.build();
         String bodyText = null;
-        APIClient.BRResponse resp = APIClient.getInstance(app).sendRequest(request, false, 0);
+        APIClient.BRResponse resp = APIClient.getInstance(app).sendRequest(request, false);
 
         try {
             bodyText = resp.getBodyText();
