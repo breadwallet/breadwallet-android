@@ -1247,10 +1247,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                 case CREATED:
                     printInfo("Wallet Created", iso, event.name());
                     break;
-
                 case BALANCE_UPDATED:
-                    notifyBalanceWasUpdated(wallet, iso);
                     setBalanceUpdated(iso);
+                    notifyBalanceWasUpdated(wallet, iso);
                     printInfo("New Balance: " + wallet.getBalance(), iso, event.name());
                     break;
                 case DEFAULT_GAS_LIMIT_UPDATED:
@@ -1425,11 +1424,17 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
             final BigDecimal balance = new BigDecimal(wallet.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL)); //use TOKEN_DECIMAL
             final String iso = wallet.getToken().getSymbol();
             if (app != null) {
-                BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, iso); //the token wallet being updated.
+                final BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, iso); //the token wallet being updated.
                 if (wm != null) {
-                    wm.refreshCachedBalance(app);
-                    wm.onBalanceChanged(balance);
+                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            wm.refreshCachedBalance(app);
+                            wm.onBalanceChanged(balance);
+                        }
+                    });
                 }
+
             }
         }
     }
