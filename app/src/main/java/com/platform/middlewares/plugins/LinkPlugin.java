@@ -10,6 +10,7 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
 import com.platform.BRHTTPHelper;
@@ -113,7 +114,7 @@ public class LinkPlugin implements Plugin {
 
                     hasBrowser = true;
                     Intent getInt = new Intent(app, WebViewActivity.class);
-                    getInt.putExtra("url", getUri.toString());
+                    getInt.putExtra(BRConstants.EXTRA_URL, getUri.toString());
                     app.startActivity(getInt);
                     ((Activity) app).overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
                     APIClient.BRResponse resp = new APIClient.BRResponse(null, 204);
