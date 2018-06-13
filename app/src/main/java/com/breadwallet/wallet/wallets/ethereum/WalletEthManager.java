@@ -1409,11 +1409,10 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
             //ETH wallet balance was updated
 
             final BigDecimal balance = new BigDecimal(wallet.getBalance(getUnit()));
-
+            refreshCachedBalance(app);
             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    refreshCachedBalance(app);
                     onBalanceChanged(balance); //this, Eth wallet.
                 }
             });
@@ -1426,10 +1425,10 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
             if (app != null) {
                 final BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, iso); //the token wallet being updated.
                 if (wm != null) {
+                    wm.refreshCachedBalance(app);
                     BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                         @Override
                         public void run() {
-                            wm.refreshCachedBalance(app);
                             wm.onBalanceChanged(balance);
                         }
                     });
