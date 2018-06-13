@@ -164,7 +164,7 @@ dependencies {
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.3'
     implementation 'io.sigpipe:jbsdiff:1.0'
     implementation 'com.google.zxing:core:3.3.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.1'
     implementation 'com.android.support.test:runner:1.0.2'
     implementation 'com.android.support.test:rules:1.0.2'
     implementation 'junit:junit:4.12'
