@@ -111,6 +111,14 @@ public final class BRConstants {
     public static final String HEADER_VALUE_CONTENT_TYPE = "application/json; charset=utf-8";
     public static final String HEADER_VALUE_ACCEPT = "application/json";
 
+
+    /**
+     * Extra constants
+     */
+
+    public static final String EXTRA_URL = "com.breadwallet.EXTRA_URL";
+
+
     private BRConstants() {
     }
 
