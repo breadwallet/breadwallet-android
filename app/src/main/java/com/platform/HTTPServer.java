@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -66,12 +67,13 @@ public class HTTPServer {
 
     private static Set<Middleware> middlewares;
     private static Server server;
-    public static final int PORT = 31120;
+    private static final int PORT = 31120;
     public static final String URL_EA = "http://localhost:" + PORT + "/ea";
     public static final String URL_BUY = "http://localhost:" + PORT + "/buy";
     public static final String URL_SELL = "http://localhost:" + PORT + "/sell";
     public static final String URL_SUPPORT = "http://localhost:" + PORT + "/support";
     public static ServerMode mode;
+    private static OnCloseListener mOnCloseListener;
 
     public enum ServerMode {
         SUPPORT,
@@ -162,7 +164,11 @@ public class HTTPServer {
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        ((Activity) app).onBackPressed();
+                        if (mOnCloseListener != null) {
+                            mOnCloseListener.onClose();
+                        } else {
+                            ((Activity) app).onBackPressed();
+                        }
                     }
                 });
                 APIClient.BRResponse resp = new APIClient.BRResponse(null, 200);
@@ -185,7 +191,7 @@ public class HTTPServer {
 
             app.startActivity(Intent.createChooser(email, "Choose an Email client :"));
             APIClient.BRResponse resp = new APIClient.BRResponse(null, 200);
-            return BRHTTPHelper.handleSuccess(resp,  baseRequest, response);
+            return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
         } else if (target.toLowerCase().startsWith("/didload")) {
             APIClient.BRResponse resp = new APIClient.BRResponse(null, 200);
             return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
@@ -239,6 +245,14 @@ public class HTTPServer {
         // kvstore plugin provides access to the shared replicated kv store
         Plugin kvStorePlugin = new KVStorePlugin();
         httpRouter.appendPlugin(kvStorePlugin);
+    }
+
+    public static void setOnCloseListener(OnCloseListener listener) {
+        mOnCloseListener = listener;
+    }
+
+    public interface OnCloseListener {
+        void onClose();
     }
 
 }

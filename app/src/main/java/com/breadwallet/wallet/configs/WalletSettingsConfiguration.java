@@ -3,11 +3,9 @@ package com.breadwallet.wallet.configs;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.CurrencySettingsActivity;
 import com.breadwallet.presenter.activities.settings.ImportActivity;
 import com.breadwallet.presenter.activities.settings.SpendLimitActivity;
 import com.breadwallet.presenter.activities.settings.SyncBlockchainActivity;
@@ -18,7 +16,6 @@ import com.breadwallet.tools.security.AuthManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.List;
 
 /**

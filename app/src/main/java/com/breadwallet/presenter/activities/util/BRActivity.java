@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -56,7 +57,7 @@ import com.platform.tools.BRBitId;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRActivity extends Activity implements BreadApp.OnAppBackgrounded {
+public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgrounded {
     private static final String TAG = BRActivity.class.getName();
     public static final Point screenParametersPoint = new Point();
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
@@ -96,11 +97,6 @@ public class BRActivity extends Activity implements BreadApp.OnAppBackgrounded {
         super.onResume();
         BreadApp.backgroundedTime = 0;
 
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        //No call for super(). Bug on API Level > 11.
     }
 
     @Override

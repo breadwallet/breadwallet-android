@@ -4,23 +4,17 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
-import android.support.annotation.ColorInt;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.RelativeSizeSpan;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.util.Utils;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
@@ -49,7 +43,7 @@ import java.util.List;
  */
 public class BRKeyboard extends LinearLayout implements View.OnClickListener {
     public static final String TAG = BRKeyboard.class.getName();
-    List<OnInsertListener> listeners = new ArrayList<>();
+    private OnInsertListener mClickListener;
     private Button num0;
     private Button num1;
     private Button num2;
@@ -209,19 +203,17 @@ public class BRKeyboard extends LinearLayout implements View.OnClickListener {
 
     }
 
-    public void addOnInsertListener(OnInsertListener listener) {
-        listeners.add(listener);
+    public void setOnInsertListener(OnInsertListener listener) {
+        mClickListener = listener;
     }
 
     @Override
     public void onClick(View v) {
-        for (OnInsertListener listener : listeners) {
-            listener.onClick(v instanceof ImageButton ? "" : ((Button) v).getText().toString());
-        }
+        mClickListener.onInsert(v instanceof ImageButton ? "" : ((Button) v).getText().toString());
     }
 
     public interface OnInsertListener {
-        void onClick(String key);
+        void onInsert(String key);
     }
 
     public void setBRKeyboardColor(int color) {

@@ -2,6 +2,7 @@ package com.breadwallet.presenter.activities;
 
 import android.os.Handler;
 import android.os.Bundle;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -9,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
@@ -22,7 +22,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
-public class ReEnterPinActivity extends BRActivity {
+public class ReEnterPinActivity extends BRActivity implements BRKeyboard.OnInsertListener {
     private static final String TAG = ReEnterPinActivity.class.getName();
     private BRKeyboard keyboard;
     public static ReEnterPinActivity reEnterPinActivity;
@@ -79,12 +79,6 @@ public class ReEnterPinActivity extends BRActivity {
         dot5 = findViewById(R.id.dot5);
         dot6 = findViewById(R.id.dot6);
 
-        keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {
-            @Override
-            public void onClick(String key) {
-                handleClick(key);
-            }
-        });
         keyboard.setShowDot(false);
     }
 
@@ -92,6 +86,7 @@ public class ReEnterPinActivity extends BRActivity {
     protected void onResume() {
         super.onResume();
         updateDots();
+        keyboard.setOnInsertListener(this);
         appVisible = true;
         app = this;
         isPressAllowed = true;
@@ -101,6 +96,7 @@ public class ReEnterPinActivity extends BRActivity {
     protected void onPause() {
         super.onPause();
         appVisible = false;
+        keyboard.setOnInsertListener(null);
     }
 
     private void handleClick(String key) {
@@ -177,12 +173,12 @@ public class ReEnterPinActivity extends BRActivity {
             } else {
                 BRAnimator.showBreadSignal(this, getString(R.string.Alerts_pinSet),
                         getString(R.string.UpdatePin_createInstruction), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
-                    @Override
-                    public void onComplete() {
-                        PostAuth.getInstance().onCreateWalletAuth(ReEnterPinActivity.this, false);
+                            @Override
+                            public void onComplete() {
+                                PostAuth.getInstance().onCreateWalletAuth(ReEnterPinActivity.this, false);
 
-                    }
-                });
+                            }
+                        });
             }
 
         } else {
@@ -195,13 +191,14 @@ public class ReEnterPinActivity extends BRActivity {
                     pin = new StringBuilder("");
                     updateDots();
                 }
-            }, 500);
+            }, DateUtils.SECOND_IN_MILLIS / 2);
             pin = new StringBuilder();
         }
 
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public void onInsert(String key) {
+        handleClick(key);
     }
 }
