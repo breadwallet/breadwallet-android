@@ -2,12 +2,9 @@ package com.breadwallet.tools.animation;
 
 import android.Manifest;
 import android.animation.Animator;
-import android.animation.AnimatorListenerAdapter;
-import android.animation.ArgbEvaluator;
 import android.animation.LayoutTransition;
 import android.animation.ObjectAnimator;
 import android.animation.PropertyValuesHolder;
-import android.animation.ValueAnimator;
 import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -15,11 +12,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.ContextCompat;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.DecelerateInterpolator;
 import android.view.animation.OvershootInterpolator;
 
 import com.breadwallet.R;
@@ -27,11 +24,9 @@ import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.LoginActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
-import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.entities.TxUiHolder;
-import com.breadwallet.presenter.fragments.FragmentGreetings;
 import com.breadwallet.presenter.fragments.FragmentSignal;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
@@ -74,10 +69,9 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 public class BRAnimator {
     private static final String TAG = BRAnimator.class.getName();
     private static FragmentSignal mFragmentSignal;
-    private static boolean clickAllowed = true;
-    public static final int SLIDE_ANIMATION_DURATION = 300;
+    private static boolean mIsClickAllowed = true;
 
-    public static boolean mSupportIsShowing;
+    private static boolean mSupportIsShowing;
 
     public static void showBreadSignal(Activity activity, String title, String iconDescription, int drawableId, BROnSignalCompletion completion) {
         mFragmentSignal = new FragmentSignal();
@@ -91,49 +85,47 @@ public class BRAnimator {
         transaction.setCustomAnimations(R.animator.from_bottom, R.animator.to_bottom, R.animator.from_bottom, R.animator.to_bottom);
         transaction.add(android.R.id.content, mFragmentSignal, mFragmentSignal.getClass().getName());
         transaction.addToBackStack(null);
-        if (!activity.isDestroyed())
+        if (!activity.isDestroyed()) {
             transaction.commit();
+        }
     }
 
-    public static void showSendFragment(Activity app, final CryptoRequest request) {
+    public static void showSendFragment(FragmentActivity app, final CryptoRequest request) {
         if (app == null) {
             Log.e(TAG, "showSendFragment: app is null");
             return;
         }
-        FragmentSend fragmentSend = (FragmentSend) app.getFragmentManager().findFragmentByTag(FragmentSend.class.getName());
-        if (fragmentSend != null && fragmentSend.isAdded()) {
-            fragmentSend.setCryptoObject(request);
-            return;
-        }
-        try {
+
+        FragmentSend fragmentSend = (FragmentSend) app.getSupportFragmentManager().findFragmentByTag(FragmentSend.class.getName());
+        if (fragmentSend == null) {
             fragmentSend = new FragmentSend();
-            if (request != null && !request.address.isEmpty()) {
-                fragmentSend.setCryptoObject(request);
-            }
-            app.getFragmentManager().beginTransaction()
+        }
+        fragmentSend.saveViewModelData(request);
+        if (!fragmentSend.isAdded()) {
+            app.getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                     .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
                     .addToBackStack(FragmentSend.class.getName()).commit();
-        } finally {
-
         }
 
     }
 
-    public static void showSupportFragment(Activity app, String articleId, BaseWalletManager wm) {
-
-        if (mSupportIsShowing) return;
-        mSupportIsShowing = true;
-        if (app == null) {
-            Log.e(TAG, "showSupportFragment: app is null");
-            return;
-        }
-        FragmentSupport fragmentSupport = (FragmentSupport) app.getFragmentManager().findFragmentByTag(FragmentSupport.class.getName());
-        if (fragmentSupport != null && fragmentSupport.isAdded()) {
-            app.getFragmentManager().popBackStack();
+    public static void showSupportFragment(FragmentActivity app, String articleId, BaseWalletManager wm) {
+        if (mSupportIsShowing) {
             return;
         }
         try {
+            mSupportIsShowing = true;
+            if (app == null) {
+                Log.e(TAG, "showSupportFragment: app is null");
+                return;
+            }
+
+            FragmentSupport fragmentSupport = (FragmentSupport) app.getSupportFragmentManager().findFragmentByTag(FragmentSupport.class.getName());
+            if (fragmentSupport != null && fragmentSupport.isAdded()) {
+                app.getFragmentManager().popBackStack();
+                return;
+            }
             String iso = "BTC";
             if (wm != null) wm.getIso();
             fragmentSupport = new FragmentSupport();
@@ -143,32 +135,13 @@ public class BRAnimator {
                 bundle.putString("articleId", articleId);
 
             fragmentSupport.setArguments(bundle);
-            app.getFragmentManager().beginTransaction()
+            app.getSupportFragmentManager().beginTransaction()
                     .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                     .add(android.R.id.content, fragmentSupport, FragmentSend.class.getName())
                     .addToBackStack(FragmentSend.class.getName()).commit();
-
         } finally {
-
+            mSupportIsShowing = false;
         }
-
-    }
-
-    public static void popBackStackTillEntry(Activity app, int entryIndex) {
-
-        if (app.getFragmentManager() == null) {
-            return;
-        }
-        if (app.getFragmentManager().getBackStackEntryCount() <= entryIndex) {
-            return;
-        }
-        FragmentManager.BackStackEntry entry = app.getFragmentManager().getBackStackEntryAt(
-                entryIndex);
-        if (entry != null) {
-            app.getFragmentManager().popBackStackImmediate(entry.getId(),
-                    FragmentManager.POP_BACK_STACK_INCLUSIVE);
-        }
-
 
     }
 
@@ -245,20 +218,20 @@ public class BRAnimator {
         return itemLayoutTransition;
     }
 
-    public static void showRequestFragment(Activity app) {
+    public static void showRequestFragment(FragmentActivity app) {
         if (app == null) {
             Log.e(TAG, "showRequestFragment: app is null");
             return;
         }
 
-        FragmentRequestAmount fragmentRequestAmount = (FragmentRequestAmount) app.getFragmentManager().findFragmentByTag(FragmentRequestAmount.class.getName());
+        FragmentRequestAmount fragmentRequestAmount = (FragmentRequestAmount) app.getSupportFragmentManager().findFragmentByTag(FragmentRequestAmount.class.getName());
         if (fragmentRequestAmount != null && fragmentRequestAmount.isAdded())
             return;
 
         fragmentRequestAmount = new FragmentRequestAmount();
         Bundle bundle = new Bundle();
         fragmentRequestAmount.setArguments(bundle);
-        app.getFragmentManager().beginTransaction()
+        app.getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                 .add(android.R.id.content, fragmentRequestAmount, FragmentRequestAmount.class.getName())
                 .addToBackStack(FragmentRequestAmount.class.getName()).commit();
@@ -266,12 +239,12 @@ public class BRAnimator {
     }
 
     //isReceive tells the Animator that the Receive fragment is requested, not My Address
-    public static void showReceiveFragment(Activity app, boolean isReceive) {
+    public static void showReceiveFragment(FragmentActivity app, boolean isReceive) {
         if (app == null) {
             Log.e(TAG, "showReceiveFragment: app is null");
             return;
         }
-        FragmentReceive fragmentReceive = (FragmentReceive) app.getFragmentManager().findFragmentByTag(FragmentReceive.class.getName());
+        FragmentReceive fragmentReceive = (FragmentReceive) app.getSupportFragmentManager().findFragmentByTag(FragmentReceive.class.getName());
         if (fragmentReceive != null && fragmentReceive.isAdded())
             return;
         fragmentReceive = new FragmentReceive();
@@ -279,42 +252,31 @@ public class BRAnimator {
         args.putBoolean("receive", isReceive);
         fragmentReceive.setArguments(args);
 
-        app.getFragmentManager().beginTransaction()
+        app.getSupportFragmentManager().beginTransaction()
                 .setCustomAnimations(0, 0, 0, R.animator.plain_300)
                 .add(android.R.id.content, fragmentReceive, FragmentReceive.class.getName())
                 .addToBackStack(FragmentReceive.class.getName()).commit();
 
     }
 
-    public static void showGreetingsMessage(Activity app) {
-        if (app == null) {
-            Log.e(TAG, "showGreetingsMessage: app is null");
-            return;
-        }
-        FragmentTransaction transaction = app.getFragmentManager().beginTransaction();
-        transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
-        transaction.add(android.R.id.content, new FragmentGreetings(), FragmentGreetings.class.getName());
-        transaction.addToBackStack(FragmentGreetings.class.getName());
-        transaction.commit();
-
-    }
-
     public static boolean isClickAllowed() {
-        if (clickAllowed) {
-            clickAllowed = false;
+        if (mIsClickAllowed) {
+            mIsClickAllowed = false;
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                        Thread.sleep(300);
+                        Thread.sleep(DateUtils.SECOND_IN_MILLIS / 3);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    clickAllowed = true;
+                    mIsClickAllowed = true;
                 }
             });
             return true;
-        } else return false;
+        } else {
+            return false;
+        }
     }
 
     public static void killAllFragments(Activity app) {
@@ -346,47 +308,6 @@ public class BRAnimator {
         if (!from.isDestroyed()) {
             from.finish();
         }
-    }
-
-    public static void animateSignalSlide(final ViewGroup signalLayout, final boolean reverse, final OnSlideAnimationEnd listener) {
-        float translationY = signalLayout.getTranslationY();
-        float signalHeight = signalLayout.getHeight();
-        signalLayout.setTranslationY(reverse ? translationY : translationY + signalHeight);
-
-        signalLayout.animate().translationY(reverse ? IntroActivity.screenParametersPoint.y : translationY).setDuration(SLIDE_ANIMATION_DURATION)
-                .setInterpolator(reverse ? new DecelerateInterpolator() : new OvershootInterpolator(0.7f))
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        super.onAnimationEnd(animation);
-                        if (listener != null)
-                            listener.onAnimationEnd();
-                    }
-                });
-
-    }
-
-    public static void animateBackgroundDim(final ViewGroup backgroundLayout, boolean reverse) {
-        int transColor = reverse ? R.color.black_trans : android.R.color.transparent;
-        int blackTransColor = reverse ? android.R.color.transparent : R.color.black_trans;
-
-        ValueAnimator anim = new ValueAnimator();
-        anim.setIntValues(transColor, blackTransColor);
-        anim.setEvaluator(new ArgbEvaluator());
-        anim.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-            @Override
-            public void onAnimationUpdate(ValueAnimator valueAnimator) {
-                backgroundLayout.setBackgroundColor((Integer) valueAnimator.getAnimatedValue());
-            }
-        });
-
-        anim.setDuration(SLIDE_ANIMATION_DURATION);
-        anim.start();
-    }
-
-
-    public interface OnSlideAnimationEnd {
-        void onAnimationEnd();
     }
 
 }

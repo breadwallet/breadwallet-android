@@ -365,8 +365,6 @@ public class WalletsMaster {
         if (!Utils.isNullOrEmpty(node)) {
             String host = TrustedNode.getNodeHost(node);
             int port = TrustedNode.getNodePort(node);
-//        Log.e(TAG, "trust onClick: host:" + host);
-//        Log.e(TAG, "trust onClick: port:" + port);
             boolean success = wm.useFixedNode(host, port);
             if (!success) {
                 Log.e(TAG, "updateFixedPeer: Failed to updateFixedPeer with input: " + node);

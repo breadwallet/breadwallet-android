@@ -93,7 +93,6 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
     @Override
     public void onBindViewHolder(final WalletItemViewHolder holder, int position) {
-        Log.d(TAG, "onBindViewHolder");
 
         if (getItemViewType(position) == VIEW_TYPE_WALLET) {
 

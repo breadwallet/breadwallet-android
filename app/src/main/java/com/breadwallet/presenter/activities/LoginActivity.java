@@ -49,7 +49,7 @@ import java.util.List;
 import static com.breadwallet.R.color.white;
 import static com.breadwallet.tools.util.BRConstants.SCANNER_REQUEST;
 
-public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgrounded {
+public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgrounded, BRKeyboard.OnInsertListener {
     private static final String TAG = LoginActivity.class.getName();
     private BRKeyboard keyboard;
     private LinearLayout pinLayout;
@@ -111,12 +111,6 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
         dot5 = findViewById(R.id.dot5);
         dot6 = findViewById(R.id.dot6);
 
-        keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {
-            @Override
-            public void onClick(String key) {
-                handleClick(key);
-            }
-        });
         keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_trans_button);
         keyboard.setBRButtonTextColor(R.color.white);
         keyboard.setShowDot(false);
@@ -172,6 +166,8 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
     protected void onResume() {
         super.onResume();
 
+        keyboard.setOnInsertListener(this);
+
         appVisible = true;
         app = this;
         inputAllowed = true;
@@ -192,6 +188,7 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
     protected void onPause() {
         super.onPause();
         appVisible = false;
+        keyboard.setOnInsertListener(null);
     }
 
     private void handleClick(String key) {
@@ -322,9 +319,6 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
         }
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-    }
 
     @Override
     public void onBackgrounded() {
@@ -333,5 +327,10 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
         for (BaseWalletManager w : list) {
             w.disconnect(LoginActivity.this);
         }
+    }
+
+    @Override
+    public void onInsert(String key) {
+        handleClick(key);
     }
 }

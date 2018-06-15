@@ -12,12 +12,11 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
-public class SetPinActivity extends BRActivity {
+public class SetPinActivity extends BRActivity implements BRKeyboard.OnInsertListener {
     private static final String TAG = SetPinActivity.class.getName();
     private BRKeyboard keyboard;
     public static SetPinActivity introSetPitActivity;
@@ -65,12 +64,6 @@ public class SetPinActivity extends BRActivity {
         dot5 = findViewById(R.id.dot5);
         dot6 = findViewById(R.id.dot6);
 
-        keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {
-            @Override
-            public void onClick(String key) {
-                handleClick(key);
-            }
-        });
         keyboard.setShowDot(false);
 
     }
@@ -79,6 +72,7 @@ public class SetPinActivity extends BRActivity {
     protected void onResume() {
         super.onResume();
         updateDots();
+        keyboard.setOnInsertListener(this);
         introSetPitActivity = this;
         appVisible = true;
         app = this;
@@ -87,6 +81,7 @@ public class SetPinActivity extends BRActivity {
     @Override
     protected void onPause() {
         super.onPause();
+        keyboard.setOnInsertListener(null);
         appVisible = false;
     }
 
@@ -159,6 +154,7 @@ public class SetPinActivity extends BRActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public void onInsert(String key) {
+        handleClick(key);
     }
 }

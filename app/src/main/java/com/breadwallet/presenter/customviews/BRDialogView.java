@@ -7,8 +7,6 @@ import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.constraint.ConstraintLayout;
-import android.support.constraint.ConstraintSet;
 import android.text.SpannableString;
 import android.text.method.LinkMovementMethod;
 import android.util.Log;
