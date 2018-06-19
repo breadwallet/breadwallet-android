@@ -1,21 +1,20 @@
 package com.breadwallet.presenter.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.support.v4.app.FragmentActivity;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.BreadApp;
@@ -24,6 +23,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
+import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.manager.BRClipboardManager;
@@ -40,8 +40,6 @@ import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
 
-import static com.breadwallet.tools.animation.BRAnimator.animateBackgroundDim;
-import static com.breadwallet.tools.animation.BRAnimator.animateSignalSlide;
 import static com.platform.HTTPServer.URL_SUPPORT;
 
 
@@ -70,56 +68,56 @@ import static com.platform.HTTPServer.URL_SUPPORT;
  * THE SOFTWARE.
  */
 
-public class FragmentReceive extends Fragment implements OnBalanceChangedListener {
+public class FragmentReceive extends ModalDialogFragment implements OnBalanceChangedListener {
     private static final String TAG = FragmentReceive.class.getName();
 
     public TextView mTitle;
     public TextView mAddress;
     public ImageView mQrImage;
-    public LinearLayout backgroundLayout;
-    public LinearLayout signalLayout;
     private String mReceiveAddress;
-    private View separator;
-    private BRButton shareButton;
-    private Button shareEmail;
-    private Button shareTextMessage;
-    private Button requestButton;
-    private BRLinearLayoutWithCaret shareButtonsLayout;
-    private BRLinearLayoutWithCaret copiedLayout;
-    private boolean shareButtonsShown = false;
-    private boolean showRequestAnAmount;
-    private ImageButton close;
-    private Handler copyCloseHandler = new Handler();
-    private BRKeyboard keyboard;
-    private View separator2;
-    private boolean isReceive;
+    private View mSeparatorRequestView;
+    private BRButton mShareButton;
+    private Button mShareEmailButton;
+    private Button mShareMessageButton;
+    private Button mRequestButton;
+    private BRLinearLayoutWithCaret mShareButtonsLayout;
+    private BRLinearLayoutWithCaret mCopiedLayout;
+    private boolean mIsShareButtonsShown = false;
+    private boolean mShowRequestAnAmount;
+    private ImageButton mCloseButton;
+    private Handler mCopyHandler = new Handler();
+    private BRKeyboard mKeyboard;
+    private View mSeparatorHeaderView;
+    private boolean mIsViewReceive;
+    private ViewGroup mBackgroundLayout;
+    private ViewGroup mSignalLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         // The last two arguments ensure LayoutParams are inflated
         // properly.
 
-        View rootView = inflater.inflate(R.layout.fragment_receive, container, false);
+        ViewGroup rootView = assignRootView((ViewGroup) inflater.inflate(R.layout.fragment_receive, container, false));
+        mBackgroundLayout = assignBackgroundLayout((ViewGroup) rootView.findViewById(R.id.background_layout));
+        mSignalLayout = assignSignalLayout((ViewGroup) rootView.findViewById(R.id.signal_layout));
         mTitle = rootView.findViewById(R.id.title);
         mAddress = rootView.findViewById(R.id.address_text);
         mQrImage = rootView.findViewById(R.id.qr_image);
-        backgroundLayout = rootView.findViewById(R.id.background_layout);
-        signalLayout = rootView.findViewById(R.id.signal_layout);
-        shareButton = rootView.findViewById(R.id.share_button);
-        shareEmail = rootView.findViewById(R.id.share_email);
-        shareTextMessage = rootView.findViewById(R.id.share_text);
-        shareButtonsLayout = rootView.findViewById(R.id.share_buttons_layout);
-        copiedLayout = rootView.findViewById(R.id.copied_layout);
-        requestButton = rootView.findViewById(R.id.request_button);
-        keyboard = rootView.findViewById(R.id.keyboard);
-        keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button);
-        keyboard.setBRKeyboardColor(R.color.white);
-        separator = rootView.findViewById(R.id.separator);
-        close = rootView.findViewById(R.id.close_button);
-        separator2 = rootView.findViewById(R.id.separator2);
-        separator2.setVisibility(View.GONE);
+        mShareButton = rootView.findViewById(R.id.share_button);
+        mShareEmailButton = rootView.findViewById(R.id.share_email);
+        mShareMessageButton = rootView.findViewById(R.id.share_text);
+        mShareButtonsLayout = rootView.findViewById(R.id.share_buttons_layout);
+        mCopiedLayout = rootView.findViewById(R.id.copied_layout);
+        mRequestButton = rootView.findViewById(R.id.request_button);
+        mKeyboard = rootView.findViewById(R.id.keyboard);
+        mKeyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button);
+        mKeyboard.setBRKeyboardColor(R.color.white);
+        mSeparatorRequestView = rootView.findViewById(R.id.separator);
+        mCloseButton = rootView.findViewById(R.id.close_button);
+        mSeparatorHeaderView = rootView.findViewById(R.id.separator2);
+        mSeparatorHeaderView.setVisibility(View.GONE);
         setListeners();
-        isReceive = getArguments().getBoolean("receive");
+        mIsViewReceive = getArguments().getBoolean("receive");
 
         WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(this);
 
@@ -136,23 +134,23 @@ public class FragmentReceive extends Fragment implements OnBalanceChangedListene
                 }
 
                 BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                BRAnimator.showSupportFragment(app, BRConstants.FAQ_RECEIVE, wm);
+                BRAnimator.showSupportFragment((FragmentActivity) app, BRConstants.FAQ_RECEIVE, wm);
             }
         });
 
-        signalLayout.removeView(shareButtonsLayout);
-        signalLayout.removeView(copiedLayout);
+        mSignalLayout.removeView(mShareButtonsLayout);
+        mSignalLayout.removeView(mCopiedLayout);
 
-        signalLayout.setLayoutTransition(BRAnimator.getDefaultTransition());
+        mSignalLayout.setLayoutTransition(BRAnimator.getDefaultTransition());
 
-        signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
+        mSignalLayout.setOnTouchListener(new SlideDetector(getContext(), mSignalLayout));
 
         return rootView;
     }
 
 
     private void setListeners() {
-        shareEmail.setOnClickListener(new View.OnClickListener() {
+        mShareEmailButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
@@ -165,7 +163,7 @@ public class FragmentReceive extends Fragment implements OnBalanceChangedListene
 
             }
         });
-        shareTextMessage.setOnClickListener(new View.OnClickListener() {
+        mShareMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
@@ -176,12 +174,12 @@ public class FragmentReceive extends Fragment implements OnBalanceChangedListene
                 QRUtils.share("sms:", getActivity(), cryptoUri.toString());
             }
         });
-        shareButton.setOnClickListener(new View.OnClickListener() {
+        mShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                shareButtonsShown = !shareButtonsShown;
-                showShareButtons(shareButtonsShown);
+                mIsShareButtonsShown = !mIsShareButtonsShown;
+                showShareButtons(mIsShareButtonsShown);
             }
         });
         mAddress.setOnClickListener(new View.OnClickListener() {
@@ -191,18 +189,18 @@ public class FragmentReceive extends Fragment implements OnBalanceChangedListene
                 copyText();
             }
         });
-        requestButton.setOnClickListener(new View.OnClickListener() {
+        mRequestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 Activity app = getActivity();
                 app.getFragmentManager().popBackStack();
-                BRAnimator.showRequestFragment(app);
+                BRAnimator.showRequestFragment((FragmentActivity) app);
 
             }
         });
 
-        backgroundLayout.setOnClickListener(new View.OnClickListener() {
+        mBackgroundLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
@@ -217,45 +215,43 @@ public class FragmentReceive extends Fragment implements OnBalanceChangedListene
             }
         });
 
-        close.setOnClickListener(new View.OnClickListener() {
+        mCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity app = getActivity();
-                if (app != null)
-                    app.getFragmentManager().popBackStack();
+                closeWithAnimation();
             }
         });
     }
 
     private void showShareButtons(boolean b) {
         if (!b) {
-            signalLayout.removeView(shareButtonsLayout);
-            shareButton.setType(2);
+            mSignalLayout.removeView(mShareButtonsLayout);
+            mShareButton.setType(2);
         } else {
-            signalLayout.addView(shareButtonsLayout, showRequestAnAmount ? signalLayout.getChildCount() - 2 : signalLayout.getChildCount());
-            shareButton.setType(3);
+            mSignalLayout.addView(mShareButtonsLayout, mShowRequestAnAmount ? mSignalLayout.getChildCount() - 2 : mSignalLayout.getChildCount());
+            mShareButton.setType(3);
             showCopiedLayout(false);
         }
     }
 
     private void showCopiedLayout(boolean b) {
         if (!b) {
-            signalLayout.removeView(copiedLayout);
-            copyCloseHandler.removeCallbacksAndMessages(null);
+            mSignalLayout.removeView(mCopiedLayout);
+            mCopyHandler.removeCallbacksAndMessages(null);
         } else {
-            if (signalLayout.indexOfChild(copiedLayout) == -1) {
-                signalLayout.addView(copiedLayout, signalLayout.indexOfChild(shareButton));
+            if (mSignalLayout.indexOfChild(mCopiedLayout) == -1) {
+                mSignalLayout.addView(mCopiedLayout, mSignalLayout.indexOfChild(mShareButton));
                 showShareButtons(false);
-                shareButtonsShown = false;
-                copyCloseHandler.postDelayed(new Runnable() {
+                mIsShareButtonsShown = false;
+                mCopyHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        signalLayout.removeView(copiedLayout);
+                        mSignalLayout.removeView(mCopiedLayout);
                     }
-                }, 2000);
+                }, DateUtils.SECOND_IN_MILLIS * 2);
             } else {
-                copyCloseHandler.removeCallbacksAndMessages(null);
-                signalLayout.removeView(copiedLayout);
+                mCopyHandler.removeCallbacksAndMessages(null);
+                mSignalLayout.removeView(mCopiedLayout);
             }
         }
     }
@@ -264,23 +260,12 @@ public class FragmentReceive extends Fragment implements OnBalanceChangedListene
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        final ViewTreeObserver observer = signalLayout.getViewTreeObserver();
-        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                observer.removeOnGlobalLayoutListener(this);
-                animateBackgroundDim(backgroundLayout, false);
-                animateSignalSlide(signalLayout, false, null);
-            }
-        });
         BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
-        Bundle extras = getArguments();
-        boolean isReceive = extras.getBoolean("receive");
-        showRequestAnAmount = isReceive && wm.getUiConfiguration().isShowRequestedAmount();
-        if (!showRequestAnAmount) {
-            signalLayout.removeView(separator);
-            signalLayout.removeView(requestButton);
+        mShowRequestAnAmount = mIsViewReceive && wm.getUiConfiguration().isShowRequestedAmount();
+        if (!mShowRequestAnAmount) {
+            mSignalLayout.removeView(mSeparatorRequestView);
+            mSignalLayout.removeView(mRequestButton);
             mTitle.setText(getString(R.string.UnlockScreen_myAddress));
         }
 
@@ -305,7 +290,7 @@ public class FragmentReceive extends Fragment implements OnBalanceChangedListene
                     public void run() {
                         String walletIso;
 
-                        if (isReceive) {
+                        if (mIsViewReceive) {
                             walletIso = BRSharedPrefs.getReceiveAddress(ctx, wm.getIso());
                         } else {
                             WalletBitcoinManager btcWm = WalletBitcoinManager.getInstance(ctx);
@@ -336,19 +321,6 @@ public class FragmentReceive extends Fragment implements OnBalanceChangedListene
         showCopiedLayout(true);
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        animateBackgroundDim(backgroundLayout, true);
-        animateSignalSlide(signalLayout, true, new BRAnimator.OnSlideAnimationEnd() {
-            @Override
-            public void onAnimationEnd() {
-                Activity app = getActivity();
-                if (app != null && !app.isDestroyed())
-                    app.getFragmentManager().popBackStack();
-            }
-        });
-    }
 
     @Override
     public void onResume() {

@@ -51,7 +51,7 @@ import com.breadwallet.tools.util.Utils;
  * THE SOFTWARE.
  */
 
-public class FragmentPin extends Fragment {
+public class FragmentPin extends Fragment implements BRKeyboard.OnInsertListener {
     private static final String TAG = FragmentPin.class.getName();
 
     private BRAuthCompletion completion;
@@ -105,12 +105,7 @@ public class FragmentPin extends Fragment {
         dot5 = rootView.findViewById(R.id.dot5);
         dot6 = rootView.findViewById(R.id.dot6);
 
-        keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {
-            @Override
-            public void onClick(String key) {
-                handleClick(key);
-            }
-        });
+
         keyboard.setShowDot(false);
 
         return rootView;
@@ -153,8 +148,8 @@ public class FragmentPin extends Fragment {
         super.onResume();
         updateDots();
         authSucceeded = false;
+        keyboard.setOnInsertListener(this);
     }
-
 
     private void handleClick(String key) {
         if (key == null) {
@@ -256,10 +251,15 @@ public class FragmentPin extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
+        keyboard.setOnInsertListener(null);
     }
 
     public void setCompletion(BRAuthCompletion completion) {
         this.completion = completion;
     }
 
+    @Override
+    public void onInsert(String key) {
+        handleClick(key);
+    }
 }

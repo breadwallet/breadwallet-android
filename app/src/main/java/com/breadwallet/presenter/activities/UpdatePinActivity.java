@@ -10,7 +10,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
@@ -22,7 +21,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
-public class UpdatePinActivity extends BRActivity {
+public class UpdatePinActivity extends BRActivity implements BRKeyboard.OnInsertListener {
     private static final String TAG = UpdatePinActivity.class.getName();
     private BRKeyboard keyboard;
     private View dot1;
@@ -81,12 +80,6 @@ public class UpdatePinActivity extends BRActivity {
             }
         });
 
-        keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {
-            @Override
-            public void onClick(String key) {
-                handleClick(key);
-            }
-        });
         keyboard.setShowDot(false);
 
     }
@@ -97,12 +90,14 @@ public class UpdatePinActivity extends BRActivity {
         updateDots();
         appVisible = true;
         app = this;
+        keyboard.setOnInsertListener(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         appVisible = false;
+        keyboard.setOnInsertListener(null);
     }
 
     private void handleClick(String key) {
@@ -179,12 +174,12 @@ public class UpdatePinActivity extends BRActivity {
                     AuthManager.getInstance().setPinCode(pin.toString(), this);
                     BRAnimator.showBreadSignal(this, getString(R.string.Alerts_pinSet),
                             getString(R.string.UpdatePin_caption), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
-                        @Override
-                        public void onComplete() {
-                            Intent homeIntent = new Intent(UpdatePinActivity.this, HomeActivity.class);
-                            startActivity(homeIntent);
-                        }
-                    });
+                                @Override
+                                public void onComplete() {
+                                    Intent homeIntent = new Intent(UpdatePinActivity.this, HomeActivity.class);
+                                    startActivity(homeIntent);
+                                }
+                            });
                 } else {
                     SpringAnimator.failShakeAnimation(this, pinLayout);
                     setMode(ENTER_NEW_PIN);
@@ -215,6 +210,7 @@ public class UpdatePinActivity extends BRActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public void onInsert(String key) {
+        handleClick(key);
     }
 }

@@ -401,6 +401,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             }
         });
+
         wallet.addBalanceChangedListener(this);
 
         mCurrentWalletIso = wallet.getIso();
@@ -497,7 +498,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         if (progress != SyncService.PROGRESS_FINISH) {
             StringBuffer labelText = new StringBuffer(getString(R.string.SyncingView_syncing));
             labelText.append(' ')
-                     .append(NumberFormat.getPercentInstance().format(progress));
+                    .append(NumberFormat.getPercentInstance().format(progress));
             mProgressLabel.setText(labelText);
             mProgressLayout.setVisibility(View.VISIBLE);
 
