@@ -1,22 +1,21 @@
 package com.breadwallet.presenter.fragments;
 
 import android.app.Activity;
-import android.app.Fragment;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
 import android.support.transition.AutoTransition;
 import android.support.transition.TransitionManager;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.view.animation.OvershootInterpolator;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
@@ -24,7 +23,6 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.breadwallet.BuildConfig;
@@ -35,6 +33,8 @@ import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.CryptoRequest;
+import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
+import com.breadwallet.presenter.viewmodels.SendViewModel;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SlideDetector;
@@ -50,6 +50,7 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 import java.math.BigDecimal;
@@ -84,100 +85,95 @@ import static com.platform.HTTPServer.URL_SUPPORT;
  * THE SOFTWARE.
  */
 
-public class FragmentSend extends Fragment {
+public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnInsertListener {
     private static final String TAG = FragmentSend.class.getName();
-    public ScrollView backgroundLayout;
-    public LinearLayout signalLayout;
-    private BRKeyboard keyboard;
-    private EditText addressEdit;
-    private Button scan;
-    private Button paste;
-    private Button send;
-    private EditText commentEdit;
-    private StringBuilder amountBuilder;
-    private TextView isoText;
-    private EditText amountEdit;
-    private TextView balanceText;
-    private TextView feeText;
-    private ImageView feeEdit;
-    private BigDecimal curBalance;
-    private String selectedIso;
-    private Button isoButton;
-    private int keyboardIndex;
-    private LinearLayout keyboardLayout;
-    private ImageButton close;
-    private ConstraintLayout amountLayout;
-    private BRButton regular;
-    private BRButton economy;
-    private BRLinearLayoutWithCaret feeLayout;
-    private boolean feeButtonsShown = false;
-    private BRText feeDescription;
-    private BRText warningText;
-    private boolean amountLabelOn = true;
 
-    private static String savedMemo;
-    private static String savedIso;
-    private static String savedAmount;
-
-    private boolean ignoreCleanup;
+    private BRKeyboard mKeyboard;
+    private EditText mAddressEdit;
+    private Button mScan;
+    private Button mPaste;
+    private Button mSend;
+    private EditText mCommentEdit;
+    private TextView mCurrencyCode;
+    private EditText mAmountEdit;
+    private TextView mBalanceText;
+    private TextView mFeeText;
+    private ImageView mEditFeeIcon;
+    private String mSelectedCurrencyCode;
+    private Button mCurrencyCodeButton;
+    private int mKeyboardIndex;
+    private LinearLayout mKeyboardLayout;
+    private ImageButton mCloseButton;
+    private ConstraintLayout mAmountLayout;
+    private BRButton mRegularFeeButton;
+    private BRButton mEconomyFeeButton;
+    private BRLinearLayoutWithCaret mFeeLayout;
+    private boolean mIsFeeButtonsShown = false;
+    private BRText mFeeDescription;
+    private BRText mEconomyFeeWarningText;
+    private boolean mIsAmountLabelShown = true;
+    private static final int CURRENCY_CODE_TEXT_SIZE = 18;
+    private SendViewModel mViewModel;
+    private ViewGroup mBackgroundLayout;
+    private ViewGroup mSignalLayout;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_send, container, false);
-        backgroundLayout = rootView.findViewById(R.id.background_layout);
-        signalLayout = rootView.findViewById(R.id.signal_layout);
-        keyboard = rootView.findViewById(R.id.keyboard);
-        keyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button);
-        keyboard.setBRKeyboardColor(R.color.white);
-        isoText = rootView.findViewById(R.id.iso_text);
-        addressEdit = rootView.findViewById(R.id.address_edit);
-        scan = rootView.findViewById(R.id.scan);
-        paste = rootView.findViewById(R.id.paste_button);
-        send = rootView.findViewById(R.id.send_button);
-        commentEdit = rootView.findViewById(R.id.comment_edit);
-        amountEdit = rootView.findViewById(R.id.amount_edit);
-        balanceText = rootView.findViewById(R.id.balance_text);
-        feeText = rootView.findViewById(R.id.fee_text);
-        feeEdit = rootView.findViewById(R.id.edit);
-        isoButton = rootView.findViewById(R.id.iso_button);
-        keyboardLayout = rootView.findViewById(R.id.keyboard_layout);
-        amountLayout = rootView.findViewById(R.id.amount_layout);
-        feeLayout = rootView.findViewById(R.id.fee_buttons_layout);
-        feeDescription = rootView.findViewById(R.id.fee_description);
-        warningText = rootView.findViewById(R.id.warning_text);
+        ViewGroup rootView = assignRootView((ViewGroup) inflater.inflate(R.layout.fragment_send, container, false));
+        mBackgroundLayout = assignBackgroundLayout((ViewGroup) rootView.findViewById(R.id.background_layout));
+        mSignalLayout = assignSignalLayout((ViewGroup) rootView.findViewById(R.id.signal_layout));
+        mKeyboard = rootView.findViewById(R.id.keyboard);
+        mKeyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button);
+        mKeyboard.setBRKeyboardColor(R.color.white);
+        mCurrencyCode = rootView.findViewById(R.id.iso_text);
+        mAddressEdit = rootView.findViewById(R.id.address_edit);
+        mScan = rootView.findViewById(R.id.scan);
+        mPaste = rootView.findViewById(R.id.paste_button);
+        mSend = rootView.findViewById(R.id.send_button);
+        mCommentEdit = rootView.findViewById(R.id.comment_edit);
+        mAmountEdit = rootView.findViewById(R.id.amount_edit);
+        mBalanceText = rootView.findViewById(R.id.balance_text);
+        mFeeText = rootView.findViewById(R.id.fee_text);
+        mEditFeeIcon = rootView.findViewById(R.id.edit);
+        mCurrencyCodeButton = rootView.findViewById(R.id.iso_button);
+        mKeyboardLayout = rootView.findViewById(R.id.keyboard_layout);
+        mAmountLayout = rootView.findViewById(R.id.amount_layout);
+        mFeeLayout = rootView.findViewById(R.id.fee_buttons_layout);
+        mFeeDescription = rootView.findViewById(R.id.fee_description);
+        mEconomyFeeWarningText = rootView.findViewById(R.id.warning_text);
 
-        regular = rootView.findViewById(R.id.left_button);
-        economy = rootView.findViewById(R.id.right_button);
-        close = rootView.findViewById(R.id.close_button);
+        mRegularFeeButton = rootView.findViewById(R.id.left_button);
+        mEconomyFeeButton = rootView.findViewById(R.id.right_button);
+        mCloseButton = rootView.findViewById(R.id.close_button);
         BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-        selectedIso = BRSharedPrefs.isCryptoPreferred(getActivity()) ? wm.getIso() : BRSharedPrefs.getPreferredFiatIso(getContext());
+        mSelectedCurrencyCode = BRSharedPrefs.isCryptoPreferred(getActivity()) ? wm.getIso() : BRSharedPrefs.getPreferredFiatIso(getContext());
 
-        amountBuilder = new StringBuilder(0);
+        mViewModel = ViewModelProviders.of(this).get(SendViewModel.class);
+
         setListeners();
-        isoText.setText(getString(R.string.Send_amountLabel));
-        isoText.setTextSize(18);
-        isoText.setTextColor(getContext().getColor(R.color.light_gray));
-        isoText.requestLayout();
-        signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
+        mCurrencyCode.setText(getString(R.string.Send_amountLabel));
+        mCurrencyCode.setTextSize(CURRENCY_CODE_TEXT_SIZE);
+        mCurrencyCode.setTextColor(getContext().getColor(R.color.light_gray));
+        mCurrencyCode.requestLayout();
+        mSignalLayout.setOnTouchListener(new SlideDetector(getContext(), mSignalLayout));
 
-        signalLayout.setOnClickListener(new View.OnClickListener() {
+        mSignalLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
             }
         });
 
+        showFeeSelectionButtons(mIsFeeButtonsShown);
 
-        showFeeSelectionButtons(feeButtonsShown);
-
-        feeEdit.setOnClickListener(new View.OnClickListener() {
+        mEditFeeIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                feeButtonsShown = !feeButtonsShown;
-                showFeeSelectionButtons(feeButtonsShown);
+                mIsFeeButtonsShown = !mIsFeeButtonsShown;
+                showFeeSelectionButtons(mIsFeeButtonsShown);
             }
         });
-        keyboardIndex = signalLayout.indexOfChild(keyboardLayout);
+        mKeyboardIndex = mSignalLayout.indexOfChild(mKeyboardLayout);
 
         ImageButton faq = rootView.findViewById(R.id.faq_button);
 
@@ -191,36 +187,36 @@ public class FragmentSend extends Fragment {
                     return;
                 }
                 BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                BRAnimator.showSupportFragment(app, BRConstants.FAQ_SEND, wm);
+                BRAnimator.showSupportFragment((FragmentActivity) app, BRConstants.FAQ_SEND, wm);
             }
         });
 
         showKeyboard(false);
         setButton(true);
 
-        signalLayout.setLayoutTransition(BRAnimator.getDefaultTransition());
+        mSignalLayout.setLayoutTransition(BRAnimator.getDefaultTransition());
 
         return rootView;
     }
 
     private void setListeners() {
-        amountEdit.setOnClickListener(new View.OnClickListener() {
+        mAmountEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 showKeyboard(true);
-                if (amountLabelOn) { //only first time
-                    amountLabelOn = false;
-                    amountEdit.setHint("0");
-                    amountEdit.setTextSize(24);
-                    balanceText.setVisibility(View.VISIBLE);
-                    feeEdit.setVisibility(View.VISIBLE);
-                    feeText.setVisibility(View.VISIBLE);
-                    isoText.setTextColor(getContext().getColor(R.color.almost_black));
-                    isoText.setText(CurrencyUtils.getSymbolByIso(getActivity(), selectedIso));
-                    isoText.setTextSize(28);
-                    final float scaleX = amountEdit.getScaleX();
-                    amountEdit.setScaleX(0);
+                if (mIsAmountLabelShown) { //only first time
+                    mIsAmountLabelShown = false;
+                    mAmountEdit.setHint("0");
+                    mAmountEdit.setTextSize(24);
+                    mBalanceText.setVisibility(View.VISIBLE);
+                    mEditFeeIcon.setVisibility(View.VISIBLE);
+                    mFeeText.setVisibility(View.VISIBLE);
+                    mCurrencyCode.setTextColor(getContext().getColor(R.color.almost_black));
+                    mCurrencyCode.setText(CurrencyUtils.getSymbolByIso(getActivity(), mSelectedCurrencyCode));
+                    mCurrencyCode.setTextSize(28);
+                    final float scaleX = mAmountEdit.getScaleX();
+                    mAmountEdit.setScaleX(0);
 
                     AutoTransition tr = new AutoTransition();
                     tr.setInterpolator(new OvershootInterpolator());
@@ -232,8 +228,8 @@ public class FragmentSend extends Fragment {
 
                         @Override
                         public void onTransitionEnd(@NonNull android.support.transition.Transition transition) {
-                            amountEdit.requestLayout();
-                            amountEdit.animate().setDuration(100).scaleX(scaleX);
+                            mAmountEdit.requestLayout();
+                            mAmountEdit.animate().setDuration(100).scaleX(scaleX);
                         }
 
                         @Override
@@ -253,16 +249,16 @@ public class FragmentSend extends Fragment {
                     });
 
                     ConstraintSet set = new ConstraintSet();
-                    set.clone(amountLayout);
-                    TransitionManager.beginDelayedTransition(amountLayout, tr);
+                    set.clone(mAmountLayout);
+                    TransitionManager.beginDelayedTransition(mAmountLayout, tr);
 
                     int px4 = Utils.getPixelsFromDps(getContext(), 4);
-                    set.connect(balanceText.getId(), ConstraintSet.TOP, isoText.getId(), ConstraintSet.BOTTOM, px4);
-                    set.connect(feeText.getId(), ConstraintSet.TOP, balanceText.getId(), ConstraintSet.BOTTOM, px4);
-                    set.connect(feeText.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px4);
-                    set.connect(isoText.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, px4);
-                    set.connect(isoText.getId(), ConstraintSet.BOTTOM, -1, ConstraintSet.TOP, -1);
-                    set.applyTo(amountLayout);
+                    set.connect(mBalanceText.getId(), ConstraintSet.TOP, mCurrencyCode.getId(), ConstraintSet.BOTTOM, px4);
+                    set.connect(mFeeText.getId(), ConstraintSet.TOP, mBalanceText.getId(), ConstraintSet.BOTTOM, px4);
+                    set.connect(mFeeText.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px4);
+                    set.connect(mCurrencyCode.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, px4);
+                    set.connect(mCurrencyCode.getId(), ConstraintSet.BOTTOM, -1, ConstraintSet.TOP, -1);
+                    set.applyTo(mAmountLayout);
 
                 }
 
@@ -270,24 +266,24 @@ public class FragmentSend extends Fragment {
         });
 
         //needed to fix the overlap bug
-        commentEdit.setOnKeyListener(new View.OnKeyListener() {
+        mCommentEdit.setOnKeyListener(new View.OnKeyListener() {
             public boolean onKey(View v, int keyCode, KeyEvent event) {
                 if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
-                    amountLayout.requestLayout();
+                    mAmountLayout.requestLayout();
                     return true;
                 }
                 return false;
             }
         });
 
-        commentEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mCommentEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 showKeyboard(!hasFocus);
             }
         });
 
-        paste.setOnClickListener(new View.OnClickListener() {
+        mPaste.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
@@ -326,7 +322,7 @@ public class FragmentSend extends Fragment {
                 if (wm.isAddressValid(obj.address)) {
                     final Activity app = getActivity();
                     if (app == null) {
-                        Log.e(TAG, "paste onClick: app is null");
+                        Log.e(TAG, "mPaste onClick: app is null");
                         return;
                     }
                     BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -357,7 +353,7 @@ public class FragmentSend extends Fragment {
                                                     @Override
                                                     public void onClick(BRDialogView brDialogView) {
                                                         brDialogView.dismiss();
-                                                        addressEdit.setText(wm.decorateAddress(obj.address));
+                                                        mAddressEdit.setText(wm.decorateAddress(obj.address));
                                                     }
                                                 }, new BRDialogView.BROnClickListener() {
                                                     @Override
@@ -373,7 +369,7 @@ public class FragmentSend extends Fragment {
                                     @Override
                                     public void run() {
                                         Log.e(TAG, "run: " + wm.getIso());
-                                        addressEdit.setText(wm.decorateAddress(obj.address));
+                                        mAddressEdit.setText(wm.decorateAddress(obj.address));
 
                                     }
                                 });
@@ -388,30 +384,30 @@ public class FragmentSend extends Fragment {
             }
         });
 
-        isoButton.setOnClickListener(new View.OnClickListener() {
+        mCurrencyCodeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (selectedIso.equalsIgnoreCase(BRSharedPrefs.getPreferredFiatIso(getContext()))) {
+                if (mSelectedCurrencyCode.equalsIgnoreCase(BRSharedPrefs.getPreferredFiatIso(getContext()))) {
                     Activity app = getActivity();
-                    selectedIso = WalletsMaster.getInstance(app).getCurrentWallet(app).getIso();
+                    mSelectedCurrencyCode = WalletsMaster.getInstance(app).getCurrentWallet(app).getIso();
                 } else {
-                    selectedIso = BRSharedPrefs.getPreferredFiatIso(getContext());
+                    mSelectedCurrencyCode = BRSharedPrefs.getPreferredFiatIso(getContext());
                 }
                 updateText();
 
             }
         });
 
-        scan.setOnClickListener(new View.OnClickListener() {
+        mScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
-                saveMetaData();
+                saveViewModelData();
                 BRAnimator.openScanner(getActivity(), BRConstants.SCANNER_REQUEST);
 
             }
         });
-        send.setOnClickListener(new View.OnClickListener() {
+        mSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //not allowed now
@@ -425,14 +421,14 @@ public class FragmentSend extends Fragment {
                     return;
                 }
                 boolean allFilled = true;
-                String rawAddress = addressEdit.getText().toString();
-                String amountStr = amountBuilder.toString();
-                String comment = commentEdit.getText().toString();
+                String rawAddress = mAddressEdit.getText().toString();
+                String amountStr = mViewModel.getAmount();
+                String comment = mCommentEdit.getText().toString();
 
                 //inserted amount
                 BigDecimal rawAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) || amountStr.equalsIgnoreCase(".") ? "0" : amountStr);
                 //is the chosen ISO a crypto (could be a fiat currency)
-                boolean isIsoCrypto = master.isIsoCrypto(getActivity(), selectedIso);
+                boolean isIsoCrypto = master.isIsoCrypto(getActivity(), mSelectedCurrencyCode);
 
                 BigDecimal cryptoAmount = isIsoCrypto ? wm.getSmallestCryptoForCrypto(getActivity(), rawAmount) : wm.getSmallestCryptoForFiat(getActivity(), rawAmount);
 
@@ -455,18 +451,18 @@ public class FragmentSend extends Fragment {
                 }
                 if (cryptoAmount.compareTo(BigDecimal.ZERO) <= 0) {
                     allFilled = false;
-                    SpringAnimator.failShakeAnimation(getActivity(), amountEdit);
+                    SpringAnimator.failShakeAnimation(getActivity(), mAmountEdit);
                 }
 
                 if (cryptoAmount.compareTo(wm.getCachedBalance(getActivity())) > 0) {
                     allFilled = false;
-                    SpringAnimator.failShakeAnimation(getActivity(), balanceText);
-                    SpringAnimator.failShakeAnimation(getActivity(), feeText);
+                    SpringAnimator.failShakeAnimation(getActivity(), mBalanceText);
+                    SpringAnimator.failShakeAnimation(getActivity(), mFeeText);
                 }
 
                 if (WalletsMaster.getInstance(getActivity()).isIsoErc20(getActivity(), wm.getIso())) {
 
-                    BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, addressEdit.getText().toString());
+                    BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, mAddressEdit.getText().toString());
                     BaseWalletManager ethWm = WalletEthManager.getInstance(app);
                     BigDecimal isoFee = isIsoCrypto ? rawFee : ethWm.getFiatForSmallestCrypto(app, rawFee, null);
                     BigDecimal b = ethWm.getCachedBalance(app);
@@ -493,7 +489,7 @@ public class FragmentSend extends Fragment {
             }
         });
 
-        backgroundLayout.setOnClickListener(new View.OnClickListener() {
+        mBackgroundLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
@@ -501,17 +497,14 @@ public class FragmentSend extends Fragment {
             }
         });
 
-        close.setOnClickListener(new View.OnClickListener() {
+        mCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Activity app = getActivity();
-                if (app != null)
-                    app.getFragmentManager().popBackStack();
+                closeWithAnimation();
             }
         });
 
-
-        addressEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+        mAddressEdit.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if ((event != null && (event.getKeyCode() == KeyEvent.KEYCODE_ENTER))
                         || (actionId == EditorInfo.IME_ACTION_DONE) || (actionId == EditorInfo.IME_ACTION_NEXT)) {
@@ -528,48 +521,40 @@ public class FragmentSend extends Fragment {
             }
         });
 
-        addressEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        mAddressEdit.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
                 showKeyboard(!hasFocus);
             }
         });
 
-        keyboard.addOnInsertListener(new BRKeyboard.OnInsertListener() {
-            @Override
-            public void onClick(String key) {
-                handleClick(key);
-            }
-        });
+        mKeyboard.setOnInsertListener(this);
 
-        regular.setOnClickListener(new View.OnClickListener() {
+        mRegularFeeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setButton(true);
             }
         });
-        economy.setOnClickListener(new View.OnClickListener() {
+        mEconomyFeeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setButton(false);
             }
         });
-//        updateText();
 
     }
 
     private void showKeyboard(boolean b) {
-        int curIndex = keyboardIndex;
-
         if (!b) {
-            signalLayout.removeView(keyboardLayout);
+            mSignalLayout.removeView(mKeyboardLayout);
 
         } else {
             Utils.hideKeyboard(getActivity());
-            if (signalLayout.indexOfChild(keyboardLayout) == -1)
-                signalLayout.addView(keyboardLayout, curIndex);
+            if (mSignalLayout.indexOfChild(mKeyboardLayout) == -1)
+                mSignalLayout.addView(mKeyboardLayout, mKeyboardIndex);
             else
-                signalLayout.removeView(keyboardLayout);
+                mSignalLayout.removeView(mKeyboardLayout);
 
         }
     }
@@ -640,62 +625,17 @@ public class FragmentSend extends Fragment {
                 }, null, 0);
     }
 
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        final ViewTreeObserver observer = signalLayout.getViewTreeObserver();
-        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                if (observer.isAlive())
-                    observer.removeOnGlobalLayoutListener(this);
-                BRAnimator.animateBackgroundDim(backgroundLayout, false);
-                BRAnimator.animateSignalSlide(signalLayout, false, new BRAnimator.OnSlideAnimationEnd() {
-                    @Override
-                    public void onAnimationEnd() {
-
-                    }
-                });
-            }
-        });
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        BRAnimator.animateBackgroundDim(backgroundLayout, true);
-        BRAnimator.animateSignalSlide(signalLayout, true, new BRAnimator.OnSlideAnimationEnd() {
-            @Override
-            public void onAnimationEnd() {
-                if (getActivity() != null) {
-                    try {
-                        getActivity().getFragmentManager().popBackStack();
-                    } catch (Exception ignored) {
-
-                    }
-                }
-            }
-        });
-    }
 
     @Override
     public void onResume() {
         super.onResume();
-        loadMetaData();
-
+        loadViewModelData();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         Utils.hideKeyboard(getActivity());
-        if (!ignoreCleanup) {
-            savedIso = null;
-            savedAmount = null;
-            savedMemo = null;
-        }
     }
 
     private void handleClick(String key) {
@@ -714,31 +654,35 @@ public class FragmentSend extends Fragment {
     }
 
     private void handleDigitClick(Integer dig) {
-        String currAmount = amountBuilder.toString();
-        String iso = selectedIso;
+        String currAmount = mViewModel.getAmount();
         BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
         if (new BigDecimal(currAmount.concat(String.valueOf(dig))).compareTo(wm.getMaxAmount(getActivity())) <= 0) {
             //do not insert 0 if the balance is 0 now
-            if (currAmount.equalsIgnoreCase("0")) amountBuilder = new StringBuilder("");
-            if ((currAmount.contains(".") && (currAmount.length() - currAmount.indexOf(".") > CurrencyUtils.getMaxDecimalPlaces(getActivity(), iso))))
+            if (currAmount.equalsIgnoreCase("0")) {
+                mViewModel.setAmount("");
+            }
+            boolean isDigitLimitReached = (currAmount.length() - currAmount.indexOf(".") > CurrencyUtils.getMaxDecimalPlaces(getActivity(), mSelectedCurrencyCode));
+            if ((currAmount.contains(".") && isDigitLimitReached)) {
                 return;
-            amountBuilder.append(dig);
+            }
+            mViewModel.setAmount(mViewModel.getAmount() + dig);
             updateText();
         }
     }
 
     private void handleSeparatorClick() {
-        String currAmount = amountBuilder.toString();
-        if (currAmount.contains(".") || CurrencyUtils.getMaxDecimalPlaces(getActivity(), selectedIso) == 0)
+        String currAmount = mViewModel.getAmount();
+        if (currAmount.contains(".") || CurrencyUtils.getMaxDecimalPlaces(getActivity(), mSelectedCurrencyCode) == 0)
             return;
-        amountBuilder.append(".");
+        mViewModel.setAmount(mViewModel.getAmount() + ".");
         updateText();
     }
 
     private void handleDeleteClick() {
-        String currAmount = amountBuilder.toString();
+        String currAmount = mViewModel.getAmount();
         if (currAmount.length() > 0) {
-            amountBuilder.deleteCharAt(currAmount.length() - 1);
+            currAmount = currAmount.substring(0, currAmount.length() - 1);
+            mViewModel.setAmount(currAmount);
             updateText();
         }
 
@@ -748,20 +692,19 @@ public class FragmentSend extends Fragment {
         Activity app = getActivity();
         if (app == null) return;
 
-        String stringAmount = amountBuilder.toString();
+        String stringAmount = mViewModel.getAmount();
         setAmount();
         BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
         String balanceString;
-        if (selectedIso == null)
-            selectedIso = wm.getIso();
-        //String iso = selectedIso;
-        curBalance = wm.getCachedBalance(app);
-        if (!amountLabelOn)
-            isoText.setText(CurrencyUtils.getSymbolByIso(app, selectedIso));
-        isoButton.setText(selectedIso);
+        if (mSelectedCurrencyCode == null)
+            mSelectedCurrencyCode = wm.getIso();
+        BigDecimal mCurrentBalance = wm.getCachedBalance(app);
+        if (!mIsAmountLabelShown)
+            mCurrencyCode.setText(CurrencyUtils.getSymbolByIso(app, mSelectedCurrencyCode));
+        mCurrencyCodeButton.setText(mSelectedCurrencyCode);
 
         //is the chosen ISO a crypto (could be also a fiat currency)
-        boolean isIsoCrypto = WalletsMaster.getInstance(app).isIsoCrypto(app, selectedIso);
+        boolean isIsoCrypto = WalletsMaster.getInstance(app).isIsoCrypto(app, mSelectedCurrencyCode);
         boolean isWalletErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, wm.getIso());
         BigDecimal inputAmount = new BigDecimal(Utils.isNullOrEmpty(stringAmount) || stringAmount.equalsIgnoreCase(".") ? "0" : stringAmount);
 
@@ -769,101 +712,59 @@ public class FragmentSend extends Fragment {
         BigDecimal cryptoAmount = isIsoCrypto ? wm.getSmallestCryptoForCrypto(app, inputAmount) : wm.getSmallestCryptoForFiat(app, inputAmount);
 
         //wallet's balance for the selected ISO
-        BigDecimal isoBalance = isIsoCrypto ? wm.getCryptoForSmallestCrypto(app, curBalance) : wm.getFiatForSmallestCrypto(app, curBalance, null);
+        BigDecimal isoBalance = isIsoCrypto ? wm.getCryptoForSmallestCrypto(app, mCurrentBalance) : wm.getFiatForSmallestCrypto(app, mCurrentBalance, null);
         if (isoBalance == null) isoBalance = BigDecimal.ZERO;
 
-        BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, addressEdit.getText().toString());
+        BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, mAddressEdit.getText().toString());
 
         //get the fee for iso (dollars, bits, BTC..)
         BigDecimal isoFee = isIsoCrypto ? rawFee : wm.getFiatForSmallestCrypto(app, rawFee, null);
 
         //format the fee to the selected ISO
-        String formattedFee = CurrencyUtils.getFormattedAmount(app, selectedIso, isoFee);
+        String formattedFee = CurrencyUtils.getFormattedAmount(app, mSelectedCurrencyCode, isoFee);
 
         if (isWalletErc20) {
             BaseWalletManager ethWm = WalletEthManager.getInstance(app);
             isoFee = isIsoCrypto ? rawFee : ethWm.getFiatForSmallestCrypto(app, rawFee, null);
-            formattedFee = CurrencyUtils.getFormattedAmount(app, isIsoCrypto ? ethWm.getIso() : selectedIso, isoFee);
+            formattedFee = CurrencyUtils.getFormattedAmount(app, isIsoCrypto ? ethWm.getIso() : mSelectedCurrencyCode, isoFee);
         }
 
         boolean isOverTheBalance = inputAmount.compareTo(isoBalance) > 0;
 
         if (isOverTheBalance) {
-            balanceText.setTextColor(getContext().getColor(R.color.warning_color));
-            feeText.setTextColor(getContext().getColor(R.color.warning_color));
-            amountEdit.setTextColor(getContext().getColor(R.color.warning_color));
-            if (!amountLabelOn)
-                isoText.setTextColor(getContext().getColor(R.color.warning_color));
+            mBalanceText.setTextColor(getContext().getColor(R.color.warning_color));
+            mFeeText.setTextColor(getContext().getColor(R.color.warning_color));
+            mAmountEdit.setTextColor(getContext().getColor(R.color.warning_color));
+            if (!mIsAmountLabelShown)
+                mCurrencyCode.setTextColor(getContext().getColor(R.color.warning_color));
         } else {
-            balanceText.setTextColor(getContext().getColor(R.color.light_gray));
-            feeText.setTextColor(getContext().getColor(R.color.light_gray));
-            amountEdit.setTextColor(getContext().getColor(R.color.almost_black));
-            if (!amountLabelOn)
-                isoText.setTextColor(getContext().getColor(R.color.almost_black));
+            mBalanceText.setTextColor(getContext().getColor(R.color.light_gray));
+            mFeeText.setTextColor(getContext().getColor(R.color.light_gray));
+            mAmountEdit.setTextColor(getContext().getColor(R.color.almost_black));
+            if (!mIsAmountLabelShown)
+                mCurrencyCode.setTextColor(getContext().getColor(R.color.almost_black));
         }
         //formattedBalance
-        String formattedBalance = CurrencyUtils.getFormattedAmount(app, selectedIso,
+        String formattedBalance = CurrencyUtils.getFormattedAmount(app, mSelectedCurrencyCode,
                 isIsoCrypto ? wm.getSmallestCryptoForCrypto(app, isoBalance) : isoBalance);
         balanceString = String.format(getString(R.string.Send_balance), formattedBalance);
-        balanceText.setText(balanceString);
-        feeText.setText(String.format(getString(R.string.Send_fee), formattedFee));
-        amountLayout.requestLayout();
+        mBalanceText.setText(balanceString);
+        mFeeText.setText(String.format(getString(R.string.Send_fee), formattedFee));
+        mAmountLayout.requestLayout();
     }
 
-    public void setCryptoObject(final CryptoRequest obj) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                if (obj == null) {
-                    Log.e(TAG, "setCryptoObject: obj is null");
-                    return;
-                }
-                Activity app = getActivity();
-                if (app == null) {
-                    Log.e(TAG, "setCryptoObject: app is null");
-                    return;
-                }
-                BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                if (obj.address != null && addressEdit != null) {
-                    addressEdit.setText(wm.decorateAddress(obj.address.trim()));
-                }
-                if (obj.message != null && commentEdit != null) {
-                    commentEdit.setText(obj.message);
-                }
-                if (obj.amount != null) {
-
-                    BigDecimal satoshiAmount = obj.amount.multiply(new BigDecimal(100000000));
-                    amountBuilder = new StringBuilder(wm.getFiatForSmallestCrypto(getActivity(), satoshiAmount, null).toPlainString());
-                    updateText();
-                } else {
-                    // ETH request amount param is named `value`
-
-                    if (obj.value != null) {
-
-                        BigDecimal fiatAmount = wm.getFiatForSmallestCrypto(getActivity(), obj.value, null);
-                        fiatAmount = fiatAmount.setScale(2, RoundingMode.HALF_EVEN);
-
-                        amountBuilder = new StringBuilder(fiatAmount.toPlainString());
-                        updateText();
-
-                    }
-                }
-            }
-        }, 500);
-
-    }
 
     private void showFeeSelectionButtons(boolean b) {
         if (!b) {
-            signalLayout.removeView(feeLayout);
+            mSignalLayout.removeView(mFeeLayout);
         } else {
-            signalLayout.addView(feeLayout, signalLayout.indexOfChild(amountLayout) + 1);
+            mSignalLayout.addView(mFeeLayout, mSignalLayout.indexOfChild(mAmountLayout) + 1);
 
         }
     }
 
     private void setAmount() {
-        String tmpAmount = amountBuilder.toString();
+        String tmpAmount = mViewModel.getAmount();
         int divider = tmpAmount.length();
         if (tmpAmount.contains(".")) {
             divider = tmpAmount.indexOf(".");
@@ -875,7 +776,7 @@ public class FragmentSend extends Fragment {
                 newAmount.append(",");
             }
         }
-        amountEdit.setText(newAmount.toString());
+        mAmountEdit.setText(newAmount.toString());
     }
 
     private void setButton(boolean isRegular) {
@@ -883,22 +784,22 @@ public class FragmentSend extends Fragment {
         String iso = wallet.getIso();
         if (isRegular) {
             BRSharedPrefs.putFavorStandardFee(getActivity(), iso, true);
-            regular.setTextColor(getContext().getColor(R.color.white));
-            regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue));
-            economy.setTextColor(getContext().getColor(R.color.dark_blue));
-            economy.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue_stroke));
-            feeDescription.setText(String.format(getString(R.string.FeeSelector_estimatedDeliver), getString(R.string.FeeSelector_regularTime)));
-            warningText.getLayoutParams().height = 0;
+            mRegularFeeButton.setTextColor(getContext().getColor(R.color.white));
+            mRegularFeeButton.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue));
+            mEconomyFeeButton.setTextColor(getContext().getColor(R.color.dark_blue));
+            mEconomyFeeButton.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue_stroke));
+            mFeeDescription.setText(String.format(getString(R.string.FeeSelector_estimatedDeliver), getString(R.string.FeeSelector_regularTime)));
+            mEconomyFeeWarningText.getLayoutParams().height = 0;
         } else {
             BRSharedPrefs.putFavorStandardFee(getActivity(), iso, false);
-            regular.setTextColor(getContext().getColor(R.color.dark_blue));
-            regular.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue_stroke));
-            economy.setTextColor(getContext().getColor(R.color.white));
-            economy.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue));
-            feeDescription.setText(String.format(getString(R.string.FeeSelector_estimatedDeliver), getString(R.string.FeeSelector_economyTime)));
-            warningText.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;
+            mRegularFeeButton.setTextColor(getContext().getColor(R.color.dark_blue));
+            mRegularFeeButton.setBackground(getContext().getDrawable(R.drawable.b_half_left_blue_stroke));
+            mEconomyFeeButton.setTextColor(getContext().getColor(R.color.white));
+            mEconomyFeeButton.setBackground(getContext().getDrawable(R.drawable.b_half_right_blue));
+            mFeeDescription.setText(String.format(getString(R.string.FeeSelector_estimatedDeliver), getString(R.string.FeeSelector_economyTime)));
+            mEconomyFeeWarningText.getLayoutParams().height = LinearLayout.LayoutParams.WRAP_CONTENT;
         }
-        warningText.requestLayout();
+        mEconomyFeeWarningText.requestLayout();
         updateText();
     }
 
@@ -907,7 +808,7 @@ public class FragmentSend extends Fragment {
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
 
-        // Checks whether a hardware keyboard is available
+        // Checks whether a hardware mKeyboard is available
         if (newConfig.hardKeyboardHidden == Configuration.HARDKEYBOARDHIDDEN_NO) {
             Log.e(TAG, "onConfigurationChanged: hidden");
             showKeyboard(true);
@@ -917,32 +818,68 @@ public class FragmentSend extends Fragment {
         }
     }
 
-    private void saveMetaData() {
-        if (!commentEdit.getText().toString().isEmpty())
-            savedMemo = commentEdit.getText().toString();
-        if (!amountBuilder.toString().isEmpty())
-            savedAmount = amountBuilder.toString();
-        savedIso = selectedIso;
-        ignoreCleanup = true;
-    }
-
-    private void loadMetaData() {
-        ignoreCleanup = false;
-        if (!Utils.isNullOrEmpty(savedMemo))
-            commentEdit.setText(savedMemo);
-        if (!Utils.isNullOrEmpty(savedIso))
-            selectedIso = savedIso;
-        if (!Utils.isNullOrEmpty(savedAmount)) {
-            amountBuilder = new StringBuilder(savedAmount);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    amountEdit.performClick();
-                    updateText();
-                }
-            }, 500);
-
+    public void loadViewModelData() {
+        if (mAddressEdit != null) {
+            if (!Utils.isNullOrEmpty(mViewModel.getAddress())) {
+                mAddressEdit.setText(mViewModel.getAddress());
+            }
+            if (!Utils.isNullOrEmpty(mViewModel.getMemo())) {
+                mCommentEdit.setText(mViewModel.getMemo());
+            }
+            if (!Utils.isNullOrEmpty(mViewModel.getChosenCode())) {
+                mSelectedCurrencyCode = mViewModel.getChosenCode().toUpperCase();
+            }
         }
     }
 
+    public void saveViewModelData(CryptoRequest request) {
+        String address = null;
+        String code = null;
+        String amount = null;
+        String memo = null;
+        if (request == null) {
+            if (mCommentEdit != null) {
+                memo = mCommentEdit.getText().toString();
+                address = mAddressEdit.getText().toString();
+                code = mSelectedCurrencyCode;
+            }
+        } else {
+            BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+            address = request.address;
+            memo = request.message;
+            code = request.iso;
+
+            if (request.amount != null) {
+                BigDecimal satoshiAmount = request.amount.multiply(new BigDecimal(BaseBitcoinWalletManager.ONE_BITCOIN_IN_SATOSHIS));
+                amount = wm.getFiatForSmallestCrypto(getActivity(), satoshiAmount, null).toPlainString();
+            } else if (request.value != null) {
+                // ETH request amount param is named `value`
+                BigDecimal fiatAmount = wm.getFiatForSmallestCrypto(getActivity(), request.value, null);
+                fiatAmount = fiatAmount.setScale(2, RoundingMode.HALF_EVEN);
+                amount = fiatAmount.toPlainString();
+            }
+        }
+        if (!Utils.isNullOrEmpty(address)) {
+            mViewModel.setAddress(address);
+        }
+        if (!Utils.isNullOrEmpty(memo)) {
+            mViewModel.setMemo(memo);
+        }
+        if (!Utils.isNullOrEmpty(code)) {
+            mViewModel.setChosenCode(code);
+        }
+        if (!Utils.isNullOrEmpty(amount)) {
+            mViewModel.setAmount(amount);
+        }
+        loadViewModelData();
+    }
+
+    public void saveViewModelData() {
+        saveViewModelData(null);
+    }
+
+    @Override
+    public void onInsert(String key) {
+        handleClick(key);
+    }
 }

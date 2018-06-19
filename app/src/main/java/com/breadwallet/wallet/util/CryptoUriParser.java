@@ -3,6 +3,7 @@ package com.breadwallet.wallet.util;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.breadwallet.R;
@@ -250,15 +251,7 @@ public class CryptoUriParser {
         return true;
     }
 
-    private static boolean tryCryptoUrl(final CryptoRequest requestObject, Context context) {
-        final Activity app;
-        if (context instanceof Activity) {
-            app = (Activity) context;
-        } else {
-            Log.e(TAG, "tryCryptoUrl: " + "app isn't activity: " + context.getClass().getSimpleName());
-            BRReportsManager.reportBug(new NullPointerException("app isn't activity: " + context.getClass().getSimpleName()));
-            return false;
-        }
+    private static boolean tryCryptoUrl(final CryptoRequest requestObject, final Context app) {
         if (requestObject == null || requestObject.address == null || requestObject.address.isEmpty())
             return false;
         final BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
@@ -276,14 +269,14 @@ public class CryptoUriParser {
         }
 
         if (requestObject.amount == null || requestObject.amount.compareTo(BigDecimal.ZERO) == 0) {
-            app.runOnUiThread(new Runnable() {
+            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    BRAnimator.showSendFragment(app, requestObject);
+                    BRAnimator.showSendFragment((FragmentActivity) app, requestObject);
                 }
             });
         } else {
-            BRAnimator.killAllFragments(app);
+            BRAnimator.killAllFragments((Activity) app);
             if (Utils.isNullOrEmpty(requestObject.address) || !wallet.isAddressValid(requestObject.address)) {
                 BRDialog.showSimpleDialog(app, app.getString(R.string.Send_invalidAddressTitle), "");
                 return true;

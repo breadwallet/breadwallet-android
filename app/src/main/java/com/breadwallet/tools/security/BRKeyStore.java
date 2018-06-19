@@ -10,6 +10,7 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
+import android.support.v4.app.FragmentActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -1058,7 +1059,7 @@ public class BRKeyStore {
                     public void run() {
                         BRDialog.hideDialog();
                         BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                        BRAnimator.showSupportFragment((Activity) app, BRConstants.FAQ_LOOP_BUG, wm);
+                        BRAnimator.showSupportFragment((FragmentActivity) app, BRConstants.FAQ_LOOP_BUG, wm);
                     }
                 });
 
