@@ -9,7 +9,6 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
-import android.util.Log;
 import android.view.View;
 import android.widget.CompoundButton;
 import android.widget.ImageButton;
@@ -70,7 +69,7 @@ public class FingerprintActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(FingerprintActivity.this).getCurrentWallet(FingerprintActivity.this);
-                BRAnimator.showSupportFragment(FingerprintActivity.this, BRConstants.enableFingerprint, wm);
+                BRAnimator.showSupportFragment(FingerprintActivity.this, BRConstants.FAQ_ENABLE_FINGERPRINT, wm);
             }
         });
 
@@ -142,13 +141,13 @@ public class FingerprintActivity extends BRActivity {
         //amount in satoshis
 
         WalletBitcoinManager wm = WalletBitcoinManager.getInstance(this);
-        BigDecimal cryptoLimit = BRKeyStore.getSpendLimit(this, wm.getIso(this));
+        BigDecimal cryptoLimit = BRKeyStore.getSpendLimit(this, wm.getIso());
 
         //amount in user preferred ISO (e.g. USD)
         BigDecimal curAmount = wm.getFiatForSmallestCrypto(this, cryptoLimit, null);
         //formatted string for the label
         return String.format(getString(R.string.TouchIdSettings_spendingLimit),
-                CurrencyUtils.getFormattedAmount(this, wm.getIso(this), cryptoLimit), CurrencyUtils.getFormattedAmount(this, iso, curAmount));
+                CurrencyUtils.getFormattedAmount(this, wm.getIso(), cryptoLimit), CurrencyUtils.getFormattedAmount(this, iso, curAmount));
     }
 
     @Override

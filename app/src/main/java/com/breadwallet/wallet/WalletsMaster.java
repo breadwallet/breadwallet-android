@@ -30,8 +30,8 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
-import com.breadwallet.wallet.wallets.etherium.WalletTokenManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.entities.WalletInfo;
 import com.platform.tools.KVStoreManager;
@@ -159,7 +159,7 @@ public class WalletsMaster {
     //get the total fiat balance held in all the wallets in the smallest unit (e.g. cents)
     public BigDecimal getAggregatedFiatBalance(Context app) {
         long start = System.currentTimeMillis();
-        BigDecimal totalBalance = new BigDecimal(0);
+        BigDecimal totalBalance = BigDecimal.ZERO;
         List<BaseWalletManager> list = new ArrayList<>(getAllWallets(app));
         for (BaseWalletManager wallet : list) {
             BigDecimal fiatBalance = wallet.getFiatBalance(app);
@@ -233,7 +233,7 @@ public class WalletsMaster {
     public boolean isIsoCrypto(Context app, String iso) {
         List<BaseWalletManager> list = new ArrayList<>(getAllWallets(app));
         for (BaseWalletManager w : list) {
-            if (w.getIso(app).equalsIgnoreCase(iso)) {
+            if (w.getIso().equalsIgnoreCase(iso)) {
                 return true;
             }
         }
@@ -327,16 +327,16 @@ public class WalletsMaster {
 
     public void setSpendingLimitIfNotSet(final Context app, final BaseWalletManager wm) {
         if (app == null) return;
-        BigDecimal limit = BRKeyStore.getTotalLimit(app, wm.getIso(app));
-        if (limit.compareTo(new BigDecimal(0)) == 0) {
+        BigDecimal limit = BRKeyStore.getTotalLimit(app, wm.getIso());
+        if (limit.compareTo(BigDecimal.ZERO) == 0) {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     long start = System.currentTimeMillis();
                     BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                    BigDecimal totalSpent = wallet == null ? new BigDecimal(0) : wallet.getTotalSent(app);
-                    BigDecimal totalLimit = totalSpent.add(BRKeyStore.getSpendLimit(app, wm.getIso(app)));
-                    BRKeyStore.putTotalLimit(app, totalLimit, wm.getIso(app));
+                    BigDecimal totalSpent = wallet == null ? BigDecimal.ZERO : wallet.getTotalSent(app);
+                    BigDecimal totalLimit = totalSpent.add(BRKeyStore.getSpendLimit(app, wm.getIso()));
+                    BRKeyStore.putTotalLimit(app, totalLimit, wm.getIso());
                 }
             });
 
@@ -361,7 +361,7 @@ public class WalletsMaster {
 
     @WorkerThread
     public void updateFixedPeer(Context app, BaseWalletManager wm) {
-        String node = BRSharedPrefs.getTrustNode(app, wm.getIso(app));
+        String node = BRSharedPrefs.getTrustNode(app, wm.getIso());
         if (!Utils.isNullOrEmpty(node)) {
             String host = TrustedNode.getNodeHost(node);
             int port = TrustedNode.getNodePort(node);

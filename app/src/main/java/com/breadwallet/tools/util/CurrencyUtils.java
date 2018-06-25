@@ -3,6 +3,7 @@ package com.breadwallet.tools.util;
 import android.content.Context;
 import android.util.Log;
 
+import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
@@ -40,80 +41,52 @@ import java.util.Locale;
 public class CurrencyUtils {
     public static final String TAG = CurrencyUtils.class.getName();
 
+    public static String getFormattedAmount(Context app, String iso, BigDecimal amount) {
+        //Use default (wallet's maxDecimal places)
+        return getFormattedAmount(app, iso, amount, -1);
+    }
 
     /**
      * @param app    - the Context
      * @param iso    - the iso for the currency we want to format the amount for
      * @param amount - the smallest denomination currency (e.g. dollars or satoshis)
+     * @param maxDecimalPlacesForCrypto - max decimal places to use or -1 for wallet's default
      * @return - the formatted amount e.g. $535.50 or b5000
      */
-    public static String getFormattedAmount(Context app, String iso, BigDecimal amount) {
-        long start = System.currentTimeMillis();
+    public static String getFormattedAmount(Context app, String iso, BigDecimal amount, int maxDecimalPlacesForCrypto) {
         if (amount == null) return "---"; //to be able to detect in a bug
-        if (iso == null) return "???"; //to be able to detect in a bug
-//        Log.e(TAG, "amount: " + amount);
+        if (Utils.isNullOrEmpty(iso)) throw new RuntimeException("need iso for formatting!");
         DecimalFormat currencyFormat;
-
         // This formats currency values as the user expects to read them (default locale).
         currencyFormat = (DecimalFormat) DecimalFormat.getCurrencyInstance(Locale.getDefault());
         // This specifies the actual currency that the value is in, and provide
         // s the currency symbol.
-        DecimalFormatSymbols decimalFormatSymbols;
-        Currency currency = null;
-        String symbol = null;
-        decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
-//        int decimalPoints = 0;
+        DecimalFormatSymbols decimalFormatSymbols = currencyFormat.getDecimalFormatSymbols();
         BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
-        if (wallet != null) {
-            symbol = wallet.getSymbol(app);
-            amount = wallet.getCryptoForSmallestCrypto(app, amount);
-        } else {
-            try {
-                currency = Currency.getInstance(iso);
-                symbol = currency.getSymbol();
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            }
-        }
-
-        decimalFormatSymbols.setCurrencySymbol(symbol);
         currencyFormat.setGroupingUsed(true);
-        currencyFormat.setMaximumFractionDigits(currency != null ? currency.getDefaultFractionDigits() : wallet.getMaxDecimalPlaces(app));
-        currencyFormat.setMinimumFractionDigits(currency != null ? currency.getDefaultFractionDigits() : 0);
-        currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
-        currencyFormat.setNegativePrefix("-" + decimalFormatSymbols.getCurrencySymbol());
-
-        return currencyFormat.format(amount);
-    }
-
-    public static String getFormattedAmountWithoutSymbol(Context app, String iso, BigDecimal amount) {
-        if (amount == null) return "---"; //to be able to detect in a bug
-        DecimalFormat currencyFormat;
-
-        currencyFormat = (DecimalFormat) DecimalFormat.getNumberInstance();
-        Currency currency = null;
-
-        BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
-
+        currencyFormat.setRoundingMode(BRConstants.ROUNDING_MODE);
         if (wallet != null) {
             amount = wallet.getCryptoForSmallestCrypto(app, amount);
-
+            decimalFormatSymbols.setCurrencySymbol("");
+            currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
+            currencyFormat.setMaximumFractionDigits(maxDecimalPlacesForCrypto == -1 ? wallet.getMaxDecimalPlaces(app) : maxDecimalPlacesForCrypto);
+            currencyFormat.setMinimumFractionDigits(0);
+            return String.format("%s %s", currencyFormat.format(amount), iso.toUpperCase());
         } else {
             try {
-                currency = Currency.getInstance(iso);
+                Currency currency = Currency.getInstance(iso);
+                String symbol = currency.getSymbol();
+                decimalFormatSymbols.setCurrencySymbol(symbol);
+                currencyFormat.setDecimalFormatSymbols(decimalFormatSymbols);
+                currencyFormat.setNegativePrefix("-" + symbol);
+                currencyFormat.setMaximumFractionDigits(currency.getDefaultFractionDigits());
+                currencyFormat.setMinimumFractionDigits(currency.getDefaultFractionDigits());
             } catch (IllegalArgumentException e) {
                 e.printStackTrace();
+                BRReportsManager.reportBug(new IllegalArgumentException("illegal iso: " + iso));
             }
+            return currencyFormat.format(amount);
         }
-
-        currencyFormat.setGroupingUsed(true);
-        currencyFormat.setMaximumFractionDigits(currency != null ? currency.getDefaultFractionDigits() : wallet.getMaxDecimalPlaces(app));
-        currencyFormat.setMinimumFractionDigits(currency != null ? currency.getDefaultFractionDigits() : 0);
-        currencyFormat.setDecimalFormatSymbols(null);
-        currencyFormat.setNegativePrefix("-");
-
-        return currencyFormat.format(amount) + " " + iso.toUpperCase();
-
     }
 
     public static String getSymbolByIso(Context app, String iso) {
@@ -132,13 +105,6 @@ public class CurrencyUtils {
         }
         return Utils.isNullOrEmpty(symbol) ? iso : symbol;
     }
-
-//    //get currency denomination (iso) BTC, ETH etc.
-//    public static String getCurrencyIso(Context app, String iso) {
-//        BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(iso);
-//        if (wallet == null) return iso;
-//        return wallet.getIso(app);
-//    }
 
     public static int getMaxDecimalPlaces(Context app, String iso) {
         BaseWalletManager wallet = WalletsMaster.getInstance(app).getWalletByIso(app, iso);

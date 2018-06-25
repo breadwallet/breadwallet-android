@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.webkit.ConsoleMessage;
 import android.webkit.JsResult;
-import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -27,9 +26,6 @@ import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.util.Utils;
 import com.platform.HTTPServer;
-
-import java.net.URI;
-import java.net.URISyntaxException;
 
 import static com.platform.HTTPServer.URL_SUPPORT;
 
@@ -191,7 +187,7 @@ public class FragmentSupport extends Fragment {
     public void onPause() {
         super.onPause();
         Utils.hideKeyboard(getActivity());
-        BRAnimator.supportIsShowing = false;
+        BRAnimator.mSupportIsShowing = false;
     }
 
 }

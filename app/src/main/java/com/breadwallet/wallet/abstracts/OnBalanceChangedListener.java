@@ -28,5 +28,5 @@ import java.math.BigDecimal;
  */
 public interface OnBalanceChangedListener {
 
-    void onBalanceChanged(String iso, BigDecimal newBalance);
+    void onBalanceChanged(BigDecimal newBalance);
 }

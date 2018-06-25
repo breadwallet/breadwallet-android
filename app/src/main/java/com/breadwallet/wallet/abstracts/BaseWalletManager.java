@@ -3,12 +3,6 @@ package com.breadwallet.wallet.abstracts;
 import android.content.Context;
 import android.support.annotation.WorkerThread;
 
-import com.breadwallet.core.BRCoreAddress;
-import com.breadwallet.core.BRCoreMerkleBlock;
-import com.breadwallet.core.BRCorePeer;
-import com.breadwallet.core.BRCorePeerManager;
-import com.breadwallet.core.BRCoreTransaction;
-import com.breadwallet.core.BRCoreWallet;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
@@ -16,10 +10,10 @@ import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
+import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Set;
 
 /**
  * BreadWallet
@@ -51,14 +45,14 @@ public interface BaseWalletManager {
      * The methods that are annotated with @WorkerThread might block so can't be called in the UI Thread
      */
 
-    public interface OnHashUpdated{
+    public interface OnHashUpdated {
         void onUpdated(String hash);
     }
 
     //get the core wallet
     int getForkId();
 
-    //get the currency unit ETHEREUM_WEI...
+    //get the currency unit ETHER_WEI...
     BREthereumAmount.Unit getUnit();
 
     boolean isAddressValid(String address);
@@ -69,41 +63,45 @@ public interface BaseWalletManager {
 
     void addBalanceChangedListener(OnBalanceChangedListener list);
 
-    void addTxStatusUpdatedListener(OnTxStatusUpdatedListener list);
+    void onBalanceChanged(BigDecimal balance);
 
-    void addSyncListeners(SyncListener list);
+//    void addTxStatusUpdatedListener(OnTxStatusUpdatedListener list);
+
+    void addSyncListener(SyncListener listener);
+
+    void removeSyncListener(SyncListener listener);
 
     void addTxListModifiedListener(OnTxListModified list);
 
     void watchTransactionForHash(CryptoTransaction tx, OnHashUpdated listener);
 
+    //get confirmation number
     @WorkerThread
-        //get confirmation number
     long getRelayCount(byte[] txHash);
 
+    //get the syncing progress
     @WorkerThread
-        //get the syncing progress
     double getSyncProgress(long startHeight);
+    //get the connection status 0 - Disconnected, 1 - Connecting, 2 - Connected, 3 - Unknown
 
     @WorkerThread
-        //get the connection status 0 - Disconnected, 1 - Connecting, 2 - Connected, 3 - Unknown
     double getConnectStatus();
 
+    //Connect the wallet (PeerManager for Bitcoin)
     @WorkerThread
-        //Connect the wallet (PeerManager for Bitcoin)
     void connect(Context app);
 
+    //Disconnect the wallet (PeerManager for Bitcoin)
     @WorkerThread
-        //Disconnect the wallet (PeerManager for Bitcoin)
     void disconnect(Context app);
 
+    //Use a fixed favorite node to connect
     @WorkerThread
-        //Use a fixed favorite node to connect
     boolean useFixedNode(String node, int port);
 
+    //Rescan the wallet (PeerManager for Bitcoin)
     @WorkerThread
-        //Rescan the wallet (PeerManager for Bitcoin)
-    void rescan();
+    void rescan(Context app);
 
     @WorkerThread
         //get a list of all the transactions sorted by timestamp (e.g. BRCoreTransaction[] for BTC)
@@ -160,28 +158,28 @@ public interface BaseWalletManager {
     String getSymbol(Context app);
 
     //get the currency denomination e.g. Bitcoin - BTC, Ether - ETH
-    String getIso(Context app);
+    String getIso();
 
     //get the currency scheme (bitcoin or bitcoincash)
-    String getScheme(Context app);
+    String getScheme();
 
     //get the currency name e.g. Bitcoin
-    String getName(Context app);
+    String getName();
 
     //get the currency denomination e.g. BCH, mBCH, Bits
-    String getDenominator(Context app);
+    String getDenominator();
 
+    //get the wallet's receive address
     @WorkerThread
-        //get the wallet's receive address
     CryptoAddress getReceiveAddress(Context app);
 
     CryptoTransaction createTransaction(BigDecimal amount, String address);
 
     //decorate an address to a particular currency, if needed (like BCH address format)
-    String decorateAddress(Context app, String addr);
+    String decorateAddress(String addr);
 
     //convert to raw address to a particular currency, if needed (like BCH address format)
-    String undecorateAddress(Context app, String addr);
+    String undecorateAddress(String addr);
 
     //get the number of decimal places to use for this currency
     int getMaxDecimalPlaces(Context app);

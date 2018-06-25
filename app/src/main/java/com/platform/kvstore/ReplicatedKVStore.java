@@ -102,7 +102,7 @@ public class ReplicatedKVStore implements BreadApp.OnAppBackgrounded {
 //        if (ActivityUTILS.isMainThread()) throw new NetworkOnMainThreadException();
         if (mDatabase == null || !mDatabase.isOpen())
             mDatabase = dbHelper.getWritableDatabase();
-        dbHelper.setWriteAheadLoggingEnabled(BRConstants.WAL);
+        dbHelper.setWriteAheadLoggingEnabled(BRConstants.WRITE_AHEAD_LOGGING);
 //        }
 //        Log.d(TAG, "getWritable open counter: " + String.valueOf(mOpenCounter.get()));
         return mDatabase;
@@ -677,22 +677,24 @@ public class ReplicatedKVStore implements BreadApp.OnAppBackgrounded {
                     SQLiteDatabase db = getReadable();
                     String selectQuery = "SELECT " + PlatformSqliteHelper.KV_REMOTE_VERSION + " FROM " + KV_STORE_TABLE_NAME + " WHERE key = ? ORDER BY version DESC LIMIT 1";
                     cursor = db.rawQuery(selectQuery, new String[]{key});
-                    if (cursor.moveToNext())
+                    if (cursor.moveToNext()) {
                         version = cursor.getLong(0);
-                    else
-                        Log.e(TAG, "remoteVersion: cursor is null for: " + selectQuery);
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 } finally {
-                    if (cursor != null)
+                    if (cursor != null) {
                         cursor.close();
+                    }
                     closeDB();
                 }
             } else {
                 Log.e(TAG, "Key is invalid: " + key);
             }
         } finally {
-            if (cursor != null) cursor.close();
+            if (cursor != null) {
+                cursor.close();
+            }
         }
 
         return version;

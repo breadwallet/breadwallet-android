@@ -10,8 +10,8 @@ android {
         applicationId = 'com.breadwallet'
         minSdkVersion 23
         targetSdkVersion 27
-        versionCode 263
-        versionName "263"
+        versionCode 273
+        versionName "3.1.0"
         multiDexEnabled true
 
         // Similar to other properties in the defaultConfig block,
@@ -119,7 +119,8 @@ android {
             debuggable = true
             jniDebuggable = true
             minifyEnabled = false
-
+            ext.enableCrashlytics = false
+            ext.alwaysUpdateBuildId = false
             externalNativeBuild {
                 cmake {
                     cFlags "-DBITCOIN_DEBUG=1"
@@ -159,17 +160,17 @@ dependencies {
     implementation 'com.android.support:recyclerview-v7:27.1.1'
     implementation 'com.android.support:cardview-v7:27.1.1'
     implementation 'com.squareup.okhttp3:okhttp:3.7.0'
-    implementation 'com.google.firebase:firebase-core:15.0.2'
-//    implementation 'com.google.firebase:firebase-crash:15.0.2'
-    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.2'
+    implementation 'com.google.firebase:firebase-core:16.0.0'
+    implementation 'com.crashlytics.sdk.android:crashlytics:2.9.3'
     implementation 'io.sigpipe:jbsdiff:1.0'
     implementation 'com.google.zxing:core:3.3.0'
-    implementation 'com.android.support.constraint:constraint-layout:1.1.0'
+    implementation 'com.android.support.constraint:constraint-layout:1.1.1'
     implementation 'com.android.support.test:runner:1.0.2'
     implementation 'com.android.support.test:rules:1.0.2'
     implementation 'junit:junit:4.12'
     implementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'tools.fastlane:screengrab:1.1.0'
+    implementation 'android.arch.lifecycle:extensions:1.1.1'
 }
 
 apply plugin: 'com.google.gms.google-services'

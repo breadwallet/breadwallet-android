@@ -81,7 +81,7 @@ public class SecurityCenterActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(SecurityCenterActivity.this).getCurrentWallet(SecurityCenterActivity.this);
-                BRAnimator.showSupportFragment(SecurityCenterActivity.this, BRConstants.securityCenter, wm);
+                BRAnimator.showSupportFragment(SecurityCenterActivity.this, BRConstants.FAQ_SECURITY_CENTER, wm);
             }
         });
 

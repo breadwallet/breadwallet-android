@@ -37,14 +37,15 @@ import java.io.StreamCorruptedException;
 
 public class BytesUtil {
 
+    public static final int BUFFER_CAPACITY = 1024;
+
     public static byte[] readBytesFromStream(InputStream in) {
 
         // this dynamically extends to take the bytes you read
         ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
 
         // this is storage overwritten on each iteration with bytes
-        int bufferSize = 1024;
-        byte[] buffer = new byte[bufferSize];
+        byte[] buffer = new byte[BUFFER_CAPACITY];
 
         // we need to know how may bytes were read to write them to the byteBuffer
         int len = 0;

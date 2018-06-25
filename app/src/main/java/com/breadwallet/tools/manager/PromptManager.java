@@ -93,7 +93,7 @@ public class PromptManager {
                 return BRKeyStore.getPinCode(app).length() != 6;
             case RECOMMEND_RESCAN:
                 BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                return wallet != null && BRSharedPrefs.getScanRecommended(app, wallet.getIso(app));
+                return wallet != null && BRSharedPrefs.getScanRecommended(app, wallet.getIso());
             case SHARE_DATA:
                 return !BRSharedPrefs.getShareData(app) && !BRSharedPrefs.getPromptDismissed(app, "shareData");
 
@@ -148,7 +148,7 @@ public class PromptManager {
                             public void run() {
                                 BRSharedPrefs.putStartHeight(app, BRSharedPrefs.getCurrentWalletIso(app), 0);
                                 BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                                wallet.rescan();
+                                wallet.rescan(app);
                                 BRSharedPrefs.putScanRecommended(app, BRSharedPrefs.getCurrentWalletIso(app), false);
                             }
                         });

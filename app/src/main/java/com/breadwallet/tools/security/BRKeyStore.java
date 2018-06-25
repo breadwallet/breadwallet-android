@@ -442,7 +442,7 @@ public class BRKeyStore {
     }
 
     public  static boolean putPhrase(byte[] strToStore, Context context, int requestCode) throws UserNotAuthenticatedException {
-        if (PostAuth.isStuckWithAuthLoop) {
+        if (PostAuth.mAuthLoopBugHappened) {
             showLoopBugMessage(context);
             throw new UserNotAuthenticatedException();
         }
@@ -451,7 +451,7 @@ public class BRKeyStore {
     }
 
     public  static byte[] getPhrase(final Context context, int requestCode) throws UserNotAuthenticatedException {
-        if (PostAuth.isStuckWithAuthLoop) {
+        if (PostAuth.mAuthLoopBugHappened) {
             showLoopBugMessage(context);
             throw new UserNotAuthenticatedException();
         }
@@ -460,7 +460,7 @@ public class BRKeyStore {
     }
 
     public  static boolean putCanary(String strToStore, Context context, int requestCode) throws UserNotAuthenticatedException {
-        if (PostAuth.isStuckWithAuthLoop) {
+        if (PostAuth.mAuthLoopBugHappened) {
             showLoopBugMessage(context);
             throw new UserNotAuthenticatedException();
         }
@@ -476,7 +476,7 @@ public class BRKeyStore {
     }
 
     public  static String getCanary(final Context context, int requestCode) throws UserNotAuthenticatedException {
-        if (PostAuth.isStuckWithAuthLoop) {
+        if (PostAuth.mAuthLoopBugHappened) {
             showLoopBugMessage(context);
             throw new UserNotAuthenticatedException();
         }
@@ -694,7 +694,7 @@ public class BRKeyStore {
         WalletSettingsConfiguration configs = wm.getSettingsConfiguration();
         return (result != null && result.length > 0) ?
                 new BigDecimal(new String(result)) :
-                (configs.mFingerprintLimits.size() != 0 ? configs.mFingerprintLimits.get(1) : new BigDecimal(0));
+                (configs.mFingerprintLimits.size() != 0 ? configs.mFingerprintLimits.get(1) : BigDecimal.ZERO);
     }
 
     public  static boolean putTotalLimit(Context context, BigDecimal totalLimit, String iso) {
@@ -716,7 +716,7 @@ public class BRKeyStore {
         } catch (UserNotAuthenticatedException e) {
             e.printStackTrace();
         }
-        return (result != null && result.length > 0) ? new BigDecimal(new String(result)) : new BigDecimal(0);
+        return (result != null && result.length > 0) ? new BigDecimal(new String(result)) : BigDecimal.ZERO;
     }
 
     public  static boolean putFailTimeStamp(long spendLimit, Context context) {
@@ -1058,7 +1058,7 @@ public class BRKeyStore {
                     public void run() {
                         BRDialog.hideDialog();
                         BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                        BRAnimator.showSupportFragment((Activity) app, BRConstants.loopBug, wm);
+                        BRAnimator.showSupportFragment((Activity) app, BRConstants.FAQ_LOOP_BUG, wm);
                     }
                 });
 

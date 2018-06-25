@@ -9,6 +9,16 @@
     android:background="@color/extra_light_blue_background"
     tools:context="com.breadwallet.presenter.activities.SetPinActivity">
 
+
+    <ImageButton
+        android:id="@+id/back_button"
+        app:layout_constraintTop_toTopOf="@id/title"
+        android:background="@drawable/ic_arrow_left"
+        app:layout_constraintStart_toStartOf="@id/buttons_layout"
+        android:layout_width="24dp"
+        android:layout_height="24dp" />
+
+
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/title"
         android:layout_width="wrap_content"
@@ -19,6 +29,8 @@
         android:textColor="@color/almost_black"
         android:textSize="@dimen/header"
         app:customTFont="CircularPro-Bold.otf"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 

@@ -17,7 +17,6 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -30,9 +29,11 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.math.BigDecimal;
 import java.util.Currency;
+import java.util.Iterator;
+import java.util.List;
 
 
-public class DisplayCurrencyActivity extends BRActivity {
+public class DisplayCurrencyActivity extends BaseSettingsActivity {
     private static final String TAG = DisplayCurrencyActivity.class.getName();
     private TextView exchangeText;
     private ListView listView;
@@ -53,10 +54,13 @@ public class DisplayCurrencyActivity extends BRActivity {
     }
 
     @Override
+    public int getLayoutId() {
+        return R.layout.activity_display_currency;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_display_currency);
-
         ImageButton faq = findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
@@ -64,14 +68,16 @@ public class DisplayCurrencyActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(DisplayCurrencyActivity.this).getCurrentWallet(DisplayCurrencyActivity.this);
-                BRAnimator.showSupportFragment(DisplayCurrencyActivity.this, BRConstants.displayCurrency, wm);
+                BRAnimator.showSupportFragment(DisplayCurrencyActivity.this, BRConstants.FAQ_DISPLAY_CURRENCY, wm);
             }
         });
 
         exchangeText = findViewById(R.id.exchange_text);
         listView = findViewById(R.id.currency_list_view);
         adapter = new CurrencyListAdapter(this);
-        adapter.addAll(RatesDataSource.getInstance(this).getAllCurrencies(this, "BTC"));
+        List<CurrencyEntity> currencies = RatesDataSource.getInstance(this).getAllCurrencies(this, "BTC");
+        List<CurrencyEntity> cleanList = cleanList(currencies);
+        adapter.addAll(cleanList);
         leftButton = findViewById(R.id.left_button);
         rightButton = findViewById(R.id.right_button);
         leftButton.setOnClickListener(new View.OnClickListener() {
@@ -80,6 +86,7 @@ public class DisplayCurrencyActivity extends BRActivity {
                 setButton(true);
             }
         });
+
 
         rightButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,6 +121,18 @@ public class DisplayCurrencyActivity extends BRActivity {
         listView.setAdapter(adapter);
         adapter.notifyDataSetChanged();
 
+    }
+
+    private List<CurrencyEntity> cleanList(List<CurrencyEntity> list) {
+
+        Iterator<CurrencyEntity> iter = list.iterator();
+        while (iter.hasNext()) {
+            CurrencyEntity ent = iter.next();
+            if (WalletsMaster.getInstance(this).isIsoCrypto(this, ent.name)) {
+                iter.remove();
+            }
+        }
+        return list;
     }
 
     private void updateExchangeRate() {

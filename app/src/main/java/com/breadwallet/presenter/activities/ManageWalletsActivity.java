@@ -11,45 +11,42 @@ import android.widget.ImageButton;
 
 import com.breadwallet.R;
 import com.breadwallet.core.ethereum.BREthereumToken;
+import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
+import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.adapter.ManageTokenListAdapter;
 import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback;
 import com.breadwallet.tools.listeners.OnStartDragListener;
 import com.breadwallet.tools.manager.BRReportsManager;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
-import com.breadwallet.wallet.wallets.etherium.WalletTokenManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.tools.KVStoreManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ManageWalletsActivity extends BRActivity implements OnStartDragListener {
+public class ManageWalletsActivity extends BaseSettingsActivity implements OnStartDragListener {
 
     private static final String TAG = ManageWalletsActivity.class.getSimpleName();
     private ManageTokenListAdapter mAdapter;
     private RecyclerView mTokenList;
     private List<TokenListMetaData.TokenInfo> mTokens;
     private ItemTouchHelper mItemTouchHelper;
-    private ImageButton mBackButton;
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
+    public int getLayoutId() {
+        return R.layout.activity_manage_wallets;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_manage_wallets);
 
         mTokenList = findViewById(R.id.token_list);
-        mBackButton = findViewById(R.id.back_arrow);
 
-        mBackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
+
     }
 
     @Override

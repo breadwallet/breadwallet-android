@@ -138,7 +138,7 @@ public class FragmentRequestAmount extends Fragment {
                 }
                 BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
 
-                BRAnimator.showSupportFragment(app, BRConstants.requestAmount, wm);
+                BRAnimator.showSupportFragment(app, BRConstants.FAQ_REQUEST_AMOUNT, wm);
             }
         });
 
@@ -212,7 +212,7 @@ public class FragmentRequestAmount extends Fragment {
                 if (!BRAnimator.isClickAllowed()) return;
                 showKeyboard(false);
                 BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-                Uri bitcoinUri = CryptoUriParser.createCryptoUrl(getActivity(), wm, wm.decorateAddress(getActivity(), mReceiveAddress),
+                Uri bitcoinUri = CryptoUriParser.createCryptoUrl(getActivity(), wm, wm.decorateAddress(mReceiveAddress),
                         getAmount(), null, null, null);
                 QRUtils.share("mailto:", getActivity(), bitcoinUri.toString());
 
@@ -226,7 +226,7 @@ public class FragmentRequestAmount extends Fragment {
                 showKeyboard(false);
                 BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
-                Uri bitcoinUri = CryptoUriParser.createCryptoUrl(getActivity(), wm, wm.decorateAddress(getActivity(), mReceiveAddress),
+                Uri bitcoinUri = CryptoUriParser.createCryptoUrl(getActivity(), wm, wm.decorateAddress(mReceiveAddress),
                         getAmount(), null, null, null);
                 QRUtils.share("sms:", getActivity(), bitcoinUri.toString());
             }
@@ -262,13 +262,13 @@ public class FragmentRequestAmount extends Fragment {
             @Override
             public void onClick(View v) {
                 if (selectedIso.equalsIgnoreCase(BRSharedPrefs.getPreferredFiatIso(getContext()))) {
-                    selectedIso = mWallet.getIso(getActivity());
+                    selectedIso = mWallet.getIso();
                 } else {
                     selectedIso = BRSharedPrefs.getPreferredFiatIso(getContext());
                 }
                 BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
-                boolean generated = generateQrImage(wm.decorateAddress(getActivity(), mReceiveAddress), amountEdit.getText().toString(), selectedIso);
+                boolean generated = generateQrImage(wm.decorateAddress(mReceiveAddress), amountEdit.getText().toString(), selectedIso);
                 if (!generated)
                     throw new RuntimeException("failed to generate qr image for address");
                 updateText();
@@ -315,13 +315,13 @@ public class FragmentRequestAmount extends Fragment {
                 final BaseWalletManager wallet = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
                 wallet.refreshAddress(getActivity());
-                mReceiveAddress = BRSharedPrefs.getReceiveAddress(getActivity(), wallet.getIso(getActivity()));
+                mReceiveAddress = BRSharedPrefs.getReceiveAddress(getActivity(), wallet.getIso());
 
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        mAddress.setText(mWallet.decorateAddress(getActivity(), mReceiveAddress));
-                        boolean generated = generateQrImage(mWallet.decorateAddress(getActivity(), mReceiveAddress), null, wallet.getIso(getActivity()));
+                        mAddress.setText(mWallet.decorateAddress(mReceiveAddress));
+                        boolean generated = generateQrImage(mWallet.decorateAddress(mReceiveAddress), null, wallet.getIso());
                         if (!generated)
                             throw new RuntimeException("failed to generate qr image for address");
                     }
@@ -376,7 +376,7 @@ public class FragmentRequestAmount extends Fragment {
         }
         BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
-        boolean generated = generateQrImage(wm.decorateAddress(getActivity(), mReceiveAddress), amountEdit.getText().toString(), selectedIso);
+        boolean generated = generateQrImage(wm.decorateAddress(mReceiveAddress), amountEdit.getText().toString(), selectedIso);
         if (!generated) throw new RuntimeException("failed to generate qr image for address");
     }
 

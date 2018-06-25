@@ -54,7 +54,7 @@ public class SetPinActivity extends BRActivity {
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(SetPinActivity.this).getCurrentWallet(SetPinActivity.this);
-                BRAnimator.showSupportFragment(SetPinActivity.this, BRConstants.setPin, wm);
+                BRAnimator.showSupportFragment(SetPinActivity.this, BRConstants.FAQ_SET_PIN, wm);
             }
         });
 

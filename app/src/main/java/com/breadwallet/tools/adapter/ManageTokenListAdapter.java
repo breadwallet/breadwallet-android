@@ -21,15 +21,14 @@ import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.animation.ItemTouchHelperAdapter;
 import com.breadwallet.tools.animation.ItemTouchHelperViewHolder;
 import com.breadwallet.tools.listeners.OnStartDragListener;
-import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
-import com.breadwallet.wallet.wallets.etherium.WalletTokenManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenListAdapter.ManageTokenItemViewHolder> implements ItemTouchHelperAdapter {
 
@@ -101,7 +100,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
 
         if (tokenManager != null) {
             tokenBalance = tokenManager.getCachedBalance(mContext);
-            if (tokenBalance.compareTo(new BigDecimal(0)) == 0) {
+            if (tokenBalance.compareTo(BigDecimal.ZERO) == 0) {
                 holder.tokenBalance.setText("");
             } else {
                 holder.tokenBalance.setText(tokenBalance.toPlainString() + iso);
@@ -187,6 +186,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
         TokenListMetaData currentMd = KVStoreManager.getInstance().getTokenListMetaData(mContext);
 
         Collections.swap(currentMd.enabledCurrencies, fromPosition, toPosition);
+        Collections.swap(mTokens, fromPosition, toPosition);
 
         KVStoreManager.getInstance().putTokenListMetaData(mContext, currentMd);
 
