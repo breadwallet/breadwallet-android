@@ -57,7 +57,7 @@
         android:max="100"
         android:progress="0"
         android:progressBackgroundTint="#552196f3"
-        android:progressDrawable="@drawable/wallet_sync_progress_bar"
+        android:progressDrawable="@drawable/tx_complete_progress_bar"
         android:progressTint="#4b77f3"
         android:visibility="invisible" />
 

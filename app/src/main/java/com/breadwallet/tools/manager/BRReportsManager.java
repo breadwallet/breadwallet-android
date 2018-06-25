@@ -33,6 +33,9 @@ public class BRReportsManager {
 
     private static final String TAG = BRReportsManager.class.getName();
 
+    private BRReportsManager() {
+    }
+
     public static void reportBug(RuntimeException er, boolean crash) {
         Log.e(TAG, "reportBug: ", er);
         try {

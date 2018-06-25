@@ -42,13 +42,13 @@ public class CryptoTransaction {
 
     public BigDecimal getTxSize() {
         if (mCoreTx != null) return new BigDecimal(mCoreTx.getSize());
-        else if (mEtherTx != null) return new BigDecimal(0);
+        else if (mEtherTx != null) return BigDecimal.ZERO;
         else return null;
     }
 
     public BigDecimal getTxStandardFee() {
         if (mCoreTx != null) return new BigDecimal(mCoreTx.getStandardFee());
-        else if (mEtherTx != null) return new BigDecimal(0);
+        else if (mEtherTx != null) return BigDecimal.ZERO;
         else return null;
     }
 

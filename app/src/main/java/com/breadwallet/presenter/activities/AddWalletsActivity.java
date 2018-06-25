@@ -5,11 +5,9 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
-import android.text.InputType;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageButton;
 
 import com.breadwallet.R;
@@ -20,12 +18,11 @@ import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.adapter.AddTokenListAdapter;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.tools.KVStoreManager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class AddWalletsActivity extends BRActivity {
 

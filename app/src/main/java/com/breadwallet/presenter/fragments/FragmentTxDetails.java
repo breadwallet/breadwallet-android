@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,12 +31,14 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.TxManager;
+import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.KVStoreManager;
 
@@ -66,10 +69,10 @@ public class FragmentTxDetails extends DialogFragment {
     private View mGasPriceDivider;
     private View mGasLimitDivider;
 
-    ConstraintLayout mFeePrimaryContainer;
-    ConstraintLayout mFeeSecondaryContainer;
-    ConstraintLayout mGasPriceContainer;
-    ConstraintLayout mGasLimitContainer;
+    private ConstraintLayout mFeePrimaryContainer;
+    private ConstraintLayout mFeeSecondaryContainer;
+    private ConstraintLayout mGasPriceContainer;
+    private ConstraintLayout mGasLimitContainer;
 
     private BRText mFeePrimaryLabel;
     private BRText mFeePrimary;
@@ -86,7 +89,6 @@ public class FragmentTxDetails extends DialogFragment {
     private BRText mAmountNow;
     private BRText mWhenSentLabel;
     private BRText mNowLabel;
-    private OnPauseListener mOnPauseListener;
 
     private ConstraintLayout mConfirmedContainer;
     private View mConfirmedDivider;
@@ -181,7 +183,6 @@ public class FragmentTxDetails extends DialogFragment {
         int color = mToFromAddress.getTextColors().getDefaultColor();
         mMemoText.setTextColor(color);
 
-
         updateUi();
         return rootView;
     }
@@ -192,9 +193,7 @@ public class FragmentTxDetails extends DialogFragment {
     }
 
     public void setTransaction(TxUiHolder item) {
-
         this.mTransaction = item;
-
     }
 
     private void updateUi() {
@@ -206,7 +205,7 @@ public class FragmentTxDetails extends DialogFragment {
         if (mTransaction != null) {
             //user prefers crypto (or fiat)
             boolean isCryptoPreferred = BRSharedPrefs.isCryptoPreferred(app);
-            String cryptoIso = walletManager.getIso(app);
+            String cryptoIso = walletManager.getIso();
             String fiatIso = BRSharedPrefs.getPreferredFiatIso(getContext());
             boolean isErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, cryptoIso);
 
@@ -228,8 +227,8 @@ public class FragmentTxDetails extends DialogFragment {
                 if (ethTx != null && !isErc20) {
                     mGasPrice.setText(String.format("%s %s", new BigDecimal(ethTx.getGasPrice(BREthereumAmount.Unit.ETHER_GWEI)).stripTrailingZeros().toPlainString(), "gwei"));
                     mGasLimit.setText(new BigDecimal(ethTx.getGasLimit()).toPlainString());
-                    rawFee = new BigDecimal(ethTx.isConfirmed() ? ethTx.getGasUsed() :
-                            ethTx.getGasLimit()).multiply(new BigDecimal(ethTx.getGasPrice(walletManager.getUnit())));
+                    long gas = ethTx.isConfirmed() ? ethTx.getGasUsed() : ethTx.getGasLimit();
+                    rawFee = new BigDecimal(gas).multiply(new BigDecimal(ethTx.getGasPrice(walletManager.getUnit())));
                 } else {
                     hideEthViews();
 
@@ -250,16 +249,17 @@ public class FragmentTxDetails extends DialogFragment {
                 }
             }
 
-            if (mTransaction.getBlockHeight() == Integer.MAX_VALUE)
+            if (mTransaction.getBlockHeight() == Integer.MAX_VALUE) {
                 hideConfirmedView();
+            }
 
             if (!mTransaction.isValid()) {
                 mTxStatus.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, 0);
             }
 
-            BigDecimal cryptoAmount = mTransaction.getAmount();
+            BigDecimal cryptoAmount = mTransaction.getAmount().setScale(walletManager.getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE);
             BREthereumToken tkn = null;
-            if (walletManager.getIso(app).equalsIgnoreCase("ETH"))
+            if (walletManager.getIso().equalsIgnoreCase("ETH"))
                 tkn = WalletEthManager.getInstance(app).node.lookupToken(mTransaction.getTo());
             if (tkn != null) cryptoAmount = mTransaction.getFee(); // it's a token transfer ETH tx
 
@@ -268,22 +268,25 @@ public class FragmentTxDetails extends DialogFragment {
             BigDecimal fiatAmountWhenSent;
             TxMetaData metaData = KVStoreManager.getInstance().getTxMetaData(app, mTransaction.getTxHash());
             if (metaData == null || metaData.exchangeRate == 0 || Utils.isNullOrEmpty(metaData.exchangeCurrency)) {
-                fiatAmountWhenSent = new BigDecimal(0);
-                amountWhenSent = CurrencyUtils.getFormattedAmount(app, fiatIso, fiatAmountWhenSent);//always fiat amount
+                fiatAmountWhenSent = BigDecimal.ZERO;
+                //always fiat amount
+                amountWhenSent = CurrencyUtils.getFormattedAmount(app, fiatIso, fiatAmountWhenSent);
             } else {
-                CurrencyEntity ent = new CurrencyEntity(metaData.exchangeCurrency, null, (float) metaData.exchangeRate, walletManager.getIso(app));
+                CurrencyEntity ent = new CurrencyEntity(metaData.exchangeCurrency, null, (float) metaData.exchangeRate, walletManager.getIso());
                 fiatAmountWhenSent = walletManager.getFiatForSmallestCrypto(app, cryptoAmount.abs(), ent);
-                amountWhenSent = CurrencyUtils.getFormattedAmount(app, ent.code, fiatAmountWhenSent);//always fiat amount
+                //always fiat amount
+                amountWhenSent = CurrencyUtils.getFormattedAmount(app, ent.code, fiatAmountWhenSent);
 
             }
 
-            amountNow = CurrencyUtils.getFormattedAmount(app, fiatIso, fiatAmountNow);//always fiat amount
+            //always fiat amount
+            amountNow = CurrencyUtils.getFormattedAmount(app, fiatIso, fiatAmountNow);
 
             mAmountWhenSent.setText(amountWhenSent);
             mAmountNow.setText(amountNow);
 
             // If 'amount when sent' is 0 or unavailable, show fiat tx amount on its own
-            if (fiatAmountWhenSent.compareTo(new BigDecimal(0)) == 0) {
+            if (fiatAmountWhenSent.compareTo(BigDecimal.ZERO) == 0) {
                 mAmountWhenSent.setVisibility(View.INVISIBLE);
                 mWhenSentLabel.setVisibility(View.INVISIBLE);
                 mNowLabel.setVisibility(View.INVISIBLE);
@@ -298,7 +301,7 @@ public class FragmentTxDetails extends DialogFragment {
             mTxAction.setText(!received ? getString(R.string.TransactionDetails_titleSent) : getString(R.string.TransactionDetails_titleReceived));
             mToFrom.setText(!received ? getString(R.string.Confirmation_to) + " " : getString(R.string.TransactionDetails_addressViaHeader) + " ");
 
-            mToFromAddress.setText(walletManager.decorateAddress(app, mTransaction.getTo())); //showing only the destination address
+            mToFromAddress.setText(walletManager.decorateAddress(mTransaction.getTo())); //showing only the destination address
 
             // Allow the to/from address to be copyable
             mToFromAddress.setOnClickListener(new View.OnClickListener() {
@@ -312,41 +315,18 @@ public class FragmentTxDetails extends DialogFragment {
                     BRClipboardManager.putClipboard(getContext(), address);
                     Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_LONG).show();
 
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mToFromAddress.setTextColor(color);
-
-                        }
-                    }, 200);
+                    mToFromAddress.setTextColor(color);
 
 
                 }
             });
-            mOnPauseListener = new OnPauseListener() {
-                @Override
-                public void onPaused() {
-                    // Update the memo field on the transaction and save it
-                    if (mTxMetaData == null) mTxMetaData = new TxMetaData();
-                    mTxMetaData.comment = mMemoText.getText().toString();
-                    Log.d(TAG, "MetaData not null");
-                    KVStoreManager.getInstance().putTxMetaData(getContext(), mTxMetaData, mTransaction.getTxHash());
-                    mTxMetaData = null;
 
-                    // Hide softkeyboard if it's visible
-                    InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-                    imm.hideSoftInputFromWindow(mMemoText.getWindowToken(), 0);
+            //this is always crypto amount
+            mTxAmount.setText(CurrencyUtils.getFormattedAmount(app, walletManager.getIso(), received ? cryptoAmount : cryptoAmount.negate()));
 
-                    // Update Tx list to reflect the memo change
-                    TxManager.getInstance().updateTxList(getContext());
-
-                }
-            };
-
-            mTxAmount.setText(CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), received ? cryptoAmount : cryptoAmount.negate()));//this is always crypto amount
-
-            if (received)
+            if (received) {
                 mTxAmount.setTextColor(getContext().getColor(R.color.transaction_amount_received_color));
+            }
 
             // Set the memo text if one is available
             String memo;
@@ -373,7 +353,7 @@ public class FragmentTxDetails extends DialogFragment {
             }
 
             // timestamp is 0 if it's not confirmed in a block yet so make it now
-            mTxDate.setText(BRDateUtil.getFullDate(mTransaction.getTimeStamp() == 0 ? System.currentTimeMillis() : (mTransaction.getTimeStamp() * 1000)));
+            mTxDate.setText(BRDateUtil.getFullDate(mTransaction.getTimeStamp() == 0 ? System.currentTimeMillis() : (mTransaction.getTimeStamp() * DateUtils.SECOND_IN_MILLIS)));
 
             // Set the transaction id
             mTransactionId.setText(mTransaction.getHashReversed());
@@ -391,13 +371,8 @@ public class FragmentTxDetails extends DialogFragment {
                     BRClipboardManager.putClipboard(getContext(), id);
                     Toast.makeText(getContext(), getString(R.string.Receive_copied), Toast.LENGTH_LONG).show();
 
-                    new Handler().postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            mTransactionId.setTextColor(color);
+                    mTransactionId.setTextColor(color);
 
-                        }
-                    }, 200);
                 }
             });
 
@@ -443,10 +418,19 @@ public class FragmentTxDetails extends DialogFragment {
 
     @Override
     public void onPause() {
-        if (mOnPauseListener != null) mOnPauseListener.onPaused();
-
         super.onPause();
+        // Update the memo field on the transaction and save it
+        if (mTxMetaData == null) mTxMetaData = new TxMetaData();
+        mTxMetaData.comment = mMemoText.getText().toString();
+        KVStoreManager.getInstance().putTxMetaData(getContext(), mTxMetaData, mTransaction.getTxHash());
+        mTxMetaData = null;
 
+        // Hide softkeyboard if it's visible
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mMemoText.getWindowToken(), 0);
+
+        // Update Tx list to reflect the memo change
+        TxManager.getInstance().updateTxList(getActivity());
     }
 
     public interface OnPauseListener {

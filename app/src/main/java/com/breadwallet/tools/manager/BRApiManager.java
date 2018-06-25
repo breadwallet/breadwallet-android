@@ -1,9 +1,9 @@
 package com.breadwallet.tools.manager;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Handler;
 import android.os.NetworkOnMainThreadException;
+import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -21,7 +21,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -36,7 +35,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import okhttp3.Request;
-import okhttp3.Response;
 
 /**
  * BreadWallet
@@ -73,6 +71,12 @@ public class BRApiManager {
 
     private Handler handler;
 
+    public static final String HEADER_WALLET_ID = "X-Wallet-Id";
+    public static final String HEADER_IS_INTERNAL = "X-Is-Internal";
+    public static final String HEADER_TESTFLIGHT = "X-Testflight";
+    public static final String HEADER_TESTNET = "X-Bitcoin-Testnet";
+    public static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
+
     private BRApiManager() {
         handler = new Handler();
     }
@@ -85,6 +89,7 @@ public class BRApiManager {
         return instance;
     }
 
+    @WorkerThread
     private void updateRates(Context context, BaseWalletManager walletManager) {
         if (ActivityUTILS.isMainThread()) {
             throw new NetworkOnMainThreadException();
@@ -101,7 +106,7 @@ public class BRApiManager {
                         tmp.name = tmpObj.getString("name");
                         tmp.code = tmpObj.getString("code");
                         tmp.rate = Float.valueOf(tmpObj.getString("rate"));
-                        tmp.iso = walletManager.getIso(context);
+                        tmp.iso = walletManager.getIso();
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -125,57 +130,60 @@ public class BRApiManager {
                 //use a handler to run a toast that shows the current timestamp
                 handler.post(new Runnable() {
                     public void run() {
-                        updateData(context);
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateData(context);
+                            }
+                        });
                     }
                 });
             }
         };
     }
 
+    @WorkerThread
     private void updateData(final Context context) {
+
+        if (BreadApp.isAppInBackground(context)) {
+            Log.e(TAG, "doInBackground: Stopping timer, no activity on.");
+            stopTimerTask();
+            return;
+        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                if (BreadApp.isAppInBackground(context)) {
-                    Log.e(TAG, "doInBackground: Stopping timer, no activity on.");
-                    stopTimerTask();
-                    return;
-                }
+                updateErc20Rates(context);
+            }
+        });
+
+        List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(context).getAllWallets(context));
+
+        for (final BaseWalletManager w : list) {
+            //only update stuff for non erc20 for now, API endpoint BUG
+            if (w.getIso().equalsIgnoreCase("BTC") || w.getIso().equalsIgnoreCase("BCH")
+                    || w.getIso().equalsIgnoreCase("ETH")) {
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        updateErc20Rates(context);
+                        w.updateFee(context);
                     }
                 });
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        //get each wallet's rates
+                        updateRates(context, w);
 
-                List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(context).getAllWallets(context));
-
-                for (final BaseWalletManager w : list) {
-                    //only update stuff for non erc20 for now, API endpoint BUG
-                    if (w.getIso(context).equalsIgnoreCase("BTC") || w.getIso(context).equalsIgnoreCase("BCH")
-                            || w.getIso(context).equalsIgnoreCase("ETH")) {
-                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                w.updateFee(context);
-                            }
-                        });
-                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                            @Override
-                            public void run() {
-                                //get each wallet's rates
-                                updateRates(context, w);
-
-                            }
-                        });
                     }
-                }
-
+                });
             }
-        });
+        }
+
     }
 
-    private void updateErc20Rates(Context context) {
+    @WorkerThread
+    private synchronized void updateErc20Rates(Context context) {
         //get all erc20 rates.
         String url = "https://api.coinmarketcap.com/v1/ticker/?limit=1000&convert=BTC";
         String result = urlGET(context, url);
@@ -237,8 +245,9 @@ public class BRApiManager {
         }
     }
 
+    @WorkerThread
     public static JSONArray fetchRates(Context app, BaseWalletManager walletManager) {
-        String url = "https://" + BreadApp.HOST + "/rates?currency=" + walletManager.getIso(app);
+        String url = "https://" + BreadApp.HOST + "/rates?currency=" + walletManager.getIso();
         String jsonString = urlGET(app, url);
         JSONArray jsonArray = null;
         if (jsonString == null) {
@@ -254,8 +263,9 @@ public class BRApiManager {
         return jsonArray == null ? backupFetchRates(app, walletManager) : jsonArray;
     }
 
+    @WorkerThread
     public static JSONArray backupFetchRates(Context app, BaseWalletManager walletManager) {
-        if (!walletManager.getIso(app).equalsIgnoreCase(WalletBitcoinManager.getInstance(app).getIso(app))) {
+        if (!walletManager.getIso().equalsIgnoreCase(WalletBitcoinManager.getInstance(app).getIso())) {
             //todo add backup for BCH
             return null;
         }
@@ -273,12 +283,8 @@ public class BRApiManager {
         return jsonArray;
     }
 
+    @WorkerThread
     public static String urlGET(Context app, String myURL) {
-//        System.out.println("Requested URL_EA:" + myURL);
-        if (ActivityUTILS.isMainThread()) {
-            Log.e(TAG, "urlGET: network on main thread");
-            throw new RuntimeException("network on main thread");
-        }
         Map<String, String> headers = BreadApp.getBreadHeaders();
 
         Request.Builder builder = new Request.Builder()
@@ -294,19 +300,15 @@ public class BRApiManager {
         }
 
         Request request = builder.build();
-        String response = null;
-        APIClient.BRResponse resp = APIClient.getInstance(app).sendRequest(request, false, 0);
+        String bodyText = null;
+        APIClient.BRResponse resp = APIClient.getInstance(app).sendRequest(request, false);
 
         try {
-            if (resp == null) {
-                Log.e(TAG, "urlGET: " + myURL + ", resp is null");
-                return null;
-            }
-            response = resp.getBodyText();
+            bodyText = resp.getBodyText();
             String strDate = resp.getHeaders().get("date");
             if (strDate == null) {
                 Log.e(TAG, "urlGET: strDate is null!");
-                return response;
+                return bodyText;
             }
             SimpleDateFormat formatter = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
             Date date = formatter.parse(strDate);
@@ -315,7 +317,7 @@ public class BRApiManager {
         } catch (ParseException e) {
             e.printStackTrace();
         }
-        return response;
+        return bodyText;
     }
 
 }

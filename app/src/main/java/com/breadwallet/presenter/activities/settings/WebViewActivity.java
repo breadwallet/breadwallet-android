@@ -37,10 +37,8 @@ import android.widget.Toolbar;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -148,12 +146,11 @@ public class WebViewActivity extends BRActivity {
         webSettings.setDomStorageEnabled(true);
         webSettings.setJavaScriptEnabled(true);
 
-        theUrl = getIntent().getStringExtra("url");
+        theUrl = getIntent().getStringExtra(BRConstants.EXTRA_URL);
         String json = getIntent().getStringExtra("json");
-        // webView.loadUrl("https://upload.photobox.com/en/");
 
         if (json == null) {
-            if (!setupServerMode(theUrl)) {
+            if (theUrl != null & !setupServerMode(theUrl)) {
                 webView.loadUrl(theUrl);
 
                 return;
@@ -167,7 +164,7 @@ public class WebViewActivity extends BRActivity {
                 bottomToolbar.setVisibility(View.INVISIBLE);
             }
             if (theUrl.endsWith("/buy"))
-                theUrl = theUrl + "?currency=" + WalletsMaster.getInstance(this).getCurrentWallet(this).getIso(this).toLowerCase();
+                theUrl = theUrl + "?currency=" + WalletsMaster.getInstance(this).getCurrentWallet(this).getIso().toLowerCase();
             webView.loadUrl(theUrl);
             if (articleId != null && !articleId.isEmpty())
                 navigate(articleId);

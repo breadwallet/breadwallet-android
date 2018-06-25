@@ -70,7 +70,7 @@ import static com.platform.HTTPServer.URL_SUPPORT;
  * THE SOFTWARE.
  */
 
-public class FragmentReceive extends Fragment {
+public class FragmentReceive extends Fragment implements OnBalanceChangedListener {
     private static final String TAG = FragmentReceive.class.getName();
 
     public TextView mTitle;
@@ -121,12 +121,7 @@ public class FragmentReceive extends Fragment {
         setListeners();
         isReceive = getArguments().getBoolean("receive");
 
-        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(new OnBalanceChangedListener() {
-            @Override
-            public void onBalanceChanged(String iso, BigDecimal newBalance) {
-                updateQr();
-            }
-        });
+        WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity()).addBalanceChangedListener(this);
 
         ImageButton faq = rootView.findViewById(R.id.faq_button);
 
@@ -141,7 +136,7 @@ public class FragmentReceive extends Fragment {
                 }
 
                 BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                BRAnimator.showSupportFragment(app, BRConstants.receive, wm);
+                BRAnimator.showSupportFragment(app, BRConstants.FAQ_RECEIVE, wm);
             }
         });
 
@@ -163,8 +158,8 @@ public class FragmentReceive extends Fragment {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
-                        walletManager.decorateAddress(getActivity(), mReceiveAddress),
-                        new BigDecimal(0), null, null, null);
+                        walletManager.decorateAddress(mReceiveAddress),
+                        BigDecimal.ZERO, null, null, null);
                 QRUtils.share("mailto:", getActivity(), cryptoUri.toString());
 
 
@@ -176,8 +171,8 @@ public class FragmentReceive extends Fragment {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
-                        walletManager.decorateAddress(getActivity(), mReceiveAddress),
-                        new BigDecimal(0), null, null, null);
+                        walletManager.decorateAddress(mReceiveAddress),
+                        BigDecimal.ZERO, null, null, null);
                 QRUtils.share("sms:", getActivity(), cryptoUri.toString());
             }
         });
@@ -282,7 +277,7 @@ public class FragmentReceive extends Fragment {
 
         Bundle extras = getArguments();
         boolean isReceive = extras.getBoolean("receive");
-        showRequestAnAmount = isReceive && wm.getUiConfiguration().showRequestAnAmount;
+        showRequestAnAmount = isReceive && wm.getUiConfiguration().isShowRequestedAmount();
         if (!showRequestAnAmount) {
             signalLayout.removeView(separator);
             signalLayout.removeView(requestButton);
@@ -311,16 +306,16 @@ public class FragmentReceive extends Fragment {
                         String walletIso;
 
                         if (isReceive) {
-                            walletIso = BRSharedPrefs.getReceiveAddress(ctx, wm.getIso(ctx));
+                            walletIso = BRSharedPrefs.getReceiveAddress(ctx, wm.getIso());
                         } else {
                             WalletBitcoinManager btcWm = WalletBitcoinManager.getInstance(ctx);
-                            walletIso = BRSharedPrefs.getReceiveAddress(ctx, btcWm.getIso(ctx));
+                            walletIso = BRSharedPrefs.getReceiveAddress(ctx, btcWm.getIso());
                         }
                         mReceiveAddress = walletIso;
-                        String decorated = wm.decorateAddress(ctx, mReceiveAddress);
+                        String decorated = wm.decorateAddress(mReceiveAddress);
                         mAddress.setText(decorated);
                         Utils.correctTextSizeIfNeeded(mAddress);
-                        Uri uri = CryptoUriParser.createCryptoUrl(ctx, wm, decorated, new BigDecimal(0), null, null, null);
+                        Uri uri = CryptoUriParser.createCryptoUrl(ctx, wm, decorated, BigDecimal.ZERO, null, null, null);
                         boolean generated = QRUtils.generateQR(ctx, uri.toString(), mQrImage);
                         if (!generated)
                             throw new RuntimeException("failed to generate qr image for address");
@@ -336,7 +331,7 @@ public class FragmentReceive extends Fragment {
         BRClipboardManager.putClipboard(app, mAddress.getText().toString());
         //copy the legacy for testing purposes (testnet faucet money receiving)
         if (Utils.isEmulatorOrDebug(app) && BuildConfig.BITCOIN_TESTNET)
-            BRClipboardManager.putClipboard(app, WalletsMaster.getInstance(app).getCurrentWallet(app).undecorateAddress(app, mAddress.getText().toString()));
+            BRClipboardManager.putClipboard(app, WalletsMaster.getInstance(app).getCurrentWallet(app).undecorateAddress(mAddress.getText().toString()));
 
         showCopiedLayout(true);
     }
@@ -365,4 +360,8 @@ public class FragmentReceive extends Fragment {
         super.onPause();
     }
 
+    @Override
+    public void onBalanceChanged(BigDecimal newBalance) {
+        updateQr();
+    }
 }

@@ -10,10 +10,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.ActivityUTILS;
-import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.animation.BRAnimator;
 import com.breadwallet.tools.manager.BRClipboardManager;
@@ -21,51 +19,50 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 
 import java.util.Locale;
 
-public class AboutActivity extends BRActivity {
+public class AboutActivity extends BaseSettingsActivity {
     private static final String TAG = AboutActivity.class.getName();
-    //    private TextView termsText;
-    private TextView policyText;
-    private TextView infoText;
 
-    private ImageView redditShare;
-    private ImageView twitterShare;
-    private ImageView blogShare;
     private static AboutActivity app;
     private BRText mCopy;
     private BRText mRewardsId;
+    private static final int DEFAULT_VERSION_CODE = 0;
+    private static final String DEFAULT_VERSION_NAME = "0";
 
     public static AboutActivity getApp() {
         return app;
     }
-
-    public static boolean appVisible = false;
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
     }
 
     @Override
+    public int getLayoutId() {
+        return R.layout.activity_about;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_about);
 
-        infoText = findViewById(R.id.info_text);
-//        termsText = (TextView) findViewById(R.id.terms_text);
-        policyText = findViewById(R.id.policy_text);
+        TextView infoText = findViewById(R.id.info_text);
+        TextView policyText = findViewById(R.id.policy_text);
 
-        PackageInfo pInfo = null;
+
+        PackageInfo packageInfo = null;
         try {
-            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            packageInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        int verCode = pInfo != null ? pInfo.versionCode : 0;
+        int versionCode = packageInfo != null ? packageInfo.versionCode : DEFAULT_VERSION_CODE;
+        String versionName = packageInfo != null ? packageInfo.versionName : DEFAULT_VERSION_NAME;
 
-        infoText.setText(String.format(Locale.getDefault(), getString(R.string.About_footer), verCode));
+        infoText.setText(String.format(Locale.getDefault(), getString(R.string.About_footer), versionName, versionCode));
 
-        redditShare = findViewById(R.id.reddit_share_button);
-        twitterShare = findViewById(R.id.twitter_share_button);
-        blogShare = findViewById(R.id.blog_share_button);
+        ImageView redditShare = findViewById(R.id.reddit_share_button);
+        ImageView twitterShare = findViewById(R.id.twitter_share_button);
+        ImageView blogShare = findViewById(R.id.blog_share_button);
         mRewardsId = findViewById(R.id.brd_rewards_id);
         mCopy = findViewById(R.id.brd_copy);
 
@@ -118,14 +115,12 @@ public class AboutActivity extends BRActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        appVisible = true;
         app = this;
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        appVisible = false;
     }
 
     @Override

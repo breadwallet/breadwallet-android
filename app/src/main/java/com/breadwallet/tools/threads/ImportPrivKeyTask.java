@@ -117,7 +117,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             return null;
         }
 
-        String decoratedAddress = wm.decorateAddress(app, tmpAddress);
+        String decoratedAddress = wm.decorateAddress(tmpAddress);
 
         //automatically uses testnet if x-testnet is true
         String fullUrl = String.format("https://%s/q/addr/%s/utxo?currency=%s", BreadApp.HOST, decoratedAddress, iso);
@@ -150,7 +150,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         final BaseWalletManager walletManager = WalletsMaster.getInstance(app).getWalletByIso(app, iso);
 
         BigDecimal bigAmount = walletManager.getTransactionAmount(mTransaction);
-        BigDecimal bigFee = new BigDecimal(0);
+        BigDecimal bigFee = BigDecimal.ZERO;
 
         for (BRCoreTransactionInput in : mTransaction.getCoreTx().getInputs())
             bigFee = bigFee.add(new BigDecimal(in.getAmount()));
@@ -160,8 +160,8 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
         String formattedFiatAmount = CurrencyUtils.getFormattedAmount(app, BRSharedPrefs.getPreferredFiatIso(app), walletManager.getFiatForSmallestCrypto(app, bigAmount, null));
 
         //bits, BTCs..
-        String amount = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), bigAmount);
-        String fee = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(app), bigFee.abs());
+        String amount = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(), bigAmount);
+        String fee = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(), bigFee.abs());
         String message = String.format(app.getString(R.string.Import_confirm), amount, fee);
         String posButton = String.format("%s (%s)", amount, formattedFiatAmount);
         BRDialog.showCustomDialog(app, "", message, posButton, app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
@@ -349,7 +349,7 @@ public class ImportPrivKeyTask extends AsyncTask<String, String, String> {
             return true;
         } else if (BRCoreKey.isValidBitcoinPrivateKey(privKey)) {
             Log.d(TAG, "isValidBitcoinPrivateKey true");
-            new ImportPrivKeyTask(((Activity) ctx)).execute(privKey, walletManager.getIso(ctx));
+            new ImportPrivKeyTask(((Activity) ctx)).execute(privKey, walletManager.getIso());
             return true;
         } else {
             Log.e(TAG, "trySweepWallet: !isValidBitcoinPrivateKey && !isValidBitcoinBIP38Key");

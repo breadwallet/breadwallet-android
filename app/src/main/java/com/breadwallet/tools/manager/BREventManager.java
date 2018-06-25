@@ -161,7 +161,7 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
 
                     Log.d(TAG, "Making request to -> " + strUtl);
 
-                    APIClient.BRResponse response = APIClient.getInstance(app).sendRequest(request, true, 0);
+                    APIClient.BRResponse response = APIClient.getInstance(app).sendRequest(request, true);
                     if (response != null)
                         strResponse = response.getBodyText();
                     Log.d(TAG, "Events response -> " + strResponse);

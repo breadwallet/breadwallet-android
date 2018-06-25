@@ -4,7 +4,7 @@ package com.breadwallet.presenter.activities.intro;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
-import android.security.keystore.UserNotAuthenticatedException;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -12,9 +12,7 @@ import android.widget.ImageButton;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
-import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.presenter.activities.HomeActivity;
-import com.breadwallet.presenter.activities.ReEnterPinActivity;
 import com.breadwallet.presenter.activities.SetPinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.BRAnimator;
@@ -27,11 +25,9 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
 
 import java.io.Serializable;
-import java.util.Arrays;
 
 
 /**
@@ -63,11 +59,9 @@ public class IntroActivity extends BRActivity implements Serializable {
     private static final String TAG = IntroActivity.class.getName();
     public Button newWalletButton;
     public Button recoverWalletButton;
-    public static IntroActivity introActivity;
     public static boolean appVisible = false;
     private static IntroActivity app;
     private View splashScreen;
-    private ImageButton faq;
 
     public static IntroActivity getApp() {
         return app;
@@ -87,28 +81,22 @@ public class IntroActivity extends BRActivity implements Serializable {
         splashScreen = findViewById(R.id.splash_screen);
         setListeners();
         updateBundles();
-        faq = findViewById(R.id.faq_button);
+        ImageButton faq = findViewById(R.id.faq_button);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!BRAnimator.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(IntroActivity.this).getCurrentWallet(IntroActivity.this);
-                BRAnimator.showSupportFragment(IntroActivity.this, BRConstants.startView, wm);
+                BRAnimator.showSupportFragment(IntroActivity.this, BRConstants.FAQ_START_VIEW, wm);
             }
         });
 
-
-        if (!BuildConfig.DEBUG && BRKeyStore.AUTH_DURATION_SEC != 300) {
-            Log.e(TAG, "onCreate: BRKeyStore.AUTH_DURATION_SEC != 300");
-            BRReportsManager.reportBug(new RuntimeException("AUTH_DURATION_SEC should be 300"), true);
-        }
-        introActivity = this;
-
         getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
 
-        if (Utils.isEmulatorOrDebug(this))
+        if (Utils.isEmulatorOrDebug(this)) {
             Utils.printPhoneSpecs();
+        }
 
         byte[] masterPubKey = BRKeyStore.getMasterPublicKey(this);
 
@@ -126,7 +114,7 @@ public class IntroActivity extends BRActivity implements Serializable {
             public void run() {
                 splashScreen.setVisibility(View.GONE);
             }
-        }, 1000);
+        }, DateUtils.SECOND_IN_MILLIS);
 
     }
 
@@ -134,8 +122,6 @@ public class IntroActivity extends BRActivity implements Serializable {
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                Thread.currentThread().setName("BG:" + TAG + ":updateBundles");
-
                 final long startTime = System.currentTimeMillis();
                 APIClient apiClient = APIClient.getInstance(IntroActivity.this);
                 apiClient.updateBundle();
@@ -177,7 +163,6 @@ public class IntroActivity extends BRActivity implements Serializable {
         super.onResume();
         appVisible = true;
         app = this;
-
     }
 
     @Override
@@ -196,11 +181,8 @@ public class IntroActivity extends BRActivity implements Serializable {
         super.onStop();
     }
 
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-
     }
-
 }

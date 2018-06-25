@@ -44,28 +44,7 @@ import java.util.UUID;
 public class BRSharedPrefs {
     public static final String TAG = BRSharedPrefs.class.getName();
 
-    public static List<OnIsoChangedListener> isoChangedListeners = new ArrayList<>();
     public static final String PREFS_NAME = "MyPrefsFile";
-
-    public interface OnIsoChangedListener {
-        void onIsoChanged(String iso);
-    }
-
-    public static void addIsoChangedListener(OnIsoChangedListener listener) {
-        if (isoChangedListeners == null) {
-            isoChangedListeners = new ArrayList<>();
-        }
-        if (!isoChangedListeners.contains(listener))
-            isoChangedListeners.add(listener);
-    }
-
-    public static void removeListener(OnIsoChangedListener listener) {
-        if (isoChangedListeners == null) {
-            isoChangedListeners = new ArrayList<>();
-        }
-        isoChangedListeners.remove(listener);
-
-    }
 
     public static String getPreferredFiatIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
@@ -84,10 +63,6 @@ public class BRSharedPrefs {
         SharedPreferences.Editor editor = settings.edit();
         editor.putString("currentCurrency", iso.equalsIgnoreCase(Locale.getDefault().getISO3Language()) ? null : iso);
         editor.apply();
-
-        for (OnIsoChangedListener listener : isoChangedListeners) {
-            if (listener != null) listener.onIsoChanged(iso);
-        }
 
     }
 
@@ -199,6 +174,29 @@ public class BRSharedPrefs {
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong("lastSyncTime_" + iso.toUpperCase(), time);
+        editor.apply();
+    }
+
+    public static String getLastRescanModeUsed(Context activity, String iso) {
+        SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString("lastRescanModeUsed_" + iso.toUpperCase(), null);
+    }
+
+    public static void putLastRescanModeUsed(Context activity, String iso, String mode) {
+        SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString("lastRescanModeUsed_" + iso.toUpperCase(), mode);
+        editor.apply();
+    }
+    public static long getLastSendTransactionBlockheight(Context activity, String iso) {
+        SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getLong("lastSendTransactionBlockheight_" + iso.toUpperCase(), 0);
+    }
+
+    public static void putLastSendTransactionBlockheight(Context activity, String iso, long blockHeight) {
+        SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong("lastSendTransactionBlockheight_" + iso.toUpperCase(), blockHeight);
         editor.apply();
     }
 
@@ -334,10 +332,21 @@ public class BRSharedPrefs {
     }
 
     public static void putStartHeight(Context context, String iso, long startHeight) {
-        if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putLong("startHeight_" + iso.toUpperCase(), startHeight);
+        editor.apply();
+    }
+
+    public static long getLastRescanTime(Context context, String iso) {
+        SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
+        return settingsToGet.getLong("rescanTime_" + iso.toUpperCase(), 0);
+    }
+
+    public static void putLastRescanTime(Context context, String iso, long time) {
+        SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putLong("rescanTime_" + iso.toUpperCase(), time);
         editor.apply();
     }
 
@@ -347,7 +356,6 @@ public class BRSharedPrefs {
     }
 
     public static void putLastBlockHeight(Context context, String iso, int lastHeight) {
-        if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putInt("lastBlockHeight" + iso.toUpperCase(), lastHeight);
@@ -360,7 +368,6 @@ public class BRSharedPrefs {
     }
 
     public static void putScanRecommended(Context context, String iso, boolean recommended) {
-        if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("scanRecommended_" + iso.toUpperCase(), recommended);
@@ -373,7 +380,6 @@ public class BRSharedPrefs {
     }
 
     public static void putBchPreforkSynced(Context context, boolean synced) {
-        if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("preforkSynced", synced);
@@ -381,15 +387,16 @@ public class BRSharedPrefs {
     }
 
     // BTC, mBTC, Bits
-    public static int getCryptoDenomination(Context context, String iso) {//ignore iso, using same denomination for both for now
+    //ignore iso, using same denomination for both for now
+    public static int getCryptoDenomination(Context context, String iso) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
         return settingsToGet.getInt("currencyUnit", BRConstants.CURRENT_UNIT_BITCOINS);
 
     }
 
     // BTC, mBTC, Bits
+    //ignore iso, using same denomination for both for now
     public static void putCryptoDenomination(Context context, String iso, int unit) {
-        if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putInt("currencyUnit", unit);
@@ -404,7 +411,6 @@ public class BRSharedPrefs {
     }
 
     private static void setDeviceId(Context context, String uuid) {
-        if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putString("userId", uuid);
@@ -423,7 +429,6 @@ public class BRSharedPrefs {
     }
 
     public static void putShowNotification(Context context, boolean show) {
-        if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("showNotification", show);
@@ -436,7 +441,6 @@ public class BRSharedPrefs {
     }
 
     public static void putShareData(Context context, boolean show) {
-        if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("shareData", show);
@@ -448,7 +452,6 @@ public class BRSharedPrefs {
     }
 
     public static void putIsNewWallet(Context context, boolean newWallet) {
-        if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("newWallet", newWallet);
@@ -461,7 +464,6 @@ public class BRSharedPrefs {
     }
 
     public static void putPromptDismissed(Context context, String promptName, boolean dismissed) {
-        if (context == null) return;
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = settings.edit();
         editor.putBoolean("prompt_" + promptName, dismissed);

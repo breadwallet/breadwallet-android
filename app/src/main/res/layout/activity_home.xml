@@ -171,6 +171,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/portfolio_label"
+                android:nestedScrollingEnabled="false"
                 android:layout_marginEnd="@dimen/activity_horizontal_margin"
                 android:layout_marginStart="@dimen/activity_horizontal_margin">
 
@@ -327,7 +328,7 @@
                 android:contentInsetLeft="0dp"
                 android:contentInsetStart="0dp"
                 android:visibility="visible"
-                app:breadText="No internet connection found.\nCheck your connection and try again."
+                app:breadText="@string/Alert.noInternet"
                 app:contentInsetLeft="0dp"
                 app:contentInsetStart="0dp" />
 

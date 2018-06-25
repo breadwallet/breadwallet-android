@@ -1,49 +1,31 @@
 package com.breadwallet.presenter.activities.settings;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.annotation.LayoutRes;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
-import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.CurrencySettingsActivity;
 import com.breadwallet.presenter.activities.ManageWalletsActivity;
 import com.breadwallet.presenter.activities.UpdatePinActivity;
-import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
-import com.breadwallet.presenter.entities.TokenItem;
-import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.adapter.SettingsAdapter;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.breadwallet.wallet.wallets.etherium.WalletEthManager;
-import com.breadwallet.wallet.wallets.etherium.WalletTokenManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TokenListMetaData;
 import com.platform.tools.KVStoreManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.breadwallet.R.layout.settings_list_item;
-import static com.breadwallet.R.layout.settings_list_section;
-
-public class SettingsActivity extends BRActivity {
+public class SettingsActivity extends BaseSettingsActivity {
     private static final String TAG = SettingsActivity.class.getName();
     private ListView listView;
     public List<BRSettingsItem> items;
@@ -54,23 +36,17 @@ public class SettingsActivity extends BRActivity {
         return app;
     }
 
-    private ImageButton mBackButton;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_settings);
+    public int getLayoutId() {
+        return R.layout.activity_settings;
+    }
 
+    @Override
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         listView = findViewById(R.id.settings_list);
 
-        mBackButton = findViewById(R.id.back_button);
-
-        mBackButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onBackPressed();
-            }
-        });
 
     }
 
@@ -143,33 +119,33 @@ public class SettingsActivity extends BRActivity {
 
         final WalletBitcoinManager btcWallet = WalletBitcoinManager.getInstance(app);
         if (btcWallet.getSettingsConfiguration().mSettingList.size() > 0)
-            items.add(new BRSettingsItem(btcWallet.getName(app), "", new View.OnClickListener() {
+            items.add(new BRSettingsItem(btcWallet.getName(), "", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(SettingsActivity.this, CurrencySettingsActivity.class);
-                    BRSharedPrefs.putCurrentWalletIso(app, btcWallet.getIso(app)); //change the current wallet to the one they enter settings to
+                    BRSharedPrefs.putCurrentWalletIso(app, btcWallet.getIso()); //change the current wallet to the one they enter settings to
                     startActivity(intent);
                     overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 }
             }, false, R.drawable.chevron_right_light));
         final WalletBchManager bchWallet = WalletBchManager.getInstance(app);
         if (bchWallet.getSettingsConfiguration().mSettingList.size() > 0)
-            items.add(new BRSettingsItem(WalletBchManager.getInstance(app).getName(app), "", new View.OnClickListener() {
+            items.add(new BRSettingsItem(WalletBchManager.getInstance(app).getName(), "", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(SettingsActivity.this, CurrencySettingsActivity.class);
-                    BRSharedPrefs.putCurrentWalletIso(app, bchWallet.getIso(app));//change the current wallet to the one they enter settings to
+                    BRSharedPrefs.putCurrentWalletIso(app, bchWallet.getIso());//change the current wallet to the one they enter settings to
                     startActivity(intent);
                     overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 }
             }, false, R.drawable.chevron_right_light));
         final WalletEthManager ethWallet = WalletEthManager.getInstance(app);
         if (ethWallet.getSettingsConfiguration().mSettingList.size() > 0)
-            items.add(new BRSettingsItem(WalletEthManager.getInstance(app).getName(app), "", new View.OnClickListener() {
+            items.add(new BRSettingsItem(WalletEthManager.getInstance(app).getName(), "", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     Intent intent = new Intent(SettingsActivity.this, CurrencySettingsActivity.class);
-                    BRSharedPrefs.putCurrentWalletIso(app, ethWallet.getIso(app));//change the current wallet to the one they enter settings to
+                    BRSharedPrefs.putCurrentWalletIso(app, ethWallet.getIso());//change the current wallet to the one they enter settings to
                     startActivity(intent);
                     overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                 }

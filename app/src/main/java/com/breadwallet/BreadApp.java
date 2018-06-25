@@ -3,6 +3,7 @@ package com.breadwallet;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.Application;
+import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
 import android.content.IntentFilter;
 import android.graphics.Point;
@@ -13,16 +14,19 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.breadwallet.presenter.activities.util.ApplicationLifecycleObserver;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.listeners.SyncReceiver;
+import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.crashlytics.android.Crashlytics;
+import com.platform.APIClient;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -36,7 +40,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static com.platform.APIClient.BREAD_POINT;
 import io.fabric.sdk.android.Fabric;
 
 /**
@@ -67,15 +70,16 @@ import io.fabric.sdk.android.Fabric;
 public class BreadApp extends Application {
     private static final String TAG = BreadApp.class.getName();
     public static int DISPLAY_HEIGHT_PX;
-    FingerprintManager mFingerprintManager;
+    public static int DISPLAY_WIDTH_PX;
+    private FingerprintManager mFingerprintManager;
     // host is the server(s) on which the API is hosted
     public static String HOST = "api.breadwallet.com";
     private static List<OnAppBackgrounded> listeners;
     private static Timer isBackgroundChecker;
     public static AtomicInteger activityCounter = new AtomicInteger();
     public static long backgroundedTime;
-    public static boolean appInBackground;
     private static Context mContext;
+    private ApplicationLifecycleObserver mObserver;
 
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
 
@@ -98,11 +102,10 @@ public class BreadApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        boolean debug = Utils.isEmulatorOrDebug(this);
         HOST = "stage2.breadwallet.com";
         final Fabric fabric = new Fabric.Builder(this)
-                .kits(new Crashlytics())
-                .debuggable(debug)// Enables Crashlytics debugger
+                .kits(new Crashlytics.Builder().disabled(BuildConfig.DEBUG).build())
+                .debuggable(BuildConfig.DEBUG)// Enables Crashlytics debugger
                 .build();
         Fabric.with(fabric);
 
@@ -124,25 +127,27 @@ public class BreadApp extends Application {
         if (!Utils.isEmulatorOrDebug(this) && IS_ALPHA)
             throw new RuntimeException("can't be alpha for release");
 
-        boolean isTestVersion = BREAD_POINT.contains("staging") || BREAD_POINT.contains("stage");
+        boolean isTestVersion = APIClient.getInstance(this).isStaging();
         boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
         String lang = getCurrentLocale(this);
 
-        mHeaders.put("X-Is-Internal", IS_ALPHA ? "true" : "false");
-        mHeaders.put("X-Testflight", isTestVersion ? "true" : "false");
-        mHeaders.put("X-Bitcoin-Testnet", isTestNet ? "true" : "false");
-        mHeaders.put("Accept-Language", lang);
-
+        mHeaders.put(BRApiManager.HEADER_IS_INTERNAL, IS_ALPHA ? "true" : "false");
+        mHeaders.put(BRApiManager.HEADER_TESTFLIGHT, isTestVersion ? "true" : "false");
+        mHeaders.put(BRApiManager.HEADER_TESTNET, isTestNet ? "true" : "false");
+        mHeaders.put(BRApiManager.HEADER_ACCEPT_LANGUAGE, lang);
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        int DISPLAY_WIDTH_PX = size.x;
+        DISPLAY_WIDTH_PX = size.x;
         DISPLAY_HEIGHT_PX = size.y;
         mFingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
 
         registerReceiver(InternetManager.getInstance(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
+
+        mObserver = new ApplicationLifecycleObserver();
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(mObserver);
 
     }
 
@@ -154,6 +159,7 @@ public class BreadApp extends Application {
                 BRSharedPrefs.putWalletRewardId(app, rewardId);
             } else BRReportsManager.reportBug(new NullPointerException("rewardId is empty"));
         }
+
     }
 
     private static synchronized String generateWalletId(Context app, String address) {
@@ -264,4 +270,6 @@ public class BreadApp extends Application {
     public interface OnAppBackgrounded {
         void onBackgrounded();
     }
+
+
 }

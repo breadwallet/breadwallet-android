@@ -12,6 +12,7 @@ import android.view.Display;
 import android.view.WindowManager;
 import android.widget.ImageView;
 
+import com.breadwallet.R;
 import com.breadwallet.wallet.WalletsMaster;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.EncodeHintType;
@@ -55,6 +56,8 @@ import static android.graphics.Color.WHITE;
  */
 public class QRUtils {
     private static final String TAG = QRUtils.class.getName();
+    private static final String SHARE_IMAGE_TYPE = "image/*";
+    private static final String SHARE_SUBJECT = " Address";
 
     public static Bitmap encodeAsBitmap(String content, int dimension) {
 
@@ -160,26 +163,17 @@ public class QRUtils {
         Uri uri = FileProvider.getUriForFile(app, "com.breadwallet", file);
 
         Intent intent = new Intent();
-        if (via.equalsIgnoreCase("sms:")) {
-            intent.setAction(Intent.ACTION_VIEW);
-            intent.setData(Uri.parse("sms:"));
-            intent.putExtra("sms_body", bitcoinUri);
-            intent.putExtra("exit_on_sent", true);
-            app.startActivity(intent);
-
-        } else {
-            intent.setAction(Intent.ACTION_SEND);
-            intent.setType("image/*");
-            intent.putExtra(Intent.EXTRA_SUBJECT, WalletsMaster.getInstance(app).getCurrentWallet(app).getName(app) + " Address");
-            intent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            if (uri != null) {
-                intent.putExtra(Intent.EXTRA_STREAM, uri);
-                Log.d(TAG, "Uri -> " + file.getPath());
-            } else
-                Log.d(TAG, "Bitmap uri is null!");
-            app.startActivity(Intent.createChooser(intent, "Open mail app"));
-        }
+        intent.setAction(Intent.ACTION_SEND);
+        intent.setType(SHARE_IMAGE_TYPE);
+        intent.putExtra(Intent.EXTRA_SUBJECT, WalletsMaster.getInstance(app).getCurrentWallet(app).getName() + SHARE_SUBJECT);
+        intent.putExtra(Intent.EXTRA_TEXT, bitcoinUri);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        if (uri != null) {
+            intent.putExtra(Intent.EXTRA_STREAM, uri);
+            Log.d(TAG, "Uri -> " + file.getPath());
+        } else
+            Log.d(TAG, "Bitmap uri is null!");
+        app.startActivity(Intent.createChooser(intent, app.getString(R.string.QRUtils_ShareTitle)));
 
 
     }

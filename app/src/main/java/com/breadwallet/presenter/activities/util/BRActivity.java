@@ -23,12 +23,13 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.util.CryptoUriParser;
 import com.platform.HTTPServer;
+import com.platform.UserMetricsManager;
 import com.platform.tools.BRBitId;
 
 /**

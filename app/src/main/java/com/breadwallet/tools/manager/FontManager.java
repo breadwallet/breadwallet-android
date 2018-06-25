@@ -34,6 +34,9 @@ public class FontManager {
 
     private static final Hashtable<String, Typeface> cache = new Hashtable<>();
 
+    private FontManager() {
+    }
+
     public static void overrideFonts(TextView... v) {
         if (v == null) return;
         Typeface FONT_REGULAR = Typeface.create("sans-serif-light", Typeface.NORMAL);
@@ -64,7 +67,7 @@ public class FontManager {
 
     public static boolean setCustomFont(Context ctx, TextView v, String asset) {
         //make CircularPro-Book.otf default
-        Typeface tf = FontManager.get(ctx,  asset);
+        Typeface tf = FontManager.get(ctx, asset);
         v.setTypeface(tf);
         return true;
     }

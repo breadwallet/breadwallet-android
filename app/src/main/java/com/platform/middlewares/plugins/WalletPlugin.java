@@ -91,20 +91,28 @@ public class WalletPlugin implements Plugin {
                 /**whether or not the users wallet is set up yet, or is currently locked*/
                 jsonResp.put("no_wallet", wm.noWalletForPlatform(app));
 
-                String addrs = BRSharedPrefs.getReceiveAddress(app, wm.getCurrentWallet(app).getIso(app));
-                if (Utils.isNullOrEmpty(addrs)) {
-                    BRReportsManager.reportBug(new NullPointerException("Address is null for simplex!"));
-                    Log.e(TAG, "handle: Address is null for simplex!");
-                    addrs = wm.getCurrentWallet(app).getReceiveAddress(app).stringify();
+                String address = w.getReceiveAddress(app).stringify();
+                if (Utils.isNullOrEmpty(address)) {
+                    throw new IllegalArgumentException("Bitcoin address is empty");
                 }
+
                 /**the current receive address*/
-                jsonResp.put("receive_address", w == null ? "" : w.getReceiveAddress(app).stringify());
+                jsonResp.put("receive_address", address);
 
                 /**how digits after the decimal point. 2 = bits 8 = btc 6 = mbtc*/
-                jsonResp.put("btc_denomiation_digits", w == null ? "" : w.getMaxDecimalPlaces(app));
+                jsonResp.put("btc_denomiation_digits", w.getMaxDecimalPlaces(app));
+                String preferredCode = BRSharedPrefs.getPreferredFiatIso(app);
+                Currency fiatCurrency = Currency.getInstance(preferredCode);
 
                 /**the users native fiat currency as an ISO 4217 code. Should be uppercased */
-                jsonResp.put("local_currency_code", Currency.getInstance(Locale.getDefault()).getCurrencyCode().toUpperCase());
+                jsonResp.put("local_currency_code", fiatCurrency.getCurrencyCode().toUpperCase());
+
+                /**the user's fiat precision (e.g. 2 for USD, 0 for JPY, etc)*/
+                jsonResp.put("local_currency_precision", fiatCurrency.getDefaultFractionDigits());
+
+                /**the user's native fiat currency symbol*/
+                jsonResp.put("local_currency_symbol", fiatCurrency.getSymbol());
+
                 APIClient.BRResponse resp = new APIClient.BRResponse(jsonResp.toString().getBytes(), 200, "application/json");
 
                 return BRHTTPHelper.handleSuccess(resp, baseRequest, response);
@@ -315,7 +323,7 @@ public class WalletPlugin implements Plugin {
 
             JSONObject obj = new JSONObject();
             try {
-                obj.put("currency", w.getIso(app));
+                obj.put("currency", w.getIso());
                 obj.put("address", w.getReceiveAddress(app).stringify());
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -357,9 +365,9 @@ public class WalletPlugin implements Plugin {
         }
 
         final BaseWalletManager wm = WalletsMaster.getInstance(app).getWalletByIso(app, currency);
-        String addr = wm.undecorateAddress(app, toAddress);
+        String addr = wm.undecorateAddress(toAddress);
         if (Utils.isNullOrEmpty(addr)) {
-            BRDialog.showSimpleDialog(app, "Failed to create tx for exchange!", "Invalid address: " + addr);
+            BRDialog.showSimpleDialog(app, "Failed to create tx for exchange!", "Address is empty");
             return;
         }
         BigDecimal bigAmount = WalletsMaster.getInstance(app).isIsoErc20(app, currency) ?
@@ -395,24 +403,25 @@ public class WalletPlugin implements Plugin {
         for (BaseWalletManager w : list) {
             JSONObject obj = new JSONObject();
             try {
-                obj.put("id", w.getIso(app));
-                obj.put("ticker", w.getIso(app));
-                obj.put("name", w.getName(app));
+                obj.put("id", w.getIso());
+                obj.put("ticker", w.getIso());
+                obj.put("name", w.getName());
 
                 //Colors
                 JSONArray colors = new JSONArray();
-                colors.put(w.getUiConfiguration().mStartColor);
-                colors.put(w.getUiConfiguration().mEndColor);
+                colors.put(w.getUiConfiguration().getStartColor());
+                colors.put(w.getUiConfiguration().getEndColor());
 
                 obj.put("colors", colors);
 
                 //Balance
                 //TODO Temporary solution due to the fact that the erc20 balances are stored in Decimals rather than smallest currency (WEI, SATOSHIS)
                 JSONObject balance = new JSONObject();
-                boolean isErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, w.getIso(app));
+
+                boolean isErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, w.getIso());
                 BigDecimal rawBalance = w.getCachedBalance(app);
-                String denominator = w.getDenominator(app);
-                balance.put("currency", w.getIso(app));
+                String denominator = w.getDenominator();
+                balance.put("currency", w.getIso());
                 balance.put("numerator", isErc20 ? rawBalance.multiply(new BigDecimal(denominator)).toPlainString() : rawBalance.toPlainString());
                 balance.put("denominator", denominator);
 

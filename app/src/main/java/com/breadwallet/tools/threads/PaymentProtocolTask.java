@@ -81,11 +81,11 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             Log.e(TAG, "the uri: " + params[0]);
             URL url = new URL(params[0]);
             BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-            if (!wm.getIso(app).equalsIgnoreCase("BTC") && !wm.getIso(app).equalsIgnoreCase("BCH")) {
-                throw new RuntimeException("Can't happen, Payment protocol for: " + wm.getIso(app));
+            if (!wm.getIso().equalsIgnoreCase("BTC") && !wm.getIso().equalsIgnoreCase("BCH")) {
+                throw new RuntimeException("Can't happen, Payment protocol for: " + wm.getIso());
             }
             urlConnection = (HttpURLConnection) url.openConnection();
-            urlConnection.setRequestProperty("Accept", "application/" + wm.getName(app).toLowerCase() + "-paymentrequest");
+            urlConnection.setRequestProperty("Accept", "application/" + wm.getName().toLowerCase() + "-paymentrequest");
             urlConnection.setConnectTimeout(3000);
             urlConnection.setReadTimeout(3000);
             urlConnection.setUseCaches(false);
@@ -278,7 +278,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
             allAddresses.append(output.getAddress()).append(", ");
         }
         final BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-        BRCoreWallet coreWallet = wm.getIso(app).equalsIgnoreCase("BTC") ? ((WalletBitcoinManager) wm).getWallet() : ((WalletBchManager) wm).getWallet();
+        BRCoreWallet coreWallet = wm.getIso().equalsIgnoreCase("BTC") ? ((WalletBitcoinManager) wm).getWallet() : ((WalletBchManager) wm).getWallet();
         final BRCoreTransaction trans = coreWallet.createTransactionForOutputs(paymentProtocolRequest.getOutputs());
         if (trans == null) {
             BRDialog.showSimpleDialog(app, "Insufficient funds", "");
@@ -303,7 +303,7 @@ public class PaymentProtocolTask extends AsyncTask<String, String, String> {
                 BigDecimal minOutput = wm.getMinOutputAmount(app);
                 if (txAmt.compareTo(minOutput) < 0) {
                     final String bitcoinMinMessage = String.format(Locale.getDefault(), app.getString(R.string.PaymentProtocol_Errors_smallTransaction),
-                            BRConstants.symbolBits + minOutput.divide(new BigDecimal("100")));
+                            BRConstants.BITS_SYMBOL + minOutput.divide(new BigDecimal("100")));
                     app.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {

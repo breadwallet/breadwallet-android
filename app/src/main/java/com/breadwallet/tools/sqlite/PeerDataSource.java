@@ -35,7 +35,6 @@ import com.breadwallet.presenter.entities.BRPeerEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.BRConstants;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -156,7 +155,7 @@ public class PeerDataSource implements BRDataSourceInterface {
         // Opening new database
         if (database == null || !database.isOpen())
             database = dbHelper.getWritableDatabase();
-        dbHelper.setWriteAheadLoggingEnabled(BRConstants.WAL);
+        dbHelper.setWriteAheadLoggingEnabled(BRConstants.WRITE_AHEAD_LOGGING);
 //        }
 //        Log.d("Database open counter: ",  String.valueOf(mOpenCounter.get()));
         return database;
