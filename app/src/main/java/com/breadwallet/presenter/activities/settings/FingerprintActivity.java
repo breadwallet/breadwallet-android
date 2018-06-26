@@ -20,7 +20,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
@@ -67,9 +67,9 @@ public class FingerprintActivity extends BRActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(FingerprintActivity.this).getCurrentWallet(FingerprintActivity.this);
-                BRAnimator.showSupportFragment(FingerprintActivity.this, BRConstants.FAQ_ENABLE_FINGERPRINT, wm);
+                UiUtils.showSupportFragment(FingerprintActivity.this, BRConstants.FAQ_ENABLE_FINGERPRINT, wm);
             }
         });
 

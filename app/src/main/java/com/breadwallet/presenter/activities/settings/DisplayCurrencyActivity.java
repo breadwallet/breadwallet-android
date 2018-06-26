@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.sqlite.RatesDataSource;
@@ -66,9 +66,9 @@ public class DisplayCurrencyActivity extends BaseSettingsActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(DisplayCurrencyActivity.this).getCurrentWallet(DisplayCurrencyActivity.this);
-                BRAnimator.showSupportFragment(DisplayCurrencyActivity.this, BRConstants.FAQ_DISPLAY_CURRENCY, wm);
+                UiUtils.showSupportFragment(DisplayCurrencyActivity.this, BRConstants.FAQ_DISPLAY_CURRENCY, wm);
             }
         });
 

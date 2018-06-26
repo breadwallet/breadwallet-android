@@ -9,7 +9,7 @@ import android.widget.ImageButton;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -46,17 +46,17 @@ public class ImportActivity extends BRActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(ImportActivity.this).getCurrentWallet(ImportActivity.this);
-                BRAnimator.showSupportFragment(ImportActivity.this, BRConstants.FAQ_IMPORT_WALLET, wm);
+                UiUtils.showSupportFragment(ImportActivity.this, BRConstants.FAQ_IMPORT_WALLET, wm);
             }
         });
 
         scan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.openScanner(ImportActivity.this, BRConstants.SCANNER_REQUEST);
+                if (!UiUtils.isClickAllowed()) return;
+                UiUtils.openScanner(ImportActivity.this, BRConstants.SCANNER_REQUEST);
             }
         });
     }
@@ -93,7 +93,7 @@ public class ImportActivity extends BRActivity {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    BRAnimator.openScanner(this, BRConstants.SCANNER_REQUEST);
+                    UiUtils.openScanner(this, BRConstants.SCANNER_REQUEST);
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
 

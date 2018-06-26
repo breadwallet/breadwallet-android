@@ -113,25 +113,25 @@ public class BRLinearLayoutWithCaret extends LinearLayout {
         backgroundPaint.setColor(getContext().getColor(R.color.extra_light_blue_background));
 
         setBackgroundColor(getContext().getColor(android.R.color.transparent));
-        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.BRLinearLayoutWithCaret);
-        final int N = a.getIndexCount();
+        TypedArray attributes = getContext().obtainStyledAttributes(attrs, R.styleable.BRLinearLayoutWithCaret);
+        final int N = attributes.getIndexCount();
         for (int i = 0; i < N; ++i) {
-            int attr = a.getIndex(i);
+            int attr = attributes.getIndex(i);
             switch (attr) {
                 case R.styleable.BRLinearLayoutWithCaret_strokeColor:
-                    @ColorInt int strokeColor = a.getColor(attr, 0);
+                    @ColorInt int strokeColor = attributes.getColor(attr, 0);
                     if (strokeColor != 0) strokePaint.setColor(strokeColor);
                     break;
                 case R.styleable.BRLinearLayoutWithCaret_backgroundColor:
-                    @ColorInt int bgColor = a.getColor(attr, 0);
+                    @ColorInt int bgColor = attributes.getColor(attr, 0);
                     if (bgColor != 0) backgroundPaint.setColor(bgColor);
                     break;
                 case R.styleable.BRLinearLayoutWithCaret_withStroke:
-                    withStroke = a.getBoolean(attr, false);
+                    withStroke = attributes.getBoolean(attr, false);
                     break;
             }
         }
-        a.recycle();
+        attributes.recycle();
 
     }
 

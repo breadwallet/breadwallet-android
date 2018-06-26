@@ -16,7 +16,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRReportsManager;
@@ -56,16 +56,18 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_words);
 
-        if (Utils.isEmulatorOrDebug(this)) {
-//            mDebugPhrase = "こせき　ぎじにってい　けっこん　せつぞく　うんどう　ふこう　にっすう　こせい　きさま　なまみ　たきび　はかい";//japanese
-//            mDebugPhrase = "video tiger report bid suspect taxi mail argue naive layer metal surface";//english
-//            mDebugPhrase = "vocation triage capsule marchand onduler tibia illicite entier fureur minorer amateur lubie";//french
-//            mDebugPhrase = "zorro turismo mezcla nicho morir chico blanco pájaro alba esencia roer repetir";//spanish
-//            mDebugPhrase = "怨 贪 旁 扎 吹 音 决 廷 十 助 畜 怒";//chinese
-//            mDebugPhrase = "aim lawn sniff tenant coffee smoke meat hockey glow try also angle";
-//            mDebugPhrase = "oído largo pensar grúa vampiro nación tomar agitar mano azote tarea miedo";
-
-        }
+//        if (Utils.isEmulatorOrDebug(this)) {
+//            //japanese
+//            mDebugPhrase = "こせき　ぎじにってい　けっこん　せつぞく　うんどう　ふこう　にっすう　こせい　きさま　なまみ　たきび　はかい";
+//            //english
+//            mDebugPhrase = "video tiger report bid suspect taxi mail argue naive layer metal surface";
+//            //french
+//            mDebugPhrase = "vocation triage capsule marchand onduler tibia illicite entier fureur minorer amateur lubie";
+//            //spanish
+//            mDebugPhrase = "zorro turismo mezcla nicho morir chico blanco pájaro alba esencia roer repetir";
+//            //chinese
+//            mDebugPhrase = "怨 贪 旁 扎 吹 音 决 廷 十 助 畜 怒";
+//        }
 
         mNextButton = findViewById(R.id.send_button);
 
@@ -91,9 +93,9 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(InputWordsActivity.this).getCurrentWallet(InputWordsActivity.this);
-                BRAnimator.showSupportFragment(InputWordsActivity.this, BRConstants.FAQ_PAPER_KEY, wm);
+                UiUtils.showSupportFragment(InputWordsActivity.this, BRConstants.FAQ_PAPER_KEY, wm);
             }
         });
 
@@ -146,7 +148,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 final Activity app = InputWordsActivity.this;
                 String phraseToCheck = getPhrase();
                 if (Utils.isEmulatorOrDebug(app) && !Utils.isNullOrEmpty(mDebugPhrase)) {
@@ -177,7 +179,11 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                                                 m.wipeWalletButKeystore(app);
                                                 m.wipeKeyStore(app);
                                                 Intent intent = new Intent(app, IntroActivity.class);
-                                                finalizeIntent(intent);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                                                startActivity(intent);
+                                                if (!InputWordsActivity.this.isDestroyed())
+                                                    finish();
                                             }
                                         }, new BRDialogView.BROnClickListener() {
                                             @Override
@@ -187,10 +193,11 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                                         }, null, 0);
 
                             } else {
-                                AuthManager.getInstance().setPinCode("", InputWordsActivity.this);
-                                Intent intent = new Intent(app, SetPinActivity.class);
-                                intent.putExtra("noPin", true);
-                                finalizeIntent(intent);
+                                AuthManager.getInstance().setPinCode(InputWordsActivity.this, "");
+                                Intent intent = new Intent(app, InputPinActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                                startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
                             }
 
 
@@ -229,13 +236,6 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
             }
         });
 
-    }
-
-    private void finalizeIntent(Intent intent) {
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-        startActivity(intent);
-        if (!InputWordsActivity.this.isDestroyed()) finish();
     }
 
     @Override
@@ -290,10 +290,6 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-    }
-
-    @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if (!hasFocus) {
             validateWord((EditText) v);
@@ -309,6 +305,20 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         if (!valid) {
             SpringAnimator.failShakeAnimation(this, view);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == InputPinActivity.SET_PIN_REQUEST_CODE && resultCode == RESULT_OK) {
+
+            boolean isPinAccepted = data.getBooleanExtra(InputPinActivity.EXTRA_PIN_ACCEPTED, false);
+            if (isPinAccepted) {
+                UiUtils.startBreadActivity(this, false);
+            }
+        }
+
     }
 
 }
