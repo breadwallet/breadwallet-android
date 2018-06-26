@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -21,7 +20,7 @@ import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.tools.adapter.WalletListAdapter;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -42,7 +41,7 @@ import java.util.ArrayList;
  * Home activity that will show a list of a user's wallets
  */
 
-public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener , RatesDataSource.OnDataChanged{
+public class HomeActivity extends BRActivity implements InternetManager.ConnectionReceiverListener, RatesDataSource.OnDataChanged {
 
     private static final String TAG = HomeActivity.class.getSimpleName();
 
@@ -132,10 +131,10 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mSupport.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(HomeActivity.this).getCurrentWallet(HomeActivity.this);
 
-                BRAnimator.showSupportFragment(HomeActivity.this, null, wm);
+                UiUtils.showSupportFragment(HomeActivity.this, null, wm);
             }
         });
 
@@ -220,7 +219,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             @Override
             public void run() {
                 Thread.currentThread().setName("BG:" + TAG + ":refreshBalances and address");
-                Activity app = HomeActivity.this;
                 WalletsMaster.getInstance(app).refreshBalances(app);
                 WalletsMaster.getInstance(app).getCurrentWallet(app).refreshAddress(app);
             }

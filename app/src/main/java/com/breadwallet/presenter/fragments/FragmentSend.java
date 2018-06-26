@@ -35,7 +35,7 @@ import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
 import com.breadwallet.presenter.viewmodels.SendViewModel;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.animation.SpringAnimator;
@@ -180,21 +180,21 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 Activity app = getActivity();
                 if (app == null) {
                     Log.e(TAG, "onClick: app is null, can't start the webview with url: " + URL_SUPPORT);
                     return;
                 }
                 BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                BRAnimator.showSupportFragment((FragmentActivity) app, BRConstants.FAQ_SEND, wm);
+                UiUtils.showSupportFragment((FragmentActivity) app, BRConstants.FAQ_SEND, wm);
             }
         });
 
         showKeyboard(false);
         setButton(true);
 
-        mSignalLayout.setLayoutTransition(BRAnimator.getDefaultTransition());
+        mSignalLayout.setLayoutTransition(UiUtils.getDefaultTransition());
 
         return rootView;
     }
@@ -286,7 +286,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mPaste.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 String theUrl = BRClipboardManager.getClipboard(getActivity());
                 if (Utils.isNullOrEmpty(theUrl)) {
                     sayClipboardEmpty();
@@ -401,9 +401,9 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mScan.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 saveViewModelData();
-                BRAnimator.openScanner(getActivity(), BRConstants.SCANNER_REQUEST);
+                UiUtils.openScanner(getActivity(), BRConstants.SCANNER_REQUEST);
 
             }
         });
@@ -411,7 +411,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             @Override
             public void onClick(View v) {
                 //not allowed now
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 WalletsMaster master = WalletsMaster.getInstance(getActivity());
                 final BaseWalletManager wm = master.getCurrentWallet(getActivity());
                 //get the current wallet used
@@ -492,7 +492,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mBackgroundLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 getActivity().onBackPressed();
             }
         });
@@ -653,10 +653,10 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         }
     }
 
-    private void handleDigitClick(Integer dig) {
+    private void handleDigitClick(Integer digit) {
         String currAmount = mViewModel.getAmount();
         BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
-        if (new BigDecimal(currAmount.concat(String.valueOf(dig))).compareTo(wm.getMaxAmount(getActivity())) <= 0) {
+        if (new BigDecimal(currAmount.concat(String.valueOf(digit))).compareTo(wm.getMaxAmount(getActivity())) <= 0) {
             //do not insert 0 if the balance is 0 now
             if (currAmount.equalsIgnoreCase("0")) {
                 mViewModel.setAmount("");
@@ -665,7 +665,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             if ((currAmount.contains(".") && isDigitLimitReached)) {
                 return;
             }
-            mViewModel.setAmount(mViewModel.getAmount() + dig);
+            mViewModel.setAmount(mViewModel.getAmount() + digit);
             updateText();
         }
     }

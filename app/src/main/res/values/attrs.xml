@@ -19,6 +19,9 @@
         <attr name="customBFont" format="string"/>
         <attr name="hasShadow" format="boolean"/>
     </declare-styleable>
+    <declare-styleable name="PinLayout">
+        <attr name="pinDigitsResId" format="reference"/>
+    </declare-styleable>
 
     <declare-styleable name="BRKeyboard">
         <attr name="showAlphabet" format="boolean"/>

@@ -11,7 +11,7 @@ import com.breadwallet.presenter.activities.settings.SpendLimitActivity;
 import com.breadwallet.presenter.activities.settings.SyncBlockchainActivity;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.security.AuthManager;
 
 import java.math.BigDecimal;
@@ -59,7 +59,7 @@ public class WalletSettingsConfiguration {
             mSettingList.add(new BRSettingsItem("Redeem Private Key", "", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!BRAnimator.isClickAllowed()) return;
+                    if (!UiUtils.isClickAllowed()) return;
                     Activity app = (Activity) v.getContext();
                     Intent intent = new Intent(app, ImportActivity.class);
                     app.startActivity(intent);
@@ -71,7 +71,7 @@ public class WalletSettingsConfiguration {
             mSettingList.add(new BRSettingsItem("Rescan Blockchain", "", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (!BRAnimator.isClickAllowed()) return;
+                    if (!UiUtils.isClickAllowed()) return;
                     Activity app = (Activity) v.getContext();
                     Intent intent = new Intent(app, SyncBlockchainActivity.class);
                     app.startActivity(intent);

@@ -6,7 +6,7 @@ import android.content.Intent;
 import android.view.View;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.UpdatePinActivity;
+import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.FingerprintActivity;
 import com.breadwallet.presenter.activities.settings.ShareDataActivity;
@@ -134,9 +134,11 @@ public class PromptManager {
                 return new PromptInfo(app.getString(R.string.Prompts_UpgradePin_title), app.getString(R.string.Prompts_UpgradePin_body), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(app, UpdatePinActivity.class);
-                        app.startActivity(intent);
+                        Intent intent = new Intent(app, InputPinActivity.class);
+                        intent.putExtra(InputPinActivity.EXTRA_PIN_MODE_UPDATE, true);
                         app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                        app.startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
+
                     }
                 });
             case RECOMMEND_RESCAN:

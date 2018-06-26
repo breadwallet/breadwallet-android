@@ -12,7 +12,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.util.BRConstants;
@@ -47,9 +47,9 @@ public class DisabledActivity extends BRActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(DisabledActivity.this).getCurrentWallet(DisabledActivity.this);
-                BRAnimator.showSupportFragment(DisabledActivity.this, BRConstants.FAQ_WALLET_DISABLE, wm);
+                UiUtils.showSupportFragment(DisabledActivity.this, BRConstants.FAQ_WALLET_DISABLE, wm);
             }
         });
 
@@ -78,7 +78,7 @@ public class DisabledActivity extends BRActivity {
         if (AuthManager.getInstance().isWalletDisabled(DisabledActivity.this)) {
             SpringAnimator.failShakeAnimation(DisabledActivity.this, disabled);
         } else {
-            BRAnimator.startBreadActivity(DisabledActivity.this, true);
+            UiUtils.startBreadActivity(DisabledActivity.this, true);
         }
     }
 
@@ -130,7 +130,7 @@ public class DisabledActivity extends BRActivity {
         } else if (AuthManager.getInstance().isWalletDisabled(DisabledActivity.this)) {
             SpringAnimator.failShakeAnimation(DisabledActivity.this, disabled);
         } else {
-            BRAnimator.startBreadActivity(DisabledActivity.this, true);
+            UiUtils.startBreadActivity(DisabledActivity.this, true);
         }
         overridePendingTransition(R.anim.fade_up, R.anim.fade_down);
     }

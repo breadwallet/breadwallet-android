@@ -18,7 +18,7 @@ import android.webkit.WebViewClient;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.util.Utils;
 import com.platform.HTTPServer;
@@ -70,7 +70,7 @@ public class FragmentSupport extends ModalDialogFragment {
 
         mSignalLayout.setOnTouchListener(new SlideDetector(getContext(), mSignalLayout));
 
-        mSignalLayout.setLayoutTransition(BRAnimator.getDefaultTransition());
+        mSignalLayout.setLayoutTransition(UiUtils.getDefaultTransition());
 
         mWebView = rootView.findViewById(R.id.web_view);
         mWebView.setWebChromeClient(new BRWebChromeClient());
@@ -148,6 +148,7 @@ public class FragmentSupport extends ModalDialogFragment {
     public void onPause() {
         super.onPause();
         Utils.hideKeyboard(getActivity());
+        UiUtils.setIsSupportFragmentShown(false);
     }
 
 }

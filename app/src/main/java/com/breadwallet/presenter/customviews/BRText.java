@@ -59,10 +59,10 @@ public class BRText extends TextView {
     }
 
     private void init(Context ctx, AttributeSet attrs) {
-        TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.BRText);
-        String customFont = a.getString(R.styleable.BRText_customTFont);
+        TypedArray attributes = ctx.obtainStyledAttributes(attrs, R.styleable.BRText);
+        String customFont = attributes.getString(R.styleable.BRText_customTFont);
         FontManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Book.otf" : customFont);
-        a.recycle();
+        attributes.recycle();
         setLineSpacing(0, 1.3f);
 
         //setTextDirection(TEXT_DIRECTION_LTR);

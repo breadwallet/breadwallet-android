@@ -81,17 +81,17 @@ public class BRKeyboard extends LinearLayout implements View.OnClickListener {
     private void init(AttributeSet attrs) {
         View root = inflate(getContext(), R.layout.pin_pad, this);
 
-        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.BRKeyboard);
-        final int N = a.getIndexCount();
+        TypedArray attributes = getContext().obtainStyledAttributes(attrs, R.styleable.BRKeyboard);
+        final int N = attributes.getIndexCount();
         for (int i = 0; i < N; ++i) {
-            int attr = a.getIndex(i);
+            int attr = attributes.getIndex(i);
             switch (attr) {
                 case R.styleable.BRKeyboard_showAlphabet:
-                    showAlphabet = a.getBoolean(attr, false);
+                    showAlphabet = attributes.getBoolean(attr, false);
                     break;
             }
         }
-        a.recycle();
+        attributes.recycle();
 
         this.setWillNotDraw(false);
         num0 = root.findViewById(R.id.num0);

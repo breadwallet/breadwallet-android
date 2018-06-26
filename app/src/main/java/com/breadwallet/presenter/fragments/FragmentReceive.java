@@ -24,7 +24,7 @@ import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
 import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -126,7 +126,7 @@ public class FragmentReceive extends ModalDialogFragment implements OnBalanceCha
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 Activity app = getActivity();
                 if (app == null) {
                     Log.e(TAG, "onClick: app is null, can't start the webview with url: " + URL_SUPPORT);
@@ -134,14 +134,14 @@ public class FragmentReceive extends ModalDialogFragment implements OnBalanceCha
                 }
 
                 BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                BRAnimator.showSupportFragment((FragmentActivity) app, BRConstants.FAQ_RECEIVE, wm);
+                UiUtils.showSupportFragment((FragmentActivity) app, BRConstants.FAQ_RECEIVE, wm);
             }
         });
 
         mSignalLayout.removeView(mShareButtonsLayout);
         mSignalLayout.removeView(mCopiedLayout);
 
-        mSignalLayout.setLayoutTransition(BRAnimator.getDefaultTransition());
+        mSignalLayout.setLayoutTransition(UiUtils.getDefaultTransition());
 
         mSignalLayout.setOnTouchListener(new SlideDetector(getContext(), mSignalLayout));
 
@@ -153,7 +153,7 @@ public class FragmentReceive extends ModalDialogFragment implements OnBalanceCha
         mShareEmailButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
                         walletManager.decorateAddress(mReceiveAddress),
@@ -166,7 +166,7 @@ public class FragmentReceive extends ModalDialogFragment implements OnBalanceCha
         mShareMessageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 Uri cryptoUri = CryptoUriParser.createCryptoUrl(getActivity(), walletManager,
                         walletManager.decorateAddress(mReceiveAddress),
@@ -177,7 +177,7 @@ public class FragmentReceive extends ModalDialogFragment implements OnBalanceCha
         mShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 mIsShareButtonsShown = !mIsShareButtonsShown;
                 showShareButtons(mIsShareButtonsShown);
             }
@@ -185,17 +185,17 @@ public class FragmentReceive extends ModalDialogFragment implements OnBalanceCha
         mAddress.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 copyText();
             }
         });
         mRequestButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 Activity app = getActivity();
                 app.getFragmentManager().popBackStack();
-                BRAnimator.showRequestFragment((FragmentActivity) app);
+                UiUtils.showRequestFragment((FragmentActivity) app);
 
             }
         });
@@ -203,14 +203,14 @@ public class FragmentReceive extends ModalDialogFragment implements OnBalanceCha
         mBackgroundLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 getActivity().onBackPressed();
             }
         });
         mQrImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 copyText();
             }
         });

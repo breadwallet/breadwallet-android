@@ -9,7 +9,7 @@ import android.widget.ImageButton;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.InputWordsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -38,16 +38,16 @@ public class UnlinkActivity extends BRActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(UnlinkActivity.this).getCurrentWallet(UnlinkActivity.this);
-                BRAnimator.showSupportFragment(UnlinkActivity.this, BRConstants.FAQ_WIPE_WALLET, wm);
+                UiUtils.showSupportFragment(UnlinkActivity.this, BRConstants.FAQ_WIPE_WALLET, wm);
             }
         });
 
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 Intent intent = new Intent(UnlinkActivity.this, InputWordsActivity.class);
                 intent.putExtra(InputWordsActivity.EXTRA_UNLINK, true);
                 startActivity(intent);
@@ -58,7 +58,7 @@ public class UnlinkActivity extends BRActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 onBackPressed();
             }
         });

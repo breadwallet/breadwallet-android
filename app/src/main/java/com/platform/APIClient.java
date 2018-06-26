@@ -10,7 +10,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.core.BRCoreKey;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -182,7 +182,7 @@ public class APIClient {
 
     //returns the fee per kb or 0 if something went wrong
     public long feePerKb() {
-        if (ActivityUTILS.isMainThread()) {
+        if (UiUtils.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
         try {
@@ -199,7 +199,7 @@ public class APIClient {
 
     //only for testing
     public String buyBitcoinMe() {
-        if (ActivityUTILS.isMainThread()) {
+        if (UiUtils.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
         if (mContext == null) {
@@ -224,7 +224,7 @@ public class APIClient {
         }
         mIsFetchingToken = true;
 
-        if (ActivityUTILS.isMainThread()) {
+        if (UiUtils.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
         if (mContext == null) {
@@ -301,7 +301,7 @@ public class APIClient {
     }
 
     private Response sendHttpRequest(Request locRequest, boolean withAuth) {
-        if (ActivityUTILS.isMainThread()) {
+        if (UiUtils.isMainThread()) {
             Log.e(TAG, "urlGET: network on main thread");
             throw new RuntimeException("network on main thread");
         }
@@ -498,7 +498,7 @@ public class APIClient {
     }
 
     public synchronized void updateBundle() {
-        if (ActivityUTILS.isMainThread()) {
+        if (UiUtils.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
         File bundleFile = new File(getBundleResource(mContext, mBundleFileName));
@@ -559,7 +559,7 @@ public class APIClient {
     }
 
     public String getLatestVersion() {
-        if (ActivityUTILS.isMainThread()) {
+        if (UiUtils.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
         String latestVersion = null;
@@ -585,7 +585,7 @@ public class APIClient {
     }
 
     public void downloadDiff(String currentTarVersion) {
-        if (ActivityUTILS.isMainThread()) {
+        if (UiUtils.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
         Request diffRequest = new Request.Builder()
@@ -685,7 +685,7 @@ public class APIClient {
     }
 
     private void updateFeatureFlag() {
-        if (ActivityUTILS.isMainThread()) {
+        if (UiUtils.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
         String furl = "/me/features";
@@ -835,7 +835,7 @@ public class APIClient {
     }
 
     private void syncKvStore() {
-        if (ActivityUTILS.isMainThread()) {
+        if (UiUtils.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
         final APIClient client = this;

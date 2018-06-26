@@ -10,11 +10,10 @@ import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BREventManager;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
@@ -25,7 +24,6 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
-import com.breadwallet.wallet.wallets.ethereum.BaseEthereumWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 import java.io.UnsupportedEncodingException;
@@ -220,7 +218,7 @@ public class CryptoUriParser {
 
             switch (host) {
                 case "scanqr":
-                    BRAnimator.openScanner((Activity) app, BRConstants.SCANNER_REQUEST);
+                    UiUtils.openScanner((Activity) app, BRConstants.SCANNER_REQUEST);
                     break;
                 case "addressList":
                     //todo implement
@@ -272,11 +270,11 @@ public class CryptoUriParser {
             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    BRAnimator.showSendFragment((FragmentActivity) app, requestObject);
+                    UiUtils.showSendFragment((FragmentActivity) app, requestObject);
                 }
             });
         } else {
-            BRAnimator.killAllFragments((Activity) app);
+            UiUtils.killAllFragments((Activity) app);
             if (Utils.isNullOrEmpty(requestObject.address) || !wallet.isAddressValid(requestObject.address)) {
                 BRDialog.showSimpleDialog(app, app.getString(R.string.Send_invalidAddressTitle), "");
                 return true;

@@ -25,7 +25,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.FingerprintUiHelper;
@@ -92,7 +92,7 @@ public class FragmentFingerprint extends Fragment
         mCancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 closeMe();
             }
         });
@@ -102,7 +102,7 @@ public class FragmentFingerprint extends Fragment
         mSecondDialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 closeMe();
                 goToBackup();
             }
@@ -175,7 +175,7 @@ public class FragmentFingerprint extends Fragment
         authSucceeded = true;
 
         if (completion != null) completion.onComplete();
-        BRAnimator.killAllFragments(app);
+        UiUtils.killAllFragments(app);
 
         closeMe();
 
