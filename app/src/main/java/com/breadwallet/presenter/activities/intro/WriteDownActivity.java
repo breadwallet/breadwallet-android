@@ -8,7 +8,7 @@ import android.widget.ImageButton;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.util.BRConstants;
@@ -40,16 +40,16 @@ public class WriteDownActivity extends BRActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(WriteDownActivity.this).getCurrentWallet(WriteDownActivity.this);
-                BRAnimator.showSupportFragment(WriteDownActivity.this, BRConstants.FAQ_PAPER_KEY, wm);
+                UiUtils.showSupportFragment(WriteDownActivity.this, BRConstants.FAQ_PAPER_KEY, wm);
 
             }
         });
         writeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 AuthManager.getInstance().authPrompt(WriteDownActivity.this, null, getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
                     @Override
                     public void onComplete() {
@@ -82,7 +82,7 @@ public class WriteDownActivity extends BRActivity {
     }
 
     private void close() {
-        BRAnimator.startBreadActivity(this, false);
+        UiUtils.startBreadActivity(this, false);
         overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
         if (!isDestroyed()) {
             finish();

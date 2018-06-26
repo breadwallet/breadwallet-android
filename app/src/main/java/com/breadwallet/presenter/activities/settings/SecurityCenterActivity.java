@@ -18,12 +18,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
+import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
-import com.breadwallet.presenter.activities.UpdatePinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.BRSecurityCenterItem;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
@@ -49,10 +48,6 @@ public class SecurityCenterActivity extends BRActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_security_center);
@@ -67,7 +62,7 @@ public class SecurityCenterActivity extends BRActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 onBackPressed();
             }
         });
@@ -79,9 +74,9 @@ public class SecurityCenterActivity extends BRActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(SecurityCenterActivity.this).getCurrentWallet(SecurityCenterActivity.this);
-                BRAnimator.showSupportFragment(SecurityCenterActivity.this, BRConstants.FAQ_SECURITY_CENTER, wm);
+                UiUtils.showSupportFragment(SecurityCenterActivity.this, BRConstants.FAQ_SECURITY_CENTER, wm);
             }
         });
 
@@ -98,8 +93,8 @@ public class SecurityCenterActivity extends BRActivity {
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        if (ActivityUTILS.isLast(this)) {
-            BRAnimator.startBreadActivity(this, false);
+        if (UiUtils.isLast(this)) {
+            UiUtils.startBreadActivity(this, false);
         } else {
             super.onBackPressed();
         }
@@ -163,9 +158,11 @@ public class SecurityCenterActivity extends BRActivity {
                 isPinSet ? R.drawable.ic_check_mark_blue : R.drawable.ic_check_mark_grey, new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(SecurityCenterActivity.this, UpdatePinActivity.class);
-                startActivity(intent);
+                Intent intent = new Intent(SecurityCenterActivity.this, InputPinActivity.class);
+                intent.putExtra(InputPinActivity.EXTRA_PIN_MODE_UPDATE, true);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
             }
         }));
 
@@ -198,5 +195,19 @@ public class SecurityCenterActivity extends BRActivity {
         }));
 
         mListView.setAdapter(new SecurityCenterListAdapter(this, R.layout.menu_list_item, itemList));
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == InputPinActivity.SET_PIN_REQUEST_CODE && resultCode == RESULT_OK) {
+
+            boolean isPinAccepted = data.getBooleanExtra(InputPinActivity.EXTRA_PIN_ACCEPTED, false);
+            if (isPinAccepted) {
+                UiUtils.startBreadActivity(this, false);
+            }
+        }
+
     }
 }

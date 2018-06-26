@@ -14,7 +14,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.adapter.TransactionListAdapter;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.wallet.WalletsMaster;
@@ -69,7 +69,7 @@ public class TxManager {
 
                 if (position == -1) return;
                 TxUiHolder item = adapter.getItems().get(position);
-                BRAnimator.showTransactionDetails(app, item, position);
+                UiUtils.showTransactionDetails(app, item, position);
             }
 
             @Override

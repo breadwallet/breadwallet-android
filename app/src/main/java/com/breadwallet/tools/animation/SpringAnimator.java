@@ -1,6 +1,7 @@
 package com.breadwallet.tools.animation;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Handler;
 import android.util.Log;
 import android.view.View;
@@ -92,7 +93,7 @@ public class SpringAnimator {
         view.startAnimation(trans);
     }
 
-    public static void failShakeAnimation(Activity context, View view) {
+    public static void failShakeAnimation(Context context, View view) {
         if (view == null) return;
         Animation shake = AnimationUtils.loadAnimation(context, R.anim.shake);
         view.setVisibility(View.VISIBLE);

@@ -19,7 +19,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.fragments.FragmentPhraseWord;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.security.PostAuth;
@@ -85,8 +85,8 @@ public class PaperKeyActivity extends BRActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                BRAnimator.startBreadActivity(PaperKeyActivity.this, false);
+                if (!UiUtils.isClickAllowed()) return;
+                UiUtils.startBreadActivity(PaperKeyActivity.this, false);
                 if (!isDestroyed()) finish();
             }
         });

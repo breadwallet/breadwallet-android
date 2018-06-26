@@ -63,10 +63,10 @@ public class BREdit extends EditText {
     }
 
     private void init(Context ctx, AttributeSet attrs) {
-        TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.BREdit);
-        String customFont = a.getString(R.styleable.BREdit_customEFont);
+        TypedArray attributes = ctx.obtainStyledAttributes(attrs, R.styleable.BREdit);
+        String customFont = attributes.getString(R.styleable.BREdit_customEFont);
         FontManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Medium.otf" : customFont);
-        a.recycle();
+        attributes.recycle();
     }
 
 }

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
-import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -13,11 +12,13 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
+import com.breadwallet.presenter.activities.InputPinActivity;
+import com.breadwallet.presenter.activities.InputWordsActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -30,7 +31,6 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.platform.HTTPServer;
-import com.platform.UserMetricsManager;
 import com.platform.tools.BRBitId;
 
 /**
@@ -112,7 +112,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 // Camera permission has been granted, preview can be displayed
                 Log.i(TAG, "CAMERA permission has now been granted. Showing preview.");
-                BRAnimator.openScanner(this, BRConstants.SCANNER_REQUEST);
+                UiUtils.openScanner(this, BRConstants.SCANNER_REQUEST);
             } else {
                 Log.i(TAG, "CAMERA permission was NOT granted.");
                 BRDialog.showSimpleDialog(this, getString(R.string.Send_cameraUnavailabeTitle_android), getString(R.string.Send_cameraUnavailabeMessage_android));
@@ -245,6 +245,14 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     finish();
                 }
                 break;
+            case InputPinActivity.SET_PIN_REQUEST_CODE:
+                if (data != null) {
+                    boolean isPinAccepted = data.getBooleanExtra(InputPinActivity.EXTRA_PIN_ACCEPTED, false);
+                    if (isPinAccepted) {
+                        UiUtils.startBreadActivity(this, false);
+                    }
+                }
+                break;
 
         }
     }
@@ -255,10 +263,12 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
         InternetManager.getInstance();
         if (!(app instanceof IntroActivity || app instanceof RecoverActivity || app instanceof WriteDownActivity))
             BRApiManager.getInstance().startTimer(app);
-        //show wallet locked if it is
-        if (!ActivityUTILS.isAppSafe(app))
-            if (AuthManager.getInstance().isWalletDisabled(app))
+        //show wallet locked if it is and we're not in an illegal activity
+        if (!(app instanceof InputPinActivity || app instanceof InputWordsActivity)) {
+            if (AuthManager.getInstance().isWalletDisabled(app)) {
                 AuthManager.getInstance().setWalletDisabled(app);
+            }
+        }
         BreadApp.setBreadContext(app);
 
 
@@ -281,7 +291,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                 && ((System.currentTimeMillis() - BreadApp.backgroundedTime) >= 180 * 1000)
                 && !(app instanceof DisabledActivity)) {
             if (!BRKeyStore.getPinCode(app).isEmpty()) {
-                BRAnimator.startBreadActivity(app, true);
+                UiUtils.startBreadActivity(app, true);
             }
         }
 

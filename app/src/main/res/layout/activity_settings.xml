@@ -7,7 +7,7 @@
     android:layout_width="match_parent"
     android:background="@color/extra_light_blue_background"
     android:layout_height="match_parent"
-    tools:context="com.breadwallet.presenter.activities.SetPinActivity">
+    tools:context="com.breadwallet.presenter.activities.settings.SettingsActivity">
 
 
     <android.support.v7.widget.Toolbar

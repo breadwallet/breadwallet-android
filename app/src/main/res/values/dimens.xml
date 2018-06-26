@@ -18,6 +18,9 @@
     <dimen name="paragraph">14sp</dimen>
     <dimen name="header">18sp</dimen>
     <dimen name="sub_header">16sp</dimen>
-
+    <dimen name="animation_long">2000</dimen>
+    <dimen name="animation_medium">1000</dimen>
+    <dimen name="animation_short">500</dimen>
+    <dimen name="animation_very_short">300</dimen>
 
 </resources>

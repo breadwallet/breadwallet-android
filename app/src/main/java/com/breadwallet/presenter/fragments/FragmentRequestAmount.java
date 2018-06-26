@@ -24,7 +24,7 @@ import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
 import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -130,7 +130,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 Activity app = getActivity();
                 if (app == null) {
                     Log.e(TAG, "onClick: app is null, can't start the webview with url: " + URL_SUPPORT);
@@ -138,7 +138,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
                 }
                 BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
 
-                BRAnimator.showSupportFragment((FragmentActivity) app, BRConstants.FAQ_REQUEST_AMOUNT, wm);
+                UiUtils.showSupportFragment((FragmentActivity) app, BRConstants.FAQ_REQUEST_AMOUNT, wm);
             }
         });
 
@@ -162,7 +162,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
         });
         updateText();
 
-        mSignalLayout.setLayoutTransition(BRAnimator.getDefaultTransition());
+        mSignalLayout.setLayoutTransition(UiUtils.getDefaultTransition());
 
         mSignalLayout.setOnTouchListener(new SlideDetector(getContext(), mSignalLayout));
 
@@ -201,7 +201,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
             @Override
             public void onClick(View v) {
                 removeCurrencySelector();
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 showKeyboard(false);
                 BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 Uri bitcoinUri = CryptoUriParser.createCryptoUrl(getActivity(), wm, wm.decorateAddress(mReceiveAddress),
@@ -214,7 +214,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
             @Override
             public void onClick(View v) {
                 removeCurrencySelector();
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 showKeyboard(false);
                 BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
 
@@ -226,7 +226,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
         mShareButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 mShareButtonsShown = !mShareButtonsShown;
                 showShareButtons(mShareButtonsShown);
                 showKeyboard(false);
@@ -245,7 +245,7 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
             @Override
             public void onClick(View v) {
                 removeCurrencySelector();
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 getActivity().onBackPressed();
             }
         });
@@ -344,15 +344,15 @@ public class FragmentRequestAmount extends ModalDialogFragment implements BRKeyb
         if (!generated) throw new RuntimeException("failed to generate qr image for address");
     }
 
-    private void handleDigitClick(Integer dig) {
+    private void handleDigitClick(Integer digit) {
         String currAmount = mAmountBuilder.toString();
-        if (new BigDecimal(currAmount.concat(String.valueOf(dig))).doubleValue()
+        if (new BigDecimal(currAmount.concat(String.valueOf(digit))).doubleValue()
                 <= mWallet.getMaxAmount(getActivity()).doubleValue()) {
             //do not insert 0 if the balance is 0 now
             if (currAmount.equalsIgnoreCase("0")) mAmountBuilder = new StringBuilder("");
             if ((currAmount.contains(".") && (currAmount.length() - currAmount.indexOf(".") > CurrencyUtils.getMaxDecimalPlaces(getActivity(), mSelectedCurrencyCode))))
                 return;
-            mAmountBuilder.append(dig);
+            mAmountBuilder.append(digit);
             updateText();
         }
     }

@@ -19,7 +19,7 @@ import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
@@ -916,11 +916,11 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                                 if (app != null && app instanceof Activity) {
                                     if (!Utils.isNullOrEmpty(finalTxHash)) {
                                         PostAuth.stampMetaData(app, finalTxHash.getBytes());
-                                        BRAnimator.showBreadSignal((Activity) app, app.getString(R.string.Alerts_sendSuccess),
+                                        UiUtils.showBreadSignal((Activity) app, app.getString(R.string.Alerts_sendSuccess),
                                                 app.getString(R.string.Alerts_sendSuccessSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                                                     @Override
                                                     public void onComplete() {
-                                                        BRAnimator.killAllFragments((Activity) app);
+                                                        UiUtils.killAllFragments((Activity) app);
                                                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                                                             @Override
                                                             public void run() {
