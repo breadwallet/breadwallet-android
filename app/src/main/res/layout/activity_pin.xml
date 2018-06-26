@@ -30,10 +30,12 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.120000005"/>
 
-    <LinearLayout
-        android:id="@+id/pinLayout"
+
+    <com.breadwallet.presenter.customviews.PinLayout
+        android:id="@+id/pin_digits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        app:pinDigitsResId="@drawable/ic_pin_dot_white"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         android:orientation="horizontal"
@@ -43,42 +45,7 @@
         app:layout_constraintTop_toBottomOf="@+id/title"
         app:layout_constraintVertical_bias="0.75">
 
-        <View
-            android:id="@+id/dot1"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="@drawable/ic_pin_dot_white"/>
-
-        <View
-            android:id="@+id/dot2"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="@drawable/ic_pin_dot_white"/>
-
-        <View
-            android:id="@+id/dot3"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="@drawable/ic_pin_dot_white"/>
-
-        <View
-            android:id="@+id/dot4"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="@drawable/ic_pin_dot_white"/>
-
-        <View
-            android:id="@+id/dot5"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="@drawable/ic_pin_dot_white"/>
-
-        <View
-            android:id="@+id/dot6"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="@drawable/ic_pin_dot_white"/>
-    </LinearLayout>
+    </com.breadwallet.presenter.customviews.PinLayout>
 
     <com.breadwallet.presenter.customviews.BRKeyboard
         android:id="@+id/brkeyboard"
@@ -94,13 +61,18 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
         android:text="@string/UnlockScreen.subheader"
         android:textColor="@color/almost_black"
         android:textSize="@dimen/sub_header"
         app:customTFont="CircularPro-Book.otf"
-        app:layout_constraintBottom_toTopOf="@+id/pinLayout"
+        app:layout_constraintBottom_toTopOf="@+id/unlocked_text"
+        app:layout_constraintEnd_toEndOf="@+id/unlocked_text"
         app:layout_constraintLeft_toLeftOf="@+id/pinLayout"
-        app:layout_constraintRight_toRightOf="@+id/pinLayout"/>
+        app:layout_constraintRight_toRightOf="@+id/pinLayout"
+        app:layout_constraintStart_toStartOf="@+id/unlocked_text"
+        />
 
     <LinearLayout
         android:id="@+id/buttons_layout"

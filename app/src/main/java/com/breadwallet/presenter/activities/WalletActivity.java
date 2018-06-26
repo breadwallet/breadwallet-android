@@ -30,7 +30,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BRText;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
@@ -139,7 +139,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BRAnimator.showSendFragment(WalletActivity.this, null);
+                UiUtils.showSendFragment(WalletActivity.this, null);
 
             }
         });
@@ -148,7 +148,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mReceiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BRAnimator.showReceiveFragment(WalletActivity.this, true);
+                UiUtils.showReceiveFragment(WalletActivity.this, true);
 
             }
         });
@@ -164,7 +164,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mSearchIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!BRAnimator.isClickAllowed()) {
+                if (!UiUtils.isClickAllowed()) {
                     return;
                 }
                 mBarFlipper.setDisplayedChild(1); //search bar
@@ -311,7 +311,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     private void swap() {
-        if (!BRAnimator.isClickAllowed()) {
+        if (!UiUtils.isClickAllowed()) {
             return;
         }
         BRSharedPrefs.setIsCryptoPreferred(WalletActivity.this, !BRSharedPrefs.isCryptoPreferred(WalletActivity.this));

@@ -19,7 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.util.Utils;
 
@@ -115,7 +115,7 @@ public class BRDialogView extends DialogFragment {
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 if (posListener != null)
                     posListener.onClick(BRDialogView.this);
             }
@@ -137,7 +137,7 @@ public class BRDialogView extends DialogFragment {
         negativeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 if (negListener != null)
                     negListener.onClick(BRDialogView.this);
             }
@@ -155,7 +155,7 @@ public class BRDialogView extends DialogFragment {
             helpButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (!BRAnimator.isClickAllowed()) return;
+                    if (!UiUtils.isClickAllowed()) return;
                     if (helpListener != null)
                         helpListener.onClick(BRDialogView.this);
                 }

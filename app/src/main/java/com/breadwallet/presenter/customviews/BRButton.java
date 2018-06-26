@@ -102,24 +102,24 @@ public class BRButton extends Button {
         bPaintStroke = new Paint();
         shadowRect = new Rect(0, 0, 100, 100);
         bRect = new RectF(0, 0, 100, 100);
-        TypedArray a = ctx.obtainStyledAttributes(attrs, R.styleable.BRButton);
-        String customFont = a.getString(R.styleable.BRButton_customBFont);
+        TypedArray attributes = ctx.obtainStyledAttributes(attrs, R.styleable.BRButton);
+        String customFont = attributes.getString(R.styleable.BRButton_customBFont);
         FontManager.setCustomFont(ctx, this, Utils.isNullOrEmpty(customFont) ? "CircularPro-Medium.otf" : customFont);
         float px16 = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 15, getResources().getDisplayMetrics());
         //check attributes you need, for example all paddings
-        int[] attributes = new int[]{android.R.attr.paddingStart, android.R.attr.paddingTop, android.R.attr.paddingEnd, android.R.attr.paddingBottom, R.attr.isBreadButton, R.attr.buttonType};
+        int[] attributeArray = new int[]{android.R.attr.paddingStart, android.R.attr.paddingTop, android.R.attr.paddingEnd, android.R.attr.paddingBottom, R.attr.isBreadButton, R.attr.buttonType};
         //then obtain typed array
-        TypedArray arr = ctx.obtainStyledAttributes(attrs, attributes);
+        TypedArray arr = ctx.obtainStyledAttributes(attrs, attributeArray);
         //You can check if attribute exists (in this example checking paddingRight)
 
-        isBreadButton = a.getBoolean(R.styleable.BRButton_isBreadButton, false);
+        isBreadButton = attributes.getBoolean(R.styleable.BRButton_isBreadButton, false);
         int paddingLeft = arr.hasValue(0) ? arr.getDimensionPixelOffset(0, -1) : (int) px16;
         int paddingTop = arr.hasValue(1) ? arr.getDimensionPixelOffset(1, -1) : 0;
         int paddingRight = arr.hasValue(2) ? arr.getDimensionPixelOffset(2, -1) : (int) px16;
         int paddingBottom = arr.hasValue(3) ? arr.getDimensionPixelOffset(3, -1) + (isBreadButton ? (int) px16 : 0) : (isBreadButton ? (int) px16 : 0);
-        hasShadow = a.getBoolean(R.styleable.BRButton_hasShadow, true);
+        hasShadow = attributes.getBoolean(R.styleable.BRButton_hasShadow, true);
 
-        int type = a.getInteger(R.styleable.BRButton_buttonType, 0);
+        int type = attributes.getInteger(R.styleable.BRButton_buttonType, 0);
         setType(type);
 
         bPaint.setAntiAlias(true);
@@ -130,7 +130,7 @@ public class BRButton extends Button {
         }
 
         setPadding(paddingLeft, paddingTop, paddingRight, paddingBottom);
-        a.recycle();
+        attributes.recycle();
         arr.recycle();
         final ViewTreeObserver observer = getViewTreeObserver();
         observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {

@@ -11,9 +11,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRText;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 
@@ -30,10 +29,6 @@ public class AboutActivity extends BaseSettingsActivity {
 
     public static AboutActivity getApp() {
         return app;
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
     }
 
     @Override
@@ -125,8 +120,8 @@ public class AboutActivity extends BaseSettingsActivity {
 
     @Override
     public void onBackPressed() {
-        if (ActivityUTILS.isLast(this)) {
-            BRAnimator.startBreadActivity(this, false);
+        if (UiUtils.isLast(this)) {
+            UiUtils.startBreadActivity(this, false);
         } else {
             super.onBackPressed();
         }

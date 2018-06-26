@@ -7,24 +7,24 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/extra_light_blue_background"
-    tools:context="com.breadwallet.presenter.activities.SetPinActivity">
+    tools:context="com.breadwallet.presenter.activities.InputPinActivity">
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
         android:layout_marginStart="@dimen/bread_margin"
         android:layout_marginTop="@dimen/bread_margin"
         android:text="@string/UpdatePin.createTitle"
         android:textColor="@color/almost_black"
         android:textSize="@dimen/header"
         app:customTFont="CircularPro-Bold.otf"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/faq_button"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        app:layout_constraintHorizontal_bias="0.0"/>
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/description"
@@ -85,54 +85,14 @@
         app:layout_constraintTop_toTopOf="@+id/title"
         />
 
-    <LinearLayout
-        android:id="@+id/pinLayout"
+    <com.breadwallet.presenter.customviews.PinLayout
+        android:id="@+id/pin_digits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/bread_margin"
-        android:layout_marginStart="@dimen/bread_margin"
-        android:layout_marginTop="48dp"
-        android:orientation="horizontal"
+        android:layout_margin="@dimen/bread_margin"
         app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/description">
-
-        <View
-            android:id="@+id/dot1"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="@drawable/ic_pin_dot_gray"/>
-
-        <View
-            android:id="@+id/dot2"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="@drawable/ic_pin_dot_gray"/>
-
-        <View
-            android:id="@+id/dot3"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="@drawable/ic_pin_dot_gray"/>
-
-        <View
-            android:id="@+id/dot4"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="@drawable/ic_pin_dot_gray"/>
-
-        <View
-            android:id="@+id/dot5"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="@drawable/ic_pin_dot_gray"/>
-
-        <View
-            android:id="@+id/dot6"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:background="@drawable/ic_pin_dot_gray"/>
-    </LinearLayout>
+        app:layout_constraintTop_toBottomOf="@+id/description"/>
 
 </android.support.constraint.ConstraintLayout>

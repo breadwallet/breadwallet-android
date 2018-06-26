@@ -104,7 +104,7 @@
                 android:resource="@xml/searchable"/>
         </activity>
         <activity
-            android:name=".presenter.activities.SetPinActivity"
+            android:name=".presenter.activities.InputPinActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity
@@ -117,14 +117,6 @@
             android:screenOrientation="portrait"/>
         <activity
             android:name=".presenter.activities.settings.ImportActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name=".presenter.activities.ReEnterPinActivity"
-            android:launchMode="singleTask"
-            android:screenOrientation="portrait"/>
-        <activity
-            android:name=".presenter.activities.UpdatePinActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"/>
         <activity

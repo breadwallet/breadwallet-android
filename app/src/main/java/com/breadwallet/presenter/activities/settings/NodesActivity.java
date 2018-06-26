@@ -20,7 +20,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCorePeer;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.TrustedNode;
@@ -81,7 +81,7 @@ public class NodesActivity extends BRActivity {
         switchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 final Activity app = NodesActivity.this;
                 final WalletBitcoinManager wm = WalletBitcoinManager.getInstance(NodesActivity.this);
 
