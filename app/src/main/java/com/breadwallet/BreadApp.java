@@ -102,7 +102,11 @@ public class BreadApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        HOST = "stage2.breadwallet.com";
+
+        if (BuildConfig.DEBUG) {
+            HOST = "stage2.breadwallet.com";
+        }
+
         final Fabric fabric = new Fabric.Builder(this)
                 .kits(new Crashlytics.Builder().disabled(BuildConfig.DEBUG).build())
                 .debuggable(BuildConfig.DEBUG)// Enables Crashlytics debugger
