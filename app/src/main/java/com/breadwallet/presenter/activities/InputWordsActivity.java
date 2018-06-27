@@ -248,7 +248,6 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         boolean success = true;
 
         StringBuilder paperKeyStringBuilder = new StringBuilder();
-
         for (EditText editText : mEditWords) {
             String cleanedWords = clean(editText.getText().toString().toLowerCase());
             if (Utils.isNullOrEmpty(cleanedWords)) {
@@ -259,17 +258,13 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                 paperKeyStringBuilder.append(' ');
             }
         }
-        //remove the last space
-        paperKeyStringBuilder.setLength(paperKeyStringBuilder.length() - 1);
-
-
-        String paperKey = paperKeyStringBuilder.toString();
 
         if (!success) {
             return null;
         }
 
-        //ensure the paper key is 12 words
+        // Ensure the paper key is 12 words.
+        String paperKey = paperKeyStringBuilder.toString().trim();
         int numberOfWords = paperKey.split(" ").length;
         if (numberOfWords != NUMBER_OF_WORDS) {
             BRReportsManager.reportBug(new IllegalArgumentException("Paper key contains " + numberOfWords + " words"));
