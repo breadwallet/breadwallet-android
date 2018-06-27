@@ -415,6 +415,7 @@ public class WalletPlugin implements Plugin {
                 obj.put("colors", colors);
 
                 //Balance
+                //TODO Temporary solution due to the fact that the erc20 balances are stored in Decimals rather than smallest currency (WEI, SATOSHIS)
                 JSONObject balance = new JSONObject();
 
                 boolean isErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, w.getIso());
