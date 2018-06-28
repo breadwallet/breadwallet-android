@@ -425,7 +425,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     @Override
     public void refreshCachedBalance(Context app) {
         BigDecimal balance = new BigDecimal(getWallet().getBalance());
-        BRSharedPrefs.putCachedBalance(app, getIso(), balance);
+        setCachedBalance(app, balance);
     }
 
     @Override
@@ -867,10 +867,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-
-                // TODO This listener is never added... so this is not doing anything.
-//                for (OnTxStatusUpdatedListener listener : txStatusUpdatedListeners)
-//                    if (listener != null) listener.onTxStatusUpdated();
                 onTxListModified(null);
             }
         });

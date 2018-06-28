@@ -89,8 +89,4 @@ public class WriteDownActivity extends BRActivity {
         }
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-    }
-
 }
