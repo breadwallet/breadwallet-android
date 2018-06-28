@@ -109,7 +109,7 @@ public class PinFragment extends Fragment {
         if (!Utils.isNullOrEmpty(messageString)) {
             mMessage.setText(messageString);
         }
-        mKeyboard.setTranslationY(keyboardTrY + BRActivity.screenParametersPoint.y / 3);
+        mKeyboard.setTranslationY(keyboardTrY + mKeyboard.getHeight());
         mKeyboard.animate()
                 .translationY(keyboardTrY)
                 .setDuration(R.dimen.animation_medium)

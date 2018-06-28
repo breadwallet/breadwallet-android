@@ -92,6 +92,7 @@ public class PostAuth {
             Intent intent = new Intent(activity, WriteDownActivity.class);
             activity.startActivity(intent);
             activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+            activity.finish();
         } else {
             if (authAsked) {
                 Log.e(TAG, "onCreateWalletAuth: WARNING!!!! LOOP");
