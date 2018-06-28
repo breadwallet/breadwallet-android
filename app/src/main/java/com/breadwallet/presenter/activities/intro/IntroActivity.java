@@ -143,25 +143,5 @@ public class IntroActivity extends BRActivity {
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == InputPinActivity.SET_PIN_REQUEST_CODE && resultCode == RESULT_OK) {
-
-            boolean isPinAccepted = data.getBooleanExtra(InputPinActivity.EXTRA_PIN_ACCEPTED, false);
-            if (isPinAccepted) {
-                UiUtils.showBreadSignal(IntroActivity.this, getString(R.string.Alerts_pinSet),
-                        getString(R.string.UpdatePin_createInstruction), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
-                            @Override
-                            public void onComplete() {
-                                PostAuth.getInstance().onCreateWalletAuth(IntroActivity.this, false);
-                                IntroActivity.this.finish();
-                            }
-                        });
-            }
-        }
-
-    }
 
 }
