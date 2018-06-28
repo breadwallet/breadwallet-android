@@ -28,6 +28,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.platform.HTTPServer;
@@ -249,8 +250,14 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                 if (data != null) {
                     boolean isPinAccepted = data.getBooleanExtra(InputPinActivity.EXTRA_PIN_ACCEPTED, false);
                     if (isPinAccepted) {
-                        UiUtils.startBreadActivity(this, false);
+                        if (Utils.isNullOrEmpty(BRKeyStore.getMasterPublicKey(this))) {
+                            PostAuth.getInstance().onCreateWalletAuth(this, false);
+                        } else {
+                            UiUtils.startBreadActivity(this, false);
+                        }
+
                     }
+
                 }
                 break;
 

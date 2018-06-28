@@ -209,7 +209,9 @@ public class BRKeyboard extends LinearLayout implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-        mClickListener.onInsert(v instanceof ImageButton ? "" : ((Button) v).getText().toString());
+        if (mClickListener != null) {
+            mClickListener.onInsert(v instanceof ImageButton ? "" : ((Button) v).getText().toString());
+        }
     }
 
     public interface OnInsertListener {
