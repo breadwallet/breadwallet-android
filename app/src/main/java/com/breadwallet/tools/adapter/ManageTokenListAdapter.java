@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.view.MotionEventCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -76,9 +77,15 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
 
         boolean isHidden = KVStoreManager.getInstance().getTokenListMetaData(mContext).isCurrencyHidden(item.symbol);
 
-        holder.showHide.setBackground(mContext.getDrawable(isHidden ? R.drawable.add_wallet_button : R.drawable.remove_wallet_button));
+        TypedValue showWalletTypedValue = new TypedValue();
+        TypedValue hideWalletTypedValue = new TypedValue();
+
+        mContext.getTheme().resolveAttribute(R.attr.show_wallet_button_background, showWalletTypedValue, true);
+        mContext.getTheme().resolveAttribute(R.attr.hide_wallet_button_background, hideWalletTypedValue, true);
+
+        holder.showHide.setBackground(mContext.getDrawable(isHidden ? showWalletTypedValue.resourceId : hideWalletTypedValue.resourceId));
         holder.showHide.setText(isHidden ? mContext.getString(R.string.TokenList_show) : mContext.getString(R.string.TokenList_hide));
-        holder.showHide.setTextColor(mContext.getColor(isHidden ? R.color.dialog_button_positive : R.color.red));
+        holder.showHide.setTextColor(mContext.getColor(isHidden ? R.color.button_add_wallet_text : R.color.button_cancel_add_wallet_text));
 
         holder.showHide.setOnClickListener(new View.OnClickListener() {
             @Override

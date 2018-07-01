@@ -6,36 +6,48 @@
     android:id="@+id/activity_pit"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bread_gradient"
     tools:context="com.breadwallet.presenter.activities.LoginActivity">
+
+
+    <com.breadwallet.presenter.customviews.BRText
+        android:id="@+id/scan"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:textColor="@color/logo_gradient_start"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="12dp"
+        android:drawableLeft="@drawable/ic_qrcode"
+        android:drawablePadding="5dp"
+        android:text="@string/Send.scanLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
     <ImageView
         android:id="@+id/title"
-        android:layout_width="96dp"
-        android:layout_height="48dp"
-        android:layout_marginBottom="8dp"
+        android:layout_width="132dp"
+        android:layout_height="80dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
         android:gravity="center_horizontal"
-        android:src="@drawable/brd_logo_white"
+        android:src="@drawable/brd_logo_gradient"
         android:textColor="@color/white"
         android:textSize="48sp"
         app:customTFont="Celevenia.otf"
-        app:layout_constraintBottom_toTopOf="@+id/brkeyboard"
+        android:layout_marginTop="130dp"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.120000005"/>
+        app:layout_constraintStart_toStartOf="parent" />
+
 
 
     <com.breadwallet.presenter.customviews.PinLayout
         android:id="@+id/pin_digits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:pinDigitsResId="@drawable/ic_pin_dot_white"
+        app:pinDigitsResId="@drawable/ic_pin_dot_empty"
         android:layout_marginBottom="8dp"
         android:layout_marginTop="8dp"
         android:orientation="horizontal"
@@ -55,24 +67,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:showAlphabet="true"/>
-
-    <com.breadwallet.presenter.customviews.BRText
-        android:id="@+id/enter_pin_label"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:text="@string/UnlockScreen.subheader"
-        android:textColor="@color/almost_black"
-        android:textSize="@dimen/sub_header"
-        app:customTFont="CircularPro-Book.otf"
-        app:layout_constraintBottom_toTopOf="@+id/unlocked_text"
-        app:layout_constraintEnd_toEndOf="@+id/unlocked_text"
-        app:layout_constraintLeft_toLeftOf="@+id/pinLayout"
-        app:layout_constraintRight_toRightOf="@+id/pinLayout"
-        app:layout_constraintStart_toStartOf="@+id/unlocked_text"
-        />
 
     <LinearLayout
         android:id="@+id/buttons_layout"

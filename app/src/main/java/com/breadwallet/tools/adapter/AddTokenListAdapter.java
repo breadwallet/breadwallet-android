@@ -6,18 +6,16 @@ import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRText;
-import com.breadwallet.presenter.customviews.TokenIconView;
 import com.breadwallet.presenter.entities.TokenItem;
-import com.breadwallet.tools.util.Utils;
 
 import java.util.ArrayList;
 
@@ -67,9 +65,15 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
             Log.d(TAG, "Error finding icon for -> " + iconResourceName);
         }
 
+        TypedValue addWalletTypedValue = new TypedValue();
+        TypedValue removeWalletTypedValue = new TypedValue();
+
+        mContext.getTheme().resolveAttribute(R.attr.add_wallet_button_background, addWalletTypedValue, true);
+        mContext.getTheme().resolveAttribute(R.attr.remove_wallet_button_background, removeWalletTypedValue, true);
+
         holder.addRemoveButton.setText(mContext.getString(item.isAdded ? R.string.TokenList_remove : R.string.TokenList_add));
-        holder.addRemoveButton.setBackground(mContext.getDrawable(item.isAdded ? R.drawable.remove_wallet_button : R.drawable.add_wallet_button));
-        holder.addRemoveButton.setTextColor(mContext.getColor(item.isAdded ? R.color.red : R.color.dialog_button_positive));
+        holder.addRemoveButton.setBackground(mContext.getDrawable(item.isAdded ? removeWalletTypedValue.resourceId : addWalletTypedValue.resourceId));
+        holder.addRemoveButton.setTextColor(mContext.getColor(item.isAdded ? R.color.button_cancel_add_wallet_text : R.color.button_add_wallet_text));
 
         holder.addRemoveButton.setOnClickListener(new View.OnClickListener() {
             @Override

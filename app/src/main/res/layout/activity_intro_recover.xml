@@ -4,7 +4,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_intro_recover"
-    android:background="@color/extra_light_blue_background"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.breadwallet.presenter.activities.intro.RecoverActivity">
@@ -133,17 +132,14 @@
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/textView8"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/bread_margin"
-        android:layout_marginEnd="@dimen/bread_margin"
+        android:layout_height="19dp"
         android:layout_marginTop="@dimen/bread_margin"
-        android:text="@string/RecoverWallet.intro"
         android:lineSpacingMultiplier="1.3"
-        android:textColor="@color/almost_black"
+        android:text="@string/RecoverWallet.intro"
         android:textSize="@dimen/sub_header"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/relativeLayout"/>
+        app:layout_constraintTop_toBottomOf="@+id/relativeLayout" />
 
     <ImageButton
         android:id="@+id/faq_button"
