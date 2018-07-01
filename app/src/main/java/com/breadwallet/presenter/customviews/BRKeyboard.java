@@ -2,8 +2,6 @@ package com.breadwallet.presenter.customviews;
 
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.graphics.Canvas;
-import android.graphics.drawable.Drawable;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.RelativeSizeSpan;
@@ -15,6 +13,8 @@ import android.widget.LinearLayout;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.util.Utils;
+
+import java.util.ArrayList;
 
 
 /**
@@ -43,20 +43,11 @@ import com.breadwallet.tools.util.Utils;
  */
 public class BRKeyboard extends LinearLayout implements View.OnClickListener {
     public static final String TAG = BRKeyboard.class.getName();
-    private OnInsertListener mClickListener;
-    private Button num0;
-    private Button num1;
-    private Button num2;
-    private Button num3;
-    private Button num4;
-    private Button num5;
-    private Button num6;
-    private Button num7;
-    private Button num8;
-    private Button num9;
-    private Button numDot;
-    private ImageButton numDelete;
-    private boolean showAlphabet;
+    private OnInsertListener mKeyInsertListener;
+    private ImageButton mDeleteButton;
+    private ArrayList<Button> mPinButtons;
+    private static final int LAST_NUMBER_INDEX = 9;
+    private static final int DECIMAL_INDEX = 10;
 
     public BRKeyboard(Context context) {
         super(context);
@@ -81,9 +72,10 @@ public class BRKeyboard extends LinearLayout implements View.OnClickListener {
     private void init(AttributeSet attrs) {
         View root = inflate(getContext(), R.layout.pin_pad, this);
 
+        boolean showAlphabet = false;
         TypedArray attributes = getContext().obtainStyledAttributes(attrs, R.styleable.BRKeyboard);
-        final int N = attributes.getIndexCount();
-        for (int i = 0; i < N; ++i) {
+        final int attributeCount = attributes.getIndexCount();
+        for (int i = 0; i < attributeCount; ++i) {
             int attr = attributes.getIndex(i);
             switch (attr) {
                 case R.styleable.BRKeyboard_showAlphabet:
@@ -94,60 +86,47 @@ public class BRKeyboard extends LinearLayout implements View.OnClickListener {
         attributes.recycle();
 
         this.setWillNotDraw(false);
-        num0 = root.findViewById(R.id.num0);
-        num1 = root.findViewById(R.id.num1);
-        num2 = root.findViewById(R.id.num2);
-        num3 = root.findViewById(R.id.num3);
-        num4 = root.findViewById(R.id.num4);
-        num5 = root.findViewById(R.id.num5);
-        num6 = root.findViewById(R.id.num6);
-        num7 = root.findViewById(R.id.num7);
-        num8 = root.findViewById(R.id.num8);
-        num9 = root.findViewById(R.id.num9);
-        numDot = root.findViewById(R.id.numDot);
-        numDelete = root.findViewById(R.id.numDelete);
 
-        num0.setOnClickListener(this);
-        num1.setOnClickListener(this);
-        num2.setOnClickListener(this);
-        num3.setOnClickListener(this);
-        num4.setOnClickListener(this);
-        num5.setOnClickListener(this);
-        num6.setOnClickListener(this);
-        num7.setOnClickListener(this);
-        num8.setOnClickListener(this);
-        num9.setOnClickListener(this);
-        numDot.setOnClickListener(this);
-        numDelete.setOnClickListener(this);
+        mDeleteButton = root.findViewById(R.id.delete);
 
-        num0.setText(getText(0));
-        num1.setText(getText(1));
-        num2.setText(getText(2));
-        num3.setText(getText(3));
-        num4.setText(getText(4));
-        num5.setText(getText(5));
-        num6.setText(getText(6));
-        num7.setText(getText(7));
-        num8.setText(getText(8));
-        num9.setText(getText(9));
+        mPinButtons = new ArrayList<>();
+        mPinButtons.add((Button) root.findViewById(R.id.num0));
+        mPinButtons.add((Button) root.findViewById(R.id.num1));
+        mPinButtons.add((Button) root.findViewById(R.id.num2));
+        mPinButtons.add((Button) root.findViewById(R.id.num3));
+        mPinButtons.add((Button) root.findViewById(R.id.num4));
+        mPinButtons.add((Button) root.findViewById(R.id.num5));
+        mPinButtons.add((Button) root.findViewById(R.id.num6));
+        mPinButtons.add((Button) root.findViewById(R.id.num7));
+        mPinButtons.add((Button) root.findViewById(R.id.num8));
+        mPinButtons.add((Button) root.findViewById(R.id.num9));
+        mPinButtons.add((Button) root.findViewById(R.id.decimal));
 
-        if (showAlphabet) {
-            int dp8 = Utils.getPixelsFromDps(getContext(), 8);
-            num0.setPadding(0, 0, 0, dp8);
-            num1.setPadding(0, 0, 0, dp8);
-            num2.setPadding(0, 0, 0, dp8);
-            num3.setPadding(0, 0, 0, dp8);
-            num4.setPadding(0, 0, 0, dp8);
-            num5.setPadding(0, 0, 0, dp8);
-            num6.setPadding(0, 0, 0, dp8);
-            num7.setPadding(0, 0, 0, dp8);
-            num8.setPadding(0, 0, 0, dp8);
-            num9.setPadding(0, 0, 0, dp8);
+        int bottomPaddingDimen = getContext().getResources().getInteger(R.integer.pin_keyboard_bottom_padding);
+        int bottomPaddingPixels = Utils.getPixelsFromDps(getContext(), bottomPaddingDimen);
+
+        for (int i = 0; i < mPinButtons.size(); i++) {
+            Button button = mPinButtons.get(i);
+            button.setOnClickListener(this);
+
+            if (i <= LAST_NUMBER_INDEX) {
+                button.setText(getText(i, showAlphabet));
+            }
+
+            if (showAlphabet) {
+                button.setPadding(0, 0, 0, bottomPaddingPixels);
+            }
         }
+
+        mDeleteButton.setOnClickListener(this);
+        if (showAlphabet) {
+            mDeleteButton.setPadding(0, 0, 0, bottomPaddingPixels);
+        }
+
         invalidate();
     }
 
-    private CharSequence getText(int index) {
+    private CharSequence getText(int index, boolean showAlphabet) {
         SpannableString span1 = new SpannableString(String.valueOf(index));
         if (showAlphabet) {
 
@@ -194,172 +173,62 @@ public class BRKeyboard extends LinearLayout implements View.OnClickListener {
     protected void onSizeChanged(int w, int h, int oldw, int oldh) {
         super.onSizeChanged(w, h, oldw, oldh);
         invalidate();
-
-    }
-
-    @Override
-    public void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-
     }
 
     public void setOnInsertListener(OnInsertListener listener) {
-        mClickListener = listener;
+        mKeyInsertListener = listener;
     }
 
     @Override
     public void onClick(View v) {
-        if (mClickListener != null) {
-            mClickListener.onInsert(v instanceof ImageButton ? "" : ((Button) v).getText().toString());
+        if (mKeyInsertListener != null) {
+            mKeyInsertListener.onKeyInsert(v instanceof ImageButton ? "" : ((Button) v).getText().toString());
         }
+
     }
 
     public interface OnInsertListener {
-        void onInsert(String key);
+        void onKeyInsert(String key);
     }
 
     public void setBRKeyboardColor(int color) {
         setBackgroundColor(getContext().getColor(color));
     }
 
-    public void setBRButtonTextColor(int color) {
-        num0.setTextColor(getContext().getColor(color));
-        num1.setTextColor(getContext().getColor(color));
-        num2.setTextColor(getContext().getColor(color));
-        num3.setTextColor(getContext().getColor(color));
-        num4.setTextColor(getContext().getColor(color));
-        num5.setTextColor(getContext().getColor(color));
-        num6.setTextColor(getContext().getColor(color));
-        num7.setTextColor(getContext().getColor(color));
-        num8.setTextColor(getContext().getColor(color));
-        num9.setTextColor(getContext().getColor(color));
-        numDot.setTextColor(getContext().getColor(color));
-//        numDelete.setColorFilter(getContext().getColor(color));
-        invalidate();
-    }
-
     public void setBRButtonBackgroundResId(int resId) {
-        num0.setBackgroundResource(resId);
-        num1.setBackgroundResource(resId);
-        num2.setBackgroundResource(resId);
-        num3.setBackgroundResource(resId);
-        num4.setBackgroundResource(resId);
-        num5.setBackgroundResource(resId);
-        num6.setBackgroundResource(resId);
-        num7.setBackgroundResource(resId);
-        num8.setBackgroundResource(resId);
-        num9.setBackgroundResource(resId);
-        numDot.setBackgroundResource(resId);
-        numDelete.setBackgroundResource(resId);
-        invalidate();
-    }
-
-    public void setShowDot(boolean b) {
-        numDot.setVisibility(b ? VISIBLE : GONE);
-        invalidate();
-    }
-
-    public void setBreadground(Drawable drawable) {
-        setBackground(drawable);
-        invalidate();
-    }
-
-    /**
-     * Change the background of a specific button
-     *
-     * @param index    the index of the button (10 - delete, 11 - dot)
-     * @param drawable the drawable to be used
-     */
-    public void setCustomButtonBackgroundDrawable(int index, Drawable drawable) {
-        switch (index) {
-            case 0:
-                num0.setBackground(drawable);
-                break;
-            case 1:
-                num1.setBackground(drawable);
-                break;
-            case 2:
-                num2.setBackground(drawable);
-                break;
-            case 3:
-                num3.setBackground(drawable);
-                break;
-            case 4:
-                num4.setBackground(drawable);
-                break;
-            case 5:
-                num5.setBackground(drawable);
-                break;
-            case 6:
-                num6.setBackground(drawable);
-                break;
-            case 7:
-                num7.setBackground(drawable);
-                break;
-            case 8:
-                num8.setBackground(drawable);
-                break;
-            case 9:
-                num9.setBackground(drawable);
-                break;
-            case 10:
-                numDelete.setBackground(drawable);
-                break;
-            case 11:
-                numDot.setBackground(drawable);
-                break;
+        for (Button button : mPinButtons) {
+            button.setBackgroundResource(resId);
         }
+        mDeleteButton.setBackgroundResource(resId);
+        invalidate();
+    }
+
+    public void setShowDecimal(boolean showDecimal) {
+        mPinButtons.get(DECIMAL_INDEX).setVisibility(showDecimal ? VISIBLE : GONE);
+        invalidate();
     }
 
     /**
      * Change the background of a specific button
      *
-     * @param index the index of the button (10 - delete, 11 - dot)
      * @param color the color to be used
      */
-    public void setCustomButtonBackgroundColor(int index, int color) {
-        switch (index) {
-            case 0:
-                num0.setBackgroundColor(color);
-                break;
-            case 1:
-                num1.setBackgroundColor(color);
-                break;
-            case 2:
-                num2.setBackgroundColor(color);
-                break;
-            case 3:
-                num3.setBackgroundColor(color);
-                break;
-            case 4:
-                num4.setBackgroundColor(color);
-                break;
-            case 5:
-                num5.setBackgroundColor(color);
-                break;
-            case 6:
-                num6.setBackgroundColor(color);
-                break;
-            case 7:
-                num7.setBackgroundColor(color);
-                break;
-            case 8:
-                num8.setBackgroundColor(color);
-                break;
-            case 9:
-                num9.setBackgroundColor(color);
-                break;
-            case 10:
-                numDelete.setBackgroundColor(color);
-                break;
-            case 11:
-                numDot.setBackgroundColor(color);
-                break;
-        }
+    public void setDeleteButtonBackgroundColor(int color) {
+        mDeleteButton.setBackgroundColor(color);
+        invalidate();
     }
 
-    public void setDeleteImage(Drawable res) {
-        numDelete.setImageDrawable(res);
+    public void setDeleteImage(int resourceId) {
+        mDeleteButton.setImageDrawable(getResources().getDrawable(resourceId));
+        invalidate();
+    }
+
+    public void setButtonTextColor(int[] colors) {
+        for (int i = 0; i < mPinButtons.size(); i++) {
+            mPinButtons.get(i).setTextColor(colors[i]);
+        }
+
+        invalidate();
     }
 
 }

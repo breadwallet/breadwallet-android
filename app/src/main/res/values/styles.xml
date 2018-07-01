@@ -14,8 +14,7 @@
     </style>
 
     <!-- ActionBar styles -->
-    <style name="BreadActionBar"
-           parent="@style/Widget.AppCompat.ActionBar">
+    <style name="BreadActionBar" parent="@style/Widget.AppCompat.ActionBar">
         <item name="android:background">@color/white_trans</item>
     </style>
 
@@ -28,5 +27,54 @@
         <item name="android:textColor">@color/dark_blue</item>
 
     </style>
+
+    <style name="AppTheme.Dark" parent="AppTheme">
+        <item name="android:windowBackground">@color/background_dark</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="list_background">@color/list_background_dark</item>
+        <item name="add_wallet_button_background">@drawable/add_wallet_button_dark</item>
+        <item name="remove_wallet_button_background">@drawable/remove_wallet_button_dark</item>
+        <item name="hide_wallet_button_background">@drawable/remove_wallet_button_dark</item>
+        <item name="show_wallet_button_background">@drawable/add_wallet_button_dark</item>
+        <item name="toolbar_background">@color/background_dark</item>
+        <item name="toolbar_back_arrow">@drawable/ic_arrow_left_dark</item>
+        <item name="pin_pad_delete_src">@drawable/ic_delete_dark</item>
+        <item name="pin_dot_filled_background">@drawable/ic_pin_dot_filled</item>
+        <item name="create_new_wallet_background">@color/create_new_wallet_button_dark</item>
+        <item name="recover_wallet_background">@color/recover_wallet_button_dark</item>
+
+    </style>
+
+    <style name="AppTheme.Light" parent="AppTheme">
+        <item name="android:windowBackground">@color/white</item>
+        <item name="android:textColor">@color/red</item>
+        <item name="list_background">@color/white</item>
+        <item name="add_wallet_button_background">@drawable/add_wallet_button</item>
+        <item name="remove_wallet_button_background">@drawable/remove_wallet_button</item>
+        <item name="hide_wallet_button_background">@drawable/remove_wallet_button</item>
+        <item name="show_wallet_button_background">@drawable/add_wallet_button</item>
+        <item name="toolbar_back_arrow">@drawable/ic_arrow_left</item>
+        <item name="pin_pad_delete_src">@drawable/ic_delete_gray</item>
+        <item name="pin_dot_filled_background">@drawable/ic_pin_dot_black</item>
+        <item name="toolbar_background">@color/white</item>
+        <item name="create_new_wallet_background">@color/create_new_wallet_button_light</item>
+        <item name="recover_wallet_background">@color/recover_wallet_button_light</item>
+
+
+    </style>
+
+    <!-- Custom attributes for dark/light views and drawables -->
+    <attr name="add_wallet_button_background" format="reference" />
+    <attr name="remove_wallet_button_background" format="reference" />
+    <attr name="show_wallet_button_background" format="reference" />
+    <attr name="hide_wallet_button_background" format="reference" />
+    <attr name="list_background" format="reference" />
+    <attr name="toolbar_background" format="reference" />
+    <attr name="toolbar_back_arrow" format="reference" />
+    <attr name="pin_pad_delete_src" format="reference" />
+    <attr name="pin_dot_filled_background" format="reference" />
+    <attr name="create_new_wallet_background" format="reference" />
+    <attr name="recover_wallet_background" format="reference" />
+
 
 </resources>

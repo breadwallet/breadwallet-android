@@ -126,6 +126,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mKeyboard = rootView.findViewById(R.id.keyboard);
         mKeyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button);
         mKeyboard.setBRKeyboardColor(R.color.white);
+        mKeyboard.setDeleteImage(R.drawable.ic_delete_gray);
         mCurrencyCode = rootView.findViewById(R.id.iso_text);
         mAddressEdit = rootView.findViewById(R.id.address_edit);
         mScan = rootView.findViewById(R.id.scan);
@@ -879,7 +880,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     }
 
     @Override
-    public void onInsert(String key) {
+    public void onKeyInsert(String key) {
         handleClick(key);
     }
 }

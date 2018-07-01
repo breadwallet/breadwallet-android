@@ -8,8 +8,7 @@
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:background="@color/add_wallets_header_color">
+        android:layout_height="60dp">
 
 
         <RelativeLayout
@@ -20,7 +19,7 @@
                 android:id="@+id/back_arrow"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/ic_arrow_left"/>
+                android:background="?attr/toolbar_back_arrow" />
 
 
             <com.breadwallet.presenter.customviews.BRText
@@ -29,49 +28,38 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:text="@string/MenuButton.addWallet"
-                android:textSize="18sp"
-                app:customTFont="CircularPro-Book.otf"/>
+                android:textSize="20sp"
+                app:customTFont="CircularPro-Bold.otf" />
 
 
         </RelativeLayout>
     </android.support.v7.widget.Toolbar>
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="2px"
-        android:background="@color/add_wallets_searchbar_color"
-        android:layout_below="@id/toolbar">
-
-    </View>
 
     <com.breadwallet.presenter.customviews.BREdit
         android:id="@+id/search_edit"
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginEnd="12dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/add_wallets_searchbar"
+        android:layout_height="60dp"
+        android:layout_below="@id/toolbar"
+        android:background="?attr/list_background"
         android:drawableStart="@drawable/ic_search_gray_24dp"
+        android:hint="Search..."
         android:inputType="textPersonName"
-        android:hint="Search"
-        app:customTFont="CircularPro-Medium.otf"
         android:maxEms="20"
         android:maxLines="1"
         android:padding="8dp"
-        android:textColor="@color/dark_gray"
+        android:paddingLeft="10dp"
+        android:textColor="@color/white"
         android:textColorHint="@color/light_gray"
         android:textCursorDrawable="@null"
-        android:layout_below="@id/divider" />
+        app:customTFont="CircularPro-Medium.otf" />
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/token_list"
-        android:layout_below="@id/search_edit"
-        android:layout_marginTop="18dp"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"></android.support.v7.widget.RecyclerView>
+        android:layout_height="wrap_content"
+        android:layout_below="@id/search_edit"
+        android:layout_marginTop="2dp"></android.support.v7.widget.RecyclerView>
 
 
 </RelativeLayout>

@@ -7,17 +7,13 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
-import android.graphics.Color;
 import android.graphics.LinearGradient;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.Shader;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.GradientDrawable;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.MotionEvent;
 import android.view.ViewTreeObserver;
@@ -25,7 +21,6 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.Animation;
 import android.view.animation.ScaleAnimation;
 import android.widget.Button;
-import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.tools.manager.FontManager;
@@ -218,7 +213,7 @@ public class BRButton extends Button {
             setTextColor(getContext().getColor(R.color.light_gray));
             bPaint.setColor(getContext().getColor(R.color.button_secondary));
             bPaint.setStyle(Paint.Style.FILL);
-        } else if (type == 3) { //blue strokeww
+        } else if (type == 3) { //blue stroke
             bPaintStroke.setColor(getContext().getColor(R.color.button_primary_normal));
             bPaintStroke.setStyle(Paint.Style.STROKE);
             bPaintStroke.setStrokeWidth(Utils.getPixelsFromDps(getContext(), 1));
@@ -232,8 +227,7 @@ public class BRButton extends Button {
             setTextColor(getContext().getColor(R.color.white));
             bPaint.setColor(getContext().getColor(R.color.currency_buttons_color));
             bPaint.setStyle(Paint.Style.FILL);
-        }
-        else if (type == 5){
+        } else if (type == 5) {
             bPaintStroke.setColor(getContext().getColor(R.color.blue));
             bPaintStroke.setStyle(Paint.Style.STROKE);
             bPaintStroke.setStrokeWidth(Utils.getPixelsFromDps(getContext(), 1));
@@ -242,12 +236,31 @@ public class BRButton extends Button {
             bPaint.setStyle(Paint.Style.FILL);
 
         }
+        // Create new wallet button
+        else if (type == 6) {
+            setHasShadow(false);
+            TypedValue buttonColorValue = new TypedValue();
+            getContext().getTheme().resolveAttribute(R.attr.create_new_wallet_background, buttonColorValue, true);
+            setTextColor(getContext().getColor(R.color.white));
+            bPaint.setColor(getContext().getColor(buttonColorValue.resourceId));
+            bPaint.setStyle(Paint.Style.FILL);
+        }
+
+        // Recover wallet button
+        else if (type == 7) {
+            setHasShadow(false);
+            TypedValue buttonColorValue = new TypedValue();
+            getContext().getTheme().resolveAttribute(R.attr.recover_wallet_background, buttonColorValue, true);
+            setTextColor(getContext().getColor(R.color.white));
+            bPaint.setColor(getContext().getColor(buttonColorValue.resourceId));
+            bPaint.setStyle(Paint.Style.FILL);
+        }
         invalidate();
     }
 
-    public void makeGradient(int startColor, int endColor){
-            bPaint.setShader(new LinearGradient(0, 0, getWidth(), 0, startColor, endColor, Shader.TileMode.MIRROR));
-            invalidate();
+    public void makeGradient(int startColor, int endColor) {
+        bPaint.setShader(new LinearGradient(0, 0, getWidth(), 0, startColor, endColor, Shader.TileMode.MIRROR));
+        invalidate();
     }
 
     private void press(int duration) {

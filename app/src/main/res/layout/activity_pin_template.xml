@@ -1,12 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_intro_set_pit"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/extra_light_blue_background"
     tools:context="com.breadwallet.presenter.activities.InputPinActivity">
 
     <com.breadwallet.presenter.customviews.BRText
@@ -18,13 +16,12 @@
         android:layout_marginStart="@dimen/bread_margin"
         android:layout_marginTop="@dimen/bread_margin"
         android:text="@string/UpdatePin.createTitle"
-        android:textColor="@color/almost_black"
         android:textSize="@dimen/header"
         app:customTFont="CircularPro-Bold.otf"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toLeftOf="@+id/faq_button"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/description"
@@ -34,13 +31,11 @@
         android:layout_marginTop="24dp"
         android:lineSpacingMultiplier="1.3"
         android:text="@string/UpdatePin.createInstruction"
-        android:textColor="@color/almost_black"
         android:textSize="@dimen/sub_header"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/title"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <com.breadwallet.presenter.customviews.BRKeyboard
         android:id="@+id/brkeyboard"
@@ -52,8 +47,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:showAlphabet="true"
-        />
+        app:showAlphabet="true" />
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/textView5"
@@ -70,7 +64,7 @@
         app:layout_constraintLeft_toLeftOf="@+id/description"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/pinLayout"
-        app:layout_constraintVertical_bias="0.73"/>
+        app:layout_constraintVertical_bias="0.73" />
 
     <ImageButton
         android:id="@+id/faq_button"
@@ -82,17 +76,15 @@
         android:background="@drawable/faq_question_black"
         app:layout_constraintBottom_toBottomOf="@+id/title"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/title"
-        />
+        app:layout_constraintTop_toTopOf="@+id/title" />
 
     <com.breadwallet.presenter.customviews.PinLayout
         android:id="@+id/pin_digits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="@dimen/bread_margin"
-        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintTop_toBottomOf="@id/description"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/description"/>
+        app:layout_constraintRight_toRightOf="parent"/>
 
 </android.support.constraint.ConstraintLayout>

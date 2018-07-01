@@ -5,7 +5,6 @@
     android:id="@+id/activity_intro_set_pit"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/extra_light_blue_background"
     tools:context="com.breadwallet.presenter.activities.settings.AboutActivity">
 
 
@@ -13,9 +12,9 @@
         android:id="@+id/back_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/ic_arrow_left"
-        app:layout_constraintTop_toTopOf="@id/title"
+        android:background="?attr/toolbar_back_arrow"
         app:layout_constraintStart_toStartOf="@id/brd_rewards_id"
+        app:layout_constraintTop_toTopOf="@id/title"
         tools:layout_editor_absoluteX="16dp"
         tools:layout_editor_absoluteY="16dp" />
 
@@ -37,7 +36,6 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="48dp"
         android:textSize="16sp"
-        android:textColor="@color/almost_black"
         app:customTFont="CircularPro-Book.otf"
         app:layout_constraintLeft_toLeftOf="@id/divider4"
         app:layout_constraintTop_toBottomOf="@+id/brd_rewards" />
@@ -62,8 +60,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="12dp"
-        android:textColor="@color/dark_blue"
         android:text="@string/URLHandling.copy"
+        android:textColor="@color/dark_blue"
         android:textSize="20sp"
         app:customTFont="CircularPro-Book.otf"
         app:layout_constraintEnd_toEndOf="parent"
@@ -89,7 +87,6 @@
         android:layout_marginLeft="148dp"
         android:layout_marginTop="36dp"
         android:text="@string/About.title"
-        android:textColor="@color/almost_black"
         android:textSize="@dimen/header"
         app:customTFont="CircularPro-Bold.otf"
         app:layout_constraintLeft_toLeftOf="parent"

@@ -8,10 +8,10 @@ import android.widget.ImageButton;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
-import com.breadwallet.presenter.customviews.PinLayout;
 import com.breadwallet.presenter.customviews.BRText;
-import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.presenter.customviews.PinLayout;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
@@ -74,8 +74,10 @@ public class InputPinActivity extends BRActivity implements PinLayout.OnPinInser
 
         mPinDigitViews.setOnPinInsertedListener(this);
 
-        mKeyboard.setShowDot(false);
+        mKeyboard.setShowDecimal(false);
 
+        int[] pinDigitButtonColors = getResources().getIntArray(R.array.pin_digit_button_colors);
+        mKeyboard.setButtonTextColor(pinDigitButtonColors);
     }
 
     @Override
@@ -91,7 +93,7 @@ public class InputPinActivity extends BRActivity implements PinLayout.OnPinInser
     }
 
     @Override
-    public void onInserted(String pin, boolean isPinCorrect) {
+    public void onPinInserted(String pin, boolean isPinCorrect) {
         switch (mPinMode) {
             case VERIFY:
                 if (isPinCorrect) {
@@ -131,6 +133,7 @@ public class InputPinActivity extends BRActivity implements PinLayout.OnPinInser
             case NEW:
                 if (mPinUpdateMode) {
                     mTitle.setText(R.string.UpdatePin_enterNew);
+                    mPinDigitViews.updatePinUi(PinLayout.MAX_PIN_DIGITS, true);
                 } else {
                     mTitle.setText(R.string.UpdatePin_createTitle);
                 }
@@ -143,6 +146,7 @@ public class InputPinActivity extends BRActivity implements PinLayout.OnPinInser
                 }
                 break;
         }
+
     }
 
     private void handleSuccess() {
