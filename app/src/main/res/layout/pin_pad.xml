@@ -148,8 +148,8 @@
         app:customBFont="CircularPro-Book.otf"/>
 
     <com.breadwallet.presenter.customviews.BRButton
-        android:id="@+id/numDot"
-        android:layout_column="0"
+        android:id="@+id/decimal"
+        android:layout_column="2"
         android:layout_gravity="fill_horizontal"
         android:layout_margin="2px"
         android:layout_row="3"
@@ -178,17 +178,17 @@
         app:customBFont="CircularPro-Book.otf"/>
 
     <ImageButton
-        android:id="@+id/numDelete"
+        android:id="@+id/delete"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_column="2"
+        android:layout_column="0"
         android:layout_gravity="fill_horizontal|fill_vertical"
         android:layout_margin="2px"
         android:layout_row="3"
         android:background="@android:color/transparent"
         android:gravity="center"
         android:paddingBottom="8dp"
-        android:src="@drawable/ic_delete_gray"
+        android:src="?attr/pin_pad_delete_src"
         android:text=""
         android:textColor="@color/pin_pad_text"
         android:textSize="@dimen/pin_par_text_size"

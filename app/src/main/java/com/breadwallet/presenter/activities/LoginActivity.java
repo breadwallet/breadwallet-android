@@ -22,8 +22,8 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.PinLayout;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
-import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -33,22 +33,15 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.APIClient;
 
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgrounded {
     private static final String TAG = LoginActivity.class.getName();
     private BRKeyboard mKeyboard;
     private LinearLayout mPinLayout;
-
-
-
     private ImageView mUnlockedImage;
     private TextView mUnlockedText;
-    private TextView mEnterPinLabel;
-
     private ImageButton mFingerPrint;
     private static final int DELETE_BUTTON_INDEX = 10;
     private PinLayout mPinDigitViews;
@@ -77,18 +70,9 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
 
         mUnlockedImage = findViewById(R.id.unlocked_image);
         mUnlockedText = findViewById(R.id.unlocked_text);
-        mEnterPinLabel = findViewById(R.id.enter_pin_label);
-
-        mKeyboard.setBRButtonBackgroundResId(R.drawable.keyboard_trans_button);
-        mKeyboard.setBRButtonTextColor(R.color.white);
-        mKeyboard.setShowDot(false);
-        mKeyboard.setBreadground(getDrawable(R.drawable.bread_gradient));
-        mKeyboard.setCustomButtonBackgroundColor(DELETE_BUTTON_INDEX, getColor(android.R.color.transparent));
-        mKeyboard.setDeleteImage(getDrawable(R.drawable.ic_delete_white));
-
         mPinDigitViews.setOnPinInsertedListener(new PinLayout.OnPinInserted() {
             @Override
-            public void onInserted(String pin, boolean isPinCorrect) {
+            public void onPinInserted(String pin, boolean isPinCorrect) {
                 if (isPinCorrect) {
                     unlockWallet();
                 } else {
@@ -96,6 +80,14 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
                 }
             }
         });
+
+        mKeyboard.setShowDecimal(false);
+        mKeyboard.setDeleteButtonBackgroundColor(getColor(android.R.color.transparent));
+        mKeyboard.setDeleteImage(R.drawable.ic_delete_dark);
+
+        int[] pinDigitButtonColors = getResources().getIntArray(R.array.pin_digit_button_colors);
+        mKeyboard.setButtonTextColor(pinDigitButtonColors);
+
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -174,7 +166,6 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
 
     private void unlockWallet() {
         mPinLayout.animate().translationY(-R.dimen.animation_long).setInterpolator(new AccelerateInterpolator());
-        mEnterPinLabel.animate().translationY(-R.dimen.animation_long).setInterpolator(new AccelerateInterpolator());
         mKeyboard.animate().translationY(R.dimen.animation_long).setInterpolator(new AccelerateInterpolator());
         mUnlockedImage.animate().alpha(1f).setListener(new AnimatorListenerAdapter() {
             @Override

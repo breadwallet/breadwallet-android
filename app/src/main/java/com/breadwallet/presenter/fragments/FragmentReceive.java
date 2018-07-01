@@ -24,8 +24,8 @@ import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.BRLinearLayoutWithCaret;
 import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
-import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.SlideDetector;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.qrcode.QRUtils;
@@ -111,6 +111,7 @@ public class FragmentReceive extends ModalDialogFragment implements OnBalanceCha
         mRequestButton = rootView.findViewById(R.id.request_button);
         mKeyboard = rootView.findViewById(R.id.keyboard);
         mKeyboard.setBRButtonBackgroundResId(R.drawable.keyboard_white_button);
+        mKeyboard.setDeleteImage(R.drawable.ic_delete_gray);
         mKeyboard.setBRKeyboardColor(R.color.white);
         mSeparatorRequestView = rootView.findViewById(R.id.separator);
         mCloseButton = rootView.findViewById(R.id.close_button);
