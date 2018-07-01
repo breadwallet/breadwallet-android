@@ -6,7 +6,6 @@
     android:id="@+id/activity_intro_recover"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/extra_light_blue_background"
     tools:context="com.breadwallet.presenter.activities.intro.RecoverActivity">
 
     <com.breadwallet.presenter.customviews.BRButton
@@ -36,7 +35,6 @@
         android:layout_marginTop="16dp"
         android:lineSpacingMultiplier="1.3"
         android:text="@string/WipeWallet.startMessage"
-        android:textColor="@color/almost_black"
         android:textSize="@dimen/sub_header"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
@@ -52,7 +50,6 @@
         android:layout_marginTop="8dp"
         android:lineSpacingMultiplier="1.3"
         android:text="@string/WipeWallet.startWarning"
-        android:textColor="@color/almost_black"
         android:textSize="@dimen/sub_header"
         app:layout_constraintBottom_toTopOf="@+id/send_button"
         app:layout_constraintHorizontal_bias="0.333"

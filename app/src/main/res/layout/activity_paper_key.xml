@@ -6,7 +6,6 @@
     android:id="@+id/activity_write_down"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     tools:context="com.breadwallet.presenter.activities.intro.WriteDownActivity">
 
     <android.support.constraint.ConstraintLayout
@@ -142,7 +141,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:text="1 of 12"
-        android:textColor="@color/light_gray"
         app:customTFont="CircularPro-Medium.otf"/>
 
 

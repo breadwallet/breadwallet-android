@@ -291,7 +291,7 @@
     <!-- Manage wallet modal title -->
     <string name="ManageWallet.title">Manage Wallet</string>
     <!-- "Add [a] Wallet [to the home screen]" -->
-    <string name="MenuButton.addWallet">Add Wallet</string>
+    <string name="MenuButton.addWallet">Add Wallets</string>
     <!-- Buy bitcoin title -->
     <string name="MenuButton.buy">Buy Bitcoin</string>
     <!-- Menu button title -->
@@ -920,4 +920,6 @@
 
     <string name="QRUtils.ShareTitle">Share Address</string>
 
+    <!-- Intro screen subtitle -->
+    <string name="Intro.subtitle">Moving money forward.</string>
 </resources>

@@ -2,11 +2,14 @@
 package com.breadwallet.presenter.activities.intro;
 
 import android.content.Intent;
+import android.graphics.LinearGradient;
+import android.graphics.Shader;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.HomeActivity;
@@ -63,10 +66,18 @@ public class IntroActivity extends BRActivity {
         mNewWalletButton = findViewById(R.id.button_new_wallet);
         mRecoverWalletButton = findViewById(R.id.button_recover_wallet);
         mSplashScreen = findViewById(R.id.splash_screen);
+        TextView subtitle = findViewById(R.id.intro_subtitle);
 
         setListeners();
         updateBundles();
         ImageButton faq = findViewById(R.id.faq_button);
+
+        Shader shader = new LinearGradient(
+                90, 0, 100, 100,
+                getResources().getColor(R.color.button_gradient_start_color, null), getResources().getColor(R.color.button_gradient_end_color, null),
+                Shader.TileMode.CLAMP);
+
+        subtitle.getPaint().setShader(shader);
 
         faq.setOnClickListener(new View.OnClickListener() {
             @Override

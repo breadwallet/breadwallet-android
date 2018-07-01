@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.text.format.DateUtils;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,6 +70,7 @@ public class PinFragment extends Fragment {
 
         View rootView = inflater.inflate(R.layout.fragment_pin, container, false);
         mKeyboard = rootView.findViewById(R.id.brkeyboard);
+        mKeyboard.setDeleteImage(R.drawable.ic_delete_gray);
 
         mTitle = rootView.findViewById(R.id.title);
         mMessage = rootView.findViewById(R.id.message);
@@ -86,7 +88,7 @@ public class PinFragment extends Fragment {
 
         mPinDigitViews.setOnPinInsertedListener(new PinLayout.OnPinInserted() {
             @Override
-            public void onInserted(String pin, boolean isPinCorrect) {
+            public void onPinInserted(String pin, boolean isPinCorrect) {
                 if (isPinCorrect) {
                     handleSuccess();
                 }
