@@ -3,7 +3,6 @@ package com.breadwallet.presenter.customviews;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -62,10 +61,7 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
     private OnPinInserted mOnPinInsertedListener;
     private String mLastInsertedPin;
     private boolean mIsPinUpdating;
-    private final int PIN_REFRESH_DELAY = 500;
-    private Handler mPinUpdateHandler = new Handler();
     private int mPinDotBackground;
-    private int mCurrentPinLength;
 
     public PinLayout(Context context) {
         super(context);
@@ -114,7 +110,6 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
         getContext().getTheme().resolveAttribute(R.attr.pin_dot_filled_background, pinDotColorValue, true);
         mPinDotBackground = pinDotColorValue.resourceId;
 
-
     }
 
     private void useNewDigitLimit(boolean useNewLimit) {
@@ -151,7 +146,8 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
 
     private void handleKeyInsert() {
         int pinLength = mPinStringBuilder.length();
-        updatePinUi(pinLength, false);
+
+        updatePinUi(pinLength);
 
         if (mPinStringBuilder.length() == mPinLimit) {
             String pin = mPinStringBuilder.toString();
@@ -160,40 +156,27 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
                 mOnPinInsertedListener.onPinInserted(pin, true);
                 authSuccess(getContext());
                 useNewDigitLimit(true);
-
             } else {
                 mOnPinInsertedListener.onPinInserted(pin, false);
-                updatePinUi(mPinLimit, true);
                 if (!mIsPinUpdating && !currentPin.isEmpty()) {
                     authFailed(getContext(), pin);
                 }
             }
+            updatePinUi(0);
             mPinStringBuilder = new StringBuilder();
             mLastInsertedPin = pin;
 
         }
-
     }
 
-    public void updatePinUi(int pinLength, final boolean needsRefresh) {
-
-        int currentPinDigitIndex = pinLength - 1;
-        if (pinLength > 0 && pinLength <= MAX_PIN_DIGITS) {
-            mPinDigitViews.get(currentPinDigitIndex).setBackgroundResource(mPinDotBackground);
-
-            // Only use the handler to refresh the pin digit UI if needed
-            if (needsRefresh) {
-                mPinUpdateHandler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-
-                        for (int i = 0; i < mPinDigitViews.size(); i++) {
-                            mPinDigitViews.get(i).setBackgroundResource(mBaseResourceID);
-                        }
-
-                    }
-                }, PIN_REFRESH_DELAY);
+    private void updatePinUi(int pinLength) {
+        for (int i = 0; i < mPinDigitViews.size(); i++) {
+            if (pinLength > 0) {
+                mPinDigitViews.get(i).setBackgroundResource(mPinDotBackground);
+            } else {
+                mPinDigitViews.get(i).setBackgroundResource(mBaseResourceID);
             }
+            pinLength--;
         }
     }
 
@@ -206,10 +189,9 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
 
     private void handleDeleteClick() {
         if (mPinStringBuilder.length() > 0) {
-            mPinDigitViews.get(mPinStringBuilder.length() - 1).setBackgroundResource(mBaseResourceID);
             mPinStringBuilder.deleteCharAt(mPinStringBuilder.length() - 1);
         }
-
+        handleKeyInsert();
     }
 
     public void setOnPinInsertedListener(OnPinInserted onPinInsertedListener) {
