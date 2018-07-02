@@ -39,7 +39,7 @@
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1">
 
-        <com.breadwallet.presenter.customviews.BRText
+        <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -96,7 +96,7 @@
             app:layout_constraintTop_toTopOf="@+id/imageView4"/>
 
 
-        <com.breadwallet.presenter.customviews.BRText
+        <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -129,7 +129,7 @@
     </android.support.constraint.ConstraintLayout>
 
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/textView8"
         android:layout_width="0dp"
         android:layout_height="19dp"

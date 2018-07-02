@@ -8,10 +8,10 @@ import android.widget.ImageButton;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
-import com.breadwallet.presenter.customviews.BRText;
 import com.breadwallet.presenter.customviews.PinLayout;
-import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.animation.UiUtils;
+import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
@@ -22,7 +22,7 @@ public class InputPinActivity extends BRActivity implements PinLayout.OnPinInser
     private static final String TAG = InputPinActivity.class.getName();
 
     private PinLayout mPinDigitViews;
-    private BRText mTitle;
+    private BaseTextView mTitle;
     private String mNewPin;
     private PinMode mPinMode;
     private boolean mPinUpdateMode;

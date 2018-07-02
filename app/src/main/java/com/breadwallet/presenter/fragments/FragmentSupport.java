@@ -98,7 +98,6 @@ public class FragmentSupport extends ModalDialogFragment {
         });
 
         mUrl = URL_SUPPORT;
-        HTTPServer.mode = HTTPServer.ServerMode.SUPPORT;
         HTTPServer.setOnCloseListener(new HTTPServer.OnCloseListener() {
             @Override
             public void onClose() {

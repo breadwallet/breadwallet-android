@@ -9,7 +9,7 @@
               android:padding="8dp"
               android:showDividers="middle">
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/toast_text"
         android:textSize="@dimen/sub_header"
         android:layout_width="wrap_content"

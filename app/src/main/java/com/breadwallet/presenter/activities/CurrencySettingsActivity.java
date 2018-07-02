@@ -7,7 +7,7 @@ import android.widget.ListView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
-import com.breadwallet.presenter.customviews.BRText;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.tools.adapter.SettingsAdapter;
 import com.breadwallet.wallet.WalletsMaster;
@@ -22,7 +22,7 @@ import java.util.List;
 
 public class CurrencySettingsActivity extends BaseSettingsActivity {
 
-    private BRText mTitle;
+    private BaseTextView mTitle;
     private ListView listView;
     public List<BRSettingsItem> items;
     private static CurrencySettingsActivity app;
@@ -31,6 +31,11 @@ public class CurrencySettingsActivity extends BaseSettingsActivity {
     @Override
     public int getLayoutId() {
         return R.layout.activity_currency_settings;
+    }
+
+    @Override
+    public int getBackButtonId() {
+        return R.id.back_button;
     }
 
     @Override

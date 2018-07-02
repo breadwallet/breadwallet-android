@@ -18,11 +18,10 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.core.ethereum.BREthereumToken;
-import com.breadwallet.presenter.customviews.BRText;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
@@ -369,9 +368,9 @@ public class TransactionListAdapter extends RecyclerView.Adapter<RecyclerView.Vi
         public TextView comment;
         public ImageView arrowIcon;
 
-        public BRText transactionDate;
-        public BRText transactionAmount;
-        public BRText transactionDetail;
+        public BaseTextView transactionDate;
+        public BaseTextView transactionAmount;
+        public BaseTextView transactionDetail;
         public Button transactionFailed;
         public ProgressBar transactionProgress;
 

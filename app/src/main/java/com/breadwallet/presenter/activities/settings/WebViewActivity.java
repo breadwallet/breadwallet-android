@@ -36,12 +36,11 @@ import android.widget.Toolbar;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.presenter.customviews.BRText;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.platform.HTTPServer;
 import com.platform.middlewares.plugins.GeoLocationPlugin;
 import com.platform.middlewares.plugins.LinkPlugin;
 
@@ -78,7 +77,7 @@ public class WebViewActivity extends BRActivity {
 
     private Toolbar topToolbar;
     private Toolbar bottomToolbar;
-    private BRText mCloseButton;
+    private BaseTextView mCloseButton;
     private ImageButton mReloadButton;
     private ImageButton mBackButton;
     private ImageButton mForwardButton;
@@ -149,7 +148,7 @@ public class WebViewActivity extends BRActivity {
         String json = getIntent().getStringExtra("json");
 
         if (json == null) {
-            if (theUrl != null & !setupServerMode(theUrl)) {
+            if (theUrl != null) {
                 webView.loadUrl(theUrl);
 
                 return;
@@ -322,20 +321,6 @@ public class WebViewActivity extends BRActivity {
                 Log.e(TAG, "onReceiveValue: " + value);
             }
         });
-    }
-
-    private boolean setupServerMode(String url) {
-        if (url.equalsIgnoreCase(HTTPServer.URL_BUY)) {
-            HTTPServer.mode = HTTPServer.ServerMode.BUY;
-        } else if (url.equalsIgnoreCase(HTTPServer.URL_SUPPORT)) {
-            HTTPServer.mode = HTTPServer.ServerMode.SUPPORT;
-        } else if (url.equalsIgnoreCase(HTTPServer.URL_EA)) {
-            HTTPServer.mode = HTTPServer.ServerMode.EA;
-        } else {
-            Log.e(TAG, "setupServerMode: " + "unknown url: " + url);
-            return false;
-        }
-        return true;
     }
 
     private boolean closeOnMatch(Uri toUri) {

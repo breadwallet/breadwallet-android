@@ -33,7 +33,7 @@ public class WriteDownActivity extends BRActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                close();
+                UiUtils.startBreadActivity(WriteDownActivity.this, false);
             }
         });
         ImageButton faq = findViewById(R.id.faq_button);
@@ -50,18 +50,18 @@ public class WriteDownActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
-                AuthManager.getInstance().authPrompt(WriteDownActivity.this, null, getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
-                    @Override
-                    public void onComplete() {
-                        PostAuth.getInstance().onPhraseCheckAuth(WriteDownActivity.this, false);
-                    }
+                AuthManager.getInstance().authPrompt(WriteDownActivity.this, null,
+                        getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
+                            @Override
+                            public void onComplete() {
+                                PostAuth.getInstance().onPhraseCheckAuth(WriteDownActivity.this, false);
+                            }
 
-                    @Override
-                    public void onCancel() {
+                            @Override
+                            public void onCancel() {
 
-                    }
-                });
-
+                            }
+                        });
             }
         });
     }
@@ -74,19 +74,8 @@ public class WriteDownActivity extends BRActivity {
 
     @Override
     public void onBackPressed() {
-        if (getFragmentManager().getBackStackEntryCount() == 0) {
-            close();
-        } else {
-            getFragmentManager().popBackStack();
-        }
-    }
-
-    private void close() {
-        UiUtils.startBreadActivity(this, false);
-        overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
-        if (!isDestroyed()) {
-            finish();
-        }
+        super.onBackPressed();
+        overridePendingTransition(R.anim.empty_300, R.anim.exit_to_bottom);
     }
 
 }

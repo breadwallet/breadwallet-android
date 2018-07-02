@@ -15,7 +15,7 @@
         android:layout_height="wrap_content" />
 
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/bch_dialog_title"
         android:text="BRD now supports Bitcoin Cash!"
         android:layout_centerHorizontal="true"
@@ -24,7 +24,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/bch_dialog_message"
         android:text="Any BCH in your wallet can be accessed through the home screen."
         android:layout_below="@id/bch_dialog_title"
