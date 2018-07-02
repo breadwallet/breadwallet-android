@@ -143,10 +143,6 @@ public class IntroActivity extends BRActivity {
                 if (!UiUtils.isClickAllowed()) {
                     return;
                 }
-                HomeActivity app = HomeActivity.getApp();
-                if (app != null) {
-                    app.finish();
-                }
                 Intent intent = new Intent(IntroActivity.this, RecoverActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);

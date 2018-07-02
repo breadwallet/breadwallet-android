@@ -5,27 +5,20 @@ import android.widget.CompoundButton;
 import android.widget.ToggleButton;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 
-public class ShareDataActivity extends BRActivity {
+public class ShareDataActivity extends BaseSettingsActivity {
     private static final String TAG = ShareDataActivity.class.getName();
-    private ToggleButton toggleButton;
-    public static boolean appVisible = false;
-    private static ShareDataActivity app;
-
-    public static ShareDataActivity getApp() {
-        return app;
-    }
+    private ToggleButton mToggleButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_share_data);
+        setContentView(getLayoutId());
 
-        toggleButton = findViewById(R.id.toggleButton);
-        toggleButton.setChecked(BRSharedPrefs.getShareData(this));
-        toggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        mToggleButton = findViewById(R.id.toggleButton);
+        mToggleButton.setChecked(BRSharedPrefs.getShareData(this));
+        mToggleButton.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 BRSharedPrefs.putShareData(ShareDataActivity.this, isChecked);
@@ -35,26 +28,13 @@ public class ShareDataActivity extends BRActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        appVisible = true;
-        app = this;
+    public int getLayoutId() {
+        return R.layout.activity_share_data;
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        appVisible = false;
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public int getBackButtonId() {
+        return R.id.back_button;
     }
 
 }

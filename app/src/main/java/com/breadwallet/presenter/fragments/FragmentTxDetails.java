@@ -5,11 +5,9 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.text.format.DateUtils;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +23,12 @@ import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.presenter.customviews.BREdit;
-import com.breadwallet.presenter.customviews.BRText;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.TxManager;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.BRDateUtil;
 import com.breadwallet.tools.util.CurrencyUtils;
@@ -56,16 +53,16 @@ public class FragmentTxDetails extends DialogFragment {
 
     private TxUiHolder mTransaction;
 
-    private BRText mTxAction;
-    private BRText mTxAmount;
-    private BRText mTxStatus;
-    private BRText mTxDate;
-    private BRText mToFrom;
-    private BRText mToFromAddress;
+    private BaseTextView mTxAction;
+    private BaseTextView mTxAmount;
+    private BaseTextView mTxStatus;
+    private BaseTextView mTxDate;
+    private BaseTextView mToFrom;
+    private BaseTextView mToFromAddress;
     private BREdit mMemoText;
 
-    private BRText mGasPrice;
-    private BRText mGasLimit;
+    private BaseTextView mGasPrice;
+    private BaseTextView mGasLimit;
     private View mGasPriceDivider;
     private View mGasLimitDivider;
 
@@ -74,21 +71,21 @@ public class FragmentTxDetails extends DialogFragment {
     private ConstraintLayout mGasPriceContainer;
     private ConstraintLayout mGasLimitContainer;
 
-    private BRText mFeePrimaryLabel;
-    private BRText mFeePrimary;
+    private BaseTextView mFeePrimaryLabel;
+    private BaseTextView mFeePrimary;
     private View mFeePrimaryDivider;
-    private BRText mFeeSecondaryLabel;
-    private BRText mFeeSecondary;
+    private BaseTextView mFeeSecondaryLabel;
+    private BaseTextView mFeeSecondary;
     private View mFeeSecondaryDivider;
 
-    private BRText mExchangeRate;
-    private BRText mConfirmedInBlock;
-    private BRText mTransactionId;
-    private BRText mShowHide;
-    private BRText mAmountWhenSent;
-    private BRText mAmountNow;
-    private BRText mWhenSentLabel;
-    private BRText mNowLabel;
+    private BaseTextView mExchangeRate;
+    private BaseTextView mConfirmedInBlock;
+    private BaseTextView mTransactionId;
+    private BaseTextView mShowHide;
+    private BaseTextView mAmountWhenSent;
+    private BaseTextView mAmountNow;
+    private BaseTextView mWhenSentLabel;
+    private BaseTextView mNowLabel;
 
     private ConstraintLayout mConfirmedContainer;
     private View mConfirmedDivider;

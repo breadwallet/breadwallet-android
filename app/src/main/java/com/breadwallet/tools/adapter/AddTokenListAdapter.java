@@ -14,8 +14,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.customviews.BRText;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.TokenItem;
+import com.breadwallet.tools.util.BRConstants;
 
 import java.util.ArrayList;
 
@@ -47,14 +48,14 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
     public void onBindViewHolder(final @NonNull AddTokenListAdapter.TokenItemViewHolder holder, final int position) {
 
         TokenItem item = mTokens.get(position);
-        String tickerName = item.symbol.toLowerCase();
+        String currencyCode = item.symbol.toLowerCase();
 
-        if (tickerName.equals("1st")) {
-            tickerName = "first";
+        if (currencyCode.equals("1st")) {
+            currencyCode = "first";
         }
 
-        String iconResourceName = tickerName;
-        int iconResourceId = mContext.getResources().getIdentifier(tickerName, "drawable", mContext.getPackageName());
+        String iconResourceName = currencyCode;
+        int iconResourceId = mContext.getResources().getIdentifier(currencyCode, BRConstants.DRAWABLE, mContext.getPackageName());
 
         holder.name.setText(mTokens.get(position).name);
         holder.symbol.setText(mTokens.get(position).symbol);
@@ -83,10 +84,8 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
                 if (!mTokens.get(position).isAdded) {
                     mTokens.get(position).isAdded = true;
                     mListener.onTokenAdded(mTokens.get(position));
-                }
-
-                // Set button back to "Add"
-                else {
+                } else {
+                    // Set button back to "Add"
                     mTokens.get(position).isAdded = false;
                     mListener.onTokenRemoved(mTokens.get(position));
 
@@ -119,8 +118,8 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
     public class TokenItemViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView logo;
-        private BRText symbol;
-        private BRText name;
+        private BaseTextView symbol;
+        private BaseTextView name;
         private Button addRemoveButton;
 
         public TokenItemViewHolder(View view) {

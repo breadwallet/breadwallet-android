@@ -40,7 +40,7 @@ public class BRNotificationBar extends android.support.v7.widget.Toolbar {
     private static final String TAG = BRNotificationBar.class.getName();
 
     private BRActivity activity;
-    private BRText description;
+    private BaseTextView description;
     private BRButton close;
 
     public boolean[] filterSwitches = new boolean[4];

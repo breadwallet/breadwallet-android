@@ -3,44 +3,38 @@
                 xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@color/white"
                 android:filterTouchesWhenObscured="true"
-                android:orientation="horizontal"
-    >
+                android:orientation="horizontal">
 
-    <com.breadwallet.presenter.customviews.BRText
+    <ImageView
+        android:id="@+id/item_icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginStart="16dp"/>
+
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/item_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="16dp"
         android:layout_marginBottom="16dp"
-        android:textSize="@dimen/sub_header"
-        android:textColor="@color/total_assets_usd_color"
-        />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_toEndOf="@+id/item_icon"
+        android:textColor="@color/white"
+        android:textSize="@dimen/sub_header"/>
 
-    <com.breadwallet.presenter.customviews.BRText
-        app:customTFont="CircularPro-Medium.otf"
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/item_addon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:textSize="@dimen/sub_header"
-        android:visibility="visible"
-        android:text="$USD"
         android:layout_centerVertical="true"
         android:layout_marginEnd="28dp"
         android:textColor="@color/total_assets_label_color"
-       />
-
-    <ImageButton
-        android:id="@+id/right_icon"
-        android:background="@drawable/chevron_right_light"
-        android:layout_alignParentEnd="true"
-        android:layout_centerVertical="true"
-        android:layout_marginEnd="8dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:textSize="@dimen/sub_header"
+        android:visibility="visible"
+        app:customTFont="CircularPro-Medium.otf"/>
 
 </RelativeLayout>

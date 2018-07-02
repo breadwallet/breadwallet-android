@@ -122,8 +122,6 @@
     <string name="Button.Home">Home</string>
     <!-- Ignore button label -->
     <string name="Button.ignore">Ignore</string>
-    <!-- menu button -->
-    <string name="Button.menu">menu</string>
     <!-- No button -->
     <string name="Button.no">No</string>
     <!-- OK button label -->
@@ -297,7 +295,7 @@
     <!-- Menu button title -->
     <string name="MenuButton.lock">Lock Wallet</string>
     <!-- Menu button title -->
-    <string name="MenuButton.security">Security Center</string>
+    <string name="MenuButton.security">Security Settings</string>
     <!-- Menu button title -->
     <string name="MenuButton.settings">Settings</string>
     <!-- Menu button title -->
@@ -922,4 +920,10 @@
 
     <!-- Intro screen subtitle -->
     <string name="Intro.subtitle">Moving money forward.</string>
+    <string name="MenuButton.manageWallets">Manage Wallets</string>
+    <string name="MenuButton.scan">Scan QR Code</string>
+    <string name="Button.trade">Trade</string>
+    <string name="Button.menu">Menu</string>
+    <string name="Button.review">Review</string>
+
 </resources>
