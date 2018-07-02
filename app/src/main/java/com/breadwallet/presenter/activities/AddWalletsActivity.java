@@ -148,6 +148,12 @@ public class AddWalletsActivity extends BRActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
+    }
+
+    @Override
     protected void onPause() {
         super.onPause();
         WalletsMaster.getInstance(this).updateWallets(this);

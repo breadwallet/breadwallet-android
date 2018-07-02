@@ -4,6 +4,6 @@
         android:radius="4dp"
         />
 
-    <solid android:color="#fff"/>
-    <stroke android:color="@color/red" android:width="1px"/>
+    <solid android:color="?attr/secondary_background"/>
+    <stroke android:color="@color/button_gradient_end_color" android:width="1px"/>
 </shape>

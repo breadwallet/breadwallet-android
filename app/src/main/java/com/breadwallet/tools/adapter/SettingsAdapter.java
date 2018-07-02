@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
@@ -73,8 +74,12 @@ public class SettingsAdapter extends ArrayAdapter<String> {
                 addon.setVisibility(View.VISIBLE);
                 addon.setText(item.addonText);
             }
-            ImageButton icon = v.findViewById(R.id.right_icon);
-            icon.setBackgroundResource(item.iconResId);
+            ImageView icon = v.findViewById(R.id.item_icon);
+            if (item.iconResId != 0) {
+                icon.setBackgroundResource(item.iconResId);
+            } else {
+                icon.setVisibility(View.GONE);
+            }
 
             v.setOnClickListener(item.listener);
         }

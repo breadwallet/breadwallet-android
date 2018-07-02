@@ -29,6 +29,7 @@ import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.LoginActivity;
 import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
+import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.entities.TxUiHolder;
@@ -334,6 +335,13 @@ public class UiUtils {
             return true;
         }
         return false;
+    }
+
+    public static void startWebActivity(Activity activity, String url) {
+        Intent intent = new Intent(activity, WebViewActivity.class);
+        intent.putExtra(BRConstants.EXTRA_URL, url);
+        activity.startActivity(intent);
+        activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
     }
 
     public static boolean isMainThread() {

@@ -9,7 +9,7 @@
     tools:context="com.breadwallet.presenter.activities.LoginActivity">
 
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/scan"
         android:textSize="18sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -130,7 +130,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/unlocked_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

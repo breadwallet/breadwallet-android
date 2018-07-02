@@ -6,7 +6,7 @@
     android:background="@color/white">
 
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/tx_date"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -19,7 +19,7 @@
         app:customTFont="CircularPro-Book.otf" />
 
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/tx_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
         android:textColor="@color/settings_chevron_right"
         android:textSize="14sp"/>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/tx_amount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -68,18 +68,11 @@ public class HTTPServer {
     private static Set<Middleware> middlewares;
     private static Server server;
     private static final int PORT = 31120;
-    public static final String URL_EA = "http://localhost:" + PORT + "/ea";
     public static final String URL_BUY = "http://localhost:" + PORT + "/buy";
+    public static final String URL_TRADE = "http://localhost:" + PORT + "/trade";
     public static final String URL_SELL = "http://localhost:" + PORT + "/sell";
     public static final String URL_SUPPORT = "http://localhost:" + PORT + "/support";
-    public static ServerMode mode;
     private static OnCloseListener mOnCloseListener;
-
-    public enum ServerMode {
-        SUPPORT,
-        BUY,
-        EA
-    }
 
     public HTTPServer() {
         init();
@@ -145,8 +138,7 @@ public class HTTPServer {
     }
 
     private static class ServerHandler extends AbstractHandler {
-        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response)
-                throws IOException, ServletException {
+        public void handle(String target, Request baseRequest, HttpServletRequest request, HttpServletResponse response) {
             boolean success;
             success = dispatch(target, baseRequest, request, response);
             if (!success) {

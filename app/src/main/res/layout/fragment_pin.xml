@@ -22,7 +22,7 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
-        <com.breadwallet.presenter.customviews.BRText
+        <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -33,7 +33,7 @@
             android:textSize="22sp"
             app:customTFont="CircularPro-Bold.otf"/>
 
-        <com.breadwallet.presenter.customviews.BRText
+        <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

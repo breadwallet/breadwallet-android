@@ -1,5 +1,6 @@
 package com.breadwallet.presenter.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -10,15 +11,14 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.widget.LinearLayout;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.SecurityCenterActivity;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
-import com.breadwallet.presenter.customviews.BRText;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
@@ -31,6 +31,7 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -47,24 +48,19 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     private RecyclerView mWalletRecycler;
     private WalletListAdapter mAdapter;
-    private BRText mFiatTotal;
-    private RelativeLayout mSettings;
-    private RelativeLayout mSecurity;
-    private RelativeLayout mSupport;
+    private BaseTextView mFiatTotal;
     private PromptManager.PromptItem mCurrentPrompt;
     public BRNotificationBar mNotificationBar;
 
-    private BRText mPromptTitle;
-    private BRText mPromptDescription;
+    private BaseTextView mPromptTitle;
+    private BaseTextView mPromptDescription;
     private BRButton mPromptContinue;
     private BRButton mPromptDismiss;
     private CardView mPromptCard;
 
-    private static HomeActivity app;
-
-    public static HomeActivity getApp() {
-        return app;
-    }
+    private LinearLayout mBuyLayout;
+    private LinearLayout mTradeLayout;
+    private LinearLayout mMenuLayout;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -75,9 +71,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mWalletRecycler = findViewById(R.id.rv_wallet_list);
         mFiatTotal = findViewById(R.id.total_assets_usd);
 
-        mSettings = findViewById(R.id.settings_row);
-        mSecurity = findViewById(R.id.security_row);
-        mSupport = findViewById(R.id.support_row);
         mNotificationBar = findViewById(R.id.notification_bar);
 
         mPromptCard = findViewById(R.id.prompt_card);
@@ -85,6 +78,34 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mPromptDescription = findViewById(R.id.prompt_description);
         mPromptContinue = findViewById(R.id.continue_button);
         mPromptDismiss = findViewById(R.id.dismiss_button);
+
+        mBuyLayout = findViewById(R.id.buy_layout);
+        mTradeLayout = findViewById(R.id.trade_layout);
+        mMenuLayout = findViewById(R.id.menu_layout);
+
+        mBuyLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UiUtils.startWebActivity(HomeActivity.this, HTTPServer.URL_BUY);
+            }
+        });
+
+        mTradeLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                UiUtils.startWebActivity(HomeActivity.this, HTTPServer.URL_TRADE);
+            }
+        });
+
+        mMenuLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
+                intent.putExtra(SettingsActivity.EXTRA_MODE, SettingsActivity.MODE_SETTINGS);
+                startActivity(intent);
+                overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+            }
+        });
 
         mWalletRecycler.setLayoutManager(new LinearLayoutManager(this));
 
@@ -112,33 +133,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             }
         }));
 
-        mSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, SettingsActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        });
-        mSecurity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, SecurityCenterActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
-            }
-        });
-        mSupport.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) return;
-                BaseWalletManager wm = WalletsMaster.getInstance(HomeActivity.this).getCurrentWallet(HomeActivity.this);
-
-                UiUtils.showSupportFragment(HomeActivity.this, null, wm);
-            }
-        });
-
-
         mPromptDismiss.setColor(Color.parseColor("#b3c0c8"));
         mPromptDismiss.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -148,12 +142,10 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         });
 
         mPromptContinue.setColor(Color.parseColor("#4b77f3"));
-        mPromptContinue.setOnClickListener(new View.OnClickListener()
-
-        {
+        mPromptContinue.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                PromptManager.PromptInfo info = PromptManager.getInstance().promptInfo(app, mCurrentPrompt);
+                PromptManager.PromptInfo info = PromptManager.getInstance().promptInfo(HomeActivity.this, mCurrentPrompt);
                 if (info.listener != null)
                     info.listener.onClick(mPromptContinue);
                 else
@@ -168,9 +160,9 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mPromptCard.setVisibility(View.GONE);
         Log.e(TAG, "hidePrompt: " + mCurrentPrompt);
         if (mCurrentPrompt == PromptManager.PromptItem.SHARE_DATA) {
-            BRSharedPrefs.putPromptDismissed(app, "shareData", true);
+            BRSharedPrefs.putPromptDismissed(this, "shareData", true);
         } else if (mCurrentPrompt == PromptManager.PromptItem.FINGER_PRINT) {
-            BRSharedPrefs.putPromptDismissed(app, "fingerprint", true);
+            BRSharedPrefs.putPromptDismissed(this, "fingerprint", true);
         }
         if (mCurrentPrompt != null)
             BREventManager.getInstance().pushEvent("prompt." + PromptManager.getInstance().getPromptName(mCurrentPrompt) + ".dismissed");
@@ -198,7 +190,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     protected void onResume() {
         super.onResume();
         long start = System.currentTimeMillis();
-        app = this;
 
         showNextPromptIfNeeded();
 
@@ -219,8 +210,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             @Override
             public void run() {
                 Thread.currentThread().setName("BG:" + TAG + ":refreshBalances and address");
-                WalletsMaster.getInstance(app).refreshBalances(app);
-                WalletsMaster.getInstance(app).getCurrentWallet(app).refreshAddress(app);
+                WalletsMaster.getInstance(HomeActivity.this).refreshBalances(HomeActivity.this);
+                WalletsMaster.getInstance(HomeActivity.this).getCurrentWallet(HomeActivity.this).refreshAddress(HomeActivity.this);
             }
         });
 
