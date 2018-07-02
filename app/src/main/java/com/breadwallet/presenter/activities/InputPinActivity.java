@@ -78,6 +78,7 @@ public class InputPinActivity extends BRActivity implements PinLayout.OnPinInser
 
         int[] pinDigitButtonColors = getResources().getIntArray(R.array.pin_digit_button_colors);
         mKeyboard.setButtonTextColor(pinDigitButtonColors);
+
     }
 
     @Override
@@ -133,7 +134,6 @@ public class InputPinActivity extends BRActivity implements PinLayout.OnPinInser
             case NEW:
                 if (mPinUpdateMode) {
                     mTitle.setText(R.string.UpdatePin_enterNew);
-                    mPinDigitViews.updatePinUi(PinLayout.MAX_PIN_DIGITS, true);
                 } else {
                     mTitle.setText(R.string.UpdatePin_createTitle);
                 }
@@ -146,7 +146,6 @@ public class InputPinActivity extends BRActivity implements PinLayout.OnPinInser
                 }
                 break;
         }
-
     }
 
     private void handleSuccess() {

@@ -413,7 +413,7 @@
     <!-- Enter paper key instruction -->
     <string name="RecoverWallet.instruction">Enter Paper Key</string>
     <!-- Recover wallet intro -->
-    <string name="RecoverWallet.intro">Recover your BRD with your paper key.</string>
+    <string name="RecoverWallet.intro">To recover a previous BRD(or Bread) wallet, please make sure you have your 12-word paper key handy.</string>
     <!-- Invalid paper key message -->
     <string name="RecoverWallet.invalid">The paper key you entered is invalid. Please double-check each word and try again.</string>
     <!-- Previous button accessibility label -->
@@ -613,7 +613,7 @@
     <!-- button label -->
     <string name="StartPaperPhrase.againButtonTitle">Write Down Paper Key Again</string>
     <!-- Paper key explanation text. -->
-    <string name="StartPaperPhrase.body">Your paper key is the only way to restore your BRD if your phone is lost, stolen, broken, or upgraded.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
+    <string name="StartPaperPhrase.body">Your paper key is the only way to restore your BRD wallet if your phone is lost, stolen, broken, or upgraded.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
     <!-- button label -->
     <string name="StartPaperPhrase.buttonTitle">Write Down Paper Key</string>
     <!-- Argument is date -->
