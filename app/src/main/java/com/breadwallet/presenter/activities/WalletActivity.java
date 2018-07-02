@@ -25,11 +25,10 @@ import android.widget.LinearLayout;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRSearchBar;
-import com.breadwallet.presenter.customviews.BRText;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -71,10 +70,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private static final String SYNCED_THROUGH_DATE_FORMAT = "MM/dd/yy HH:mm";
     private static final float SYNC_PROGRESS_LAYOUT_ANIMATION_ALPHA = 0.0f;
 
-    private BRText mCurrencyTitle;
-    private BRText mCurrencyPriceUsd;
-    private BRText mBalancePrimary;
-    private BRText mBalanceSecondary;
+    private BaseTextView mCurrencyTitle;
+    private BaseTextView mCurrencyPriceUsd;
+    private BaseTextView mBalancePrimary;
+    private BaseTextView mBalanceSecondary;
     private Toolbar mToolbar;
     private ImageButton mBackButton;
     private BRButton mSendButton;
@@ -82,14 +81,12 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private BRButton mBuyButton;
     private BRButton mSellButton;
     private LinearLayout mProgressLayout;
-    private BRText mSyncStatusLabel;
-    private BRText mProgressLabel;
+    private BaseTextView mSyncStatusLabel;
+    private BaseTextView mProgressLabel;
     public ViewFlipper mBarFlipper;
     private BRSearchBar mSearchBar;
     private ImageButton mSearchIcon;
     private ConstraintLayout mToolBarConstraintLayout;
-
-    public static final String EXTRA_URL = "com.breadwallet.EXTRA_URL";
 
     private static final float PRIMARY_TEXT_SIZE = 30;
     private static final float SECONDARY_TEXT_SIZE = 16;
@@ -175,14 +172,14 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mBuyButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                startWebActivity(HTTPServer.URL_BUY);
+                UiUtils.startWebActivity(WalletActivity.this, HTTPServer.URL_BUY);
             }
         });
 
         mSellButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startWebActivity(HTTPServer.URL_SELL);
+                UiUtils.startWebActivity(WalletActivity.this, HTTPServer.URL_SELL);
             }
         });
 
@@ -229,12 +226,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     }
 
-    private void startWebActivity(String action) {
-        Intent intent = new Intent(this, WebViewActivity.class);
-        intent.putExtra(EXTRA_URL, action);
-        startActivity(intent);
-        overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
-    }
 
     private void startSyncLoggerIfNeeded() {
         if (Utils.isEmulatorOrDebug(this) && RUN_LOGGER) {

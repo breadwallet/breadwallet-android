@@ -1215,7 +1215,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
 
                             if (responseObject.has(JsonRpcHelper.RESULT)) {
                                 String blockNumber = responseObject.getString(JsonRpcHelper.RESULT);
-                                Log.e(TAG, "onRpcRequestCompleted: getBlockNumber: " + blockNumber);
                                 node.announceBlockNumber(blockNumber, rid);
                             }
                         } catch (JSONException e) {

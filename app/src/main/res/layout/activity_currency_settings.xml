@@ -27,7 +27,7 @@
 
     </android.support.v7.widget.Toolbar>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         app:customTFont="CircularPro-Bold.otf"
         android:id="@+id/title"
         android:layout_width="wrap_content"

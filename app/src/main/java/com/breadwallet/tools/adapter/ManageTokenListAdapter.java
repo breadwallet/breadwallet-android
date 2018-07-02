@@ -17,11 +17,12 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.customviews.BRText;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.animation.ItemTouchHelperAdapter;
 import com.breadwallet.tools.animation.ItemTouchHelperViewHolder;
 import com.breadwallet.tools.listeners.OnStartDragListener;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.platform.entities.TokenListMetaData;
@@ -57,14 +58,14 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
     public void onBindViewHolder(@NonNull final ManageTokenListAdapter.ManageTokenItemViewHolder holder, int position) {
 
         final TokenItem item = mTokens.get(position);
-        String tickerName = item.symbol.toLowerCase();
+        String currencyCode = item.symbol.toLowerCase();
 
-        if (tickerName.equals("1st")) {
-            tickerName = "first";
+        if (currencyCode.equals("1st")) {
+            currencyCode = "first";
         }
 
-        String iconResourceName = tickerName;
-        int iconResourceId = mContext.getResources().getIdentifier(tickerName, "drawable", mContext.getPackageName());
+        String iconResourceName = currencyCode;
+        int iconResourceId = mContext.getResources().getIdentifier(currencyCode, BRConstants.DRAWABLE, mContext.getPackageName());
 
         holder.tokenName.setText(mTokens.get(position).name);
         holder.tokenTicker.setText(mTokens.get(position).symbol);
@@ -146,9 +147,9 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
     public class ManageTokenItemViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
 
         private ImageButton dragHandle;
-        private BRText tokenTicker;
-        private BRText tokenName;
-        private BRText tokenBalance;
+        private BaseTextView tokenTicker;
+        private BaseTextView tokenName;
+        private BaseTextView tokenBalance;
         private Button showHide;
         private ImageView tokenIcon;
 

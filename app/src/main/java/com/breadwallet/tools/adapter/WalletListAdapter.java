@@ -14,14 +14,16 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.customviews.BRText;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.services.SyncService;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -45,6 +47,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
     private static final int VIEW_TYPE_WALLET = 0;
     private static final int VIEW_TYPE_ADD_WALLET = 1;
+    public static final String IMAGE_RESOURCE_ID_PREFIX = "white_";
 
     public WalletListAdapter(Context context, ArrayList<BaseWalletManager> walletList) {
         this.mContext = context;
@@ -70,7 +73,6 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             return new AddWalletItemViewHolder(convertView);
 
         }
-
 
     }
 
@@ -99,7 +101,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             WalletItem item = mWalletItems.get(position);
             final BaseWalletManager wallet = item.walletManager;
             String name = wallet.getName();
-            final String iso = wallet.getIso();
+            String currencyCode = wallet.getIso();
 
             String exchangeRate = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatExchangeRate(mContext));
             String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatBalance(mContext));
@@ -107,7 +109,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
             // Set wallet fields
             holder.mWalletName.setText(name);
-            holder.mTradePrice.setText(mContext.getString(R.string.Account_exchangeRate, exchangeRate, iso));
+            holder.mTradePrice.setText(mContext.getString(R.string.Account_exchangeRate, exchangeRate, currencyCode));
             holder.mWalletBalanceFiat.setText(fiatBalance);
             holder.mWalletBalanceFiat.setTextColor(mContext.getResources().getColor(item.mShowSyncProgress ? R.color.wallet_balance_fiat_syncing : R.color.wallet_balance_fiat));
             holder.mWalletBalanceCurrency.setText(cryptoBalance);
@@ -116,14 +118,21 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             holder.mSyncingLabel.setVisibility(item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
             holder.mSyncingLabel.setText(item.mLabelText);
 
+            String currencyCodeWithPrefix = IMAGE_RESOURCE_ID_PREFIX.concat(currencyCode).toLowerCase();
+
+
+            int iconResourceId = mContext.getResources().getIdentifier(currencyCodeWithPrefix, BRConstants.DRAWABLE, mContext.getPackageName());
+
+            holder.mLogoIcon.setBackground(mContext.getDrawable(iconResourceId));
+
             String startColor = wallet.getUiConfiguration().getStartColor();
             String endColor = wallet.getUiConfiguration().getEndColor();
 
-        Drawable drawable = mContext.getResources().getDrawable(R.drawable.crypto_card_shape, null).mutate();
-        //create gradient with 2 colors if exist
-        ((GradientDrawable) drawable).setColors(new int[]{Color.parseColor(startColor), Color.parseColor(endColor == null ? startColor : endColor)});
-        ((GradientDrawable) drawable).setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
-        holder.mParent.setBackground(drawable);
+            Drawable drawable = mContext.getResources().getDrawable(R.drawable.crypto_card_shape, null).mutate();
+            //create gradient with 2 colors if exist
+            ((GradientDrawable) drawable).setColors(new int[]{Color.parseColor(startColor), Color.parseColor(endColor == null ? startColor : endColor)});
+            ((GradientDrawable) drawable).setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
+            holder.mParent.setBackground(drawable);
 
         }
     }
@@ -225,13 +234,14 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
     public class WalletItemViewHolder extends RecyclerView.ViewHolder {
 
-        private BRText mWalletName;
-        private BRText mTradePrice;
-        private BRText mWalletBalanceFiat;
-        private BRText mWalletBalanceCurrency;
+        private BaseTextView mWalletName;
+        private BaseTextView mTradePrice;
+        private BaseTextView mWalletBalanceFiat;
+        private BaseTextView mWalletBalanceCurrency;
         private RelativeLayout mParent;
-        private BRText mSyncingLabel;
+        private BaseTextView mSyncingLabel;
         private ProgressBar mSyncingProgressBar;
+        private ImageView mLogoIcon;
 
         public WalletItemViewHolder(View view) {
             super(view);
@@ -243,6 +253,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             mParent = view.findViewById(R.id.wallet_card);
             mSyncingLabel = view.findViewById(R.id.syncing_label);
             mSyncingProgressBar = view.findViewById(R.id.sync_progress);
+            mLogoIcon = view.findViewById(R.id.currency_icon_white);
         }
     }
 
@@ -263,7 +274,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
         }
 
         public void updateData(boolean showSyncProgress) {
-           updateData(showSyncProgress, null);
+            updateData(showSyncProgress, null);
         }
 
         public void updateData(boolean showSyncProgress, String labelText) {

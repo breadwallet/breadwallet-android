@@ -45,7 +45,7 @@
                 android:layout_marginStart="16dp"
                 app:layout_constraintLeft_toLeftOf="parent"/>
 
-            <com.breadwallet.presenter.customviews.BRText
+            <com.breadwallet.presenter.customviews.BaseTextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

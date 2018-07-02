@@ -16,7 +16,7 @@ import android.widget.ListView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.presenter.customviews.BRText;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.security.BRKeyStore;
@@ -121,7 +121,7 @@ public class SpendLimitActivity extends BRActivity {
 
         private final Context mContext;
         private final int layoutResourceId;
-        private BRText textViewItem;
+        private BaseTextView textViewItem;
 
         public LimitAdaptor(Context mContext) {
 
