@@ -156,8 +156,11 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                 return;
             }
         }
-
-        BreadApp.generateWalletIfIfNeeded(app, getReceiveAddress(app).stringify());
+        String address = getReceiveAddress(app).stringify();
+        if (Utils.isNullOrEmpty(address)) {
+            BRReportsManager.reportBug(new IllegalArgumentException("Eth address missing!"), true);
+        }
+        BreadApp.generateWalletIfIfNeeded(app, address);
         WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
 
         estimateGasPrice();
