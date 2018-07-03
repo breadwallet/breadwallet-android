@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.text.format.DateUtils;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,7 +15,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.PinLayout;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
@@ -49,7 +47,7 @@ import com.breadwallet.tools.util.Utils;
  * THE SOFTWARE.
  */
 
-public class PinFragment extends Fragment {
+public class PinFragment extends Fragment implements PinLayout.OnPinInserted {
     private static final String TAG = PinFragment.class.getName();
 
     private BRAuthCompletion mCompletion;
@@ -85,15 +83,6 @@ public class PinFragment extends Fragment {
         });
 
         mPinDigitViews = rootView.findViewById(R.id.pin_digits);
-
-        mPinDigitViews.setOnPinInsertedListener(new PinLayout.OnPinInserted() {
-            @Override
-            public void onPinInserted(String pin, boolean isPinCorrect) {
-                if (isPinCorrect) {
-                    handleSuccess();
-                }
-            }
-        });
 
         return rootView;
     }
@@ -132,7 +121,7 @@ public class PinFragment extends Fragment {
     public void onResume() {
         super.onResume();
         mAuthSucceeded = false;
-        mPinDigitViews.setupKeyboard(mKeyboard);
+        mPinDigitViews.setup(mKeyboard, this);
     }
 
     private void handleSuccess() {
@@ -143,8 +132,6 @@ public class PinFragment extends Fragment {
         if (activity != null && !activity.isDestroyed()) {
             activity.getFragmentManager().popBackStack();
         }
-        mPinDigitViews.disposeListeners();
-
     }
 
     @Override
@@ -169,11 +156,17 @@ public class PinFragment extends Fragment {
     @Override
     public void onPause() {
         super.onPause();
-        mKeyboard.setOnInsertListener(null);
+        mPinDigitViews.cleanUp();
     }
 
     public void setCompletion(BRAuthCompletion completion) {
         this.mCompletion = completion;
     }
 
+    @Override
+    public void onPinInserted(String pin, boolean isPinCorrect) {
+        if (isPinCorrect) {
+            handleSuccess();
+        }
+    }
 }
