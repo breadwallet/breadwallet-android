@@ -28,6 +28,12 @@ public class ShareDataActivity extends BaseSettingsActivity {
     }
 
     @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
+    }
+
+    @Override
     public int getLayoutId() {
         return R.layout.activity_share_data;
     }
