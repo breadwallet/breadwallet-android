@@ -280,10 +280,8 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
     @WorkerThread
     @Override
     public void refreshCachedBalance(final Context app) {
-        if (mWalletEthManager.wasBalanceUpdated(mWalletToken.getSymbol())) {
-            final BigDecimal balance = new BigDecimal(mWalletToken.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));
-            BRSharedPrefs.putCachedBalance(app, getIso(), balance);
-        }
+        final BigDecimal balance = new BigDecimal(mWalletToken.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));
+        BRSharedPrefs.putCachedBalance(app, getIso(), balance);
     }
 
     @Override

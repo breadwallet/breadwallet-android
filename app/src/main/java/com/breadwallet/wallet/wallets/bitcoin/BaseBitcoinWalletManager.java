@@ -846,20 +846,10 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
     public void balanceChanged(final long balance) {
         super.balanceChanged(balance);
-        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                final Context app = BreadApp.getBreadContext();
-                setCachedBalance(app, new BigDecimal(balance));
-                onTxListModified(null);
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        refreshAddress(app);
-                    }
-                });
-            }
-        });
+        final Context app = BreadApp.getBreadContext();
+        setCachedBalance(app, new BigDecimal(balance));
+        onBalanceChanged(new BigDecimal(balance));
+        refreshAddress(app);
     }
 
     public void txStatusUpdate() {
