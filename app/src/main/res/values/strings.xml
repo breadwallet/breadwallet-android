@@ -413,7 +413,7 @@
     <!-- Enter paper key instruction -->
     <string name="RecoverWallet.instruction">Enter Paper Key</string>
     <!-- Recover wallet intro -->
-    <string name="RecoverWallet.intro">To recover a previous BRD(or Bread) wallet, please make sure you have your 12-word paper key handy.</string>
+    <string name="RecoverWallet.intro">To recover a previous BRD (or Bread) wallet, please make sure you have your 12-word paper key handy.</string>
     <!-- Invalid paper key message -->
     <string name="RecoverWallet.invalid">The paper key you entered is invalid. Please double-check each word and try again.</string>
     <!-- Previous button accessibility label -->
