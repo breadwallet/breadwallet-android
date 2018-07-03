@@ -6,7 +6,6 @@
     android:id="@+id/activity_write_down"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/extra_light_blue_background"
     tools:context="com.breadwallet.presenter.activities.intro.WriteDownActivity">
 
     <android.support.constraint.ConstraintLayout
@@ -128,7 +127,6 @@
             android:layout_marginStart="@dimen/bread_margin"
             android:layout_marginTop="@dimen/bread_margin"
             android:lineSpacingMultiplier="1.3"
-            android:textColor="@color/light_gray"
             android:textSize="18sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
@@ -163,7 +161,6 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/bread_margin"
             android:layout_marginTop="@dimen/bread_margin"
-            android:textColor="@color/light_gray"
             android:textSize="18sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/line1"/>
