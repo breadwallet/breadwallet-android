@@ -112,7 +112,7 @@
     <color name="pin_dot_filled_light">#F29500</color>
     <color name="create_new_wallet_button_dark">#29ABE2</color>
     <color name="create_new_wallet_button_light">#4C98FD</color>
-    <color name="recover_wallet_button_dark">#33FF548D</color>
+    <color name="recover_wallet_button_dark">#33FFFFFF</color>
     <color name="recover_wallet_button_light">#FFFFFF</color>
 
 

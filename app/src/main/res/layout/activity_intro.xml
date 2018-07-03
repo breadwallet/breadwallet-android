@@ -8,8 +8,8 @@
 
     <ImageView
         android:id="@+id/BRText"
-        android:layout_width="128dp"
-        android:layout_height="64dp"
+        android:layout_width="158dp"
+        android:layout_height="94dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="96dp"
