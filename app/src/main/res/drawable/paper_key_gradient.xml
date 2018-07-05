@@ -3,8 +3,8 @@
        android:shape="rectangle">
 
     <gradient
-        android:endColor="@color/write_phrase_gradient_end"
+        android:endColor="@color/recover_wallet_header_gradient_end"
         android:gradientRadius="160dp"
-        android:startColor="@color/write_phrase_gradient_start"
+        android:startColor="@color/recover_wallet_header_gradient_start"
         android:type="radial"/>
 </shape>
