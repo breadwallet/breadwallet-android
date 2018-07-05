@@ -113,8 +113,8 @@
                 android:layout_below="@id/divider1"
                 android:layout_marginStart="14dp"
                 android:layout_marginTop="14dp"
-                android:drawableStart="@drawable/checkmark_circled"
                 android:drawablePadding="5dp"
+                android:drawableStart="@drawable/checkmark_circled"
                 android:text="Complete"
                 android:textColor="@color/settings_chevron_right"
                 app:customTFont="CircularPro-Book.otf"/>
@@ -130,6 +130,7 @@
                 android:paddingEnd="20dp"
                 android:paddingStart="20dp"
                 android:text="Yesterday at 12:53 PM"
+                android:textColor="?attr/secondary_text_color"
                 app:customTFont="CircularPro-Book.otf"/>
 
             <View
@@ -166,6 +167,7 @@
                 android:paddingStart="16dp"
                 android:singleLine="true"
                 android:text=""
+                android:textColor="?attr/secondary_text_color"
                 android:textSize="12sp"
                 app:customTFont="CircularPro-Book.otf"/>
 
@@ -177,7 +179,6 @@
                 android:layout_marginTop="14dp"
                 android:background="@color/light_gray"/>
 
-
             <com.breadwallet.presenter.customviews.BaseTextView
                 android:id="@+id/memo_label"
                 android:layout_width="wrap_content"
@@ -186,7 +187,6 @@
                 android:layout_marginStart="14dp"
                 android:layout_marginTop="14dp"
                 android:text="Memo"
-
                 android:textColor="@color/settings_chevron_right"
                 app:customTFont="CircularPro-Book.otf"/>
 
@@ -198,18 +198,18 @@
                 android:layout_below="@id/divider3"
                 android:layout_marginTop="14dp"
                 android:layout_toEndOf="@id/memo_label"
-                android:gravity="end"
+                android:background="@android:color/transparent"
                 android:cursorVisible="false"
+                android:gravity="end"
+                android:hint="@string/TransactionDetails.commentsPlaceholder"
+                android:imeOptions="actionDone"
+                android:inputType="text"
                 android:paddingEnd="16dp"
                 android:paddingStart="16dp"
-                android:background="@android:color/transparent"
-                android:hint="@string/TransactionDetails.commentsPlaceholder"
-                android:inputType="text"
-                android:imeOptions="actionDone"
                 android:text="Sample transaction memo would go here. Some things are truly better left unsaid"
+                android:textColor="?attr/secondary_text_color"
                 android:textSize="12sp"
                 app:customTFont="CircularPro-Book.otf"/>
-
 
             <View
                 android:id="@+id/memo_divider"
@@ -219,7 +219,6 @@
                 android:layout_marginTop="14dp"
                 android:background="@color/light_gray"/>
 
-
             <LinearLayout
                 android:id="@+id/details_container"
                 android:layout_width="match_parent"
@@ -228,7 +227,6 @@
                 android:layout_marginTop="14dp"
                 android:orientation="vertical"
                 android:visibility="gone">
-
 
                 <android.support.constraint.ConstraintLayout
                     android:id="@+id/gas_price_container"
@@ -256,6 +254,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginEnd="16dp"
                         android:text=""
+                        android:textColor="?attr/secondary_text_color"
                         app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="@+id/gas_price_label"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -295,6 +294,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginEnd="16dp"
                         android:text=""
+                        android:textColor="?attr/secondary_text_color"
                         app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="@+id/gas_limit_label"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -334,6 +334,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginEnd="16dp"
                         android:text=""
+                        android:textColor="?attr/secondary_text_color"
                         app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="@+id/fee_primary_label"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -373,6 +374,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginEnd="16dp"
                         android:text=""
+                        android:textColor="?attr/secondary_text_color"
                         app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="@+id/fee_secondary_label"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -410,6 +412,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginEnd="16dp"
                         android:text=""
+                        android:textColor="?attr/secondary_text_color"
                         app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="@+id/exchange_rate_label"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -448,6 +451,7 @@
                         android:layout_alignParentEnd="true"
                         android:layout_marginEnd="16dp"
                         android:text="549293"
+                        android:textColor="?attr/secondary_text_color"
                         app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="@+id/confirmed_in_block_label"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -490,6 +494,7 @@
                         android:layout_marginStart="8dp"
                         android:ellipsize="middle"
                         android:singleLine="true"
+                        android:textColor="?attr/secondary_text_color"
                         android:textSize="12sp"
                         app:customTFont="CircularPro-Book.otf"
                         app:layout_constraintBottom_toBottomOf="@+id/transaction_id_label"
@@ -514,8 +519,8 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/details_container"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="26dp"
                 android:layout_marginBottom="20dp"
+                android:layout_marginTop="26dp"
                 android:text="Show Details"
                 android:textColor="@color/blue"/>
 
