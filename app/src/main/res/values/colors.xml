@@ -43,13 +43,13 @@
     <item name="import_gradient_start" type="color">#76b0fd</item>
     <item name="import_gradient_end" type="color">#4C98FD</item>
 
-    <item name="write_phrase_gradient_start" type="color">#D9FD5394</item>
-    <item name="write_phrase_gradient_end" type="color">#FD5394</item>
+    <item name="recover_wallet_header_gradient_start" type="color">#EF8BB1</item>
+    <item name="recover_wallet_header_gradient_end" type="color">#FF5193</item>
 
     <item name="pin_pad_text" type="color">#A3A8AE</item>
     <item name="extra_light_blue_background" type="color">#F5F8FA</item>
 
-    <item name="button_primary_normal" type="color">#4C98FD</item>
+    <item name="button_primary_normal" type="color">#29ABE2</item>
     <item name="button_secondary" type="color">#F5F8FA</item>
     <item name="button_secondary_text" type="color">#232426</item>
 
