@@ -33,6 +33,7 @@
         <item name="android:textColor">@color/white</item>
         <item name="tertiary_background">@color/tertiary_background</item>
         <item name="primary_background">@color/primary_background</item>
+        <item name="secondary_text_color">@color/secondary_text_color</item>
         <item name="secondary_background">@color/secondary_background</item>
         <item name="add_wallet_button_background">@drawable/add_wallet_button_dark</item>
         <item name="remove_wallet_button_background">@drawable/remove_wallet_button_dark</item>
@@ -49,6 +50,7 @@
     <style name="AppTheme.Light" parent="AppTheme">
         <item name="android:windowBackground">@color/white</item>
         <item name="android:textColor">@color/red</item>
+        <item name="secondary_text_color">@color/secondary_text_color</item>
         <item name="tertiary_background">@color/extra_light_blue_background</item>
         <item name="primary_background">@color/extra_light_blue_background</item>
         <item name="secondary_background">@color/extra_light_blue_background</item>
@@ -74,6 +76,7 @@
     <attr name="tertiary_background" format="reference" />
     <attr name="secondary_background" format="reference" />
     <attr name="primary_background" format="reference" />
+    <attr name="secondary_text_color" format="reference" />
     <attr name="toolbar_background" format="reference" />
     <attr name="toolbar_back_arrow" format="reference" />
     <attr name="pin_pad_delete_src" format="reference" />
