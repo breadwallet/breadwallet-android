@@ -194,19 +194,18 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
         handleKeyInsert();
     }
 
-    public void setOnPinInsertedListener(OnPinInserted onPinInsertedListener) {
-        this.mOnPinInsertedListener = onPinInsertedListener;
-    }
 
-    public void disposeListeners() {
-        mOnPinInsertedListener = null;
-        mKeyboard.setOnInsertListener(null);
-    }
 
-    public void setupKeyboard(BRKeyboard keyboard) {
+    public void setup(BRKeyboard keyboard, OnPinInserted onPinInsertedListener) {
         this.mKeyboard = keyboard;
         mKeyboard.setOnInsertListener(this);
         mKeyboard.setShowDecimal(false);
+        mOnPinInsertedListener = onPinInsertedListener;
+    }
+
+    public void cleanUp() {
+        mKeyboard.setOnInsertListener(null);
+        mOnPinInsertedListener = null;
     }
 
     @Override

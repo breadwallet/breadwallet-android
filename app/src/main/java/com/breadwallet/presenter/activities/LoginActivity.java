@@ -36,7 +36,7 @@ import com.platform.APIClient;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgrounded {
+public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgrounded, PinLayout.OnPinInserted {
     private static final String TAG = LoginActivity.class.getName();
     private BRKeyboard mKeyboard;
     private LinearLayout mPinLayout;
@@ -70,16 +70,6 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
 
         mUnlockedImage = findViewById(R.id.unlocked_image);
         mUnlockedText = findViewById(R.id.unlocked_text);
-        mPinDigitViews.setOnPinInsertedListener(new PinLayout.OnPinInserted() {
-            @Override
-            public void onPinInserted(String pin, boolean isPinCorrect) {
-                if (isPinCorrect) {
-                    unlockWallet();
-                } else {
-                    showFailedToUnlock();
-                }
-            }
-        });
 
         mKeyboard.setShowDecimal(false);
         mKeyboard.setDeleteButtonBackgroundColor(getColor(android.R.color.transparent));
@@ -87,7 +77,6 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
 
         int[] pinDigitButtonColors = getResources().getIntArray(R.array.pin_digit_button_colors);
         mKeyboard.setButtonTextColor(pinDigitButtonColors);
-
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -137,8 +126,7 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
     protected void onResume() {
         super.onResume();
 
-        mPinDigitViews.setupKeyboard(mKeyboard);
-
+        mPinDigitViews.setup(mKeyboard, this);
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -152,7 +140,7 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
     @Override
     protected void onPause() {
         super.onPause();
-        mPinDigitViews.disposeListeners();
+        mPinDigitViews.cleanUp();
     }
 
     @Override
@@ -240,4 +228,12 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
         }
     }
 
+    @Override
+    public void onPinInserted(String pin, boolean isPinCorrect) {
+        if (isPinCorrect) {
+            unlockWallet();
+        } else {
+            showFailedToUnlock();
+        }
+    }
 }
