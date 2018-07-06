@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
                 android:id="@+id/wallet_card"
                 android:layout_width="match_parent"
-                android:layout_height="30dp"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:background="@android:color/transparent">
 
@@ -13,9 +13,10 @@
         android:layout_centerVertical="true"
         android:layout_centerHorizontal="true"
         android:drawableStart="@drawable/ic_add_wallets"
-        android:drawablePadding="5dp"
+        android:drawablePadding="16dp"
         android:text="@string/TokenList.addTitle"
         android:textColor="@color/white"
+        android:layout_marginBottom="16dp"
         android:textSize="16sp"/>
 
 </RelativeLayout>
