@@ -116,8 +116,8 @@ public class APIClient {
     private OkHttpClient mHTTPClient;
 
     private static final String BUNDLES_FOLDER_NAME = "bundles";
-    private static final String BRD_WEB = "brd-web";
-    private static final String BRD_WEB_STAGING = "brd-web-staging";
+    private static final String BRD_WEB = "brd-web-3";
+    private static final String BRD_WEB_STAGING = "brd-web-3-staging";
     private static String mBundleName = BRD_WEB;
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
