@@ -72,8 +72,6 @@ public class InputPinActivity extends BRActivity implements PinLayout.OnPinInser
 
         mPinDigitViews = findViewById(R.id.pin_digits);
 
-        mPinDigitViews.setOnPinInsertedListener(this);
-
         mKeyboard.setShowDecimal(false);
 
         int[] pinDigitButtonColors = getResources().getIntArray(R.array.pin_digit_button_colors);
@@ -84,13 +82,13 @@ public class InputPinActivity extends BRActivity implements PinLayout.OnPinInser
     @Override
     protected void onResume() {
         super.onResume();
-        mPinDigitViews.setupKeyboard(mKeyboard);
+        mPinDigitViews.setup(mKeyboard, this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        mPinDigitViews.disposeListeners();
+        mPinDigitViews.cleanUp();
     }
 
     @Override
