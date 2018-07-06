@@ -43,6 +43,8 @@
         <item name="pin_dot_filled_background">@drawable/ic_pin_dot_filled</item>
         <item name="create_new_wallet_background">@color/create_new_wallet_button_dark</item>
         <item name="recover_wallet_background">@color/recover_wallet_button_dark</item>
+        <item name="fingerprint_icon_background">@drawable/fingerprint_icon_dark</item>
+
     </style>
 
     <style name="AppTheme.Light" parent="AppTheme">
@@ -62,6 +64,7 @@
         <item name="toolbar_background">@color/white</item>
         <item name="create_new_wallet_background">@color/create_new_wallet_button_light</item>
         <item name="recover_wallet_background">@color/recover_wallet_button_light</item>
+        <item name="fingerprint_icon_background">@drawable/fingerprint_icon</item>
     </style>
 
     <!-- Custom attributes for dark/light views and drawables -->
@@ -79,4 +82,5 @@
     <attr name="pin_dot_filled_background" format="reference" />
     <attr name="create_new_wallet_background" format="reference" />
     <attr name="recover_wallet_background" format="reference" />
+    <attr name="fingerprint_icon_background" format="reference"/>
 </resources>
