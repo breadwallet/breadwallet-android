@@ -151,11 +151,11 @@
         android:id="@+id/fingerprint_icon"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="14dp"
+        android:layout_marginEnd="48dp"
         android:background="@android:color/transparent"
-        android:src="@drawable/fingerprint_icon"
-        app:layout_constraintBottom_toTopOf="@+id/brkeyboard"
+        android:src="?attr/fingerprint_icon_background"
+        app:layout_constraintBottom_toBottomOf="@+id/brkeyboard"
         app:layout_constraintRight_toRightOf="parent"/>
 
 </com.breadwallet.presenter.customviews.BRLockScreenConstraintLayout>
