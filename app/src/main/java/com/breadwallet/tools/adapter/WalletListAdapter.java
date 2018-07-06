@@ -122,8 +122,9 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
 
 
             int iconResourceId = mContext.getResources().getIdentifier(currencyCodeWithPrefix, BRConstants.DRAWABLE, mContext.getPackageName());
-
-            holder.mLogoIcon.setBackground(mContext.getDrawable(iconResourceId));
+            if (iconResourceId > 0) {
+                holder.mLogoIcon.setBackground(mContext.getDrawable(iconResourceId));
+            }
 
             String startColor = wallet.getUiConfiguration().getStartColor();
             String endColor = wallet.getUiConfiguration().getEndColor();
