@@ -25,7 +25,6 @@
     <style name="RobotoButtonStyle" parent="android:Widget.Holo.Button">
         <item name="android:fontFamily">sans-serif-light</item>
         <item name="android:textColor">@color/dark_blue</item>
-
     </style>
 
     <style name="AppTheme.Dark" parent="AppTheme">
@@ -33,7 +32,7 @@
         <item name="android:textColor">@color/white</item>
         <item name="tertiary_background">@color/tertiary_background</item>
         <item name="primary_background">@color/primary_background</item>
-        <item name="secondary_text_color">@color/secondary_text_color</item>
+        <item name="secondary_text_color">@color/almost_black</item>
         <item name="secondary_background">@color/secondary_background</item>
         <item name="add_wallet_button_background">@drawable/add_wallet_button_dark</item>
         <item name="remove_wallet_button_background">@drawable/remove_wallet_button_dark</item>
@@ -44,13 +43,12 @@
         <item name="pin_dot_filled_background">@drawable/ic_pin_dot_filled</item>
         <item name="create_new_wallet_background">@color/create_new_wallet_button_dark</item>
         <item name="recover_wallet_background">@color/recover_wallet_button_dark</item>
-
     </style>
 
     <style name="AppTheme.Light" parent="AppTheme">
         <item name="android:windowBackground">@color/white</item>
         <item name="android:textColor">@color/red</item>
-        <item name="secondary_text_color">@color/secondary_text_color</item>
+        <item name="secondary_text_color">@color/almost_black</item>
         <item name="tertiary_background">@color/extra_light_blue_background</item>
         <item name="primary_background">@color/extra_light_blue_background</item>
         <item name="secondary_background">@color/extra_light_blue_background</item>
@@ -64,8 +62,6 @@
         <item name="toolbar_background">@color/white</item>
         <item name="create_new_wallet_background">@color/create_new_wallet_button_light</item>
         <item name="recover_wallet_background">@color/recover_wallet_button_light</item>
-
-
     </style>
 
     <!-- Custom attributes for dark/light views and drawables -->
@@ -83,6 +79,4 @@
     <attr name="pin_dot_filled_background" format="reference" />
     <attr name="create_new_wallet_background" format="reference" />
     <attr name="recover_wallet_background" format="reference" />
-
-
 </resources>
