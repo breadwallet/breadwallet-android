@@ -59,7 +59,7 @@
             android:layout_height="match_parent"
             android:layout_above="@+id/menu_table"
             android:layout_below="@id/home_header"
-            android:layout_marginBottom="16dp">
+            >
 
             <RelativeLayout
                 android:layout_width="match_parent"
