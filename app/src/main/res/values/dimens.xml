@@ -22,5 +22,6 @@
     <dimen name="animation_medium">1000</dimen>
     <dimen name="animation_short">500</dimen>
     <dimen name="animation_very_short">300</dimen>
+    <dimen name="pin_dot_size">24dp</dimen>
 
 </resources>
