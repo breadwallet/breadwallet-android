@@ -44,6 +44,8 @@
         <item name="create_new_wallet_background">@color/create_new_wallet_button_dark</item>
         <item name="recover_wallet_background">@color/recover_wallet_button_dark</item>
         <item name="fingerprint_icon_background">@drawable/fingerprint_icon_dark</item>
+        <item name="faq_button_background">@drawable/ic_faq_button_dark</item>
+
 
     </style>
 
@@ -65,6 +67,7 @@
         <item name="create_new_wallet_background">@color/create_new_wallet_button_light</item>
         <item name="recover_wallet_background">@color/recover_wallet_button_light</item>
         <item name="fingerprint_icon_background">@drawable/fingerprint_icon</item>
+        <item name="faq_button_background">@drawable/faq_question_black</item>
     </style>
 
     <!-- Custom attributes for dark/light views and drawables -->
@@ -83,4 +86,5 @@
     <attr name="create_new_wallet_background" format="reference" />
     <attr name="recover_wallet_background" format="reference" />
     <attr name="fingerprint_icon_background" format="reference"/>
+    <attr name="faq_button_background" format="reference"/>
 </resources>
