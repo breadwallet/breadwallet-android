@@ -33,7 +33,7 @@ public class WriteDownActivity extends BRActivity {
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UiUtils.startBreadActivity(WriteDownActivity.this, false);
+                finish();
             }
         });
         ImageButton faq = findViewById(R.id.faq_button);
