@@ -484,8 +484,11 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                         @Override
                         public void run() {
                             SendManager.sendTransaction(getActivity(), item, wm, null);
+
                         }
                     });
+
+                    closeWithAnimation();
                 }
             }
         });
