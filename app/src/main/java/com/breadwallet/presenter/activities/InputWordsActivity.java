@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -50,6 +51,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
     //will be true if this screen was called from the restore screen
     private boolean mIsRestoring = false;
     private boolean mIsResettingPin = false;
+    private TypedValue mTypedValue = new TypedValue();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +72,8 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
 //        }
 
         mNextButton = findViewById(R.id.send_button);
+
+        getTheme().resolveAttribute(R.attr.input_words_text_color, mTypedValue, true);
 
         if (Utils.isUsingCustomInputMethod(this)) {
             BRDialog.showCustomDialog(this, getString(R.string.JailbreakWarnings_title), getString(R.string.Alert_customKeyboard_android),
@@ -289,14 +293,14 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         if (!hasFocus) {
             validateWord((EditText) v);
         } else {
-            ((EditText) v).setTextColor(getColor(R.color.light_gray));
+            ((EditText) v).setTextColor(getResources().getColor(mTypedValue.resourceId, null));
         }
     }
 
     private void validateWord(EditText view) {
         String word = view.getText().toString();
         boolean valid = SmartValidator.isWordValid(this, word);
-        view.setTextColor(getColor(valid ? R.color.light_gray : R.color.red_text));
+        view.setTextColor(getColor(valid ? getResources().getColor(mTypedValue.resourceId, null) : R.color.red_text));
         if (!valid) {
             SpringAnimator.failShakeAnimation(this, view);
         }
