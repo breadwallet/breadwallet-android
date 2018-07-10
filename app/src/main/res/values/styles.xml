@@ -48,6 +48,7 @@
         <item name="wallet_footer_button_background">@color/wallet_footer_button_color_dark</item>
         <item name="spend_limit_list_divider_color">@color/spend_limit_list_divider_color_dark</item>
         <item name="input_words_text_color">@color/white</item>
+        <item name="unlink_wallet_back_button">@drawable/ic_arrow_left_white</item>
     </style>
 
     <style name="AppTheme.Light" parent="AppTheme">
@@ -71,6 +72,7 @@
         <item name="faq_button_background">@drawable/faq_question_black</item>
         <item name="spend_limit_list_divider_color">@color/spend_limit_list_divider_color_light</item>
         <item name="input_words_text_color">@color/almost_black</item>
+        <item name="unlink_wallet_back_button">@drawable/ic_arrow_left</item>
     </style>
 
     <!-- Custom attributes for dark/light views and drawables -->
@@ -93,5 +95,5 @@
     <attr name="wallet_footer_button_background" format="reference"/>
     <attr name="spend_limit_list_divider_color" format="reference"/>
     <attr name="input_words_text_color" format="reference" />
-
+    <attr name="unlink_wallet_back_button" format="reference"/>
 </resources>
