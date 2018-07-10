@@ -12,7 +12,6 @@ import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Looper;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -33,10 +32,10 @@ import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.entities.TxUiHolder;
-import com.breadwallet.presenter.fragments.FragmentSignal;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
 import com.breadwallet.presenter.fragments.FragmentSend;
+import com.breadwallet.presenter.fragments.FragmentSignal;
 import com.breadwallet.presenter.fragments.FragmentSupport;
 import com.breadwallet.presenter.fragments.FragmentTxDetails;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
@@ -80,7 +79,6 @@ public class UiUtils {
     private static final String TAG = UiUtils.class.getName();
     public static final int CLICK_PERIOD_ALLOWANCE = 300;
     private static long mLastClickTime = 0;
-
     private static boolean mSupportIsShowing;
 
     public static void showBreadSignal(Activity activity, String title, String iconDescription, int drawableId, BROnSignalCompletion completion) {
@@ -350,6 +348,16 @@ public class UiUtils {
             Log.e(TAG, "IS MAIN UI THREAD!");
         }
         return isMain;
+    }
+
+    public static int getThemeId(Activity activity) {
+        try {
+            return activity.getPackageManager().getActivityInfo(activity.getComponentName(), 0).getThemeResource();
+        } catch (PackageManager.NameNotFoundException e) {
+            Log.e(TAG, "Error finding theme for this Activity -> " + activity.getLocalClassName());
+        }
+
+        return 0;
     }
 
 }

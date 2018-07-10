@@ -86,6 +86,7 @@
     <color name="sync_toolbar">#e5e5e5</color>
     <color name="sync_toolbar_text">#828282</color>
     <color name="sync_toolbar_retry_text">#29abe2</color>
+    <color name="wallet_footer_button_color_dark">#33ffffff</color>
 
     // Dialog button colors
     <color name="dialog_button_positive">#29abe2</color>
