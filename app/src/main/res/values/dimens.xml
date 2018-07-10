@@ -23,5 +23,5 @@
     <dimen name="animation_short">500</dimen>
     <dimen name="animation_very_short">300</dimen>
     <dimen name="pin_dot_size">24dp</dimen>
-
+    <dimen name="manage_wallets_footer_padding_left">12dp</dimen>
 </resources>
