@@ -19,6 +19,8 @@ import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.util.BRConstants;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapter.TokenItemViewHolder> {
 
@@ -34,6 +36,14 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
         this.mTokens = tokens;
         this.mListener = listener;
         this.mBackupTokens = mTokens;
+
+        Collections.sort(mTokens, new Comparator<TokenItem>() {
+            @Override
+            public int compare(TokenItem one, TokenItem two) {
+                return one.symbol.compareToIgnoreCase(two.symbol);
+            }
+        });
+
     }
 
     public interface OnTokenAddOrRemovedListener {
@@ -57,8 +67,8 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
         String iconResourceName = currencyCode;
         int iconResourceId = mContext.getResources().getIdentifier(currencyCode, BRConstants.DRAWABLE, mContext.getPackageName());
 
-        holder.name.setText(mTokens.get(position).name);
-        holder.symbol.setText(mTokens.get(position).symbol);
+        holder.name.setText(mTokens.get(position).symbol);
+        holder.symbol.setText(mTokens.get(position).name);
         try {
             holder.logo.setBackground(mContext.getDrawable(iconResourceId));
         } catch (Exception e) {
