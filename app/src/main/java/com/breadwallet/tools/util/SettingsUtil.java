@@ -195,6 +195,7 @@ public class SettingsUtil {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(activity, WriteDownActivity.class);
+                intent.putExtra(WriteDownActivity.EXTRA_VIEW_REASON, WriteDownActivity.ViewReason.SETTINGS.getValue());
                 activity.startActivity(intent);
                 activity.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
             }
