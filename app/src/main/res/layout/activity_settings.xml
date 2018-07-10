@@ -24,7 +24,7 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_centerVertical="true"
-                android:background="@drawable/ic_arrow_left"
+                android:background="?attr/toolbar_back_arrow"
                 android:visibility="gone"/>
 
             <com.breadwallet.presenter.customviews.BaseTextView
