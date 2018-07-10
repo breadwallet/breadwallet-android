@@ -110,62 +110,63 @@ public class PromptManager {
         return null;
     }
 
-    public PromptInfo promptInfo(final Activity app, PromptItem item) {
+    public PromptInfo promptInfo(final Activity context, PromptItem item) {
         switch (item) {
             case FINGER_PRINT:
-                return new PromptInfo(app.getString(R.string.Prompts_TouchId_title_android), app.getString(R.string.Prompts_TouchId_body_android), new View.OnClickListener() {
+                return new PromptInfo(context.getString(R.string.Prompts_TouchId_title_android), context.getString(R.string.Prompts_TouchId_body_android), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(app, FingerprintActivity.class);
-                        app.startActivity(intent);
-                        app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                        Intent intent = new Intent(context, FingerprintActivity.class);
+                        context.startActivity(intent);
+                        context.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                     }
                 });
             case PAPER_KEY:
-                return new PromptInfo(app.getString(R.string.Prompts_PaperKey_title), app.getString(R.string.Prompts_PaperKey_body), new View.OnClickListener() {
+                return new PromptInfo(context.getString(R.string.Prompts_PaperKey_title), context.getString(R.string.Prompts_PaperKey_body), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(app, WriteDownActivity.class);
-                        app.startActivity(intent);
-                        app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
+                        Intent intent = new Intent(context, WriteDownActivity.class);
+                        intent.putExtra(WriteDownActivity.EXTRA_VIEW_REASON, WriteDownActivity.ViewReason.SETTINGS.getValue());
+                        context.startActivity(intent);
+                        context.overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
                     }
                 });
             case UPGRADE_PIN:
-                return new PromptInfo(app.getString(R.string.Prompts_UpgradePin_title), app.getString(R.string.Prompts_UpgradePin_body), new View.OnClickListener() {
+                return new PromptInfo(context.getString(R.string.Prompts_UpgradePin_title), context.getString(R.string.Prompts_UpgradePin_body), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        Intent intent = new Intent(app, InputPinActivity.class);
+                        Intent intent = new Intent(context, InputPinActivity.class);
                         intent.putExtra(InputPinActivity.EXTRA_PIN_MODE_UPDATE, true);
-                        app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                        app.startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
+                        context.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                        context.startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
 
                     }
                 });
             case RECOMMEND_RESCAN:
-                return new PromptInfo(app.getString(R.string.Prompts_RecommendRescan_title), app.getString(R.string.Prompts_RecommendRescan_body), new View.OnClickListener() {
+                return new PromptInfo(context.getString(R.string.Prompts_RecommendRescan_title), context.getString(R.string.Prompts_RecommendRescan_body), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
-                                BRSharedPrefs.putStartHeight(app, BRSharedPrefs.getCurrentWalletIso(app), 0);
-                                BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                                wallet.rescan(app);
-                                BRSharedPrefs.putScanRecommended(app, BRSharedPrefs.getCurrentWalletIso(app), false);
+                                BRSharedPrefs.putStartHeight(context, BRSharedPrefs.getCurrentWalletIso(context), 0);
+                                BaseWalletManager wallet = WalletsMaster.getInstance(context).getCurrentWallet(context);
+                                wallet.rescan(context);
+                                BRSharedPrefs.putScanRecommended(context, BRSharedPrefs.getCurrentWalletIso(context), false);
                             }
                         });
                     }
                 });
             case SHARE_DATA:
-                return new PromptInfo(app.getString(R.string.Prompts_ShareData_title), app.getString(R.string.Prompts_ShareData_body), new View.OnClickListener() {
+                return new PromptInfo(context.getString(R.string.Prompts_ShareData_title), context.getString(R.string.Prompts_ShareData_body), new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                             @Override
                             public void run() {
-                                Intent intent = new Intent(app, ShareDataActivity.class);
-                                app.startActivity(intent);
-                                app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                                Intent intent = new Intent(context, ShareDataActivity.class);
+                                context.startActivity(intent);
+                                context.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                             }
                         });
                     }

@@ -17,11 +17,38 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
 public class WriteDownActivity extends BRActivity {
     private static final String TAG = WriteDownActivity.class.getName();
-    private static WriteDownActivity app;
+    public static final String EXTRA_VIEW_REASON = "com.breadwallet.EXTRA_VIEW_REASON";
 
-    public static WriteDownActivity getApp() {
-        return app;
+    public enum ViewReason {
+        /* Activity was shown because a new wallet was created. */
+        NEW_WALLET(0),
+
+        /* Activity was shown from settings.  */
+        SETTINGS(1),
+
+        /* Invalid reason.  */
+        ERROR(-1);
+
+        private int mValue;
+
+        ViewReason(int value) {
+            mValue = value;
+        }
+
+        public int getValue() {
+            return mValue;
+        }
+
+        public static ViewReason valueOf(int value) {
+            for (ViewReason viewReason : values()) {
+                if (viewReason.getValue() == value) {
+                    return viewReason;
+                }
+            }
+            return null;
+        }
     }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,12 +57,24 @@ public class WriteDownActivity extends BRActivity {
 
         Button writeButton = findViewById(R.id.button_write_down);
         ImageButton close = findViewById(R.id.close_button);
+        final ViewReason viewReason = ViewReason.valueOf(getIntent().getIntExtra(EXTRA_VIEW_REASON, ViewReason.ERROR.getValue()));
+
         close.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                finish();
+                switch (viewReason) {
+                    case NEW_WALLET:
+                        UiUtils.startBreadActivity(WriteDownActivity.this, false);
+                        break;
+                    case SETTINGS:
+                        // Fall through
+                    default:
+                        onBackPressed();
+                        break;
+                }
             }
         });
+
         ImageButton faq = findViewById(R.id.faq_button);
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,15 +106,9 @@ public class WriteDownActivity extends BRActivity {
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        app = this;
-    }
-
-    @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.empty_300, R.anim.exit_to_bottom);
+        overridePendingTransition(R.anim.fade_up, R.anim.exit_to_bottom);
     }
 
 }
