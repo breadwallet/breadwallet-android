@@ -7,6 +7,9 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.tools.adapter.SettingsAdapter;
 import com.breadwallet.tools.util.SettingsUtil;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +20,7 @@ public class SettingsActivity extends BaseSettingsActivity {
     public static final String MODE_SETTINGS = "settings";
     public static final String MODE_PREFERENCES = "preferences";
     public static final String MODE_SECURITY = "security";
+    public static final String MODE_CURRENCY_SETTINGS = "currency_settings";
     private boolean mIsButtonBackArrow;
 
     @Override
@@ -58,6 +62,13 @@ public class SettingsActivity extends BaseSettingsActivity {
             case MODE_SECURITY:
                 settingsItems = SettingsUtil.getSecuritySettings(this);
                 title.setText(getString(R.string.MenuButton_security));
+                mIsButtonBackArrow = true;
+                break;
+            case MODE_CURRENCY_SETTINGS:
+                BaseWalletManager walletManager = WalletsMaster.getInstance(this).getCurrentWallet(this);
+                settingsItems = walletManager.getSettingsConfiguration().getSettingsList();
+                String currencySettingsLabel = String.format("%s %s", walletManager.getName(), getString(R.string.Settings_title));
+                title.setText(currencySettingsLabel);
                 mIsButtonBackArrow = true;
                 break;
         }

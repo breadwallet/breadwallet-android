@@ -44,65 +44,25 @@ import java.util.List;
  */
 public class WalletSettingsConfiguration {
 
-    public List<BRSettingsItem> mSettingList;
-    public List<BigDecimal> mFingerprintLimits;
+    private List<BRSettingsItem> mSettingList;
+    private List<BigDecimal> mFingerprintLimits;
 
-    public WalletSettingsConfiguration(){
+    public WalletSettingsConfiguration() {
         mSettingList = new ArrayList<>();
         mFingerprintLimits = new ArrayList<>();
     }
 
-    public WalletSettingsConfiguration(Context context, String iso, List<BigDecimal> limits) {
+    public WalletSettingsConfiguration(Context context, String iso, List<BRSettingsItem> settingList, List<BigDecimal> limits) {
         mFingerprintLimits = limits;
-        mSettingList = new ArrayList<>();
-        if (iso.equalsIgnoreCase("BTC") || iso.equalsIgnoreCase("BCH"))
-            mSettingList.add(new BRSettingsItem("Redeem Private Key", "", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!UiUtils.isClickAllowed()) return;
-                    Activity app = (Activity) v.getContext();
-                    Intent intent = new Intent(app, ImportActivity.class);
-                    app.startActivity(intent);
-                    app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                }
-            }, false, R.drawable.chevron_right_light));
+        mSettingList = settingList;
+    }
 
-        if (iso.equalsIgnoreCase("BTC") || iso.equalsIgnoreCase("BCH"))
-            mSettingList.add(new BRSettingsItem("Rescan Blockchain", "", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if (!UiUtils.isClickAllowed()) return;
-                    Activity app = (Activity) v.getContext();
-                    Intent intent = new Intent(app, SyncBlockchainActivity.class);
-                    app.startActivity(intent);
-                    app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                }
-            }, false, R.drawable.ic_rescan));
+    public List<BRSettingsItem> getSettingsList() {
+        return mSettingList;
+    }
 
-        //add that for all currencies
-
-        if (AuthManager.isFingerPrintAvailableAndSetup(context) && (iso.equalsIgnoreCase("BTC") || iso.equalsIgnoreCase("BCH") || iso.equalsIgnoreCase("ETH"))) {
-            mSettingList.add(new BRSettingsItem(context.getString(R.string.Settings_touchIdLimit_android), "", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    final Activity app = (Activity) v.getContext();
-                    AuthManager.getInstance().authPrompt(app, null, app.getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
-                        @Override
-                        public void onComplete() {
-                            Intent intent = new Intent(app, SpendLimitActivity.class);
-                            app.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                            app.startActivity(intent);
-                        }
-
-                        @Override
-                        public void onCancel() {
-
-                        }
-                    });
-
-                }
-            }, false, R.drawable.chevron_right_light));
-        }
+    public List<BigDecimal> getFingerprintLimits() {
+        return mFingerprintLimits;
     }
 
 }

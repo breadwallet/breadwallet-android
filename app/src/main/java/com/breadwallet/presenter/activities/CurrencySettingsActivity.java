@@ -25,8 +25,6 @@ public class CurrencySettingsActivity extends BaseSettingsActivity {
     private BaseTextView mTitle;
     private ListView listView;
     public List<BRSettingsItem> items;
-    private static CurrencySettingsActivity app;
-
 
     @Override
     public int getLayoutId() {
@@ -46,7 +44,7 @@ public class CurrencySettingsActivity extends BaseSettingsActivity {
 
         final BaseWalletManager wm = WalletsMaster.getInstance(this).getCurrentWallet(this);
 
-        mTitle.setText(String.format("%s %s", wm.getName(), CurrencySettingsActivity.this.getString(R.string.Button_settings)));
+        mTitle.setText(String.format("%s %s", wm.getName(), CurrencySettingsActivity.this.getString(R.string.Settings_title)));
     }
 
     @Override
@@ -55,9 +53,8 @@ public class CurrencySettingsActivity extends BaseSettingsActivity {
         if (items == null)
             items = new ArrayList<>();
         items.clear();
-        app = this;
 
-        items.addAll(WalletsMaster.getInstance(this).getCurrentWallet(this).getSettingsConfiguration().mSettingList);
+        items.addAll(WalletsMaster.getInstance(this).getCurrentWallet(this).getSettingsConfiguration().getSettingsList());
         View view = new View(this);
         listView.addFooterView(view, null, true);
         listView.addHeaderView(view, null, true);
