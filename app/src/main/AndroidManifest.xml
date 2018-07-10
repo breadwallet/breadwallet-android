@@ -93,6 +93,14 @@
                 <data android:scheme="bread" />
                 <data android:scheme="bitcoincash" />
                 <data android:scheme="bchtest" />
+                <data
+                    android:host="brd.com"
+                    android:pathPrefix="/scanqr"
+                    android:scheme="https" />
+                <data
+                    android:host="brd.com"
+                    android:pathPrefix="/wallet-pair"
+                    android:scheme="https" />
             </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.SEARCH" />
@@ -124,7 +132,7 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".presenter.activities.settings.SettingsActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="portrait" />
         <activity
             android:name=".presenter.activities.settings.NotificationActivity"
             android:launchMode="singleTask"
