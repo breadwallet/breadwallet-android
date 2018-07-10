@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -32,6 +31,7 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.DeepLinkingManager;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.TxManager;
@@ -47,8 +47,6 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.SyncListener;
-import com.breadwallet.wallet.util.CryptoUriParser;
-import com.breadwallet.wallet.wallets.WalletManagerHelper;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.HTTPServer;
@@ -248,15 +246,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         //since we have one instance of activity at all times, this is needed to know when a new intent called upon this activity
-        handleUrlClickIfNeeded(intent);
-    }
-
-    private void handleUrlClickIfNeeded(Intent intent) {
-        Uri data = intent.getData();
-        if (data != null && !data.toString().isEmpty()) {
-            //handle external click with crypto scheme
-            CryptoUriParser.processRequest(this, data.toString(), WalletsMaster.getInstance(this).getCurrentWallet(this));
-        }
+        DeepLinkingManager.handleUrlClick(this, intent);
     }
 
     private void updateUi() {
@@ -421,7 +411,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         SyncService.registerSyncNotificationBroadcastReceiver(WalletActivity.this.getApplicationContext(), mSyncNotificationBroadcastReceiver);
         SyncService.startService(this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletIso);
 
-        handleUrlClickIfNeeded(getIntent());
+        DeepLinkingManager.handleUrlClick(this, getIntent());
 
     }
 
