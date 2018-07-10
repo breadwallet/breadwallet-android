@@ -45,8 +45,7 @@
         <item name="recover_wallet_background">@color/recover_wallet_button_dark</item>
         <item name="fingerprint_icon_background">@drawable/fingerprint_icon_dark</item>
         <item name="faq_button_background">@drawable/ic_faq_button_dark</item>
-
-
+        <item name="wallet_footer_button_background">@color/wallet_footer_button_color_dark</item>
     </style>
 
     <style name="AppTheme.Light" parent="AppTheme">
@@ -87,4 +86,5 @@
     <attr name="recover_wallet_background" format="reference" />
     <attr name="fingerprint_icon_background" format="reference"/>
     <attr name="faq_button_background" format="reference"/>
+    <attr name="wallet_footer_button_background" format="reference"/>
 </resources>

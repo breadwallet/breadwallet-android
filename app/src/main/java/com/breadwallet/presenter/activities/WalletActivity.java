@@ -89,6 +89,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private BRSearchBar mSearchBar;
     private ImageButton mSearchIcon;
     private ConstraintLayout mToolBarConstraintLayout;
+    private LinearLayout mWalletFooter;
 
     private static final float PRIMARY_TEXT_SIZE = 30;
     private static final float SECONDARY_TEXT_SIZE = 16;
@@ -127,6 +128,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mProgressLayout = findViewById(R.id.progress_layout);
         mSyncStatusLabel = findViewById(R.id.sync_status_label);
         mProgressLabel = findViewById(R.id.syncing_label);
+        mWalletFooter = findViewById(R.id.bottom_toolbar_layout1);
 
         startSyncLoggerIfNeeded();
 
@@ -275,6 +277,25 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         String startColor = wm.getUiConfiguration().getStartColor();
         String endColor = wm.getUiConfiguration().getEndColor();
+        int currentTheme = UiUtils.getThemeId(this);
+
+        if (currentTheme == R.style.AppTheme_Dark) {
+            mSendButton.setColor(getColor(R.color.wallet_footer_button_color_dark));
+            mReceiveButton.setColor(getColor(R.color.wallet_footer_button_color_dark));
+            mBuyButton.setColor(getColor(R.color.wallet_footer_button_color_dark));
+            mSellButton.setColor(getColor(R.color.wallet_footer_button_color_dark));
+
+            if(endColor != null){
+                mWalletFooter.setBackgroundColor(Color.parseColor(endColor));
+            }
+        } else {
+            if(endColor != null) {
+                mSendButton.setColor(Color.parseColor(endColor));
+                mReceiveButton.setColor(Color.parseColor(endColor));
+                mBuyButton.setColor(Color.parseColor(endColor));
+                mSellButton.setColor(Color.parseColor(endColor));
+            }
+        }
 
         if (endColor != null) {
             //it's a gradient
@@ -283,17 +304,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                     new int[]{Color.parseColor(startColor), Color.parseColor(endColor)});
             gd.setCornerRadius(0f);
             mToolbar.setBackground(gd);
-            mSendButton.setColor(Color.parseColor(endColor)); //end color if gradient
-            mReceiveButton.setColor(Color.parseColor(endColor));
-            mBuyButton.setColor(Color.parseColor(endColor));
-            mSellButton.setColor(Color.parseColor(endColor));
         } else {
             //it's a solid color
             mToolbar.setBackgroundColor(Color.parseColor(startColor));
-            mSendButton.setColor(Color.parseColor(startColor));
-            mReceiveButton.setColor(Color.parseColor(startColor));
-            mBuyButton.setColor(Color.parseColor(startColor));
-            mSellButton.setColor(Color.parseColor(startColor));
         }
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
