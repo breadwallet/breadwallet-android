@@ -153,6 +153,7 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
     }
 
     private void unlockWallet() {
+        mFingerPrint.setVisibility(View.INVISIBLE);
         mPinLayout.animate().translationY(-R.dimen.animation_long).setInterpolator(new AccelerateInterpolator());
         mKeyboard.animate().translationY(R.dimen.animation_long).setInterpolator(new AccelerateInterpolator());
         mUnlockedImage.animate().alpha(1f).setListener(new AnimatorListenerAdapter() {
