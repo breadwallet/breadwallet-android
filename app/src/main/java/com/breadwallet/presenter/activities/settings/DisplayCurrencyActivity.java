@@ -80,7 +80,6 @@ public class DisplayCurrencyActivity extends BaseSettingsActivity {
             }
         });
 
-
         mRightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -242,6 +241,5 @@ public class DisplayCurrencyActivity extends BaseSettingsActivity {
         }
 
     }
-
 
 }

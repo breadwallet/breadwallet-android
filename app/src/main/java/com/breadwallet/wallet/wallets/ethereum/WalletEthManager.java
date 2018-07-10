@@ -107,7 +107,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
         mUiConfig = new WalletUiConfiguration("#5e6fa5", null,
                 true, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
-        mSettingsConfig = new WalletSettingsConfiguration(app, ISO, getFingerprintLimits(app));
+        mSettingsConfig = new WalletSettingsConfiguration();
 
         if (Utils.isNullOrEmpty(ethPubKey)) {
             Log.e(TAG, "WalletEthManager: Using the paperKey to create");

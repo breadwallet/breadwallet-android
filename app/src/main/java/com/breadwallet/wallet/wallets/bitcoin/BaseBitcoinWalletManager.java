@@ -85,12 +85,14 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     public static final String BITCOIN_SYMBOL = "BTC";
     public static final String BITCASH_SYMBOL = "BCH";
 
+    private WalletSettingsConfiguration mSettingsConfig;
+
     private WalletManagerHelper mWalletManagerHelper;
     private int mSyncRetryCount = 0;
     private static final int CREATE_WALLET_MAX_RETRY = 3;
     private int mCreateWalletAllowedRetries = CREATE_WALLET_MAX_RETRY;
     private WalletUiConfiguration mUiConfig;
-    private WalletSettingsConfiguration mSettingsConfig;
+
     private Executor mListenerExecutor = Executors.newSingleThreadExecutor();
 
     public enum RescanMode {
@@ -110,7 +112,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         BRSharedPrefs.putFirstAddress(context, firstAddress);
 
         mUiConfig = new WalletUiConfiguration(getColor(), null, true, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
-        mSettingsConfig = new WalletSettingsConfiguration(context, getIso(), getFingerprintLimits(context));
+
     }
 
     protected abstract String getTag();
@@ -138,6 +140,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         return createWallet();
     }
 
+
     @Override
     protected BRCoreWallet.Listener createWalletListener() {
         return new BRCoreWalletManager.WrappedExecutorWalletListener(
@@ -161,6 +164,10 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         }
 
         return arr;
+    }
+
+    protected void setSettingsConfig(WalletSettingsConfiguration settingsConfig) {
+        this.mSettingsConfig = settingsConfig;
     }
 
     @Override
@@ -379,6 +386,11 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     public abstract String undecorateAddress(String address);
 
     @Override
+    public WalletSettingsConfiguration getSettingsConfiguration() {
+        return mSettingsConfig;
+    }
+
+    @Override
     public int getMaxDecimalPlaces(Context app) {
         int unit = BRSharedPrefs.getCryptoDenomination(app, getIso());
         switch (unit) {
@@ -436,11 +448,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     @Override
     public WalletUiConfiguration getUiConfiguration() {
         return mUiConfig;
-    }
-
-    @Override
-    public WalletSettingsConfiguration getSettingsConfiguration() {
-        return mSettingsConfig;
     }
 
     @Override

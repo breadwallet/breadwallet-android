@@ -702,7 +702,7 @@ public class BRKeyStore {
         WalletSettingsConfiguration configs = wm.getSettingsConfiguration();
         return (result != null && result.length > 0) ?
                 new BigDecimal(new String(result)) :
-                (configs.mFingerprintLimits.size() != 0 ? configs.mFingerprintLimits.get(1) : BigDecimal.ZERO);
+                (configs.getFingerprintLimits().size() != 0 ? configs.getFingerprintLimits().get(1) : BigDecimal.ZERO);
     }
 
     public static boolean putTotalLimit(Context context, BigDecimal totalLimit, String iso) {
