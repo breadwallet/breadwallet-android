@@ -78,7 +78,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private ImageButton mBackButton;
     private BRButton mSendButton;
     private BRButton mReceiveButton;
-    private BRButton mBuyButton;
     private BRButton mSellButton;
     private LinearLayout mProgressLayout;
     private BaseTextView mSyncStatusLabel;
@@ -117,7 +116,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mBackButton = findViewById(R.id.back_icon);
         mSendButton = findViewById(R.id.send_button);
         mReceiveButton = findViewById(R.id.receive_button);
-        mBuyButton = findViewById(R.id.buy_button);
         mSellButton = findViewById(R.id.sell_button);
         mBarFlipper = findViewById(R.id.tool_bar_flipper);
         mSearchBar = findViewById(R.id.search_bar);
@@ -168,16 +166,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 }
                 mBarFlipper.setDisplayedChild(1); //search bar
                 mSearchBar.onShow(true);
-            }
-        });
-
-        mBuyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                BaseWalletManager walletManager = WalletsMaster.getInstance(WalletActivity.this).getCurrentWallet(WalletActivity.this);
-                String currencyCode = walletManager.getIso();
-                String url = HTTPServer.URL_BUY + BRConstants.CURRENCY_PARAMETER + currencyCode;
-                UiUtils.startWebActivity(WalletActivity.this, url);
             }
         });
 
@@ -272,17 +260,15 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         if (currentTheme == R.style.AppTheme_Dark) {
             mSendButton.setColor(getColor(R.color.wallet_footer_button_color_dark));
             mReceiveButton.setColor(getColor(R.color.wallet_footer_button_color_dark));
-            mBuyButton.setColor(getColor(R.color.wallet_footer_button_color_dark));
             mSellButton.setColor(getColor(R.color.wallet_footer_button_color_dark));
 
-            if(endColor != null){
+            if (endColor != null) {
                 mWalletFooter.setBackgroundColor(Color.parseColor(endColor));
             }
         } else {
-            if(endColor != null) {
+            if (endColor != null) {
                 mSendButton.setColor(Color.parseColor(endColor));
                 mReceiveButton.setColor(Color.parseColor(endColor));
-                mBuyButton.setColor(Color.parseColor(endColor));
                 mSellButton.setColor(Color.parseColor(endColor));
             }
         }
