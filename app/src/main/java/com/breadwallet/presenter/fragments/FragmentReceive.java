@@ -289,15 +289,12 @@ public class FragmentReceive extends ModalDialogFragment implements OnBalanceCha
                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        String walletIso;
-
                         if (mIsViewReceive) {
-                            walletIso = BRSharedPrefs.getReceiveAddress(ctx, wm.getIso());
+                            mReceiveAddress = wm.getAddress();
                         } else {
-                            WalletBitcoinManager btcWm = WalletBitcoinManager.getInstance(ctx);
-                            walletIso = BRSharedPrefs.getReceiveAddress(ctx, btcWm.getIso());
+                            mReceiveAddress = WalletBitcoinManager.getInstance(ctx).getAddress();
                         }
-                        mReceiveAddress = walletIso;
+
                         String decorated = wm.decorateAddress(mReceiveAddress);
                         mAddress.setText(decorated);
                         Utils.correctTextSizeIfNeeded(mAddress);
