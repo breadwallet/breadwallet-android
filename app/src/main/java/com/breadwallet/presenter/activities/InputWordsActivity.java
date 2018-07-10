@@ -293,14 +293,14 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         if (!hasFocus) {
             validateWord((EditText) v);
         } else {
-            ((EditText) v).setTextColor(getResources().getColor(mTypedValue.resourceId, null));
+            ((EditText) v).setTextColor(getColor(mTypedValue.resourceId));
         }
     }
 
     private void validateWord(EditText view) {
         String word = view.getText().toString();
         boolean valid = SmartValidator.isWordValid(this, word);
-        view.setTextColor(getColor(valid ? getResources().getColor(mTypedValue.resourceId, null) : R.color.red_text));
+        view.setTextColor(getColor(valid ? mTypedValue.resourceId : R.color.red_text));
         if (!valid) {
             SpringAnimator.failShakeAnimation(this, view);
         }
