@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -28,9 +27,11 @@ import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.PromptManager;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
@@ -86,7 +87,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         mBuyLayout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UiUtils.startWebActivity(HomeActivity.this, HTTPServer.URL_BUY);
+                String url = String.format(BRConstants.CURRENCY_PARAMETER_STRING_FORMAT, HTTPServer.URL_BUY, WalletBitcoinManager.getInstance(HomeActivity.this).getIso());
+                UiUtils.startWebActivity(HomeActivity.this, url);
             }
         });
 
