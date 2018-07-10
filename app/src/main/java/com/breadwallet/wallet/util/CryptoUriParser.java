@@ -224,7 +224,7 @@ public class CryptoUriParser {
                     //todo implement
                     break;
                 case "address":
-                    BRClipboardManager.putClipboard(app, wm.decorateAddress(BRSharedPrefs.getReceiveAddress(app, wm.getIso())));
+                    BRClipboardManager.putClipboard(app, wm.decorateAddress(wm.getAddress()));
 
                     break;
             }
