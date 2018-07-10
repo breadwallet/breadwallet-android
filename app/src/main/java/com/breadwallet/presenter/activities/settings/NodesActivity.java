@@ -33,7 +33,6 @@ public class NodesActivity extends BRActivity {
     private Button switchButton;
     private TextView nodeStatus;
     private TextView trustNode;
-    public static boolean appVisible = false;
     AlertDialog mDialog;
     private int mInterval = 3000;
     private Handler mHandler;
@@ -53,16 +52,6 @@ public class NodesActivity extends BRActivity {
             }
         }
     };
-    private static NodesActivity app;
-
-
-    public static NodesActivity getApp() {
-        return app;
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -132,13 +121,13 @@ public class NodesActivity extends BRActivity {
 
     private void createDialog() {
 
-        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(app);
+        final AlertDialog.Builder alertDialog = new AlertDialog.Builder(this);
         final TextView customTitle = new TextView(this);
 
         customTitle.setGravity(Gravity.CENTER);
         customTitle.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
-        int pad32 = Utils.getPixelsFromDps(app, 32);
-        int pad16 = Utils.getPixelsFromDps(app, 16);
+        int pad32 = Utils.getPixelsFromDps(this, 32);
+        int pad16 = Utils.getPixelsFromDps(this, 16);
         customTitle.setPadding(pad16, pad16, pad16, pad16);
         customTitle.setText(getString(R.string.NodeSelector_enterTitle));
         customTitle.setTextSize(TypedValue.COMPLEX_UNIT_SP, 18);
@@ -146,11 +135,11 @@ public class NodesActivity extends BRActivity {
         alertDialog.setCustomTitle(customTitle);
         alertDialog.setMessage(getString(R.string.NodeSelector_enterBody));
 
-        final EditText input = new EditText(app);
+        final EditText input = new EditText(this);
         LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.MATCH_PARENT);
-        int pix = Utils.getPixelsFromDps(app, 24);
+        int pix = Utils.getPixelsFromDps(this, 24);
 
         input.setPadding(pix, 0, pix, pix);
         input.setLayoutParams(lp);
@@ -177,10 +166,10 @@ public class NodesActivity extends BRActivity {
             @Override
             public void onClick(View v) {
                 String str = input.getText().toString();
-                final WalletBitcoinManager wm = WalletBitcoinManager.getInstance(app);
+                final WalletBitcoinManager wm = WalletBitcoinManager.getInstance(NodesActivity.this);
                 if (TrustedNode.isValid(str)) {
                     mDialog.setMessage("");
-                    BRSharedPrefs.putTrustNode(app, wm.getIso(), str);
+                    BRSharedPrefs.putTrustNode(NodesActivity.this, wm.getIso(), str);
                     if (!updatingNode) {
                         updatingNode = true;
                         customTitle.setText(getString(R.string.Webview_updating));
@@ -188,7 +177,7 @@ public class NodesActivity extends BRActivity {
                             @Override
                             public void run() {
                                 Thread.currentThread().setName("BG:" + TAG + ":updateFixedPeer");
-                                WalletsMaster.getInstance(app).updateFixedPeer(app, wm);
+                                WalletsMaster.getInstance(NodesActivity.this).updateFixedPeer(NodesActivity.this, wm);
                                 updatingNode = false;
                                 BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                                     @Override
@@ -211,12 +200,12 @@ public class NodesActivity extends BRActivity {
 
                 } else {
                     customTitle.setText("Invalid Node");
-                    customTitle.setTextColor(app.getColor(R.color.warning_color));
+                    customTitle.setTextColor(NodesActivity.this.getColor(R.color.warning_color));
                     new Handler().postDelayed(new Runnable() {
                         @Override
                         public void run() {
                             customTitle.setText(getString(R.string.NodeSelector_enterTitle));
-                            customTitle.setTextColor(app.getColor(R.color.almost_black));
+                            customTitle.setTextColor(NodesActivity.this.getColor(R.color.almost_black));
                         }
                     }, 1000);
                 }
@@ -237,8 +226,6 @@ public class NodesActivity extends BRActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        appVisible = true;
-        app = this;
         mHandler = new Handler();
         startRepeatingTask();
     }
@@ -246,7 +233,6 @@ public class NodesActivity extends BRActivity {
     @Override
     protected void onPause() {
         super.onPause();
-        appVisible = false;
         stopRepeatingTask();
     }
 

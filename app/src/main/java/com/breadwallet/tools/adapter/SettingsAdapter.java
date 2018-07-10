@@ -47,12 +47,12 @@ import static com.breadwallet.R.layout.settings_list_section;
  */
 public class SettingsAdapter extends ArrayAdapter<String> {
 
-    private List<BRSettingsItem> items;
+    private List<BRSettingsItem> mItems;
     private Context mContext;
 
     public SettingsAdapter(@NonNull Context context, @LayoutRes int resource, @NonNull List<BRSettingsItem> items) {
         super(context, resource);
-        this.items = items;
+        this.mItems = items;
         this.mContext = context;
     }
 
@@ -61,7 +61,7 @@ public class SettingsAdapter extends ArrayAdapter<String> {
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
 
         View v;
-        BRSettingsItem item = items.get(position);
+        BRSettingsItem item = mItems.get(position);
         LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
 
         if (item.isSection) {
@@ -73,12 +73,6 @@ public class SettingsAdapter extends ArrayAdapter<String> {
             if (!addon.getText().toString().isEmpty()) {
                 addon.setVisibility(View.VISIBLE);
                 addon.setText(item.addonText);
-            }
-            ImageView icon = v.findViewById(R.id.item_icon);
-            if (item.iconResId != 0) {
-                icon.setBackgroundResource(item.iconResId);
-            } else {
-                icon.setVisibility(View.GONE);
             }
 
             v.setOnClickListener(item.listener);
@@ -93,7 +87,7 @@ public class SettingsAdapter extends ArrayAdapter<String> {
 
     @Override
     public int getCount() {
-        return items == null ? 0 : items.size();
+        return mItems == null ? 0 : mItems.size();
     }
 
     @Override

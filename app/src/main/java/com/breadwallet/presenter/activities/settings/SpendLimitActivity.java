@@ -30,18 +30,8 @@ import java.util.List;
 
 public class SpendLimitActivity extends BRActivity {
     private static final String TAG = SpendLimitActivity.class.getName();
-    public static boolean appVisible = false;
-    private static SpendLimitActivity app;
     private ListView listView;
     private LimitAdaptor adapter;
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-    }
-
-    public static SpendLimitActivity getApp() {
-        return app;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -64,7 +54,7 @@ public class SpendLimitActivity extends BRActivity {
         adapter = new LimitAdaptor(this);
         final BaseWalletManager wm = WalletsMaster.getInstance(this).getCurrentWallet(this);
 
-        List<BigDecimal> limits = wm.getSettingsConfiguration().mFingerprintLimits;
+        List<BigDecimal> limits = wm.getSettingsConfiguration().getFingerprintLimits();
 
         adapter.addAll(limits);
 
@@ -77,9 +67,9 @@ public class SpendLimitActivity extends BRActivity {
                     Log.e(TAG, "onItemClick: limit is null!");
                     return;
                 }
-                BRKeyStore.putSpendLimit(app, limit, wm.getIso());
-                BigDecimal totalSent = wm.getTotalSent(app);
-                BRKeyStore.putTotalLimit(app, totalSent.add(BRKeyStore.getSpendLimit(app, wm.getIso())), wm.getIso());
+                BRKeyStore.putSpendLimit(SpendLimitActivity.this, limit, wm.getIso());
+                BigDecimal totalSent = wm.getTotalSent(SpendLimitActivity.this);
+                BRKeyStore.putTotalLimit(SpendLimitActivity.this, totalSent.add(BRKeyStore.getSpendLimit(SpendLimitActivity.this, wm.getIso())), wm.getIso());
                 adapter.notifyDataSetChanged();
             }
 
@@ -90,25 +80,11 @@ public class SpendLimitActivity extends BRActivity {
     }
 
     private int getStepFromLimit(BigDecimal limit) {
-        List<BigDecimal> limits = WalletsMaster.getInstance(this).getCurrentWallet(this).getSettingsConfiguration().mFingerprintLimits;
+        List<BigDecimal> limits = WalletsMaster.getInstance(this).getCurrentWallet(this).getSettingsConfiguration().getFingerprintLimits();
         for (int i = 0; i < limits.size(); i++) {
             if (limits.get(i).compareTo(limit) == 0) return i;
         }
         return -1;
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        appVisible = true;
-        app = this;
-
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        appVisible = false;
     }
 
     @Override
@@ -133,8 +109,8 @@ public class SpendLimitActivity extends BRActivity {
 
         @Override
         public View getView(int position, View convertView, @NonNull ViewGroup parent) {
-            BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-            final BigDecimal limit = BRKeyStore.getSpendLimit(app, wm.getIso());
+            BaseWalletManager wm = WalletsMaster.getInstance(SpendLimitActivity.this).getCurrentWallet(SpendLimitActivity.this);
+            final BigDecimal limit = BRKeyStore.getSpendLimit(SpendLimitActivity.this, wm.getIso());
             if (convertView == null) {
                 // inflate the layout
                 LayoutInflater inflater = ((Activity) mContext).getLayoutInflater();
@@ -143,11 +119,11 @@ public class SpendLimitActivity extends BRActivity {
             // get the TextView and then set the text (item name) and tag (item ID) values
             textViewItem = convertView.findViewById(R.id.currency_item_text);
             BigDecimal item = getItem(position);
-            BaseWalletManager walletManager = WalletsMaster.getInstance(app).getCurrentWallet(app);
+            BaseWalletManager walletManager = WalletsMaster.getInstance(SpendLimitActivity.this).getCurrentWallet(SpendLimitActivity.this);
 
-            String cryptoAmount = CurrencyUtils.getFormattedAmount(app, walletManager.getIso(), item);
+            String cryptoAmount = CurrencyUtils.getFormattedAmount(SpendLimitActivity.this, walletManager.getIso(), item);
 
-            String text = String.format(item.compareTo(BigDecimal.ZERO) == 0 ? app.getString(R.string.TouchIdSpendingLimit) : "%s", cryptoAmount);
+            String text = String.format(item.compareTo(BigDecimal.ZERO) == 0 ? getString(R.string.TouchIdSpendingLimit) : "%s", cryptoAmount);
             textViewItem.setText(text);
             ImageView checkMark = convertView.findViewById(R.id.currency_checkmark);
 

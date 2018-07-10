@@ -219,7 +219,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     }
 
-
     private void startSyncLoggerIfNeeded() {
         if (Utils.isEmulatorOrDebug(this) && RUN_LOGGER) {
             if (mTestLogger != null) {
