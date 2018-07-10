@@ -48,10 +48,8 @@ import org.json.JSONObject;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 
@@ -79,8 +77,8 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletEthManager extends BaseEthereumWalletManager implements BaseWalletManager,
-        BREthereumLightNode.Client, BREthereumLightNode.Listener {
+public class WalletEthManager extends BaseEthereumWalletManager implements  BREthereumLightNode.Client,
+        BREthereumLightNode.Listener {
     private static final String TAG = WalletEthManager.class.getSimpleName();
 
     private CryptoTransaction mWatchedTransaction;
@@ -155,17 +153,16 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
                 return;
             }
         }
-        String address = getReceiveAddress(app).stringify();
-        if (Utils.isNullOrEmpty(address)) {
+        mAddress = getReceiveAddress(app).stringify();
+        if (Utils.isNullOrEmpty(mAddress)) {
             BRReportsManager.reportBug(new IllegalArgumentException("Eth address missing!"), true);
         }
-        BreadApp.generateWalletIfIfNeeded(app, address);
+        BreadApp.generateWalletIfIfNeeded(app, mAddress);
         WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
 
         estimateGasPrice();
         mWallet.setDefaultUnit(BREthereumAmount.Unit.ETHER_WEI);
         node.connect();
-
     }
 
     public static synchronized WalletEthManager getInstance(Context app) {
@@ -224,18 +221,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
         return result;
     }
 
-    public BREthereumWallet getEthWallet() {
-        return mWallet;
-    }
-
     @Override
     public BREthereumAmount.Unit getUnit() {
         return BREthereumAmount.Unit.ETHER_WEI;
-    }
-
-    @Override
-    public boolean isAddressValid(String address) {
-        return !Utils.isNullOrEmpty(address) && address.startsWith("0x");
     }
 
     @Override
@@ -397,18 +385,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BaseW
             Log.e(TAG, "updateFeePerKb: FAILED: " + jsonString, e);
         }
 
-    }
-
-    @Override
-    public void refreshAddress(Context app) {
-        if (Utils.isNullOrEmpty(BRSharedPrefs.getReceiveAddress(app, getIso()))) {
-            CryptoAddress address = getReceiveAddress(app);
-            if (Utils.isNullOrEmpty(address.stringify())) {
-                Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
-                BRReportsManager.reportBug(new NullPointerException("empty address!"));
-            }
-            BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso());
-        }
     }
 
     @Override
