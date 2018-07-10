@@ -90,6 +90,7 @@ public class PostAuth {
         boolean success = WalletsMaster.getInstance(activity).generateRandomSeed(activity);
         if (success) {
             Intent intent = new Intent(activity, WriteDownActivity.class);
+            intent.putExtra(WriteDownActivity.EXTRA_VIEW_REASON, WriteDownActivity.ViewReason.NEW_WALLET.getValue());
             activity.startActivity(intent);
             activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             activity.finish();
