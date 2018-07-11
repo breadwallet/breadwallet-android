@@ -101,7 +101,7 @@
             android:layout_alignBottom="@+id/textView2"
             android:layout_alignParentEnd="true"
             android:layout_marginEnd="15dp"
-            android:background="@drawable/faq_question_white"
+            android:background="?attr/faq_button_secondary_color"
             android:scaleType="centerCrop"/>
 
         <ImageButton
@@ -113,7 +113,7 @@
             android:layout_alignTop="@+id/textView2"
             android:layout_marginStart="16dp"
             android:background="@android:color/transparent"
-            android:src="?attr/unlink_wallet_back_button"/>
+            android:src="?attr/back_arrow_secondary"/>
 
     </RelativeLayout>
 

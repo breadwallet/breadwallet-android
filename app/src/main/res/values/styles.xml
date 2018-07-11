@@ -39,16 +39,18 @@
         <item name="hide_wallet_button_background">@drawable/remove_wallet_button_dark</item>
         <item name="show_wallet_button_background">@drawable/add_wallet_button_dark</item>
         <item name="toolbar_back_arrow">@drawable/ic_arrow_left_dark</item>
+        <item name="back_arrow_secondary">@drawable/ic_arrow_left_white</item>
         <item name="pin_pad_delete_src">@drawable/ic_delete_dark</item>
         <item name="pin_dot_filled_background">@drawable/ic_pin_dot_filled</item>
         <item name="create_new_wallet_background">@color/create_new_wallet_button_dark</item>
         <item name="recover_wallet_background">@color/recover_wallet_button_dark</item>
         <item name="fingerprint_icon_background">@drawable/fingerprint_icon_dark</item>
-        <item name="faq_button_background">@drawable/ic_faq_button_dark</item>
+        <item name="faq_button_primary_color">@drawable/ic_faq_button_dark</item>
+        <item name="faq_button_secondary_color">@drawable/faq_question_white</item>
         <item name="wallet_footer_button_background">@color/wallet_footer_button_color_dark</item>
         <item name="spend_limit_list_divider_color">@color/spend_limit_list_divider_color_dark</item>
         <item name="input_words_text_color">@color/white</item>
-        <item name="unlink_wallet_back_button">@drawable/ic_arrow_left_white</item>
+
         <item name="token_secondary_text_color">@color/white_60_percent_opaque</item>
     </style>
 
@@ -64,16 +66,17 @@
         <item name="hide_wallet_button_background">@drawable/remove_wallet_button</item>
         <item name="show_wallet_button_background">@drawable/add_wallet_button</item>
         <item name="toolbar_back_arrow">@drawable/ic_arrow_left</item>
+        <item name="back_arrow_secondary">@drawable/ic_arrow_left</item>
         <item name="pin_pad_delete_src">@drawable/ic_delete_gray</item>
         <item name="pin_dot_filled_background">@drawable/ic_pin_dot_black</item>
         <item name="toolbar_background">@color/white</item>
         <item name="create_new_wallet_background">@color/create_new_wallet_button_light</item>
         <item name="recover_wallet_background">@color/recover_wallet_button_light</item>
         <item name="fingerprint_icon_background">@drawable/fingerprint_icon</item>
-        <item name="faq_button_background">@drawable/faq_question_black</item>
+        <item name="faq_button_primary_color">@drawable/faq_question_black</item>
+        <item name="faq_button_secondary_color">@drawable/faq_question_black</item>
         <item name="spend_limit_list_divider_color">@color/spend_limit_list_divider_color_light</item>
         <item name="input_words_text_color">@color/almost_black</item>
-        <item name="unlink_wallet_back_button">@drawable/ic_arrow_left</item>
         <item name="token_secondary_text_color">@color/almost_black</item>
     </style>
 
@@ -88,15 +91,16 @@
     <attr name="secondary_text_color" format="reference" />
     <attr name="toolbar_background" format="reference" />
     <attr name="toolbar_back_arrow" format="reference" />
+    <attr name="back_arrow_secondary" format="reference" />
     <attr name="pin_pad_delete_src" format="reference" />
     <attr name="pin_dot_filled_background" format="reference" />
     <attr name="create_new_wallet_background" format="reference" />
     <attr name="recover_wallet_background" format="reference" />
     <attr name="fingerprint_icon_background" format="reference"/>
-    <attr name="faq_button_background" format="reference"/>
+    <attr name="faq_button_primary_color" format="reference"/>
+    <attr name="faq_button_secondary_color" format="reference"/>
     <attr name="wallet_footer_button_background" format="reference"/>
     <attr name="spend_limit_list_divider_color" format="reference"/>
     <attr name="input_words_text_color" format="reference" />
-    <attr name="unlink_wallet_back_button" format="reference"/>
-    <attr name="token_secondary_text_color" format="reference"/>
+    <attr name="token_secondary_text_color" format="reference" />
 </resources>
