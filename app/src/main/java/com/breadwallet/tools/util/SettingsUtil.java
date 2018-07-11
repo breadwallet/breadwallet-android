@@ -1,6 +1,7 @@
 package com.breadwallet.tools.util;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
@@ -148,7 +149,7 @@ public final class SettingsUtil {
             public void onClick(View v) {
                 Intent intent = new Intent(activity, DisplayCurrencyActivity.class);
                 activity.startActivity(intent);
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.empty_300);
+                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
 
             }
         }, false, 0));
@@ -176,7 +177,7 @@ public final class SettingsUtil {
             public void onClick(View v) {
                 Intent intent = new Intent(activity, ShareDataActivity.class);
                 activity.startActivity(intent);
-                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.empty_300);
+                activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
         }, false, 0));
         return items;
@@ -230,7 +231,7 @@ public final class SettingsUtil {
         return items;
     }
 
-    public static List<BRSettingsItem> getBitcoinSettings(final Activity activity) {
+    public static List<BRSettingsItem> getBitcoinSettings(final Context activity) {
         List<BRSettingsItem> items = new ArrayList<>();
         if (AuthManager.isFingerPrintAvailableAndSetup(activity)) {
             items.add(new BRSettingsItem(activity.getString(R.string.Settings_touchIdLimit_android), "", new View.OnClickListener() {
@@ -253,7 +254,7 @@ public final class SettingsUtil {
                     });
 
                 }
-            }, false, R.drawable.chevron_right_light));
+            }, false, 0));
         }
         items.add(new BRSettingsItem(activity.getString(R.string.Settings_importTitle), "", new View.OnClickListener() {
             @Override
@@ -264,7 +265,7 @@ public final class SettingsUtil {
                 currentActivity.startActivity(intent);
                 currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false, R.drawable.chevron_right_light));
+        }, false, 0));
 
         items.add(new BRSettingsItem(activity.getString(R.string.ReScan_header), "", new View.OnClickListener() {
             @Override
@@ -275,7 +276,7 @@ public final class SettingsUtil {
                 currentActivity.startActivity(intent);
                 currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false, R.drawable.ic_rescan));
+        }, false, 0));
 
         //add that for all currencies
         items.add(new BRSettingsItem(activity.getString(R.string.NodeSelector_title), "", new View.OnClickListener() {
@@ -286,10 +287,10 @@ public final class SettingsUtil {
                 currentActivity.startActivity(intent);
                 currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false, R.drawable.chevron_right_light));
+        }, false, 0));
         return items;
     }
-    public static List<BRSettingsItem> getBitcoinCashSettings(final Activity activity) {
+    public static List<BRSettingsItem> getBitcoinCashSettings(final Context activity) {
         List<BRSettingsItem> items = new ArrayList<>();
         items.add(new BRSettingsItem(activity.getString(R.string.Settings_importTitle), "", new View.OnClickListener() {
             @Override
@@ -300,7 +301,7 @@ public final class SettingsUtil {
                 currentActivity.startActivity(intent);
                 currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false, R.drawable.chevron_right_light));
+        }, false, 0));
 
         items.add(new BRSettingsItem(activity.getString(R.string.ReScan_header), "", new View.OnClickListener() {
             @Override
@@ -311,7 +312,7 @@ public final class SettingsUtil {
                 currentActivity.startActivity(intent);
                 currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
             }
-        }, false, R.drawable.ic_rescan));
+        }, false, 0));
 
         return items;
     }
