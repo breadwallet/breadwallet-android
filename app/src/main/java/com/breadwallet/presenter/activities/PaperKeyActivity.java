@@ -36,13 +36,7 @@ public class PaperKeyActivity extends BRActivity {
     private LinearLayout buttonsLayout;
     private TextView itemIndexText;
     private SparseArray<String> wordMap;
-    public static boolean appVisible = false;
-    private static PaperKeyActivity app;
     private ImageButton close;
-
-    public static PaperKeyActivity getApp() {
-        return app;
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +63,8 @@ public class PaperKeyActivity extends BRActivity {
             }
         });
 
-        nextButton = findViewById(R.id.send_button);
-        previousButton = findViewById(R.id.button_previous);
+        nextButton = findViewById(R.id.next_button);
+        previousButton = findViewById(R.id.previous_button);
         close = findViewById(R.id.close_button);
         itemIndexText = findViewById(R.id.item_index_text);
         buttonsLayout = findViewById(R.id.buttons_layout);
@@ -104,7 +98,7 @@ public class PaperKeyActivity extends BRActivity {
             throw new RuntimeException(TAG + ": cleanPhrase is null");
         }
 
-        String wordArray[] = cleanPhrase.split(" ");
+        String wordArray[ ] = cleanPhrase.split(" ");
 
         if (cleanPhrase.charAt(cleanPhrase.length() - 1) == '\0') {
             BRDialog.showCustomDialog(this, getString(R.string.JailbreakWarnings_title),
@@ -127,7 +121,6 @@ public class PaperKeyActivity extends BRActivity {
             }
             updateItemIndexText();
         }
-
     }
 
     private void updateWordView(boolean isNext) {
@@ -157,24 +150,10 @@ public class PaperKeyActivity extends BRActivity {
         previousButton.setEnabled(b);
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        appVisible = true;
-        app = this;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        appVisible = false;
-    }
-
     private void updateItemIndexText() {
         String text = String.format(Locale.getDefault(), getString(R.string.WritePaperPhrase_step), wordViewPager.getCurrentItem() + 1, wordMap.size());
         itemIndexText.setText(text);
     }
-
 
     @Override
     public void onBackPressed() {
@@ -204,9 +183,5 @@ public class PaperKeyActivity extends BRActivity {
             return words == null ? 0 : words.length;
         }
 
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
     }
 }
