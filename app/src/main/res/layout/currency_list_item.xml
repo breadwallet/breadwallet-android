@@ -34,10 +34,4 @@
         android:filterTouchesWhenObscured="true"
         android:visibility="gone"/>
 
-    <View
-        android:layout_alignParentBottom="true"
-        android:background="?attr/spend_limit_list_divider_color"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"/>
-
 </RelativeLayout>
