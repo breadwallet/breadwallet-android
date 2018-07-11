@@ -825,7 +825,8 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     public void loadViewModelData() {
         if (mAddressEdit != null) {
             if (!Utils.isNullOrEmpty(mViewModel.getAddress())) {
-                mAddressEdit.setText(mViewModel.getAddress());
+                BaseWalletManager walletManager = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+                mAddressEdit.setText(walletManager.decorateAddress(mViewModel.getAddress()));
             }
             if (!Utils.isNullOrEmpty(mViewModel.getMemo())) {
                 mCommentEdit.setText(mViewModel.getMemo());
