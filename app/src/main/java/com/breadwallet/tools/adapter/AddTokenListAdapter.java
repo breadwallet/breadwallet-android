@@ -21,29 +21,28 @@ import com.breadwallet.tools.util.BRConstants;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.List;
 
 public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapter.TokenItemViewHolder> {
 
     private Context mContext;
-    private ArrayList<TokenItem> mTokens;
-    private ArrayList<TokenItem> mBackupTokens;
+    private List<TokenItem> mTokens;
+    private List<TokenItem> mBackupTokens;
     private static final String TAG = AddTokenListAdapter.class.getSimpleName();
     private OnTokenAddOrRemovedListener mListener;
 
-    public AddTokenListAdapter(Context context, ArrayList<TokenItem> tokens, OnTokenAddOrRemovedListener listener) {
-
-        this.mContext = context;
-        this.mTokens = tokens;
-        this.mListener = listener;
-        this.mBackupTokens = mTokens;
+    public AddTokenListAdapter(Context context, List<TokenItem> tokens, OnTokenAddOrRemovedListener listener) {
+        mContext = context;
+        mTokens = tokens;
+        mListener = listener;
+        mBackupTokens = mTokens;
 
         Collections.sort(mTokens, new Comparator<TokenItem>() {
             @Override
-            public int compare(TokenItem one, TokenItem two) {
-                return one.symbol.compareToIgnoreCase(two.symbol);
+            public int compare(TokenItem first, TokenItem second) {
+                return first.symbol.compareToIgnoreCase(second.symbol);
             }
         });
-
     }
 
     public interface OnTokenAddOrRemovedListener {
@@ -67,8 +66,8 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
         String iconResourceName = currencyCode;
         int iconResourceId = mContext.getResources().getIdentifier(currencyCode, BRConstants.DRAWABLE, mContext.getPackageName());
 
-        holder.name.setText(mTokens.get(position).symbol);
-        holder.symbol.setText(mTokens.get(position).name);
+        holder.name.setText(mTokens.get(position).name);
+        holder.symbol.setText(mTokens.get(position).symbol);
         try {
             holder.logo.setBackground(mContext.getDrawable(iconResourceId));
         } catch (Exception e) {
@@ -136,7 +135,7 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
             super(view);
 
             logo = view.findViewById(R.id.token_icon);
-            symbol = view.findViewById(R.id.token_ticker);
+            symbol = view.findViewById(R.id.token_symbol);
             name = view.findViewById(R.id.token_name);
             addRemoveButton = view.findViewById(R.id.add_remove_button);
 
