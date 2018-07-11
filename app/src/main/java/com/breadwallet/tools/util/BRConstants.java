@@ -131,6 +131,7 @@ public final class BRConstants {
     public static final String URL_BLOG  = "https://brd.com/blog/";
     public static final String URL_BRD_HOST = "brd.com";
     public static final String WALLET_PAIR_PATH = "wallet-pair";
+    public static final String WALLET_LINK_PATH = "link-wallet";
 
 
     private BRConstants() {

@@ -34,6 +34,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.core.BRCoreKey;
+import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -833,19 +834,7 @@ public class ReplicatedKVStore implements BreadApp.OnAppBackgrounded {
         return new CompletionObject(CompletionObject.RemoteKVStoreError.unknown);
     }
 
-    /**
-     * generate a nonce using microseconds-since-epoch
-     */
-    public static byte[] getNonce() {
-        byte[] nonce = new byte[12];
-        ByteBuffer buffer = ByteBuffer.allocate(8);
-        long t = System.nanoTime() / 1000;
-        buffer.order(ByteOrder.LITTLE_ENDIAN);
-        buffer.putLong(t);
-        byte[] byteTime = buffer.array();
-        System.arraycopy(byteTime, 0, nonce, 4, byteTime.length);
-        return nonce;
-    }
+
 
     /**
      * encrypt some data using self.key
@@ -866,7 +855,7 @@ public class ReplicatedKVStore implements BreadApp.OnAppBackgrounded {
             return null;
         }
         BRCoreKey key = new BRCoreKey(tempAuthKey);
-        byte[] nonce = getNonce();
+        byte[] nonce = CryptoHelper.generateRandomNonce();
         if (Utils.isNullOrEmpty(nonce) || nonce.length != 12) {
             Log.e(TAG, "encrypt: nonce is invalid: " + (nonce == null ? null : nonce.length));
             return null;

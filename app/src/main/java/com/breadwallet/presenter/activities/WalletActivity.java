@@ -24,21 +24,27 @@ import android.widget.LinearLayout;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
+import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BaseTextView;
+import com.breadwallet.protocols.messageexchange.MessageApi;
+import com.breadwallet.protocols.messageexchange.Protos;
+import com.breadwallet.protocols.messageexchange.PwbMaster;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.crypto.Base58;
+import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.DeepLinkingManager;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.TxManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.services.SyncService;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.SyncTestLogger;
 import com.breadwallet.tools.util.Utils;
@@ -51,6 +57,10 @@ import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.HTTPServer;
 
+import org.bouncycastle.asn1.ASN1InputStream;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -216,6 +226,20 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         boolean cryptoPreferred = BRSharedPrefs.isCryptoPreferred(this);
 
         setPriceTags(cryptoPreferred, false);
+        //TODO Delete testing code
+        byte[] authKey = BRKeyStore.getAuthKey(this);
+        if (Utils.isNullOrEmpty(authKey)) throw new NullPointerException();
+        BRCoreKey key = new BRCoreKey(authKey);
+        byte[] pubkey = key.getPubKey();
+        Log.e(TAG, "onCreate: pubkeyLen:" + pubkey.length);
+        if (Utils.isNullOrEmpty(pubkey)) throw new NullPointerException();
+        Log.e(TAG, "onCreate: core base58PubKey:" + BRCoreKey.encodeBase58(pubkey));
+        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                PwbMaster.checkInboxAndRespond(WalletActivity.this);
+            }
+        });
 
     }
 
