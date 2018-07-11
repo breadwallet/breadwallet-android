@@ -199,7 +199,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
             super(view);
 
             dragHandle = view.findViewById(R.id.drag_icon);
-            tokenTicker = view.findViewById(R.id.token_ticker);
+            tokenTicker = view.findViewById(R.id.token_symbol);
             tokenName = view.findViewById(R.id.token_name);
             tokenBalance = view.findViewById(R.id.token_balance);
             showHide = view.findViewById(R.id.show_hide_button);
