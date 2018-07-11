@@ -1,19 +1,16 @@
 package com.breadwallet.tools.util;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.v4.app.FragmentActivity;
 import android.view.View;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.CurrencySettingsActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.ManageWalletsActivity;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.AboutActivity;
-import com.breadwallet.presenter.activities.settings.AdvancedActivity;
 import com.breadwallet.presenter.activities.settings.DisplayCurrencyActivity;
 import com.breadwallet.presenter.activities.settings.FingerprintActivity;
 import com.breadwallet.presenter.activities.settings.ImportActivity;
@@ -60,22 +57,25 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class SettingsUtil {
+public final class SettingsUtil {
 
     private static final String MARKET_URI = "market://details?id=com.breadwallet";
     private static final String GOOGLE_PLAY_URI = "https://play.google.com/store/apps/details?id=com.breadwallet";
     private static final String APP_STORE_PACKAGE = "com.android.vending";
 
+    private SettingsUtil() { }
+
     public static List<BRSettingsItem> getMainSettings(final Activity activity) {
         List<BRSettingsItem> settingsItems = new ArrayList<>();
         final BaseWalletManager walletManager = WalletsMaster.getInstance(activity).getCurrentWallet(activity);
 
-        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_scan), "", new View.OnClickListener() {
+        // TODO: Implement Scan QR code once the requirements are more clear.  This is for PWB.
+        /* settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_scan), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 UiUtils.openScanner(activity, BRConstants.SCANNER_REQUEST);
             }
-        }, false, R.drawable.ic_camera));
+        }, false, R.drawable.ic_camera)); */
 
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_manageWallets), "", new View.OnClickListener() {
             @Override
