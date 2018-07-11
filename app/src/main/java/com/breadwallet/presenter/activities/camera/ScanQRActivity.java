@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v13.app.ActivityCompat;
 import android.util.Log;
+import android.view.InputDevice;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.manager.InputDataManager;
 import com.breadwallet.tools.qrcode.QRCodeReaderView;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
@@ -176,7 +178,7 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
         lastUpdated = System.currentTimeMillis();
         if (handlingCode) return;
         handlingCode = true;
-        if (CryptoUriParser.isCryptoUrl(this, text) || BRBitId.isBitId(text)) {
+        if (CryptoUriParser.isCryptoUrl(this, text) || BRBitId.isBitId(text) || InputDataManager.isWalletPair(this, text)) {
             Log.e(TAG, "onQRCodeRead: isCrypto");
             runOnUiThread(new Runnable() {
                 @Override

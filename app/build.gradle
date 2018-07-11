@@ -1,5 +1,6 @@
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
+apply plugin: 'com.google.protobuf'
 
 android {
     compileSdkVersion = 27
@@ -137,9 +138,42 @@ android {
     }
     sourceSets {
         main {
-            java.srcDirs = ['src/main/java', 'src/main/jni/breadwallet-core/Java/root', 'src/main/jni/breadwallet-core/ethereum/Java/root']
+            java.srcDirs = ['src/main/java', 'src/main/jni/breadwallet-core/Java/root',
+                            'src/main/jni/breadwallet-core/ethereum/Java/root',
+                            '${protobuf.generatedFilesBaseDir}/main/javalite']
         }
     }
+}
+
+protobuf {
+    protoc {
+        // You still need protoc like in the non-Android case
+        artifact = 'com.google.protobuf:protoc:3.0.0'
+
+    }
+    plugins {
+        javalite {
+            // The codegen for lite comes as a separate artifact
+            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
+
+        }
+    }
+    generateProtoTasks {
+        all().each { task ->
+            task.builtins {
+                // In most cases you don't need the full Java output
+                // if you use the lite output.
+                remove java
+            }
+            task.plugins {
+                javalite {}
+            }
+        }
+    }
+}
+
+clean {
+    delete protobuf.generatedFilesBaseDir
 }
 
 repositories {
@@ -172,6 +206,10 @@ dependencies {
     implementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'tools.fastlane:screengrab:1.1.0'
     implementation 'android.arch.lifecycle:extensions:1.1.1'
+    implementation 'com.google.protobuf:protobuf-lite:3.0.0'
+    implementation group: 'org.bouncycastle', name: 'bcprov-jdk15on', version: '1.60'
+    implementation group: 'com.google.guava', name: 'guava', version: '25.1-android'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

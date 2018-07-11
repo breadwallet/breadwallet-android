@@ -5,6 +5,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
+import com.breadwallet.protocols.messageexchange.PwbMaster;
+import com.breadwallet.protocols.messageexchange.entities.PairingObject;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -48,17 +50,18 @@ public final class InputDataManager {
         } else if (BRBitId.isBitId(result)) {
             BRBitId.signBitID(context, result, null);
         } else if (isWalletPair(context, result)) {
-            //todo add the pairing code in the next MR
+            PairingObject pairingObject = PairingObject.parseUriString(result);
+            PwbMaster.startPairing(context, pairingObject);
         }
     }
 
-    private static boolean isWalletPair(Context context, String result) {
+    public static boolean isWalletPair(Context context, String result) {
         if (Utils.isNullOrEmpty(result)) {
             return false;
         }
         Uri uri = Uri.parse(result);
-
-        if (uri.getHost().equalsIgnoreCase(BRConstants.URL_BRD_HOST) && uri.getPath().equalsIgnoreCase(BRConstants.WALLET_PAIR_PATH)) {
+        String path = uri.getPath();
+        if (uri.getHost().equalsIgnoreCase(BRConstants.URL_BRD_HOST) && (path.contains(BRConstants.WALLET_PAIR_PATH) || path.contains(BRConstants.WALLET_LINK_PATH))) {
             Log.d(TAG, "isWalletPair: true");
             return true;
         }
