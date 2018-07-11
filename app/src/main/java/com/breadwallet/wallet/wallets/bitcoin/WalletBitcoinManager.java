@@ -91,7 +91,7 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
             }
         });
         WalletsMaster.getInstance(context).setSpendingLimitIfNotSet(context, this);
-        setSettingsConfig(new WalletSettingsConfiguration(context, getIso(), SettingsUtil.getBitcoinSettings((Activity) context), getFingerprintLimits(context)));
+        setSettingsConfig(new WalletSettingsConfiguration(context, getIso(), SettingsUtil.getBitcoinSettings(context), getFingerprintLimits(context)));
     }
 
     @Override
