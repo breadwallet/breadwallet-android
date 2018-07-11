@@ -92,7 +92,7 @@
         android:weightSum="2.0">
 
         <com.breadwallet.presenter.customviews.BRButton
-            android:id="@+id/button_previous"
+            android:id="@+id/previous_button"
             android:layout_width="0dp"
             android:layout_height="72dp"
             android:layout_marginBottom="32dp"
@@ -111,7 +111,7 @@
             />
 
         <com.breadwallet.presenter.customviews.BRButton
-            android:id="@+id/send_button"
+            android:id="@+id/next_button"
             android:layout_width="0dp"
             android:layout_height="72dp"
             android:layout_marginBottom="32dp"
