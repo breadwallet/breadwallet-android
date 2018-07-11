@@ -74,6 +74,11 @@ public class SettingsAdapter extends ArrayAdapter<String> {
                 addon.setVisibility(View.VISIBLE);
                 addon.setText(item.addonText);
             }
+            ImageButton icon = v.findViewById(R.id.setting_icon);
+            if (item.iconResId != 0) {
+                icon.setVisibility(View.VISIBLE);
+                icon.setBackgroundResource(item.iconResId);
+            }
 
             v.setOnClickListener(item.listener);
         }
