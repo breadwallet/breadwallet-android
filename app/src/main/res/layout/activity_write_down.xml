@@ -50,7 +50,7 @@
             android:layout_height="@dimen/faq_dimen"
             android:layout_gravity="start"
             android:layout_margin="@dimen/bread_margin"
-            android:background="@drawable/faq_question_white"/>
+            android:background="?attr/faq_button_secondary_color"/>
 
     </FrameLayout>
 

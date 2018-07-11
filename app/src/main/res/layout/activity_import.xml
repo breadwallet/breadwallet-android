@@ -6,7 +6,6 @@
     android:id="@+id/activity_intro_recover"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/extra_light_blue_background"
     tools:context="com.breadwallet.presenter.activities.intro.RecoverActivity">
 
     <com.breadwallet.presenter.customviews.BRButton
@@ -16,7 +15,6 @@
         android:layout_margin="@dimen/bread_margin"
         android:padding="10dp"
         android:text="@string/Import.scan"
-        android:textColor="@color/white"
         android:textSize="18sp"
         app:buttonType="1"
         app:customBFont="CircularPro-Medium.otf"
@@ -34,7 +32,6 @@
         android:layout_marginTop="16dp"
         android:lineSpacingMultiplier="1.3"
         android:text="@string/Import.message"
-        android:textColor="@color/almost_black"
         android:textSize="@dimen/paragraph"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -50,7 +47,6 @@
         android:layout_marginTop="0dp"
         android:lineSpacingMultiplier="1.3"
         android:text="@string/Import.warning"
-        android:textColor="@color/almost_black"
         android:textSize="@dimen/paragraph"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toRightOf="@+id/imageView8"
@@ -86,17 +82,16 @@
             android:layout_centerHorizontal="true"
             android:layout_margin="@dimen/bread_margin"
             android:text="@string/Settings.importTitle"
-            android:textColor="@color/white"
             android:textSize="@dimen/header"
             app:customTFont="CircularPro-Bold.otf"
             tools:layout_constraintTop_creator="1"/>
 
         <ImageButton
             android:id="@+id/close_button"
-            android:layout_width="32dp"
-            android:layout_height="32dp"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
             android:layout_margin="@dimen/bread_margin"
-            android:background="@drawable/ic_chevron_left_white_24dp"
+            android:background="?attr/back_arrow_secondary"
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="81dp"/>
 
@@ -107,7 +102,7 @@
             android:layout_height="@dimen/faq_dimen"
             android:layout_alignParentEnd="true"
             android:layout_margin="@dimen/bread_margin"
-            android:background="@drawable/faq_question_white"
+            android:background="?attr/faq_button_secondary_color"
             tools:layout_editor_absoluteX="0dp"
             tools:layout_editor_absoluteY="81dp"/>
 

@@ -43,9 +43,7 @@
                 android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
                 android:layout_margin="@dimen/bread_margin"
-                android:background="@drawable/faq_question_white"
-                />
-
+                android:background="?attr/faq_button_secondary_color" />
 
         </RelativeLayout>
 
