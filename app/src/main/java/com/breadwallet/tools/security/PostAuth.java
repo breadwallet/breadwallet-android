@@ -142,8 +142,8 @@ public class PostAuth {
         activity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
     }
 
-    public void onBitIDAuth(Activity activity, boolean authenticated) {
-        BRBitId.completeBitID(activity, authenticated);
+    public void onBitIDAuth(Context context, boolean authenticated) {
+        BRBitId.completeBitID(context, authenticated);
     }
 
     public void onRecoverWalletAuth(final Activity activity, boolean authAsked) {
