@@ -221,7 +221,4 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
         qrCodeReaderView.startCamera();
     }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-    }
 }

@@ -64,19 +64,19 @@ public final class SettingsUtil {
     private static final String GOOGLE_PLAY_URI = "https://play.google.com/store/apps/details?id=com.breadwallet";
     private static final String APP_STORE_PACKAGE = "com.android.vending";
 
-    private SettingsUtil() { }
+    private SettingsUtil() {
+    }
 
     public static List<BRSettingsItem> getMainSettings(final Activity activity) {
         List<BRSettingsItem> settingsItems = new ArrayList<>();
         final BaseWalletManager walletManager = WalletsMaster.getInstance(activity).getCurrentWallet(activity);
 
-        // TODO: Implement Scan QR code once the requirements are more clear.  This is for PWB.
-        /* settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_scan), "", new View.OnClickListener() {
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_scan), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 UiUtils.openScanner(activity, BRConstants.SCANNER_REQUEST);
             }
-        }, false, R.drawable.ic_camera)); */
+        }, false, R.drawable.ic_camera));
 
         settingsItems.add(new BRSettingsItem(activity.getString(R.string.MenuButton_manageWallets), "", new View.OnClickListener() {
             @Override
@@ -231,32 +231,32 @@ public final class SettingsUtil {
         return items;
     }
 
-    public static List<BRSettingsItem> getBitcoinSettings(final Context activity) {
+    public static List<BRSettingsItem> getBitcoinSettings(final Context context) {
         List<BRSettingsItem> items = new ArrayList<>();
-        if (AuthManager.isFingerPrintAvailableAndSetup(activity)) {
-            items.add(new BRSettingsItem(activity.getString(R.string.Settings_touchIdLimit_android), "", new View.OnClickListener() {
+        if (AuthManager.isFingerPrintAvailableAndSetup(context)) {
+            items.add(new BRSettingsItem(context.getString(R.string.Settings_touchIdLimit_android), "", new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     final Activity currentActivity = (Activity) v.getContext();
                     AuthManager.getInstance().authPrompt(currentActivity, null,
                             currentActivity.getString(R.string.VerifyPin_continueBody), true, false, new BRAuthCompletion() {
-                        @Override
-                        public void onComplete() {
-                            Intent intent = new Intent(currentActivity, SpendLimitActivity.class);
-                            currentActivity.startActivity(intent);
-                            currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                        }
+                                @Override
+                                public void onComplete() {
+                                    Intent intent = new Intent(currentActivity, SpendLimitActivity.class);
+                                    currentActivity.startActivity(intent);
+                                    currentActivity.overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                                }
 
-                        @Override
-                        public void onCancel() {
+                                @Override
+                                public void onCancel() {
 
-                        }
-                    });
+                                }
+                            });
 
                 }
             }, false, 0));
         }
-        items.add(new BRSettingsItem(activity.getString(R.string.Settings_importTitle), "", new View.OnClickListener() {
+        items.add(new BRSettingsItem(context.getString(R.string.Settings_importTitle), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
@@ -267,7 +267,7 @@ public final class SettingsUtil {
             }
         }, false, 0));
 
-        items.add(new BRSettingsItem(activity.getString(R.string.ReScan_header), "", new View.OnClickListener() {
+        items.add(new BRSettingsItem(context.getString(R.string.ReScan_header), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
@@ -279,7 +279,7 @@ public final class SettingsUtil {
         }, false, 0));
 
         //add that for all currencies
-        items.add(new BRSettingsItem(activity.getString(R.string.NodeSelector_title), "", new View.OnClickListener() {
+        items.add(new BRSettingsItem(context.getString(R.string.NodeSelector_title), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Activity currentActivity = (Activity) v.getContext();
@@ -290,9 +290,10 @@ public final class SettingsUtil {
         }, false, 0));
         return items;
     }
-    public static List<BRSettingsItem> getBitcoinCashSettings(final Context activity) {
+
+    public static List<BRSettingsItem> getBitcoinCashSettings(final Context context) {
         List<BRSettingsItem> items = new ArrayList<>();
-        items.add(new BRSettingsItem(activity.getString(R.string.Settings_importTitle), "", new View.OnClickListener() {
+        items.add(new BRSettingsItem(context.getString(R.string.Settings_importTitle), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
@@ -303,7 +304,7 @@ public final class SettingsUtil {
             }
         }, false, 0));
 
-        items.add(new BRSettingsItem(activity.getString(R.string.ReScan_header), "", new View.OnClickListener() {
+        items.add(new BRSettingsItem(context.getString(R.string.ReScan_header), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
