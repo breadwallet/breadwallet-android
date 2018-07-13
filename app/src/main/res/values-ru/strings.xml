@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+  <string name="HomeScreen.trade">Обмен</string>
+  <string name="SyncingView.syncedThrough">Синхронизированно до %1$s</string>
   <!-- App name -->
   <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
@@ -66,7 +68,7 @@
   <string name="Android.allowFileSystemAccess">Включите разрешения на хранение в настройках вашего устройства: «Настройки» &gt; «Приложения» &gt; «BRD» &gt; «Разрешения».</string>
   <!-- The "home" screen is the name of the top level menu for the app. -->
   <string name="Android.BCH.welcome.message">Доступ к BCH в вашем кошельке теперь возможен с главного экрана.</string>
-  <string name="Android.BCH.welcome.title">BRD теперь поддерживает Bitcoin Cash!</string>
+  <!-- Warning about using apps that can alter the screen -->
   <string name="Android.screenAlteringMessage">BRD не сможет нормально работать, если не отключить изменяющие экран приложения (такие как Twilight).</string>
   <!-- An app that alters the screen ("screen-altering app") has been detected. -->
   <string name="Android.screenAlteringTitle">Обнаружено изменяющее экран приложение</string>
@@ -214,6 +216,8 @@
   <string name="FeeSelector.economyWarning">Этот параметр не рекомендуется для транзакций, чувствительных с точки зрения времени.</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
   <string name="FeeSelector.estimatedDeliver">Ожидаемое исполнение: %1$s</string>
+  <!-- [This transaction will complete in] 2-5 minutes -->
+  <string name="FeeSelector.ethTime">2-5 минут</string>
   <!-- Regular fee -->
   <string name="FeeSelector.regular">Обычна сумма</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
@@ -273,13 +277,13 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Игнорировать</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">БЕЗОПАСНОСТЬ УСТРОЙСТВА ПОДВЕРГНУТА РИСКУ\n Какое-либо приложение по снятию ограничений с файловой системы может получить доступ к данным цепочки ключей  Bread и украсть ваши биткойны! Немедленно очистите ваш кошелек и восстановите его на безопасном устройстве.</string>
+  <string name="JailbreakWarnings.messageWithBalance">БЕЗОПАСНОСТЬ УСТРОЙСТВА ПОДВЕРГНУТА РИСКУ
+ Какое-либо приложение по снятию ограничений с файловой системы может получить доступ к данным цепочки ключей  Bread и украсть ваши биткойны! Немедленно очистите ваш кошелек и восстановите его на безопасном устройстве.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">БЕЗОПАСНОСТЬ УСТРОЙСТВА ПОДВЕРГНУТА РИСКУ\n Какое-либо приложение по снятию ограничений с файловой системы может получить доступ к данным цепочки ключей  Bread и украсть ваши биткойны. Пожалуйста, используйте Bread только на устройствах с не снятыми с файловой системы ограничениями.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">БЕЗОПАСНОСТЬ УСТРОЙСТВА ПОДВЕРГНУТА РИСКУ
+ Какое-либо приложение по снятию ограничений с файловой системы может получить доступ к данным цепочки ключей  Bread и украсть ваши биткойны. Пожалуйста, используйте Bread только на устройствах с не снятыми с файловой системы ограничениями.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">ПРЕДУПРЕЖДЕНИЕ</string>
-  <!-- Wipe wallet button -->
-  <string name="JailbreakWarnings.wipe">Очистить</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Сервисы определения местоположения отключены.</string>
   <!-- No permissions for location services -->
@@ -294,8 +298,6 @@
   <string name="ManageWallet.title">Управление кошельком</string>
   <!-- "Add [a] Wallet [to the home screen]" -->
   <string name="MenuButton.addWallet">Добавить кошелек</string>
-  <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">Купить Bitcoin</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Заблокировать кошелек</string>
   <!-- Menu button title -->
@@ -466,6 +468,8 @@
   <string name="Search.pending">в ожидании</string>
   <!-- Received filter label -->
   <string name="Search.received">получено</string>
+  <!-- [Click here to] search -->
+  <string name="Search.search">Поиск</string>
   <!-- Sent filter label -->
   <string name="Search.sent">отправлено</string>
   <!-- Face ID button title -->
@@ -523,7 +527,7 @@
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">Недействительный %1$s-адрес получателя.</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">В буфере обмена нет действительного биткоин-адреса.</string>
+  <string name="Send.invalidAddressOnPasteboard">В буфере обмена нет действительного %1$s-адреса.</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">Недействительный адрес</string>
   <!-- Is rescanning error message -->
@@ -560,14 +564,6 @@
   <string name="Send.UsedAddress.secondLIne">Повторное использование снижает как вашу конфиденциальность, так и конфиденциальность получателя, и может привести к потерям, если получатель не совершает непосредственный контроль за этим адресом.</string>
   <!-- Adress already used alert title -->
   <string name="Send.UsedAddress.title">Адрес уже используется</string>
-  <!-- Other settings section header -->
-  <plurals name="Settings">
-    <item quantity="few">Другое</item>
-    <item quantity="many">Другое</item>
-    <item quantity="one">Другое</item>
-    <item quantity="other">Другое</item>
-    <item quantity="zero">Другое</item>
-  </plurals>
   <!-- About label -->
   <string name="Settings.about">О нас</string>
   <!-- Advanced settings header -->
@@ -592,10 +588,10 @@
   <string name="Settings.manage">Управление</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">Уведомления</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">Другие</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Параметры</string>
+  <!-- Tap here to reset the list of currencies to the default settings. -->
+  <string name="Settings.resetCurrencies">Восстановить валюту по умолчанию</string>
   <!-- Leave review button label -->
   <string name="Settings.review">Оставьте свой отзыв</string>
   <!-- Share anonymous data label -->
@@ -621,7 +617,9 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Выписать бумажный ключ снова</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Бумажный ключ – это единственный способ восстановить ваш Bread-кошелек в случае потери, кражи, поломки или замены вашего телефона.\n\nМы покажем вам список слов, которые необходимо записать на листе бумаги и хранить в надежном месте.</string>
+  <string name="StartPaperPhrase.body">Бумажный ключ – это единственный способ восстановить ваш Bread-кошелек в случае потери, кражи, поломки или замены вашего телефона.
+
+Мы покажем вам список слов, которые необходимо записать на листе бумаги и хранить в надежном месте.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Выписать бумажный ключ</string>
   <!-- Argument is date -->
@@ -771,13 +769,13 @@
   <!-- Moved $5.00 (as in "I moved $5 to another location") -->
   <string name="TransactionDetails.moved">Перемещено %1$s</string>
   <!-- Moved $5.00 -->
-  <string name="TransactionDetails.movedAmountDescription">Перемещено <b>%1$s</b></string>
+  <string name="TransactionDetails.movedAmountDescription"><![CDATA[Перемещено <b>%1$s</b>]]></string>
   <!-- eg. Confirmed in Block: Not Confirmed -->
   <string name="TransactionDetails.notConfirmedBlockHeightLabel">Не подтверждено</string>
   <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
   <string name="TransactionDetails.received">Получено %1$s</string>
   <!-- Received $5.00 -->
-  <string name="TransactionDetails.receivedAmountDescription">Получено <b>%1$s</b></string>
+  <string name="TransactionDetails.receivedAmountDescription"><![CDATA[Получено <b>%1$s</b>]]></string>
   <!-- received from <address> -->
   <string name="TransactionDetails.receivedFrom">получено от %1$s</string>
   <!-- received via <address> -->
@@ -789,7 +787,7 @@
   <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
   <string name="TransactionDetails.sent">Отправить %1$s</string>
   <!-- Sent $5.00 -->
-  <string name="TransactionDetails.sentAmountDescription">Отправлено <b>%1$s</b></string>
+  <string name="TransactionDetails.sentAmountDescription"><![CDATA[Отправлено <b>%1$s</b>]]></string>
   <!-- Show Details button -->
   <string name="TransactionDetails.showDetails">Показать подробности</string>
   <!-- The balance the user started with before the transaction completed -->
@@ -889,7 +887,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">Идет обновление...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet сменил свое название на Bread и обзавелся новым дизайном и функциями.\n\nЕсли вам нужна помощь, то ищите иконку (?) в правом верхнем углу большинства экранов.</string>
+  <string name="Welcome.body">Breadwallet сменил свое название на Bread и обзавелся новым дизайном и функциями.
+
+Если вам нужна помощь, то ищите иконку (?) в правом верхнем углу большинства экранов.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Добро пожаловать в Bread!</string>
   <!-- Wipe wallet alert message -->
@@ -920,4 +920,12 @@
   <string name="WritePaperPhrase.previous">Назад</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d из %2$d</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">Другие</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Управлять кошельками</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Меню</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Купить Bitcoin</string>
 </resources>

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+    <string name="HomeScreen.trade">換</string>
+    <string name="SyncingView.syncedThrough">從 %1$s 同步</string>
   <!-- App name -->
   <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
@@ -66,7 +68,7 @@
   <string name="Android.allowFileSystemAccess">請在您的裝置啟用儲存權限：[設定] &gt; [應用程式] &gt; [BRD] &gt; [權限]。</string>
   <!-- The "home" screen is the name of the top level menu for the app. -->
   <string name="Android.BCH.welcome.message">任何在您錢包裡的 BCH 都可透過主畫面存取。</string>
-  <string name="Android.BCH.welcome.title">BRD 現在支援比特幣！</string>
+  <!-- Warning about using apps that can alter the screen -->
   <string name="Android.screenAlteringMessage">除非停用螢幕改變應用程式（例如 Twilight），否則 BRD 無法正常運作。</string>
   <!-- An app that alters the screen ("screen-altering app") has been detected. -->
   <string name="Android.screenAlteringTitle">偵測到螢幕改變應用程式</string>
@@ -214,6 +216,8 @@
   <string name="FeeSelector.economyWarning">此選項不建議用於時效性的交易。</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
   <string name="FeeSelector.estimatedDeliver">預計發送時間：%1$s</string>
+  <!-- [This transaction will complete in] 2-5 minutes -->
+  <string name="FeeSelector.ethTime">2-5 分鐘</string>
   <!-- Regular fee -->
   <string name="FeeSelector.regular">標準</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
@@ -273,13 +277,13 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">略過</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">裝置安全性遭破解\n 任何「越獄」應用程式都可以存取 Bread 的鑰匙圈資料、 竊取您的比特幣！立即抹除這個錢包，在安全的裝置上還原。</string>
+  <string name="JailbreakWarnings.messageWithBalance">裝置安全性遭破解
+ 任何「越獄」應用程式都可以存取 Bread 的鑰匙圈資料、 竊取您的比特幣！立即抹除這個錢包，在安全的裝置上還原。</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">裝置安全性遭破解\n 任何「越獄」應用程式都可以存取 Bread 的鑰匙圈資料、 竊取您的比特幣。請只在未越獄的裝置上使用 Bread。</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">裝置安全性遭破解
+ 任何「越獄」應用程式都可以存取 Bread 的鑰匙圈資料、 竊取您的比特幣。請只在未越獄的裝置上使用 Bread。</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">警告</string>
-  <!-- Wipe wallet button -->
-  <string name="JailbreakWarnings.wipe">抹除</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">定位服務已停用。</string>
   <!-- No permissions for location services -->
@@ -294,8 +298,6 @@
   <string name="ManageWallet.title">管理電子錢包</string>
   <!-- "Add [a] Wallet [to the home screen]" -->
   <string name="MenuButton.addWallet">增加錢包</string>
-  <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">購買比特幣</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">鎖定電子錢包</string>
   <!-- Menu button title -->
@@ -466,6 +468,8 @@
   <string name="Search.pending">待決</string>
   <!-- Received filter label -->
   <string name="Search.received">已收到</string>
+  <!-- [Click here to] search -->
+  <string name="Search.search">搜尋</string>
   <!-- Sent filter label -->
   <string name="Search.sent">已寄送</string>
   <!-- Face ID button title -->
@@ -523,7 +527,7 @@
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">目的地址不是一個有效的%1$s地址。</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">剪貼板未包含有效的比特幣地址。</string>
+  <string name="Send.invalidAddressOnPasteboard">剪貼板未包含有效的%1$s地址。</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">位址無效</string>
   <!-- Is rescanning error message -->
@@ -560,11 +564,6 @@
   <string name="Send.UsedAddress.secondLIne">重複使用會降低您與收受者的隱私，如果收受者無法直接控制該位址，可能會造成損失。</string>
   <!-- Adress already used alert title -->
   <string name="Send.UsedAddress.title">位址已有人使用</string>
-  <!-- Other settings section header -->
-  <plurals name="Settings">
-    <item quantity="other">其他</item>
-    <item quantity="zero">其他</item>
-  </plurals>
   <!-- About label -->
   <string name="Settings.about">關於</string>
   <!-- Advanced settings header -->
@@ -589,10 +588,10 @@
   <string name="Settings.manage">管理</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">通知</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">其他</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">偏好</string>
+  <!-- Tap here to reset the list of currencies to the default settings. -->
+  <string name="Settings.resetCurrencies">重設為預設貨幣</string>
   <!-- Leave review button label -->
   <string name="Settings.review">為我們撰寫評論</string>
   <!-- Share anonymous data label -->
@@ -618,7 +617,10 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">再寫一次紙本金鑰</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">您的手機遺失、損壞或升級時，紙本金鑰是復原\n Bread 唯一的方式。\n\n我們會向您出示一個字串，請寫在紙上並妥善保管。</string>
+  <string name="StartPaperPhrase.body">您的手機遺失、損壞或升級時，紙本金鑰是復原
+ Bread 唯一的方式。
+
+我們會向您出示一個字串，請寫在紙上並妥善保管。</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">寫下紙本金鑰</string>
   <!-- Argument is date -->
@@ -768,13 +770,13 @@
   <!-- Moved $5.00 (as in "I moved $5 to another location") -->
   <string name="TransactionDetails.moved">已轉移 %1$s</string>
   <!-- Moved $5.00 -->
-  <string name="TransactionDetails.movedAmountDescription">已移動 <b>%1$s</b></string>
+  <string name="TransactionDetails.movedAmountDescription"><![CDATA[已移動 <b>%1$s</b>]]></string>
   <!-- eg. Confirmed in Block: Not Confirmed -->
   <string name="TransactionDetails.notConfirmedBlockHeightLabel">未確認</string>
   <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
   <string name="TransactionDetails.received">已收取 %1$s</string>
   <!-- Received $5.00 -->
-  <string name="TransactionDetails.receivedAmountDescription">已收到 <b>%1$s</b></string>
+  <string name="TransactionDetails.receivedAmountDescription"><![CDATA[已收到 <b>%1$s</b>]]></string>
   <!-- received from <address> -->
   <string name="TransactionDetails.receivedFrom">已收取自 %1$s</string>
   <!-- received via <address> -->
@@ -786,7 +788,7 @@
   <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
   <string name="TransactionDetails.sent">已送出 %1$s</string>
   <!-- Sent $5.00 -->
-  <string name="TransactionDetails.sentAmountDescription">已寄出 <b>%1$s</b></string>
+  <string name="TransactionDetails.sentAmountDescription"><![CDATA[已寄出 <b>%1$s</b>]]></string>
   <!-- Show Details button -->
   <string name="TransactionDetails.showDetails">顯示細節</string>
   <!-- The balance the user started with before the transaction completed -->
@@ -886,7 +888,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">正在更新……</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet 已經改名爲 Bread，有嶄新的面貌和一些新功能。\n\n如果需要協助，就在大部分畫面的右上角尋找(?)。</string>
+  <string name="Welcome.body">Breadwallet 已經改名爲 Bread，有嶄新的面貌和一些新功能。
+
+如果需要協助，就在大部分畫面的右上角尋找(?)。</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">歡迎使用 Bread！</string>
   <!-- Wipe wallet alert message -->
@@ -917,4 +921,12 @@
   <string name="WritePaperPhrase.previous">上一頁</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%2$d 之 %1$d</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">其他</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">管理錢包</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">選單</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">購買比特幣</string>
 </resources>

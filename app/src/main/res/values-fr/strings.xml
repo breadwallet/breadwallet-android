@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+  <string name="HomeScreen.trade">Échanger</string>
+  <string name="SyncingView.syncedThrough">Synchronisé jusqu'à %1$s</string>
   <!-- App name -->
   <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
@@ -66,7 +68,7 @@
   <string name="Android.allowFileSystemAccess">Veuillez activer les autorisations de stockage dans les paramètres de votre appareil : « Paramètres » &gt; « Applications » &gt; « BRD » &gt; « Autorisations ».</string>
   <!-- The "home" screen is the name of the top level menu for the app. -->
   <string name="Android.BCH.welcome.message">Vous pouvez consulter le montant de BCH de votre portefeuille via l\'écran d\'accueil.</string>
-  <string name="Android.BCH.welcome.title">BRD prend désormais en charge le Bitcoin Cash !</string>
+  <!-- Warning about using apps that can alter the screen -->
   <string name="Android.screenAlteringMessage">BRD ne fonctionnera pas correctement à moins que les applications modifiant l\'écran (telles que Twilight) ne soient désactivées.</string>
   <!-- An app that alters the screen ("screen-altering app") has been detected. -->
   <string name="Android.screenAlteringTitle">Application modifiant l\'écran détectée</string>
@@ -214,6 +216,8 @@
   <string name="FeeSelector.economyWarning">Cette option n\'est pas recommandée pour les transactions dont les délais sont cruciaux.</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
   <string name="FeeSelector.estimatedDeliver">Délai de réception estimé : %1$s</string>
+  <!-- [This transaction will complete in] 2-5 minutes -->
+  <string name="FeeSelector.ethTime">2 à 5 minutes</string>
   <!-- Regular fee -->
   <string name="FeeSelector.regular">Régulier</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
@@ -247,7 +251,8 @@
   <!-- Caption for graphics -->
   <string name="Import.leftCaption">Portefeuille à importer</string>
   <!-- Import wallet intro screen message -->
-  <string name="Import.message">Importer un portefeuille signifie le transfert de tout son contenu dans votre portfeuille BRD en une seule transaction.\n</string>
+  <string name="Import.message">Importer un portefeuille signifie le transfert de tout son contenu dans votre portfeuille BRD en une seule transaction.
+</string>
   <!-- Enter password alert view title -->
   <string name="Import.password">Cette clé privée est protégée par mot de passe.</string>
   <!-- password textfield placeholder -->
@@ -273,13 +278,13 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Ignorer</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">SÉCURITÉ DU DISPOSITIF COMPROMISE\nToute application « évasive » peut accéder aux données du porte-clé de Bread et voler vos bitcoins ! Détruisez ce portefeuille immédiatement et restaurez-le sur un appareil sécurisé.</string>
+  <string name="JailbreakWarnings.messageWithBalance">SÉCURITÉ DU DISPOSITIF COMPROMISE
+Toute application « évasive » peut accéder aux données du porte-clé de Bread et voler vos bitcoins ! Détruisez ce portefeuille immédiatement et restaurez-le sur un appareil sécurisé.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">SÉCURITÉ DU DISPOSITIF COMPROMISE\nToute application « évasive » peut accéder aux données du porte-clé de Bread et voler vos bitcoins. N\'utilisez Bread que sur un appareil non évasif.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">SÉCURITÉ DU DISPOSITIF COMPROMISE
+Toute application « évasive » peut accéder aux données du porte-clé de Bread et voler vos bitcoins. N\'utilisez Bread que sur un appareil non évasif.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">AVERTISSEMENT</string>
-  <!-- Wipe wallet button -->
-  <string name="JailbreakWarnings.wipe">Supprimer</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Les services de localisation sont désactivés.</string>
   <!-- No permissions for location services -->
@@ -294,8 +299,6 @@
   <string name="ManageWallet.title">Gérer le portefeuille</string>
   <!-- "Add [a] Wallet [to the home screen]" -->
   <string name="MenuButton.addWallet">Ajouter un portefeuille</string>
-  <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">Acheter des Bitcoins</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Verrouiller le portefeuille</string>
   <!-- Menu button title -->
@@ -466,6 +469,8 @@
   <string name="Search.pending">en attente</string>
   <!-- Received filter label -->
   <string name="Search.received">reçu</string>
+  <!-- [Click here to] search -->
+  <string name="Search.search">Rechercher</string>
   <!-- Sent filter label -->
   <string name="Search.sent">envoyé</string>
   <!-- Face ID button title -->
@@ -523,7 +528,7 @@
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">L\'adresse de destination n\'est pas une adresse %1$s valide.</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">Le champ d\'entrée ne contient aucune adresse bitcoin valide.</string>
+  <string name="Send.invalidAddressOnPasteboard">Le champ d\'entrée ne contient aucune adresse %1$s valide.</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">Adresse non valide</string>
   <!-- Is rescanning error message -->
@@ -560,12 +565,6 @@
   <string name="Send.UsedAddress.secondLIne">La réutilisation réduit la confidentialité pour vous et le destinataire et peut entraîner une perte si le destinataire ne contrôle pas directement l\'adresse.</string>
   <!-- Adress already used alert title -->
   <string name="Send.UsedAddress.title">Adresse déjà utilisée</string>
-  <!-- Other settings section header -->
-  <plurals name="Settings">
-    <item quantity="one">Autre</item>
-    <item quantity="other">Autre</item>
-    <item quantity="zero">Autre</item>
-  </plurals>
   <!-- About label -->
   <string name="Settings.about">À propos de</string>
   <!-- Advanced settings header -->
@@ -590,10 +589,10 @@
   <string name="Settings.manage">Gérer</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">Notifications</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">Autre</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Préférences</string>
+  <!-- Tap here to reset the list of currencies to the default settings. -->
+  <string name="Settings.resetCurrencies">Restaurer les devises par défaut</string>
   <!-- Leave review button label -->
   <string name="Settings.review">Laissez-nous un commentaire</string>
   <!-- Share anonymous data label -->
@@ -619,7 +618,9 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Enregistrez la clé papier à nouveau</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Votre clé papier est la seule façon de restaurer votre Bread si votre téléphone est perdu, volé, cassé ou mis à niveau.\n\nNous allons vous montrer une liste de mots à écrire sur un morceau de papier et à garder en sécurité.</string>
+  <string name="StartPaperPhrase.body">Votre clé papier est la seule façon de restaurer votre Bread si votre téléphone est perdu, volé, cassé ou mis à niveau.
+
+Nous allons vous montrer une liste de mots à écrire sur un morceau de papier et à garder en sécurité.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Écrire la clé papier</string>
   <!-- Argument is date -->
@@ -769,13 +770,13 @@
   <!-- Moved $5.00 (as in "I moved $5 to another location") -->
   <string name="TransactionDetails.moved">Transféré %1$s</string>
   <!-- Moved $5.00 -->
-  <string name="TransactionDetails.movedAmountDescription">Déplacé  <b>%1$s</b></string>
+  <string name="TransactionDetails.movedAmountDescription"><![CDATA[Déplacé  <b>%1$s</b>]]></string>
   <!-- eg. Confirmed in Block: Not Confirmed -->
   <string name="TransactionDetails.notConfirmedBlockHeightLabel">Non confirmé</string>
   <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
   <string name="TransactionDetails.received">A reçu %1$s</string>
   <!-- Received $5.00 -->
-  <string name="TransactionDetails.receivedAmountDescription">Reçu <b>%1$s</b></string>
+  <string name="TransactionDetails.receivedAmountDescription"><![CDATA[Reçu <b>%1$s</b>]]></string>
   <!-- received from <address> -->
   <string name="TransactionDetails.receivedFrom">reçu de %1$s</string>
   <!-- received via <address> -->
@@ -787,7 +788,7 @@
   <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
   <string name="TransactionDetails.sent">A envoyé %1$s</string>
   <!-- Sent $5.00 -->
-  <string name="TransactionDetails.sentAmountDescription">Envoyé <b>%1$s</b></string>
+  <string name="TransactionDetails.sentAmountDescription"><![CDATA[Envoyé <b>%1$s</b>]]></string>
   <!-- Show Details button -->
   <string name="TransactionDetails.showDetails">Afficher les détails</string>
   <!-- The balance the user started with before the transaction completed -->
@@ -887,7 +888,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">Mise à jour...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet revient sous le nom de Bread, avec un nouveau design et de nouvelles fonctionnalités. \n\nSi vous avez besoin d\'aide, cliquez sur le (?) en haut à droite de la plupart des écrans.</string>
+  <string name="Welcome.body">Breadwallet revient sous le nom de Bread, avec un nouveau design et de nouvelles fonctionnalités. 
+
+Si vous avez besoin d\'aide, cliquez sur le (?) en haut à droite de la plupart des écrans.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Bienvenue chez Bread !</string>
   <!-- Wipe wallet alert message -->
@@ -901,7 +904,8 @@
   <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
   <string name="WipeWallet.instruction">Pour commencer un nouveau portefeuille ou rétablir un portefeuille existant, vous devez d\'abord supprimer le portefeuille actuellement installé. Pour continuer, saisissez la Clé Papier du portefeuille actuel.</string>
   <!-- Instructions for unlinking the wallet -->
-  <string name="WipeWallet.startMessage">Démarrer ou récupérer un autre portefeuille vous permet d\'accéder et de gérer un portefeuille Bread différent sur cet appareil.\n</string>
+  <string name="WipeWallet.startMessage">Démarrer ou récupérer un autre portefeuille vous permet d\'accéder et de gérer un portefeuille Bread différent sur cet appareil.
+</string>
   <!-- Start wipe wallet view warning -->
   <string name="WipeWallet.startWarning">Vous ne pourrez plus accéder à votre portefeuille courant depuis cet appareil. Si vous souhaitez le récupérer plus tard, vous devrais réentrer la clé papier.</string>
   <!-- Unlink this wallet from this device. -->
@@ -918,4 +922,12 @@
   <string name="WritePaperPhrase.previous">Précédent</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d de %2$d</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">Autre</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Gérer les portefeuilles</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Menu</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Acheter des Bitcoins</string>
 </resources>
