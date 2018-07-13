@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+  <string name="HomeScreen.trade">取引</string>
+  <string name="SyncingView.syncedThrough">%1$s@まで同期完了</string>
   <!-- App name -->
   <string name="About.appName.android">ブレッド</string>
   <!-- About screen blog label -->
@@ -66,7 +68,7 @@
   <string name="Android.allowFileSystemAccess">お使いのデバイスの設定でストレージの使用を許可して下さい: 「設定」&gt;「アプリ」&gt;「BRD」&gt;「許可」。</string>
   <!-- The "home" screen is the name of the top level menu for the app. -->
   <string name="Android.BCH.welcome.message">お使いのウォレットのBCHには、ホーム画面からアクセスすることができます。</string>
-  <string name="Android.BCH.welcome.title">BRDがビットコインキャッシュに対応しました!</string>
+  <!-- Warning about using apps that can alter the screen -->
   <string name="Android.screenAlteringMessage">画面変更アプリ(例: Twilight) が無効になっていなければ、BRDは正常に動作しません。</string>
   <!-- An app that alters the screen ("screen-altering app") has been detected. -->
   <string name="Android.screenAlteringTitle">画面変更アプリが検出されました</string>
@@ -214,6 +216,8 @@
   <string name="FeeSelector.economyWarning">このオプションは早く送金を済ませたい方にはお勧めしません。</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
   <string name="FeeSelector.estimatedDeliver">推定送金時間: %1$s</string>
+  <!-- [This transaction will complete in] 2-5 minutes -->
+  <string name="FeeSelector.ethTime">2〜5分</string>
   <!-- Regular fee -->
   <string name="FeeSelector.regular">レギュラー</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
@@ -253,7 +257,9 @@
   <!-- password textfield placeholder -->
   <string name="Import.passwordPlaceholder">パスワード</string>
   <!-- Caption for graphics -->
-  <string name="Import.rightCaption">あなたの\nブレッドの\nウォレット</string>
+  <string name="Import.rightCaption">あなたの
+ブレッドの
+ウォレット</string>
   <!-- Scan Private key button label -->
   <string name="Import.scan">秘密鍵をスキャン</string>
   <!-- Import wallet success alert title -->
@@ -273,13 +279,13 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">無視する</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">端末がセキュリティの危険にさらされている可能性があります\n 「脱獄」アプリはブレッドのキーチェーンデータにアクセスし、あなたのビットコインを盗む恐れがあります!  直ちにこのウォレットを完全削除して、安全な端末で復元して下さい。</string>
+  <string name="JailbreakWarnings.messageWithBalance">端末がセキュリティの危険にさらされている可能性があります
+ 「脱獄」アプリはブレッドのキーチェーンデータにアクセスし、あなたのビットコインを盗む恐れがあります!  直ちにこのウォレットを完全削除して、安全な端末で復元して下さい。</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">端末がセキュリティの危険にさらされている可能性があります\n「脱獄」アプリはブレッドのキーチェーンデータにアクセスし、あなたのビットコインを盗む恐れがあります!  ブレッドは必ず脱獄端末以外で利用してください。</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">端末がセキュリティの危険にさらされている可能性があります
+「脱獄」アプリはブレッドのキーチェーンデータにアクセスし、あなたのビットコインを盗む恐れがあります!  ブレッドは必ず脱獄端末以外で利用してください。</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">警告</string>
-  <!-- Wipe wallet button -->
-  <string name="JailbreakWarnings.wipe">完全削除</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">位置情報サービスが無効化されています。</string>
   <!-- No permissions for location services -->
@@ -293,13 +299,11 @@
   <!-- Manage wallet modal title -->
   <string name="ManageWallet.title">ウォレットを管理</string>
   <!-- "Add [a] Wallet [to the home screen]" -->
-  <string name="MenuButton.addWallet">ウォレットを追加する</string>
-  <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">ビットコインを購入</string>
+  <string name="MenuButton.addWallet">ウォレットの追加</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">ウォレットにロックを設定する</string>
   <!-- Menu button title -->
-  <string name="MenuButton.security">セキュリティセンター</string>
+  <string name="MenuButton.security">セキュリティ</string>
   <!-- Menu button title -->
   <string name="MenuButton.settings">設定</string>
   <!-- Menu button title -->
@@ -466,6 +470,8 @@
   <string name="Search.pending">保留中</string>
   <!-- Received filter label -->
   <string name="Search.received">受取済</string>
+  <!-- [Click here to] search -->
+  <string name="Search.search">検索</string>
   <!-- Sent filter label -->
   <string name="Search.sent">送信済</string>
   <!-- Face ID button title -->
@@ -523,7 +529,7 @@
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">送金先のアドレスが無効な%1$sアドレスです。</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">ペーストボードに有効なビットコインアドレスが入っていません。</string>
+  <string name="Send.invalidAddressOnPasteboard">ペーストボードに有効な%1$sアドレスが入っていません。</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">無効なアドレスです</string>
   <!-- Is rescanning error message -->
@@ -560,11 +566,6 @@
   <string name="Send.UsedAddress.secondLIne">再利用は、送金側と受取側の両方のプライバシーの侵害につながるおそれがあり、受取人がアドレスを直接管理しない場合、損害につながるおそれもあります。</string>
   <!-- Adress already used alert title -->
   <string name="Send.UsedAddress.title">アドレスはすでに使用されています</string>
-  <!-- Other settings section header -->
-  <plurals name="Settings">
-    <item quantity="other">その他</item>
-    <item quantity="zero">その他</item>
-  </plurals>
   <!-- About label -->
   <string name="Settings.about">概要</string>
   <!-- Advanced settings header -->
@@ -589,10 +590,10 @@
   <string name="Settings.manage">管理</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">通知</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">その他</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">設定</string>
+  <!-- Tap here to reset the list of currencies to the default settings. -->
+  <string name="Settings.resetCurrencies">デフォルトの通貨に戻す</string>
   <!-- Leave review button label -->
   <string name="Settings.review">レビューを書く</string>
   <!-- Share anonymous data label -->
@@ -618,7 +619,9 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">復元フレーズをもう一度書き留めてください</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">復元フレーズは、スマートフォンを紛失したり、盗まれたり、壊れたり、アップグレードした場合に、ご自身のブレッドを元に戻せる唯一の方法です。\n\n単語の一覧を表示しますので、紙に書き留めて安全に保管してください。</string>
+  <string name="StartPaperPhrase.body">復元フレーズは、スマートフォンを紛失したり、盗まれたり、壊れたり、アップグレードした場合に、ご自身のブレッドを元に戻せる唯一の方法です。
+
+単語の一覧を表示しますので、紙に書き留めて安全に保管してください。</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">復元フレーズを書き留めてください</string>
   <!-- Argument is date -->
@@ -768,13 +771,13 @@
   <!-- Moved $5.00 (as in "I moved $5 to another location") -->
   <string name="TransactionDetails.moved">%1$sを移動させました</string>
   <!-- Moved $5.00 -->
-  <string name="TransactionDetails.movedAmountDescription"><b>%1$s</b>を移動させました</string>
+  <string name="TransactionDetails.movedAmountDescription"><![CDATA[<b>%1$s</b>を移動させました]]></string>
   <!-- eg. Confirmed in Block: Not Confirmed -->
   <string name="TransactionDetails.notConfirmedBlockHeightLabel">未承認</string>
   <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
   <string name="TransactionDetails.received">%1$sを受け取りました</string>
   <!-- Received $5.00 -->
-  <string name="TransactionDetails.receivedAmountDescription"><b>%1$s</b>を受け取りました</string>
+  <string name="TransactionDetails.receivedAmountDescription"><![CDATA[<b>%1$s</b>を受け取りました]]></string>
   <!-- received from <address> -->
   <string name="TransactionDetails.receivedFrom">%1$sから受け取りました</string>
   <!-- received via <address> -->
@@ -786,7 +789,7 @@
   <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
   <string name="TransactionDetails.sent">%1$sを送金しました</string>
   <!-- Sent $5.00 -->
-  <string name="TransactionDetails.sentAmountDescription"><b>%1$s</b>を送金しました</string>
+  <string name="TransactionDetails.sentAmountDescription"><![CDATA[<b>%1$s</b>を送金しました]]></string>
   <!-- Show Details button -->
   <string name="TransactionDetails.showDetails">詳細を表示する</string>
   <!-- The balance the user started with before the transaction completed -->
@@ -886,7 +889,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">更新中...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwalletは新しい機能や見た目を備えて、Breadという名前に生まれ変わりました。\n\nヘルプをご覧になるには、画面右上にある(?)からお探しください。</string>
+  <string name="Welcome.body">Breadwalletは新しい機能や見た目を備えて、Breadという名前に生まれ変わりました。
+
+ヘルプをご覧になるには、画面右上にある(?)からお探しください。</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Breadへようこそ！</string>
   <!-- Wipe wallet alert message -->
@@ -917,4 +922,12 @@
   <string name="WritePaperPhrase.previous">前へ</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%2$dの%1$d</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">その他</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">ウォレットの管理</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">メニュー</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">ビットコインを購入</string>
 </resources>

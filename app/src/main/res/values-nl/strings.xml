@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+  <string name="HomeScreen.trade">Handel</string>
+  <string name="SyncingView.syncedThrough">Gesynchroniseerd via %1$s</string>
   <!-- App name -->
   <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
@@ -66,7 +68,7 @@
   <string name="Android.allowFileSystemAccess">Schakel opslagtoestemmingen in uw apparaatinstellingen in: \"Instellingen\"&gt; \"Apps\"&gt; \"BRD\"&gt; \"Toestemmingen\".</string>
   <!-- The "home" screen is the name of the top level menu for the app. -->
   <string name="Android.BCH.welcome.message">Elke BCH in uw wallet is toegankelijk via het startscherm.</string>
-  <string name="Android.BCH.welcome.title">BRD ondersteunt nu Bitcoin Cash!</string>
+  <!-- Warning about using apps that can alter the screen -->
   <string name="Android.screenAlteringMessage">BRD zal niet goed werken tenzij schermveranderende apps (zoals Twilight) zijn uitgeschakeld.</string>
   <!-- An app that alters the screen ("screen-altering app") has been detected. -->
   <string name="Android.screenAlteringTitle">Schermveranderende app gedetecteerd</string>
@@ -214,6 +216,8 @@
   <string name="FeeSelector.economyWarning">Deze optie wordt niet aangeraden voor tijdgevoelige transacties.</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
   <string name="FeeSelector.estimatedDeliver">Geschatte levering: %1$s</string>
+  <!-- [This transaction will complete in] 2-5 minutes -->
+  <string name="FeeSelector.ethTime">2 tot 5 minuten</string>
   <!-- Regular fee -->
   <string name="FeeSelector.regular">Normaal</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
@@ -255,7 +259,7 @@
   <!-- Caption for graphics -->
   <string name="Import.rightCaption">Jouw Bread Portemonnee</string>
   <!-- Scan Private key button label -->
-  <string name="Import.scan">"Scan private key "</string>
+  <string name="Import.scan">Scan private key </string>
   <!-- Import wallet success alert title -->
   <string name="Import.success">Succes</string>
   <!-- Successfully imported wallet message body -->
@@ -273,13 +277,13 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Negeren</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">APPARAAT BEVEILIGING BESCHADIGD\nElke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan hiermee je Bitcoins stelen! Wis deze portemonnee direct en herstel het op een veilig apparaat.</string>
+  <string name="JailbreakWarnings.messageWithBalance">APPARAAT BEVEILIGING BESCHADIGD
+Elke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan hiermee je Bitcoins stelen! Wis deze portemonnee direct en herstel het op een veilig apparaat.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">APPARAAT BEVEILIGING BESCHADIGD\nElke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan hiermee je Bitcoins stelen. Gebruik Bread a.u.b. alleen op een niet-gejailbreakt apparaat.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">APPARAAT BEVEILIGING BESCHADIGD
+Elke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan hiermee je Bitcoins stelen. Gebruik Bread a.u.b. alleen op een niet-gejailbreakt apparaat.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">WAARSCHUWING</string>
-  <!-- Wipe wallet button -->
-  <string name="JailbreakWarnings.wipe">Wissen</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Locatievoorzieningen zijn uitgeschakeld.</string>
   <!-- No permissions for location services -->
@@ -294,8 +298,6 @@
   <string name="ManageWallet.title">Portemonnee Beheren</string>
   <!-- "Add [a] Wallet [to the home screen]" -->
   <string name="MenuButton.addWallet">Voeg Wallet toe</string>
-  <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">Bitcoins Kopen</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Portemonnee Vergrendelen</string>
   <!-- Menu button title -->
@@ -466,6 +468,8 @@
   <string name="Search.pending">in afwachting van</string>
   <!-- Received filter label -->
   <string name="Search.received">ontvangen</string>
+  <!-- [Click here to] search -->
+  <string name="Search.search">Zoeken</string>
   <!-- Sent filter label -->
   <string name="Search.sent">verstuurd</string>
   <!-- Face ID button title -->
@@ -523,7 +527,7 @@
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">Het bestemmingsadres is geen geldig %1$s-adres.</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">Plakbord bevat geen geldig bitcoin adres.</string>
+  <string name="Send.invalidAddressOnPasteboard">Plakbord bevat geen geldig %1$s adres.</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">Ongeldig Adres</string>
   <!-- Is rescanning error message -->
@@ -560,12 +564,6 @@
   <string name="Send.UsedAddress.secondLIne">Hergebruikt vermindert privacy voor zowel jou en de ontvanger en kan resulteren in verlies als de ontvanger niet direct het adres beheert.</string>
   <!-- Adress already used alert title -->
   <string name="Send.UsedAddress.title">Adres Al Gebruikt</string>
-  <!-- Other settings section header -->
-  <plurals name="Settings">
-    <item quantity="one">Andere</item>
-    <item quantity="other">Ander</item>
-    <item quantity="zero">Ander</item>
-  </plurals>
   <!-- About label -->
   <string name="Settings.about">Over</string>
   <!-- Advanced settings header -->
@@ -590,10 +588,10 @@
   <string name="Settings.manage">Beheer</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">Notificaties</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">Andere</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Voorkeuren</string>
+  <!-- Tap here to reset the list of currencies to the default settings. -->
+  <string name="Settings.resetCurrencies">Opnieuw instellen naar standaard valuta\'s</string>
   <!-- Leave review button label -->
   <string name="Settings.review">Laat een review achter</string>
   <!-- Share anonymous data label -->
@@ -619,7 +617,9 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Schrijf Papieren Sleutel Opnieuw Op</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Je papieren sleutel is de enige manier om je Bread te herstellen als je telefoon verloren, gestolen, kapot of geüpgrade is.\n\nWe zullen je een lijst met woorden laten zie die je op een papiertje moet schrijven en veilig moet bewaren.</string>
+  <string name="StartPaperPhrase.body">Je papieren sleutel is de enige manier om je Bread te herstellen als je telefoon verloren, gestolen, kapot of geüpgrade is.
+
+We zullen je een lijst met woorden laten zie die je op een papiertje moet schrijven en veilig moet bewaren.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Schrijf Papieren Sleutel Op</string>
   <!-- Argument is date -->
@@ -769,13 +769,13 @@
   <!-- Moved $5.00 (as in "I moved $5 to another location") -->
   <string name="TransactionDetails.moved">%1$s verplaatst</string>
   <!-- Moved $5.00 -->
-  <string name="TransactionDetails.movedAmountDescription"><b>%1$s</b> verplaatst</string>
+  <string name="TransactionDetails.movedAmountDescription"><![CDATA[<b>%1$s</b> verplaatst]]></string>
   <!-- eg. Confirmed in Block: Not Confirmed -->
   <string name="TransactionDetails.notConfirmedBlockHeightLabel">Niet bevestigd</string>
   <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
   <string name="TransactionDetails.received">Ontvangen %1$s</string>
   <!-- Received $5.00 -->
-  <string name="TransactionDetails.receivedAmountDescription">Ontvangen <b>%1$s</b></string>
+  <string name="TransactionDetails.receivedAmountDescription"><![CDATA[Ontvangen <b>%1$s</b>]]></string>
   <!-- received from <address> -->
   <string name="TransactionDetails.receivedFrom">ontvangen van %1$s</string>
   <!-- received via <address> -->
@@ -787,7 +787,7 @@
   <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
   <string name="TransactionDetails.sent">Verstuurd %1$s</string>
   <!-- Sent $5.00 -->
-  <string name="TransactionDetails.sentAmountDescription">Verstuurd <b>%1$s</b></string>
+  <string name="TransactionDetails.sentAmountDescription"><![CDATA[Verstuurd <b>%1$s</b>]]></string>
   <!-- Show Details button -->
   <string name="TransactionDetails.showDetails">Details weergeven</string>
   <!-- The balance the user started with before the transaction completed -->
@@ -887,7 +887,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">Updaten...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet is omgedoopt tot Bread, met een gloednieuw uiterlijk en enkele nieuwe functies.\n\nAls u hulp nodig hebt, zoek naar de (?) rechtsboven in de meeste schermen.</string>
+  <string name="Welcome.body">Breadwallet is omgedoopt tot Bread, met een gloednieuw uiterlijk en enkele nieuwe functies.
+
+Als u hulp nodig hebt, zoek naar de (?) rechtsboven in de meeste schermen.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Welkom bij Brood!</string>
   <!-- Wipe wallet alert message -->
@@ -918,4 +920,12 @@
   <string name="WritePaperPhrase.previous">Vorige</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d van %2$d</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">Andere</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Beheer portemonnees</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Menu</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Bitcoins Kopen</string>
 </resources>

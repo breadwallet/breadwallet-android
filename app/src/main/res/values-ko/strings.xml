@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+  <string name="HomeScreen.trade">교환</string>
+  <string name="SyncingView.syncedThrough">%1$s 전 동기화 됨</string>
   <!-- App name -->
   <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
@@ -66,7 +68,7 @@
   <string name="Android.allowFileSystemAccess">단말의 \"설정\" &gt; \"앱\" &gt; \"BRD\" &gt; \"권한\"에서 저장소 접근을 허용해 주세요.</string>
   <!-- The "home" screen is the name of the top level menu for the app. -->
   <string name="Android.BCH.welcome.message">홈 화면을 통해 월렛에 있는 모든 BCH에 액세스할 수 있습니다.</string>
-  <string name="Android.BCH.welcome.title">이제 BRD가 Bitcoin Cash를 지원합니다!</string>
+  <!-- Warning about using apps that can alter the screen -->
   <string name="Android.screenAlteringMessage">BRD는 (Twilight과 같은) 화면 변경 앱을 비활성화하지 않으면 제대로 동작하지 않습니다.</string>
   <!-- An app that alters the screen ("screen-altering app") has been detected. -->
   <string name="Android.screenAlteringTitle">화면 변경 앱이 탐지됨</string>
@@ -214,6 +216,8 @@
   <string name="FeeSelector.economyWarning">이 옵션은 시간에 민감한 거래에는 추천하지 않습니다.</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
   <string name="FeeSelector.estimatedDeliver">예상 배송 시간: %1$s</string>
+  <!-- [This transaction will complete in] 2-5 minutes -->
+  <string name="FeeSelector.ethTime">2-5분</string>
   <!-- Regular fee -->
   <string name="FeeSelector.regular">일반</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
@@ -273,13 +277,13 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">무시</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! 이 지갑을 바로 지우시고 안전한 장치에서 복구하세요.</string>
+  <string name="JailbreakWarnings.messageWithBalance">장치 보안 취약
+모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! 이 지갑을 바로 지우시고 안전한 장치에서 복구하세요.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! Bread를 비-jailbroken 장치에서만 사용해 주세요.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">장치 보안 취약
+모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! Bread를 비-jailbroken 장치에서만 사용해 주세요.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">경고</string>
-  <!-- Wipe wallet button -->
-  <string name="JailbreakWarnings.wipe">초기화</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">위치 서비스가 꺼졌습니다.</string>
   <!-- No permissions for location services -->
@@ -294,8 +298,6 @@
   <string name="ManageWallet.title">지갑 관리</string>
   <!-- "Add [a] Wallet [to the home screen]" -->
   <string name="MenuButton.addWallet">지갑 추가</string>
-  <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">비트코인 구매</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">지갑 잠그기</string>
   <!-- Menu button title -->
@@ -466,6 +468,8 @@
   <string name="Search.pending">대기 중</string>
   <!-- Received filter label -->
   <string name="Search.received">수신</string>
+  <!-- [Click here to] search -->
+  <string name="Search.search">검색</string>
   <!-- Sent filter label -->
   <string name="Search.sent">송금</string>
   <!-- Face ID button title -->
@@ -523,7 +527,7 @@
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">해당 수취인 주소는 %1$s에서 유효하지 않은 주소입니다.</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">클립보드가 유효한 비트코인 주소를 가지고 있지 않습니다</string>
+  <string name="Send.invalidAddressOnPasteboard">클립보드가 유효한 %1$s 주소를 가지고 있지 않습니다</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">유효하지 않은 주소입니다</string>
   <!-- Is rescanning error message -->
@@ -560,11 +564,6 @@
   <string name="Send.UsedAddress.secondLIne">주소를 재사용할 경우 귀하와 받는 사람 모두의 개인 정보 보호가 약해지며, 받는 사람이 직접 주소를 관리하지 않을 경우 분실을 초래할 수 있습니다.</string>
   <!-- Adress already used alert title -->
   <string name="Send.UsedAddress.title">이미 사용중인 주소입니다</string>
-  <!-- Other settings section header -->
-  <plurals name="Settings">
-    <item quantity="other">기타</item>
-    <item quantity="zero">기타</item>
-  </plurals>
   <!-- About label -->
   <string name="Settings.about">관련 사항</string>
   <!-- Advanced settings header -->
@@ -589,10 +588,10 @@
   <string name="Settings.manage">관리</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">알림</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">기타</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">환경 설정</string>
+  <!-- Tap here to reset the list of currencies to the default settings. -->
+  <string name="Settings.resetCurrencies">기본 통화로 초기화</string>
   <!-- Leave review button label -->
   <string name="Settings.review">후기를 남겨주세요</string>
   <!-- Share anonymous data label -->
@@ -618,7 +617,9 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">페이퍼 키를 다시 쓰기</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">페이퍼 키는 핸드폰을 분실하거나, 도난당하거나, 망가지거나, 업그레이드한 경우 브레드를 다시 살릴 수 있는 유일한 방법입니다.\n\n저희가 제시하는 단어 목록을 잘 적어서 안전하게 보관해 주세요.</string>
+  <string name="StartPaperPhrase.body">페이퍼 키는 핸드폰을 분실하거나, 도난당하거나, 망가지거나, 업그레이드한 경우 브레드를 다시 살릴 수 있는 유일한 방법입니다.
+
+저희가 제시하는 단어 목록을 잘 적어서 안전하게 보관해 주세요.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">페이퍼 키 작성하기</string>
   <!-- Argument is date -->
@@ -768,13 +769,13 @@
   <!-- Moved $5.00 (as in "I moved $5 to another location") -->
   <string name="TransactionDetails.moved">%1$s 이동함</string>
   <!-- Moved $5.00 -->
-  <string name="TransactionDetails.movedAmountDescription"><b>%1$s</b> 이동됨</string>
+  <string name="TransactionDetails.movedAmountDescription"><![CDATA[<b>%1$s</b> 이동됨]]></string>
   <!-- eg. Confirmed in Block: Not Confirmed -->
   <string name="TransactionDetails.notConfirmedBlockHeightLabel">확인되지 않음</string>
   <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
   <string name="TransactionDetails.received">%1$s 받음</string>
   <!-- Received $5.00 -->
-  <string name="TransactionDetails.receivedAmountDescription"><b>%1$s</b> 수신됨</string>
+  <string name="TransactionDetails.receivedAmountDescription"><![CDATA[<b>%1$s</b> 수신됨]]></string>
   <!-- received from <address> -->
   <string name="TransactionDetails.receivedFrom">%1$s(으)로부터 받음</string>
   <!-- received via <address> -->
@@ -786,7 +787,7 @@
   <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
   <string name="TransactionDetails.sent">%1$s 보냄</string>
   <!-- Sent $5.00 -->
-  <string name="TransactionDetails.sentAmountDescription"><b>%1$s</b> 전송됨</string>
+  <string name="TransactionDetails.sentAmountDescription"><![CDATA[<b>%1$s</b> 전송됨]]></string>
   <!-- Show Details button -->
   <string name="TransactionDetails.showDetails">세부 정보 보이기</string>
   <!-- The balance the user started with before the transaction completed -->
@@ -886,7 +887,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">업데이트 중...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet이 이름을 Bread로 바꾸고 새롭게 단장하였으며 새로운 기능도 갖췄습니다.\n\n도움이 필요하시면 대부분 화면에서 우측 상단에 있는 (?)을(를) 클릭하십시오.</string>
+  <string name="Welcome.body">Breadwallet이 이름을 Bread로 바꾸고 새롭게 단장하였으며 새로운 기능도 갖췄습니다.
+
+도움이 필요하시면 대부분 화면에서 우측 상단에 있는 (?)을(를) 클릭하십시오.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Bread에 환영합니다!</string>
   <!-- Wipe wallet alert message -->
@@ -917,4 +920,12 @@
   <string name="WritePaperPhrase.previous">이전</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%2$d의 %1$d</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">기타</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">지갑 관리</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">메뉴</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">비트코인 구매</string>
 </resources>
