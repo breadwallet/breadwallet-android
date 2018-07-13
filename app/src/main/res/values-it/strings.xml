@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+  <string name="HomeScreen.trade">Scambio</string>
+  <string name="SyncingView.syncedThrough">Sincronizzato attraverso %1$s</string>
   <!-- App name -->
   <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
@@ -66,7 +68,7 @@
   <string name="Android.allowFileSystemAccess">Abilita le autorizzazioni per l\'archiviazione nelle impostazioni del dispositivo: \"Impostazioni\"&gt; \"App\"&gt; \"BRD\"&gt; \"Autorizzazioni\".</string>
   <!-- The "home" screen is the name of the top level menu for the app. -->
   <string name="Android.BCH.welcome.message">Puoi accedere a qualsiasi BCH nel tuo wallet dalla schermata Home.</string>
-  <string name="Android.BCH.welcome.title">Ora BRD supporta Bitcoin Cash!</string>
+  <!-- Warning about using apps that can alter the screen -->
   <string name="Android.screenAlteringMessage">BRD non funzionerà correttamente a meno che le app che alterano lo schermo (come Twilight) siano disabilitate.</string>
   <!-- An app that alters the screen ("screen-altering app") has been detected. -->
   <string name="Android.screenAlteringTitle">App che altera lo schermo rilevata</string>
@@ -214,6 +216,8 @@
   <string name="FeeSelector.economyWarning">Questa opzione non è raccomandata per le transazioni dalle tempistiche delicate.</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
   <string name="FeeSelector.estimatedDeliver">Consegna Stimata: %1$s</string>
+  <!-- [This transaction will complete in] 2-5 minutes -->
+  <string name="FeeSelector.ethTime">2-5 minuti</string>
   <!-- Regular fee -->
   <string name="FeeSelector.regular">Regolare</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
@@ -273,13 +277,13 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Ignora</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">SICUREZZA DEL DISPOSITIVO COMPROMESSA\nQualsiasi applicazione \"jailbreak\" può accedere ai dati di keychain di Bread e rubarti i bitcoin! Cancella immediatamente questo portafoglio ed effettua il ripristino su un dispositivo sicuro.</string>
+  <string name="JailbreakWarnings.messageWithBalance">SICUREZZA DEL DISPOSITIVO COMPROMESSA
+Qualsiasi applicazione \"jailbreak\" può accedere ai dati di keychain di Bread e rubarti i bitcoin! Cancella immediatamente questo portafoglio ed effettua il ripristino su un dispositivo sicuro.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">SICUREZZA DEL DISPOSITIVO COMPROMESSA\nQualsiasi applicazione \"jailbreak\" può accedere ai dati di keychain di Bread e rubarti i bitcoin. Utilizza Bread solamente su un dispositivo senza jailbreak.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">SICUREZZA DEL DISPOSITIVO COMPROMESSA
+Qualsiasi applicazione \"jailbreak\" può accedere ai dati di keychain di Bread e rubarti i bitcoin. Utilizza Bread solamente su un dispositivo senza jailbreak.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">ATTENZIONE</string>
-  <!-- Wipe wallet button -->
-  <string name="JailbreakWarnings.wipe">Cancella</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">I servizi di localizzazione sono disabilitati.</string>
   <!-- No permissions for location services -->
@@ -294,8 +298,6 @@
   <string name="ManageWallet.title">Gestisci Portafoglio</string>
   <!-- "Add [a] Wallet [to the home screen]" -->
   <string name="MenuButton.addWallet">Aggiungi portafoglio</string>
-  <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">Acquista Bitcoin</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Blocca Portafoglio</string>
   <!-- Menu button title -->
@@ -369,7 +371,7 @@
   <!-- Transaction rejected prompt title -->
   <string name="Prompts.RecommendRescan.title">Transazione Rifiutata</string>
   <!-- Share data prompt body -->
-  <string name="Prompts.ShareData.body">"Aiutaci a migliorare Bread condividendo i tuoi dati anonimi con noi "</string>
+  <string name="Prompts.ShareData.body">Aiutaci a migliorare Bread condividendo i tuoi dati anonimi con noi </string>
   <!-- Share data prompt title -->
   <string name="Prompts.ShareData.title">Condividi dati anonimi</string>
   <!-- Enable touch ID prompt body -->
@@ -466,6 +468,8 @@
   <string name="Search.pending">in attesa</string>
   <!-- Received filter label -->
   <string name="Search.received">ricevuto</string>
+  <!-- [Click here to] search -->
+  <string name="Search.search">Cerca</string>
   <!-- Sent filter label -->
   <string name="Search.sent">inviato</string>
   <!-- Face ID button title -->
@@ -523,7 +527,7 @@
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">L\'indirizzo di destinazione non è un indirizzo %1$s valido.</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">Il box non contiene un indirizzo bitcoin valido.</string>
+  <string name="Send.invalidAddressOnPasteboard">Il box non contiene un indirizzo %1$s valido.</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">Indirizzo Non Valido</string>
   <!-- Is rescanning error message -->
@@ -560,12 +564,6 @@
   <string name="Send.UsedAddress.secondLIne">Il riutilizzo riduce la privacy sia tua che del destinatario e può causare perdite se il destinatario non controlla direttamente l\'indirizzo.</string>
   <!-- Adress already used alert title -->
   <string name="Send.UsedAddress.title">Indirizzo Già Utilizzato</string>
-  <!-- Other settings section header -->
-  <plurals name="Settings">
-    <item quantity="one">Altro</item>
-    <item quantity="other">Altro</item>
-    <item quantity="zero">Altro</item>
-  </plurals>
   <!-- About label -->
   <string name="Settings.about">Chi siamo</string>
   <!-- Advanced settings header -->
@@ -590,10 +588,10 @@
   <string name="Settings.manage">Gestisci</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">Notifiche</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">Altro</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Preferenze</string>
+  <!-- Tap here to reset the list of currencies to the default settings. -->
+  <string name="Settings.resetCurrencies">Reimposta valute predefinite</string>
   <!-- Leave review button label -->
   <string name="Settings.review">Scrivi una Recensione</string>
   <!-- Share anonymous data label -->
@@ -619,7 +617,9 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Annota di nuovo la Paper Key</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">La tua Paper Key è l\'unico modo per ripristinare il tuo Bread, nel caso il tuo telefono sia perso, rubato, rotto o aggiornato.\n\nTi mostreremo un elenco di parole da annotare su un pezzo di carta e conservare al sicuro.</string>
+  <string name="StartPaperPhrase.body">La tua Paper Key è l\'unico modo per ripristinare il tuo Bread, nel caso il tuo telefono sia perso, rubato, rotto o aggiornato.
+
+Ti mostreremo un elenco di parole da annotare su un pezzo di carta e conservare al sicuro.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Annota la Paper Key</string>
   <!-- Argument is date -->
@@ -769,13 +769,13 @@
   <!-- Moved $5.00 (as in "I moved $5 to another location") -->
   <string name="TransactionDetails.moved">Trasferiti %1$s</string>
   <!-- Moved $5.00 -->
-  <string name="TransactionDetails.movedAmountDescription">Spostato <b>%1$s</b></string>
+  <string name="TransactionDetails.movedAmountDescription"><![CDATA[Spostato <b>%1$s</b>]]></string>
   <!-- eg. Confirmed in Block: Not Confirmed -->
   <string name="TransactionDetails.notConfirmedBlockHeightLabel">Non confermato</string>
   <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
   <string name="TransactionDetails.received">Ricevuti %1$s</string>
   <!-- Received $5.00 -->
-  <string name="TransactionDetails.receivedAmountDescription">Ricevuto <b>%1$s</b></string>
+  <string name="TransactionDetails.receivedAmountDescription"><![CDATA[Ricevuto <b>%1$s</b>]]></string>
   <!-- received from <address> -->
   <string name="TransactionDetails.receivedFrom">ricevuto da %1$s</string>
   <!-- received via <address> -->
@@ -787,7 +787,7 @@
   <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
   <string name="TransactionDetails.sent">Inviati %1$s</string>
   <!-- Sent $5.00 -->
-  <string name="TransactionDetails.sentAmountDescription">Inviato <b>%1$s</b></string>
+  <string name="TransactionDetails.sentAmountDescription"><![CDATA[Inviato <b>%1$s</b>]]></string>
   <!-- Show Details button -->
   <string name="TransactionDetails.showDetails">Mostra dettagli</string>
   <!-- The balance the user started with before the transaction completed -->
@@ -887,7 +887,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">In aggiornamento…</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet ha cambiato il suo nome in Bread e ha un look nuovissimo nonché alcune nuove funzionalità.\n\nSe hai bisogno di aiuto, cerca il (?) a destra in alto sulla maggior parte delle schermate.</string>
+  <string name="Welcome.body">Breadwallet ha cambiato il suo nome in Bread e ha un look nuovissimo nonché alcune nuove funzionalità.
+
+Se hai bisogno di aiuto, cerca il (?) a destra in alto sulla maggior parte delle schermate.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Ti diamo il benvenuto su Bread!</string>
   <!-- Wipe wallet alert message -->
@@ -918,4 +920,12 @@
   <string name="WritePaperPhrase.previous">Precedente</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d di %2$d</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">Altro</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Gestisci i Portafogli</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Menu</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Acquista Bitcoin</string>
 </resources>
