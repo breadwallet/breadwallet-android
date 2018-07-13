@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-  <string name="HomeScreen.trade">교환</string>
-  <string name="SyncingView.syncedThrough">%1$s 전 동기화 됨</string>
   <!-- App name -->
   <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
@@ -226,10 +224,16 @@
   <string name="FeeSelector.title">처리 속도</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">관리</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">비트코인 구매</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">메뉴</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">지갑</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">총 자산</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">교환</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">개인 열쇠 잔고 확인 중...</string>
   <!-- Sweep private key confirmation message -->
@@ -277,13 +281,13 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">무시</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">장치 보안 취약
-모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! 이 지갑을 바로 지우시고 안전한 장치에서 복구하세요.</string>
+  <string name="JailbreakWarnings.messageWithBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! 이 지갑을 바로 지우시고 안전한 장치에서 복구하세요.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">장치 보안 취약
-모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! Bread를 비-jailbroken 장치에서만 사용해 주세요.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! Bread를 비-jailbroken 장치에서만 사용해 주세요.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">경고</string>
+  <!-- Wipe wallet button -->
+  <string name="JailbreakWarnings.wipe">초기화</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">위치 서비스가 꺼졌습니다.</string>
   <!-- No permissions for location services -->
@@ -300,6 +304,10 @@
   <string name="MenuButton.addWallet">지갑 추가</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">지갑 잠그기</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">지갑 관리</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">QR코드 스캔</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">보안 센터</string>
   <!-- Menu button title -->
@@ -588,6 +596,8 @@
   <string name="Settings.manage">관리</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">알림</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">기타</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">환경 설정</string>
   <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -617,9 +627,7 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">페이퍼 키를 다시 쓰기</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">페이퍼 키는 핸드폰을 분실하거나, 도난당하거나, 망가지거나, 업그레이드한 경우 브레드를 다시 살릴 수 있는 유일한 방법입니다.
-
-저희가 제시하는 단어 목록을 잘 적어서 안전하게 보관해 주세요.</string>
+  <string name="StartPaperPhrase.body">페이퍼 키는 핸드폰을 분실하거나, 도난당하거나, 망가지거나, 업그레이드한 경우 브레드를 다시 살릴 수 있는 유일한 방법입니다.\n\n저희가 제시하는 단어 목록을 잘 적어서 안전하게 보관해 주세요.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">페이퍼 키 작성하기</string>
   <!-- Argument is date -->
@@ -632,10 +640,14 @@
   <string name="StartViewController.recoverButton">지갑 복구하기</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">연결 중</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">동기화 실패</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">동기화 중</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">다시 시도</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">%1$s 전 동기화 됨</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">동기화 중</string>
   <!-- 6 d (6 days) -->
@@ -887,9 +899,7 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">업데이트 중...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet이 이름을 Bread로 바꾸고 새롭게 단장하였으며 새로운 기능도 갖췄습니다.
-
-도움이 필요하시면 대부분 화면에서 우측 상단에 있는 (?)을(를) 클릭하십시오.</string>
+  <string name="Welcome.body">Breadwallet이 이름을 Bread로 바꾸고 새롭게 단장하였으며 새로운 기능도 갖췄습니다.\n\n도움이 필요하시면 대부분 화면에서 우측 상단에 있는 (?)을(를) 클릭하십시오.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Bread에 환영합니다!</string>
   <!-- Wipe wallet alert message -->
@@ -920,12 +930,4 @@
   <string name="WritePaperPhrase.previous">이전</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%2$d의 %1$d</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">기타</string>
-  <!-- (Click here to) manage (your list of) wallets -->
-  <string name="MenuButton.manageWallets">지갑 관리</string>
-  <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">메뉴</string>
-  <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">비트코인 구매</string>
 </resources>

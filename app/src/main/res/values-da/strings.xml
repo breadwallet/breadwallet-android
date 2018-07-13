@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-  <string name="HomeScreen.trade">Køb og sælg</string>
-  <string name="SyncingView.syncedThrough">Synkroniseret via %1$s</string>
   <!-- App name -->
   <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
@@ -226,10 +224,16 @@
   <string name="FeeSelector.title">Behandlingshastighed</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">Administration</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Køb Bitcoin</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Menu</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">Tegnebøger</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">samlet antal aktiver</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">Køb og sælg</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Tjekker beløb på privat nøgle...</string>
   <!-- Sweep private key confirmation message -->
@@ -277,13 +281,13 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Ignorer</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">ENHEDENS SIKKERHED ER KOMPROMITTERET
- Enhver \'jailbreak\' app kan få adgang til Breads nøgledata og stjæle dine bitcoin! Ryd straks denne pung og gendan på en sikker enhed.</string>
+  <string name="JailbreakWarnings.messageWithBalance">ENHEDENS SIKKERHED ER KOMPROMITTERET\n Enhver \'jailbreak\' app kan få adgang til Breads nøgledata og stjæle dine bitcoin! Ryd straks denne pung og gendan på en sikker enhed.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">ENHEDENS SIKKERHED ER KOMPROMITTERET
- Enhver \'jailbreak\' app kan få adgang til Breads nøgledata og stjæle dine bitcoin. Brug kun Bread på en ikke jailbreaket enhed.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">ENHEDENS SIKKERHED ER KOMPROMITTERET\n Enhver \'jailbreak\' app kan få adgang til Breads nøgledata og stjæle dine bitcoin. Brug kun Bread på en ikke jailbreaket enhed.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">ADVARSEL</string>
+  <!-- Wipe wallet button -->
+  <string name="JailbreakWarnings.wipe">Ryd</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Placeringstjenester er deaktiveret.</string>
   <!-- No permissions for location services -->
@@ -300,6 +304,10 @@
   <string name="MenuButton.addWallet">Tilføj pung</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Lås pung</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Administrer Tegnebøger</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">Scan QR-kode</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">Sikkerhedscenter</string>
   <!-- Menu button title -->
@@ -588,6 +596,8 @@
   <string name="Settings.manage">Administrer</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">Notifikationer</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">Andet</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Indstillinger</string>
   <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -617,9 +627,7 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Skriv paper key ned igen</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Din paper key er den eneste måde at gendanne dit Bread på, hvis din telefon mistes, stjæles, går i stykker eller opgraderes.
-
-Vi viser dig en liste over word du skal skrive ned på et papir, og holde sikkert.</string>
+  <string name="StartPaperPhrase.body">Din paper key er den eneste måde at gendanne dit Bread på, hvis din telefon mistes, stjæles, går i stykker eller opgraderes.\n\nVi viser dig en liste over word du skal skrive ned på et papir, og holde sikkert.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Skriv paper key ned</string>
   <!-- Argument is date -->
@@ -632,10 +640,14 @@ Vi viser dig en liste over word du skal skrive ned på et papir, og holde sikker
   <string name="StartViewController.recoverButton">Gendan tegnebog</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Tilslutter</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">Synkronisering mislykkedes</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Synkroniserer</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Prøv igen</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">Synkroniseret via %1$s</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">Synkroniserer</string>
   <!-- 6 d (6 days) -->
@@ -887,9 +899,7 @@ Vi viser dig en liste over word du skal skrive ned på et papir, og holde sikker
   <!-- Updating webview message -->
   <string name="Webview.updating">Opdaterer...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet har skiftet navn til Bread med et helt nyt look og nogle nye funktioner.
-
-Hvis du har brug for hjælp, led efter (?) øverst til højre på de fleste skærme.</string>
+  <string name="Welcome.body">Breadwallet har skiftet navn til Bread med et helt nyt look og nogle nye funktioner.\n\nHvis du har brug for hjælp, led efter (?) øverst til højre på de fleste skærme.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Velkommen til Bread!</string>
   <!-- Wipe wallet alert message -->
@@ -920,12 +930,4 @@ Hvis du har brug for hjælp, led efter (?) øverst til højre på de fleste skæ
   <string name="WritePaperPhrase.previous">Forrige</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d af %2$d</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">Andet</string>
-  <!-- (Click here to) manage (your list of) wallets -->
-  <string name="MenuButton.manageWallets">Administrer Tegnebøger</string>
-  <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">Menu</string>
-  <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">Køb Bitcoin</string>
 </resources>

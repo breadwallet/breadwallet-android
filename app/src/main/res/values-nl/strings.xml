@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-  <string name="HomeScreen.trade">Handel</string>
-  <string name="SyncingView.syncedThrough">Gesynchroniseerd via %1$s</string>
   <!-- App name -->
   <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
@@ -226,10 +224,16 @@
   <string name="FeeSelector.title">Verwerkingssnelheid</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">Beheerder</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Bitcoins Kopen</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Menu</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">Wallets</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">Totale Prijs:</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">Handel</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Private key balans checken...</string>
   <!-- Sweep private key confirmation message -->
@@ -277,13 +281,13 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Negeren</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">APPARAAT BEVEILIGING BESCHADIGD
-Elke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan hiermee je Bitcoins stelen! Wis deze portemonnee direct en herstel het op een veilig apparaat.</string>
+  <string name="JailbreakWarnings.messageWithBalance">APPARAAT BEVEILIGING BESCHADIGD\nElke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan hiermee je Bitcoins stelen! Wis deze portemonnee direct en herstel het op een veilig apparaat.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">APPARAAT BEVEILIGING BESCHADIGD
-Elke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan hiermee je Bitcoins stelen. Gebruik Bread a.u.b. alleen op een niet-gejailbreakt apparaat.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">APPARAAT BEVEILIGING BESCHADIGD\nElke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan hiermee je Bitcoins stelen. Gebruik Bread a.u.b. alleen op een niet-gejailbreakt apparaat.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">WAARSCHUWING</string>
+  <!-- Wipe wallet button -->
+  <string name="JailbreakWarnings.wipe">Wissen</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Locatievoorzieningen zijn uitgeschakeld.</string>
   <!-- No permissions for location services -->
@@ -300,6 +304,10 @@ Elke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan 
   <string name="MenuButton.addWallet">Voeg Wallet toe</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Portemonnee Vergrendelen</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Beheer portemonnees</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">Scan QR-code</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">Veiligheidscentrum</string>
   <!-- Menu button title -->
@@ -588,6 +596,8 @@ Elke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan 
   <string name="Settings.manage">Beheer</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">Notificaties</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">Andere</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Voorkeuren</string>
   <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -617,9 +627,7 @@ Elke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan 
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Schrijf Papieren Sleutel Opnieuw Op</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Je papieren sleutel is de enige manier om je Bread te herstellen als je telefoon verloren, gestolen, kapot of geüpgrade is.
-
-We zullen je een lijst met woorden laten zie die je op een papiertje moet schrijven en veilig moet bewaren.</string>
+  <string name="StartPaperPhrase.body">Je papieren sleutel is de enige manier om je Bread te herstellen als je telefoon verloren, gestolen, kapot of geüpgrade is.\n\nWe zullen je een lijst met woorden laten zie die je op een papiertje moet schrijven en veilig moet bewaren.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Schrijf Papieren Sleutel Op</string>
   <!-- Argument is date -->
@@ -632,10 +640,14 @@ We zullen je een lijst met woorden laten zie die je op een papiertje moet schrij
   <string name="StartViewController.recoverButton">Wallet herstellen</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Aan het verbinden</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">Synchronisatie mislukt</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Synchroniseren</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Opnieuw proberen</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">Gesynchroniseerd via %1$s</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">Aan het synchroniseren</string>
   <!-- 6 d (6 days) -->
@@ -887,9 +899,7 @@ We zullen je een lijst met woorden laten zie die je op een papiertje moet schrij
   <!-- Updating webview message -->
   <string name="Webview.updating">Updaten...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet is omgedoopt tot Bread, met een gloednieuw uiterlijk en enkele nieuwe functies.
-
-Als u hulp nodig hebt, zoek naar de (?) rechtsboven in de meeste schermen.</string>
+  <string name="Welcome.body">Breadwallet is omgedoopt tot Bread, met een gloednieuw uiterlijk en enkele nieuwe functies.\n\nAls u hulp nodig hebt, zoek naar de (?) rechtsboven in de meeste schermen.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Welkom bij Brood!</string>
   <!-- Wipe wallet alert message -->
@@ -920,12 +930,4 @@ Als u hulp nodig hebt, zoek naar de (?) rechtsboven in de meeste schermen.</stri
   <string name="WritePaperPhrase.previous">Vorige</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d van %2$d</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">Andere</string>
-  <!-- (Click here to) manage (your list of) wallets -->
-  <string name="MenuButton.manageWallets">Beheer portemonnees</string>
-  <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">Menu</string>
-  <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">Bitcoins Kopen</string>
 </resources>

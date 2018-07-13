@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-  <string name="HomeScreen.trade">换</string>
-  <string name="SyncingView.syncedThrough">从 %1$s 同步</string>
   <!-- App name -->
   <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
@@ -226,10 +224,16 @@
   <string name="FeeSelector.title">处理速度</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">管理</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">购买比特币</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">菜单</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">钱包</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">总资产</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">换</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">正在查看私人密钥余额...</string>
   <!-- Sweep private key confirmation message -->
@@ -277,13 +281,13 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">忽略</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">设备安全性受损
-任何\'越狱\'应用都可能访问 Bread 的密钥链数据并盗取您的比特币！立即擦除这个钱包并在一台安全设备上进行恢复。</string>
+  <string name="JailbreakWarnings.messageWithBalance">设备安全性受损\n任何\'越狱\'应用都可能访问 Bread 的密钥链数据并盗取您的比特币！立即擦除这个钱包并在一台安全设备上进行恢复。</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">设备安全性受损
-任何\'越狱\'应用都可能访问 Bread 的密钥链数据并盗取您的比特币！请您仅在未越狱设备上使用 Bread 。</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">设备安全性受损\n任何\'越狱\'应用都可能访问 Bread 的密钥链数据并盗取您的比特币！请您仅在未越狱设备上使用 Bread 。</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">警告</string>
+  <!-- Wipe wallet button -->
+  <string name="JailbreakWarnings.wipe">擦除</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">位置服务被禁用。</string>
   <!-- No permissions for location services -->
@@ -300,6 +304,10 @@
   <string name="MenuButton.addWallet">添加钱包</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">锁住钱包</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">管理钱包</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">扫描QR</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">安全中心</string>
   <!-- Menu button title -->
@@ -588,6 +596,8 @@
   <string name="Settings.manage">管理</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">通知</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">其他</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">选项</string>
   <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -617,10 +627,7 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">再次书写纸键</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">如果您的手机丢失、被盗、损坏或升级，纸上密钥是恢复 Bread 的唯一方法。
-
-
-我们将向您显示一张单词表，请将其写在纸上并保存在安全的地方。</string>
+  <string name="StartPaperPhrase.body">如果您的手机丢失、被盗、损坏或升级，纸上密钥是恢复 Bread 的唯一方法。\n\n\n我们将向您显示一张单词表，请将其写在纸上并保存在安全的地方。</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">写下纸键</string>
   <!-- Argument is date -->
@@ -633,10 +640,14 @@
   <string name="StartViewController.recoverButton">恢复钱包</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">连接中</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">同步失败</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">正在同步</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">重试</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">从 %1$s 同步</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">同步中</string>
   <!-- 6 d (6 days) -->
@@ -919,12 +930,4 @@
   <string name="WritePaperPhrase.previous">上一步</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d / %2$d</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">其他</string>
-  <!-- (Click here to) manage (your list of) wallets -->
-  <string name="MenuButton.manageWallets">管理钱包</string>
-  <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">菜单</string>
-  <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">购买比特币</string>
 </resources>
