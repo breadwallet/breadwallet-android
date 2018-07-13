@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-  <string name="HomeScreen.trade">Handeln</string>
-  <string name="SyncingView.syncedThrough">Synchronsiert durch %1$s</string>
   <!-- App name -->
   <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
@@ -226,10 +224,16 @@
   <string name="FeeSelector.title">Verarbeitungsgeschwindigkeit</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">Administrator</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Bitcoin kaufen</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Menü</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">Geldbörsen</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">Gesamtvermögen</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">Handeln</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Das Privatschlüsselguthaben wird überprüft …</string>
   <!-- Sweep private key confirmation message -->
@@ -277,13 +281,13 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Ignorieren</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">DAS GERÄT IST NICHT LÄNGER SICHER
-Jede beliebige „Jailbreak“-App kann auf Breads Keychain-Daten zugreifen und deine Bitcoins stehlen! Lösche dieses Wallet unverzüglich und stelle es auf einem sicheren Gerät wieder her.</string>
+  <string name="JailbreakWarnings.messageWithBalance">DAS GERÄT IST NICHT LÄNGER SICHER\nJede beliebige „Jailbreak“-App kann auf Breads Keychain-Daten zugreifen und deine Bitcoins stehlen! Lösche dieses Wallet unverzüglich und stelle es auf einem sicheren Gerät wieder her.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">DAS GERÄT IST NICHT LÄNGER SICHER
-Jede beliebige „Jailbreak“-App kann auf Breads Keychain-Daten zugreifen und deine Bitcoins stehlen. Bitte setze Bread ausschließlich auf Geräten ohne Jailbreak ein.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">DAS GERÄT IST NICHT LÄNGER SICHER\nJede beliebige „Jailbreak“-App kann auf Breads Keychain-Daten zugreifen und deine Bitcoins stehlen. Bitte setze Bread ausschließlich auf Geräten ohne Jailbreak ein.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">ACHTUNG</string>
+  <!-- Wipe wallet button -->
+  <string name="JailbreakWarnings.wipe">Löschen</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Standortdienste sind deaktiviert</string>
   <!-- No permissions for location services -->
@@ -300,6 +304,10 @@ Jede beliebige „Jailbreak“-App kann auf Breads Keychain-Daten zugreifen und 
   <string name="MenuButton.addWallet">Wallet hinzufügen</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Wallet sperren</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Wallets verwalten</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">QR-Code scannen</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">Sicherheits-Center</string>
   <!-- Menu button title -->
@@ -588,6 +596,8 @@ Jede beliebige „Jailbreak“-App kann auf Breads Keychain-Daten zugreifen und 
   <string name="Settings.manage">Verwalten</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">Benachrichtigungen</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">Andere</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Einstellungen</string>
   <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -617,9 +627,7 @@ Jede beliebige „Jailbreak“-App kann auf Breads Keychain-Daten zugreifen und 
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Offlineschlüssel erneut notieren</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Dein Offlineschlüssel ist die einzige Möglichkeit, dein Bread wiederherzustellen, falls du dein Smartphone verlierst, austauscht, es gestohlen wird oder kaputtgeht.
-
-Hierfür zeigen wir dir eine Liste von Wörtern an, damit du sie dir auf ein Stück Papier notieren kannst, das es sicher aufzubewahren gilt.</string>
+  <string name="StartPaperPhrase.body">Dein Offlineschlüssel ist die einzige Möglichkeit, dein Bread wiederherzustellen, falls du dein Smartphone verlierst, austauscht, es gestohlen wird oder kaputtgeht.\n\nHierfür zeigen wir dir eine Liste von Wörtern an, damit du sie dir auf ein Stück Papier notieren kannst, das es sicher aufzubewahren gilt.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Offlineschlüssel notieren</string>
   <!-- Argument is date -->
@@ -632,10 +640,14 @@ Hierfür zeigen wir dir eine Liste von Wörtern an, damit du sie dir auf ein St�
   <string name="StartViewController.recoverButton">Geldbörse wiederherstellen</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Verbindet</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">Synchronisation fehlgeschlagen</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Synchronisation läuft</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Erneut versuchen</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">Synchronsiert durch %1$s</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">Synchronisiert</string>
   <!-- 6 d (6 days) -->
@@ -887,9 +899,7 @@ Hierfür zeigen wir dir eine Liste von Wörtern an, damit du sie dir auf ein St�
   <!-- Updating webview message -->
   <string name="Webview.updating">Aktualisierung läuft …</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet heißt jetzt Bread und hat ein brandneues Erscheinungsbild sowie einige neue Funktionen.
-
-Wenn Sie Hilfe benötigen, halten Sie Ausschau nach dem (?), das auf den meisten Bildschirm oben rechts zu finden ist.</string>
+  <string name="Welcome.body">Breadwallet heißt jetzt Bread und hat ein brandneues Erscheinungsbild sowie einige neue Funktionen.\n\nWenn Sie Hilfe benötigen, halten Sie Ausschau nach dem (?), das auf den meisten Bildschirm oben rechts zu finden ist.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Willkommen bei Bread!</string>
   <!-- Wipe wallet alert message -->
@@ -920,12 +930,4 @@ Wenn Sie Hilfe benötigen, halten Sie Ausschau nach dem (?), das auf den meisten
   <string name="WritePaperPhrase.previous">Zurück</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d von %2$d</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">Andere</string>
-  <!-- (Click here to) manage (your list of) wallets -->
-  <string name="MenuButton.manageWallets">Wallets verwalten</string>
-  <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">Menü</string>
-  <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">Bitcoin kaufen</string>
 </resources>

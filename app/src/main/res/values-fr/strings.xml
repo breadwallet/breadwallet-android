@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-  <string name="HomeScreen.trade">Échanger</string>
-  <string name="SyncingView.syncedThrough">Synchronisé jusqu'à %1$s</string>
   <!-- App name -->
   <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
@@ -226,10 +224,16 @@
   <string name="FeeSelector.title">Vitesse de traitement</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">Admin</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Acheter des Bitcoins</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Menu</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">Portefeuilles</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">Capital total</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">Échanger</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Vérification du solde des clés privées...</string>
   <!-- Sweep private key confirmation message -->
@@ -251,8 +255,7 @@
   <!-- Caption for graphics -->
   <string name="Import.leftCaption">Portefeuille à importer</string>
   <!-- Import wallet intro screen message -->
-  <string name="Import.message">Importer un portefeuille signifie le transfert de tout son contenu dans votre portfeuille BRD en une seule transaction.
-</string>
+  <string name="Import.message">Importer un portefeuille signifie le transfert de tout son contenu dans votre portfeuille BRD en une seule transaction.\n</string>
   <!-- Enter password alert view title -->
   <string name="Import.password">Cette clé privée est protégée par mot de passe.</string>
   <!-- password textfield placeholder -->
@@ -278,13 +281,13 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Ignorer</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">SÉCURITÉ DU DISPOSITIF COMPROMISE
-Toute application « évasive » peut accéder aux données du porte-clé de Bread et voler vos bitcoins ! Détruisez ce portefeuille immédiatement et restaurez-le sur un appareil sécurisé.</string>
+  <string name="JailbreakWarnings.messageWithBalance">SÉCURITÉ DU DISPOSITIF COMPROMISE\nToute application « évasive » peut accéder aux données du porte-clé de Bread et voler vos bitcoins ! Détruisez ce portefeuille immédiatement et restaurez-le sur un appareil sécurisé.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">SÉCURITÉ DU DISPOSITIF COMPROMISE
-Toute application « évasive » peut accéder aux données du porte-clé de Bread et voler vos bitcoins. N\'utilisez Bread que sur un appareil non évasif.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">SÉCURITÉ DU DISPOSITIF COMPROMISE\nToute application « évasive » peut accéder aux données du porte-clé de Bread et voler vos bitcoins. N\'utilisez Bread que sur un appareil non évasif.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">AVERTISSEMENT</string>
+  <!-- Wipe wallet button -->
+  <string name="JailbreakWarnings.wipe">Supprimer</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Les services de localisation sont désactivés.</string>
   <!-- No permissions for location services -->
@@ -301,6 +304,10 @@ Toute application « évasive » peut accéder aux données du porte-clé de Bre
   <string name="MenuButton.addWallet">Ajouter un portefeuille</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Verrouiller le portefeuille</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Gérer les portefeuilles</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">Scanner le code QR</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">Centre de sécurité</string>
   <!-- Menu button title -->
@@ -589,6 +596,8 @@ Toute application « évasive » peut accéder aux données du porte-clé de Bre
   <string name="Settings.manage">Gérer</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">Notifications</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">Autre</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Préférences</string>
   <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -618,9 +627,7 @@ Toute application « évasive » peut accéder aux données du porte-clé de Bre
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Enregistrez la clé papier à nouveau</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Votre clé papier est la seule façon de restaurer votre Bread si votre téléphone est perdu, volé, cassé ou mis à niveau.
-
-Nous allons vous montrer une liste de mots à écrire sur un morceau de papier et à garder en sécurité.</string>
+  <string name="StartPaperPhrase.body">Votre clé papier est la seule façon de restaurer votre Bread si votre téléphone est perdu, volé, cassé ou mis à niveau.\n\nNous allons vous montrer une liste de mots à écrire sur un morceau de papier et à garder en sécurité.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Écrire la clé papier</string>
   <!-- Argument is date -->
@@ -633,10 +640,14 @@ Nous allons vous montrer une liste de mots à écrire sur un morceau de papier e
   <string name="StartViewController.recoverButton">Récupérer le portefeuille</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Connexion</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">Échec de la synchronisation</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Synchronisation</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Réessayer</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">Synchronisé jusqu\'à %1$s</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">Synchronisation</string>
   <!-- 6 d (6 days) -->
@@ -888,9 +899,7 @@ Nous allons vous montrer une liste de mots à écrire sur un morceau de papier e
   <!-- Updating webview message -->
   <string name="Webview.updating">Mise à jour...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet revient sous le nom de Bread, avec un nouveau design et de nouvelles fonctionnalités. 
-
-Si vous avez besoin d\'aide, cliquez sur le (?) en haut à droite de la plupart des écrans.</string>
+  <string name="Welcome.body">Breadwallet revient sous le nom de Bread, avec un nouveau design et de nouvelles fonctionnalités. \n\nSi vous avez besoin d\'aide, cliquez sur le (?) en haut à droite de la plupart des écrans.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Bienvenue chez Bread !</string>
   <!-- Wipe wallet alert message -->
@@ -904,8 +913,7 @@ Si vous avez besoin d\'aide, cliquez sur le (?) en haut à droite de la plupart 
   <!-- Enter phrase to wipe wallet instruction. (Important to explain it is the CURRENT [this wallet's] paper key that needs to be entered). -->
   <string name="WipeWallet.instruction">Pour commencer un nouveau portefeuille ou rétablir un portefeuille existant, vous devez d\'abord supprimer le portefeuille actuellement installé. Pour continuer, saisissez la Clé Papier du portefeuille actuel.</string>
   <!-- Instructions for unlinking the wallet -->
-  <string name="WipeWallet.startMessage">Démarrer ou récupérer un autre portefeuille vous permet d\'accéder et de gérer un portefeuille Bread différent sur cet appareil.
-</string>
+  <string name="WipeWallet.startMessage">Démarrer ou récupérer un autre portefeuille vous permet d\'accéder et de gérer un portefeuille Bread différent sur cet appareil.\n</string>
   <!-- Start wipe wallet view warning -->
   <string name="WipeWallet.startWarning">Vous ne pourrez plus accéder à votre portefeuille courant depuis cet appareil. Si vous souhaitez le récupérer plus tard, vous devrais réentrer la clé papier.</string>
   <!-- Unlink this wallet from this device. -->
@@ -922,12 +930,4 @@ Si vous avez besoin d\'aide, cliquez sur le (?) en haut à droite de la plupart 
   <string name="WritePaperPhrase.previous">Précédent</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d de %2$d</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">Autre</string>
-  <!-- (Click here to) manage (your list of) wallets -->
-  <string name="MenuButton.manageWallets">Gérer les portefeuilles</string>
-  <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">Menu</string>
-  <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">Acheter des Bitcoins</string>
 </resources>
