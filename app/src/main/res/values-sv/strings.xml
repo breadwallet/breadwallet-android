@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
+  <string name="HomeScreen.trade">Handla</string>
+  <string name="SyncingView.syncedThrough">Synkroniserad genom %1$s</string>
   <!-- App name -->
   <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
@@ -66,7 +68,7 @@
   <string name="Android.allowFileSystemAccess">Vi ber dig att medge lagringstillåtelse i dina enhetsinställningar: \"Inställningar\" &gt; \"Appar\" &gt; \"BRD\" &gt; \"Tillåtelser\".</string>
   <!-- The "home" screen is the name of the top level menu for the app. -->
   <string name="Android.BCH.welcome.message">Valfri BCH i din plånbok kan nås via hemskärmen.</string>
-  <string name="Android.BCH.welcome.title">BRD stöder nu Bitcoin Cash!</string>
+  <!-- Warning about using apps that can alter the screen -->
   <string name="Android.screenAlteringMessage">BRD fungerar inte korrekt om inte skärmskiftande appar (såsom Twilight) är inaktiverade.</string>
   <!-- An app that alters the screen ("screen-altering app") has been detected. -->
   <string name="Android.screenAlteringTitle">Skärmskiftande app upptäckt</string>
@@ -214,6 +216,8 @@
   <string name="FeeSelector.economyWarning">Detta alternativ rekommenderas inte för tidskänsliga transaktioner.</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
   <string name="FeeSelector.estimatedDeliver">Beräknad leverans: %1$s</string>
+  <!-- [This transaction will complete in] 2-5 minutes -->
+  <string name="FeeSelector.ethTime">2-5 minuter</string>
   <!-- Regular fee -->
   <string name="FeeSelector.regular">Vanlig</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
@@ -273,13 +277,13 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Ignorera</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Töm denna plånbok direkt och återställ den på en säker enhet.</string>
+  <string name="JailbreakWarnings.messageWithBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD
+En \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Töm denna plånbok direkt och återställ den på en säker enhet.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Använd Bread endast på en säker enhet.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD
+En \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Använd Bread endast på en säker enhet.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">VARNING</string>
-  <!-- Wipe wallet button -->
-  <string name="JailbreakWarnings.wipe">Töm</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Platstjänster är inaktiverade.</string>
   <!-- No permissions for location services -->
@@ -294,8 +298,6 @@
   <string name="ManageWallet.title">Hantera plånbok</string>
   <!-- "Add [a] Wallet [to the home screen]" -->
   <string name="MenuButton.addWallet">Lägg till plånbok</string>
-  <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">Köp Bitcoin</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Lås plånbok</string>
   <!-- Menu button title -->
@@ -466,6 +468,8 @@
   <string name="Search.pending">väntar</string>
   <!-- Received filter label -->
   <string name="Search.received">mottaget</string>
+  <!-- [Click here to] search -->
+  <string name="Search.search">Sök</string>
   <!-- Sent filter label -->
   <string name="Search.sent">skickat</string>
   <!-- Face ID button title -->
@@ -523,7 +527,7 @@
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">Mottagaradressen är inte en giltig %1$s-adress.</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">Urklipp innehåller inte en giltig bitcoinadress.</string>
+  <string name="Send.invalidAddressOnPasteboard">Urklipp innehåller inte en giltig %1$s-adress.</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">Ogiltig adress</string>
   <!-- Is rescanning error message -->
@@ -560,12 +564,6 @@
   <string name="Send.UsedAddress.secondLIne">Återanvändning minskar sekretessen både för dig och mottagaren och kan sluta i förlust om mottagaren inte direkt kontrollerar adressen.</string>
   <!-- Adress already used alert title -->
   <string name="Send.UsedAddress.title">Adressen är redan använd</string>
-  <!-- Other settings section header -->
-  <plurals name="Settings">
-    <item quantity="one">Andra</item>
-    <item quantity="other">Andra</item>
-    <item quantity="zero">Andra</item>
-  </plurals>
   <!-- About label -->
   <string name="Settings.about">Om</string>
   <!-- Advanced settings header -->
@@ -590,10 +588,10 @@
   <string name="Settings.manage">Hantera</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">Meddelanden</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">Andra</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Preferenser</string>
+  <!-- Tap here to reset the list of currencies to the default settings. -->
+  <string name="Settings.resetCurrencies">Återställ till förvalda valutor</string>
   <!-- Leave review button label -->
   <string name="Settings.review">Betygssätt oss</string>
   <!-- Share anonymous data label -->
@@ -619,7 +617,9 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Skriv ner ordnyckel på nytt</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Din ordnyckel  är enda sättet att återställ Bread om du förlorat din telefon, blivit bestulen på den eller har uppgraderat den.\n\nVi visar dig en lista över ord som du kan skriva ner på ett papper och gömma undan.</string>
+  <string name="StartPaperPhrase.body">Din ordnyckel  är enda sättet att återställ Bread om du förlorat din telefon, blivit bestulen på den eller har uppgraderat den.
+
+Vi visar dig en lista över ord som du kan skriva ner på ett papper och gömma undan.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Skriv ner ordnyckel</string>
   <!-- Argument is date -->
@@ -769,13 +769,13 @@
   <!-- Moved $5.00 (as in "I moved $5 to another location") -->
   <string name="TransactionDetails.moved">Flyttade %1$s</string>
   <!-- Moved $5.00 -->
-  <string name="TransactionDetails.movedAmountDescription">Flyttade <b>%1$s</b></string>
+  <string name="TransactionDetails.movedAmountDescription"><![CDATA[Flyttade <b>%1$s</b>]]></string>
   <!-- eg. Confirmed in Block: Not Confirmed -->
   <string name="TransactionDetails.notConfirmedBlockHeightLabel">Inte bekräftad</string>
   <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
   <string name="TransactionDetails.received">Mottog %1$s</string>
   <!-- Received $5.00 -->
-  <string name="TransactionDetails.receivedAmountDescription">Tog emot <b>%1$s</b></string>
+  <string name="TransactionDetails.receivedAmountDescription"><![CDATA[Tog emot <b>%1$s</b>]]></string>
   <!-- received from <address> -->
   <string name="TransactionDetails.receivedFrom">mottaget från %1$s</string>
   <!-- received via <address> -->
@@ -787,7 +787,7 @@
   <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
   <string name="TransactionDetails.sent">Skickade %1$s</string>
   <!-- Sent $5.00 -->
-  <string name="TransactionDetails.sentAmountDescription">Skickade <b>%1$s</b></string>
+  <string name="TransactionDetails.sentAmountDescription"><![CDATA[Skickade <b>%1$s</b>]]></string>
   <!-- Show Details button -->
   <string name="TransactionDetails.showDetails">Visa detaljer</string>
   <!-- The balance the user started with before the transaction completed -->
@@ -887,7 +887,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">Uppdaterar...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadplånboken har bytt namn till Bread, med ett splitter nytt utseende och några nya funktioner.\n\nOm du behöver hjälp, leta efter (?)-tecknet i det övre högra hörnet på de flesta skärmar.</string>
+  <string name="Welcome.body">Breadplånboken har bytt namn till Bread, med ett splitter nytt utseende och några nya funktioner.
+
+Om du behöver hjälp, leta efter (?)-tecknet i det övre högra hörnet på de flesta skärmar.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Välkommen till Bread!</string>
   <!-- Wipe wallet alert message -->
@@ -918,4 +920,12 @@
   <string name="WritePaperPhrase.previous">Föregående</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d av %2$d</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">Andra</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Hantera plånböcker</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Meny</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Köp Bitcoin</string>
 </resources>
