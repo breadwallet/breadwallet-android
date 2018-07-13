@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-  <string name="HomeScreen.trade">Handla</string>
-  <string name="SyncingView.syncedThrough">Synkroniserad genom %1$s</string>
   <!-- App name -->
   <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
@@ -226,10 +224,16 @@
   <string name="FeeSelector.title">Bearbetningshastighet</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">Admin</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Köp Bitcoin</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Meny</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">Plånböcker</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">totala tillgångar</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">Handla</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Kontrollerar privat nyckelsaldo...</string>
   <!-- Sweep private key confirmation message -->
@@ -277,13 +281,13 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Ignorera</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD
-En \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Töm denna plånbok direkt och återställ den på en säker enhet.</string>
+  <string name="JailbreakWarnings.messageWithBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Töm denna plånbok direkt och återställ den på en säker enhet.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD
-En \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Använd Bread endast på en säker enhet.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Använd Bread endast på en säker enhet.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">VARNING</string>
+  <!-- Wipe wallet button -->
+  <string name="JailbreakWarnings.wipe">Töm</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Platstjänster är inaktiverade.</string>
   <!-- No permissions for location services -->
@@ -300,6 +304,10 @@ En \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina b
   <string name="MenuButton.addWallet">Lägg till plånbok</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Lås plånbok</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Hantera plånböcker</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">Skanna QR-kod</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">Säkerhetscenter</string>
   <!-- Menu button title -->
@@ -588,6 +596,8 @@ En \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina b
   <string name="Settings.manage">Hantera</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">Meddelanden</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">Andra</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Preferenser</string>
   <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -617,9 +627,7 @@ En \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina b
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Skriv ner ordnyckel på nytt</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Din ordnyckel  är enda sättet att återställ Bread om du förlorat din telefon, blivit bestulen på den eller har uppgraderat den.
-
-Vi visar dig en lista över ord som du kan skriva ner på ett papper och gömma undan.</string>
+  <string name="StartPaperPhrase.body">Din ordnyckel  är enda sättet att återställ Bread om du förlorat din telefon, blivit bestulen på den eller har uppgraderat den.\n\nVi visar dig en lista över ord som du kan skriva ner på ett papper och gömma undan.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Skriv ner ordnyckel</string>
   <!-- Argument is date -->
@@ -632,10 +640,14 @@ Vi visar dig en lista över ord som du kan skriva ner på ett papper och gömma 
   <string name="StartViewController.recoverButton">Återställ plånbok</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Ansluter</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">Synkronisering misslyckades</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Synkar</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Försök igen</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">Synkroniserad genom %1$s</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">Synkroniserar</string>
   <!-- 6 d (6 days) -->
@@ -887,9 +899,7 @@ Vi visar dig en lista över ord som du kan skriva ner på ett papper och gömma 
   <!-- Updating webview message -->
   <string name="Webview.updating">Uppdaterar...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadplånboken har bytt namn till Bread, med ett splitter nytt utseende och några nya funktioner.
-
-Om du behöver hjälp, leta efter (?)-tecknet i det övre högra hörnet på de flesta skärmar.</string>
+  <string name="Welcome.body">Breadplånboken har bytt namn till Bread, med ett splitter nytt utseende och några nya funktioner.\n\nOm du behöver hjälp, leta efter (?)-tecknet i det övre högra hörnet på de flesta skärmar.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Välkommen till Bread!</string>
   <!-- Wipe wallet alert message -->
@@ -920,12 +930,4 @@ Om du behöver hjälp, leta efter (?)-tecknet i det övre högra hörnet på de 
   <string name="WritePaperPhrase.previous">Föregående</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d av %2$d</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">Andra</string>
-  <!-- (Click here to) manage (your list of) wallets -->
-  <string name="MenuButton.manageWallets">Hantera plånböcker</string>
-  <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">Meny</string>
-  <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">Köp Bitcoin</string>
 </resources>
