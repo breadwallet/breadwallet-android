@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-  <string name="HomeScreen.trade">Обмен</string>
-  <string name="SyncingView.syncedThrough">Синхронизированно до %1$s</string>
   <!-- App name -->
   <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
@@ -226,10 +224,16 @@
   <string name="FeeSelector.title">Скорость обработки</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">Админ</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Купить Bitcoin</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Меню</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">Кошельки</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">итого активов</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">Обмен</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Проверяем баланс по персональному ключу...</string>
   <!-- Sweep private key confirmation message -->
@@ -277,13 +281,13 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Игнорировать</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">БЕЗОПАСНОСТЬ УСТРОЙСТВА ПОДВЕРГНУТА РИСКУ
- Какое-либо приложение по снятию ограничений с файловой системы может получить доступ к данным цепочки ключей  Bread и украсть ваши биткойны! Немедленно очистите ваш кошелек и восстановите его на безопасном устройстве.</string>
+  <string name="JailbreakWarnings.messageWithBalance">БЕЗОПАСНОСТЬ УСТРОЙСТВА ПОДВЕРГНУТА РИСКУ\n Какое-либо приложение по снятию ограничений с файловой системы может получить доступ к данным цепочки ключей  Bread и украсть ваши биткойны! Немедленно очистите ваш кошелек и восстановите его на безопасном устройстве.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">БЕЗОПАСНОСТЬ УСТРОЙСТВА ПОДВЕРГНУТА РИСКУ
- Какое-либо приложение по снятию ограничений с файловой системы может получить доступ к данным цепочки ключей  Bread и украсть ваши биткойны. Пожалуйста, используйте Bread только на устройствах с не снятыми с файловой системы ограничениями.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">БЕЗОПАСНОСТЬ УСТРОЙСТВА ПОДВЕРГНУТА РИСКУ\n Какое-либо приложение по снятию ограничений с файловой системы может получить доступ к данным цепочки ключей  Bread и украсть ваши биткойны. Пожалуйста, используйте Bread только на устройствах с не снятыми с файловой системы ограничениями.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">ПРЕДУПРЕЖДЕНИЕ</string>
+  <!-- Wipe wallet button -->
+  <string name="JailbreakWarnings.wipe">Очистить</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Сервисы определения местоположения отключены.</string>
   <!-- No permissions for location services -->
@@ -300,6 +304,10 @@
   <string name="MenuButton.addWallet">Добавить кошелек</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Заблокировать кошелек</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Управлять кошельками</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">Сканировать QR код</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">Центр безопасности</string>
   <!-- Menu button title -->
@@ -588,6 +596,8 @@
   <string name="Settings.manage">Управление</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">Уведомления</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">Другие</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Параметры</string>
   <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -617,9 +627,7 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Выписать бумажный ключ снова</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Бумажный ключ – это единственный способ восстановить ваш Bread-кошелек в случае потери, кражи, поломки или замены вашего телефона.
-
-Мы покажем вам список слов, которые необходимо записать на листе бумаги и хранить в надежном месте.</string>
+  <string name="StartPaperPhrase.body">Бумажный ключ – это единственный способ восстановить ваш Bread-кошелек в случае потери, кражи, поломки или замены вашего телефона.\n\nМы покажем вам список слов, которые необходимо записать на листе бумаги и хранить в надежном месте.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Выписать бумажный ключ</string>
   <!-- Argument is date -->
@@ -632,10 +640,14 @@
   <string name="StartViewController.recoverButton">Восстановить кошелек</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Соединение</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">Ошибка синхронизации</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Синхронизация</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Повторить</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">Синхронизированно до %1$s</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">Синхронизация</string>
   <!-- 6 d (6 days) -->
@@ -887,9 +899,7 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">Идет обновление...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet сменил свое название на Bread и обзавелся новым дизайном и функциями.
-
-Если вам нужна помощь, то ищите иконку (?) в правом верхнем углу большинства экранов.</string>
+  <string name="Welcome.body">Breadwallet сменил свое название на Bread и обзавелся новым дизайном и функциями.\n\nЕсли вам нужна помощь, то ищите иконку (?) в правом верхнем углу большинства экранов.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Добро пожаловать в Bread!</string>
   <!-- Wipe wallet alert message -->
@@ -920,12 +930,4 @@
   <string name="WritePaperPhrase.previous">Назад</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d из %2$d</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">Другие</string>
-  <!-- (Click here to) manage (your list of) wallets -->
-  <string name="MenuButton.manageWallets">Управлять кошельками</string>
-  <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">Меню</string>
-  <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">Купить Bitcoin</string>
 </resources>

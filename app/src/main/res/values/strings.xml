@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
-  <!-- As in "(tap here to) buy (bitcoin)" -->
-  <string name="HomeScreen.trade">Trade</string>
-  <string name="SyncingView.syncedThrough">Synced through %1$s</string>
   <!-- App name -->
   <string name="About.appName.android">Bread</string>
   <!-- About screen blog label -->
   <string name="About.blog">Blog</string>
   <!-- About screen footer -->
-  <string name="About.footer">Made by the global BRD team. Version %1$s (%2$s)</string>
+  <string name="About.footer">Made by the global BRD team. Version %1$s Build %2$s</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">Privacy Policy</string>
   <!-- About screen reddit label -->
@@ -227,10 +224,16 @@
   <string name="FeeSelector.title">Processing Speed</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">Admin</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Buy Bitcoin</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Menu</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">Wallets</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">Total Assets</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">Trade</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Checking private key balance...</string>
   <!-- Sweep private key confirmation message -->
@@ -278,13 +281,13 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Ignore</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">DEVICE SECURITY COMPROMISED
- Any \'jailbreak\' app can access BRD\'s keychain data and steal your bitcoin! Wipe this wallet immediately and restore on a secure device.</string>
+  <string name="JailbreakWarnings.messageWithBalance">DEVICE SECURITY COMPROMISED\n Any \'jailbreak\' app can access BRD\'s keychain data and steal your bitcoin! Wipe this wallet immediately and restore on a secure device.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">DEVICE SECURITY COMPROMISED
- Any \'jailbreak\' app can access BRD\'s keychain data and steal your bitcoin. Please only use BRD on a non-jailbroken device.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">DEVICE SECURITY COMPROMISED\n Any \'jailbreak\' app can access BRD\'s keychain data and steal your bitcoin. Please only use BRD on a non-jailbroken device.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">WARNING</string>
+  <!-- Wipe wallet button -->
+  <string name="JailbreakWarnings.wipe">Wipe</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Location services are disabled.</string>
   <!-- No permissions for location services -->
@@ -301,6 +304,10 @@
   <string name="MenuButton.addWallet">Add Wallet</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Lock Wallet</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Manage Wallets</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">Scan QR Code</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">Security Settings</string>
   <!-- Menu button title -->
@@ -589,6 +596,8 @@
   <string name="Settings.manage">Manage</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">Notifications</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">Other</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Preferences</string>
   <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -618,9 +627,7 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Write Down Paper Key Again</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Your paper key is the only way to restore your BRD if your phone is lost, stolen, broken, or upgraded.
-
-We will show you a list of words to write down on a piece of paper and keep safe.</string>
+  <string name="StartPaperPhrase.body">Your paper key is the only way to restore your BRD if your phone is lost, stolen, broken, or upgraded.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Write Down Paper Key</string>
   <!-- Argument is date -->
@@ -631,12 +638,16 @@ We will show you a list of words to write down on a piece of paper and keep safe
   <string name="StartViewController.message">Moving money forward.</string>
   <!-- Recover your wallet from a backup -->
   <string name="StartViewController.recoverButton">Recover Wallet</string>
-  <!-- Syncing view connectiong state header text -->
+  <!-- Syncing view connection state header text -->
   <string name="SyncingView.connecting">Connecting</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">Sync Failed</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Syncing</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Retry</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">Synced through %1$s</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">Syncing</string>
   <!-- 6 d (6 days) -->
@@ -888,9 +899,7 @@ We will show you a list of words to write down on a piece of paper and keep safe
   <!-- Updating webview message -->
   <string name="Webview.updating">Updating...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet has changed its name to BRD, with a brand new look and some new features.
-
-If you need help, look for the (?) in the top right of most screens.</string>
+  <string name="Welcome.body">Breadwallet has changed its name to BRD, with a brand new look and some new features.\n\nIf you need help, look for the (?) in the top right of most screens.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Welcome to BRD!</string>
   <!-- Wipe wallet alert message -->
@@ -921,12 +930,4 @@ If you need help, look for the (?) in the top right of most screens.</string>
   <string name="WritePaperPhrase.previous">Previous</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d of %2$d</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">Other</string>
-  <!-- (Click here to) manage (your list of) wallets -->
-  <string name="MenuButton.manageWallets">Manage Wallets</string>
-  <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">Menu</string>
-  <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">Buy Bitcoin</string>
 </resources>
