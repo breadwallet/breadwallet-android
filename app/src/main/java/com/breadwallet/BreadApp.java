@@ -2,9 +2,11 @@ package com.breadwallet;
 
 import android.annotation.TargetApi;
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.app.Application;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.graphics.Point;
 import android.hardware.fingerprint.FingerprintManager;
@@ -16,6 +18,8 @@ import android.view.WindowManager;
 
 import com.breadwallet.presenter.activities.util.ApplicationLifecycleObserver;
 import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.listeners.SyncReceiver;
@@ -152,7 +156,22 @@ public class BreadApp extends Application {
 
         mObserver = new ApplicationLifecycleObserver();
         ProcessLifecycleOwner.get().getLifecycle().addObserver(mObserver);
+    }
 
+
+    /**
+     * Clears all app data from disk. This is equivalent to the user choosing to clear the app's data from within the
+     * device settings UI. It erases all dynamic data associated with the app -- its private data and data in its
+     * private area on external storage -- but does not remove the installed application itself, nor any OBB files.
+     * It also revokes all runtime permissions that the app has acquired, clears all notifications and removes all
+     * Uri grants related to this application.
+     *
+     * @throws IllegalStateException if the {@link ActivityManager} fails to wipe the user's data.
+     */
+    public static void clearApplicationUserData() {
+        if (!((ActivityManager) mContext.getSystemService(ACTIVITY_SERVICE)).clearApplicationUserData()) {
+            throw new IllegalStateException(TAG + ": Failed to clear user application data.");
+        }
     }
 
     public static void generateWalletIfIfNeeded(Context app, String address) {
@@ -276,6 +295,4 @@ public class BreadApp extends Application {
     public interface OnAppBackgrounded {
         void onBackgrounded();
     }
-
-
 }
