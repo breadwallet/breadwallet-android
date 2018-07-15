@@ -123,7 +123,7 @@ public final class SettingsUtil {
             }
         }, false, R.drawable.ic_about));
 
-        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Button_review), "", new View.OnClickListener() {
+        settingsItems.add(new BRSettingsItem(activity.getString(R.string.Settings_review), "", new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 try {

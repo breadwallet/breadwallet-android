@@ -173,7 +173,7 @@ public class QRUtils {
             Log.d(TAG, "Uri -> " + file.getPath());
         } else
             Log.d(TAG, "Bitmap uri is null!");
-        app.startActivity(Intent.createChooser(intent, app.getString(R.string.QRUtils_ShareTitle)));
+        app.startActivity(Intent.createChooser(intent, app.getString(R.string.Receive_share)));
 
 
     }

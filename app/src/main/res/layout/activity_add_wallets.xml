@@ -43,7 +43,7 @@
         android:layout_below="@id/toolbar"
         android:background="?attr/secondary_background"
         android:drawableStart="@drawable/ic_search_gray_24dp"
-        android:hint="Search..."
+        android:hint="@string/Search.search"
         android:inputType="textPersonName"
         android:maxEms="20"
         android:maxLines="1"
