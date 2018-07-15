@@ -66,7 +66,7 @@
   <string name="Android.allowFileSystemAccess">请在您的设备设置中启用存储空间使用权限：“设置” &gt; “应用” &gt; “BRD” &gt; “权限”。</string>
   <!-- The "home" screen is the name of the top level menu for the app. -->
   <string name="Android.BCH.welcome.message">您钱包中的任何比特币现金 (BCH) 均可通过主屏幕访问。</string>
-  <string name="Android.BCH.welcome.title">BRD 现已支持比特币现金！</string>
+  <!-- Warning about using apps that can alter the screen -->
   <string name="Android.screenAlteringMessage">您应禁用屏幕更改应用（如 Twilight），否则 BRD 将无法正常工作。</string>
   <!-- An app that alters the screen ("screen-altering app") has been detected. -->
   <string name="Android.screenAlteringTitle">检测到屏幕更改应用</string>
@@ -214,6 +214,8 @@
   <string name="FeeSelector.economyWarning">对于有时效性的交易，不推荐使用此选项。</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
   <string name="FeeSelector.estimatedDeliver">预计交付时间：%1$s</string>
+  <!-- [This transaction will complete in] 2-5 minutes -->
+  <string name="FeeSelector.ethTime">2-5 分钟</string>
   <!-- Regular fee -->
   <string name="FeeSelector.regular">常规</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
@@ -222,10 +224,16 @@
   <string name="FeeSelector.title">处理速度</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">管理</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">购买比特币</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">菜单</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">钱包</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">总资产</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">换</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">正在查看私人密钥余额...</string>
   <!-- Sweep private key confirmation message -->
@@ -294,10 +302,12 @@
   <string name="ManageWallet.title">管理钱包</string>
   <!-- "Add [a] Wallet [to the home screen]" -->
   <string name="MenuButton.addWallet">添加钱包</string>
-  <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">购买比特币</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">锁住钱包</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">管理钱包</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">扫描QR</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">安全中心</string>
   <!-- Menu button title -->
@@ -466,6 +476,8 @@
   <string name="Search.pending">待定</string>
   <!-- Received filter label -->
   <string name="Search.received">已收到</string>
+  <!-- [Click here to] search -->
+  <string name="Search.search">搜索</string>
   <!-- Sent filter label -->
   <string name="Search.sent">已发送</string>
   <!-- Face ID button title -->
@@ -523,7 +535,7 @@
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">目标地址不是有效的%1$s地址。</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">粘贴板中没有有效的比特币地址</string>
+  <string name="Send.invalidAddressOnPasteboard">粘贴板中没有有效的%1$s地址</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">无效地址</string>
   <!-- Is rescanning error message -->
@@ -560,11 +572,6 @@
   <string name="Send.UsedAddress.secondLIne">重复使用会削弱您和收件人的隐私，如果收件人不直接控制地址，可能会导致损失。</string>
   <!-- Adress already used alert title -->
   <string name="Send.UsedAddress.title">地址已被使用</string>
-  <!-- Other settings section header -->
-  <plurals name="Settings">
-    <item quantity="other">其他</item>
-    <item quantity="zero">其他</item>
-  </plurals>
   <!-- About label -->
   <string name="Settings.about">关于</string>
   <!-- Advanced settings header -->
@@ -593,6 +600,8 @@
   <string name="Settings.other">其他</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">选项</string>
+  <!-- Tap here to reset the list of currencies to the default settings. -->
+  <string name="Settings.resetCurrencies">重置为默认货币</string>
   <!-- Leave review button label -->
   <string name="Settings.review">给我们评论</string>
   <!-- Share anonymous data label -->
@@ -631,10 +640,14 @@
   <string name="StartViewController.recoverButton">恢复钱包</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">连接中</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">同步失败</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">正在同步</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">重试</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">从 %1$s 同步</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">同步中</string>
   <!-- 6 d (6 days) -->
@@ -768,13 +781,13 @@
   <!-- Moved $5.00 (as in "I moved $5 to another location") -->
   <string name="TransactionDetails.moved">移出 %1$s</string>
   <!-- Moved $5.00 -->
-  <string name="TransactionDetails.movedAmountDescription">已移动 <b>%1$s</b></string>
+  <string name="TransactionDetails.movedAmountDescription"><![CDATA[已移动 <b>%1$s</b>]]></string>
   <!-- eg. Confirmed in Block: Not Confirmed -->
   <string name="TransactionDetails.notConfirmedBlockHeightLabel">未确认</string>
   <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
   <string name="TransactionDetails.received">已接收 %1$s</string>
   <!-- Received $5.00 -->
-  <string name="TransactionDetails.receivedAmountDescription">已收到 <b>%1$s</b></string>
+  <string name="TransactionDetails.receivedAmountDescription"><![CDATA[已收到 <b>%1$s</b>]]></string>
   <!-- received from <address> -->
   <string name="TransactionDetails.receivedFrom">已接收，来自 %1$s</string>
   <!-- received via <address> -->
@@ -786,7 +799,7 @@
   <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
   <string name="TransactionDetails.sent">已发送 %1$s</string>
   <!-- Sent $5.00 -->
-  <string name="TransactionDetails.sentAmountDescription">已发送 <b>%1$s</b></string>
+  <string name="TransactionDetails.sentAmountDescription"><![CDATA[已发送 <b>%1$s</b>]]></string>
   <!-- Show Details button -->
   <string name="TransactionDetails.showDetails">显示详细信息</string>
   <!-- The balance the user started with before the transaction completed -->

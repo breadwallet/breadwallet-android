@@ -66,7 +66,7 @@
   <string name="Android.allowFileSystemAccess">Agradecemos que ative as permissões de armazenamento nas definições do seu dispositivo: \"Definições\" &gt; \"Aplicações\" &gt; \"BRD\" &gt; \"Permissões\".</string>
   <!-- The "home" screen is the name of the top level menu for the app. -->
   <string name="Android.BCH.welcome.message">Qualquer BCH existente na sua carteira pode ser acedido através do ecrã principal.</string>
-  <string name="Android.BCH.welcome.title">Agora, o BRD suporta Bitcoin Cash!</string>
+  <!-- Warning about using apps that can alter the screen -->
   <string name="Android.screenAlteringMessage">O BRD não vai funcionar adequadamente se não forem desativadas as aplicações que alteram o ecrã (tais como a Twilight).</string>
   <!-- An app that alters the screen ("screen-altering app") has been detected. -->
   <string name="Android.screenAlteringTitle">Foi Detetada uma Aplicação que Altera o Ecrã</string>
@@ -214,6 +214,8 @@
   <string name="FeeSelector.economyWarning">Esta opção não se recomenda para transações delicadas a nível de tempo.</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
   <string name="FeeSelector.estimatedDeliver">Entrega estimada: %1$s</string>
+  <!-- [This transaction will complete in] 2-5 minutes -->
+  <string name="FeeSelector.ethTime">2 a 5 minutos</string>
   <!-- Regular fee -->
   <string name="FeeSelector.regular">Normal.</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
@@ -222,10 +224,16 @@
   <string name="FeeSelector.title">Velocidade de processamento</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">Administrador</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Comprar Bitcoins</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Menu</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">Carteiras</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">ativos totais</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">Comércio</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">A verificar o saldo da chave privada...</string>
   <!-- Sweep private key confirmation message -->
@@ -294,10 +302,12 @@
   <string name="ManageWallet.title">Gerir Carteira</string>
   <!-- "Add [a] Wallet [to the home screen]" -->
   <string name="MenuButton.addWallet">Adicionar Carteira</string>
-  <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">Comprar Bitcoins</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Bloquear Carteira</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Gerir Carteiras</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">Escanear o código QR</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">Centro de Segurança</string>
   <!-- Menu button title -->
@@ -466,6 +476,8 @@
   <string name="Search.pending">pendente</string>
   <!-- Received filter label -->
   <string name="Search.received">recebido</string>
+  <!-- [Click here to] search -->
+  <string name="Search.search">Pesquisar</string>
   <!-- Sent filter label -->
   <string name="Search.sent">enviado</string>
   <!-- Face ID button title -->
@@ -523,7 +535,7 @@
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">O endereço de destino não é um endereço de %1$s válido.</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">A área de transferência não possui nenhum endereço de bitcoin válido.</string>
+  <string name="Send.invalidAddressOnPasteboard">A área de transferência não possui nenhum endereço de %1$s válido.</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">Endereço Inválido</string>
   <!-- Is rescanning error message -->
@@ -560,12 +572,6 @@
   <string name="Send.UsedAddress.secondLIne">A reutilização reduz a sua privacidade e a do destinatário e pode resultar em perdas se o destinatário não controlar diretamente o endereço.</string>
   <!-- Adress already used alert title -->
   <string name="Send.UsedAddress.title">Endereço Já Utilizado</string>
-  <!-- Other settings section header -->
-  <plurals name="Settings">
-    <item quantity="one">Outro</item>
-    <item quantity="other">Outro</item>
-    <item quantity="zero">Outro</item>
-  </plurals>
   <!-- About label -->
   <string name="Settings.about">Sobre</string>
   <!-- Advanced settings header -->
@@ -594,6 +600,8 @@
   <string name="Settings.other">Outro</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Preferências</string>
+  <!-- Tap here to reset the list of currencies to the default settings. -->
+  <string name="Settings.resetCurrencies">Repor as moedas predefinidas</string>
   <!-- Leave review button label -->
   <string name="Settings.review">Deixe-nos uma avaliação</string>
   <!-- Share anonymous data label -->
@@ -632,10 +640,14 @@
   <string name="StartViewController.recoverButton">Recuperar Carteira</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Conectando</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">A sincronização falhou</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">A Sincronizar</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Tentar Novamente</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">Sincronizado por %1$s</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">Sincronizando</string>
   <!-- 6 d (6 days) -->
@@ -769,13 +781,13 @@
   <!-- Moved $5.00 (as in "I moved $5 to another location") -->
   <string name="TransactionDetails.moved">Movimentou %1$s</string>
   <!-- Moved $5.00 -->
-  <string name="TransactionDetails.movedAmountDescription">Movido <b>%1$s</b></string>
+  <string name="TransactionDetails.movedAmountDescription"><![CDATA[Movido <b>%1$s</b>]]></string>
   <!-- eg. Confirmed in Block: Not Confirmed -->
   <string name="TransactionDetails.notConfirmedBlockHeightLabel">Não confirmado</string>
   <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
   <string name="TransactionDetails.received">Recebeu %1$s</string>
   <!-- Received $5.00 -->
-  <string name="TransactionDetails.receivedAmountDescription">Recebido <b>%1$s</b></string>
+  <string name="TransactionDetails.receivedAmountDescription"><![CDATA[Recebido <b>%1$s</b>]]></string>
   <!-- received from <address> -->
   <string name="TransactionDetails.receivedFrom">recebido de %1$s</string>
   <!-- received via <address> -->
@@ -787,7 +799,7 @@
   <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
   <string name="TransactionDetails.sent">Enviou %1$s</string>
   <!-- Sent $5.00 -->
-  <string name="TransactionDetails.sentAmountDescription">Enviado <b>%1$s</b></string>
+  <string name="TransactionDetails.sentAmountDescription"><![CDATA[Enviado <b>%1$s</b>]]></string>
   <!-- Show Details button -->
   <string name="TransactionDetails.showDetails">Mostrar Detalhes</string>
   <!-- The balance the user started with before the transaction completed -->

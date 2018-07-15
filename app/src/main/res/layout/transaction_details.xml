@@ -115,7 +115,7 @@
                 android:layout_marginTop="14dp"
                 android:drawablePadding="5dp"
                 android:drawableStart="@drawable/checkmark_circled"
-                android:text="Complete"
+                android:text="@string/Transaction.complete"
                 android:textColor="@color/settings_chevron_right"
                 app:customTFont="CircularPro-Book.otf"/>
 
@@ -186,7 +186,7 @@
                 android:layout_below="@id/divider3"
                 android:layout_marginStart="14dp"
                 android:layout_marginTop="14dp"
-                android:text="Memo"
+                android:text="@string/TransactionDetails.commentsHeader"
                 android:textColor="@color/settings_chevron_right"
                 app:customTFont="CircularPro-Book.otf"/>
 
@@ -521,7 +521,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginBottom="20dp"
                 android:layout_marginTop="26dp"
-                android:text="Show Details"
+                android:text="@string/TransactionDetails.showDetails"
                 android:textColor="@color/blue"/>
 
         </RelativeLayout>

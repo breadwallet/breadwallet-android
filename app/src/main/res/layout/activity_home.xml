@@ -212,7 +212,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="@string/MenuButton.buy"
+                        android:text="@string/HomeScreen.buy"
                         android:textColor="@color/sync_toolbar_retry_text"/>
 
                 </LinearLayout>
@@ -234,7 +234,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="@string/Button.trade"
+                        android:text="@string/HomeScreen.trade"
                         android:textColor="@color/sync_toolbar_retry_text"/>
                 </LinearLayout>
 
@@ -256,7 +256,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
-                        android:text="@string/Button.menu"
+                        android:text="@string/HomeScreen.menu"
                         android:textColor="@color/sync_toolbar_retry_text"/>
                 </LinearLayout>
 
