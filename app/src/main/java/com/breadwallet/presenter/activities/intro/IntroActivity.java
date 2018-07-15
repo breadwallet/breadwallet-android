@@ -7,16 +7,13 @@ import android.graphics.Shader;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
@@ -55,31 +52,25 @@ import com.platform.APIClient;
  */
 
 public class IntroActivity extends BRActivity {
-    private static final String TAG = IntroActivity.class.getName();
-    private Button mNewWalletButton;
-    private Button mRecoverWalletButton;
-    private View mSplashScreen;
+    private static final String TAG = IntroActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
-        mNewWalletButton = findViewById(R.id.button_new_wallet);
-        mRecoverWalletButton = findViewById(R.id.button_recover_wallet);
-        mSplashScreen = findViewById(R.id.splash_screen);
-        TextView subtitle = findViewById(R.id.intro_subtitle);
-
-        setListeners();
+        setOnClickListeners();
         updateBundles();
-        ImageButton faq = findViewById(R.id.faq_button);
 
         Shader shader = new LinearGradient(
                 90, 0, 100, 100,
-                getResources().getColor(R.color.button_gradient_start_color, null), getResources().getColor(R.color.button_gradient_end_color, null),
+                getColor(R.color.button_gradient_start_color),
+                getColor(R.color.button_gradient_end_color),
                 Shader.TileMode.CLAMP);
 
+        TextView subtitle = findViewById(R.id.intro_subtitle);
         subtitle.getPaint().setShader(shader);
 
+        ImageButton faq = findViewById(R.id.faq_button);
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,8 +96,7 @@ public class IntroActivity extends BRActivity {
 
         PostAuth.getInstance().onCanaryCheck(IntroActivity.this, false);
 
-        mSplashScreen.setVisibility(View.GONE);
-
+        findViewById(R.id.splash_screen).setVisibility(View.GONE);
     }
 
     private void updateBundles() {
@@ -122,8 +112,8 @@ public class IntroActivity extends BRActivity {
         });
     }
 
-    private void setListeners() {
-        mNewWalletButton.setOnClickListener(new View.OnClickListener() {
+    private void setOnClickListeners() {
+        findViewById(R.id.button_new_wallet).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) {
@@ -136,7 +126,7 @@ public class IntroActivity extends BRActivity {
             }
         });
 
-        mRecoverWalletButton.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.button_recover_wallet).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) {
@@ -148,6 +138,4 @@ public class IntroActivity extends BRActivity {
             }
         });
     }
-
-
 }
