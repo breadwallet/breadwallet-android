@@ -11,6 +11,7 @@ import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
@@ -95,13 +96,11 @@ public class IntroActivity extends BRActivity {
         }
 
         byte[] masterPubKey = BRKeyStore.getMasterPublicKey(this);
-
-        boolean isFirstAddressCorrect = false;
         if (masterPubKey != null && masterPubKey.length != 0) {
-            isFirstAddressCorrect = SmartValidator.checkFirstAddress(this, masterPubKey);
-        }
-        if (!isFirstAddressCorrect) {
-            WalletsMaster.getInstance(this).wipeWalletButKeystore(this);
+            if (!SmartValidator.checkFirstAddress(this, masterPubKey)) {
+                Log.e(TAG, "Address is invalid. Clearing all user data now.");
+                BreadApp.clearApplicationUserData();
+            }
         }
 
         PostAuth.getInstance().onCanaryCheck(IntroActivity.this, false);
