@@ -19,6 +19,7 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.tools.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -430,9 +431,8 @@ public class BRKeyStore {
         }, null, new DialogInterface.OnDismissListener() {
             @Override
             public void onDismiss(DialogInterface dialog) {
-                WalletsMaster.getInstance(app).wipeKeyStore(app);
-                WalletsMaster.getInstance(app).wipeWalletButKeystore(app);
-                dialog.dismiss();
+                Log.e(TAG, "Device password was disabled. Clearing all user data now.");
+                BreadApp.clearApplicationUserData();
             }
         }, 0);
     }
