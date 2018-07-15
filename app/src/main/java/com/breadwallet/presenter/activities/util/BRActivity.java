@@ -228,7 +228,8 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
                     });
 
                 } else {
-                    Log.e(TAG, "WARNING: resultCode != RESULT_OK");
+                    Log.e(TAG, "User failed to authenticate device while creating a wallet. Clearing all user data now.");
+                    // TODO: Should this be BreadApp.clearApplicationUserData();?
                     WalletsMaster m = WalletsMaster.getInstance(BRActivity.this);
                     m.wipeWalletButKeystore(this);
                     finish();

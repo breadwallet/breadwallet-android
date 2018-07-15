@@ -353,11 +353,12 @@ public class PostAuth {
                 return;
             }
 
-            String strPhrase = new String((phrase == null) ? new byte[0] : phrase);
-            if (strPhrase.isEmpty()) {
+            if (phrase == null) {
+                // TODO: Should this be BreapApp.clearApplicationUserData()? I think we want to handle the case where the keystore
+                // TODO: returns a null phrase erroneously (in which case yes).
+                // TODO: However, phrase == null on first boot, so we need to distinguish the cases before making the change.
                 WalletsMaster m = WalletsMaster.getInstance(activity);
-                m.wipeKeyStore(activity);
-                m.wipeWalletButKeystore(activity);
+                m.wipeAll(activity);
             } else {
                 Log.e(TAG, "onCanaryCheck: Canary wasn't there, but the phrase persists, adding canary to keystore.");
                 try {
