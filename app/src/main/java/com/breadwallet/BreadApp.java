@@ -18,11 +18,8 @@ import android.view.WindowManager;
 
 import com.breadwallet.presenter.activities.util.ApplicationLifecycleObserver;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
-import com.breadwallet.tools.listeners.SyncReceiver;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -75,7 +72,6 @@ public class BreadApp extends Application {
     private static final String TAG = BreadApp.class.getName();
     public static int DISPLAY_HEIGHT_PX;
     public static int DISPLAY_WIDTH_PX;
-    private FingerprintManager mFingerprintManager;
     // host is the server(s) on which the API is hosted
     public static String HOST = "api.breadwallet.com";
     private static List<OnAppBackgrounded> listeners;
@@ -150,7 +146,6 @@ public class BreadApp extends Application {
         display.getSize(size);
         DISPLAY_WIDTH_PX = size.x;
         DISPLAY_HEIGHT_PX = size.y;
-        mFingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
 
         registerReceiver(InternetManager.getInstance(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
@@ -245,7 +240,6 @@ public class BreadApp extends Application {
 
     public static Context getBreadContext() {
         Context app = currentActivity;
-        if (app == null) app = SyncReceiver.app;
         if (app == null) app = mContext;
         return app;
     }

@@ -80,8 +80,6 @@ public class IntroActivity extends BRActivity {
             }
         });
 
-        getWindowManager().getDefaultDisplay().getSize(screenParametersPoint);
-
         if (Utils.isEmulatorOrDebug(this)) {
             Utils.printPhoneSpecs();
         }
