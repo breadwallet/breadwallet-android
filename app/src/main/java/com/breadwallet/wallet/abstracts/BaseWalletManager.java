@@ -55,6 +55,8 @@ public interface BaseWalletManager {
     //get the currency unit ETHER_WEI...
     BREthereumAmount.Unit getUnit();
 
+    String getAddress();
+
     boolean isAddressValid(String address);
 
     @WorkerThread

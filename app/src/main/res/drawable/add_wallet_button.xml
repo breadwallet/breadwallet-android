@@ -4,6 +4,6 @@
         android:radius="4dp"
         />
 
-    <solid android:color="#fff"/>
+    <solid android:color="?attr/secondary_background"/>
     <stroke android:color="@color/dialog_button_positive" android:width="2px"/>
 </shape>

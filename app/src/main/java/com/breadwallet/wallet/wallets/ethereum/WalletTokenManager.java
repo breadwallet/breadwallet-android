@@ -13,10 +13,8 @@ import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.RatesDataSource;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
@@ -54,7 +52,7 @@ import java.util.Map;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletTokenManager extends BaseEthereumWalletManager implements BaseWalletManager {
+public class WalletTokenManager extends BaseEthereumWalletManager {
 
     private static final String TAG = WalletTokenManager.class.getSimpleName();
 
@@ -66,10 +64,10 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
     private WalletUiConfiguration uiConfig;
 
     private WalletTokenManager(WalletEthManager walletEthManager, BREthereumWallet tokenWallet) {
-        this.mWalletEthManager = walletEthManager;
-        this.mWalletToken = tokenWallet;
+        mWalletEthManager = walletEthManager;
+        mWalletToken = tokenWallet;
         uiConfig = new WalletUiConfiguration(tokenWallet.getToken().getColorLeft(), tokenWallet.getToken().getColorRight(), false, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
-
+        mAddress = mWalletEthManager.getAddress();
     }
 
     private synchronized static WalletTokenManager getTokenWallet(WalletEthManager walletEthManager, BREthereumToken token) {
@@ -142,11 +140,6 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
     @Override
     public BREthereumAmount.Unit getUnit() {
         return BREthereumAmount.Unit.TOKEN_DECIMAL;
-    }
-
-    @Override
-    public boolean isAddressValid(String address) {
-        return mWalletEthManager.isAddressValid(address);
     }
 
     @Override
@@ -264,26 +257,11 @@ public class WalletTokenManager extends BaseEthereumWalletManager implements Bas
         //no need
     }
 
-    @Override
-    public void refreshAddress(Context app) {
-        long start = System.currentTimeMillis();
-        if (Utils.isNullOrEmpty(BRSharedPrefs.getReceiveAddress(app, getIso()))) {
-            String address = getReceiveAddress(app).stringify();
-            if (Utils.isNullOrEmpty(address)) {
-                Log.e(TAG, "refreshAddress: WARNING, retrieved address:" + address);
-                BRReportsManager.reportBug(new NullPointerException("empty address!"));
-            }
-            BRSharedPrefs.putReceiveAddress(app, address, getIso());
-        }
-    }
-
     @WorkerThread
     @Override
     public void refreshCachedBalance(final Context app) {
-        if (mWalletEthManager.wasBalanceUpdated(mWalletToken.getSymbol())) {
-            final BigDecimal balance = new BigDecimal(mWalletToken.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));
-            BRSharedPrefs.putCachedBalance(app, getIso(), balance);
-        }
+        final BigDecimal balance = new BigDecimal(mWalletToken.getBalance(BREthereumAmount.Unit.TOKEN_DECIMAL));
+        BRSharedPrefs.putCachedBalance(app, getIso(), balance);
     }
 
     @Override

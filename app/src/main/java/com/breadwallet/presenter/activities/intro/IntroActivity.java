@@ -2,21 +2,21 @@
 package com.breadwallet.presenter.activities.intro;
 
 import android.content.Intent;
+import android.graphics.LinearGradient;
+import android.graphics.Shader;
 import android.os.Bundle;
-import android.os.Handler;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
+import android.widget.TextView;
 
-import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.HomeActivity;
-import com.breadwallet.presenter.activities.SetPinActivity;
+import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.manager.BRReportsManager;
+import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
 import com.breadwallet.tools.security.SmartValidator;
@@ -26,8 +26,6 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.APIClient;
-
-import java.io.Serializable;
 
 
 /**
@@ -55,40 +53,38 @@ import java.io.Serializable;
  * THE SOFTWARE.
  */
 
-public class IntroActivity extends BRActivity implements Serializable {
+public class IntroActivity extends BRActivity {
     private static final String TAG = IntroActivity.class.getName();
-    public Button newWalletButton;
-    public Button recoverWalletButton;
-    public static boolean appVisible = false;
-    private static IntroActivity app;
-    private View splashScreen;
-
-    public static IntroActivity getApp() {
-        return app;
-    }
-
-    @Override
-    protected void onRestart() {
-        super.onRestart();  // Always call the superclass method first
-    }
+    private Button mNewWalletButton;
+    private Button mRecoverWalletButton;
+    private View mSplashScreen;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_intro);
-        newWalletButton = findViewById(R.id.button_new_wallet);
-        recoverWalletButton = findViewById(R.id.button_recover_wallet);
-        splashScreen = findViewById(R.id.splash_screen);
+        mNewWalletButton = findViewById(R.id.button_new_wallet);
+        mRecoverWalletButton = findViewById(R.id.button_recover_wallet);
+        mSplashScreen = findViewById(R.id.splash_screen);
+        TextView subtitle = findViewById(R.id.intro_subtitle);
+
         setListeners();
         updateBundles();
         ImageButton faq = findViewById(R.id.faq_button);
 
+        Shader shader = new LinearGradient(
+                90, 0, 100, 100,
+                getResources().getColor(R.color.button_gradient_start_color, null), getResources().getColor(R.color.button_gradient_end_color, null),
+                Shader.TileMode.CLAMP);
+
+        subtitle.getPaint().setShader(shader);
+
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(IntroActivity.this).getCurrentWallet(IntroActivity.this);
-                BRAnimator.showSupportFragment(IntroActivity.this, BRConstants.FAQ_START_VIEW, wm);
+                UiUtils.showSupportFragment(IntroActivity.this, BRConstants.FAQ_START_VIEW, wm);
             }
         });
 
@@ -108,13 +104,9 @@ public class IntroActivity extends BRActivity implements Serializable {
             WalletsMaster.getInstance(this).wipeWalletButKeystore(this);
         }
 
-        PostAuth.getInstance().onCanaryCheck(this, false);
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                splashScreen.setVisibility(View.GONE);
-            }
-        }, DateUtils.SECOND_IN_MILLIS);
+        PostAuth.getInstance().onCanaryCheck(IntroActivity.this, false);
+
+        mSplashScreen.setVisibility(View.GONE);
 
     }
 
@@ -132,57 +124,31 @@ public class IntroActivity extends BRActivity implements Serializable {
     }
 
     private void setListeners() {
-        newWalletButton.setOnClickListener(new View.OnClickListener() {
+        mNewWalletButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                HomeActivity bApp = HomeActivity.getApp();
-                Intent intent = new Intent(IntroActivity.this, SetPinActivity.class);
-                startActivity(intent);
+                if (!UiUtils.isClickAllowed()) {
+                    return;
+                }
+                Intent intent = new Intent(IntroActivity.this, InputPinActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                if (bApp != null) bApp.finish();
+                startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
             }
         });
 
-        recoverWalletButton.setOnClickListener(new View.OnClickListener() {
+        mRecoverWalletButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
-                HomeActivity bApp = HomeActivity.getApp();
-                if (bApp != null) bApp.finish();
+                if (!UiUtils.isClickAllowed()) {
+                    return;
+                }
                 Intent intent = new Intent(IntroActivity.this, RecoverActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                if (bApp != null) bApp.finish();
             }
         });
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-        appVisible = true;
-        app = this;
-    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        appVisible = false;
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-    }
 }

@@ -1,5 +1,6 @@
 package com.breadwallet.wallet.wallets.bitcoin;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -11,8 +12,10 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -53,7 +56,7 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
 
     private static WalletBitcoinManager mInstance;
 
-    public static synchronized  WalletBitcoinManager getInstance(Context context) {
+    public static synchronized WalletBitcoinManager getInstance(Context context) {
         if (mInstance == null) {
             byte[] rawPubKey = BRKeyStore.getMasterPublicKey(context);
             if (Utils.isNullOrEmpty(rawPubKey)) {
@@ -67,27 +70,28 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
         return mInstance;
     }
 
-    private WalletBitcoinManager(final Context app, BRCoreMasterPubKey masterPubKey,
+    private WalletBitcoinManager(final Context context, BRCoreMasterPubKey masterPubKey,
                                  BRCoreChainParams chainParams,
                                  double earliestPeerTime) {
-        super(app, masterPubKey, chainParams, earliestPeerTime);
+        super(context, masterPubKey, chainParams, earliestPeerTime);
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                if (BRSharedPrefs.getStartHeight(app, getIso()) == 0)
-                    BRSharedPrefs.putStartHeight(app, getIso(), getPeerManager().getLastBlockHeight());
+                if (BRSharedPrefs.getStartHeight(context, getIso()) == 0)
+                    BRSharedPrefs.putStartHeight(context, getIso(), getPeerManager().getLastBlockHeight());
 
-                BigDecimal fee = BRSharedPrefs.getFeeRate(app, getIso());
-                BigDecimal economyFee = BRSharedPrefs.getEconomyFeeRate(app, getIso());
+                BigDecimal fee = BRSharedPrefs.getFeeRate(context, getIso());
+                BigDecimal economyFee = BRSharedPrefs.getEconomyFeeRate(context, getIso());
                 if (fee.compareTo(BigDecimal.ZERO) == 0) {
                     fee = new BigDecimal(getWallet().getDefaultFeePerKb());
                     BREventManager.getInstance().pushEvent("wallet.didUseDefaultFeePerKB");
                 }
-                getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(app, getIso()) ? fee.longValue() : economyFee.longValue());
-                WalletsMaster.getInstance(app).updateFixedPeer(app, WalletBitcoinManager.this);
+                getWallet().setFeePerKb(BRSharedPrefs.getFavorStandardFee(context, getIso()) ? fee.longValue() : economyFee.longValue());
+                WalletsMaster.getInstance(context).updateFixedPeer(context, WalletBitcoinManager.this);
             }
         });
-        WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
+        WalletsMaster.getInstance(context).setSpendingLimitIfNotSet(context, this);
+        setSettingsConfig(new WalletSettingsConfiguration(context, getIso(), SettingsUtil.getBitcoinSettings(context), getFingerprintLimits(context)));
     }
 
     @Override
@@ -135,6 +139,7 @@ public final class WalletBitcoinManager extends BaseBitcoinWalletManager {
         return addr; //no need to undecorate
     }
 
-    protected void syncStopped(Context context) { }
+    protected void syncStopped(Context context) {
+    }
 
 }

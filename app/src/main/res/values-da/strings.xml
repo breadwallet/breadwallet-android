@@ -66,7 +66,7 @@
   <string name="Android.allowFileSystemAccess">Aktiver lagringstilladelse i din enheds indstillinger: \"Indstillinger\" &gt; \"Apps\" &gt; \"BRD\" &gt; \"Tilladelser\".</string>
   <!-- The "home" screen is the name of the top level menu for the app. -->
   <string name="Android.BCH.welcome.message">Du kan få adgang til enhver BCH i din pung via hjemskærmen.</string>
-  <string name="Android.BCH.welcome.title">BRD understøtter nu Bitcoin Cash!</string>
+  <!-- Warning about using apps that can alter the screen -->
   <string name="Android.screenAlteringMessage">BRD fungerer ikke korrekt medmindre apps der ændrer skærmbilledet (så som Twilight) er deaktiveret.</string>
   <!-- An app that alters the screen ("screen-altering app") has been detected. -->
   <string name="Android.screenAlteringTitle">Der er fundet en app der ændrer skærmbilledet</string>
@@ -214,6 +214,8 @@
   <string name="FeeSelector.economyWarning">Denne mulighed er ikke anbefalet for tidsfølsomme transaktioner.</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
   <string name="FeeSelector.estimatedDeliver">Forventet levering: %1$s</string>
+  <!-- [This transaction will complete in] 2-5 minutes -->
+  <string name="FeeSelector.ethTime">2-5 minutter</string>
   <!-- Regular fee -->
   <string name="FeeSelector.regular">Almindelig</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
@@ -222,10 +224,16 @@
   <string name="FeeSelector.title">Behandlingshastighed</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">Administration</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Køb Bitcoin</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Menu</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">Tegnebøger</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">samlet antal aktiver</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">Køb og sælg</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Tjekker beløb på privat nøgle...</string>
   <!-- Sweep private key confirmation message -->
@@ -294,10 +302,12 @@
   <string name="ManageWallet.title">Administrer pung</string>
   <!-- "Add [a] Wallet [to the home screen]" -->
   <string name="MenuButton.addWallet">Tilføj pung</string>
-  <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">Køb Bitcoin</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Lås pung</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Administrer Tegnebøger</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">Scan QR-kode</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">Sikkerhedscenter</string>
   <!-- Menu button title -->
@@ -466,6 +476,8 @@
   <string name="Search.pending">afventer</string>
   <!-- Received filter label -->
   <string name="Search.received">modtaget</string>
+  <!-- [Click here to] search -->
+  <string name="Search.search">Søg</string>
   <!-- Sent filter label -->
   <string name="Search.sent">sendt</string>
   <!-- Face ID button title -->
@@ -523,7 +535,7 @@
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">Modtageradressen er ikke en gyldig %1$s-adresse.</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">Tegnebord indeholder ikke en gyldig bitcoin adresse.</string>
+  <string name="Send.invalidAddressOnPasteboard">Tegnebord indeholder ikke en gyldig %1$s adresse.</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">Ugyldig adresse</string>
   <!-- Is rescanning error message -->
@@ -560,12 +572,6 @@
   <string name="Send.UsedAddress.secondLIne">Genbrug reducerer privatliv for både dig og modtageren og kan resultere i tab, hvis modtageren ikke har direkte kontrol over adressen.</string>
   <!-- Adress already used alert title -->
   <string name="Send.UsedAddress.title">Adresse allerede brugt</string>
-  <!-- Other settings section header -->
-  <plurals name="Settings">
-    <item quantity="one">Andre</item>
-    <item quantity="other">Andre</item>
-    <item quantity="zero">Andre</item>
-  </plurals>
   <!-- About label -->
   <string name="Settings.about">Om</string>
   <!-- Advanced settings header -->
@@ -594,6 +600,8 @@
   <string name="Settings.other">Andet</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Indstillinger</string>
+  <!-- Tap here to reset the list of currencies to the default settings. -->
+  <string name="Settings.resetCurrencies">Nulstil til standard valutaer</string>
   <!-- Leave review button label -->
   <string name="Settings.review">Giv os en anmeldelse</string>
   <!-- Share anonymous data label -->
@@ -632,10 +640,14 @@
   <string name="StartViewController.recoverButton">Gendan tegnebog</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Tilslutter</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">Synkronisering mislykkedes</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Synkroniserer</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Prøv igen</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">Synkroniseret via %1$s</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">Synkroniserer</string>
   <!-- 6 d (6 days) -->
@@ -769,13 +781,13 @@
   <!-- Moved $5.00 (as in "I moved $5 to another location") -->
   <string name="TransactionDetails.moved">Flyttede %1$s</string>
   <!-- Moved $5.00 -->
-  <string name="TransactionDetails.movedAmountDescription">Flyttet <b>%1$s</b></string>
+  <string name="TransactionDetails.movedAmountDescription"><![CDATA[Flyttet <b>%1$s</b>]]></string>
   <!-- eg. Confirmed in Block: Not Confirmed -->
   <string name="TransactionDetails.notConfirmedBlockHeightLabel">Ikke bekræftet</string>
   <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
   <string name="TransactionDetails.received">Modtaget %1$s</string>
   <!-- Received $5.00 -->
-  <string name="TransactionDetails.receivedAmountDescription">Modtaget <b>%1$s</b></string>
+  <string name="TransactionDetails.receivedAmountDescription"><![CDATA[Modtaget <b>%1$s</b>]]></string>
   <!-- received from <address> -->
   <string name="TransactionDetails.receivedFrom">modtaget fra %1$s</string>
   <!-- received via <address> -->
@@ -787,7 +799,7 @@
   <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
   <string name="TransactionDetails.sent">Sendt %1$s</string>
   <!-- Sent $5.00 -->
-  <string name="TransactionDetails.sentAmountDescription">Sendt <b>%1$s</b></string>
+  <string name="TransactionDetails.sentAmountDescription"><![CDATA[Sendt <b>%1$s</b>]]></string>
   <!-- Show Details button -->
   <string name="TransactionDetails.showDetails">Vis detaljer</string>
   <!-- The balance the user started with before the transaction completed -->

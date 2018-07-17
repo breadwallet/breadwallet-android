@@ -6,7 +6,6 @@
     android:id="@+id/activity_write_down"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
     tools:context="com.breadwallet.presenter.activities.intro.WriteDownActivity">
 
     <android.support.constraint.ConstraintLayout
@@ -16,7 +15,7 @@
         android:background="@drawable/paper_key_gradient"
         android:orientation="vertical">
 
-        <com.breadwallet.presenter.customviews.BRText
+        <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -51,7 +50,7 @@
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="@+id/title"/>
 
-        <com.breadwallet.presenter.customviews.BRText
+        <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/description"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -93,7 +92,7 @@
         android:weightSum="2.0">
 
         <com.breadwallet.presenter.customviews.BRButton
-            android:id="@+id/button_previous"
+            android:id="@+id/previous_button"
             android:layout_width="0dp"
             android:layout_height="72dp"
             android:layout_marginBottom="32dp"
@@ -101,40 +100,36 @@
             android:layout_marginStart="@dimen/bread_margin"
             android:layout_marginTop="8dp"
             android:layout_weight="1"
-            app:buttonType="2"
-            android:background="@android:color/transparent"
+            app:buttonType="7"
             android:elevation="0dp"
             android:enabled="false"
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
             android:text="@string/WritePaperPhrase.previous"
-            android:textColor="@color/extra_light_gray"
             android:textSize="18sp"
             app:isBreadButton="true"
             />
 
         <com.breadwallet.presenter.customviews.BRButton
-            android:id="@+id/send_button"
+            android:id="@+id/next_button"
             android:layout_width="0dp"
-            android:background="@android:color/transparent"
             android:layout_height="72dp"
             android:layout_marginBottom="32dp"
             android:layout_marginEnd="@dimen/bread_margin"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_weight="1"
-            app:buttonType="2"
+            app:buttonType="6"
             android:elevation="8dp"
             android:paddingBottom="8dp"
             android:paddingTop="8dp"
             android:text="@string/RecoverWallet.next"
-            android:textColor="@color/button_secondary_text"
             android:textSize="18sp"
             app:isBreadButton="true"/>
 
     </LinearLayout>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/item_index_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -142,7 +137,6 @@
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
         android:text="1 of 12"
-        android:textColor="@color/light_gray"
         app:customTFont="CircularPro-Medium.otf"/>
 
 

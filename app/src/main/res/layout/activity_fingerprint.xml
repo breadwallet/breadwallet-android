@@ -3,7 +3,6 @@
                                                         android:id="@+id/layout"
                                                         android:layout_width="match_parent"
                                                         android:layout_height="match_parent"
-                                                        android:background="@color/white"
                                                         android:filterTouchesWhenObscured="true"
                                                         android:orientation="vertical">
 
@@ -28,14 +27,13 @@
             >
 
 
-            <com.breadwallet.presenter.customviews.BRText
+            <com.breadwallet.presenter.customviews.BaseTextView
                 android:id="@+id/title"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignTop="@+id/faq_button"
                 android:layout_centerHorizontal="true"
                 android:text="@string/TouchIdSettings.title.android"
-                android:textColor="@color/white"
                 android:textSize="@dimen/header"
                 app:customTFont="CircularPro-Bold.otf"/>
 
@@ -45,9 +43,7 @@
                 android:layout_height="24dp"
                 android:layout_alignParentEnd="true"
                 android:layout_margin="@dimen/bread_margin"
-                android:background="@drawable/faq_question_white"
-                />
-
+                android:background="?attr/faq_button_secondary_color" />
 
         </RelativeLayout>
 
@@ -61,7 +57,7 @@
 
     </LinearLayout>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/textView10"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -70,10 +66,9 @@
         android:layout_margin="@dimen/bread_margin"
         android:lineSpacingMultiplier="1.2"
         android:text="@string/TouchIdSettings.label"
-        android:textColor="@color/almost_black"
         android:textSize="@dimen/sub_header"/>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/enable_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -83,7 +78,6 @@
         android:paddingEnd="8dp"
         android:paddingStart="16dp"
         android:text="@string/TouchIdSettings.switchLabel.android"
-        android:textColor="@color/almost_black"
         android:textSize="@dimen/paragraph"
         app:customTFont="CircularPro-Bold.otf"/>
 
@@ -108,17 +102,16 @@
         android:layout_marginTop="16dp"
         android:background="@color/extra_light_gray"/>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/limit_exchange"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/divider1"
         android:layout_margin="@dimen/bread_margin"
-        android:textColor="@color/almost_black"
         android:textSize="18sp"
         />
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/limit_info"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -127,7 +120,6 @@
         android:layout_marginTop="14dp"
         android:lineSpacingMultiplier="1.2"
         android:text="@string/TouchIdSettings.customizeText.android"
-        android:textColor="@color/almost_black"
         android:textSize="@dimen/sub_header"/>
 
 </com.breadwallet.presenter.customviews.BRRelativeLayout>

@@ -1,41 +1,27 @@
 package com.breadwallet.presenter.activities.settings;
 
-import android.content.Intent;
-import android.net.Uri;
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.util.Log;
-import android.view.View;
 import android.widget.ListView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.CurrencySettingsActivity;
-import com.breadwallet.presenter.activities.ManageWalletsActivity;
-import com.breadwallet.presenter.activities.UpdatePinActivity;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.BRSettingsItem;
 import com.breadwallet.tools.adapter.SettingsAdapter;
-import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.util.SettingsUtil;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
-import com.platform.entities.TokenListMetaData;
-import com.platform.tools.KVStoreManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SettingsActivity extends BaseSettingsActivity {
     private static final String TAG = SettingsActivity.class.getName();
-    private ListView listView;
-    public List<BRSettingsItem> items;
-    public static boolean appVisible = false;
-    private static SettingsActivity app;
-
-    public static SettingsActivity getApp() {
-        return app;
-    }
-
+    public static final String EXTRA_MODE = "com.breadwallet.presenter.activities.settings.EXTRA_MODE";
+    public static final String MODE_SETTINGS = "settings";
+    public static final String MODE_PREFERENCES = "preferences";
+    public static final String MODE_SECURITY = "security";
+    public static final String MODE_CURRENCY_SETTINGS = "currency_settings";
+    private boolean mIsButtonBackArrow;
 
     @Override
     public int getLayoutId() {
@@ -43,206 +29,60 @@ public class SettingsActivity extends BaseSettingsActivity {
     }
 
     @Override
-    protected void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        listView = findViewById(R.id.settings_list);
-
-
+    public int getBackButtonId() {
+        return mIsButtonBackArrow ? R.id.back_button : R.id.close_button;
     }
-
 
     @Override
     protected void onResume() {
+        setTitleAndList();
+        //call super on resume after the child's to allow for the mode to be detected
         super.onResume();
-        appVisible = true;
-        app = this;
-        if (items == null)
-            items = new ArrayList<>();
-        items.clear();
+    }
 
-        populateItems();
-        listView.addFooterView(new View(this), null, true);
-        listView.setAdapter(new SettingsAdapter(this, R.layout.settings_list_item, items));
+    private void setTitleAndList() {
+        BaseTextView title = findViewById(R.id.title);
+        ListView settingsList = findViewById(R.id.settings_list);
+        List<BRSettingsItem> settingsItems = new ArrayList<>();
+        String mode = getIntent().getStringExtra(EXTRA_MODE);
+        if (mode == null) {
+            throw new IllegalArgumentException("Need mode for the settings activity");
+        }
+        switch (mode) {
+            case MODE_SETTINGS:
+                settingsItems = SettingsUtil.getMainSettings(this);
+                title.setText(getString(R.string.Settings_title));
+                mIsButtonBackArrow = false;
+                break;
+            case MODE_PREFERENCES:
+                settingsItems = SettingsUtil.getPreferencesSettings(this);
+                title.setText(getString(R.string.Settings_preferences));
+                mIsButtonBackArrow = true;
+                break;
+            case MODE_SECURITY:
+                settingsItems = SettingsUtil.getSecuritySettings(this);
+                title.setText(getString(R.string.MenuButton_security));
+                mIsButtonBackArrow = true;
+                break;
+            case MODE_CURRENCY_SETTINGS:
+                BaseWalletManager walletManager = WalletsMaster.getInstance(this).getCurrentWallet(this);
+                settingsItems = walletManager.getSettingsConfiguration().getSettingsList();
+                String currencySettingsLabel = String.format("%s %s", walletManager.getName(), getString(R.string.Settings_title));
+                title.setText(currencySettingsLabel);
+                mIsButtonBackArrow = true;
+                break;
+        }
+
+        settingsList.setAdapter(new SettingsAdapter(this, R.layout.settings_list_item, settingsItems));
     }
 
     @Override
     public void onBackPressed() {
         super.onBackPressed();
-        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
-    }
-
-    private void populateItems() {
-
-        items.add(new BRSettingsItem(getString(R.string.Settings_wallet), "", null, true, 0));
-        items.add(new BRSettingsItem(getString(R.string.TokenList_manageTitle), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, ManageWalletsActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }, false, R.drawable.chevron_right_light));
-
-
-        items.add(new BRSettingsItem(getString(R.string.Settings_wipe), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, UnlinkActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }, false, R.drawable.chevron_right_light));
-
-
-        items.add(new BRSettingsItem(getString(R.string.Settings_preferences), "", null, true, 0));
-
-        items.add(new BRSettingsItem(getString(R.string.UpdatePin_updateTitle), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, UpdatePinActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }, false, R.drawable.chevron_right_light));
-
-        items.add(new BRSettingsItem(getString(R.string.Settings_currency), BRSharedPrefs.getPreferredFiatIso(this), new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, DisplayCurrencyActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }, false, R.drawable.chevron_right_light));
-
-
-        items.add(new BRSettingsItem(getString(R.string.Settings_currencySettings), "", null, true, 0));
-
-        final WalletBitcoinManager btcWallet = WalletBitcoinManager.getInstance(app);
-        if (btcWallet.getSettingsConfiguration().mSettingList.size() > 0)
-            items.add(new BRSettingsItem(btcWallet.getName(), "", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(SettingsActivity.this, CurrencySettingsActivity.class);
-                    BRSharedPrefs.putCurrentWalletIso(app, btcWallet.getIso()); //change the current wallet to the one they enter settings to
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                }
-            }, false, R.drawable.chevron_right_light));
-        final WalletBchManager bchWallet = WalletBchManager.getInstance(app);
-        if (bchWallet.getSettingsConfiguration().mSettingList.size() > 0)
-            items.add(new BRSettingsItem(WalletBchManager.getInstance(app).getName(), "", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(SettingsActivity.this, CurrencySettingsActivity.class);
-                    BRSharedPrefs.putCurrentWalletIso(app, bchWallet.getIso());//change the current wallet to the one they enter settings to
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                }
-            }, false, R.drawable.chevron_right_light));
-        final WalletEthManager ethWallet = WalletEthManager.getInstance(app);
-        if (ethWallet.getSettingsConfiguration().mSettingList.size() > 0)
-            items.add(new BRSettingsItem(WalletEthManager.getInstance(app).getName(), "", new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(SettingsActivity.this, CurrencySettingsActivity.class);
-                    BRSharedPrefs.putCurrentWalletIso(app, ethWallet.getIso());//change the current wallet to the one they enter settings to
-                    startActivity(intent);
-                    overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-                }
-            }, false, R.drawable.chevron_right_light));
-
-
-        items.add(new BRSettingsItem(getString(R.string.Tokens_Reset), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                resetToDefaultCurrencies();
-            }
-        }, false, 0));
-
-        items.add(new BRSettingsItem(getString(R.string.Settings_other), "", null, true, 0));
-
-        String shareAddOn = BRSharedPrefs.getShareData(SettingsActivity.this) ? getString(R.string.PushNotifications_on) : getString(R.string.PushNotifications_off);
-
-        items.add(new BRSettingsItem(getString(R.string.Settings_shareData), shareAddOn, new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, ShareDataActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }, false, R.drawable.chevron_right_light));
-
-        items.add(new BRSettingsItem(getString(R.string.Settings_review), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                try {
-                    Intent appStoreIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=com.breadwallet"));
-                    appStoreIntent.setPackage("com.android.vending");
-
-                    startActivity(appStoreIntent);
-                } catch (android.content.ActivityNotFoundException exception) {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=com.breadwallet")));
-                }
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }, false, R.drawable.arrow_leave));
-
-        items.add(new BRSettingsItem(getString(R.string.About_title), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, AboutActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }, false, R.drawable.chevron_right_light));
-
-        items.add(new BRSettingsItem(getString(R.string.Settings_advancedTitle), "", new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(SettingsActivity.this, AdvancedActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-            }
-        }, false, R.drawable.chevron_right_light));
-
-
-    }
-
-    private void resetToDefaultCurrencies() {
-
-        TokenListMetaData tokenMeta = KVStoreManager.getInstance().getTokenListMetaData(this);
-
-        tokenMeta.enabledCurrencies = new ArrayList<>();
-
-        TokenListMetaData.TokenInfo btc = new TokenListMetaData.TokenInfo("BTC", false, null);
-        TokenListMetaData.TokenInfo bch = new TokenListMetaData.TokenInfo("BCH", false, null);
-        TokenListMetaData.TokenInfo eth = new TokenListMetaData.TokenInfo("ETH", false, null);
-        TokenListMetaData.TokenInfo brd = new TokenListMetaData.TokenInfo("BRD", true, null);
-
-        tokenMeta.enabledCurrencies.add(btc);
-        tokenMeta.enabledCurrencies.add(bch);
-        tokenMeta.enabledCurrencies.add(eth);
-        tokenMeta.enabledCurrencies.add(brd);
-
-
-        // Publish the changes back to the KVStore
-        KVStoreManager.getInstance().putTokenListMetaData(this, tokenMeta);
-
-        // Notify WalletsMaster so the reset will be reflected on the Home Screen
-        WalletsMaster.getInstance(this).updateWallets(this);
-
-        // Go back to Home Screen
-        onBackPressed();
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        appVisible = false;
+        if (mIsButtonBackArrow) {
+            overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
+        } else {
+            overridePendingTransition(R.anim.empty_300, R.anim.exit_to_bottom);
+        }
     }
 }

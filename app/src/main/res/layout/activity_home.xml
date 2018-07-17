@@ -1,18 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
-    android:background="@color/extra_light_blue_background"
-    android:clipToPadding="false"
-    android:descendantFocusability="beforeDescendants"
-    android:filterTouchesWhenObscured="true"
-    android:fitsSystemWindows="true"
-    android:focusableInTouchMode="true"
-    android:orientation="vertical"
-    tools:context="com.breadwallet.presenter.activities.HomeActivity">
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:animateLayoutChanges="true"
+                android:clipToPadding="false"
+                android:descendantFocusability="beforeDescendants"
+                android:filterTouchesWhenObscured="true"
+                android:fitsSystemWindows="true"
+                android:focusableInTouchMode="true"
+                android:orientation="vertical"
+                tools:context="com.breadwallet.presenter.activities.HomeActivity">
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -30,9 +29,9 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="60dp"
-                android:background="@drawable/brd_logo_gradient" />
+                android:background="@drawable/brd_logo_gradient"/>
 
-            <com.breadwallet.presenter.customviews.BRText
+            <com.breadwallet.presenter.customviews.BaseTextView
                 android:id="@+id/total_assets_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -40,307 +39,231 @@
                 android:layout_marginEnd="@dimen/activity_vertical_margin"
                 android:layout_marginTop="40dp"
                 android:text="@string/HomeScreen.totalAssets"
-                android:textColor="@color/total_assets_label_color"
-                app:customTFont="CircularPro-Book.otf" />
+                android:textColor="@color/text_total_assets_label"
+                app:customTFont="CircularPro-Book.otf"/>
 
-            <com.breadwallet.presenter.customviews.BRText
+            <com.breadwallet.presenter.customviews.BaseTextView
                 android:id="@+id/total_assets_usd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_below="@id/total_assets_label"
                 android:layout_marginEnd="@dimen/activity_vertical_margin"
-                android:text="---"
-                android:textColor="@color/total_assets_usd_color"
+                android:textColor="@color/white"
                 android:textSize="28sp"
-                app:customTFont="CircularPro-Bold.otf" />
+                app:customTFont="CircularPro-Bold.otf"/>
         </RelativeLayout>
 
         <ScrollView
             android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_above="@+id/menu_table"
             android:layout_below="@id/home_header"
-            android:layout_height="match_parent">
+            >
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
-            <android.support.v7.widget.CardView
-                android:id="@+id/prompt_card"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="8dp"
-                android:background="@color/extra_light_blue_background"
-                android:visibility="gone"
-                app:cardCornerRadius="4dp">
-
-                <RelativeLayout
+                <android.support.v7.widget.CardView
+                    android:id="@+id/prompt_card"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:background="@color/extra_light_blue_background">
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:background="@color/extra_light_blue_background"
+                    android:visibility="gone"
+                    app:cardCornerRadius="4dp">
 
-                    <com.breadwallet.presenter.customviews.BRText
-                        android:id="@+id/prompt_title"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="16dp"
-                        android:layout_marginTop="16dp"
-                        android:text="Paper Key - Action Required!"
-                        android:textColor="@color/almost_black"
-                        android:textSize="16sp"
-                        app:customTFont="CircularPro-Bold.otf" />
-
-                    <com.breadwallet.presenter.customviews.BRText
-                        android:id="@+id/prompt_description"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_below="@id/prompt_title"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginStart="16dp"
-                        android:text="Your Paper Key must be saved in case you ever loose your phone."
-                        android:textSize="14sp" />
-
-                    <LinearLayout
-                        android:id="@+id/button_container"
+                    <RelativeLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentBottom="true"
-                        android:layout_below="@id/prompt_description"
-                        android:layout_marginBottom="16dp"
-                        android:layout_marginEnd="16dp"
-                        android:layout_marginStart="16dp"
-                        android:weightSum="2">
+                        android:layout_height="match_parent"
+                        android:background="@color/extra_light_blue_background">
 
-                        <com.breadwallet.presenter.customviews.BRButton
-                            android:id="@+id/dismiss_button"
-                            android:layout_width="10dp"
-                            android:layout_height="60dp"
+                        <com.breadwallet.presenter.customviews.BaseTextView
+                            android:id="@+id/prompt_title"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="16dp"
+                            android:layout_marginTop="16dp"
+                            android:text="@string/Prompts.PaperKey.title"
+                            android:textColor="@color/almost_black"
+                            android:textSize="16sp"
+                            app:customTFont="CircularPro-Bold.otf"/>
+
+                        <com.breadwallet.presenter.customviews.BaseTextView
+                            android:id="@+id/prompt_description"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/prompt_title"
+                            android:textColor="@color/almost_black"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginStart="16dp"
+                            android:text="@string/Prompts.PaperKey.body"
+                            android:textSize="14sp"/>
+
+                        <LinearLayout
+                            android:id="@+id/button_container"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
                             android:layout_alignParentBottom="true"
-                            android:layout_marginEnd="8dp"
-                            android:layout_weight="1"
-                            android:background="@color/light_gray"
-                            android:text="@string/Button.dismiss"
-                            android:textColor="@color/white"
-                            android:textSize="14sp"
-                            app:buttonType="4"
-                            app:customTFont="CircularPro-Bold.otf"
-                            app:hasShadow="false"
-                            app:isBreadButton="true" />
+                            android:layout_below="@id/prompt_description"
+                            android:layout_marginBottom="16dp"
+                            android:layout_marginEnd="16dp"
+                            android:layout_marginStart="16dp"
+                            android:weightSum="2">
 
-                        <com.breadwallet.presenter.customviews.BRButton
-                            android:id="@+id/continue_button"
-                            android:layout_width="10dp"
-                            android:layout_height="60dp"
-                            android:layout_alignParentBottom="true"
-                            android:layout_toEndOf="@id/dismiss_button"
-                            android:layout_weight="1"
-                            android:background="@color/dark_blue"
-                            android:text="@string/Button.continueAction"
-                            android:textColor="@color/white"
-                            android:textSize="14sp"
-                            app:buttonType="4"
-                            app:customTFont="CircularPro-Bold.otf"
-                            app:hasShadow="false"
-                            app:isBreadButton="true" />
+                            <com.breadwallet.presenter.customviews.BRButton
+                                android:id="@+id/dismiss_button"
+                                android:layout_width="10dp"
+                                android:layout_height="60dp"
+                                android:layout_marginEnd="8dp"
+                                android:layout_weight="1"
+                                android:background="@color/light_gray"
+                                android:text="@string/Button.dismiss"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                app:buttonType="4"
+                                app:customTFont="CircularPro-Bold.otf"
+                                app:hasShadow="false"
+                                app:isBreadButton="true"/>
 
-                    </LinearLayout>
+                            <com.breadwallet.presenter.customviews.BRButton
+                                android:id="@+id/continue_button"
+                                android:layout_width="10dp"
+                                android:layout_height="60dp"
+                                android:layout_weight="1"
+                                android:background="@color/dark_blue"
+                                android:text="@string/Button.continueAction"
+                                android:textColor="@color/white"
+                                android:textSize="14sp"
+                                app:buttonType="4"
+                                app:customTFont="CircularPro-Bold.otf"
+                                app:hasShadow="false"
+                                app:isBreadButton="true"/>
 
+                        </LinearLayout>
 
-                </RelativeLayout>
+                    </RelativeLayout>
 
+                </android.support.v7.widget.CardView>
 
-            </android.support.v7.widget.CardView>
-
-
-            <com.breadwallet.presenter.customviews.BRText
-                android:id="@+id/portfolio_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@id/prompt_card"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="30dp"
-                android:text="@string/HomeScreen.portfolio"
-                android:textColor="#788f9e" />
-
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/rv_wallet_list"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/portfolio_label"
-                android:nestedScrollingEnabled="false"
-                android:layout_marginEnd="@dimen/activity_horizontal_margin"
-                android:layout_marginStart="@dimen/activity_horizontal_margin">
-
-            </android.support.v7.widget.RecyclerView>
-
-            <com.breadwallet.presenter.customviews.BRText
-                android:id="@+id/admin_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_below="@id/rv_wallet_list"
-                android:layout_marginStart="@dimen/activity_horizontal_margin"
-                android:layout_marginTop="16dp"
-                android:text="@string/HomeScreen.admin"
-                android:textColor="#788f9e" />
-
-
-            <RelativeLayout
-                android:id="@+id/settings_row"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:layout_below="@id/admin_label"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:background="@drawable/admin_card_shape">
-
-
-                <com.breadwallet.presenter.customviews.BRText
-                    android:id="@+id/settings_label"
-                    android:layout_width="wrap_content"
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rv_wallet_list"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="22dp"
-                    android:layout_marginTop="16dp"
-                    android:clickable="false"
-                    android:drawablePadding="8dp"
+                    android:layout_below="@id/prompt_card"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:nestedScrollingEnabled="false">
 
-                    android:drawableStart="@drawable/ic_settings_cog"
-                    android:focusable="false"
-                    android:paddingBottom="4dp"
-                    android:text="@string/MenuButton.settings"
-                    android:textSize="16sp"
-                    app:customTFont="CircularPro-Book.otf" />
+                </android.support.v7.widget.RecyclerView>
 
-
-                <ImageButton
-                    android:id="@+id/arrow_right"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="12sp"
-                    android:background="@drawable/ic_chevron_right"
-                    android:clickable="false"
-                    android:focusable="false" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/security_row"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:layout_below="@id/settings_row"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/admin_card_shape">
-
-
-                <com.breadwallet.presenter.customviews.BRText
-                    android:id="@+id/security_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="22dp"
-                    android:layout_marginTop="16dp"
-                    android:clickable="false"
-                    android:drawablePadding="8dp"
-
-                    android:drawableStart="@drawable/ic_security"
-                    android:focusable="false"
-                    android:paddingBottom="4dp"
-                    android:text="@string/MenuButton.security"
-                    android:textSize="16sp"
-                    app:customTFont="CircularPro-Book.otf" />
-
-
-                <ImageButton
-                    android:id="@+id/security_arrow_right"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="12sp"
-                    android:background="@drawable/ic_chevron_right"
-                    android:clickable="false"
-                    android:focusable="false" />
-            </RelativeLayout>
-
-            <RelativeLayout
-                android:id="@+id/support_row"
-                android:layout_width="match_parent"
-                android:layout_height="54dp"
-                android:layout_below="@id/security_row"
-                android:layout_marginBottom="30dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/admin_card_shape">
-
-
-                <com.breadwallet.presenter.customviews.BRText
-                    android:id="@+id/support_label"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_gravity="center"
-                    android:layout_marginStart="22dp"
-                    android:layout_marginTop="16dp"
-                    android:clickable="false"
-                    android:drawablePadding="8dp"
-                    android:drawableStart="@drawable/ic_question_mark_shape"
-                    android:focusable="false"
-                    android:paddingBottom="4dp"
-                    android:text="@string/MenuButton.support"
-                    android:textSize="16sp"
-                    app:customTFont="CircularPro-Book.otf" />
-
-                <ImageButton
-                    android:id="@+id/support_arrow_right"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_centerVertical="true"
-                    android:layout_marginEnd="12sp"
-                    android:background="@drawable/ic_chevron_right"
-                    android:clickable="false"
-                    android:focusable="false" />
-            </RelativeLayout>
-
-
-            <com.breadwallet.presenter.customviews.BRNotificationBar
-                android:id="@+id/notification_bar"
-                android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:layout_alignParentTop="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginEnd="0dp"
-                android:layout_marginStart="0dp"
-                android:layout_marginTop="4dp"
-                android:background="@color/blue"
-                android:contentInsetLeft="0dp"
-                android:contentInsetStart="0dp"
-                android:visibility="visible"
-                app:breadText="@string/Alert.noInternet"
-                app:contentInsetLeft="0dp"
-                app:contentInsetStart="0dp" />
+                <com.breadwallet.presenter.customviews.BRNotificationBar
+                    android:id="@+id/notification_bar"
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginEnd="0dp"
+                    android:layout_marginStart="0dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@color/blue"
+                    android:contentInsetLeft="0dp"
+                    android:contentInsetStart="0dp"
+                    android:visibility="visible"
+                    app:breadText="@string/Alert.noInternet"
+                    app:contentInsetLeft="0dp"
+                    app:contentInsetStart="0dp"/>
 
             </RelativeLayout>
 
         </ScrollView>
 
+        <TableLayout
+            android:id="@+id/menu_table"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="?attr/primary_background"
+            android:clickable="true"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:padding="8dp"
+            android:stretchColumns="0,1,2">
+
+            <TableRow>
+
+                <LinearLayout
+                    android:id="@+id/buy_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_gravity="center"
+                        android:src="@drawable/ic_buy_cash"/>
+
+                    <com.breadwallet.presenter.customviews.BaseTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/HomeScreen.buy"
+                        android:textColor="@color/sync_toolbar_retry_text"/>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/trade_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:background="@drawable/ic_trade"/>
+
+                    <com.breadwallet.presenter.customviews.BaseTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/HomeScreen.trade"
+                        android:textColor="@color/sync_toolbar_retry_text"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/menu_layout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:orientation="vertical">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="4dp"
+                        android:background="@drawable/ic_menu"/>
+
+                    <com.breadwallet.presenter.customviews.BaseTextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/HomeScreen.menu"
+                        android:textColor="@color/sync_toolbar_retry_text"/>
+                </LinearLayout>
+
+            </TableRow>
+
+        </TableLayout>
+
     </RelativeLayout>
 
-
 </RelativeLayout>
-
-
-
-

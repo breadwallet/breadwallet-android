@@ -66,7 +66,7 @@
   <string name="Android.allowFileSystemAccess">Включите разрешения на хранение в настройках вашего устройства: «Настройки» &gt; «Приложения» &gt; «BRD» &gt; «Разрешения».</string>
   <!-- The "home" screen is the name of the top level menu for the app. -->
   <string name="Android.BCH.welcome.message">Доступ к BCH в вашем кошельке теперь возможен с главного экрана.</string>
-  <string name="Android.BCH.welcome.title">BRD теперь поддерживает Bitcoin Cash!</string>
+  <!-- Warning about using apps that can alter the screen -->
   <string name="Android.screenAlteringMessage">BRD не сможет нормально работать, если не отключить изменяющие экран приложения (такие как Twilight).</string>
   <!-- An app that alters the screen ("screen-altering app") has been detected. -->
   <string name="Android.screenAlteringTitle">Обнаружено изменяющее экран приложение</string>
@@ -214,6 +214,8 @@
   <string name="FeeSelector.economyWarning">Этот параметр не рекомендуется для транзакций, чувствительных с точки зрения времени.</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
   <string name="FeeSelector.estimatedDeliver">Ожидаемое исполнение: %1$s</string>
+  <!-- [This transaction will complete in] 2-5 minutes -->
+  <string name="FeeSelector.ethTime">2-5 минут</string>
   <!-- Regular fee -->
   <string name="FeeSelector.regular">Обычна сумма</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
@@ -222,10 +224,16 @@
   <string name="FeeSelector.title">Скорость обработки</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">Админ</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Купить Bitcoin</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Меню</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">Кошельки</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">итого активов</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">Обмен</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Проверяем баланс по персональному ключу...</string>
   <!-- Sweep private key confirmation message -->
@@ -294,10 +302,12 @@
   <string name="ManageWallet.title">Управление кошельком</string>
   <!-- "Add [a] Wallet [to the home screen]" -->
   <string name="MenuButton.addWallet">Добавить кошелек</string>
-  <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">Купить Bitcoin</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Заблокировать кошелек</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Управлять кошельками</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">Сканировать QR код</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">Центр безопасности</string>
   <!-- Menu button title -->
@@ -466,6 +476,8 @@
   <string name="Search.pending">в ожидании</string>
   <!-- Received filter label -->
   <string name="Search.received">получено</string>
+  <!-- [Click here to] search -->
+  <string name="Search.search">Поиск</string>
   <!-- Sent filter label -->
   <string name="Search.sent">отправлено</string>
   <!-- Face ID button title -->
@@ -523,7 +535,7 @@
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">Недействительный %1$s-адрес получателя.</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">В буфере обмена нет действительного биткоин-адреса.</string>
+  <string name="Send.invalidAddressOnPasteboard">В буфере обмена нет действительного %1$s-адреса.</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">Недействительный адрес</string>
   <!-- Is rescanning error message -->
@@ -560,14 +572,6 @@
   <string name="Send.UsedAddress.secondLIne">Повторное использование снижает как вашу конфиденциальность, так и конфиденциальность получателя, и может привести к потерям, если получатель не совершает непосредственный контроль за этим адресом.</string>
   <!-- Adress already used alert title -->
   <string name="Send.UsedAddress.title">Адрес уже используется</string>
-  <!-- Other settings section header -->
-  <plurals name="Settings">
-    <item quantity="few">Другое</item>
-    <item quantity="many">Другое</item>
-    <item quantity="one">Другое</item>
-    <item quantity="other">Другое</item>
-    <item quantity="zero">Другое</item>
-  </plurals>
   <!-- About label -->
   <string name="Settings.about">О нас</string>
   <!-- Advanced settings header -->
@@ -596,6 +600,8 @@
   <string name="Settings.other">Другие</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Параметры</string>
+  <!-- Tap here to reset the list of currencies to the default settings. -->
+  <string name="Settings.resetCurrencies">Восстановить валюту по умолчанию</string>
   <!-- Leave review button label -->
   <string name="Settings.review">Оставьте свой отзыв</string>
   <!-- Share anonymous data label -->
@@ -634,10 +640,14 @@
   <string name="StartViewController.recoverButton">Восстановить кошелек</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Соединение</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">Ошибка синхронизации</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Синхронизация</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Повторить</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">Синхронизированно до %1$s</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">Синхронизация</string>
   <!-- 6 d (6 days) -->
@@ -771,13 +781,13 @@
   <!-- Moved $5.00 (as in "I moved $5 to another location") -->
   <string name="TransactionDetails.moved">Перемещено %1$s</string>
   <!-- Moved $5.00 -->
-  <string name="TransactionDetails.movedAmountDescription">Перемещено <b>%1$s</b></string>
+  <string name="TransactionDetails.movedAmountDescription"><![CDATA[Перемещено <b>%1$s</b>]]></string>
   <!-- eg. Confirmed in Block: Not Confirmed -->
   <string name="TransactionDetails.notConfirmedBlockHeightLabel">Не подтверждено</string>
   <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
   <string name="TransactionDetails.received">Получено %1$s</string>
   <!-- Received $5.00 -->
-  <string name="TransactionDetails.receivedAmountDescription">Получено <b>%1$s</b></string>
+  <string name="TransactionDetails.receivedAmountDescription"><![CDATA[Получено <b>%1$s</b>]]></string>
   <!-- received from <address> -->
   <string name="TransactionDetails.receivedFrom">получено от %1$s</string>
   <!-- received via <address> -->
@@ -789,7 +799,7 @@
   <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
   <string name="TransactionDetails.sent">Отправить %1$s</string>
   <!-- Sent $5.00 -->
-  <string name="TransactionDetails.sentAmountDescription">Отправлено <b>%1$s</b></string>
+  <string name="TransactionDetails.sentAmountDescription"><![CDATA[Отправлено <b>%1$s</b>]]></string>
   <!-- Show Details button -->
   <string name="TransactionDetails.showDetails">Показать подробности</string>
   <!-- The balance the user started with before the transaction completed -->

@@ -117,6 +117,18 @@ public final class BRConstants {
      */
 
     public static final String EXTRA_URL = "com.breadwallet.EXTRA_URL";
+    public static final String DRAWABLE = "drawable";
+    public static final String CURRENCY_PARAMETER_STRING_FORMAT = "%s?currency=%s";
+
+    /**
+     * Social media links and privacy policy URLS
+     *
+     */
+
+    public static final String URL_PRIVACY_POLICY = "https://brd.com/privacy";
+    public static final String URL_TWITTER = "https://twitter.com/breadapp";
+    public static final String URL_REDDIT = "https://reddit.com/r/breadwallet/";
+    public static final String URL_BLOG  = "https://brd.com/blog/";
 
 
     private BRConstants() {

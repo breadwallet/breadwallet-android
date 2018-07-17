@@ -7,7 +7,6 @@ import android.support.constraint.ConstraintSet;
 import android.support.transition.TransitionManager;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.util.SparseArray;
 import android.view.KeyEvent;
 import android.view.View;
@@ -19,11 +18,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRReportsManager;
@@ -105,15 +103,15 @@ public class PaperKeyProveActivity extends BRActivity {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
 
                 if (isWordCorrect(true) && isWordCorrect(false)) {
                     Utils.hideKeyboard(PaperKeyProveActivity.this);
                     BRSharedPrefs.putPhraseWroteDown(PaperKeyProveActivity.this, true);
-                    BRAnimator.showBreadSignal(PaperKeyProveActivity.this, getString(R.string.Alerts_paperKeySet), getString(R.string.Alerts_paperKeySetSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
+                    UiUtils.showBreadSignal(PaperKeyProveActivity.this, getString(R.string.Alerts_paperKeySet), getString(R.string.Alerts_paperKeySetSubheader), R.drawable.ic_check_mark_white, new BROnSignalCompletion() {
                         @Override
                         public void onComplete() {
-                            BRAnimator.startBreadActivity(PaperKeyProveActivity.this, false);
+                            UiUtils.startBreadActivity(PaperKeyProveActivity.this, false);
                             overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
                             finishAffinity();
                         }

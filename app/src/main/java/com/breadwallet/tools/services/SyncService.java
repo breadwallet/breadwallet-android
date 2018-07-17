@@ -86,15 +86,17 @@ public class SyncService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
-        switch (intent.getAction()) {
-            case ACTION_START_SYNC_PROGRESS_POLLING:
-                String walletIso = intent.getStringExtra(EXTRA_WALLET_ISO);
-                if (walletIso != null) {
-                    startSyncPolling(SyncService.this.getApplicationContext(), walletIso);
-                }
-                break;
-            default:
-                Log.i(TAG, "Intent not recognized.");
+        if (intent != null) {
+            switch (intent.getAction()) {
+                case ACTION_START_SYNC_PROGRESS_POLLING:
+                    String walletIso = intent.getStringExtra(EXTRA_WALLET_ISO);
+                    if (walletIso != null) {
+                        startSyncPolling(SyncService.this.getApplicationContext(), walletIso);
+                    }
+                    break;
+                default:
+                    Log.i(TAG, "Intent not recognized.");
+            }
         }
     }
 

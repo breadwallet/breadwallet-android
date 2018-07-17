@@ -2,6 +2,8 @@
 <resources>
 
     <item name="white" type="color">#ffffff</item>
+    <item name="white_transparent_25" type="color">#40ffffff</item>
+    <color name="white_60_percent_opaque">#99FFFFFF</color>
     <item name="blue" type="color">#FF33B5E5</item>
     <item name="red" type="color">#FFFF4444</item>
     <item name="black" type="color">#ff000000</item>
@@ -42,13 +44,13 @@
     <item name="import_gradient_start" type="color">#76b0fd</item>
     <item name="import_gradient_end" type="color">#4C98FD</item>
 
-    <item name="write_phrase_gradient_start" type="color">#D9FD5394</item>
-    <item name="write_phrase_gradient_end" type="color">#FD5394</item>
+    <item name="recover_wallet_header_gradient_start" type="color">#EF8BB1</item>
+    <item name="recover_wallet_header_gradient_end" type="color">#FF5193</item>
 
     <item name="pin_pad_text" type="color">#A3A8AE</item>
     <item name="extra_light_blue_background" type="color">#F5F8FA</item>
 
-    <item name="button_primary_normal" type="color">#4C98FD</item>
+    <item name="button_primary_normal" type="color">#29ABE2</item>
     <item name="button_secondary" type="color">#F5F8FA</item>
     <item name="button_secondary_text" type="color">#232426</item>
 
@@ -85,14 +87,53 @@
     <color name="sync_toolbar">#e5e5e5</color>
     <color name="sync_toolbar_text">#828282</color>
     <color name="sync_toolbar_retry_text">#29abe2</color>
+    <color name="wallet_footer_button_color_dark">#33ffffff</color>
 
     // Dialog button colors
-    <color name="dialog_button_positive">#4b77f3</color>
+    <color name="dialog_button_positive">#29abe2</color>
     <color name="dialog_button_negative">#b3c0c8</color>
 
     // Add Wallets
     <color name="add_wallets_header_color">#f9f9f9</color>
     <color name="add_wallets_searchbar_color">#ececec</color>
     <color name="add_wallets_border_color">#e5e5e5</color>
+
+    // Dark Mode colors
+    <color name="primary_background">#251935</color>
+    <color name="secondary_background">#302442</color>
+    <color name="tertiary_background">#2E2540</color>
+    <color name="button_gradient_start_color">#FF5193</color>
+    <color name="button_gradient_end_color">#F29500</color>
+    <color name="button_add_wallet_background">#444b77f3</color>
+    <color name="button_cancel_add_wallet_background">#44E7AA41</color>
+    <color name="button_add_wallet_text">#4b77f3</color>
+    <color name="button_cancel_add_wallet_text">#E7AA41</color>
+    <color name="text_total_assets_label">#bfffffff</color>
+    <color name="pin_pad_delete">#FF548D</color>
+    <color name="pin_dot_filled_dark">#FF5193</color>
+    <color name="pin_dot_filled_light">#F29500</color>
+    <color name="create_new_wallet_button_dark">#29ABE2</color>
+    <color name="create_new_wallet_button_light">#4C98FD</color>
+    <color name="recover_wallet_button_dark">#33FFFFFF</color>
+    <color name="recover_wallet_button_light">#FFFFFF</color>
+    <color name="spend_limit_list_divider_color_light">#65696e</color>
+    <color name="spend_limit_list_divider_color_dark">#b3c0c8</color>
+    <color name="unlink_header_start">#97B5ED</color>
+    <color name="unlink_header_end">#779DE6</color>
+
+
+    <array name="pin_digit_button_colors">
+        <item>#FE5A80</item>
+        <item>#FC6469</item>
+        <item>#FB6B5C</item>
+        <item>#FA714E</item>
+        <item>#FD5E76</item>
+        <item>#FC6568</item>
+        <item>#FB6B5B</item>
+        <item>#FE5A80</item>
+        <item>#FD5F75</item>
+        <item>#FC6667</item>
+        <item>#FF548D</item>
+    </array>
 
 </resources>

@@ -66,7 +66,7 @@
   <string name="Android.allowFileSystemAccess">단말의 \"설정\" &gt; \"앱\" &gt; \"BRD\" &gt; \"권한\"에서 저장소 접근을 허용해 주세요.</string>
   <!-- The "home" screen is the name of the top level menu for the app. -->
   <string name="Android.BCH.welcome.message">홈 화면을 통해 월렛에 있는 모든 BCH에 액세스할 수 있습니다.</string>
-  <string name="Android.BCH.welcome.title">이제 BRD가 Bitcoin Cash를 지원합니다!</string>
+  <!-- Warning about using apps that can alter the screen -->
   <string name="Android.screenAlteringMessage">BRD는 (Twilight과 같은) 화면 변경 앱을 비활성화하지 않으면 제대로 동작하지 않습니다.</string>
   <!-- An app that alters the screen ("screen-altering app") has been detected. -->
   <string name="Android.screenAlteringTitle">화면 변경 앱이 탐지됨</string>
@@ -214,6 +214,8 @@
   <string name="FeeSelector.economyWarning">이 옵션은 시간에 민감한 거래에는 추천하지 않습니다.</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
   <string name="FeeSelector.estimatedDeliver">예상 배송 시간: %1$s</string>
+  <!-- [This transaction will complete in] 2-5 minutes -->
+  <string name="FeeSelector.ethTime">2-5분</string>
   <!-- Regular fee -->
   <string name="FeeSelector.regular">일반</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
@@ -222,10 +224,16 @@
   <string name="FeeSelector.title">처리 속도</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">관리</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">비트코인 구매</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">메뉴</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">지갑</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">총 자산</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">교환</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">개인 열쇠 잔고 확인 중...</string>
   <!-- Sweep private key confirmation message -->
@@ -294,10 +302,12 @@
   <string name="ManageWallet.title">지갑 관리</string>
   <!-- "Add [a] Wallet [to the home screen]" -->
   <string name="MenuButton.addWallet">지갑 추가</string>
-  <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">비트코인 구매</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">지갑 잠그기</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">지갑 관리</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">QR코드 스캔</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">보안 센터</string>
   <!-- Menu button title -->
@@ -466,6 +476,8 @@
   <string name="Search.pending">대기 중</string>
   <!-- Received filter label -->
   <string name="Search.received">수신</string>
+  <!-- [Click here to] search -->
+  <string name="Search.search">검색</string>
   <!-- Sent filter label -->
   <string name="Search.sent">송금</string>
   <!-- Face ID button title -->
@@ -523,7 +535,7 @@
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">해당 수취인 주소는 %1$s에서 유효하지 않은 주소입니다.</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">클립보드가 유효한 비트코인 주소를 가지고 있지 않습니다</string>
+  <string name="Send.invalidAddressOnPasteboard">클립보드가 유효한 %1$s 주소를 가지고 있지 않습니다</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">유효하지 않은 주소입니다</string>
   <!-- Is rescanning error message -->
@@ -560,11 +572,6 @@
   <string name="Send.UsedAddress.secondLIne">주소를 재사용할 경우 귀하와 받는 사람 모두의 개인 정보 보호가 약해지며, 받는 사람이 직접 주소를 관리하지 않을 경우 분실을 초래할 수 있습니다.</string>
   <!-- Adress already used alert title -->
   <string name="Send.UsedAddress.title">이미 사용중인 주소입니다</string>
-  <!-- Other settings section header -->
-  <plurals name="Settings">
-    <item quantity="other">기타</item>
-    <item quantity="zero">기타</item>
-  </plurals>
   <!-- About label -->
   <string name="Settings.about">관련 사항</string>
   <!-- Advanced settings header -->
@@ -593,6 +600,8 @@
   <string name="Settings.other">기타</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">환경 설정</string>
+  <!-- Tap here to reset the list of currencies to the default settings. -->
+  <string name="Settings.resetCurrencies">기본 통화로 초기화</string>
   <!-- Leave review button label -->
   <string name="Settings.review">후기를 남겨주세요</string>
   <!-- Share anonymous data label -->
@@ -631,10 +640,14 @@
   <string name="StartViewController.recoverButton">지갑 복구하기</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">연결 중</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">동기화 실패</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">동기화 중</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">다시 시도</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">%1$s 전 동기화 됨</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">동기화 중</string>
   <!-- 6 d (6 days) -->
@@ -768,13 +781,13 @@
   <!-- Moved $5.00 (as in "I moved $5 to another location") -->
   <string name="TransactionDetails.moved">%1$s 이동함</string>
   <!-- Moved $5.00 -->
-  <string name="TransactionDetails.movedAmountDescription"><b>%1$s</b> 이동됨</string>
+  <string name="TransactionDetails.movedAmountDescription"><![CDATA[<b>%1$s</b> 이동됨]]></string>
   <!-- eg. Confirmed in Block: Not Confirmed -->
   <string name="TransactionDetails.notConfirmedBlockHeightLabel">확인되지 않음</string>
   <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
   <string name="TransactionDetails.received">%1$s 받음</string>
   <!-- Received $5.00 -->
-  <string name="TransactionDetails.receivedAmountDescription"><b>%1$s</b> 수신됨</string>
+  <string name="TransactionDetails.receivedAmountDescription"><![CDATA[<b>%1$s</b> 수신됨]]></string>
   <!-- received from <address> -->
   <string name="TransactionDetails.receivedFrom">%1$s(으)로부터 받음</string>
   <!-- received via <address> -->
@@ -786,7 +799,7 @@
   <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
   <string name="TransactionDetails.sent">%1$s 보냄</string>
   <!-- Sent $5.00 -->
-  <string name="TransactionDetails.sentAmountDescription"><b>%1$s</b> 전송됨</string>
+  <string name="TransactionDetails.sentAmountDescription"><![CDATA[<b>%1$s</b> 전송됨]]></string>
   <!-- Show Details button -->
   <string name="TransactionDetails.showDetails">세부 정보 보이기</string>
   <!-- The balance the user started with before the transaction completed -->

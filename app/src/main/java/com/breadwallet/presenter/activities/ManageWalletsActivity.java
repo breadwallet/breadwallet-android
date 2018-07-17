@@ -1,19 +1,14 @@
 package com.breadwallet.presenter.activities;
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
-import android.view.View;
-import android.widget.ImageButton;
 
 import com.breadwallet.R;
 import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.presenter.activities.settings.BaseSettingsActivity;
-import com.breadwallet.presenter.activities.settings.SettingsActivity;
-import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.adapter.ManageTokenListAdapter;
 import com.breadwallet.tools.animation.SimpleItemTouchHelperCallback;
@@ -41,11 +36,15 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
     }
 
     @Override
+    public int getBackButtonId() {
+        return R.id.back_button;
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         mTokenList = findViewById(R.id.token_list);
-
 
     }
 
@@ -140,6 +139,7 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
     @Override
     protected void onPause() {
         super.onPause();
+        overridePendingTransition(R.anim.enter_from_left, R.anim.exit_to_right);
         WalletsMaster.getInstance(this).updateWallets(this);
     }
 

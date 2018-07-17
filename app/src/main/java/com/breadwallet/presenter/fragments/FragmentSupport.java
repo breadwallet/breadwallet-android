@@ -1,17 +1,13 @@
 package com.breadwallet.presenter.fragments;
 
 import android.annotation.SuppressLint;
-import android.app.Fragment;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v7.widget.CardView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.webkit.ConsoleMessage;
 import android.webkit.JsResult;
 import android.webkit.WebChromeClient;
@@ -19,10 +15,10 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.widget.LinearLayout;
 
 import com.breadwallet.R;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.presenter.fragments.utils.ModalDialogFragment;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.SlideDetector;
 import com.breadwallet.tools.util.Utils;
 import com.platform.HTTPServer;
@@ -55,39 +51,38 @@ import static com.platform.HTTPServer.URL_SUPPORT;
  * THE SOFTWARE.
  */
 
-public class FragmentSupport extends Fragment {
+public class FragmentSupport extends ModalDialogFragment {
     private static final String TAG = FragmentSupport.class.getName();
-    public LinearLayout backgroundLayout;
-    public CardView signalLayout;
-    WebView webView;
-    String theUrl;
-    public static boolean appVisible = false;
-    private String onCloseUrl;
+    private WebView mWebView;
+    private String mUrl;
+    private String mOnCloseUrl;
+    private ViewGroup mBackgroundLayout;
+    private ViewGroup mSignalLayout;
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
 
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View rootView = inflater.inflate(R.layout.fragment_support, container, false);
-        backgroundLayout = rootView.findViewById(R.id.background_layout);
-        signalLayout = rootView.findViewById(R.id.signal_layout);
+        ViewGroup rootView = assignRootView((ViewGroup) inflater.inflate(R.layout.fragment_support, container, false));
+        mBackgroundLayout = assignBackgroundLayout((ViewGroup) rootView.findViewById(R.id.background_layout));
+        mSignalLayout = assignSignalLayout((ViewGroup) rootView.findViewById(R.id.signal_layout));
 
-        signalLayout.setOnTouchListener(new SlideDetector(getContext(), signalLayout));
+        mSignalLayout.setOnTouchListener(new SlideDetector(getContext(), mSignalLayout));
 
-        signalLayout.setLayoutTransition(BRAnimator.getDefaultTransition());
+        mSignalLayout.setLayoutTransition(UiUtils.getDefaultTransition());
 
-        webView = rootView.findViewById(R.id.web_view);
-        webView.setWebChromeClient(new BRWebChromeClient());
-        webView.setWebViewClient(new WebViewClient() {
+        mWebView = rootView.findViewById(R.id.web_view);
+        mWebView.setWebChromeClient(new BRWebChromeClient());
+        mWebView.setWebViewClient(new WebViewClient() {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Log.d(TAG, "shouldOverrideUrlLoading: " + request.getUrl() + " | " + request.getMethod());
-                if (onCloseUrl != null && request.getUrl().toString().equalsIgnoreCase(onCloseUrl)) {
-                    getActivity().getFragmentManager().popBackStack();
-                    onCloseUrl = null;
+                if (mOnCloseUrl != null && request.getUrl().toString().equalsIgnoreCase(mOnCloseUrl)) {
+                    getActivity().getSupportFragmentManager().popBackStack();
+                    mOnCloseUrl = null;
                 } else if (request.getUrl().toString().contains("_close")) {
-                    getActivity().getFragmentManager().popBackStack();
+                    getActivity().getSupportFragmentManager().popBackStack();
                 } else {
                     view.loadUrl(request.getUrl().toString());
                 }
@@ -102,14 +97,21 @@ public class FragmentSupport extends Fragment {
             }
         });
 
-        theUrl = URL_SUPPORT;
-        HTTPServer.mode = HTTPServer.ServerMode.SUPPORT;
+        mUrl = URL_SUPPORT;
+        HTTPServer.setOnCloseListener(new HTTPServer.OnCloseListener() {
+            @Override
+            public void onClose() {
+                closeWithAnimation();
+                HTTPServer.setOnCloseListener(null);
+            }
+        });
         String articleId = getArguments() == null ? null : getArguments().getString("articleId");
         String walletIso = getArguments() == null ? null : getArguments().getString("walletIso");
-        if (Utils.isNullOrEmpty(theUrl) || Utils.isNullOrEmpty(walletIso))
+        if (Utils.isNullOrEmpty(mUrl) || Utils.isNullOrEmpty(walletIso)) {
             throw new IllegalArgumentException("No articleId or walletIso extra! " + walletIso);
+        }
 
-        WebSettings webSettings = webView.getSettings();
+        WebSettings webSettings = mWebView.getSettings();
 
         if (0 != (getActivity().getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
             WebView.setWebContentsDebuggingEnabled(true);
@@ -117,51 +119,14 @@ public class FragmentSupport extends Fragment {
         webSettings.setDomStorageEnabled(true);
         webSettings.setJavaScriptEnabled(true);
 
-        if (!Utils.isNullOrEmpty(articleId))
-            theUrl = theUrl + "/article?slug=" + articleId + "&currency=" + walletIso.toLowerCase();
+        if (!Utils.isNullOrEmpty(articleId)) {
+            mUrl = mUrl + "/article?slug=" + articleId + "&currency=" + walletIso.toLowerCase();
+        }
 
-        Log.d(TAG, "onCreate: theUrl: " + theUrl + ", articleId: " + articleId);
-        webView.loadUrl(theUrl);
+        Log.d(TAG, "onCreate: mUrl: " + mUrl + ", articleId: " + articleId);
+        mWebView.loadUrl(mUrl);
 
         return rootView;
-    }
-
-    @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
-        super.onViewCreated(view, savedInstanceState);
-
-        final ViewTreeObserver observer = signalLayout.getViewTreeObserver();
-        observer.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
-            @Override
-            public void onGlobalLayout() {
-                observer.removeOnGlobalLayoutListener(this);
-                BRAnimator.animateBackgroundDim(backgroundLayout, false);
-                BRAnimator.animateSignalSlide(signalLayout, false, new BRAnimator.OnSlideAnimationEnd() {
-                    @Override
-                    public void onAnimationEnd() {
-                    }
-                });
-            }
-        });
-
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        BRAnimator.animateBackgroundDim(backgroundLayout, true);
-        BRAnimator.animateSignalSlide(signalLayout, true, new BRAnimator.OnSlideAnimationEnd() {
-            @Override
-            public void onAnimationEnd() {
-                if (getActivity() != null) {
-                    try {
-                        getActivity().getFragmentManager().popBackStack();
-                    } catch (Exception ignored) {
-
-                    }
-                }
-            }
-        });
     }
 
     private class BRWebChromeClient extends WebChromeClient {
@@ -179,15 +144,10 @@ public class FragmentSupport extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    @Override
     public void onPause() {
         super.onPause();
         Utils.hideKeyboard(getActivity());
-        BRAnimator.mSupportIsShowing = false;
+        UiUtils.setIsSupportFragmentShown(false);
     }
 
 }

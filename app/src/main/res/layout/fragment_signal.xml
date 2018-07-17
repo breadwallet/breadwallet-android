@@ -15,7 +15,7 @@
         android:background="@drawable/signal_layout"
         android:orientation="vertical">
 
-        <com.breadwallet.presenter.customviews.BRText
+        <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -48,7 +48,7 @@
             android:src="@drawable/ic_check_mark_white"
             />
 
-        <com.breadwallet.presenter.customviews.BRText
+        <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

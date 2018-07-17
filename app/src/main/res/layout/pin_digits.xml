@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:id="@+id/pinLayout"
+              android:layout_width="wrap_content"
+              android:layout_height="wrap_content"
+              android:layout_below="@+id/message"
+              android:layout_centerHorizontal="true"
+              android:layout_marginBottom="16dp"
+              android:layout_marginEnd="16dp"
+              android:layout_marginStart="16dp"
+              android:orientation="horizontal">
+
+    <View
+        android:id="@+id/digit1"
+        android:layout_width="@dimen/pin_dot_size"
+        android:layout_height="@dimen/pin_dot_size"
+        android:background="@drawable/ic_pin_dot_empty"
+        />
+
+    <View
+        android:id="@+id/digit2"
+        android:layout_width="@dimen/pin_dot_size"
+        android:layout_height="@dimen/pin_dot_size"
+        android:background="@drawable/ic_pin_dot_empty"/>
+
+    <View
+        android:id="@+id/digit3"
+        android:layout_width="@dimen/pin_dot_size"
+        android:layout_height="@dimen/pin_dot_size"
+        android:background="@drawable/ic_pin_dot_empty"/>
+
+    <View
+        android:id="@+id/digit4"
+        android:layout_width="@dimen/pin_dot_size"
+        android:layout_height="@dimen/pin_dot_size"
+        android:background="@drawable/ic_pin_dot_empty"/>
+
+    <View
+        android:id="@+id/digit5"
+        android:layout_width="@dimen/pin_dot_size"
+        android:layout_height="@dimen/pin_dot_size"
+        android:background="@drawable/ic_pin_dot_empty"/>
+
+    <View
+        android:id="@+id/digit6"
+        android:layout_width="@dimen/pin_dot_size"
+        android:layout_height="@dimen/pin_dot_size"
+        android:background="@drawable/ic_pin_dot_empty"/>
+</LinearLayout>

@@ -6,27 +6,25 @@
     android:id="@+id/activity_intro_set_pit"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/extra_light_blue_background"
-    tools:context="com.breadwallet.presenter.activities.SetPinActivity">
+    tools:context="com.breadwallet.presenter.activities.settings.DisplayCurrencyActivity">
 
 
     <ImageButton
         android:id="@+id/back_button"
         app:layout_constraintTop_toTopOf="@id/title"
-        android:background="@drawable/ic_arrow_left"
+        android:background="?attr/toolbar_back_arrow"
         app:layout_constraintStart_toStartOf="@id/buttons_layout"
         android:layout_width="24dp"
         android:layout_height="24dp" />
 
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
         android:text="@string/Settings.currency"
-        android:textColor="@color/almost_black"
         android:textSize="@dimen/header"
         app:customTFont="CircularPro-Bold.otf"
         app:layout_constraintEnd_toEndOf="parent"
@@ -34,14 +32,13 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintTop_toTopOf="parent"/>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginTop="24dp"
         android:text="@string/DefaultCurrency.rateLabel"
-        android:textColor="@color/light_gray"
         android:textSize="@dimen/sub_header"
         app:customTFont="CircularPro-Bold.otf"
         app:layout_constraintHorizontal_bias="0.0"
@@ -49,14 +46,13 @@
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/title"/>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/BRText2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:layout_marginTop="16dp"
         android:text="@string/DefaultCurrency.bitcoinLabel"
-        android:textColor="@color/light_gray"
         android:textSize="@dimen/sub_header"
         app:customTFont="CircularPro-Bold.otf"
         app:layout_constraintHorizontal_bias="0.0"
@@ -85,7 +81,6 @@
             android:layout_weight="1.0"
             android:background="@drawable/b_half_left_blue"
             android:text="Bits (&#384;)"
-            android:textColor="@color/white"
             android:textSize="14sp"
             android:padding="0dp"
             app:customBFont="CircularPro-Medium.otf"
@@ -100,20 +95,18 @@
             android:background="@drawable/b_half_right_blue_stroke"
             android:text="BTC (Ƀ)"
             android:padding="0dp"
-            android:textColor="@color/dark_blue"
             android:textSize="14sp"
             app:isBreadButton="false"
             app:customBFont="CircularPro-Medium.otf"
             />
     </LinearLayout>
 
-    <com.breadwallet.presenter.customviews.BRText
+    <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/exchange_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="32dp"
         android:text="--- = 1 btc"
-        android:textColor="@color/almost_black"
         android:textSize="@dimen/sub_header"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintLeft_toLeftOf="@+id/description"
@@ -142,7 +135,7 @@
         android:layout_marginBottom="0dp"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="0dp"
-        android:background="@drawable/faq_question_black"
+        android:background="?attr/faq_button_primary_color"
         app:layout_constraintBottom_toBottomOf="@+id/title"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="@+id/title"/>

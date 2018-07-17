@@ -7,8 +7,8 @@ import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.entities.CurrencyEntity;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.Utils;
@@ -91,7 +91,7 @@ public class BRApiManager {
 
     @WorkerThread
     private void updateRates(Context context, BaseWalletManager walletManager) {
-        if (ActivityUTILS.isMainThread()) {
+        if (UiUtils.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
         Set<CurrencyEntity> set = new LinkedHashSet<>();

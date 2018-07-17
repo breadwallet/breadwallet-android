@@ -6,4 +6,6 @@
     <integer name="standard_screen_width_neg">-1080</integer>
     <integer name="standard_screen_height">1920</integer>
     <integer name="standard_screen_height_neg">-1920</integer>
+    <!-- Pin Keyboard button padding -->
+    <integer name ="pin_keyboard_bottom_padding">8</integer>
 </resources>

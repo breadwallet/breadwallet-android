@@ -7,10 +7,8 @@ import android.widget.Button;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.InputWordsActivity;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.activities.util.BRActivity;
-import com.breadwallet.tools.animation.BRAnimator;
-import com.breadwallet.tools.animation.SpringAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 
 public class RecoverActivity extends BRActivity {
     private Button nextButton;
@@ -31,7 +29,7 @@ public class RecoverActivity extends BRActivity {
         nextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 Intent intent = new Intent(RecoverActivity.this, InputWordsActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);

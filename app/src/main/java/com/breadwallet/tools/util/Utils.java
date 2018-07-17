@@ -64,7 +64,7 @@ import static android.content.Context.FINGERPRINT_SERVICE;
 public class Utils {
     public static final String TAG = Utils.class.getName();
 
-    public static boolean isUsingCustomInputMethod(Activity context) {
+    public static boolean isUsingCustomInputMethod(Context context) {
         if (context == null) return false;
         InputMethodManager imm = (InputMethodManager) context.getSystemService(
                 Context.INPUT_METHOD_SERVICE);

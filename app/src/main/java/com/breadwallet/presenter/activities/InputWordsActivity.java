@@ -3,6 +3,7 @@ package com.breadwallet.presenter.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.inputmethod.EditorInfo;
@@ -16,7 +17,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.SpringAnimator;
 import com.breadwallet.tools.manager.BRReportsManager;
@@ -50,24 +51,29 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
     //will be true if this screen was called from the restore screen
     private boolean mIsRestoring = false;
     private boolean mIsResettingPin = false;
+    private TypedValue mTypedValue = new TypedValue();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_input_words);
 
-        if (Utils.isEmulatorOrDebug(this)) {
-//            mDebugPhrase = "こせき　ぎじにってい　けっこん　せつぞく　うんどう　ふこう　にっすう　こせい　きさま　なまみ　たきび　はかい";//japanese
-//            mDebugPhrase = "video tiger report bid suspect taxi mail argue naive layer metal surface";//english
-//            mDebugPhrase = "vocation triage capsule marchand onduler tibia illicite entier fureur minorer amateur lubie";//french
-//            mDebugPhrase = "zorro turismo mezcla nicho morir chico blanco pájaro alba esencia roer repetir";//spanish
-//            mDebugPhrase = "怨 贪 旁 扎 吹 音 决 廷 十 助 畜 怒";//chinese
-//            mDebugPhrase = "aim lawn sniff tenant coffee smoke meat hockey glow try also angle";
-//            mDebugPhrase = "oído largo pensar grúa vampiro nación tomar agitar mano azote tarea miedo";
-
-        }
+//        if (Utils.isEmulatorOrDebug(this)) {
+//            //japanese
+//            mDebugPhrase = "こせき　ぎじにってい　けっこん　せつぞく　うんどう　ふこう　にっすう　こせい　きさま　なまみ　たきび　はかい";
+//            //english
+//            mDebugPhrase = "video tiger report bid suspect taxi mail argue naive layer metal surface";
+//            //french
+//            mDebugPhrase = "vocation triage capsule marchand onduler tibia illicite entier fureur minorer amateur lubie";
+//            //spanish
+//            mDebugPhrase = "zorro turismo mezcla nicho morir chico blanco pájaro alba esencia roer repetir";
+//            //chinese
+//            mDebugPhrase = "怨 贪 旁 扎 吹 音 决 廷 十 助 畜 怒";
+//        }
 
         mNextButton = findViewById(R.id.send_button);
+
+        getTheme().resolveAttribute(R.attr.input_words_text_color, mTypedValue, true);
 
         if (Utils.isUsingCustomInputMethod(this)) {
             BRDialog.showCustomDialog(this, getString(R.string.JailbreakWarnings_title), getString(R.string.Alert_customKeyboard_android),
@@ -91,9 +97,9 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(InputWordsActivity.this).getCurrentWallet(InputWordsActivity.this);
-                BRAnimator.showSupportFragment(InputWordsActivity.this, BRConstants.FAQ_PAPER_KEY, wm);
+                UiUtils.showSupportFragment(InputWordsActivity.this, BRConstants.FAQ_PAPER_KEY, wm);
             }
         });
 
@@ -146,7 +152,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 final Activity app = InputWordsActivity.this;
                 String phraseToCheck = getPhrase();
                 if (Utils.isEmulatorOrDebug(app) && !Utils.isNullOrEmpty(mDebugPhrase)) {
@@ -177,7 +183,11 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                                                 m.wipeWalletButKeystore(app);
                                                 m.wipeKeyStore(app);
                                                 Intent intent = new Intent(app, IntroActivity.class);
-                                                finalizeIntent(intent);
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                                                startActivity(intent);
+                                                if (!InputWordsActivity.this.isDestroyed())
+                                                    finish();
                                             }
                                         }, new BRDialogView.BROnClickListener() {
                                             @Override
@@ -187,10 +197,11 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                                         }, null, 0);
 
                             } else {
-                                AuthManager.getInstance().setPinCode("", InputWordsActivity.this);
-                                Intent intent = new Intent(app, SetPinActivity.class);
-                                intent.putExtra("noPin", true);
-                                finalizeIntent(intent);
+                                AuthManager.getInstance().setPinCode(InputWordsActivity.this, "");
+                                Intent intent = new Intent(app, InputPinActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
+                                startActivityForResult(intent, InputPinActivity.SET_PIN_REQUEST_CODE);
                             }
 
 
@@ -231,13 +242,6 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
 
     }
 
-    private void finalizeIntent(Intent intent) {
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        overridePendingTransition(R.anim.enter_from_right, R.anim.exit_to_left);
-        startActivity(intent);
-        if (!InputWordsActivity.this.isDestroyed()) finish();
-    }
-
     @Override
     public void onBackPressed() {
         super.onBackPressed();
@@ -248,7 +252,6 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
         boolean success = true;
 
         StringBuilder paperKeyStringBuilder = new StringBuilder();
-
         for (EditText editText : mEditWords) {
             String cleanedWords = clean(editText.getText().toString().toLowerCase());
             if (Utils.isNullOrEmpty(cleanedWords)) {
@@ -259,17 +262,13 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                 paperKeyStringBuilder.append(' ');
             }
         }
-        //remove the last space
-        paperKeyStringBuilder.setLength(paperKeyStringBuilder.length() - 1);
-
-
-        String paperKey = paperKeyStringBuilder.toString();
 
         if (!success) {
             return null;
         }
 
-        //ensure the paper key is 12 words
+        // Ensure the paper key is 12 words.
+        String paperKey = paperKeyStringBuilder.toString().trim();
         int numberOfWords = paperKey.split(" ").length;
         if (numberOfWords != NUMBER_OF_WORDS) {
             BRReportsManager.reportBug(new IllegalArgumentException("Paper key contains " + numberOfWords + " words"));
@@ -290,25 +289,35 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-    }
-
-    @Override
     public void onFocusChange(View v, boolean hasFocus) {
         if (!hasFocus) {
             validateWord((EditText) v);
         } else {
-            ((EditText) v).setTextColor(getColor(R.color.light_gray));
+            ((EditText) v).setTextColor(getColor(mTypedValue.resourceId));
         }
     }
 
     private void validateWord(EditText view) {
         String word = view.getText().toString();
         boolean valid = SmartValidator.isWordValid(this, word);
-        view.setTextColor(getColor(valid ? R.color.light_gray : R.color.red_text));
+        view.setTextColor(getColor(valid ? mTypedValue.resourceId : R.color.red_text));
         if (!valid) {
             SpringAnimator.failShakeAnimation(this, view);
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == InputPinActivity.SET_PIN_REQUEST_CODE && resultCode == RESULT_OK) {
+
+            boolean isPinAccepted = data.getBooleanExtra(InputPinActivity.EXTRA_PIN_ACCEPTED, false);
+            if (isPinAccepted) {
+                UiUtils.startBreadActivity(this, false);
+            }
+        }
+
     }
 
 }
