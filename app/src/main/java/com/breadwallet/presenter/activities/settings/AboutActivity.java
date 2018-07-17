@@ -11,11 +11,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
-import com.breadwallet.presenter.customviews.BRText;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.presenter.customviews.BaseTextView;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.util.BRConstants;
 
 import java.util.Locale;
 
@@ -23,8 +23,8 @@ public class AboutActivity extends BaseSettingsActivity {
     private static final String TAG = AboutActivity.class.getName();
 
     private static AboutActivity app;
-    private BRText mCopy;
-    private BRText mRewardsId;
+    private BaseTextView mCopy;
+    private BaseTextView mRewardsId;
     private static final int DEFAULT_VERSION_CODE = 0;
     private static final String DEFAULT_VERSION_NAME = "0";
 
@@ -33,12 +33,13 @@ public class AboutActivity extends BaseSettingsActivity {
     }
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
+    public int getLayoutId() {
+        return R.layout.activity_about;
     }
 
     @Override
-    public int getLayoutId() {
-        return R.layout.activity_about;
+    public int getBackButtonId() {
+        return R.id.back_button;
     }
 
     @Override
@@ -69,7 +70,7 @@ public class AboutActivity extends BaseSettingsActivity {
         redditShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://reddit.com/r/breadwallet/"));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_REDDIT));
                 startActivity(browserIntent);
                 app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
             }
@@ -78,7 +79,7 @@ public class AboutActivity extends BaseSettingsActivity {
         twitterShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/breadapp"));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_TWITTER));
                 startActivity(browserIntent);
                 app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
             }
@@ -86,7 +87,7 @@ public class AboutActivity extends BaseSettingsActivity {
         blogShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://breadapp.com/blog/"));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_BLOG));
                 startActivity(browserIntent);
                 app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
             }
@@ -94,7 +95,7 @@ public class AboutActivity extends BaseSettingsActivity {
         policyText.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://breadapp.com/privacy-policy"));
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(BRConstants.URL_PRIVACY_POLICY));
                 startActivity(browserIntent);
                 app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
             }
@@ -125,8 +126,8 @@ public class AboutActivity extends BaseSettingsActivity {
 
     @Override
     public void onBackPressed() {
-        if (ActivityUTILS.isLast(this)) {
-            BRAnimator.startBreadActivity(this, false);
+        if (UiUtils.isLast(this)) {
+            UiUtils.startBreadActivity(this, false);
         } else {
             super.onBackPressed();
         }

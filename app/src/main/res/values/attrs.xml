@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <declare-styleable name="BRText">
+    <declare-styleable name="BaseTextView">
         <attr name="customTFont" format="string"/>
     </declare-styleable>
     <declare-styleable name="BREdit">
@@ -18,6 +18,9 @@
         <attr name="buttonType" format="integer"/>
         <attr name="customBFont" format="string"/>
         <attr name="hasShadow" format="boolean"/>
+    </declare-styleable>
+    <declare-styleable name="PinLayout">
+        <attr name="pinDigitsResId" format="reference"/>
     </declare-styleable>
 
     <declare-styleable name="BRKeyboard">

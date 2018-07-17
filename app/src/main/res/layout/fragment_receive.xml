@@ -26,7 +26,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content">
 
-                <com.breadwallet.presenter.customviews.BRText
+                <com.breadwallet.presenter.customviews.BaseTextView
                     android:id="@+id/title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -87,7 +87,7 @@
                 android:visibility="gone"
                 >
 
-                <com.breadwallet.presenter.customviews.BRText
+                <com.breadwallet.presenter.customviews.BaseTextView
                     android:id="@+id/iso_text"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -198,7 +198,7 @@
                 android:src="@drawable/ic_check_mark_grey"
                 />
 
-            <com.breadwallet.presenter.customviews.BRText
+            <com.breadwallet.presenter.customviews.BaseTextView
                 android:id="@+id/address_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -223,7 +223,7 @@
                 app:backgroundColor="@color/dark_blue"
                 app:withStroke="false">
 
-                <com.breadwallet.presenter.customviews.BRText
+                <com.breadwallet.presenter.customviews.BaseTextView
                     android:id="@+id/copied_view"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

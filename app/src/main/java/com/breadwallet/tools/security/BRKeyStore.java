@@ -10,6 +10,7 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyPermanentlyInvalidatedException;
 import android.security.keystore.KeyProperties;
 import android.security.keystore.UserNotAuthenticatedException;
+import android.support.v4.app.FragmentActivity;
 import android.text.SpannableString;
 import android.text.Spanned;
 import android.text.TextPaint;
@@ -21,7 +22,7 @@ import android.view.View;
 import com.breadwallet.R;
 import com.breadwallet.tools.exceptions.BRKeystoreErrorException;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -263,7 +264,7 @@ public class BRKeyStore {
 
     }
 
-    private  static byte[] _getData(final Context context, String alias, String alias_file, String alias_iv, int request_code)
+    private static byte[] _getData(final Context context, String alias, String alias_file, String alias_iv, int request_code)
             throws UserNotAuthenticatedException {
         validateGet(alias, alias_file, alias_iv);//validate entries
         KeyStore keyStore = null;
@@ -436,12 +437,12 @@ public class BRKeyStore {
         }, 0);
     }
 
-    public  static String getFilePath(String fileName, Context context) {
+    public static String getFilePath(String fileName, Context context) {
         String filesDirectory = context.getFilesDir().getAbsolutePath();
         return filesDirectory + File.separator + fileName;
     }
 
-    public  static boolean putPhrase(byte[] strToStore, Context context, int requestCode) throws UserNotAuthenticatedException {
+    public static boolean putPhrase(byte[] strToStore, Context context, int requestCode) throws UserNotAuthenticatedException {
         if (PostAuth.mAuthLoopBugHappened) {
             showLoopBugMessage(context);
             throw new UserNotAuthenticatedException();
@@ -450,7 +451,7 @@ public class BRKeyStore {
         return !(strToStore == null || strToStore.length == 0) && _setData(context, strToStore, obj.alias, obj.datafileName, obj.ivFileName, requestCode, true);
     }
 
-    public  static byte[] getPhrase(final Context context, int requestCode) throws UserNotAuthenticatedException {
+    public static byte[] getPhrase(final Context context, int requestCode) throws UserNotAuthenticatedException {
         if (PostAuth.mAuthLoopBugHappened) {
             showLoopBugMessage(context);
             throw new UserNotAuthenticatedException();
@@ -459,7 +460,7 @@ public class BRKeyStore {
         return _getData(context, obj.alias, obj.datafileName, obj.ivFileName, requestCode);
     }
 
-    public  static boolean putCanary(String strToStore, Context context, int requestCode) throws UserNotAuthenticatedException {
+    public static boolean putCanary(String strToStore, Context context, int requestCode) throws UserNotAuthenticatedException {
         if (PostAuth.mAuthLoopBugHappened) {
             showLoopBugMessage(context);
             throw new UserNotAuthenticatedException();
@@ -475,7 +476,7 @@ public class BRKeyStore {
         return strBytes.length != 0 && _setData(context, strBytes, obj.alias, obj.datafileName, obj.ivFileName, requestCode, true);
     }
 
-    public  static String getCanary(final Context context, int requestCode) throws UserNotAuthenticatedException {
+    public static String getCanary(final Context context, int requestCode) throws UserNotAuthenticatedException {
         if (PostAuth.mAuthLoopBugHappened) {
             showLoopBugMessage(context);
             throw new UserNotAuthenticatedException();
@@ -492,7 +493,7 @@ public class BRKeyStore {
         return result;
     }
 
-    public  static boolean putMasterPublicKey(byte[] masterPubKey, Context context) {
+    public static boolean putMasterPublicKey(byte[] masterPubKey, Context context) {
         AliasObject obj = aliasObjectMap.get(PUB_KEY_ALIAS);
         try {
             return masterPubKey != null && masterPubKey.length != 0 && _setData(context, masterPubKey, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
@@ -502,7 +503,7 @@ public class BRKeyStore {
         return false;
     }
 
-    public  static byte[] getMasterPublicKey(final Context context) {
+    public static byte[] getMasterPublicKey(final Context context) {
         AliasObject obj = aliasObjectMap.get(PUB_KEY_ALIAS);
         try {
             return _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
@@ -512,7 +513,7 @@ public class BRKeyStore {
         return null;
     }
 
-    public  static boolean putEthPublicKey(byte[] masterPubKey, Context context) {
+    public static boolean putEthPublicKey(byte[] masterPubKey, Context context) {
         AliasObject obj = aliasObjectMap.get(ETH_PUBKEY_ALIAS);
         try {
             return masterPubKey != null && masterPubKey.length != 0 && _setData(context, masterPubKey, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
@@ -522,7 +523,7 @@ public class BRKeyStore {
         return false;
     }
 
-    public  static byte[] getEthPublicKey(final Context context) {
+    public static byte[] getEthPublicKey(final Context context) {
         AliasObject obj = aliasObjectMap.get(ETH_PUBKEY_ALIAS);
         try {
             return _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
@@ -532,7 +533,7 @@ public class BRKeyStore {
         return null;
     }
 
-    public  static boolean putAuthKey(byte[] authKey, Context context) {
+    public static boolean putAuthKey(byte[] authKey, Context context) {
         AliasObject obj = aliasObjectMap.get(AUTH_KEY_ALIAS);
         try {
             return authKey != null && authKey.length != 0 && _setData(context, authKey, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
@@ -542,7 +543,7 @@ public class BRKeyStore {
         return false;
     }
 
-    public  static byte[] getAuthKey(final Context context) {
+    public static byte[] getAuthKey(final Context context) {
         AliasObject obj = aliasObjectMap.get(AUTH_KEY_ALIAS);
         try {
             return _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
@@ -552,7 +553,7 @@ public class BRKeyStore {
         return null;
     }
 
-    public  static boolean putToken(byte[] token, Context context) {
+    public static boolean putToken(byte[] token, Context context) {
         AliasObject obj = aliasObjectMap.get(TOKEN_ALIAS);
         try {
             return token != null && token.length != 0 && _setData(context, token, obj.alias, obj.datafileName, obj.ivFileName, 0, false);
@@ -562,7 +563,7 @@ public class BRKeyStore {
         return false;
     }
 
-    public  static byte[] getToken(final Context context) {
+    public static byte[] getToken(final Context context) {
         AliasObject obj = aliasObjectMap.get(TOKEN_ALIAS);
         try {
             return _getData(context, obj.alias, obj.datafileName, obj.ivFileName, 0);
@@ -572,7 +573,7 @@ public class BRKeyStore {
         return null;
     }
 
-    public  static boolean putWalletCreationTime(int creationTime, Context context) {
+    public static boolean putWalletCreationTime(int creationTime, Context context) {
         AliasObject obj = aliasObjectMap.get(WALLET_CREATION_TIME_ALIAS);
         byte[] bytesToStore = TypesConverter.intToBytes(creationTime);
         try {
@@ -583,7 +584,7 @@ public class BRKeyStore {
         return false;
     }
 
-    public  static int getWalletCreationTime(final Context context) {
+    public static int getWalletCreationTime(final Context context) {
         AliasObject obj = aliasObjectMap.get(WALLET_CREATION_TIME_ALIAS);
         byte[] result = null;
         try {
@@ -605,7 +606,14 @@ public class BRKeyStore {
         }
     }
 
-    public  static boolean putPinCode(String pinCode, Context context) {
+    /**
+     * DO NOT USE DIRECTLY, use AuthManager.setPinCode instead.
+     *
+     * @param pinCode the new pin code
+     * @param context the context
+     * @return true if succeeded
+     */
+    public static boolean putPinCode(String pinCode, Context context) {
         AliasObject obj = aliasObjectMap.get(PASS_CODE_ALIAS);
         byte[] bytesToStore = pinCode.getBytes();
         try {
@@ -616,7 +624,7 @@ public class BRKeyStore {
         return false;
     }
 
-    public  static String getPinCode(final Context context) {
+    public static String getPinCode(final Context context) {
         AliasObject obj = aliasObjectMap.get(PASS_CODE_ALIAS);
         byte[] result = null;
         try {
@@ -644,7 +652,7 @@ public class BRKeyStore {
         return pinCode;
     }
 
-    public  static boolean putFailCount(int failCount, Context context) {
+    public static boolean putFailCount(int failCount, Context context) {
         AliasObject obj = aliasObjectMap.get(FAIL_COUNT_ALIAS);
         if (failCount >= 3) {
             long time = BRSharedPrefs.getSecureTime(context);
@@ -659,7 +667,7 @@ public class BRKeyStore {
         return false;
     }
 
-    public  static int getFailCount(final Context context) {
+    public static int getFailCount(final Context context) {
         long start = System.currentTimeMillis();
         AliasObject obj = aliasObjectMap.get(FAIL_COUNT_ALIAS);
         byte[] result = null;
@@ -671,7 +679,7 @@ public class BRKeyStore {
         return result != null && result.length > 0 ? TypesConverter.bytesToInt(result) : 0;
     }
 
-    public  static boolean putSpendLimit(Context context, BigDecimal spendLimit, String iso) {
+    public static boolean putSpendLimit(Context context, BigDecimal spendLimit, String iso) {
         AliasObject obj = aliasObjectMap.get(SPEND_LIMIT_ALIAS);
         byte[] bytesToStore = spendLimit.toPlainString().getBytes();
         try {
@@ -682,7 +690,7 @@ public class BRKeyStore {
         return false;
     }
 
-    public  static BigDecimal getSpendLimit(final Context context, String iso) {
+    public static BigDecimal getSpendLimit(final Context context, String iso) {
         AliasObject obj = aliasObjectMap.get(SPEND_LIMIT_ALIAS);
         byte[] result = null;
         try {
@@ -694,10 +702,10 @@ public class BRKeyStore {
         WalletSettingsConfiguration configs = wm.getSettingsConfiguration();
         return (result != null && result.length > 0) ?
                 new BigDecimal(new String(result)) :
-                (configs.mFingerprintLimits.size() != 0 ? configs.mFingerprintLimits.get(1) : BigDecimal.ZERO);
+                (configs.getFingerprintLimits().size() != 0 ? configs.getFingerprintLimits().get(1) : BigDecimal.ZERO);
     }
 
-    public  static boolean putTotalLimit(Context context, BigDecimal totalLimit, String iso) {
+    public static boolean putTotalLimit(Context context, BigDecimal totalLimit, String iso) {
         AliasObject obj = aliasObjectMap.get(TOTAL_LIMIT_ALIAS);
         byte[] bytesToStore = totalLimit.toPlainString().getBytes();
         try {
@@ -708,7 +716,7 @@ public class BRKeyStore {
         return false;
     }
 
-    public  static BigDecimal getTotalLimit(final Context context, String iso) {
+    public static BigDecimal getTotalLimit(final Context context, String iso) {
         AliasObject obj = aliasObjectMap.get(TOTAL_LIMIT_ALIAS);
         byte[] result = new byte[0];
         try {
@@ -719,7 +727,7 @@ public class BRKeyStore {
         return (result != null && result.length > 0) ? new BigDecimal(new String(result)) : BigDecimal.ZERO;
     }
 
-    public  static boolean putFailTimeStamp(long spendLimit, Context context) {
+    public static boolean putFailTimeStamp(long spendLimit, Context context) {
         AliasObject obj = aliasObjectMap.get(FAIL_TIMESTAMP_ALIAS);
         byte[] bytesToStore = TypesConverter.long2byteArray(spendLimit);
         try {
@@ -730,7 +738,7 @@ public class BRKeyStore {
         return false;
     }
 
-    public  static long getFailTimeStamp(final Context context) {
+    public static long getFailTimeStamp(final Context context) {
         AliasObject obj = aliasObjectMap.get(FAIL_TIMESTAMP_ALIAS);
         byte[] result = null;
         try {
@@ -742,7 +750,7 @@ public class BRKeyStore {
         return result != null && result.length > 0 ? TypesConverter.byteArray2long(result) : 0;
     }
 
-    public  static boolean putLastPinUsedTime(long time, Context context) {
+    public static boolean putLastPinUsedTime(long time, Context context) {
         AliasObject obj = aliasObjectMap.get(PASS_TIME_ALIAS);
         byte[] bytesToStore = TypesConverter.long2byteArray(time);
         try {
@@ -753,7 +761,7 @@ public class BRKeyStore {
         return false;
     }
 
-    public  static long getLastPinUsedTime(final Context context) {
+    public static long getLastPinUsedTime(final Context context) {
         AliasObject obj = aliasObjectMap.get(PASS_TIME_ALIAS);
         byte[] result = null;
         try {
@@ -1058,7 +1066,7 @@ public class BRKeyStore {
                     public void run() {
                         BRDialog.hideDialog();
                         BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                        BRAnimator.showSupportFragment((Activity) app, BRConstants.FAQ_LOOP_BUG, wm);
+                        UiUtils.showSupportFragment((FragmentActivity) app, BRConstants.FAQ_LOOP_BUG, wm);
                     }
                 });
 

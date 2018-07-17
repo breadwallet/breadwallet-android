@@ -3,17 +3,17 @@ package com.breadwallet.wallet.util;
 import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRClipboardManager;
 import com.breadwallet.tools.manager.BREventManager;
-import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.tools.threads.ImportPrivKeyTask;
@@ -24,7 +24,6 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
-import com.breadwallet.wallet.wallets.ethereum.BaseEthereumWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 import java.io.UnsupportedEncodingException;
@@ -219,13 +218,13 @@ public class CryptoUriParser {
 
             switch (host) {
                 case "scanqr":
-                    BRAnimator.openScanner((Activity) app, BRConstants.SCANNER_REQUEST);
+                    UiUtils.openScanner((Activity) app, BRConstants.SCANNER_REQUEST);
                     break;
                 case "addressList":
                     //todo implement
                     break;
                 case "address":
-                    BRClipboardManager.putClipboard(app, wm.decorateAddress(BRSharedPrefs.getReceiveAddress(app, wm.getIso())));
+                    BRClipboardManager.putClipboard(app, wm.decorateAddress(wm.getAddress()));
 
                     break;
             }
@@ -250,15 +249,7 @@ public class CryptoUriParser {
         return true;
     }
 
-    private static boolean tryCryptoUrl(final CryptoRequest requestObject, Context context) {
-        final Activity app;
-        if (context instanceof Activity) {
-            app = (Activity) context;
-        } else {
-            Log.e(TAG, "tryCryptoUrl: " + "app isn't activity: " + context.getClass().getSimpleName());
-            BRReportsManager.reportBug(new NullPointerException("app isn't activity: " + context.getClass().getSimpleName()));
-            return false;
-        }
+    private static boolean tryCryptoUrl(final CryptoRequest requestObject, final Context app) {
         if (requestObject == null || requestObject.address == null || requestObject.address.isEmpty())
             return false;
         final BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
@@ -276,14 +267,14 @@ public class CryptoUriParser {
         }
 
         if (requestObject.amount == null || requestObject.amount.compareTo(BigDecimal.ZERO) == 0) {
-            app.runOnUiThread(new Runnable() {
+            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    BRAnimator.showSendFragment(app, requestObject);
+                    UiUtils.showSendFragment((FragmentActivity) app, requestObject);
                 }
             });
         } else {
-            BRAnimator.killAllFragments(app);
+            UiUtils.killAllFragments((Activity) app);
             if (Utils.isNullOrEmpty(requestObject.address) || !wallet.isAddressValid(requestObject.address)) {
                 BRDialog.showSimpleDialog(app, app.getString(R.string.Send_invalidAddressTitle), "");
                 return true;

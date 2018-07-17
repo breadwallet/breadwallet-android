@@ -9,7 +9,7 @@ import android.widget.ImageButton;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -23,10 +23,6 @@ public class SyncBlockchainActivity extends BRActivity {
     private Button mRescanButton;
 
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-    }
-
-    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sync_blockchain);
@@ -36,11 +32,11 @@ public class SyncBlockchainActivity extends BRActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) {
+                if (!UiUtils.isClickAllowed()) {
                     return;
                 }
                 BaseWalletManager wm = WalletsMaster.getInstance(SyncBlockchainActivity.this).getCurrentWallet(SyncBlockchainActivity.this);
-                BRAnimator.showSupportFragment(SyncBlockchainActivity.this, BRConstants.FAQ_RESCAN, wm);
+                UiUtils.showSupportFragment(SyncBlockchainActivity.this, BRConstants.FAQ_RESCAN, wm);
             }
         });
 
@@ -48,7 +44,7 @@ public class SyncBlockchainActivity extends BRActivity {
         mRescanButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) {
+                if (!UiUtils.isClickAllowed()) {
                     return;
                 }
                 BRDialog.showCustomDialog(SyncBlockchainActivity.this, getString(R.string.ReScan_alertTitle),
@@ -79,7 +75,7 @@ public class SyncBlockchainActivity extends BRActivity {
                 BRSharedPrefs.putStartHeight(thisApp, BRSharedPrefs.getCurrentWalletIso(thisApp), 0);
                 BRSharedPrefs.putAllowSpend(thisApp, BRSharedPrefs.getCurrentWalletIso(thisApp), false);
                 WalletsMaster.getInstance(thisApp).getCurrentWallet(thisApp).rescan(thisApp);
-                BRAnimator.startBreadActivity(thisApp, false);
+                UiUtils.startBreadActivity(thisApp, false);
 
             }
         });

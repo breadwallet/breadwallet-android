@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_pin"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black_trans"
+    tools:context="com.breadwallet.presenter.activities.LoginActivity">
+
+    <RelativeLayout
+        android:id="@+id/pin_dialog"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/pin_round_corner"
+        app:layout_constraintBottom_toTopOf="@+id/brkeyboard"
+        app:layout_constraintHorizontal_bias="0.497"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="24dp"
+            android:text="@string/VerifyPin.title"
+            android:textColor="@color/almost_black"
+            android:textSize="22sp"
+            app:customTFont="CircularPro-Bold.otf"/>
+
+        <com.breadwallet.presenter.customviews.BaseTextView
+            android:id="@+id/message"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title"
+            android:layout_margin="16dp"
+            android:lineSpacingMultiplier="1.3"
+            android:text="@string/VerifyPin.authorize"
+            android:textColor="@color/almost_black"
+            android:textSize="@dimen/paragraph"/>
+
+        <com.breadwallet.presenter.customviews.PinLayout
+            android:id="@+id/pin_digits"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@+id/message"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:pinDigitsResId="@drawable/ic_pin_dot_empty">
+
+        </com.breadwallet.presenter.customviews.PinLayout>
+
+    </RelativeLayout>
+
+    <com.breadwallet.presenter.customviews.BRKeyboard
+        android:id="@+id/brkeyboard"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:background="@color/extra_light_blue_background"
+        android:paddingTop="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:showAlphabet="true"/>
+
+</android.support.constraint.ConstraintLayout>

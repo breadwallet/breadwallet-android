@@ -66,7 +66,7 @@
   <string name="Android.allowFileSystemAccess">Bitte aktivieren Sie die Speicherberechtigung in Ihren Geräteeinstellungen: „Einstellungen\" &gt; „Apps\" &gt; „BRD\" &gt; „Berechtigungen\".</string>
   <!-- The "home" screen is the name of the top level menu for the app. -->
   <string name="Android.BCH.welcome.message">Sie können über den Startbildschirm auf alle BCH in Ihrer Wallet zugreifen.</string>
-  <string name="Android.BCH.welcome.title">BRD unterstützt ab sofort Bitcoin Cash!</string>
+  <!-- Warning about using apps that can alter the screen -->
   <string name="Android.screenAlteringMessage">BRD funktioniert nicht ordnungsgemäß, solange bildschirmverändernde Apps (z.B. Twilight) aktiv sind.</string>
   <!-- An app that alters the screen ("screen-altering app") has been detected. -->
   <string name="Android.screenAlteringTitle">Bildschirmverändernde App erkannt</string>
@@ -191,7 +191,7 @@
   <!-- Fingerprint was not recognized by the scanner, please try scanning again -->
   <string name="ErrorMessages.touchIdFailed.android">Fingerabdruck nicht erkannt. Bitte erneut versuchen.</string>
   <!-- You can customize your Face ID Spending Limit from the [menu] -->
-  <string name="FaceIDSettings.customizeText">Sie können Ihr Ausgabenlimit für Face ID im %1$s] anpassen.</string>
+  <string name="FaceIDSettings.customizeText">Sie können Ihr Ausgabenlimit für Face ID im %1$s anpassen.</string>
   <!-- Face Id screen label -->
   <string name="FaceIDSettings.label">Mit Ihrem Gesicht können Sie Ihre BRD freischalten und Geld bis zu einem festgelegten Limit senden.</string>
   <!-- Title of the screen for setting the Face ID Spending Limit -->
@@ -214,6 +214,8 @@
   <string name="FeeSelector.economyWarning">Diese Option wird nicht für zeitkritische Transaktionen empfohlen.</string>
   <!-- E.g. Estimated delivery: 10-60 minutes -->
   <string name="FeeSelector.estimatedDeliver">Voraussichtliche Lieferzeit: %1$s</string>
+  <!-- [This transaction will complete in] 2-5 minutes -->
+  <string name="FeeSelector.ethTime">2–5 Minuten</string>
   <!-- Regular fee -->
   <string name="FeeSelector.regular">Regulär</string>
   <!-- E.g. [This transaction is predicted to complete in] 10-60 minutes -->
@@ -222,10 +224,16 @@
   <string name="FeeSelector.title">Verarbeitungsgeschwindigkeit</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">Administrator</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Bitcoin kaufen</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Menü</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">Geldbörsen</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">Gesamtvermögen</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">Handeln</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Das Privatschlüsselguthaben wird überprüft …</string>
   <!-- Sweep private key confirmation message -->
@@ -294,10 +302,12 @@
   <string name="ManageWallet.title">Wallet verwalten</string>
   <!-- "Add [a] Wallet [to the home screen]" -->
   <string name="MenuButton.addWallet">Wallet hinzufügen</string>
-  <!-- Buy bitcoin title -->
-  <string name="MenuButton.buy">Bitcoin kaufen</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Wallet sperren</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Wallets verwalten</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">QR-Code scannen</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">Sicherheits-Center</string>
   <!-- Menu button title -->
@@ -466,6 +476,8 @@
   <string name="Search.pending">offen</string>
   <!-- Received filter label -->
   <string name="Search.received">erhalten</string>
+  <!-- [Click here to] search -->
+  <string name="Search.search">Suche</string>
   <!-- Sent filter label -->
   <string name="Search.sent">gesendet</string>
   <!-- Face ID button title -->
@@ -523,7 +535,7 @@
   <!-- e.g. The destination is not a valid (bitcoin) address. -->
   <string name="Send.invalidAddressMessage">Die Zieladresse ist keine gültige %1$s-Adresse.</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">Pasteboard enthält keine gültige Bitcoin-Adresse.</string>
+  <string name="Send.invalidAddressOnPasteboard">Pasteboard enthält keine gültige %1$s-Adresse.</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">Ungültige Adresse</string>
   <!-- Is rescanning error message -->
@@ -560,12 +572,6 @@
   <string name="Send.UsedAddress.secondLIne">Durch eine mehrfache Verwendung können sowohl du als auch der Empfänger leichter identifiziert werden und falls der Empfänger die Adresse nicht direkt kontrolliert, kann das Verluste bedeuten.</string>
   <!-- Adress already used alert title -->
   <string name="Send.UsedAddress.title">Adresse bereits in Verwendung</string>
-  <!-- Other settings section header -->
-  <plurals name="Settings">
-    <item quantity="one">Weitere</item>
-    <item quantity="other">Weitere</item>
-    <item quantity="zero">Weitere</item>
-  </plurals>
   <!-- About label -->
   <string name="Settings.about">Info</string>
   <!-- Advanced settings header -->
@@ -594,6 +600,8 @@
   <string name="Settings.other">Andere</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Einstellungen</string>
+  <!-- Tap here to reset the list of currencies to the default settings. -->
+  <string name="Settings.resetCurrencies">Auf Standardwährungen zurücksetzen</string>
   <!-- Leave review button label -->
   <string name="Settings.review">Schreibe eine Rezension für unsere App</string>
   <!-- Share anonymous data label -->
@@ -632,10 +640,14 @@
   <string name="StartViewController.recoverButton">Geldbörse wiederherstellen</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Verbindet</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">Synchronisation fehlgeschlagen</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Synchronisation läuft</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Erneut versuchen</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">Synchronsiert durch %1$s</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">Synchronisiert</string>
   <!-- 6 d (6 days) -->
@@ -769,13 +781,13 @@
   <!-- Moved $5.00 (as in "I moved $5 to another location") -->
   <string name="TransactionDetails.moved">%1$s bewegt</string>
   <!-- Moved $5.00 -->
-  <string name="TransactionDetails.movedAmountDescription">Verschoben <b>%1$s</b></string>
+  <string name="TransactionDetails.movedAmountDescription"><![CDATA[Verschoben <b>%1$s</b>]]></string>
   <!-- eg. Confirmed in Block: Not Confirmed -->
   <string name="TransactionDetails.notConfirmedBlockHeightLabel">Nicht bestätigt</string>
   <!-- "Received [$5] at [which of my addresses]" => This is the "Received [$5]" part. -->
   <string name="TransactionDetails.received">%1$s erhalten</string>
   <!-- Received $5.00 -->
-  <string name="TransactionDetails.receivedAmountDescription">Erhalten <b>%1$s</b></string>
+  <string name="TransactionDetails.receivedAmountDescription"><![CDATA[Erhalten <b>%1$s</b>]]></string>
   <!-- received from <address> -->
   <string name="TransactionDetails.receivedFrom">erhalten von %1$s</string>
   <!-- received via <address> -->
@@ -787,7 +799,7 @@
   <!-- "Sent [$5] to [address]" => This is the "Sent [$5]" part. -->
   <string name="TransactionDetails.sent">%1$s gesendet</string>
   <!-- Sent $5.00 -->
-  <string name="TransactionDetails.sentAmountDescription">Gesendet <b>%1$s</b></string>
+  <string name="TransactionDetails.sentAmountDescription"><![CDATA[Gesendet <b>%1$s</b>]]></string>
   <!-- Show Details button -->
   <string name="TransactionDetails.showDetails">Details anzeigen</string>
   <!-- The balance the user started with before the transaction completed -->

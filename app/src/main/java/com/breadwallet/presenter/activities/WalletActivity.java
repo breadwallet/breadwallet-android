@@ -8,7 +8,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
@@ -25,20 +24,21 @@ import android.widget.LinearLayout;
 import android.widget.ViewFlipper;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRSearchBar;
-import com.breadwallet.presenter.customviews.BRText;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.presenter.customviews.BaseTextView;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
+import com.breadwallet.tools.manager.DeepLinkingManager;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.TxManager;
 import com.breadwallet.tools.services.SyncService;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.SyncTestLogger;
 import com.breadwallet.tools.util.Utils;
@@ -47,7 +47,6 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.abstracts.OnBalanceChangedListener;
 import com.breadwallet.wallet.abstracts.OnTxListModified;
 import com.breadwallet.wallet.abstracts.SyncListener;
-import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.HTTPServer;
@@ -71,25 +70,23 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     private static final String SYNCED_THROUGH_DATE_FORMAT = "MM/dd/yy HH:mm";
     private static final float SYNC_PROGRESS_LAYOUT_ANIMATION_ALPHA = 0.0f;
 
-    private BRText mCurrencyTitle;
-    private BRText mCurrencyPriceUsd;
-    private BRText mBalancePrimary;
-    private BRText mBalanceSecondary;
+    private BaseTextView mCurrencyTitle;
+    private BaseTextView mCurrencyPriceUsd;
+    private BaseTextView mBalancePrimary;
+    private BaseTextView mBalanceSecondary;
     private Toolbar mToolbar;
     private ImageButton mBackButton;
     private BRButton mSendButton;
     private BRButton mReceiveButton;
-    private BRButton mBuyButton;
     private BRButton mSellButton;
     private LinearLayout mProgressLayout;
-    private BRText mSyncStatusLabel;
-    private BRText mProgressLabel;
+    private BaseTextView mSyncStatusLabel;
+    private BaseTextView mProgressLabel;
     public ViewFlipper mBarFlipper;
     private BRSearchBar mSearchBar;
     private ImageButton mSearchIcon;
     private ConstraintLayout mToolBarConstraintLayout;
-
-    public static final String EXTRA_URL = "com.breadwallet.EXTRA_URL";
+    private LinearLayout mWalletFooter;
 
     private static final float PRIMARY_TEXT_SIZE = 30;
     private static final float SECONDARY_TEXT_SIZE = 16;
@@ -119,7 +116,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mBackButton = findViewById(R.id.back_icon);
         mSendButton = findViewById(R.id.send_button);
         mReceiveButton = findViewById(R.id.receive_button);
-        mBuyButton = findViewById(R.id.buy_button);
         mSellButton = findViewById(R.id.sell_button);
         mBarFlipper = findViewById(R.id.tool_bar_flipper);
         mSearchBar = findViewById(R.id.search_bar);
@@ -128,6 +124,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mProgressLayout = findViewById(R.id.progress_layout);
         mSyncStatusLabel = findViewById(R.id.sync_status_label);
         mProgressLabel = findViewById(R.id.syncing_label);
+        mWalletFooter = findViewById(R.id.bottom_toolbar_layout1);
 
         startSyncLoggerIfNeeded();
 
@@ -139,7 +136,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BRAnimator.showSendFragment(WalletActivity.this, null);
+                UiUtils.showSendFragment(WalletActivity.this, null);
 
             }
         });
@@ -148,7 +145,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mReceiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                BRAnimator.showReceiveFragment(WalletActivity.this, true);
+                UiUtils.showReceiveFragment(WalletActivity.this, true);
 
             }
         });
@@ -164,7 +161,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mSearchIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (!BRAnimator.isClickAllowed()) {
+                if (!UiUtils.isClickAllowed()) {
                     return;
                 }
                 mBarFlipper.setDisplayedChild(1); //search bar
@@ -172,17 +169,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             }
         });
 
-        mBuyButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startWebActivity(HTTPServer.URL_BUY);
-            }
-        });
-
         mSellButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startWebActivity(HTTPServer.URL_SELL);
+                UiUtils.startWebActivity(WalletActivity.this, HTTPServer.URL_SELL);
             }
         });
 
@@ -229,13 +219,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     }
 
-    private void startWebActivity(String action) {
-        Intent intent = new Intent(this, WebViewActivity.class);
-        intent.putExtra(EXTRA_URL, action);
-        startActivity(intent);
-        overridePendingTransition(R.anim.enter_from_bottom, R.anim.fade_down);
-    }
-
     private void startSyncLoggerIfNeeded() {
         if (Utils.isEmulatorOrDebug(this) && RUN_LOGGER) {
             if (mTestLogger != null) {
@@ -250,15 +233,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         //since we have one instance of activity at all times, this is needed to know when a new intent called upon this activity
-        handleUrlClickIfNeeded(intent);
-    }
-
-    private void handleUrlClickIfNeeded(Intent intent) {
-        Uri data = intent.getData();
-        if (data != null && !data.toString().isEmpty()) {
-            //handle external click with crypto scheme
-            CryptoUriParser.processRequest(this, data.toString(), WalletsMaster.getInstance(this).getCurrentWallet(this));
-        }
+        DeepLinkingManager.handleUrlClick(this, intent);
     }
 
     private void updateUi() {
@@ -279,6 +254,23 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         String startColor = wm.getUiConfiguration().getStartColor();
         String endColor = wm.getUiConfiguration().getEndColor();
+        int currentTheme = UiUtils.getThemeId(this);
+
+        if (currentTheme == R.style.AppTheme_Dark) {
+            mSendButton.setColor(getColor(R.color.wallet_footer_button_color_dark));
+            mReceiveButton.setColor(getColor(R.color.wallet_footer_button_color_dark));
+            mSellButton.setColor(getColor(R.color.wallet_footer_button_color_dark));
+
+            if (endColor != null) {
+                mWalletFooter.setBackgroundColor(Color.parseColor(endColor));
+            }
+        } else {
+            if (endColor != null) {
+                mSendButton.setColor(Color.parseColor(endColor));
+                mReceiveButton.setColor(Color.parseColor(endColor));
+                mSellButton.setColor(Color.parseColor(endColor));
+            }
+        }
 
         if (endColor != null) {
             //it's a gradient
@@ -287,17 +279,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                     new int[]{Color.parseColor(startColor), Color.parseColor(endColor)});
             gd.setCornerRadius(0f);
             mToolbar.setBackground(gd);
-            mSendButton.setColor(Color.parseColor(endColor)); //end color if gradient
-            mReceiveButton.setColor(Color.parseColor(endColor));
-            mBuyButton.setColor(Color.parseColor(endColor));
-            mSellButton.setColor(Color.parseColor(endColor));
         } else {
             //it's a solid color
             mToolbar.setBackgroundColor(Color.parseColor(startColor));
-            mSendButton.setColor(Color.parseColor(startColor));
-            mReceiveButton.setColor(Color.parseColor(startColor));
-            mBuyButton.setColor(Color.parseColor(startColor));
-            mSellButton.setColor(Color.parseColor(startColor));
         }
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -311,7 +295,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     private void swap() {
-        if (!BRAnimator.isClickAllowed()) {
+        if (!UiUtils.isClickAllowed()) {
             return;
         }
         BRSharedPrefs.setIsCryptoPreferred(WalletActivity.this, !BRSharedPrefs.isCryptoPreferred(WalletActivity.this));
@@ -401,6 +385,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
             }
         });
+
         wallet.addBalanceChangedListener(this);
 
         mCurrentWalletIso = wallet.getIso();
@@ -411,7 +396,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         SyncService.registerSyncNotificationBroadcastReceiver(WalletActivity.this.getApplicationContext(), mSyncNotificationBroadcastReceiver);
         SyncService.startService(this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletIso);
 
-        handleUrlClickIfNeeded(getIntent());
+        DeepLinkingManager.handleUrlClick(this, getIntent());
 
     }
 
@@ -497,7 +482,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         if (progress != SyncService.PROGRESS_FINISH) {
             StringBuffer labelText = new StringBuffer(getString(R.string.SyncingView_syncing));
             labelText.append(' ')
-                     .append(NumberFormat.getPercentInstance().format(progress));
+                    .append(NumberFormat.getPercentInstance().format(progress));
             mProgressLabel.setText(labelText);
             mProgressLayout.setVisibility(View.VISIBLE);
 

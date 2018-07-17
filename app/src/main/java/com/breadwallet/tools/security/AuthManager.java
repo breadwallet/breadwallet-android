@@ -6,27 +6,21 @@ import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.format.DateUtils;
 import android.util.Log;
-import android.view.View;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.DisabledActivity;
-import com.breadwallet.presenter.activities.util.ActivityUTILS;
 import com.breadwallet.presenter.customviews.BRDialogView;
+import com.breadwallet.presenter.customviews.PinLayout;
 import com.breadwallet.presenter.fragments.FragmentFingerprint;
-import com.breadwallet.presenter.fragments.FragmentPin;
+import com.breadwallet.presenter.fragments.PinFragment;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -57,14 +51,7 @@ import java.util.concurrent.TimeUnit;
 public class AuthManager {
     public static final String TAG = AuthManager.class.getName();
     private static AuthManager instance;
-    private String previousTry;
-    private static final int LOCK_FAIL_ATTEMPT_COUNT = 3;
-    private static final int PIN_DIGITS = 6;
-
-
-    private AuthManager() {
-        previousTry = "";
-    }
+    private static final int MAX_UNLOCK_ATTEMPTS = 3;
 
     public static AuthManager getInstance() {
         if (instance == null) {
@@ -73,111 +60,30 @@ public class AuthManager {
         return instance;
     }
 
-    public boolean checkAuth(CharSequence passSequence, Context context) {
-        Log.e(TAG, "checkAuth: ");
-        String tempPass = passSequence.toString();
-        if (!previousTry.equals(tempPass)) {
-            int failCount = BRKeyStore.getFailCount(context);
-            BRKeyStore.putFailCount(failCount + 1, context);
-        }
-        previousTry = tempPass;
-
-        String pass = BRKeyStore.getPinCode(context);
-        boolean match = pass != null && tempPass.equals(pass);
-        if (!match) {
-            if (BRKeyStore.getFailCount(context) >= LOCK_FAIL_ATTEMPT_COUNT) {
-                setWalletDisabled((Activity) context);
-            }
-        }
-
-        return match;
-    }
-
-    //when pin auth success
-    public void authSuccess(final Context app) {
-        //put the new total limit in 1 seconds, leave some time for the core to register any new tx
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(DateUtils.SECOND_IN_MILLIS);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                if (wm != null) {
-                    BRKeyStore.putTotalLimit(app, wm.getTotalSent(app).add(BRKeyStore.getSpendLimit(app, wm.getIso())), wm.getIso());
-                }
-            }
-        });
-
-        BRKeyStore.putFailCount(0, app);
-        BRKeyStore.putLastPinUsedTime(System.currentTimeMillis(), app);
-    }
-
-    public void authFail(Context app) {
-
-    }
-
     public boolean isWalletDisabled(Activity app) {
         long start = System.currentTimeMillis();
         int failCount = BRKeyStore.getFailCount(app);
-        return failCount >= LOCK_FAIL_ATTEMPT_COUNT && disabledUntil(app) > BRSharedPrefs.getSecureTime(app);
+        return failCount >= MAX_UNLOCK_ATTEMPTS && disabledUntil(app) > BRSharedPrefs.getSecureTime(app);
 
     }
 
     public long disabledUntil(Activity app) {
         int failCount = BRKeyStore.getFailCount(app);
         long failTimestamp = BRKeyStore.getFailTimeStamp(app);
-        double pow = Math.pow(PIN_DIGITS, failCount - LOCK_FAIL_ATTEMPT_COUNT) * (DateUtils.MINUTE_IN_MILLIS / DateUtils.SECOND_IN_MILLIS);
-        return (long) ((failTimestamp + pow * DateUtils.SECOND_IN_MILLIS));
+        double pow = Math.pow(PinLayout.MAX_PIN_DIGITS, failCount - MAX_UNLOCK_ATTEMPTS) * DateUtils.MINUTE_IN_MILLIS;
+        return (long) (failTimestamp + pow);
     }
 
     public void setWalletDisabled(Activity app) {
         if (!(app instanceof DisabledActivity)) {
-            ActivityUTILS.showWalletDisabled(app);
+            UiUtils.showWalletDisabled(app);
         }
     }
 
-    public void setPinCode(String pass, Activity context) {
+    public void setPinCode(Context context, String pass) {
         BRKeyStore.putFailCount(0, context);
         BRKeyStore.putPinCode(pass, context);
         BRKeyStore.putLastPinUsedTime(System.currentTimeMillis(), context);
-    }
-
-    public void updateDots(Context context, int pinLimit, String pin, View dot1, View dot2, View dot3, View dot4, View dot5, View dot6,
-                           int emptyPinRes, final OnPinSuccess onPinSuccess) {
-        if (dot1 == null || context == null) {
-            return;
-        }
-        int selectedDots = pin.length();
-
-        if (pinLimit == PIN_DIGITS) {
-            dot6.setVisibility(View.VISIBLE);
-            dot1.setVisibility(View.VISIBLE);
-            dot1.setBackground(context.getDrawable(selectedDots <= 0 ? emptyPinRes : R.drawable.ic_pin_dot_black));
-            selectedDots--;
-        } else {
-            dot6.setVisibility(View.GONE);
-            dot1.setVisibility(View.GONE);
-        }
-
-        dot2.setBackground(context.getDrawable(selectedDots <= 0 ? emptyPinRes : R.drawable.ic_pin_dot_black));
-        selectedDots--;
-        dot3.setBackground(context.getDrawable(selectedDots <= 0 ? emptyPinRes : R.drawable.ic_pin_dot_black));
-        selectedDots--;
-        dot4.setBackground(context.getDrawable(selectedDots <= 0 ? emptyPinRes : R.drawable.ic_pin_dot_black));
-        selectedDots--;
-        dot5.setBackground(context.getDrawable(selectedDots <= 0 ? emptyPinRes : R.drawable.ic_pin_dot_black));
-        if (pinLimit == 6) {
-            selectedDots--;
-            dot6.setBackground(context.getDrawable(selectedDots <= 0 ? emptyPinRes : R.drawable.ic_pin_dot_black));
-        }
-
-        if (pin.length() == pinLimit) {
-            onPinSuccess.onSuccess();
-
-        }
     }
 
     public void authPrompt(final Context context, String title, String message, boolean forcePin, boolean forceFingerprint, BRAuthCompletion completion) {
@@ -207,7 +113,7 @@ public class AuthManager {
         final Activity app = (Activity) context;
 
         FragmentFingerprint fingerprintFragment;
-        FragmentPin breadPin;
+        PinFragment breadPin;
 
         if (keyguardManager.isKeyguardSecure()) {
             if (useFingerPrint) {
@@ -221,10 +127,11 @@ public class AuthManager {
                 transaction.setCustomAnimations(0, 0, 0, R.animator.plain_300);
                 transaction.add(android.R.id.content, fingerprintFragment, FragmentFingerprint.class.getName());
                 transaction.addToBackStack(null);
-                if (!app.isDestroyed())
+                if (!app.isDestroyed()) {
                     transaction.commit();
+                }
             } else {
-                breadPin = new FragmentPin();
+                breadPin = new PinFragment();
                 Bundle args = new Bundle();
                 args.putString("title", title);
                 args.putString("message", message);
@@ -267,7 +174,4 @@ public class AuthManager {
         return Utils.isFingerprintAvailable(context) && Utils.isFingerprintEnrolled(context);
     }
 
-    public interface OnPinSuccess {
-        void onSuccess();
-    }
 }

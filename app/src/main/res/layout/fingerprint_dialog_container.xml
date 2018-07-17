@@ -30,7 +30,7 @@
         android:background="@drawable/pin_round_corner"
         android:orientation="vertical">
 
-        <com.breadwallet.presenter.customviews.BRText
+        <com.breadwallet.presenter.customviews.BaseTextView
             app:customTFont="CircularPro-Bold.otf"
             android:id="@+id/fingerprint_title"
             android:layout_width="wrap_content"
@@ -46,7 +46,7 @@
             android:textColor="?android:attr/textColorSecondary"
             android:textSize="20sp"/>
 
-        <com.breadwallet.presenter.customviews.BRText
+        <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/fingerprint_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -76,7 +76,7 @@
                 android:filterTouchesWhenObscured="true"
                 android:src="@drawable/ic_fp_40px"/>
 
-            <com.breadwallet.presenter.customviews.BRText
+            <com.breadwallet.presenter.customviews.BaseTextView
                 android:id="@+id/fingerprint_status"
                 style="@android:style/TextAppearance.Material.Body1"
                 android:layout_width="wrap_content"

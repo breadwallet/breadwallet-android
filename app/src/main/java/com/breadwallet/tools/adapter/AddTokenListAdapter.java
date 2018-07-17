@@ -6,35 +6,43 @@ import android.graphics.Typeface;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 
 import com.breadwallet.R;
-import com.breadwallet.presenter.customviews.BRText;
-import com.breadwallet.presenter.customviews.TokenIconView;
+import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.TokenItem;
-import com.breadwallet.tools.util.Utils;
+import com.breadwallet.tools.util.BRConstants;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 
 public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapter.TokenItemViewHolder> {
 
     private Context mContext;
-    private ArrayList<TokenItem> mTokens;
-    private ArrayList<TokenItem> mBackupTokens;
+    private List<TokenItem> mTokens;
+    private List<TokenItem> mBackupTokens;
     private static final String TAG = AddTokenListAdapter.class.getSimpleName();
     private OnTokenAddOrRemovedListener mListener;
 
-    public AddTokenListAdapter(Context context, ArrayList<TokenItem> tokens, OnTokenAddOrRemovedListener listener) {
+    public AddTokenListAdapter(Context context, List<TokenItem> tokens, OnTokenAddOrRemovedListener listener) {
+        mContext = context;
+        mTokens = tokens;
+        mListener = listener;
+        mBackupTokens = mTokens;
 
-        this.mContext = context;
-        this.mTokens = tokens;
-        this.mListener = listener;
-        this.mBackupTokens = mTokens;
+        Collections.sort(mTokens, new Comparator<TokenItem>() {
+            @Override
+            public int compare(TokenItem first, TokenItem second) {
+                return first.symbol.compareToIgnoreCase(second.symbol);
+            }
+        });
     }
 
     public interface OnTokenAddOrRemovedListener {
@@ -49,14 +57,14 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
     public void onBindViewHolder(final @NonNull AddTokenListAdapter.TokenItemViewHolder holder, final int position) {
 
         TokenItem item = mTokens.get(position);
-        String tickerName = item.symbol.toLowerCase();
+        String currencyCode = item.symbol.toLowerCase();
 
-        if (tickerName.equals("1st")) {
-            tickerName = "first";
+        if (currencyCode.equals("1st")) {
+            currencyCode = "first";
         }
 
-        String iconResourceName = tickerName;
-        int iconResourceId = mContext.getResources().getIdentifier(tickerName, "drawable", mContext.getPackageName());
+        String iconResourceName = currencyCode;
+        int iconResourceId = mContext.getResources().getIdentifier(currencyCode, BRConstants.DRAWABLE, mContext.getPackageName());
 
         holder.name.setText(mTokens.get(position).name);
         holder.symbol.setText(mTokens.get(position).symbol);
@@ -67,9 +75,15 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
             Log.d(TAG, "Error finding icon for -> " + iconResourceName);
         }
 
+        TypedValue addWalletTypedValue = new TypedValue();
+        TypedValue removeWalletTypedValue = new TypedValue();
+
+        mContext.getTheme().resolveAttribute(R.attr.add_wallet_button_background, addWalletTypedValue, true);
+        mContext.getTheme().resolveAttribute(R.attr.remove_wallet_button_background, removeWalletTypedValue, true);
+
         holder.addRemoveButton.setText(mContext.getString(item.isAdded ? R.string.TokenList_remove : R.string.TokenList_add));
-        holder.addRemoveButton.setBackground(mContext.getDrawable(item.isAdded ? R.drawable.remove_wallet_button : R.drawable.add_wallet_button));
-        holder.addRemoveButton.setTextColor(mContext.getColor(item.isAdded ? R.color.red : R.color.dialog_button_positive));
+        holder.addRemoveButton.setBackground(mContext.getDrawable(item.isAdded ? removeWalletTypedValue.resourceId : addWalletTypedValue.resourceId));
+        holder.addRemoveButton.setTextColor(mContext.getColor(item.isAdded ? R.color.button_cancel_add_wallet_text : R.color.button_add_wallet_text));
 
         holder.addRemoveButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -79,10 +93,8 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
                 if (!mTokens.get(position).isAdded) {
                     mTokens.get(position).isAdded = true;
                     mListener.onTokenAdded(mTokens.get(position));
-                }
-
-                // Set button back to "Add"
-                else {
+                } else {
+                    // Set button back to "Add"
                     mTokens.get(position).isAdded = false;
                     mListener.onTokenRemoved(mTokens.get(position));
 
@@ -115,15 +127,15 @@ public class AddTokenListAdapter extends RecyclerView.Adapter<AddTokenListAdapte
     public class TokenItemViewHolder extends RecyclerView.ViewHolder {
 
         private ImageView logo;
-        private BRText symbol;
-        private BRText name;
+        private BaseTextView symbol;
+        private BaseTextView name;
         private Button addRemoveButton;
 
         public TokenItemViewHolder(View view) {
             super(view);
 
             logo = view.findViewById(R.id.token_icon);
-            symbol = view.findViewById(R.id.token_ticker);
+            symbol = view.findViewById(R.id.token_symbol);
             name = view.findViewById(R.id.token_name);
             addRemoveButton = view.findViewById(R.id.add_remove_button);
 

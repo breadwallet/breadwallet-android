@@ -40,7 +40,7 @@ public class BRNotificationBar extends android.support.v7.widget.Toolbar {
     private static final String TAG = BRNotificationBar.class.getName();
 
     private BRActivity activity;
-    private BRText description;
+    private BaseTextView description;
     private BRButton close;
 
     public boolean[] filterSwitches = new boolean[4];
@@ -66,18 +66,18 @@ public class BRNotificationBar extends android.support.v7.widget.Toolbar {
         description = findViewById(R.id.description);
         close = findViewById(R.id.cancel_button);
 
-        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.BRNotificationBar);
-        final int N = a.getIndexCount();
+        TypedArray attributes = getContext().obtainStyledAttributes(attrs, R.styleable.BRNotificationBar);
+        final int N = attributes.getIndexCount();
         for (int i = 0; i < N; ++i) {
-            int attr = a.getIndex(i);
+            int attr = attributes.getIndex(i);
             switch (attr) {
                 case R.styleable.BRNotificationBar_breadText:
-                    String text = a.getString(0);
+                    String text = attributes.getString(0);
                     description.setText(text);
                     break;
             }
         }
-        a.recycle();
+        attributes.recycle();
 
         close.setOnClickListener(new OnClickListener() {
             @Override

@@ -32,7 +32,7 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.presenter.entities.PeerEntity;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRNotificationManager;
@@ -78,19 +78,20 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     private static final String TAG = BaseBitcoinWalletManager.class.getSimpleName();
 
     public static final int ONE_BITCOIN_IN_SATOSHIS = 100000000; // 1 Bitcoin in satoshis, 100 millions
-    public static final int ONE_BITCOIN_IN_BITS = 1000000; // 1 Bitcoin in bits, 1 millions
     private static final long MAXIMUM_AMOUNT = 21000000; // Maximum number of coins available
     private static final int SYNC_MAX_RETRY = 3;
 
     public static final String BITCOIN_SYMBOL = "BTC";
     public static final String BITCASH_SYMBOL = "BCH";
 
+    private WalletSettingsConfiguration mSettingsConfig;
+
     private WalletManagerHelper mWalletManagerHelper;
     private int mSyncRetryCount = 0;
     private static final int CREATE_WALLET_MAX_RETRY = 3;
     private int mCreateWalletAllowedRetries = CREATE_WALLET_MAX_RETRY;
     private WalletUiConfiguration mUiConfig;
-    private WalletSettingsConfiguration mSettingsConfig;
+
     private Executor mListenerExecutor = Executors.newSingleThreadExecutor();
 
     public enum RescanMode {
@@ -110,7 +111,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         BRSharedPrefs.putFirstAddress(context, firstAddress);
 
         mUiConfig = new WalletUiConfiguration(getColor(), null, true, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
-        mSettingsConfig = new WalletSettingsConfiguration(context, getIso(), getFingerprintLimits(context));
+
     }
 
     protected abstract String getTag();
@@ -138,6 +139,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         return createWallet();
     }
 
+
     @Override
     protected BRCoreWallet.Listener createWalletListener() {
         return new BRCoreWalletManager.WrappedExecutorWalletListener(
@@ -161,6 +163,10 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         }
 
         return arr;
+    }
+
+    protected void setSettingsConfig(WalletSettingsConfiguration settingsConfig) {
+        this.mSettingsConfig = settingsConfig;
     }
 
     @Override
@@ -379,6 +385,11 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     public abstract String undecorateAddress(String address);
 
     @Override
+    public WalletSettingsConfiguration getSettingsConfiguration() {
+        return mSettingsConfig;
+    }
+
+    @Override
     public int getMaxDecimalPlaces(Context app) {
         int unit = BRSharedPrefs.getCryptoDenomination(app, getIso());
         switch (unit) {
@@ -419,13 +430,12 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
             Log.e(getTag(), "refreshAddress: WARNING, retrieved address:" + address);
         }
         BRSharedPrefs.putReceiveAddress(app, address.stringify(), getIso());
-
     }
 
     @Override
     public void refreshCachedBalance(Context app) {
         BigDecimal balance = new BigDecimal(getWallet().getBalance());
-        BRSharedPrefs.putCachedBalance(app, getIso(), balance);
+        setCachedBalance(app, balance);
     }
 
     @Override
@@ -436,11 +446,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     @Override
     public WalletUiConfiguration getUiConfiguration() {
         return mUiConfig;
-    }
-
-    @Override
-    public WalletSettingsConfiguration getSettingsConfiguration() {
-        return mSettingsConfig;
     }
 
     @Override
@@ -564,6 +569,11 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
     @Override
     public BREthereumAmount.Unit getUnit() {
         throw new RuntimeException("stub");
+    }
+
+    @Override
+    public String getAddress() {
+        return BRSharedPrefs.getReceiveAddress(BreadApp.getBreadContext(), getIso());
     }
 
     @Override
@@ -714,7 +724,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
             @Override
             public void run() {
                 if (app instanceof Activity)
-                    BRAnimator.showBreadSignal((Activity) app, Utils.isNullOrEmpty(error) ? app.getString(R.string.Alerts_sendSuccess) : app.getString(R.string.Alert_error),
+                    UiUtils.showBreadSignal((Activity) app, Utils.isNullOrEmpty(error) ? app.getString(R.string.Alerts_sendSuccess) : app.getString(R.string.Alert_error),
                             Utils.isNullOrEmpty(error) ? app.getString(R.string.Alerts_sendSuccessSubheader) : "Error: " + error, Utils.isNullOrEmpty(error) ? R.drawable.ic_check_mark_white : R.drawable.ic_error_outline_black_24dp, new BROnSignalCompletion() {
                                 @Override
                                 public void onComplete() {
@@ -846,20 +856,10 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
     public void balanceChanged(final long balance) {
         super.balanceChanged(balance);
-        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                final Context app = BreadApp.getBreadContext();
-                setCachedBalance(app, new BigDecimal(balance));
-                onTxListModified(null);
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        refreshAddress(app);
-                    }
-                });
-            }
-        });
+        final Context app = BreadApp.getBreadContext();
+        setCachedBalance(app, new BigDecimal(balance));
+        onBalanceChanged(new BigDecimal(balance));
+        refreshAddress(app);
     }
 
     public void txStatusUpdate() {
@@ -867,10 +867,6 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
-
-                // TODO This listener is never added... so this is not doing anything.
-//                for (OnTxStatusUpdatedListener listener : txStatusUpdatedListeners)
-//                    if (listener != null) listener.onTxStatusUpdated();
                 onTxListModified(null);
             }
         });

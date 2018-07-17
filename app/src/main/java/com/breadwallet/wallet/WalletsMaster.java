@@ -17,7 +17,7 @@ import com.breadwallet.core.BRCoreMasterPubKey;
 import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -28,6 +28,7 @@ import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
@@ -345,7 +346,6 @@ public class WalletsMaster {
 
     @WorkerThread
     public void initLastWallet(Context app) {
-        long start = System.currentTimeMillis();
         if (app == null) {
             app = BreadApp.getBreadContext();
             if (app == null) {
@@ -354,9 +354,10 @@ public class WalletsMaster {
             }
         }
         BaseWalletManager wallet = getWalletByIso(app, BRSharedPrefs.getCurrentWalletIso(app));
-        if (wallet == null) wallet = getWalletByIso(app, "BTC");
-        if (wallet != null)
+        if (wallet == null) wallet = getWalletByIso(app, BaseBitcoinWalletManager.BITCOIN_SYMBOL);
+        if (wallet != null) {
             wallet.connect(app);
+        }
     }
 
     @WorkerThread
@@ -365,8 +366,6 @@ public class WalletsMaster {
         if (!Utils.isNullOrEmpty(node)) {
             String host = TrustedNode.getNodeHost(node);
             int port = TrustedNode.getNodePort(node);
-//        Log.e(TAG, "trust onClick: host:" + host);
-//        Log.e(TAG, "trust onClick: port:" + port);
             boolean success = wm.useFixedNode(host, port);
             if (!success) {
                 Log.e(TAG, "updateFixedPeer: Failed to updateFixedPeer with input: " + node);
@@ -382,7 +381,8 @@ public class WalletsMaster {
         final WalletsMaster m = WalletsMaster.getInstance(app);
         if (!m.isPasscodeEnabled(app)) {
             //Device passcode/password should be enabled for the app to work
-            BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), app.getString(R.string.Prompts_NoScreenLock_body_android),
+            BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title),
+                    app.getString(R.string.Prompts_NoScreenLock_body_android),
                     app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                         @Override
                         public void onClick(BRDialogView brDialogView) {
@@ -396,7 +396,7 @@ public class WalletsMaster {
                     }, 0);
         } else {
             if (!m.noWallet(app)) {
-                BRAnimator.startBreadActivity(app, true);
+                UiUtils.startBreadActivity(app, true);
             }
             //else just sit in the intro screen
 

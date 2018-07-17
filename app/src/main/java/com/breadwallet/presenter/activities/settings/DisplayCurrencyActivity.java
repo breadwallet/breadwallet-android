@@ -18,7 +18,7 @@ import android.widget.TextView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.tools.animation.BRAnimator;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.sqlite.RatesDataSource;
@@ -35,27 +35,20 @@ import java.util.List;
 
 public class DisplayCurrencyActivity extends BaseSettingsActivity {
     private static final String TAG = DisplayCurrencyActivity.class.getName();
-    private TextView exchangeText;
-    private ListView listView;
-    private CurrencyListAdapter adapter;
-    //    private String ISO;
-//    private float rate;
-    public static boolean appVisible = false;
-    private static DisplayCurrencyActivity app;
-    private Button leftButton;
-    private Button rightButton;
-
-    public static DisplayCurrencyActivity getApp() {
-        return app;
-    }
-
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-    }
+    private TextView mExchangeText;
+    private ListView mListView;
+    private CurrencyListAdapter mAdapter;
+    private Button mLeftButton;
+    private Button mRightButton;
 
     @Override
     public int getLayoutId() {
         return R.layout.activity_display_currency;
+    }
+
+    @Override
+    public int getBackButtonId() {
+        return R.id.back_button;
     }
 
     @Override
@@ -66,29 +59,28 @@ public class DisplayCurrencyActivity extends BaseSettingsActivity {
         faq.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!BRAnimator.isClickAllowed()) return;
+                if (!UiUtils.isClickAllowed()) return;
                 BaseWalletManager wm = WalletsMaster.getInstance(DisplayCurrencyActivity.this).getCurrentWallet(DisplayCurrencyActivity.this);
-                BRAnimator.showSupportFragment(DisplayCurrencyActivity.this, BRConstants.FAQ_DISPLAY_CURRENCY, wm);
+                UiUtils.showSupportFragment(DisplayCurrencyActivity.this, BRConstants.FAQ_DISPLAY_CURRENCY, wm);
             }
         });
 
-        exchangeText = findViewById(R.id.exchange_text);
-        listView = findViewById(R.id.currency_list_view);
-        adapter = new CurrencyListAdapter(this);
+        mExchangeText = findViewById(R.id.exchange_text);
+        mListView = findViewById(R.id.currency_list_view);
+        mAdapter = new CurrencyListAdapter(this);
         List<CurrencyEntity> currencies = RatesDataSource.getInstance(this).getAllCurrencies(this, "BTC");
         List<CurrencyEntity> cleanList = cleanList(currencies);
-        adapter.addAll(cleanList);
-        leftButton = findViewById(R.id.left_button);
-        rightButton = findViewById(R.id.right_button);
-        leftButton.setOnClickListener(new View.OnClickListener() {
+        mAdapter.addAll(cleanList);
+        mLeftButton = findViewById(R.id.left_button);
+        mRightButton = findViewById(R.id.right_button);
+        mLeftButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setButton(true);
             }
         });
 
-
-        rightButton.setOnClickListener(new View.OnClickListener() {
+        mRightButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 setButton(false);
@@ -102,7 +94,7 @@ public class DisplayCurrencyActivity extends BaseSettingsActivity {
             setButton(false);
         }
         updateExchangeRate();
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view,
                                     int position, long id) {
@@ -116,10 +108,10 @@ public class DisplayCurrencyActivity extends BaseSettingsActivity {
             }
 
         });
-        listView.addFooterView(new View(this), null, true);
-        listView.addHeaderView(new View(this), null, true);
-        listView.setAdapter(adapter);
-        adapter.notifyDataSetChanged();
+        mListView.addFooterView(new View(this), null, true);
+        mListView.addHeaderView(new View(this), null, true);
+        mListView.setAdapter(mAdapter);
+        mAdapter.notifyDataSetChanged();
 
     }
 
@@ -141,40 +133,27 @@ public class DisplayCurrencyActivity extends BaseSettingsActivity {
         CurrencyEntity entity = RatesDataSource.getInstance(this).getCurrencyByCode(this, "BTC", iso);//hard code BTC for this one
         if (entity != null) {
             String formattedExchangeRate = CurrencyUtils.getFormattedAmount(DisplayCurrencyActivity.this, BRSharedPrefs.getPreferredFiatIso(this), new BigDecimal(entity.rate));
-            exchangeText.setText(String.format("%s = %s", CurrencyUtils.getFormattedAmount(this, "BTC", new BigDecimal(100000000)), formattedExchangeRate));
+            mExchangeText.setText(String.format("%s = %s", CurrencyUtils.getFormattedAmount(this, "BTC", new BigDecimal(100000000)), formattedExchangeRate));
         }
-        adapter.notifyDataSetChanged();
+        mAdapter.notifyDataSetChanged();
     }
 
     private void setButton(boolean left) {
         if (left) {
             BRSharedPrefs.putCryptoDenomination(this, "BTC", BRConstants.CURRENT_UNIT_BITS);
-            leftButton.setTextColor(getColor(R.color.white));
-            leftButton.setBackground(getDrawable(R.drawable.b_half_left_blue));
-            rightButton.setTextColor(getColor(R.color.dark_blue));
-            rightButton.setBackground(getDrawable(R.drawable.b_half_right_blue_stroke));
+            mLeftButton.setTextColor(getColor(R.color.white));
+            mLeftButton.setBackground(getDrawable(R.drawable.b_half_left_blue));
+            mRightButton.setTextColor(getColor(R.color.dark_blue));
+            mRightButton.setBackground(getDrawable(R.drawable.b_half_right_blue_stroke));
         } else {
             BRSharedPrefs.putCryptoDenomination(this, "BTC", BRConstants.CURRENT_UNIT_BITCOINS);
-            leftButton.setTextColor(getColor(R.color.dark_blue));
-            leftButton.setBackground(getDrawable(R.drawable.b_half_left_blue_stroke));
-            rightButton.setTextColor(getColor(R.color.white));
-            rightButton.setBackground(getDrawable(R.drawable.b_half_right_blue));
+            mLeftButton.setTextColor(getColor(R.color.dark_blue));
+            mLeftButton.setBackground(getDrawable(R.drawable.b_half_left_blue_stroke));
+            mRightButton.setTextColor(getColor(R.color.white));
+            mRightButton.setBackground(getDrawable(R.drawable.b_half_right_blue));
         }
         updateExchangeRate();
 
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        appVisible = true;
-        app = this;
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        appVisible = false;
     }
 
     @Override
@@ -198,7 +177,6 @@ public class DisplayCurrencyActivity extends BaseSettingsActivity {
             this.layoutResourceId = R.layout.currency_list_item;
             this.mContext = mContext;
             ((Activity) mContext).getWindowManager().getDefaultDisplay().getSize(displayParameters);
-//        currencyListAdapter = this;
         }
 
         @Override
@@ -263,6 +241,5 @@ public class DisplayCurrencyActivity extends BaseSettingsActivity {
         }
 
     }
-
 
 }

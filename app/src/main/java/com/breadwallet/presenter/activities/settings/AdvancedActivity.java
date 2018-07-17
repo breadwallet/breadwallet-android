@@ -37,6 +37,11 @@ public class AdvancedActivity extends BaseSettingsActivity {
     }
 
     @Override
+    public int getBackButtonId() {
+        return R.id.back_button;
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         appVisible = true;
