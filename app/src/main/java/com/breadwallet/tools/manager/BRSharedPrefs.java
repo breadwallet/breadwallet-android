@@ -45,6 +45,8 @@ public class BRSharedPrefs {
     public static final String TAG = BRSharedPrefs.class.getName();
 
     public static final String PREFS_NAME = "MyPrefsFile";
+    private static final String FCM_TOKEN = "fcmToken";
+    private static final String NOTIFICATION_ID = "notificationId";
 
     public static String getPreferredFiatIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
@@ -188,6 +190,7 @@ public class BRSharedPrefs {
         editor.putString("lastRescanModeUsed_" + iso.toUpperCase(), mode);
         editor.apply();
     }
+
     public static long getLastSendTransactionBlockheight(Context activity, String iso) {
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getLong("lastSendTransactionBlockheight_" + iso.toUpperCase(), 0);
@@ -301,6 +304,7 @@ public class BRSharedPrefs {
         editor.putString("currentWalletIso", iso);
         editor.apply();
     }
+
     public static String getWalletRewardId(Context activity) {
         SharedPreferences prefs = activity.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getString("walletRewardId", null);
@@ -446,6 +450,7 @@ public class BRSharedPrefs {
         editor.putBoolean("shareData", show);
         editor.apply();
     }
+
     public static boolean isNewWallet(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return settingsToGet.getBoolean("newWallet", true);
@@ -497,4 +502,30 @@ public class BRSharedPrefs {
         editor.apply();
 
     }
+
+    public static void putFCMRegistrationToken(Context context, String token) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(FCM_TOKEN, token);
+        editor.apply();
+    }
+
+    public static String getFCMRegistrationToken(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(FCM_TOKEN, "");
+    }
+
+    public static void putNotificationId(Context context, int notificationId) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(NOTIFICATION_ID, notificationId);
+        editor.apply();
+    }
+
+    public static int getNotificationId(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt(NOTIFICATION_ID, 0);
+    }
+
+
 }
