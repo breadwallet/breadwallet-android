@@ -1,4 +1,4 @@
-package com.breadwallet.protocols.messageexchange;
+package com.breadwallet.protocol.messageexchange;
 
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
@@ -7,9 +7,9 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.core.BRCoreKey;
-import com.breadwallet.protocols.messageexchange.entities.EncryptedObject;
-import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
-import com.breadwallet.protocols.messageexchange.entities.PairingObject;
+import com.breadwallet.protocol.messageexchange.entities.EncryptedMessage;
+import com.breadwallet.protocol.messageexchange.entities.InboxEntry;
+import com.breadwallet.protocol.messageexchange.entities.PairingObject;
 import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.crypto.HmacDrbg;
@@ -55,8 +55,8 @@ import java.util.List;
  * THE SOFTWARE.
  */
 
-public final class PwbMaster {
-    private static final String TAG = PwbMaster.class.getSimpleName();
+public final class MessageExchangeService {
+    private static final String TAG = MessageExchangeService.class.getSimpleName();
     private static ByteString mSenderId = null;
     private static ByteString mPairingPublicKey = null;
 
@@ -76,13 +76,13 @@ public final class PwbMaster {
         CALL_RESPONSE
     }
 
-    private PwbMaster() {
+    private MessageExchangeService() {
     }
 
     public static Protos.Envelope createEnvelope(ByteString encryptedMessage, MessageType messageType,
                                                  ByteString senderPublicKey, ByteString receiverPublicKey,
                                                  String uniqueId, ByteString nonce) {
-        Protos.Envelope envelope = com.breadwallet.protocols.messageexchange.Protos.Envelope.newBuilder()
+        Protos.Envelope envelope = com.breadwallet.protocol.messageexchange.Protos.Envelope.newBuilder()
                 .setVersion(ENVELOPE_VERSION)
                 .setMessageType(messageType.name())
                 .setService(SERVICE_PWB)
@@ -110,11 +110,11 @@ public final class PwbMaster {
         return new BRCoreKey(hmacDrgbResult, false);
     }
 
-    public static EncryptedObject encryptMessage(Context context, byte[] senderPublicKey, byte[] data) {
+    public static EncryptedMessage encryptMessage(Context context, byte[] senderPublicKey, byte[] data) {
         byte[] nonce = CryptoHelper.generateRandomNonce();
         BRCoreKey authKey = new BRCoreKey(BRKeyStore.getAuthKey(context));
         byte[] encryptedData = authKey.encryptUsingSharedSecret(senderPublicKey, data, nonce);
-        return new EncryptedObject(encryptedData, nonce);
+        return new EncryptedMessage(encryptedData, nonce);
     }
 
     public static void processInboxMessages(Context context, List<InboxEntry> inboxEntries) {
@@ -131,13 +131,13 @@ public final class PwbMaster {
             Protos.Envelope responseEnvelope = createResponseEnvelope(context, requestEnvelope);
 
             cursors.add(inboxEntry.getCursor());
-            MessageApi.sendEnvelope(context, responseEnvelope.toByteArray());
+            MessageExchangeNetworkHelper.sendEnvelope(context, responseEnvelope.toByteArray());
         }
-        MessageApi.sendAck(context, cursors);
+        MessageExchangeNetworkHelper.sendAck(context, cursors);
     }
 
     public static void checkInboxAndRespond(Context context) {
-        List<InboxEntry> inboxEntries = MessageApi.fetchInbox(context);
+        List<InboxEntry> inboxEntries = MessageExchangeNetworkHelper.fetchInbox(context);
         processInboxMessages(context, inboxEntries);
     }
 
@@ -174,13 +174,13 @@ public final class PwbMaster {
             byte[] decryptedMessageBytes = authKey.decryptUsingSharedSecret(senderPublicKey.toByteArray(), encryptedMessage.toByteArray(), nonce.toByteArray());
             MessageType requestMessageType = MessageType.valueOf(messageType);
             ByteString messageResponse = generateResponseMessage(context, decryptedMessageBytes, requestMessageType);
-            EncryptedObject responseEncryptedObject = encryptMessage(context, senderPublicKey.toByteArray(), messageResponse.toByteArray());
+            EncryptedMessage responseEncryptedMessage = encryptMessage(context, senderPublicKey.toByteArray(), messageResponse.toByteArray());
             MessageType responseMessageType = getResponseMessageType(requestMessageType);
             BRCoreKey pairingKey = getPairingKey(context, senderPublicKey.toByteArray(), identifier.getBytes());
             byte[] responseSignature = pairingKey.compactSign(CryptoHelper.doubleSha256(requestEnvelope.toByteArray()));
-            Protos.Envelope responseEnvelope = createEnvelope(ByteString.copyFrom(responseEncryptedObject.getEncryptedData()),
+            Protos.Envelope responseEnvelope = createEnvelope(ByteString.copyFrom(responseEncryptedMessage.getEncryptedData()),
                     responseMessageType, ByteString.copyFrom(pubKey), senderPublicKey, identifier,
-                    ByteString.copyFrom(responseEncryptedObject.getNonce()));
+                    ByteString.copyFrom(responseEncryptedMessage.getNonce()));
             responseEnvelope = responseEnvelope.toBuilder().setSignature(ByteString.copyFrom(responseSignature)).build();
             return responseEnvelope;
         } catch (Exception e) {
@@ -345,10 +345,10 @@ public final class PwbMaster {
         try {
             ByteString message = createLinkMessage(pubKey, Protos.Status.ACCEPTED, ByteString.copyFrom(pairingObject.getId(), StandardCharsets.UTF_8.name()));
             byte[] senderPublickey = BRCoreKey.decodeHex(pairingObject.getPublicKeyHex());
-            EncryptedObject encryptedObject = encryptMessage(context, senderPublickey, message.toByteArray());
-            ByteString encryptedMessage = ByteString.copyFrom(encryptedObject.getEncryptedData());
-            Protos.Envelope envelope = createEnvelope(encryptedMessage, MessageType.LINK, ByteString.copyFrom(pubKey)
-                    , ByteString.copyFrom(senderPublickey), BRSharedPrefs.getDeviceId(context), ByteString.copyFrom(encryptedObject.getNonce()));
+            EncryptedMessage encryptedMessage = encryptMessage(context, senderPublickey, message.toByteArray());
+            ByteString encryptedMessageByteString = ByteString.copyFrom(encryptedMessage.getEncryptedData());
+            Protos.Envelope envelope = createEnvelope(encryptedMessageByteString, MessageType.LINK, ByteString.copyFrom(pubKey)
+                    , ByteString.copyFrom(senderPublickey), BRSharedPrefs.getDeviceId(context), ByteString.copyFrom(encryptedMessage.getNonce()));
             BRCoreKey pairingKey = getPairingKey(context, senderPublickey, pairingObject.getId().getBytes());
             byte[] signature = pairingKey.compactSign(envelope.toByteArray());
             envelope = envelope.toBuilder().setSignature(ByteString.copyFrom(signature)).build();
@@ -357,7 +357,7 @@ public final class PwbMaster {
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    MessageApi.sendEnvelope(context, envelopeData);
+                    MessageExchangeNetworkHelper.sendEnvelope(context, envelopeData);
                 }
             });
         } catch (UnsupportedEncodingException e) {
@@ -374,15 +374,15 @@ public final class PwbMaster {
         byte[] myPubKey = authKey.getPubKey();
 
         MessageType requestMessageType = MessageType.PING;
-        EncryptedObject responseEncryptedObject = encryptMessage(context, pubKey, message.toByteArray());
+        EncryptedMessage responseEncryptedMessage = encryptMessage(context, pubKey, message.toByteArray());
         MessageType responseMessageType = getResponseMessageType(requestMessageType);
         BRCoreKey pairingKey = getPairingKey(context, pubKey, identifier.getBytes());
-        Protos.Envelope envelope = createEnvelope(ByteString.copyFrom(responseEncryptedObject.getEncryptedData()),
+        Protos.Envelope envelope = createEnvelope(ByteString.copyFrom(responseEncryptedMessage.getEncryptedData()),
                 responseMessageType, ByteString.copyFrom(pubKey), ByteString.copyFrom(myPubKey),
-                identifier, ByteString.copyFrom(responseEncryptedObject.getNonce()));
+                identifier, ByteString.copyFrom(responseEncryptedMessage.getNonce()));
         byte[] responseSignature = pairingKey.compactSign(envelope.toByteArray());
         envelope = envelope.toBuilder().setSignature(ByteString.copyFrom(responseSignature)).build();
-        MessageApi.sendEnvelope(context, envelope.toByteArray());
+        MessageExchangeNetworkHelper.sendEnvelope(context, envelope.toByteArray());
     }
 
 }
