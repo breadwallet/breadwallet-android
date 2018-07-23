@@ -1,12 +1,11 @@
 package com.breadwallet.tools.manager;
 
-import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import com.breadwallet.protocols.messageexchange.PwbMaster;
-import com.breadwallet.protocols.messageexchange.entities.PairingObject;
+import com.breadwallet.protocol.messageexchange.MessageExchangeService;
+import com.breadwallet.protocol.messageexchange.entities.PairingObject;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -51,7 +50,7 @@ public final class InputDataManager {
             BRBitId.signBitID(context, result, null);
         } else if (isWalletPair(context, result)) {
             PairingObject pairingObject = PairingObject.parseUriString(result);
-            PwbMaster.startPairing(context, pairingObject);
+            MessageExchangeService.startPairing(context, pairingObject);
         }
     }
 

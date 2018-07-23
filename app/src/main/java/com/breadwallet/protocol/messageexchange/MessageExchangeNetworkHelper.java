@@ -1,16 +1,14 @@
-package com.breadwallet.protocols.messageexchange;
+package com.breadwallet.protocol.messageexchange;
 
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
-import com.breadwallet.protocols.messageexchange.entities.ServiceObject;
+import com.breadwallet.protocol.messageexchange.entities.InboxEntry;
+import com.breadwallet.protocol.messageexchange.entities.ServiceObject;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.google.protobuf.InvalidProtocolBufferException;
 import com.platform.APIClient;
 
-import org.bouncycastle.jcajce.provider.symmetric.DES;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,11 +46,11 @@ import okhttp3.RequestBody;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public final class MessageApi {
+public final class MessageExchangeNetworkHelper {
 
-    private static final String TAG = MessageApi.class.getSimpleName();
+    private static final String TAG = MessageExchangeNetworkHelper.class.getSimpleName();
 
-    //api paths
+    // Backend API paths
     public static final String INBOX_PATH = "/inbox";
     public static final String MESSAGE_PATH = "/message";
     public static final String ACK_PATH = "/ack";
@@ -68,12 +66,12 @@ public final class MessageApi {
     public static final String ENTRIES_NAME = "entries";
     public static final String CONTENT_TYPE_PROTOBUF = "application/x-protobuf";
 
-    //error params
+    // Error parameters
     public static final String ERROR = "error";
     public static final String ERROR_MESSAGE = "message";
     public static final String ERROR_CODE = "code";
 
-    //service params
+    // Service parameters
     public static final String URL = "url";
     public static final String NAME = "name";
     public static final String HASH = "hash";
@@ -85,7 +83,7 @@ public final class MessageApi {
     public static final String CAPABILITIES = "capabilities";
     public static final String SCOPES = "scopes";
 
-    private MessageApi() {
+    private MessageExchangeNetworkHelper() {
     }
 
     public static List<InboxEntry> fetchInbox(Context context) {
@@ -150,7 +148,7 @@ public final class MessageApi {
         Request request = new Request.Builder()
                 .url(messageUrl)
                 .post(requestBody)
-                .header(BRConstants.HEADER_CONTENT_TYPE, MessageApi.CONTENT_TYPE_PROTOBUF)
+                .header(BRConstants.HEADER_CONTENT_TYPE, CONTENT_TYPE_PROTOBUF)
                 .build();
         APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
         Log.e(TAG, "sendEnvelope: " + response.code);
