@@ -1,4 +1,4 @@
-package com.breadwallet.protocols.messageexchange.entities;
+package com.breadwallet.protocol.messageexchange.entities;
 
 /**
  * BreadWallet
@@ -24,11 +24,11 @@ package com.breadwallet.protocols.messageexchange.entities;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class EncryptedObject {
+public class EncryptedMessage {
     private byte[] mEncryptedData;
     private byte[] mNonce;
 
-    public EncryptedObject(byte[] encryptedData, byte[] nonce) {
+    public EncryptedMessage(byte[] encryptedData, byte[] nonce) {
         this.mEncryptedData = encryptedData;
         this.mNonce = nonce;
     }

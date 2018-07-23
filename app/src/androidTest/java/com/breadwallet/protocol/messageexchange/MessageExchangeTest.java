@@ -1,4 +1,4 @@
-package com.breadwallet.protocols.messageexchange;
+package com.breadwallet.protocol.messageexchange;
 
 import android.support.test.runner.AndroidJUnit4;
 
@@ -73,7 +73,7 @@ public class MessageExchangeTest {
                         .setScope(ACCOUNT_RESPONSE_TEST_CURRENCY_CODES[i]).build().toByteArray();
 
                 // Generate the response.
-                byte[] responseBytes = PwbMaster.generateAccountResponse(requestBytes).toByteArray();
+                byte[] responseBytes = MessageExchangeService.generateAccountResponse(requestBytes).toByteArray();
                 Protos.AccountResponse response = Protos.AccountResponse.parseFrom(responseBytes);
 
                 // Verify that the response is as expected.

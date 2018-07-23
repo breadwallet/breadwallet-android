@@ -29,13 +29,9 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BaseTextView;
-import com.breadwallet.protocols.messageexchange.MessageApi;
-import com.breadwallet.protocols.messageexchange.Protos;
-import com.breadwallet.protocols.messageexchange.PwbMaster;
+import com.breadwallet.protocol.messageexchange.MessageExchangeService;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
-import com.breadwallet.tools.crypto.Base58;
-import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.DeepLinkingManager;
 import com.breadwallet.tools.manager.FontManager;
@@ -57,10 +53,6 @@ import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.HTTPServer;
 
-import org.bouncycastle.asn1.ASN1InputStream;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
@@ -237,7 +229,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                PwbMaster.checkInboxAndRespond(WalletActivity.this);
+                MessageExchangeService.checkInboxAndRespond(WalletActivity.this);
             }
         });
 
