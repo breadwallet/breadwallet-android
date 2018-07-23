@@ -1,9 +1,11 @@
 package com.breadwallet.protocols.messageexchange;
 
 import android.content.Context;
+import android.support.annotation.VisibleForTesting;
 import android.util.Base64;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.protocols.messageexchange.entities.EncryptedObject;
 import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
@@ -15,10 +17,14 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -59,10 +65,15 @@ public final class PwbMaster {
     public static final String SERVICE_PWB = "PWB";
 
     public enum MessageType {
-        LINK, PING, PONG,
-        ACCOUNT_REQUEST, ACCOUNT_RESPONSE,
-        PAYMENT_REQUEST, PAYMENT_RESPONSE,
-        CALL_REQUEST, CALL_RESPONSE;
+        LINK,
+        PING,
+        PONG,
+        ACCOUNT_REQUEST,
+        ACCOUNT_RESPONSE,
+        PAYMENT_REQUEST,
+        PAYMENT_RESPONSE,
+        CALL_REQUEST,
+        CALL_RESPONSE
     }
 
     private PwbMaster() {
@@ -207,37 +218,126 @@ public final class PwbMaster {
     }
 
     private static ByteString generateResponseMessage(Context context, byte[] requestDecryptedMessage, MessageType requestMessageType) {
-        ByteString resultMessage = null;
-        switch (requestMessageType) {
-            case LINK:
-                byte[] pubKey = new BRCoreKey(BRKeyStore.getAuthKey(context)).getPubKey();
-                Protos.Link linkMessage = null;
-                try {
-                    linkMessage = Protos.Link.parseFrom(requestDecryptedMessage);
-                } catch (InvalidProtocolBufferException e) {
-                    e.printStackTrace();
-                }
-                mSenderId = linkMessage.getId();
-                mPairingPublicKey = linkMessage.getPublicKey();
-                //don't respond, at this point we received what we need for our paring, wait for other messages.
+        try {
+            switch (requestMessageType) {
+                case LINK:
+                    byte[] pubKey = new BRCoreKey(BRKeyStore.getAuthKey(context)).getPubKey();
+                    Protos.Link linkMessage = Protos.Link.parseFrom(requestDecryptedMessage);
+                    mSenderId = linkMessage.getId();
+                    mPairingPublicKey = linkMessage.getPublicKey();
+                    //don't respond, at this point we received what we need for our paring, wait for other messages.
 //                resultMessage = createLinkMessage(pubKey, Protos.Status.ACCEPTED, mSenderId);
-                break;
-            case PING:
-                resultMessage = Protos.Pong.newBuilder().setPong("Hi Dan, you're so awesome.").getPongBytes();
-                break;
-            case ACCOUNT_REQUEST:
-                break;
-            case PAYMENT_REQUEST:
-                break;
-            case CALL_REQUEST:
-                break;
+                    return null;
+                case PING:
+                    return Protos.Pong.newBuilder().setPong("Hi Dan, you're so awesome.").getPongBytes();
+                case ACCOUNT_REQUEST:
+                    return generateAccountResponse(requestDecryptedMessage);
+                case PAYMENT_REQUEST:
+                    return generatePaymentResponse(requestDecryptedMessage);
+                case CALL_REQUEST:
+                    return generateCallResponse(requestDecryptedMessage);
+                default:
+                    Log.e(TAG, "Request type not recognized:" + requestMessageType.name());
+            }
+        } catch (InvalidProtocolBufferException e) {
+            Log.e(TAG, "Error parsing protobuf for " + requestMessageType.name() + "message.", e);
+            // TODO: SHIV re-throw?
         }
-        return resultMessage;
+        return null;
     }
 
     private static ByteString createLinkMessage(byte[] pubKey, Protos.Status status, ByteString senderId) {
         return Protos.Link.newBuilder().setPublicKey(ByteString.copyFrom(pubKey))
                 .setStatus(status).setId(senderId).build().toByteString();
+    }
+
+    @VisibleForTesting
+    protected static ByteString generateAccountResponse(byte[] requestDecryptedMessage) throws InvalidProtocolBufferException {
+        Protos.AccountRequest request = Protos.AccountRequest.parseFrom(requestDecryptedMessage);
+
+        String currencyCode = request.getScope();
+        Context context = BreadApp.getBreadContext(); // TODO: SHIV remove once we have a service.
+        BaseWalletManager walletManager = WalletsMaster.getInstance(context).getWalletByIso(context, currencyCode);
+
+        Protos.AccountResponse.Builder responseBuilder = Protos.AccountResponse.newBuilder().setScope(currencyCode);
+        if (walletManager == null) {
+            responseBuilder.setStatus(Protos.Status.REJECTED);
+        } else {
+            String address = walletManager.getAddress();
+
+            if (address == null) {
+                responseBuilder.setStatus(Protos.Status.REJECTED);
+            }
+            else {
+                responseBuilder.setAddress(address)
+                        .setStatus(Protos.Status.ACCEPTED);
+            }
+        }
+
+        return responseBuilder.build().toByteString();
+    }
+
+    private static ByteString generatePaymentResponse(byte[] requestDecryptedMessage) throws InvalidProtocolBufferException {
+        Protos.PaymentRequest request = Protos.PaymentRequest.parseFrom(requestDecryptedMessage);
+
+        String currencyCode = request.getScope();
+        Context context = BreadApp.getBreadContext(); // TODO: SHIV remove once we have a service.
+        BaseWalletManager walletManager = WalletsMaster.getInstance(context).getWalletByIso(context, currencyCode);
+
+        // TODO: SHIV transact
+//        String network = request.getNetwork(); // a network designation
+//        String address = request.getAddress(); // the receive address for the desired payment
+//        BigDecimal amount = new BigDecimal(Integer.parseInt(request.getAmount())); // the desired amount expressed as an integer in the lowest currency denomination
+//        String memo = request.getMemo(); // optionally a request may include a memo, the receiver can retain if necessary
+
+        CryptoTransaction transaction = walletManager.createTransaction(new BigDecimal(request.getAmount()), request.getAddress());
+        boolean transactionSuccessful = true;
+        // Investigate PostAuth.getInstance().onPublishTxAuth(); ???
+
+        Protos.PaymentResponse.Builder responseBuilder = Protos.PaymentResponse.newBuilder().setScope(currencyCode);
+
+        if (transactionSuccessful) {
+            responseBuilder.setStatus(Protos.Status.ACCEPTED)
+                    .setTransactionId(transaction.getHash());
+        } else {
+            responseBuilder.setStatus(Protos.Status.REJECTED);
+        }
+
+        return responseBuilder.build().toByteString();
+    }
+
+    private static ByteString generateCallResponse(byte[] requestDecryptedMessage) throws InvalidProtocolBufferException {
+        Protos.CallRequest request = Protos.CallRequest.parseFrom(requestDecryptedMessage);
+
+        String currencyCode = request.getScope();
+        Context context = BreadApp.getBreadContext(); // TODO: SHIV remove once we have a service.
+        BaseWalletManager walletManager = WalletsMaster.getInstance(context).getWalletByIso(context, currencyCode);
+
+        // TODO: SHIV transact
+// message_type = "CALL_REQUEST"
+//        message CallRequest {
+//            required string scope = 1;      // should be a currency code eg "ETH" or "BRD"
+//            optional string network = 2 [default = "mainnet"];  // a network designation
+//                required string address = 3;    // the smart contract address
+//                required string abi = 4;        // the abi-encoded parameters to send to the smart contract
+//                required string amount = 5;     // the desired amount expressed as an integer in the lowest currency denomination
+//                optional string memo = 6;       // optionally a request may include a memo, the receiver can retain if necessary
+//        }
+
+
+        CryptoTransaction transaction = walletManager.createTransaction(new BigDecimal(request.getAmount()), request.getAddress());
+        boolean transactionSuccessful = true;
+
+        Protos.CallResponse.Builder responseBuilder = Protos.CallResponse.newBuilder().setScope(currencyCode);
+
+        if (transactionSuccessful) {
+            responseBuilder.setStatus(Protos.Status.ACCEPTED)
+                    .setTransactionId(transaction.getHash());
+        } else {
+            responseBuilder.setStatus(Protos.Status.REJECTED);
+        }
+
+        return responseBuilder.build().toByteString();
     }
 
     public static void startPairing(final Context context, PairingObject pairingObject) {
