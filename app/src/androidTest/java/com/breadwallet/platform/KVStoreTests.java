@@ -134,7 +134,7 @@ public class KVStoreTests {
 
     @Before
     public void setUp() {
-        BRConstants.PLATFORM_ON = false;
+//        BRConstants.PLATFORM_ON = false;
         ((MockUpAdapter) remote).remoteKVs.clear();
         ((MockUpAdapter) remote).putKv(new KVItem(1, 1, "hello", ReplicatedKVStore.encrypt("hello".getBytes(), mActivityRule.getActivity()), System.currentTimeMillis(), 0));
         ((MockUpAdapter) remote).putKv(new KVItem(1, 1, "removed", ReplicatedKVStore.encrypt("removed".getBytes(), mActivityRule.getActivity()), System.currentTimeMillis(), 1));

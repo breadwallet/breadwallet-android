@@ -327,39 +327,39 @@ public class WalletTests {
     public void httpTests() {
         final AtomicInteger count = new AtomicInteger();
         final String contract = "0x558ec3152e2eb2174905cd19aea4e34a23de9ad6";
-        for (int i = 0; i < 10000; i++) {
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    count.incrementAndGet();
-                    final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
-                    final String eth_rpc_url = host + "module=logs&action=getLogs" +
-                            "&fromBlock=0&toBlock=latest" +
-//                         "&address=" + ... not needed since we're asking for all the contracts
-                            "&topic0=" + "" +
-                            "&topic1=" + contract +
-                            "&topic1_2_opr=or" +
-                            "&topic2=" + contract;
-                    Log.d(TAG, "run: " + eth_rpc_url);
-                    final JSONObject payload = new JSONObject();
-                    try {
-                        payload.put("id", String.valueOf(""));
-                        // ?? payload.put("account", address);
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                    }
-
-                    JsonRpcRequest.makeRpcRequest(mActivityRule.getActivity(), eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
-                        @Override
-                        public void onRpcRequestCompleted(String jsonResult) {
-
-                            Log.e(TAG, "onRpcRequestCompleted: " + jsonResult);
-
-                        }
-                    });
-                }
-            });
-        }
+//        for (int i = 0; i < 10000; i++) {
+//            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//                @Override
+//                public void run() {
+//                    count.incrementAndGet();
+//                    final String host = "https://" + BreadApp.HOST + JsonRpcConstants.BRD_ETH_TX_ENDPOINT + "query?";
+//                    final String eth_rpc_url = host + "module=logs&action=getLogs" +
+//                            "&fromBlock=0&toBlock=latest" +
+////                         "&address=" + ... not needed since we're asking for all the contracts
+//                            "&topic0=" + "" +
+//                            "&topic1=" + contract +
+//                            "&topic1_2_opr=or" +
+//                            "&topic2=" + contract;
+//                    Log.d(TAG, "run: " + eth_rpc_url);
+//                    final JSONObject payload = new JSONObject();
+//                    try {
+//                        payload.put("id", String.valueOf(""));
+//                        // ?? payload.put("account", address);
+//                    } catch (JSONException e) {
+//                        e.printStackTrace();
+//                    }
+//
+//                    JsonRpcRequest.makeRpcRequest(mActivityRule.getActivity(), eth_rpc_url, payload, new JsonRpcRequest.JsonRpcRequestListener() {
+//                        @Override
+//                        public void onRpcRequestCompleted(String jsonResult) {
+//
+//                            Log.e(TAG, "onRpcRequestCompleted: " + jsonResult);
+//
+//                        }
+//                    });
+//                }
+//            });
+//        }
         while(count.get() < 10000){
             try {
                 Thread.sleep(1000);
