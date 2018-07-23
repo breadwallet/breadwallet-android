@@ -1,4 +1,4 @@
-package com.breadwallet.protocols.messageexchange.entities;
+package com.breadwallet.protocol.messageexchange.entities;
 
 /**
  * BreadWallet
