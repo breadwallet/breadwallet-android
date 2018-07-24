@@ -2,6 +2,7 @@ package com.breadwallet.protocols.messageexchange;
 
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
+import android.support.annotation.WorkerThread;
 import android.util.Base64;
 import android.util.Log;
 
@@ -12,10 +13,8 @@ import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
 import com.breadwallet.protocols.messageexchange.entities.PairingObject;
 import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.crypto.CryptoHelper;
-import com.breadwallet.tools.crypto.HmacDrbg;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -29,6 +28,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
 /**
  * BreadWallet
@@ -59,9 +59,9 @@ public final class MessageExchangeService /*extends Service*/ {
     private static final String TAG = MessageExchangeService.class.getSimpleName();
     private static ByteString mSenderId = null;
     private static ByteString mPairingPublicKey = null;
+    private static final int NONCE_SIZE = 12;
 
     public static final int ENVELOPE_VERSION = 1;
-    public static final int HMAC_SIZE_BYTES = 32;
     public static final String SERVICE_PWB = "PWB";
 
     public enum MessageType {
@@ -102,21 +102,20 @@ public final class MessageExchangeService /*extends Service*/ {
             Log.e(TAG, "pairWallet: invalid query parameters");
             return null;
         }
-
-        byte[] idSha256 = CryptoHelper.sha256(id);
         byte[] authKey = BRKeyStore.getAuthKey(context);
-        HmacDrbg hmacDrbg = new HmacDrbg(authKey, idSha256);
-        byte[] hmacDrgbResult = new byte[HMAC_SIZE_BYTES];
-        hmacDrbg.nextBytes(hmacDrgbResult, 0, HMAC_SIZE_BYTES);
-        return new BRCoreKey(hmacDrgbResult, false);
+        return new BRCoreKey(authKey).getPairingKey(id);
     }
 
-    public static EncryptedMessage encryptMessage(Context context, byte[] senderPublicKey, byte[] data) {
-        byte[] nonce = CryptoHelper.generateRandomNonce();
-        BRCoreKey authKey = new BRCoreKey(BRKeyStore.getAuthKey(context));
+    public static EncryptedMessage encrypt(BRCoreKey authKey, byte[] senderPublicKey, byte[] data) {
+        byte[] nonce = generateRandomNonce();
         byte[] encryptedData = authKey.encryptUsingSharedSecret(senderPublicKey, data, nonce);
         return new EncryptedMessage(encryptedData, nonce);
     }
+
+    public static byte[] decrypt(BRCoreKey authKey, byte[] senderPublicKey, byte[] encryptedMessage, byte[] nonce) {
+        return authKey.decryptUsingSharedSecret(senderPublicKey, encryptedMessage, nonce);
+    }
+
 
     public static void processInboxMessages(Context context, List<InboxEntry> inboxEntries) {
         Log.e(TAG, "processInboxMessages: " + inboxEntries.size());
@@ -124,13 +123,16 @@ public final class MessageExchangeService /*extends Service*/ {
         for (InboxEntry inboxEntry : inboxEntries) {
             Protos.Envelope requestEnvelope = getEnvelopeFromInbox(inboxEntry);
             boolean isEnvelopValid = verifyEnvelope(requestEnvelope);
-            if (!isEnvelopValid) {
-                Log.e(TAG, "createResponseEnvelope: verifyEnvelope failed!!!");
+//            if (!isEnvelopValid) {
+//                Log.e(TAG, "createResponseEnvelope: verifyEnvelope failed!!!");
+//                continue;
+//            }
+            BRCoreKey authKey = new BRCoreKey(BRKeyStore.getAuthKey(context));
+            Protos.Envelope responseEnvelope = createResponseEnvelope(authKey, requestEnvelope);
+            if (responseEnvelope == null) {
+                Log.e(TAG, "processInboxMessages: responseEnvelope is null!");
                 continue;
             }
-
-            Protos.Envelope responseEnvelope = createResponseEnvelope(context, requestEnvelope);
-
             cursors.add(inboxEntry.getCursor());
             MessageExchangeNetworkHelper.sendEnvelope(context, responseEnvelope.toByteArray());
         }
@@ -151,12 +153,16 @@ public final class MessageExchangeService /*extends Service*/ {
         byte[] senderPublicKey = envelope.getSenderPublicKey().toByteArray();
         envelope = envelope.toBuilder().setSignature(ByteString.EMPTY).build();
         byte[] envelopeDoubleSha256 = CryptoHelper.doubleSha256(envelope.toByteArray());
+        if (Utils.isNullOrEmpty(signature)) {
+            Log.e(TAG, "verifyEnvelope: signature missing.");
+            return false;
+        }
         BRCoreKey key = BRCoreKey.compactSignRecoverKey(envelopeDoubleSha256, signature);
         byte[] recoveredPubKey = key.getPubKey();
         return Arrays.equals(senderPublicKey, recoveredPubKey);
     }
 
-    public static Protos.Envelope createResponseEnvelope(Context context, Protos.Envelope requestEnvelope) {
+    public static Protos.Envelope createResponseEnvelope(BRCoreKey authKey, Protos.Envelope requestEnvelope) {
         int version = requestEnvelope.getVersion();
         String service = requestEnvelope.getService();
         String expiration = requestEnvelope.getExpiration();
@@ -170,15 +176,13 @@ public final class MessageExchangeService /*extends Service*/ {
 
         try {
             requestEnvelope = requestEnvelope.toBuilder().setSignature(ByteString.EMPTY).build();
-            BRCoreKey authKey = new BRCoreKey(BRKeyStore.getAuthKey(context));
             byte[] pubKey = authKey.getPubKey();
-            byte[] decryptedMessageBytes = authKey.decryptUsingSharedSecret(senderPublicKey.toByteArray(), encryptedMessage.toByteArray(), nonce.toByteArray());
+            byte[] decryptedMessageBytes = decrypt(authKey, senderPublicKey.toByteArray(), encryptedMessage.toByteArray(), nonce.toByteArray());
             MessageType requestMessageType = MessageType.valueOf(messageType);
-            ByteString messageResponse = generateResponseMessage(context, decryptedMessageBytes, requestMessageType);
-            EncryptedMessage responseEncryptedMessage = encryptMessage(context, senderPublicKey.toByteArray(), messageResponse.toByteArray());
+            ByteString messageResponse = generateResponseMessage(authKey, decryptedMessageBytes, requestMessageType);
+            EncryptedMessage responseEncryptedMessage = encrypt(authKey, senderPublicKey.toByteArray(), messageResponse.toByteArray());
             MessageType responseMessageType = getResponseMessageType(requestMessageType);
-            BRCoreKey pairingKey = getPairingKey(context, senderPublicKey.toByteArray(), identifier.getBytes());
-            byte[] responseSignature = pairingKey.compactSign(CryptoHelper.doubleSha256(requestEnvelope.toByteArray()));
+            byte[] responseSignature = authKey.compactSign(CryptoHelper.doubleSha256(requestEnvelope.toByteArray()));
             Protos.Envelope responseEnvelope = createEnvelope(ByteString.copyFrom(responseEncryptedMessage.getEncryptedData()),
                     responseMessageType, ByteString.copyFrom(pubKey), senderPublicKey, identifier,
                     ByteString.copyFrom(responseEncryptedMessage.getNonce()));
@@ -218,11 +222,11 @@ public final class MessageExchangeService /*extends Service*/ {
         return null;
     }
 
-    private static ByteString generateResponseMessage(Context context, byte[] requestDecryptedMessage, MessageType requestMessageType) {
+    private static ByteString generateResponseMessage(BRCoreKey authKey, byte[] requestDecryptedMessage, MessageType requestMessageType) {
         try {
             switch (requestMessageType) {
                 case LINK:
-                    byte[] pubKey = new BRCoreKey(BRKeyStore.getAuthKey(context)).getPubKey();
+                    byte[] pubKey = authKey.getPubKey();
                     Protos.Link linkMessage = Protos.Link.parseFrom(requestDecryptedMessage);
                     mSenderId = linkMessage.getId();
                     mPairingPublicKey = linkMessage.getPublicKey();
@@ -230,7 +234,7 @@ public final class MessageExchangeService /*extends Service*/ {
 //                resultMessage = createLinkMessage(pubKey, Protos.Status.ACCEPTED, mSenderId);
                     return null;
                 case PING:
-                    return Protos.Pong.newBuilder().setPong("Hi Dan, you're so awesome.").getPongBytes();
+                    return Protos.Pong.newBuilder().setPong("This is the message of the day.").build().getPongBytes();
                 case ACCOUNT_REQUEST:
                     return generateAccountResponse(requestDecryptedMessage);
                 case PAYMENT_REQUEST:
@@ -268,8 +272,7 @@ public final class MessageExchangeService /*extends Service*/ {
 
             if (address == null) {
                 responseBuilder.setStatus(Protos.Status.REJECTED);
-            }
-            else {
+            } else {
                 responseBuilder.setAddress(address)
                         .setStatus(Protos.Status.ACCEPTED);
             }
@@ -341,49 +344,54 @@ public final class MessageExchangeService /*extends Service*/ {
         return responseBuilder.build().toByteString();
     }
 
+    @WorkerThread
     public static void startPairing(final Context context, PairingObject pairingObject) {
-        byte[] pubKey = new BRCoreKey(BRKeyStore.getAuthKey(context)).getPubKey();
+        BRCoreKey authCorekey = new BRCoreKey(BRKeyStore.getAuthKey(context));
+        byte[] pubKey = authCorekey.getPubKey();
         try {
             ByteString message = createLinkMessage(pubKey, Protos.Status.ACCEPTED, ByteString.copyFrom(pairingObject.getId(), StandardCharsets.UTF_8.name()));
-            byte[] senderPublickey = BRCoreKey.decodeHex(pairingObject.getPublicKeyHex());
-            EncryptedMessage encryptedMessage = encryptMessage(context, senderPublickey, message.toByteArray());
+            byte[] ephemeralKey = BRCoreKey.decodeHex(pairingObject.getPublicKeyHex());
+            EncryptedMessage encryptedMessage = encrypt(authCorekey, ephemeralKey, message.toByteArray());
             ByteString encryptedMessageByteString = ByteString.copyFrom(encryptedMessage.getEncryptedData());
             Protos.Envelope envelope = createEnvelope(encryptedMessageByteString, MessageType.LINK, ByteString.copyFrom(pubKey)
-                    , ByteString.copyFrom(senderPublickey), BRSharedPrefs.getDeviceId(context), ByteString.copyFrom(encryptedMessage.getNonce()));
-            BRCoreKey pairingKey = getPairingKey(context, senderPublickey, pairingObject.getId().getBytes());
-            byte[] signature = pairingKey.compactSign(envelope.toByteArray());
+                    , ByteString.copyFrom(ephemeralKey), BRSharedPrefs.getDeviceId(context), ByteString.copyFrom(encryptedMessage.getNonce()));
+            BRCoreKey pairingKey = getPairingKey(context, ephemeralKey, pairingObject.getId().getBytes());
+            byte[] signature = authCorekey.compactSign(CryptoHelper.doubleSha256(envelope.toByteArray()));
             envelope = envelope.toBuilder().setSignature(ByteString.copyFrom(signature)).build();
             Log.e(TAG, "startPairing: " + envelope.toString());
             final byte[] envelopeData = envelope.toByteArray();
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    MessageExchangeNetworkHelper.sendEnvelope(context, envelopeData);
-                }
-            });
+            //network call
+            MessageExchangeNetworkHelper.sendEnvelope(context, envelopeData);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
 
     }
 
+    public static byte[] generateRandomNonce() {
+        byte[] nonce = new byte[NONCE_SIZE];
+        new Random().nextBytes(nonce);
+        return nonce;
+    }
+
     public static void sendTestPing(Context context) {
-        byte[] pubKey = Base58.decode("26qwjQdU35N8dDP2dAarAiwB2bRTktLDkcbTBnR4iHHwj");
+        Log.e(TAG, "sendTestPing: sending");
+        byte[] pubKey = Base58.decode("iRbNunsoS9P3VeGg4T2qMsXgxd3zaveva47v4vgKtQ2m");
         String identifier = "Mihail";
-        ByteString message = Protos.Pong.newBuilder().setPong("Hi Dan, you're so awesome.").getPongBytes();
+        ByteString message = Protos.Ping.newBuilder().setPing("Hi Dan, you're so awesome.").build().getPingBytes();
         BRCoreKey authKey = new BRCoreKey(BRKeyStore.getAuthKey(context));
         byte[] myPubKey = authKey.getPubKey();
 
         MessageType requestMessageType = MessageType.PING;
-        EncryptedMessage responseEncryptedMessage = encryptMessage(context, pubKey, message.toByteArray());
-        MessageType responseMessageType = getResponseMessageType(requestMessageType);
-        BRCoreKey pairingKey = getPairingKey(context, pubKey, identifier.getBytes());
+        EncryptedMessage responseEncryptedMessage = encrypt(authKey, pubKey, message.toByteArray());
+        BRCoreKey privateKey = new BRCoreKey(BRKeyStore.getAuthKey(context));
         Protos.Envelope envelope = createEnvelope(ByteString.copyFrom(responseEncryptedMessage.getEncryptedData()),
-                responseMessageType, ByteString.copyFrom(pubKey), ByteString.copyFrom(myPubKey),
+                requestMessageType, ByteString.copyFrom(myPubKey), ByteString.copyFrom(pubKey),
                 identifier, ByteString.copyFrom(responseEncryptedMessage.getNonce()));
-        byte[] responseSignature = pairingKey.compactSign(envelope.toByteArray());
+        byte[] responseSignature = privateKey.compactSign(CryptoHelper.doubleSha256(envelope.toByteArray()));
         envelope = envelope.toBuilder().setSignature(ByteString.copyFrom(responseSignature)).build();
         MessageExchangeNetworkHelper.sendEnvelope(context, envelope.toByteArray());
+        Log.e(TAG, "sendTestPing: DONE.");
     }
 
 }

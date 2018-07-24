@@ -165,7 +165,9 @@ public final class MessageExchangeNetworkHelper {
             ackJsonArray.put(cursor);
         }
         String ackUrl = APIClient.BASE_URL + ACK_PATH;
-        RequestBody requestBody = RequestBody.create(null, ackJsonArray.toString());
+        final MediaType jsonType
+                = MediaType.parse(BRConstants.HEADER_VALUE_CONTENT_TYPE);
+        RequestBody requestBody = RequestBody.create(jsonType, ackJsonArray.toString());
         Request request = new Request.Builder()
                 .url(ackUrl)
                 .post(requestBody)
@@ -173,7 +175,10 @@ public final class MessageExchangeNetworkHelper {
         APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
         ErrorObject errorObject = getError(response.getBodyText());
         if (errorObject != null) {
-            Log.e(TAG, "sendAck: " + errorObject.mMessage);
+            Log.e(TAG, "sendAck: err:" + errorObject.mMessage);
+        }
+        if (!response.isSuccessful()) {
+            Log.e(TAG, "sendAck: code:" + response.getCode());
         }
 
     }

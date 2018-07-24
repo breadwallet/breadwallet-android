@@ -140,6 +140,14 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             public void onClick(View view) {
                 UiUtils.showSendFragment(WalletActivity.this, null);
 
+                //todo remove this testing
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        MessageExchangeService.sendTestPing(WalletActivity.this);
+                    }
+                });
+
             }
         });
 
@@ -218,14 +226,14 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         boolean cryptoPreferred = BRSharedPrefs.isCryptoPreferred(this);
 
         setPriceTags(cryptoPreferred, false);
+
         //TODO Delete testing code
         byte[] authKey = BRKeyStore.getAuthKey(this);
         if (Utils.isNullOrEmpty(authKey)) throw new NullPointerException();
         BRCoreKey key = new BRCoreKey(authKey);
         byte[] pubkey = key.getPubKey();
-        Log.e(TAG, "onCreate: pubkeyLen:" + pubkey.length);
         if (Utils.isNullOrEmpty(pubkey)) throw new NullPointerException();
-        Log.e(TAG, "onCreate: core base58PubKey:" + BRCoreKey.encodeBase58(pubkey));
+        Log.e(TAG, "onCreate: pubkey:" + BRCoreKey.encodeHex(pubkey) + ", privkey: " + BRCoreKey.encodeHex(authKey));
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
