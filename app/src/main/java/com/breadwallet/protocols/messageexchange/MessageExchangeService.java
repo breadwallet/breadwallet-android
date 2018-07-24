@@ -1,6 +1,10 @@
 package com.breadwallet.protocols.messageexchange;
 
+import android.app.IntentService;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.VisibleForTesting;
 import android.support.annotation.WorkerThread;
 import android.util.Base64;
@@ -11,6 +15,7 @@ import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.protocols.messageexchange.entities.EncryptedMessage;
 import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
 import com.breadwallet.protocols.messageexchange.entities.PairingObject;
+import com.breadwallet.protocols.messageexchange.entities.RequestMetaData;
 import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -25,10 +30,12 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Random;
+import java.util.Map;
 
 /**
  * BreadWallet
@@ -55,7 +62,7 @@ import java.util.Random;
  * THE SOFTWARE.
  */
 
-public final class MessageExchangeService /*extends Service*/ {
+public final class MessageExchangeService extends IntentService {
     private static final String TAG = MessageExchangeService.class.getSimpleName();
     private static ByteString mSenderId = null;
     private static ByteString mPairingPublicKey = null;
@@ -76,7 +83,12 @@ public final class MessageExchangeService /*extends Service*/ {
         CALL_RESPONSE
     }
 
+    /**
+     * The {@link MessageExchangeService} is responsible for retrieving encrypted messages from the server which
+     * are ultimately from another wallet.
+     */
     private MessageExchangeService() {
+        super(TAG);
     }
 
     public static Protos.Envelope createEnvelope(ByteString encryptedMessage, MessageType messageType,
@@ -116,13 +128,13 @@ public final class MessageExchangeService /*extends Service*/ {
         return authKey.decryptUsingSharedSecret(senderPublicKey, encryptedMessage, nonce);
     }
 
-
+    // DEPRECATE
     public static void processInboxMessages(Context context, List<InboxEntry> inboxEntries) {
         Log.e(TAG, "processInboxMessages: " + inboxEntries.size());
         List<String> cursors = new ArrayList<>();
         for (InboxEntry inboxEntry : inboxEntries) {
             Protos.Envelope requestEnvelope = getEnvelopeFromInbox(inboxEntry);
-            boolean isEnvelopValid = verifyEnvelope(requestEnvelope);
+            boolean isEnvelopValid = verifyEnvelopeSignature(requestEnvelope);
 //            if (!isEnvelopValid) {
 //                Log.e(TAG, "createResponseEnvelope: verifyEnvelope failed!!!");
 //                continue;
@@ -139,16 +151,19 @@ public final class MessageExchangeService /*extends Service*/ {
         MessageExchangeNetworkHelper.sendAck(context, cursors);
     }
 
+    // DEPRECATE
     public static void checkInboxAndRespond(Context context) {
         List<InboxEntry> inboxEntries = MessageExchangeNetworkHelper.fetchInbox(context);
         processInboxMessages(context, inboxEntries);
     }
 
     /**
-     * @param envelope the envelope to verify
-     * @return true if valid
+     * Verifies the specified envelope's signature.
+     *
+     * @param envelope The envelope whose signature will be verified.
+     * @return True, if the signature is valid; false, otherwise.
      */
-    public static boolean verifyEnvelope(Protos.Envelope envelope) {
+    public static boolean verifyEnvelopeSignature(Protos.Envelope envelope) {
         byte[] signature = envelope.getSignature().toByteArray();
         byte[] senderPublicKey = envelope.getSenderPublicKey().toByteArray();
         envelope = envelope.toBuilder().setSignature(ByteString.EMPTY).build();
@@ -281,6 +296,7 @@ public final class MessageExchangeService /*extends Service*/ {
         return responseBuilder.build().toByteString();
     }
 
+    // DEPRECATED
     private static ByteString generatePaymentResponse(byte[] requestDecryptedMessage) throws InvalidProtocolBufferException {
         Protos.PaymentRequest request = Protos.PaymentRequest.parseFrom(requestDecryptedMessage);
 
@@ -370,7 +386,7 @@ public final class MessageExchangeService /*extends Service*/ {
 
     public static byte[] generateRandomNonce() {
         byte[] nonce = new byte[NONCE_SIZE];
-        new Random().nextBytes(nonce);
+        new SecureRandom().nextBytes(nonce);
         return nonce;
     }
 
@@ -394,4 +410,233 @@ public final class MessageExchangeService /*extends Service*/ {
         Log.e(TAG, "sendTestPing: DONE.");
     }
 
+    /***********************************************************************************************
+     *                       EVENTUALLY FINAL BUT CURRENTLY WIP BELOW THIS                         *
+     ***********************************************************************************************
+     */
+
+
+    public static final String ACTION_RETRIEVE_MESSAGES = "com.breadwallet.protocols.messageexchange.ACTION_RETRIEVE_MESSAGES";
+    private static final String ACTION_PROCESS_REQUEST = "com.breadwallet.protocols.messageexchange.ACTION_PROCESS_REQUEST";
+    public static final String ACTION_GET_USER_CONFIRMATION = "com.breadwallet.protocols.messageexchange.ACTION_GET_USER_CONFIRMATION";
+    //    public static final String EXTRA_REQUEST_ID = "com.breadwallet.protocols.messageexchange.EXTRA_REQUEST_ID";
+    private static final String EXTRA_IS_USER_APPROVED = "com.breadwallet.protocols.messageexchange.EXTRA_IS_USER_APPROVED";
+    private static final String EXTRA_REQUEST_METADATA = "com.breadwallet.protocols.messageexchange.EXTRA_REQUEST_METADATA";
+
+    // TODO: these should be stored in the DB in case of app restart or crash.
+    private Map<String, Protos.Envelope> mPendingRequests = new HashMap<>();
+
+//    public enum ServiceCapability implements Parcelable {
+//        ACCOUNT,
+//        PAYMENT,
+//        CALL,
+//    }
+
+    /**
+     * Handles intents passed to the {@link MessageExchangeService} by creating a new worker thread to complete the work required.
+     *
+     * @param intent The intent specifying the work that needs to be completed.
+     */
+    @Override
+    protected void onHandleIntent(Intent intent) {
+        if (intent != null) {
+            switch (intent.getAction()) {
+                case ACTION_RETRIEVE_MESSAGES:
+                    retrieveMessages(this.getApplicationContext());
+                    break;
+                case ACTION_PROCESS_REQUEST:
+                    boolean isUserApproved = intent.getBooleanExtra(EXTRA_IS_USER_APPROVED, false);
+                    RequestMetaData requestMetaData = intent.getParcelableExtra(EXTRA_REQUEST_METADATA);
+                    if (requestMetaData != null) {
+                        processAsyncRequest(this.getApplicationContext(), requestMetaData, isUserApproved);
+                    } else {
+                        Log.e(TAG, "Missing request meta data.  Ignoring intent.");
+                    }
+                    break;
+                default:
+                    Log.d(TAG, "Intent not recognized.");
+            }
+        }
+    }
+
+    /**
+     * Creates an intent with the specified parameters for the {@link ConfirmationActivity} to start this service.
+     *
+     * @param context        The context in which we are operating.
+     * @param parcelable     The parcelable containing meta data needed when the service starts again.
+     * @param isUserApproved True, if the user approved the pending request; false, otherwise.
+     * @return An intent with the specified parameters.
+     */
+    public static Intent createIntent(Context context, Parcelable parcelable, boolean isUserApproved) {
+        Intent intent = new Intent(context, MessageExchangeService.class);
+        intent.setAction(ACTION_PROCESS_REQUEST)
+                .putExtra(EXTRA_REQUEST_METADATA, parcelable)
+                .putExtra(EXTRA_IS_USER_APPROVED, isUserApproved);
+        return intent;
+    }
+
+    /**
+     * @param context
+     */
+    private void retrieveMessages(Context context) {
+        List<InboxEntry> inboxEntries = MessageExchangeNetworkHelper.fetchInbox(context);
+        Log.d(TAG, "retrieveMessages: " + inboxEntries.size());
+
+        List<String> cursors = new ArrayList<>();
+        for (InboxEntry inboxEntry : inboxEntries) {
+            Protos.Envelope requestEnvelope = getEnvelopeFromInboxEntry(inboxEntry);
+            String cursor = inboxEntry.getCursor();
+            if (verifyEnvelopeSignature(requestEnvelope)) {
+                processRequest(context, cursor, requestEnvelope);
+                cursors.add(cursor);
+            } else {
+                Log.e(TAG, "retrieveMessages: signature verification failed. id: " + cursor);
+            }
+        }
+
+        MessageExchangeNetworkHelper.sendAck(context, cursors);
+    }
+
+    private void processRequest(Context context, String cursor, Protos.Envelope requestEnvelope) {
+
+        byte[] decryptedMessage = decryptMessage(context, requestEnvelope); //TODO: Shiv is this needed for all?
+        MessageType messageType = MessageType.valueOf(requestEnvelope.getMessageType());
+        RequestMetaData metaData = null;
+
+        //TODO: SHIV Add go metaData: PAYMENT_METHOD_NAME - Ethereum, PAYMENT_METHOS_CURRENCY_CODE - ETH // use for displaying the price, fee, total
+        //DELIVERY_TIME, PRICE, FEE, TOTAL
+        try {
+
+            switch (messageType) {
+                case LINK:
+                    //TODO: SHIV Fix this. This is an async request.
+                    sendResponse(context, requestEnvelope);
+                    break;
+                case PING:
+                    sendResponse(context, requestEnvelope);
+                    break;
+                case ACCOUNT_REQUEST:
+                    sendResponse(context, requestEnvelope);
+                    break;
+                case PAYMENT_REQUEST:
+                    // These are asynchronous requests.  Save until some event happens.
+                    // Use cursor # to identify this request.
+                    mPendingRequests.put(cursor, requestEnvelope); //TODO:
+
+                    Protos.PaymentRequest paymentRequest = Protos.PaymentRequest.parseFrom(decryptedMessage);
+                    metaData = new RequestMetaData(cursor, paymentRequest.getScope(), paymentRequest.getNetwork(),
+                            paymentRequest.getAddress(), paymentRequest.getAmount(), paymentRequest.getMemo());
+                    confirmRequest(metaData);
+                case CALL_REQUEST:
+                    // These are asynchronous requests.  Save until some event happens.
+                    // Use cursor # to identify this request.
+                    mPendingRequests.put(cursor, requestEnvelope);
+
+                    Protos.CallRequest callRequest = Protos.CallRequest.parseFrom(decryptedMessage);
+                    metaData = new RequestMetaData(cursor, callRequest.getScope(), callRequest.getNetwork(),
+                            callRequest.getAddress(), callRequest.getAmount(), callRequest.getMemo());
+                    confirmRequest(metaData);
+                default:
+                    Log.e(TAG, "RequestMetaData type not recognized:" + messageType.name());
+            }
+        } catch (InvalidProtocolBufferException e) {
+            Log.e(TAG, "Error parsing protobuf for " + messageType.name() + "message.", e);
+            // TODO: SHIV re-throw?
+        }
+    }
+
+    private void processAsyncRequest(Context context, RequestMetaData requestMetaData, boolean isUserApproved) {
+        Protos.Envelope requestEnvelope = mPendingRequests.get(requestMetaData.getId());
+        MessageType messageType = MessageType.valueOf(requestEnvelope.getMessageType());
+
+        switch (messageType) {
+            case LINK:
+//TODO
+                break;
+            case PAYMENT_REQUEST:
+                processPaymentRequest(requestMetaData, isUserApproved);
+                break;
+            case CALL_REQUEST:
+//TODO
+                break;
+            default:
+                Log.e(TAG, "RequestMetaData type not recognized:" + messageType.name());
+        }
+
+        // TODO: Call rest of createResponseEnvelope
+
+    }
+
+    private void sendResponse(Context context, String requestId) {
+        sendResponse(context, mPendingRequests.get(requestId));
+    }
+
+    private void sendResponse(Context context, Protos.Envelope requestEnvelope) {
+        Protos.Envelope responseEnvelope = createResponseEnvelope(null, requestEnvelope); // TODO SHIV: FIX NULL
+        MessageExchangeNetworkHelper.sendEnvelope(context, responseEnvelope.toByteArray());
+    }
+
+    /**
+     * Prompts the user to confirm the pending remote request.
+     *
+     * @param requestMetaData The meta data related to the request.
+     */
+    private void confirmRequest(RequestMetaData requestMetaData) {
+        Intent intent = new Intent(this, MessageExchangeService.class); // TODO: SHIV Add name of Jade's activity
+        intent.setAction(ACTION_GET_USER_CONFIRMATION);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(EXTRA_REQUEST_METADATA, requestMetaData);
+        startActivity(intent, bundle);
+    }
+
+    public static byte[] decryptMessage(Context context, Protos.Envelope requestEnvelope) {
+        BRCoreKey authKey = new BRCoreKey(BRKeyStore.getAuthKey(context));
+        return authKey.decryptUsingSharedSecret(requestEnvelope.getSenderPublicKey().toByteArray(),
+                requestEnvelope.getEncryptedMessage().toByteArray(),
+                requestEnvelope.getNonce().toByteArray());
+
+    }
+
+    // REMOVE OLD ONE
+    private static Protos.Envelope getEnvelopeFromInboxEntry(InboxEntry entry) {
+        try {
+            byte[] envelopeData = Base64.decode(entry.getMessage(), Base64.NO_WRAP);
+            return Protos.Envelope.parseFrom(envelopeData);
+        } catch (InvalidProtocolBufferException e) {
+            Log.e(TAG, "Error decoding envelope. InboxEntry cursor: " + entry.getCursor(), e);
+            return null;
+        }
+
+
+    }
+
+    private ByteString processPaymentRequest(RequestMetaData requestMetaData, boolean isUserApproved) {
+//        Protos.PaymentRequest request = Protos.PaymentRequest.parseFrom(requestDecryptedMessage);
+
+        Protos.PaymentResponse.Builder responseBuilder = Protos.PaymentResponse.newBuilder();
+        if (isUserApproved) {
+            String currencyCode = requestMetaData.getCurrencyCode();
+//        Context context = BreadApp.getBreadContext(); // TODO: SHIV remove once we have a service.
+            BaseWalletManager walletManager = WalletsMaster.getInstance(this).getWalletByIso(this, requestMetaData.getCurrencyCode());
+
+            // TODO: SHIV transact using requestMetaData.
+            CryptoTransaction transaction = walletManager.createTransaction(new BigDecimal(requestMetaData.getAmount()), requestMetaData.getAddress());
+            // Investigate PostAuth.getInstance().onPublishTxAuth(); ???
+
+            boolean transactionSuccessful = true;
+            if (transactionSuccessful) {
+                responseBuilder.setScope(currencyCode)
+                        .setStatus(Protos.Status.ACCEPTED)
+                        .setTransactionId(transaction.getHash());
+            } else {
+                responseBuilder.setStatus(Protos.Status.REJECTED);
+//                        .setError(Protos.Error.SCOPE_UKNOWN); //TODO: Shiv Update proto
+            }
+        } else {
+            responseBuilder.setStatus(Protos.Status.REJECTED);
+//                        .setError(Protos.Error.USER_DENIED); //TODO: Shiv Update proto
+        }
+
+        return responseBuilder.build().toByteString();
+    }
 }
