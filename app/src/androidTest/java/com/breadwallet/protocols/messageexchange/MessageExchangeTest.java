@@ -1,4 +1,4 @@
-package com.breadwallet.protocol.messageexchange;
+package com.breadwallet.protocols.messageexchange;
 
 import android.support.test.runner.AndroidJUnit4;
 

@@ -1,4 +1,4 @@
-package com.breadwallet.protocol.messageexchange.entities;
+package com.breadwallet.protocols.messageexchange.entities;
 
 import android.net.Uri;
 

@@ -1,4 +1,4 @@
-package com.breadwallet.protocol.messageexchange;
+package com.breadwallet.protocols.messageexchange;
 
 import android.content.Context;
 import android.support.annotation.VisibleForTesting;
@@ -7,10 +7,9 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.core.BRCoreKey;
-import com.breadwallet.protocol.messageexchange.entities.EncryptedMessage;
-import com.breadwallet.protocol.messageexchange.entities.InboxEntry;
-import com.breadwallet.protocol.messageexchange.entities.PairingObject;
-import com.breadwallet.protocols.messageexchange.Protos;
+import com.breadwallet.protocols.messageexchange.entities.EncryptedMessage;
+import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
+import com.breadwallet.protocols.messageexchange.entities.PairingObject;
 import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.crypto.HmacDrbg;
@@ -56,7 +55,7 @@ import java.util.List;
  * THE SOFTWARE.
  */
 
-public final class MessageExchangeService {
+public final class MessageExchangeService /*extends Service*/ {
     private static final String TAG = MessageExchangeService.class.getSimpleName();
     private static ByteString mSenderId = null;
     private static ByteString mPairingPublicKey = null;
@@ -103,6 +102,7 @@ public final class MessageExchangeService {
             Log.e(TAG, "pairWallet: invalid query parameters");
             return null;
         }
+
         byte[] idSha256 = CryptoHelper.sha256(id);
         byte[] authKey = BRKeyStore.getAuthKey(context);
         HmacDrbg hmacDrbg = new HmacDrbg(authKey, idSha256);

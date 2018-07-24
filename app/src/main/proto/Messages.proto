@@ -14,6 +14,7 @@ option java_outer_classname = "Protos";
 message PushNotification {
     required string message = 1;
     optional string action = 2;
+    optional string title = 3;
 }
 
 // Envelope encapsulates one of the below message types
@@ -46,9 +47,10 @@ enum Status {
 // In the case of status=UNKNOWN or status=REJECTED, public_key and id should be omitted.
 // message_type = "LINK"
 message Link {
-    optional bytes public_key = 1;  // a pairing key's public key
-    optional bytes id = 2;          // the static, public ID of the remote entity's wallet
-    required Status status = 3;     // status of pairing request
+    optional bytes public_key = 1;        // a pairing key's public key
+    optional bytes id = 2;                // the static, public ID of the remote entity's wallet
+    required Status status = 3;           // status of pairing request
+    optional string errorMessage = 4;     // if status=REJECTED, error message string id
 }
 
 // Ping another wallet, to test the protocol and wallet link is established
@@ -72,12 +74,14 @@ message AccountRequest {
 // AccountResponse responds to an AccountRequest
 // message_type = "ACCOUNT_RESPONSE"
 message AccountResponse {
-    optional string scope = 1;      // should be the same scope as the request
-    optional string address = 2;    // the receive address, if status=ACCEPTED
-    required Status status = 3;     // any status response
+    optional string scope = 1;            // if status=ACCEPTED, should be the same scope as the request
+    optional string address = 2;          // if status=ACCEPTED, the receive address
+    required Status status = 3;           // any status response
+    optional string errorMessage = 4;     // if status=REJECTED, error message string id
 }
 
-// PaymentRequest requests a payment from a given scope
+// PaymentRequest requests a payment from a given scope.
+// Apps should show a payment dialog to confirm this transaction.
 // message_type = "PAYMENT_REQUEST"
 message PaymentRequest {
     required string scope = 1;      // should be a currency code eg "ETH" or "BRD"
@@ -90,12 +94,14 @@ message PaymentRequest {
 // PaymentResponse responds to a PaymentRequest
 // message_type = "PAYMENT_RESPONSE"
 message PaymentResponse {
-    required string scope = 1;      // should be the same scope as the request
-    required Status status = 2;     // any status response
-    optional string transaction_id = 3; // if status=ACCEPTED, the transaction ID
+    optional string scope = 1;            // if status=ACCEPTED, should be the same scope as the request
+    required Status status = 2;           // any status response
+    optional string transaction_id = 3;   // if status=ACCEPTED, the transaction ID
+    optional string errorMessage = 4;     // if status=REJECTED, error message string id
 }
 
 // CallRequest requests a smart contract call for a given scope
+// Apps should show a payment dialog to confirm this transaction.
 // NOTE: This is currently disabled for ERC20 send operations, use PaymentRequest instead
 // message_type = "CALL_REQUEST"
 message CallRequest {
@@ -110,7 +116,8 @@ message CallRequest {
 // CallResponse responds to a CallRequest
 // message_type = "CALL_RESPONSE"
 message CallResponse {
-    required string scope = 1;      // should be the same scope as the request
-    required Status status = 2;     // any status response
-    optional string transaction_id = 3; // if status=ACCEPTED, the transaction ID
+    optional string scope = 1;            // if status=ACCEPTED, should be the same scope as the request
+    required Status status = 2;           // any status response
+    optional string transaction_id = 3;   // if status=ACCEPTED, the transaction ID
+    optional string errorMessage = 4;     // if status=REJECTED, error message string id
 }

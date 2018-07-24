@@ -4,8 +4,8 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.Log;
 
-import com.breadwallet.protocol.messageexchange.MessageExchangeService;
-import com.breadwallet.protocol.messageexchange.entities.PairingObject;
+import com.breadwallet.protocols.messageexchange.MessageExchangeService;
+import com.breadwallet.protocols.messageexchange.entities.PairingObject;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
