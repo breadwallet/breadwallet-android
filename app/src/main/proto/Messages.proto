@@ -43,6 +43,13 @@ enum Status {
     REJECTED = 2;
 }
 
+// Error codes for response messages.
+enum Error {
+    UNKNOWN_ERROR = 0; // Unknown error
+    USER_DENIED = 1;   // User denied the request
+    SCOPE_UNKNOWN = 2; // Scope does not exist.
+}
+
 // Link two wallets. This establishes a communication channel for the encrypted message exchange.
 // In the case of status=UNKNOWN or status=REJECTED, public_key and id should be omitted.
 // message_type = "LINK"
@@ -50,7 +57,7 @@ message Link {
     optional bytes public_key = 1;        // a pairing key's public key
     optional bytes id = 2;                // the static, public ID of the remote entity's wallet
     required Status status = 3;           // status of pairing request
-    optional string errorMessage = 4;     // if status=REJECTED, error message string id
+    optional Error error = 4;             // if status=REJECTED, an error code.
 }
 
 // Ping another wallet, to test the protocol and wallet link is established
@@ -77,7 +84,7 @@ message AccountResponse {
     optional string scope = 1;            // if status=ACCEPTED, should be the same scope as the request
     optional string address = 2;          // if status=ACCEPTED, the receive address
     required Status status = 3;           // any status response
-    optional string errorMessage = 4;     // if status=REJECTED, error message string id
+    optional Error error = 4;             // if status=REJECTED, an error code.
 }
 
 // PaymentRequest requests a payment from a given scope.
@@ -97,7 +104,7 @@ message PaymentResponse {
     optional string scope = 1;            // if status=ACCEPTED, should be the same scope as the request
     required Status status = 2;           // any status response
     optional string transaction_id = 3;   // if status=ACCEPTED, the transaction ID
-    optional string errorMessage = 4;     // if status=REJECTED, error message string id
+    optional Error error = 4;             // if status=REJECTED, an error code.
 }
 
 // CallRequest requests a smart contract call for a given scope
@@ -119,5 +126,5 @@ message CallResponse {
     optional string scope = 1;            // if status=ACCEPTED, should be the same scope as the request
     required Status status = 2;           // any status response
     optional string transaction_id = 3;   // if status=ACCEPTED, the transaction ID
-    optional string errorMessage = 4;     // if status=REJECTED, error message string id
+    optional Error error = 4;             // if status=REJECTED, an error code.
 }
