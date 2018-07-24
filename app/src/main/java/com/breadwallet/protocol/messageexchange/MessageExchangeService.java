@@ -10,6 +10,7 @@ import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.protocol.messageexchange.entities.EncryptedMessage;
 import com.breadwallet.protocol.messageexchange.entities.InboxEntry;
 import com.breadwallet.protocol.messageexchange.entities.PairingObject;
+import com.breadwallet.protocols.messageexchange.Protos;
 import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.crypto.HmacDrbg;
@@ -82,7 +83,7 @@ public final class MessageExchangeService {
     public static Protos.Envelope createEnvelope(ByteString encryptedMessage, MessageType messageType,
                                                  ByteString senderPublicKey, ByteString receiverPublicKey,
                                                  String uniqueId, ByteString nonce) {
-        Protos.Envelope envelope = com.breadwallet.protocol.messageexchange.Protos.Envelope.newBuilder()
+        Protos.Envelope envelope = Protos.Envelope.newBuilder()
                 .setVersion(ENVELOPE_VERSION)
                 .setMessageType(messageType.name())
                 .setService(SERVICE_PWB)
