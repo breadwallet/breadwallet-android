@@ -2,6 +2,8 @@ package com.breadwallet.protocols.messageexchange;
 
 import android.support.test.runner.AndroidJUnit4;
 
+import com.breadwallet.protocols.messageexchange.Protos;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
