@@ -48,6 +48,8 @@ add_library( # The name of the library.
              src/main/jni/breadwallet-core/BRInt.h
              src/main/jni/breadwallet-core/BRKey.c
              src/main/jni/breadwallet-core/BRKey.h
+             src/main/jni/breadwallet-core/BRKeyECIES.c
+             src/main/jni/breadwallet-core/BRKeyECIES.h
              src/main/jni/breadwallet-core/BRMerkleBlock.c
              src/main/jni/breadwallet-core/BRMerkleBlock.h
              src/main/jni/breadwallet-core/BRPaymentProtocol.c
