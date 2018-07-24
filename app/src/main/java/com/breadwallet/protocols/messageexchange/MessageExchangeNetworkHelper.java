@@ -1,10 +1,10 @@
-package com.breadwallet.protocol.messageexchange;
+package com.breadwallet.protocols.messageexchange;
 
 import android.content.Context;
 import android.util.Log;
 
-import com.breadwallet.protocol.messageexchange.entities.InboxEntry;
-import com.breadwallet.protocol.messageexchange.entities.ServiceObject;
+import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
+import com.breadwallet.protocols.messageexchange.entities.ServiceObject;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
