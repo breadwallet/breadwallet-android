@@ -2,6 +2,7 @@ package com.breadwallet.presenter.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
@@ -11,6 +12,8 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.fragments.FragmentLinkWallet;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
+import com.breadwallet.protocols.messageexchange.entities.LinkMetaData;
+import com.breadwallet.protocols.messageexchange.entities.RequestMetaData;
 
 import java.io.Serializable;
 
@@ -37,32 +40,31 @@ import java.io.Serializable;
  * THE SOFTWARE.
  */
 
-// This Activity will be able to populate 2 fragments, either FragmentLinkWallet or FragmentPaymentConfirmation
+/**
+ * This Activity is used to confirm a request.  Currently is supports Link, Payment and Call requests from the
+ * {@link MessageExchangeService}.  Accordingly, it uses eithers {@link FragmentLinkWallet} or
+ * {@link FragmentPaymentConfirmation}.
+ */
 public class ConfirmationActivity extends FragmentActivity {
-
-
     private static final String TAG = ConfirmationActivity.class.getSimpleName();
-    public static final String EXTRA_CONFIRMATION_TYPE = "extra_confirmation_type";
-
-    public enum ConfirmationType {
-        LINK,
-        PAYMENT
-    }
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirmation);
         Bundle bundle = getIntent().getExtras();
+        // TODO: Jade check the action of the intent.
+        Parcelable metaData = getIntent().getParcelableExtra(MessageExchangeService.EXTRA_METADATA);
 
         BRButton positiveButton = findViewById(R.id.positive_button);
         BRButton negativeButton = findViewById(R.id.negative_button);
 
-        if (bundle != null) {
-            Log.d(TAG, "Found bundle!");
-            ConfirmationType confirmationType = (ConfirmationType) bundle.getSerializable(EXTRA_CONFIRMATION_TYPE);
-            Log.d(TAG, "Confirmation type -> " + confirmationType);
-            if (confirmationType == (ConfirmationType.LINK)) {
+        if (metaData != null) {
+            Log.d(TAG, "Found metaData!");
+            if (metaData instanceof LinkMetaData) {
+                // Handles link messages.
+
+                // TODO Jade, probably just use the Parcelable instead of the bundle from here, if frag args allow it.
                 FragmentLinkWallet linkWalletFragment = FragmentLinkWallet.newInstance(bundle);
                 getFragmentManager().beginTransaction().add(R.id.fragment_container, linkWalletFragment).commit();
                 Log.d(TAG, "ConfirmationType LINK");
@@ -81,11 +83,13 @@ public class ConfirmationActivity extends FragmentActivity {
                     }
                 });
 
-            } else if (confirmationType == ConfirmationType.PAYMENT) {
+            } else if (metaData instanceof RequestMetaData) {
+                // Handles payment and call requests.
+
                 // Display FragmentPaymentConfirmation and set up new listeners for positive
                 // and negative buttons
             } else {
-                Log.d(TAG, "Found unknown ConfirmationType!");
+                Log.d(TAG, "Found unknown Confirmation request type!");
             }
         }
     }
