@@ -28,15 +28,16 @@ import com.breadwallet.tools.util.Utils;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class PairingObject {
-    private String mPublicKeyHex;
-    private String mId;
-    private String mService;
+public class PairingMetaData {
     public static final String QUERY_PARAM_PUBLIC_KEY = "publicKey";
     public static final String QUERY_PARAM_ID = "id";
     public static final String QUERY_PARAM_SERVICE = "service";
 
-    public PairingObject(String publicKeyHex, String id, String service) {
+    private String mPublicKeyHex;
+    private String mId;
+    private String mService;
+
+    public PairingMetaData(String publicKeyHex, String id, String service) {
         this.mPublicKeyHex = publicKeyHex;
         this.mId = id;
         this.mService = service;
@@ -66,7 +67,7 @@ public class PairingObject {
         this.mService = service;
     }
 
-    public static PairingObject parseUriString(String uriString) {
+    public static PairingMetaData parseUriString(String uriString) {
         if (Utils.isNullOrEmpty(uriString)) {
             return null;
         }
@@ -74,6 +75,6 @@ public class PairingObject {
         String publicKeyHex = uri.getQueryParameter(QUERY_PARAM_PUBLIC_KEY);
         String idString = uri.getQueryParameter(QUERY_PARAM_ID);
         String service = uri.getQueryParameter(QUERY_PARAM_SERVICE);
-        return new PairingObject(publicKeyHex, idString, service);
+        return new PairingMetaData(publicKeyHex, idString, service);
     }
 }

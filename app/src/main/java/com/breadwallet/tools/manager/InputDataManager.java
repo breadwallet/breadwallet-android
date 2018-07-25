@@ -5,7 +5,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
-import com.breadwallet.protocols.messageexchange.entities.PairingObject;
+import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -50,11 +50,11 @@ public final class InputDataManager {
         } else if (BRBitId.isBitId(result)) {
             BRBitId.signBitID(context, result, null);
         } else if (isWalletPair(context, result)) {
-            final PairingObject pairingObject = PairingObject.parseUriString(result);
+            final PairingMetaData pairingMetaData = PairingMetaData.parseUriString(result);
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    MessageExchangeService.startPairing(context, pairingObject);
+                    MessageExchangeService.startPairing(context, pairingMetaData);
                 }
             });
 

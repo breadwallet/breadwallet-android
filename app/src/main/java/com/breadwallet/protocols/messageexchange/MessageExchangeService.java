@@ -14,7 +14,7 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.protocols.messageexchange.entities.EncryptedMessage;
 import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
-import com.breadwallet.protocols.messageexchange.entities.PairingObject;
+import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
 import com.breadwallet.protocols.messageexchange.entities.RequestMetaData;
 import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.crypto.CryptoHelper;
@@ -71,7 +71,7 @@ public final class MessageExchangeService extends IntentService {
     public static final int ENVELOPE_VERSION = 1;
     public static final String SERVICE_PWB = "PWB";
 
-    public enum MessageType {
+    private enum MessageType {
         LINK,
         PING,
         PONG,
@@ -91,7 +91,7 @@ public final class MessageExchangeService extends IntentService {
         super(TAG);
     }
 
-    public static Protos.Envelope createEnvelope(ByteString encryptedMessage, MessageType messageType,
+    private static Protos.Envelope createEnvelope(ByteString encryptedMessage, MessageType messageType,
                                                  ByteString senderPublicKey, ByteString receiverPublicKey,
                                                  String uniqueId, ByteString nonce) {
         Protos.Envelope envelope = Protos.Envelope.newBuilder()
@@ -240,6 +240,7 @@ public final class MessageExchangeService extends IntentService {
         return null;
     }
 
+    // Deprecated
     private static ByteString generateResponseMessage(byte[] requestDecryptedMessage, MessageType requestMessageType) {
         try {
             switch (requestMessageType) {
@@ -268,6 +269,7 @@ public final class MessageExchangeService extends IntentService {
         return null;
     }
 
+    // DEPRECATE
     private static ByteString createLinkMessage(byte[] pubKey, Protos.Status status, ByteString senderId) {
         return Protos.Link.newBuilder().setPublicKey(ByteString.copyFrom(pubKey))
                 .setStatus(status).setId(senderId).build().toByteString();
@@ -315,14 +317,16 @@ public final class MessageExchangeService extends IntentService {
         return responseBuilder.build().toByteString();
     }
 
+
+    // DEPRECATED
     @WorkerThread
-    public static void startPairing(final Context context, PairingObject pairingObject) {
+    public static void startPairing(final Context context, PairingMetaData pairingMetaData) {
         try {
-            byte[] ephemeralKey = BRCoreKey.decodeHex(pairingObject.getPublicKeyHex());
-            mSenderId = pairingObject.getId().getBytes();
+            byte[] ephemeralKey = BRCoreKey.decodeHex(pairingMetaData.getPublicKeyHex());
+            mSenderId = pairingMetaData.getId().getBytes();
             byte[] authKey = BRKeyStore.getAuthKey(context);
             BRCoreKey pairingKey = getPairingKey(authKey, mSenderId);
-            ByteString message = createLinkMessage(pairingKey.getPubKey(), Protos.Status.ACCEPTED, ByteString.copyFrom(pairingObject.getId(), StandardCharsets.UTF_8.name()));
+            ByteString message = createLinkMessage(pairingKey.getPubKey(), Protos.Status.ACCEPTED, ByteString.copyFrom(pairingMetaData.getId(), StandardCharsets.UTF_8.name()));
             MessageExchangeNetworkHelper.sendAssociatedKey(context, pairingKey.getPubKey());
 
             EncryptedMessage encryptedMessage = encrypt(pairingKey, ephemeralKey, message.toByteArray());
@@ -348,6 +352,7 @@ public final class MessageExchangeService extends IntentService {
         return nonce;
     }
 
+    // REMOVE
     public static void sendTestPing(Context context) {
         Log.e(TAG, "sendTestPing: sending");
         byte[] pubKey = Base58.decode("iRbNunsoS9P3VeGg4T2qMsXgxd3zaveva47v4vgKtQ2m");
@@ -373,8 +378,9 @@ public final class MessageExchangeService extends IntentService {
      ***********************************************************************************************
      */
 
-
+    public static final String ACTION_REQUEST_TO_PAIR = "com.breadwallet.protocols.messageexchange.ACTION_REQUEST_TO_PAIR";
     public static final String ACTION_RETRIEVE_MESSAGES = "com.breadwallet.protocols.messageexchange.ACTION_RETRIEVE_MESSAGES";
+    private static final String ACTION_PROCESS_PAIR_REQUEST = "com.breadwallet.protocols.messageexchange.ACTION_PROCESS_PAIR_REQUEST";
     private static final String ACTION_PROCESS_REQUEST = "com.breadwallet.protocols.messageexchange.ACTION_PROCESS_REQUEST";
     public static final String ACTION_GET_USER_CONFIRMATION = "com.breadwallet.protocols.messageexchange.ACTION_GET_USER_CONFIRMATION";
     //    public static final String EXTRA_REQUEST_ID = "com.breadwallet.protocols.messageexchange.EXTRA_REQUEST_ID";
@@ -383,6 +389,7 @@ public final class MessageExchangeService extends IntentService {
 
     // TODO: these should be stored in the DB in case of app restart or crash.
     private Map<String, Protos.Envelope> mPendingRequests = new HashMap<>();
+    private PairingMetaData mPairingMetaData;
 
 //    public enum ServiceCapability implements Parcelable {
 //        ACCOUNT,
@@ -399,14 +406,26 @@ public final class MessageExchangeService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             switch (intent.getAction()) {
+                case ACTION_REQUEST_TO_PAIR:
+                    // User scanned QR, to initiate pairing with a remote wallet,
+                    // TODO SHIV parse intent
+                    mPairingMetaData = new PairingMetaData("", "", "");
+
+                    // Show more details about the pairing and ask the user to confirm.
+                    confirmRequest(null); // TODO METADATA, include link type
+                    break;
+                case ACTION_PROCESS_PAIR_REQUEST:
+                    // User has approved or denied the pairing request after reviewing the details.
+                    pair(intent.getBooleanExtra(EXTRA_IS_USER_APPROVED, false));
+                    break;
                 case ACTION_RETRIEVE_MESSAGES:
-                    retrieveMessages(this);
+                    retrieveInboxEntries(this);
                     break;
                 case ACTION_PROCESS_REQUEST:
                     boolean isUserApproved = intent.getBooleanExtra(EXTRA_IS_USER_APPROVED, false);
                     RequestMetaData requestMetaData = intent.getParcelableExtra(EXTRA_REQUEST_METADATA);
                     if (requestMetaData != null) {
-                        processAsyncRequest(this, requestMetaData, isUserApproved);
+                        processAsyncRequest(requestMetaData, isUserApproved);
                     } else {
                         Log.e(TAG, "Missing request meta data.  Ignoring intent.");
                     }
@@ -419,6 +438,22 @@ public final class MessageExchangeService extends IntentService {
 
     /**
      * Creates an intent with the specified parameters for the {@link ConfirmationActivity} to start this service.
+     * Used for: Link.
+     *
+     * @param context        The context in which we are operating.
+     * @param isUserApproved True, if the user approved the pending request; false, otherwise.
+     * @return An intent with the specified parameters.
+     */
+    public static Intent createIntent(Context context, boolean isUserApproved) {
+        Intent intent = new Intent(context, MessageExchangeService.class);
+        intent.setAction(ACTION_PROCESS_PAIR_REQUEST)
+                .putExtra(EXTRA_IS_USER_APPROVED, isUserApproved);
+        return intent;
+    }
+
+    /**
+     * Creates an intent with the specified parameters for the {@link ConfirmationActivity} to start this service.
+     * Used for: Payment Request, Call Request.
      *
      * @param context        The context in which we are operating.
      * @param parcelable     The parcelable containing meta data needed when the service starts again.
@@ -433,14 +468,47 @@ public final class MessageExchangeService extends IntentService {
         return intent;
     }
 
+    public void pair(boolean isUserApproved) {
+        try {
+            byte[] ephemeralKey = BRCoreKey.decodeHex(mPairingMetaData.getPublicKeyHex());
+            mSenderId = mPairingMetaData.getId().getBytes(); // TODO fix
+            BRCoreKey pairingKey = getPairingKey();
+
+            ByteString message;
+            if (isUserApproved) {
+                // TODO: I think this should be this wallet's id, not the remote entity's id, no?
+                message = createLink(ByteString.copyFrom(pairingKey.getPubKey()), ByteString.copyFrom(mPairingMetaData.getId(), StandardCharsets.UTF_8.name()));
+                MessageExchangeNetworkHelper.sendAssociatedKey(this, pairingKey.getPubKey());
+            } else {
+                message = createLink(Protos.Error.USER_DENIED);
+            }
+
+            EncryptedMessage encryptedMessage = encrypt(pairingKey, ephemeralKey, message.toByteArray());
+            ByteString encryptedMessageByteString = ByteString.copyFrom(encryptedMessage.getEncryptedData());
+            Protos.Envelope envelope = createEnvelope(encryptedMessageByteString, MessageType.LINK, ByteString.copyFrom(pairingKey.getPubKey()),
+                    ByteString.copyFrom(ephemeralKey), BRSharedPrefs.getDeviceId(this), ByteString.copyFrom(encryptedMessage.getNonce()));
+            //TODO: Shouldn't the message identifier be a new uuid? For requests, it should be new according to the spec.
+
+            byte[] signature = pairingKey.compactSign(CryptoHelper.doubleSha256(envelope.toByteArray()));
+            envelope = envelope.toBuilder().setSignature(ByteString.copyFrom(signature)).build();
+            Log.d(TAG, "pair: request envelope:" + envelope.toString());
+
+            // Send link request to remote wallet.
+            MessageExchangeNetworkHelper.sendEnvelope(this, envelope.toByteArray());
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "Failed to pair", e);
+        }
+
+    }
+
     /**
      * Retrieves the latest batch of messages from the server.
      *
      * @param context The context in which we are operating.
      */
-    private void retrieveMessages(Context context) {
+    private void retrieveInboxEntries(Context context) {
         List<InboxEntry> inboxEntries = MessageExchangeNetworkHelper.fetchInbox(context);
-        Log.d(TAG, "retrieveMessages: " + inboxEntries.size());
+        Log.d(TAG, "retrieveInboxEntries: " + inboxEntries.size());
 
 // TODO: CHECK THESE
 //        int version = requestEnvelope.getVersion();
@@ -448,22 +516,32 @@ public final class MessageExchangeService extends IntentService {
 
         List<String> cursors = new ArrayList<>();
         for (InboxEntry inboxEntry : inboxEntries) {
-            Protos.Envelope requestEnvelope = getEnvelopeFromInboxEntry(inboxEntry);
+            Protos.Envelope envelope = getEnvelopeFromInboxEntry(inboxEntry);
             String cursor = inboxEntry.getCursor();
-            if (verifyEnvelopeSignature(requestEnvelope)) {
-                processRequest(context, cursor, requestEnvelope);
+            if (verifyEnvelopeSignature(envelope)) {
+                processEnvelope(cursor, envelope);
                 cursors.add(cursor);
             } else {
-                Log.e(TAG, "retrieveMessages: signature verification failed. id: " + cursor);
+                Log.e(TAG, "retrieveInboxEntries: signature verification failed. id: " + cursor);
             }
         }
 
         MessageExchangeNetworkHelper.sendAck(context, cursors);
     }
 
-    private void processRequest(Context context, String cursor, Protos.Envelope requestEnvelope) {
-        byte[] decryptedMessage = decrypt(requestEnvelope);
-        MessageType messageType = MessageType.valueOf(requestEnvelope.getMessageType());
+    private static Protos.Envelope getEnvelopeFromInboxEntry(InboxEntry entry) {
+        try {
+            byte[] envelopeData = Base64.decode(entry.getMessage(), Base64.NO_WRAP);
+            return Protos.Envelope.parseFrom(envelopeData);
+        } catch (InvalidProtocolBufferException e) {
+            Log.e(TAG, "Error decoding envelope. InboxEntry cursor: " + entry.getCursor(), e);
+            return null;
+        }
+    }
+
+    private void processEnvelope(String cursor, Protos.Envelope envelope) {
+        byte[] decryptedMessage = decrypt(envelope);
+        MessageType messageType = MessageType.valueOf(envelope.getMessageType());
         RequestMetaData metaData;
 
         //TODO: SHIV Add go metaData: PAYMENT_METHOD_NAME - Ethereum, PAYMENT_METHOS_CURRENCY_CODE - ETH // use for displaying the price, fee, total
@@ -471,19 +549,18 @@ public final class MessageExchangeService extends IntentService {
         try {
             switch (messageType) {
                 case LINK:
-                    //TODO: SHIV Fix this. This is an async request.
-                    sendResponse(context, requestEnvelope);
+                    processSyncRequest(messageType, envelope, decryptedMessage);
                     break;
                 case PING:
-                    processSyncRequest(messageType, requestEnvelope, decryptedMessage);
+                    processSyncRequest(messageType, envelope, decryptedMessage);
                     break;
                 case ACCOUNT_REQUEST:
-                    processSyncRequest(messageType, requestEnvelope, decryptedMessage);
+                    processSyncRequest(messageType, envelope, decryptedMessage);
                     break;
                 case PAYMENT_REQUEST:
                     // These are asynchronous requests.  Save until some event happens.
                     // Use cursor # to identify this request.
-                    mPendingRequests.put(cursor, requestEnvelope);
+                    mPendingRequests.put(cursor, envelope);
                     Protos.PaymentRequest paymentRequest = Protos.PaymentRequest.parseFrom(decryptedMessage);
                     metaData = new RequestMetaData(cursor, paymentRequest.getScope(), paymentRequest.getNetwork(),
                             paymentRequest.getAddress(), paymentRequest.getAmount(), paymentRequest.getMemo());
@@ -492,7 +569,7 @@ public final class MessageExchangeService extends IntentService {
                 case CALL_REQUEST:
                     // These are asynchronous requests.  Save until some event happens.
                     // Use cursor # to identify this request.
-                    mPendingRequests.put(cursor, requestEnvelope);
+                    mPendingRequests.put(cursor, envelope);
                     Protos.CallRequest callRequest = Protos.CallRequest.parseFrom(decryptedMessage);
                     metaData = new RequestMetaData(cursor, callRequest.getScope(), callRequest.getNetwork(),
                             callRequest.getAddress(), callRequest.getAmount(), callRequest.getMemo());
@@ -507,10 +584,12 @@ public final class MessageExchangeService extends IntentService {
         }
     }
 
-    private void processSyncRequest(MessageType messageType, Protos.Envelope requestEnvelope, byte[] decryptedMessage)
+    private void processSyncRequest(MessageType messageType, Protos.Envelope incomingEnvelope, byte[] decryptedMessage)
             throws InvalidProtocolBufferException {
         ByteString messageResponse;
         switch (messageType) {
+            case LINK:
+                processLink(incomingEnvelope, decryptedMessage);
             case PING:
                 Protos.Ping ping = Protos.Ping.parseFrom(decryptedMessage);
                 messageResponse = Protos.Pong.newBuilder().setPong(ping.getPing()).build().toByteString();
@@ -524,20 +603,16 @@ public final class MessageExchangeService extends IntentService {
                 throw new IllegalArgumentException("Request type unknown: " + messageType.name());
         }
 
-        Protos.Envelope envelope = createResponseEnvelope(requestEnvelope, messageResponse);
-        MessageExchangeNetworkHelper.sendEnvelope(this, envelope.toByteArray());
+        Protos.Envelope outgoingEnvelope = createResponseEnvelope(incomingEnvelope, messageResponse);
+        MessageExchangeNetworkHelper.sendEnvelope(this, outgoingEnvelope.toByteArray());
     }
 
-    private void processAsyncRequest(Context context, RequestMetaData requestMetaData, boolean isUserApproved) {
+    private void processAsyncRequest(RequestMetaData requestMetaData, boolean isUserApproved) {
         Protos.Envelope requestEnvelope = mPendingRequests.get(requestMetaData.getId());
         MessageType messageType = MessageType.valueOf(requestEnvelope.getMessageType());
 
         ByteString messageResponse;
         switch (messageType) {
-            case LINK:
-//TODO
-                messageResponse = null;
-                break;
             case PAYMENT_REQUEST:
                 messageResponse = processPaymentRequest(requestMetaData, isUserApproved);
                 break;
@@ -549,8 +624,23 @@ public final class MessageExchangeService extends IntentService {
                 throw new IllegalArgumentException("Request type unknown: " + messageType.name());
         }
 
-        Protos.Envelope envelope = createResponseEnvelope(requestEnvelope, messageResponse);
-        MessageExchangeNetworkHelper.sendEnvelope(context, envelope.toByteArray());
+        sendResponse(requestEnvelope, messageResponse);
+    }
+
+    private BRCoreKey getPairingKey() {
+        byte[] authKey = BRKeyStore.getAuthKey(this);
+        if (Utils.isNullOrEmpty(authKey) || Utils.isNullOrEmpty(mSenderId)) {
+            Log.e(TAG, "getPairingKey: Auth key or sender id is null.");
+            return null;
+        }
+        return new BRCoreKey(authKey).getPairingKey(mSenderId);
+    }
+
+    private byte[] decrypt(Protos.Envelope requestEnvelope) {
+        BRCoreKey pairingKey = getPairingKey();
+        return pairingKey.decryptUsingSharedSecret(requestEnvelope.getSenderPublicKey().toByteArray(),
+                requestEnvelope.getEncryptedMessage().toByteArray(),
+                requestEnvelope.getNonce().toByteArray());
     }
 
     private Protos.Envelope createResponseEnvelope(Protos.Envelope requestEnvelope, ByteString messageResponse) {
@@ -575,10 +665,9 @@ public final class MessageExchangeService extends IntentService {
         return responseEnvelope.toBuilder().setSignature(ByteString.copyFrom(responseSignature)).build();
     }
 
-    private void sendResponse(Context context, Protos.Envelope requestEnvelope) {
-        BRCoreKey authKey = new BRCoreKey(BRKeyStore.getAuthKey(context));
-        Protos.Envelope responseEnvelope = createResponseEnvelope(context, authKey, requestEnvelope);
-        MessageExchangeNetworkHelper.sendEnvelope(context, responseEnvelope.toByteArray());
+    private void sendResponse(Protos.Envelope requestEnvelope, ByteString messageResponse) {
+        Protos.Envelope envelope = createResponseEnvelope(requestEnvelope, messageResponse);
+        MessageExchangeNetworkHelper.sendEnvelope(this, envelope.toByteArray());
     }
 
     /**
@@ -594,34 +683,35 @@ public final class MessageExchangeService extends IntentService {
         startActivity(intent, bundle);
     }
 
-    private BRCoreKey getPairingKey() {
-        byte[] authKey = BRKeyStore.getAuthKey(this);
-        if (Utils.isNullOrEmpty(authKey) || Utils.isNullOrEmpty(mSenderId)) {
-            Log.e(TAG, "getPairingKey: Auth key or sender id is null.");
-            return null;
+    private ByteString createLink(ByteString pubKey, ByteString id) {
+        Protos.Link.Builder responseBuilder = Protos.Link.newBuilder();
+        responseBuilder.setPublicKey(pubKey)
+                .setId(id)
+                .setStatus(Protos.Status.ACCEPTED);
+
+        return responseBuilder.build().toByteString();
+    }
+
+    private ByteString createLink(Protos.Error error) {
+        Protos.Link.Builder responseBuilder = Protos.Link.newBuilder();
+        responseBuilder.setStatus(Protos.Status.REJECTED)
+                .setError(error);
+
+        return responseBuilder.build().toByteString();
+    }
+
+    private void processLink(Protos.Envelope envelope, byte[] decryptedMessage) throws InvalidProtocolBufferException {
+        Protos.Link link = Protos.Link.parseFrom(decryptedMessage);
+        String senderId = mPairingMetaData.getId();
+        if (senderId == null || !senderId.equals(link.getId())) {
+            // If the response for the remote entity doesn't have the same id as the initial pairing request, reject.
+            // TODO send response encrypted with ephemral key because we rejected the pairing key.
+            // This is wrong:
+            sendResponse(envelope, createLink(Protos.Error.REMOTE_ID_MISMATCH));
         }
-        return new BRCoreKey(authKey).getPairingKey(mSenderId);
     }
 
-    public byte[] decrypt(Protos.Envelope requestEnvelope) {
-        BRCoreKey pairingKey = getPairingKey();
-        return pairingKey.decryptUsingSharedSecret(requestEnvelope.getSenderPublicKey().toByteArray(),
-                requestEnvelope.getEncryptedMessage().toByteArray(),
-                requestEnvelope.getNonce().toByteArray());
-    }
-
-    // REMOVE OLD ONE
-    private static Protos.Envelope getEnvelopeFromInboxEntry(InboxEntry entry) {
-        try {
-            byte[] envelopeData = Base64.decode(entry.getMessage(), Base64.NO_WRAP);
-            return Protos.Envelope.parseFrom(envelopeData);
-        } catch (InvalidProtocolBufferException e) {
-            Log.e(TAG, "Error decoding envelope. InboxEntry cursor: " + entry.getCursor(), e);
-            return null;
-        }
-    }
-
-    private ByteString processAccountRequest(Protos.AccountRequest request){
+    private ByteString processAccountRequest(Protos.AccountRequest request) {
         String currencyCode = request.getScope();
         BaseWalletManager walletManager = WalletsMaster.getInstance(this).getWalletByIso(this, currencyCode);
 
@@ -632,8 +722,8 @@ public final class MessageExchangeService extends IntentService {
         } else {
             String address = walletManager.getAddress();
             if (address == null) {
-                responseBuilder.setStatus(Protos.Status.REJECTED);
-//                        .setError(Protos.Error.NO_ADDRESS_FOUND); //TODO SHIV add to proto
+                responseBuilder.setStatus(Protos.Status.REJECTED)
+                        .setError(Protos.Error.NO_ADDRESS_FOUND);
             } else {
                 responseBuilder.setScope(currencyCode)
                         .setAddress(address)
@@ -660,8 +750,8 @@ public final class MessageExchangeService extends IntentService {
                         .setStatus(Protos.Status.ACCEPTED)
                         .setTransactionId(transaction.getHash());
             } else {
-                responseBuilder.setStatus(Protos.Status.REJECTED);
-//                        .setError(Protos.Error.TRANSACTION_FAILED); /TODO SHIV add to proto
+                responseBuilder.setStatus(Protos.Status.REJECTED)
+                        .setError(Protos.Error.TRANSACTION_FAILED);
             }
         } else {
             responseBuilder.setStatus(Protos.Status.REJECTED)
@@ -687,8 +777,8 @@ public final class MessageExchangeService extends IntentService {
                         .setStatus(Protos.Status.ACCEPTED)
                         .setTransactionId(transaction.getHash());
             } else {
-                responseBuilder.setStatus(Protos.Status.REJECTED);
-//                        .setError(Protos.Error.TRANSACTION_FAILED); /TODO SHIV add to proto
+                responseBuilder.setStatus(Protos.Status.REJECTED)
+                        .setError(Protos.Error.TRANSACTION_FAILED);
             }
         } else {
             responseBuilder.setStatus(Protos.Status.REJECTED)
