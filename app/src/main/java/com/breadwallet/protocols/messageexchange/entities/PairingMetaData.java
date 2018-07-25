@@ -1,6 +1,8 @@
 package com.breadwallet.protocols.messageexchange.entities;
 
 import android.net.Uri;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.breadwallet.tools.util.Utils;
 
@@ -28,18 +30,37 @@ import com.breadwallet.tools.util.Utils;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class PairingObject {
+public class PairingMetaData implements Parcelable {
+    private static final String QUERY_PARAM_PUBLIC_KEY = "publicKey";
+    private static final String QUERY_PARAM_ID = "id";
+    private static final String QUERY_PARAM_SERVICE = "service";
+
     private String mPublicKeyHex;
     private String mId;
     private String mService;
-    public static final String QUERY_PARAM_PUBLIC_KEY = "publicKey";
-    public static final String QUERY_PARAM_ID = "id";
-    public static final String QUERY_PARAM_SERVICE = "service";
 
-    public PairingObject(String publicKeyHex, String id, String service) {
-        this.mPublicKeyHex = publicKeyHex;
-        this.mId = id;
-        this.mService = service;
+    public static final Creator<PairingMetaData> CREATOR = new Creator<PairingMetaData>() {
+        @Override
+        public PairingMetaData[] newArray(int size) {
+            return new PairingMetaData[size];
+        }
+
+        @Override
+        public PairingMetaData createFromParcel(Parcel source) {
+            return new PairingMetaData(source);
+        }
+    };
+
+    public PairingMetaData(String publicKeyHex, String id, String service) {
+        mPublicKeyHex = publicKeyHex;
+        mId = id;
+        mService = service;
+    }
+
+    public PairingMetaData(Parcel source) {
+        mPublicKeyHex = source.readString();
+        mId = source.readString();
+        mService = source.readString();
     }
 
     public String getPublicKeyHex() {
@@ -47,7 +68,7 @@ public class PairingObject {
     }
 
     public void setPublicKeyHex(String publicKeyHex) {
-        this.mPublicKeyHex = mPublicKeyHex;
+        mPublicKeyHex = mPublicKeyHex;
     }
 
     public String getId() {
@@ -55,7 +76,7 @@ public class PairingObject {
     }
 
     public void setId(String id) {
-        this.mId = id;
+        mId = id;
     }
 
     public String getService() {
@@ -63,17 +84,30 @@ public class PairingObject {
     }
 
     public void setService(String service) {
-        this.mService = service;
+        mService = service;
     }
 
-    public static PairingObject parseUriString(String uriString) {
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel destination, int flags) {
+        destination.writeString(mPublicKeyHex);
+        destination.writeString(mId);
+        destination.writeString(mService);
+    }
+
+    public static PairingMetaData parseUriString(String uriString) {
         if (Utils.isNullOrEmpty(uriString)) {
             return null;
         }
+
         Uri uri = Uri.parse(uriString);
         String publicKeyHex = uri.getQueryParameter(QUERY_PARAM_PUBLIC_KEY);
-        String idString = uri.getQueryParameter(QUERY_PARAM_ID);
+        String id = uri.getQueryParameter(QUERY_PARAM_ID);
         String service = uri.getQueryParameter(QUERY_PARAM_SERVICE);
-        return new PairingObject(publicKeyHex, idString, service);
+        return new PairingMetaData(publicKeyHex, id, service);
     }
 }
