@@ -124,6 +124,7 @@ public final class MessageExchangeService extends IntentService {
         return new EncryptedMessage(encryptedData, nonce);
     }
 
+    // DEPRECATE
     public static byte[] decrypt(BRCoreKey pairingKey, byte[] senderPublicKey, byte[] encryptedMessage, byte[] nonce) {
         return pairingKey.decryptUsingSharedSecret(senderPublicKey, encryptedMessage, nonce);
     }
@@ -179,6 +180,7 @@ public final class MessageExchangeService extends IntentService {
         return Arrays.equals(senderPublicKey, recoveredPubKey);
     }
 
+    // Deprecated
     public static Protos.Envelope createResponseEnvelope(Context context, BRCoreKey pairingKey, Protos.Envelope requestEnvelope) {
         int version = requestEnvelope.getVersion();
         String service = requestEnvelope.getService();
@@ -209,6 +211,7 @@ public final class MessageExchangeService extends IntentService {
         }
     }
 
+    // Deprecated
     private static Protos.Envelope getEnvelopeFromInbox(InboxEntry entry) {
         Protos.Envelope requestEnvelope = null;
         try {
@@ -270,6 +273,7 @@ public final class MessageExchangeService extends IntentService {
                 .setStatus(status).setId(senderId).build().toByteString();
     }
 
+    // DEPRECATE
     @VisibleForTesting
     protected static ByteString generateAccountResponse(byte[] requestDecryptedMessage) throws InvalidProtocolBufferException {
         Protos.AccountRequest request = Protos.AccountRequest.parseFrom(requestDecryptedMessage);
@@ -298,64 +302,16 @@ public final class MessageExchangeService extends IntentService {
     // DEPRECATED
     private static ByteString generatePaymentResponse(byte[] requestDecryptedMessage) throws InvalidProtocolBufferException {
         Protos.PaymentRequest request = Protos.PaymentRequest.parseFrom(requestDecryptedMessage);
-
         String currencyCode = request.getScope();
-        Context context = BreadApp.getBreadContext(); // TODO: SHIV remove once we have a service.
-        BaseWalletManager walletManager = WalletsMaster.getInstance(context).getWalletByIso(context, currencyCode);
-
-        // TODO: SHIV transact
-//        String network = request.getNetwork(); // a network designation
-//        String address = request.getAddress(); // the receive address for the desired payment
-//        BigDecimal amount = new BigDecimal(Integer.parseInt(request.getAmount())); // the desired amount expressed as an integer in the lowest currency denomination
-//        String memo = request.getMemo(); // optionally a request may include a memo, the receiver can retain if necessary
-
-        CryptoTransaction transaction = walletManager.createTransaction(new BigDecimal(request.getAmount()), request.getAddress());
-        boolean transactionSuccessful = true;
-        // Investigate PostAuth.getInstance().onPublishTxAuth(); ???
-
         Protos.PaymentResponse.Builder responseBuilder = Protos.PaymentResponse.newBuilder().setScope(currencyCode);
-
-        if (transactionSuccessful) {
-            responseBuilder.setStatus(Protos.Status.ACCEPTED)
-                    .setTransactionId(transaction.getHash());
-        } else {
-            responseBuilder.setStatus(Protos.Status.REJECTED);
-        }
-
         return responseBuilder.build().toByteString();
     }
 
+    // DEPRECATED
     private static ByteString generateCallResponse(byte[] requestDecryptedMessage) throws InvalidProtocolBufferException {
         Protos.CallRequest request = Protos.CallRequest.parseFrom(requestDecryptedMessage);
-
         String currencyCode = request.getScope();
-        Context context = BreadApp.getBreadContext(); // TODO: SHIV remove once we have a service.
-        BaseWalletManager walletManager = WalletsMaster.getInstance(context).getWalletByIso(context, currencyCode);
-
-        // TODO: SHIV transact
-// message_type = "CALL_REQUEST"
-//        message CallRequest {
-//            required string scope = 1;      // should be a currency code eg "ETH" or "BRD"
-//            optional string network = 2 [default = "mainnet"];  // a network designation
-//                required string address = 3;    // the smart contract address
-//                required string abi = 4;        // the abi-encoded parameters to send to the smart contract
-//                required string amount = 5;     // the desired amount expressed as an integer in the lowest currency denomination
-//                optional string memo = 6;       // optionally a request may include a memo, the receiver can retain if necessary
-//        }
-
-
-        CryptoTransaction transaction = walletManager.createTransaction(new BigDecimal(request.getAmount()), request.getAddress());
-        boolean transactionSuccessful = true;
-
         Protos.CallResponse.Builder responseBuilder = Protos.CallResponse.newBuilder().setScope(currencyCode);
-
-        if (transactionSuccessful) {
-            responseBuilder.setStatus(Protos.Status.ACCEPTED)
-                    .setTransactionId(transaction.getHash());
-        } else {
-            responseBuilder.setStatus(Protos.Status.REJECTED);
-        }
-
         return responseBuilder.build().toByteString();
     }
 
@@ -478,7 +434,9 @@ public final class MessageExchangeService extends IntentService {
     }
 
     /**
-     * @param context
+     * Retrieves the latest batch of messages from the server.
+     *
+     * @param context The context in which we are operating.
      */
     private void retrieveMessages(Context context) {
         List<InboxEntry> inboxEntries = MessageExchangeNetworkHelper.fetchInbox(context);
@@ -501,43 +459,42 @@ public final class MessageExchangeService extends IntentService {
 
     private void processRequest(Context context, String cursor, Protos.Envelope requestEnvelope) {
 
-        byte[] decryptedMessage = decryptMessage(context, requestEnvelope); //TODO: Shiv is this needed for all?
+        byte[] decryptedMessage = decrypt(context, requestEnvelope); //TODO: Shiv is this needed for all?
         MessageType messageType = MessageType.valueOf(requestEnvelope.getMessageType());
-        RequestMetaData metaData = null;
+        RequestMetaData metaData;
 
         //TODO: SHIV Add go metaData: PAYMENT_METHOD_NAME - Ethereum, PAYMENT_METHOS_CURRENCY_CODE - ETH // use for displaying the price, fee, total
         //DELIVERY_TIME, PRICE, FEE, TOTAL
         try {
-
             switch (messageType) {
                 case LINK:
                     //TODO: SHIV Fix this. This is an async request.
                     sendResponse(context, requestEnvelope);
                     break;
                 case PING:
-                    sendResponse(context, requestEnvelope);
+                    processSyncRequest(messageType, requestEnvelope, decryptedMessage);
                     break;
                 case ACCOUNT_REQUEST:
-                    sendResponse(context, requestEnvelope);
+                    processSyncRequest(messageType, requestEnvelope, decryptedMessage);
                     break;
                 case PAYMENT_REQUEST:
                     // These are asynchronous requests.  Save until some event happens.
                     // Use cursor # to identify this request.
-                    mPendingRequests.put(cursor, requestEnvelope); //TODO:
-
+                    mPendingRequests.put(cursor, requestEnvelope);
                     Protos.PaymentRequest paymentRequest = Protos.PaymentRequest.parseFrom(decryptedMessage);
                     metaData = new RequestMetaData(cursor, paymentRequest.getScope(), paymentRequest.getNetwork(),
                             paymentRequest.getAddress(), paymentRequest.getAmount(), paymentRequest.getMemo());
                     confirmRequest(metaData);
+                    break;
                 case CALL_REQUEST:
                     // These are asynchronous requests.  Save until some event happens.
                     // Use cursor # to identify this request.
                     mPendingRequests.put(cursor, requestEnvelope);
-
                     Protos.CallRequest callRequest = Protos.CallRequest.parseFrom(decryptedMessage);
                     metaData = new RequestMetaData(cursor, callRequest.getScope(), callRequest.getNetwork(),
                             callRequest.getAddress(), callRequest.getAmount(), callRequest.getMemo());
                     confirmRequest(metaData);
+                    break;
                 default:
                     Log.e(TAG, "RequestMetaData type not recognized:" + messageType.name());
             }
@@ -547,34 +504,89 @@ public final class MessageExchangeService extends IntentService {
         }
     }
 
+    private void processSyncRequest(MessageType messageType, Protos.Envelope requestEnvelope, byte[] decryptedMessage)
+            throws InvalidProtocolBufferException {
+        ByteString messageResponse;
+        switch (messageType) {
+            case PING:
+                Protos.Ping ping = Protos.Ping.parseFrom(decryptedMessage);
+                messageResponse = Protos.Pong.newBuilder().setPong(ping.getPing()).build().toByteString();
+                break;
+            case ACCOUNT_REQUEST:
+                Protos.AccountRequest request = Protos.AccountRequest.parseFrom(decryptedMessage);
+                messageResponse = processAccountRequest(request);
+                break;
+            default:
+                // Should never happen because unknown message type is handled by the caller (processRequest()).
+                throw new IllegalArgumentException("Request type unknown: " + messageType.name());
+        }
+
+        Protos.Envelope envelope = createResponseEnvelope(requestEnvelope, messageResponse);
+        MessageExchangeNetworkHelper.sendEnvelope(this, envelope.toByteArray());
+    }
+
     private void processAsyncRequest(Context context, RequestMetaData requestMetaData, boolean isUserApproved) {
         Protos.Envelope requestEnvelope = mPendingRequests.get(requestMetaData.getId());
         MessageType messageType = MessageType.valueOf(requestEnvelope.getMessageType());
 
+        ByteString messageResponse;
         switch (messageType) {
             case LINK:
 //TODO
+                messageResponse = null;
                 break;
             case PAYMENT_REQUEST:
-                processPaymentRequest(requestMetaData, isUserApproved);
+                messageResponse = processPaymentRequest(requestMetaData, isUserApproved);
                 break;
             case CALL_REQUEST:
-//TODO
+                messageResponse = processCallRequest(requestMetaData, isUserApproved);
                 break;
             default:
-                Log.e(TAG, "RequestMetaData type not recognized:" + messageType.name());
+                // Should never happen because unknown message type is handled by the caller (processRequest()).
+                throw new IllegalArgumentException("Request type unknown: " + messageType.name());
         }
 
-        // TODO: Call rest of createResponseEnvelope
-
+        Protos.Envelope envelope = createResponseEnvelope(requestEnvelope, messageResponse);
+        MessageExchangeNetworkHelper.sendEnvelope(context, envelope.toByteArray());
     }
 
-    private void sendResponse(Context context, String requestId) {
-        sendResponse(context, mPendingRequests.get(requestId));
+    public Protos.Envelope createResponseEnvelope(Protos.Envelope requestEnvelope, ByteString messageResponse) {
+//        int version = requestEnvelope.getVersion();
+//        String service = requestEnvelope.getService();
+//        String expiration = requestEnvelope.getExpiration();
+        String messageType = requestEnvelope.getMessageType();
+//        ByteString encryptedMessage = requestEnvelope.getEncryptedMessage();
+        ByteString senderPublicKey = requestEnvelope.getSenderPublicKey();
+//        ByteString receiverPublicKey = requestEnvelope.getReceiverPublicKey();
+        String identifier = requestEnvelope.getIdentifier();
+//        ByteString nonce = requestEnvelope.getNonce();
+//        ByteString signature = requestEnvelope.getSignature();
+
+
+            BRCoreKey authKey = new BRCoreKey(BRKeyStore.getAuthKey(this));
+            byte[] pubKey = authKey.getPubKey();
+
+//            byte[] decryptedMessageBytes = decrypt(authKey, senderPublicKey.toByteArray(), encryptedMessage.toByteArray(), nonce.toByteArray());
+//            MessageType requestMessageType = MessageType.valueOf(messageType);
+//            ByteString messageResponse = generateResponseMessage(authKey, decryptedMessageBytes, requestMessageType);
+
+            // Encrypt message envelope
+            EncryptedMessage responseEncryptedMessage = encrypt(authKey, senderPublicKey.toByteArray(), messageResponse.toByteArray());
+            MessageType responseMessageType = getResponseMessageType(MessageType.valueOf(messageType));
+            byte[] responseSignature = authKey.compactSign(CryptoHelper.doubleSha256(requestEnvelope.toByteArray()));
+            Protos.Envelope responseEnvelope = createEnvelope(ByteString.copyFrom(responseEncryptedMessage.getEncryptedData()),
+                    responseMessageType, ByteString.copyFrom(pubKey), senderPublicKey, identifier,
+                    ByteString.copyFrom(responseEncryptedMessage.getNonce()));
+            return responseEnvelope.toBuilder().setSignature(ByteString.copyFrom(responseSignature)).build();
     }
+
+//    private void sendResponse(Context context, String requestId) {
+//        sendResponse(context, mPendingRequests.get(requestId));
+//    }
 
     private void sendResponse(Context context, Protos.Envelope requestEnvelope) {
-        Protos.Envelope responseEnvelope = createResponseEnvelope(context, null, requestEnvelope); // TODO SHIV: FIX NULL
+        BRCoreKey authKey = new BRCoreKey(BRKeyStore.getAuthKey(context));
+        Protos.Envelope responseEnvelope = createResponseEnvelope(context, authKey, requestEnvelope);
         MessageExchangeNetworkHelper.sendEnvelope(context, responseEnvelope.toByteArray());
     }
 
@@ -591,7 +603,7 @@ public final class MessageExchangeService extends IntentService {
         startActivity(intent, bundle);
     }
 
-    public static byte[] decryptMessage(Context context, Protos.Envelope requestEnvelope) {
+    public static byte[] decrypt(Context context, Protos.Envelope requestEnvelope) {
         BRCoreKey authKey = new BRCoreKey(BRKeyStore.getAuthKey(context));
         return authKey.decryptUsingSharedSecret(requestEnvelope.getSenderPublicKey().toByteArray(),
                 requestEnvelope.getEncryptedMessage().toByteArray(),
@@ -608,35 +620,80 @@ public final class MessageExchangeService extends IntentService {
             Log.e(TAG, "Error decoding envelope. InboxEntry cursor: " + entry.getCursor(), e);
             return null;
         }
+    }
 
+    private ByteString processAccountRequest(Protos.AccountRequest request){
+        String currencyCode = request.getScope();
+        BaseWalletManager walletManager = WalletsMaster.getInstance(this).getWalletByIso(this, currencyCode);
 
+        Protos.AccountResponse.Builder responseBuilder = Protos.AccountResponse.newBuilder();
+        if (walletManager == null) {
+            responseBuilder.setStatus(Protos.Status.REJECTED)
+                    .setError(Protos.Error.SCOPE_UNKNOWN);
+        } else {
+            String address = walletManager.getAddress();
+            if (address == null) {
+                responseBuilder.setStatus(Protos.Status.REJECTED);
+//                        .setError(Protos.Error.NO_ADDRESS_FOUND); //TODO SHIV add to proto
+            } else {
+                responseBuilder.setScope(currencyCode)
+                        .setAddress(address)
+                        .setStatus(Protos.Status.ACCEPTED);
+            }
+        }
+
+        return responseBuilder.build().toByteString();
     }
 
     private ByteString processPaymentRequest(RequestMetaData requestMetaData, boolean isUserApproved) {
-//        Protos.PaymentRequest request = Protos.PaymentRequest.parseFrom(requestDecryptedMessage);
-
         Protos.PaymentResponse.Builder responseBuilder = Protos.PaymentResponse.newBuilder();
         if (isUserApproved) {
             String currencyCode = requestMetaData.getCurrencyCode();
-//        Context context = BreadApp.getBreadContext(); // TODO: SHIV remove once we have a service.
-            BaseWalletManager walletManager = WalletsMaster.getInstance(this).getWalletByIso(this, requestMetaData.getCurrencyCode());
+            BaseWalletManager walletManager = WalletsMaster.getInstance(this).getWalletByIso(this, currencyCode);
 
+            boolean transactionSuccessful = false;
             // TODO: SHIV transact using requestMetaData.
             CryptoTransaction transaction = walletManager.createTransaction(new BigDecimal(requestMetaData.getAmount()), requestMetaData.getAddress());
             // Investigate PostAuth.getInstance().onPublishTxAuth(); ???
 
-            boolean transactionSuccessful = true;
             if (transactionSuccessful) {
                 responseBuilder.setScope(currencyCode)
                         .setStatus(Protos.Status.ACCEPTED)
                         .setTransactionId(transaction.getHash());
             } else {
                 responseBuilder.setStatus(Protos.Status.REJECTED);
-//                        .setError(Protos.Error.SCOPE_UKNOWN); //TODO: Shiv Update proto
+//                        .setError(Protos.Error.TRANSACTION_FAILED); /TODO SHIV add to proto
             }
         } else {
-            responseBuilder.setStatus(Protos.Status.REJECTED);
-//                        .setError(Protos.Error.USER_DENIED); //TODO: Shiv Update proto
+            responseBuilder.setStatus(Protos.Status.REJECTED)
+                        .setError(Protos.Error.USER_DENIED);
+        }
+
+        return responseBuilder.build().toByteString();
+    }
+
+    private ByteString processCallRequest(RequestMetaData requestMetaData, boolean isUserApproved) {
+        Protos.CallResponse.Builder responseBuilder = Protos.CallResponse.newBuilder();
+        if (isUserApproved) {
+            String currencyCode = requestMetaData.getCurrencyCode();
+            BaseWalletManager walletManager = WalletsMaster.getInstance(this).getWalletByIso(this, currencyCode);
+
+            boolean transactionSuccessful = false;
+            // TODO: SHIV transact using requestMetaData.
+            CryptoTransaction transaction = walletManager.createTransaction(new BigDecimal(requestMetaData.getAmount()), requestMetaData.getAddress());
+            // Investigate PostAuth.getInstance().onPublishTxAuth(); ???
+
+            if (transactionSuccessful) {
+                responseBuilder.setScope(currencyCode)
+                        .setStatus(Protos.Status.ACCEPTED)
+                        .setTransactionId(transaction.getHash());
+            } else {
+                responseBuilder.setStatus(Protos.Status.REJECTED);
+//                        .setError(Protos.Error.TRANSACTION_FAILED); /TODO SHIV add to proto
+            }
+        } else {
+            responseBuilder.setStatus(Protos.Status.REJECTED)
+                    .setError(Protos.Error.USER_DENIED);
         }
 
         return responseBuilder.build().toByteString();

@@ -89,6 +89,7 @@ public final class MessageExchangeNetworkHelper {
     private MessageExchangeNetworkHelper() {
     }
 
+    // TODO if 100 entries received, then fetch again.
     public static List<InboxEntry> fetchInbox(Context context) {
         List<InboxEntry> inboxEntries = new ArrayList<>();
         String inboxUrl = APIClient.BASE_URL + INBOX_PATH;
