@@ -386,19 +386,18 @@ public final class MessageExchangeService extends IntentService {
     private static final String ACTION_PROCESS_PAIR_REQUEST = "com.breadwallet.protocols.messageexchange.ACTION_PROCESS_PAIR_REQUEST";
     private static final String ACTION_PROCESS_REQUEST = "com.breadwallet.protocols.messageexchange.ACTION_PROCESS_REQUEST";
     public static final String ACTION_GET_USER_CONFIRMATION = "com.breadwallet.protocols.messageexchange.ACTION_GET_USER_CONFIRMATION";
-    //    public static final String EXTRA_REQUEST_ID = "com.breadwallet.protocols.messageexchange.EXTRA_REQUEST_ID";
     private static final String EXTRA_IS_USER_APPROVED = "com.breadwallet.protocols.messageexchange.EXTRA_IS_USER_APPROVED";
     private static final String EXTRA_METADATA = "com.breadwallet.protocols.messageexchange.EXTRA_METADATA";
 
     // TODO: these should be stored in the DB in case of app restart or crash.
-    private Map<String, Protos.Envelope> mPendingRequests = new HashMap<>();
-    private PairingMetaData mPairingMetaData;
+    private static Map<String, Protos.Envelope> mPendingRequests = new HashMap<>();
+    private static PairingMetaData mPairingMetaData;
 
-//    public enum ServiceCapability implements Parcelable {
-//        ACCOUNT,
-//        PAYMENT,
-//        CALL,
-//    }
+    public enum ServiceCapability {
+        ACCOUNT,
+        PAYMENT,
+        CALL
+    }
 
     /**
      * Handles intents passed to the {@link MessageExchangeService} by creating a new worker thread to complete the work required.
@@ -599,7 +598,6 @@ public final class MessageExchangeService extends IntentService {
             }
         } catch (InvalidProtocolBufferException e) {
             Log.e(TAG, "Error parsing protobuf for " + messageType.name() + "message.", e);
-            // TODO: SHIV re-throw?
         }
     }
 
@@ -722,9 +720,9 @@ public final class MessageExchangeService extends IntentService {
     private void processLink(Protos.Envelope envelope, byte[] decryptedMessage) throws InvalidProtocolBufferException {
         Protos.Link link = Protos.Link.parseFrom(decryptedMessage);
         String senderId = mPairingMetaData.getId();
-        if (senderId == null || !senderId.equals(link.getId())) {
+        if (senderId == null || !senderId.equals(link.getId().toStringUtf8())) {
             // If the response for the remote entity doesn't have the same id as the initial pairing request, reject.
-            // TODO send response encrypted with ephemral key because we rejected the pairing key.
+            // TODO send response encrypted with ephemeral key because we rejected the pairing key.
             // This is wrong:
             sendResponse(envelope, createLink(Protos.Error.REMOTE_ID_MISMATCH));
         }
