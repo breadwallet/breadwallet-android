@@ -11,6 +11,8 @@ public class RequestMetaData implements Parcelable {
     private String mAmount;
     private String mMemo;
 
+    // TODO private String mAbi;
+
     public static final Creator<RequestMetaData> CREATOR = new Creator<RequestMetaData>() {
         @Override
         public RequestMetaData[] newArray(int size) {
