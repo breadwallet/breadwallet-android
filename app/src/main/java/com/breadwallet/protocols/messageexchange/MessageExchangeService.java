@@ -71,6 +71,9 @@ public final class MessageExchangeService extends IntentService {
     public static final int ENVELOPE_VERSION = 1;
     public static final String SERVICE_PWB = "PWB";
 
+    // TODO: REMOVE
+    public static final boolean USE_NEW_CODE = false;
+
     private enum MessageType {
         LINK,
         PING,
@@ -87,7 +90,7 @@ public final class MessageExchangeService extends IntentService {
      * The {@link MessageExchangeService} is responsible for retrieving encrypted messages from the server which
      * are ultimately from another wallet.
      */
-    private MessageExchangeService() {
+    public MessageExchangeService() {
         super(TAG);
     }
 
@@ -385,7 +388,7 @@ public final class MessageExchangeService extends IntentService {
     public static final String ACTION_GET_USER_CONFIRMATION = "com.breadwallet.protocols.messageexchange.ACTION_GET_USER_CONFIRMATION";
     //    public static final String EXTRA_REQUEST_ID = "com.breadwallet.protocols.messageexchange.EXTRA_REQUEST_ID";
     private static final String EXTRA_IS_USER_APPROVED = "com.breadwallet.protocols.messageexchange.EXTRA_IS_USER_APPROVED";
-    private static final String EXTRA_REQUEST_METADATA = "com.breadwallet.protocols.messageexchange.EXTRA_REQUEST_METADATA";
+    private static final String EXTRA_METADATA = "com.breadwallet.protocols.messageexchange.EXTRA_METADATA";
 
     // TODO: these should be stored in the DB in case of app restart or crash.
     private Map<String, Protos.Envelope> mPendingRequests = new HashMap<>();
@@ -408,11 +411,11 @@ public final class MessageExchangeService extends IntentService {
             switch (intent.getAction()) {
                 case ACTION_REQUEST_TO_PAIR:
                     // User scanned QR, to initiate pairing with a remote wallet,
-                    // TODO SHIV parse intent
-                    mPairingMetaData = new PairingMetaData("", "", "");
+                    mPairingMetaData = intent.getParcelableExtra(EXTRA_METADATA);
 
                     // Show more details about the pairing and ask the user to confirm.
-                    confirmRequest(null); // TODO METADATA, include link type
+                    //confirmRequest(null); // TODO METADATA, include link type
+                    pair(true); //TODO TESTING
                     break;
                 case ACTION_PROCESS_PAIR_REQUEST:
                     // User has approved or denied the pairing request after reviewing the details.
@@ -423,7 +426,7 @@ public final class MessageExchangeService extends IntentService {
                     break;
                 case ACTION_PROCESS_REQUEST:
                     boolean isUserApproved = intent.getBooleanExtra(EXTRA_IS_USER_APPROVED, false);
-                    RequestMetaData requestMetaData = intent.getParcelableExtra(EXTRA_REQUEST_METADATA);
+                    RequestMetaData requestMetaData = intent.getParcelableExtra(EXTRA_METADATA);
                     if (requestMetaData != null) {
                         processAsyncRequest(requestMetaData, isUserApproved);
                     } else {
@@ -434,6 +437,19 @@ public final class MessageExchangeService extends IntentService {
                     Log.d(TAG, "Intent not recognized.");
             }
         }
+    }
+
+    public static Intent createIntent(Context context, String action) {
+        Intent intent = new Intent(context, MessageExchangeService.class);
+        intent.setAction(action);
+        return intent;
+    }
+
+    public static Intent createIntent(Context context, String action, Parcelable parcelable) {
+        Intent intent = new Intent(context, MessageExchangeService.class);
+        intent.setAction(action)
+                .putExtra(EXTRA_METADATA, parcelable);
+        return intent;
     }
 
     /**
@@ -463,7 +479,7 @@ public final class MessageExchangeService extends IntentService {
     public static Intent createIntent(Context context, Parcelable parcelable, boolean isUserApproved) {
         Intent intent = new Intent(context, MessageExchangeService.class);
         intent.setAction(ACTION_PROCESS_REQUEST)
-                .putExtra(EXTRA_REQUEST_METADATA, parcelable)
+                .putExtra(EXTRA_METADATA, parcelable)
                 .putExtra(EXTRA_IS_USER_APPROVED, isUserApproved);
         return intent;
     }
@@ -508,25 +524,28 @@ public final class MessageExchangeService extends IntentService {
      */
     private void retrieveInboxEntries(Context context) {
         List<InboxEntry> inboxEntries = MessageExchangeNetworkHelper.fetchInbox(context);
-        Log.d(TAG, "retrieveInboxEntries: " + inboxEntries.size());
+        int numOfInboxEntries = inboxEntries.size();
+        Log.d(TAG, "retrieveInboxEntries: " + numOfInboxEntries);
 
 // TODO: CHECK THESE
 //        int version = requestEnvelope.getVersion();
 //        String service = requestEnvelope.getService();
 
-        List<String> cursors = new ArrayList<>();
-        for (InboxEntry inboxEntry : inboxEntries) {
-            Protos.Envelope envelope = getEnvelopeFromInboxEntry(inboxEntry);
-            String cursor = inboxEntry.getCursor();
-            if (verifyEnvelopeSignature(envelope)) {
-                processEnvelope(cursor, envelope);
-                cursors.add(cursor);
-            } else {
-                Log.e(TAG, "retrieveInboxEntries: signature verification failed. id: " + cursor);
+        if (numOfInboxEntries > 0) {
+            List<String> cursors = new ArrayList<>();
+            for (InboxEntry inboxEntry : inboxEntries) {
+                Protos.Envelope envelope = getEnvelopeFromInboxEntry(inboxEntry);
+                String cursor = inboxEntry.getCursor();
+                if (verifyEnvelopeSignature(envelope)) {
+                    processEnvelope(cursor, envelope);
+                    cursors.add(cursor);
+                } else {
+                    Log.e(TAG, "retrieveInboxEntries: signature verification failed. id: " + cursor);
+                }
             }
-        }
 
-        MessageExchangeNetworkHelper.sendAck(context, cursors);
+            MessageExchangeNetworkHelper.sendAck(context, cursors);
+        }
     }
 
     private static Protos.Envelope getEnvelopeFromInboxEntry(InboxEntry entry) {
@@ -679,7 +698,7 @@ public final class MessageExchangeService extends IntentService {
         Intent intent = new Intent(this, MessageExchangeService.class); // TODO: SHIV Add name of Jade's activity
         intent.setAction(ACTION_GET_USER_CONFIRMATION);
         Bundle bundle = new Bundle();
-        bundle.putParcelable(EXTRA_REQUEST_METADATA, requestMetaData);
+        bundle.putParcelable(EXTRA_METADATA, requestMetaData);
         startActivity(intent, bundle);
     }
 
