@@ -108,7 +108,8 @@ public final class BRConstants {
     public static final String HTTPS_PROTOCOL = "https://";
     public static final String HEADER_CONTENT_TYPE = "Content-Type";
     public static final String HEADER_ACCEPT = "Accept";
-    public static final String HEADER_VALUE_CONTENT_TYPE = "application/json; charset=utf-8";
+    public static final String CONTENT_TYPE_JSON = "application/json; charset=utf-8";
+    public static final String CONTENT_TYPE_TEXT = "text/plain";
     public static final String HEADER_VALUE_ACCEPT = "application/json";
 
 
@@ -122,13 +123,12 @@ public final class BRConstants {
 
     /**
      * Social media links and privacy policy URLS
-     *
      */
 
     public static final String URL_PRIVACY_POLICY = "https://brd.com/privacy";
     public static final String URL_TWITTER = "https://twitter.com/breadapp";
     public static final String URL_REDDIT = "https://reddit.com/r/breadwallet/";
-    public static final String URL_BLOG  = "https://brd.com/blog/";
+    public static final String URL_BLOG = "https://brd.com/blog/";
     public static final String URL_BRD_HOST = "brd.com";
     public static final String WALLET_PAIR_PATH = "wallet-pair";
     public static final String WALLET_LINK_PATH = "link-wallet";
