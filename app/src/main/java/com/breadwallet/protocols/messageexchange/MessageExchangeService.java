@@ -36,7 +36,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 
 /**
  * BreadWallet
@@ -110,6 +109,7 @@ public final class MessageExchangeService extends IntentService {
 
     }
 
+    //Deprecated
     public static BRCoreKey getPairingKey(byte[] authKey, byte[] id) {
         if (Utils.isNullOrEmpty(authKey) || Utils.isNullOrEmpty(id)) {
             Log.e(TAG, "pairWallet: invalid query parameters");
@@ -400,13 +400,13 @@ public final class MessageExchangeService extends IntentService {
         if (intent != null) {
             switch (intent.getAction()) {
                 case ACTION_RETRIEVE_MESSAGES:
-                    retrieveMessages(this.getApplicationContext());
+                    retrieveMessages(this);
                     break;
                 case ACTION_PROCESS_REQUEST:
                     boolean isUserApproved = intent.getBooleanExtra(EXTRA_IS_USER_APPROVED, false);
                     RequestMetaData requestMetaData = intent.getParcelableExtra(EXTRA_REQUEST_METADATA);
                     if (requestMetaData != null) {
-                        processAsyncRequest(this.getApplicationContext(), requestMetaData, isUserApproved);
+                        processAsyncRequest(this, requestMetaData, isUserApproved);
                     } else {
                         Log.e(TAG, "Missing request meta data.  Ignoring intent.");
                     }
@@ -442,6 +442,10 @@ public final class MessageExchangeService extends IntentService {
         List<InboxEntry> inboxEntries = MessageExchangeNetworkHelper.fetchInbox(context);
         Log.d(TAG, "retrieveMessages: " + inboxEntries.size());
 
+// TODO: CHECK THESE
+//        int version = requestEnvelope.getVersion();
+//        String service = requestEnvelope.getService();
+
         List<String> cursors = new ArrayList<>();
         for (InboxEntry inboxEntry : inboxEntries) {
             Protos.Envelope requestEnvelope = getEnvelopeFromInboxEntry(inboxEntry);
@@ -458,8 +462,7 @@ public final class MessageExchangeService extends IntentService {
     }
 
     private void processRequest(Context context, String cursor, Protos.Envelope requestEnvelope) {
-
-        byte[] decryptedMessage = decrypt(context, requestEnvelope); //TODO: Shiv is this needed for all?
+        byte[] decryptedMessage = decrypt(requestEnvelope);
         MessageType messageType = MessageType.valueOf(requestEnvelope.getMessageType());
         RequestMetaData metaData;
 
@@ -550,39 +553,27 @@ public final class MessageExchangeService extends IntentService {
         MessageExchangeNetworkHelper.sendEnvelope(context, envelope.toByteArray());
     }
 
-    public Protos.Envelope createResponseEnvelope(Protos.Envelope requestEnvelope, ByteString messageResponse) {
-//        int version = requestEnvelope.getVersion();
-//        String service = requestEnvelope.getService();
-//        String expiration = requestEnvelope.getExpiration();
-        String messageType = requestEnvelope.getMessageType();
-//        ByteString encryptedMessage = requestEnvelope.getEncryptedMessage();
+    private Protos.Envelope createResponseEnvelope(Protos.Envelope requestEnvelope, ByteString messageResponse) {
+        // Encrypt the response message.
+        BRCoreKey pairingKey = getPairingKey();
         ByteString senderPublicKey = requestEnvelope.getSenderPublicKey();
-//        ByteString receiverPublicKey = requestEnvelope.getReceiverPublicKey();
-        String identifier = requestEnvelope.getIdentifier();
-//        ByteString nonce = requestEnvelope.getNonce();
-//        ByteString signature = requestEnvelope.getSignature();
+        EncryptedMessage responseEncryptedMessage = encrypt(pairingKey, senderPublicKey.toByteArray(), messageResponse.toByteArray());
 
+        // Determine type for response.
+        MessageType requestMessageType = MessageType.valueOf(requestEnvelope.getMessageType());
+        MessageType responseMessageType = getResponseMessageType(requestMessageType);
 
-            BRCoreKey authKey = new BRCoreKey(BRKeyStore.getAuthKey(this));
-            byte[] pubKey = authKey.getPubKey();
+        // Create message envelope sans signature.
+        Protos.Envelope responseEnvelope = createEnvelope(ByteString.copyFrom(responseEncryptedMessage.getEncryptedData()),
+                responseMessageType, ByteString.copyFrom(pairingKey.getPubKey()), senderPublicKey, requestEnvelope.getIdentifier(),
+                ByteString.copyFrom(responseEncryptedMessage.getNonce()));
 
-//            byte[] decryptedMessageBytes = decrypt(authKey, senderPublicKey.toByteArray(), encryptedMessage.toByteArray(), nonce.toByteArray());
-//            MessageType requestMessageType = MessageType.valueOf(messageType);
-//            ByteString messageResponse = generateResponseMessage(authKey, decryptedMessageBytes, requestMessageType);
+        // Sign message envelope.
+        byte[] responseSignature = pairingKey.compactSign(CryptoHelper.doubleSha256(responseEnvelope.toByteArray()));
 
-            // Encrypt message envelope
-            EncryptedMessage responseEncryptedMessage = encrypt(authKey, senderPublicKey.toByteArray(), messageResponse.toByteArray());
-            MessageType responseMessageType = getResponseMessageType(MessageType.valueOf(messageType));
-            byte[] responseSignature = authKey.compactSign(CryptoHelper.doubleSha256(requestEnvelope.toByteArray()));
-            Protos.Envelope responseEnvelope = createEnvelope(ByteString.copyFrom(responseEncryptedMessage.getEncryptedData()),
-                    responseMessageType, ByteString.copyFrom(pubKey), senderPublicKey, identifier,
-                    ByteString.copyFrom(responseEncryptedMessage.getNonce()));
-            return responseEnvelope.toBuilder().setSignature(ByteString.copyFrom(responseSignature)).build();
+        // Add signature to message envelope.
+        return responseEnvelope.toBuilder().setSignature(ByteString.copyFrom(responseSignature)).build();
     }
-
-//    private void sendResponse(Context context, String requestId) {
-//        sendResponse(context, mPendingRequests.get(requestId));
-//    }
 
     private void sendResponse(Context context, Protos.Envelope requestEnvelope) {
         BRCoreKey authKey = new BRCoreKey(BRKeyStore.getAuthKey(context));
@@ -603,12 +594,20 @@ public final class MessageExchangeService extends IntentService {
         startActivity(intent, bundle);
     }
 
-    public static byte[] decrypt(Context context, Protos.Envelope requestEnvelope) {
-        BRCoreKey authKey = new BRCoreKey(BRKeyStore.getAuthKey(context));
-        return authKey.decryptUsingSharedSecret(requestEnvelope.getSenderPublicKey().toByteArray(),
+    private BRCoreKey getPairingKey() {
+        byte[] authKey = BRKeyStore.getAuthKey(this);
+        if (Utils.isNullOrEmpty(authKey) || Utils.isNullOrEmpty(mSenderId)) {
+            Log.e(TAG, "getPairingKey: Auth key or sender id is null.");
+            return null;
+        }
+        return new BRCoreKey(authKey).getPairingKey(mSenderId);
+    }
+
+    public byte[] decrypt(Protos.Envelope requestEnvelope) {
+        BRCoreKey pairingKey = getPairingKey();
+        return pairingKey.decryptUsingSharedSecret(requestEnvelope.getSenderPublicKey().toByteArray(),
                 requestEnvelope.getEncryptedMessage().toByteArray(),
                 requestEnvelope.getNonce().toByteArray());
-
     }
 
     // REMOVE OLD ONE
