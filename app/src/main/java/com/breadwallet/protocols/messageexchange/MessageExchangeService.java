@@ -13,10 +13,13 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.presenter.activities.ConfirmationActivity;
-import com.breadwallet.presenter.activities.HomeActivity;
+import com.breadwallet.protocols.messageexchange.entities.CallRequestMetaData;
 import com.breadwallet.protocols.messageexchange.entities.EncryptedMessage;
 import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
+import com.breadwallet.protocols.messageexchange.entities.LinkMetaData;
+import com.breadwallet.protocols.messageexchange.entities.MetaData;
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
+import com.breadwallet.protocols.messageexchange.entities.PaymentRequestMetaData;
 import com.breadwallet.protocols.messageexchange.entities.RequestMetaData;
 import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.crypto.CryptoHelper;
@@ -38,8 +41,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 /**
  * BreadWallet
@@ -387,11 +388,11 @@ public final class MessageExchangeService extends IntentService {
 
     public static final String ACTION_REQUEST_TO_PAIR = "com.breadwallet.protocols.messageexchange.ACTION_REQUEST_TO_PAIR";
     public static final String ACTION_RETRIEVE_MESSAGES = "com.breadwallet.protocols.messageexchange.ACTION_RETRIEVE_MESSAGES";
-    public static final String ACTION_PROCESS_PAIR_REQUEST = "com.breadwallet.protocols.messageexchange.ACTION_PROCESS_PAIR_REQUEST";
+    private static final String ACTION_PROCESS_PAIR_REQUEST = "com.breadwallet.protocols.messageexchange.ACTION_PROCESS_PAIR_REQUEST";
     private static final String ACTION_PROCESS_REQUEST = "com.breadwallet.protocols.messageexchange.ACTION_PROCESS_REQUEST";
     public static final String ACTION_GET_USER_CONFIRMATION = "com.breadwallet.protocols.messageexchange.ACTION_GET_USER_CONFIRMATION";
-    public static final String EXTRA_IS_USER_APPROVED = "com.breadwallet.protocols.messageexchange.EXTRA_IS_USER_APPROVED";
-    private static final String EXTRA_METADATA = "com.breadwallet.protocols.messageexchange.EXTRA_METADATA";
+    private static final String EXTRA_IS_USER_APPROVED = "com.breadwallet.protocols.messageexchange.EXTRA_IS_USER_APPROVED";
+    public static final String EXTRA_METADATA = "com.breadwallet.protocols.messageexchange.EXTRA_METADATA";
 
     // TODO: these should be stored in the DB in case of app restart or crash.
     private static Map<String, Protos.Envelope> mPendingRequests = new HashMap<>();
@@ -418,13 +419,10 @@ public final class MessageExchangeService extends IntentService {
                     // User scanned QR, to initiate pairing with a remote wallet,
                     mPairingMetaData = intent.getParcelableExtra(EXTRA_METADATA);
 
+                    // Show more details about the pairing and ask the user to confirm.
                     // TODO: Pass in valid domains, and request permissions list to populate in the UI
-                    Intent confirmIntent = new Intent(this, ConfirmationActivity.class);
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable(ConfirmationActivity.EXTRA_CONFIRMATION_TYPE, ConfirmationActivity.ConfirmationType.LINK);
-                    confirmIntent.putExtras(bundle);
-                    confirmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(confirmIntent);
+                    MetaData linkMetaData = new LinkMetaData("");
+                    confirmRequest(linkMetaData);
                     break;
                 case ACTION_PROCESS_PAIR_REQUEST:
                     // User has approved or denied the pairing request after reviewing the details.
@@ -501,8 +499,10 @@ public final class MessageExchangeService extends IntentService {
 
             ByteString message;
             if (isUserApproved) {
-                // TODO: I think this should be this wallet's id, not the remote entity's id, no?
+                // TODO: I think this should be this wallet's id, not the remote entity's id, no? YES
                 message = createLink(ByteString.copyFrom(pairingKey.getPubKey()), ByteString.copyFrom(mPairingMetaData.getId(), StandardCharsets.UTF_8.name()));
+
+                // Register our key with the server.
                 MessageExchangeNetworkHelper.sendAssociatedKey(this, pairingKey.getPubKey());
             } else {
                 message = createLink(Protos.Error.USER_DENIED);
@@ -512,7 +512,7 @@ public final class MessageExchangeService extends IntentService {
             ByteString encryptedMessageByteString = ByteString.copyFrom(encryptedMessage.getEncryptedData());
             Protos.Envelope envelope = createEnvelope(encryptedMessageByteString, MessageType.LINK, ByteString.copyFrom(pairingKey.getPubKey()),
                     ByteString.copyFrom(ephemeralKey), BRSharedPrefs.getDeviceId(this), ByteString.copyFrom(encryptedMessage.getNonce()));
-            //TODO: Shouldn't the message identifier be a new uuid? For requests, it should be new according to the spec.
+            //TODO: This should not use getDeviceId... it should be a new UUID that we save for reference when message is replied to.
 
             byte[] signature = pairingKey.compactSign(CryptoHelper.doubleSha256(envelope.toByteArray()));
             envelope = envelope.toBuilder().setSignature(ByteString.copyFrom(signature)).build();
@@ -590,7 +590,7 @@ public final class MessageExchangeService extends IntentService {
                     // Use cursor # to identify this request.
                     mPendingRequests.put(cursor, envelope);
                     Protos.PaymentRequest paymentRequest = Protos.PaymentRequest.parseFrom(decryptedMessage);
-                    metaData = new RequestMetaData(cursor, paymentRequest.getScope(), paymentRequest.getNetwork(),
+                    metaData = new PaymentRequestMetaData(cursor, paymentRequest.getScope(), paymentRequest.getNetwork(),
                             paymentRequest.getAddress(), paymentRequest.getAmount(), paymentRequest.getMemo());
                     confirmRequest(metaData);
                     break;
@@ -599,8 +599,8 @@ public final class MessageExchangeService extends IntentService {
                     // Use cursor # to identify this request.
                     mPendingRequests.put(cursor, envelope);
                     Protos.CallRequest callRequest = Protos.CallRequest.parseFrom(decryptedMessage);
-                    metaData = new RequestMetaData(cursor, callRequest.getScope(), callRequest.getNetwork(),
-                            callRequest.getAddress(), callRequest.getAmount(), callRequest.getMemo());
+                    metaData = new CallRequestMetaData(cursor, callRequest.getScope(), callRequest.getNetwork(),
+                            callRequest.getAddress(), callRequest.getAmount(), callRequest.getMemo(), callRequest.getAbi());
                     confirmRequest(metaData);
                     break;
                 default:
@@ -641,10 +641,10 @@ public final class MessageExchangeService extends IntentService {
         ByteString messageResponse;
         switch (messageType) {
             case PAYMENT_REQUEST:
-                messageResponse = processPaymentRequest(requestMetaData, isUserApproved);
+                messageResponse = processPaymentRequest((PaymentRequestMetaData) requestMetaData, isUserApproved);
                 break;
             case CALL_REQUEST:
-                messageResponse = processCallRequest(requestMetaData, isUserApproved);
+                messageResponse = processCallRequest((CallRequestMetaData) requestMetaData, isUserApproved);
                 break;
             default:
                 // Should never happen because unknown message type is handled by the caller (processRequest()).
@@ -700,13 +700,14 @@ public final class MessageExchangeService extends IntentService {
     /**
      * Prompts the user to confirm the pending remote request.
      *
-     * @param requestMetaData The meta data related to the request.
+     * @param metaData The meta data related to the request.
      */
-    private void confirmRequest(RequestMetaData requestMetaData) {
-        Intent intent = new Intent(this, MessageExchangeService.class); // TODO: SHIV Add name of Jade's activity
-        intent.setAction(ACTION_GET_USER_CONFIRMATION);
+    private void confirmRequest(MetaData metaData) {
+        Intent intent = new Intent(this, ConfirmationActivity.class);
+        intent.setAction(ACTION_GET_USER_CONFIRMATION)
+                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
-        bundle.putParcelable(EXTRA_METADATA, requestMetaData);
+        bundle.putParcelable(EXTRA_METADATA, metaData);
         startActivity(intent, bundle);
     }
 
@@ -735,6 +736,13 @@ public final class MessageExchangeService extends IntentService {
             // TODO send response encrypted with ephemeral key because we rejected the pairing key.
             // This is wrong:
             sendResponse(envelope, createLink(Protos.Error.REMOTE_ID_MISMATCH));
+        } else {
+
+            // TODO: SHIV store in KV store.  K = sha256(pubkey) V = id, pub key, and service
+//            link.getId();
+//            link.getPublicKey();
+//            mPairingMetaData.getService();
+
         }
     }
 
@@ -761,7 +769,7 @@ public final class MessageExchangeService extends IntentService {
         return responseBuilder.build().toByteString();
     }
 
-    private ByteString processPaymentRequest(RequestMetaData requestMetaData, boolean isUserApproved) {
+    private ByteString processPaymentRequest(PaymentRequestMetaData requestMetaData, boolean isUserApproved) {
         Protos.PaymentResponse.Builder responseBuilder = Protos.PaymentResponse.newBuilder();
         if (isUserApproved) {
             String currencyCode = requestMetaData.getCurrencyCode();
@@ -788,7 +796,7 @@ public final class MessageExchangeService extends IntentService {
         return responseBuilder.build().toByteString();
     }
 
-    private ByteString processCallRequest(RequestMetaData requestMetaData, boolean isUserApproved) {
+    private ByteString processCallRequest(CallRequestMetaData requestMetaData, boolean isUserApproved) {
         Protos.CallResponse.Builder responseBuilder = Protos.CallResponse.newBuilder();
         if (isUserApproved) {
             String currencyCode = requestMetaData.getCurrencyCode();
