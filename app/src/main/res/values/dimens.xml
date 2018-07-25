@@ -26,4 +26,7 @@
     <dimen name="manage_wallets_footer_padding_left">12dp</dimen>
     <dimen name="large_button_height">72dp</dimen>
     <dimen name="margin">10dp</dimen>
+
+    <!-- Participate with BRD link wallet dialog -->
+    <dimen name="link_wallet_dialog_width">360dp</dimen>
 </resources>

@@ -116,6 +116,10 @@
     <color name="create_new_wallet_button_light">#4C98FD</color>
     <color name="recover_wallet_button_dark">#33FFFFFF</color>
     <color name="recover_wallet_button_light">#FFFFFF</color>
+    <color name="approve_wallet_link_light">#4C98FD</color>
+    <color name="deny_wallet_link_light">#B0B0B0</color>
+    <color name="approve_wallet_link_dark">#29ABE2</color>
+    <color name="deny_wallet_link_dark">#B0B0B0</color>
     <color name="spend_limit_list_divider_color_light">#65696e</color>
     <color name="spend_limit_list_divider_color_dark">#b3c0c8</color>
     <color name="unlink_header_start">#97B5ED</color>

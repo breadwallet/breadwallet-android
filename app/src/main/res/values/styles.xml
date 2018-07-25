@@ -50,8 +50,10 @@
         <item name="wallet_footer_button_background">@color/wallet_footer_button_color_dark</item>
         <item name="spend_limit_list_divider_color">@color/spend_limit_list_divider_color_dark</item>
         <item name="input_words_text_color">@color/white</item>
-
         <item name="token_secondary_text_color">@color/white_60_percent_opaque</item>
+        <item name="approve_wallet_link_button">@color/approve_wallet_link_dark</item>
+        <item name="deny_wallet_link_button">@color/deny_wallet_link_dark</item>
+        <item name="confirmation_footer_background">@color/secondary_background</item>
     </style>
 
     <style name="AppTheme.Light" parent="AppTheme">
@@ -78,6 +80,8 @@
         <item name="spend_limit_list_divider_color">@color/spend_limit_list_divider_color_light</item>
         <item name="input_words_text_color">@color/almost_black</item>
         <item name="token_secondary_text_color">@color/almost_black</item>
+        <item name="approve_wallet_link_button">@color/approve_wallet_link_light</item>
+        <item name="deny_wallet_link_button">@color/deny_wallet_link_light</item>
     </style>
 
     <!-- Custom attributes for dark/light views and drawables -->
@@ -103,4 +107,7 @@
     <attr name="spend_limit_list_divider_color" format="reference"/>
     <attr name="input_words_text_color" format="reference" />
     <attr name="token_secondary_text_color" format="reference" />
+    <attr name="approve_wallet_link_button" format="reference"/>
+    <attr name="deny_wallet_link_button" format="reference"/>
+    <attr name="confirmation_footer_background" format="reference"/>
 </resources>
