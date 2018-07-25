@@ -12,6 +12,8 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.core.BRCoreKey;
+import com.breadwallet.presenter.activities.ConfirmationActivity;
+import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.protocols.messageexchange.entities.EncryptedMessage;
 import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
 import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
@@ -36,6 +38,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 
 /**
  * BreadWallet
@@ -72,7 +76,7 @@ public final class MessageExchangeService extends IntentService {
     public static final String SERVICE_PWB = "PWB";
 
     // TODO: REMOVE
-    public static final boolean USE_NEW_CODE = false;
+    public static final boolean USE_NEW_CODE = true;
 
     private enum MessageType {
         LINK,
@@ -95,8 +99,8 @@ public final class MessageExchangeService extends IntentService {
     }
 
     private static Protos.Envelope createEnvelope(ByteString encryptedMessage, MessageType messageType,
-                                                 ByteString senderPublicKey, ByteString receiverPublicKey,
-                                                 String uniqueId, ByteString nonce) {
+                                                  ByteString senderPublicKey, ByteString receiverPublicKey,
+                                                  String uniqueId, ByteString nonce) {
         Protos.Envelope envelope = Protos.Envelope.newBuilder()
                 .setVersion(ENVELOPE_VERSION)
                 .setMessageType(messageType.name())
@@ -383,10 +387,10 @@ public final class MessageExchangeService extends IntentService {
 
     public static final String ACTION_REQUEST_TO_PAIR = "com.breadwallet.protocols.messageexchange.ACTION_REQUEST_TO_PAIR";
     public static final String ACTION_RETRIEVE_MESSAGES = "com.breadwallet.protocols.messageexchange.ACTION_RETRIEVE_MESSAGES";
-    private static final String ACTION_PROCESS_PAIR_REQUEST = "com.breadwallet.protocols.messageexchange.ACTION_PROCESS_PAIR_REQUEST";
+    public static final String ACTION_PROCESS_PAIR_REQUEST = "com.breadwallet.protocols.messageexchange.ACTION_PROCESS_PAIR_REQUEST";
     private static final String ACTION_PROCESS_REQUEST = "com.breadwallet.protocols.messageexchange.ACTION_PROCESS_REQUEST";
     public static final String ACTION_GET_USER_CONFIRMATION = "com.breadwallet.protocols.messageexchange.ACTION_GET_USER_CONFIRMATION";
-    private static final String EXTRA_IS_USER_APPROVED = "com.breadwallet.protocols.messageexchange.EXTRA_IS_USER_APPROVED";
+    public static final String EXTRA_IS_USER_APPROVED = "com.breadwallet.protocols.messageexchange.EXTRA_IS_USER_APPROVED";
     private static final String EXTRA_METADATA = "com.breadwallet.protocols.messageexchange.EXTRA_METADATA";
 
     // TODO: these should be stored in the DB in case of app restart or crash.
@@ -406,15 +410,21 @@ public final class MessageExchangeService extends IntentService {
      */
     @Override
     protected void onHandleIntent(Intent intent) {
+        Log.d(TAG, "onHandleIntent()");
         if (intent != null) {
+            Log.d(TAG, "Intent Action -> " + intent.getAction());
             switch (intent.getAction()) {
                 case ACTION_REQUEST_TO_PAIR:
                     // User scanned QR, to initiate pairing with a remote wallet,
                     mPairingMetaData = intent.getParcelableExtra(EXTRA_METADATA);
 
-                    // Show more details about the pairing and ask the user to confirm.
-                    //confirmRequest(null); // TODO METADATA, include link type
-                    pair(true); //TODO TESTING
+                    // TODO: Pass in valid domains, and request permissions list to populate in the UI
+                    Intent confirmIntent = new Intent(this, ConfirmationActivity.class);
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable(ConfirmationActivity.EXTRA_CONFIRMATION_TYPE, ConfirmationActivity.ConfirmationType.LINK);
+                    confirmIntent.putExtras(bundle);
+                    confirmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(confirmIntent);
                     break;
                 case ACTION_PROCESS_PAIR_REQUEST:
                     // User has approved or denied the pairing request after reviewing the details.
@@ -772,7 +782,7 @@ public final class MessageExchangeService extends IntentService {
             }
         } else {
             responseBuilder.setStatus(Protos.Status.REJECTED)
-                        .setError(Protos.Error.USER_DENIED);
+                    .setError(Protos.Error.USER_DENIED);
         }
 
         return responseBuilder.build().toByteString();

@@ -120,6 +120,7 @@ public final class BRConstants {
     public static final String EXTRA_URL = "com.breadwallet.EXTRA_URL";
     public static final String DRAWABLE = "drawable";
     public static final String CURRENCY_PARAMETER_STRING_FORMAT = "%s?currency=%s";
+    public static final String EXTRA_SERVICE_CAPABILITIES = "service_capabilities";
 
     /**
      * Social media links and privacy policy URLS
