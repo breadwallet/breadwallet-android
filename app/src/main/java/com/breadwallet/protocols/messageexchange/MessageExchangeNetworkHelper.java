@@ -3,8 +3,10 @@ package com.breadwallet.protocols.messageexchange;
 import android.content.Context;
 import android.util.Log;
 
+import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
 import com.breadwallet.protocols.messageexchange.entities.ServiceObject;
+import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
@@ -55,6 +57,7 @@ public final class MessageExchangeNetworkHelper {
     public static final String MESSAGE_PATH = "/message";
     public static final String ACK_PATH = "/ack";
     public static final String SERVICE_PATH = "/external/service";
+    public static final String ASSOCIATED_KEYS = "/me/associated-keys";
 
     public static final String RECEIVED_TIME = "received_time";
     public static final String ACKNOWLEDGED = "acknowledged";
@@ -165,12 +168,11 @@ public final class MessageExchangeNetworkHelper {
             ackJsonArray.put(cursor);
         }
         String ackUrl = APIClient.BASE_URL + ACK_PATH;
-        final MediaType jsonType
-                = MediaType.parse(BRConstants.HEADER_VALUE_CONTENT_TYPE);
-        RequestBody requestBody = RequestBody.create(jsonType, ackJsonArray.toString());
+        RequestBody requestBody = RequestBody.create(null, ackJsonArray.toString());
         Request request = new Request.Builder()
                 .url(ackUrl)
                 .post(requestBody)
+                .addHeader(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
                 .build();
         APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
         ErrorObject errorObject = getError(response.getBodyText());
@@ -179,6 +181,43 @@ public final class MessageExchangeNetworkHelper {
         }
         if (!response.isSuccessful()) {
             Log.e(TAG, "sendAck: code:" + response.getCode());
+        }
+    }
+
+    public static void sendAssociatedKey(Context context, byte[] publicKey) {
+        String associatedUrl = APIClient.BASE_URL + ASSOCIATED_KEYS;
+        String base58PublicKey = BRCoreKey.encodeBase58(publicKey);
+        RequestBody requestBody = RequestBody.create(null, base58PublicKey);
+        Request request = new Request.Builder()
+                .url(associatedUrl)
+                .post(requestBody)
+                .addHeader(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_TEXT)
+                .build();
+        APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
+        ErrorObject errorObject = getError(response.getBodyText());
+        if (errorObject != null) {
+            Log.e(TAG, "sendAssociatedKey: err:" + errorObject.mMessage);
+        }
+        if (!response.isSuccessful()) {
+            Log.e(TAG, "sendAssociatedKey: code:" + response.getCode());
+        }
+
+    }
+
+    public static void getAssociatedKeys(Context context) {
+        String associatedUrl = APIClient.BASE_URL + ASSOCIATED_KEYS;
+        Request request = new Request.Builder()
+                .url(associatedUrl)
+                .get()
+                .build();
+        APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
+        Log.e(TAG, "getAssociatedKeys: " + response.getCode() + ", " + response.getBodyText());
+        ErrorObject errorObject = getError(response.getBodyText());
+        if (errorObject != null) {
+            Log.e(TAG, "sendAssociatedKey: err:" + errorObject.mMessage);
+        }
+        if (!response.isSuccessful()) {
+            Log.e(TAG, "sendAssociatedKey: code:" + response.getCode());
         }
 
     }
