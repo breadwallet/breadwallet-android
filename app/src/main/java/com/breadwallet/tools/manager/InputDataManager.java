@@ -5,7 +5,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
-import com.breadwallet.protocols.messageexchange.entities.PairingObject;
+import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -49,25 +49,34 @@ public final class InputDataManager {
                     WalletsMaster.getInstance(context).getCurrentWallet(context));
         } else if (BRBitId.isBitId(result)) {
             BRBitId.signBitID(context, result, null);
-        } else if (isWalletPair(context, result)) {
-            final PairingObject pairingObject = PairingObject.parseUriString(result);
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    MessageExchangeService.startPairing(context, pairingObject);
-                }
-            });
+        } else if (isWalletPair(result)) {
+            if (MessageExchangeService.USE_NEW_CODE) {
+                PairingMetaData pairingMetaData = PairingMetaData.parseUriString(result);
+                context.startService(MessageExchangeService.createIntent(
+                        context,
+                        MessageExchangeService.ACTION_REQUEST_TO_PAIR,
+                        pairingMetaData));
+            } else {
 
+                final PairingMetaData pairingMetaData = PairingMetaData.parseUriString(result);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        MessageExchangeService.startPairing(context, pairingMetaData);
+                    }
+                });
+            }
         }
     }
 
-    public static boolean isWalletPair(Context context, String result) {
+    public static boolean isWalletPair(String result) {
         if (Utils.isNullOrEmpty(result)) {
             return false;
         }
         Uri uri = Uri.parse(result);
         String path = uri.getPath();
-        if (uri.getHost().equalsIgnoreCase(BRConstants.URL_BRD_HOST) && (path.contains(BRConstants.WALLET_PAIR_PATH) || path.contains(BRConstants.WALLET_LINK_PATH))) {
+        if (uri.getHost().equalsIgnoreCase(BRConstants.URL_BRD_HOST)
+                && (path.contains(BRConstants.WALLET_PAIR_PATH) || path.contains(BRConstants.WALLET_LINK_PATH))) {
             Log.d(TAG, "isWalletPair: true");
             return true;
         }

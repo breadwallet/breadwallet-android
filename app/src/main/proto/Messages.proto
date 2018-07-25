@@ -45,9 +45,12 @@ enum Status {
 
 // Error codes for response messages.
 enum Error {
-    UNKNOWN_ERROR = 0; // Unknown error
-    USER_DENIED = 1;   // User denied the request
-    SCOPE_UNKNOWN = 2; // Scope does not exist.
+    UNKNOWN_ERROR = 0;              // Unknown error
+    USER_DENIED = 1;                // User denied the request.
+    SCOPE_UNKNOWN = 2;              // Scope does not exist.
+    REMOTE_ID_MISMATCH = 3;         // For link request, if the remote entity's wallet id does not match wallet id from the initial pairing.
+    NO_ADDRESS_FOUND = 4;           // For account request, address not found.
+    TRANSACTION_FAILED = 5;         // For payment/call request, transaction failed.
 }
 
 // Link two wallets. This establishes a communication channel for the encrypted message exchange.
