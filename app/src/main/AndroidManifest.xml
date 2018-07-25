@@ -234,6 +234,10 @@
             android:enabled="true"
             android:exported="false" />
         <service
+            android:name=".protocols.messageexchange.MessageExchangeService"
+            android:enabled="true"
+            android:exported="false" />
+        <service
             android:name=".tools.services.BRDFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT"/>

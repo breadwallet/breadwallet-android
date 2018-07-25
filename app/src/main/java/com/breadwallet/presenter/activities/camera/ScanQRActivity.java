@@ -178,7 +178,7 @@ public class ScanQRActivity extends BRActivity implements ActivityCompat.OnReque
         lastUpdated = System.currentTimeMillis();
         if (handlingCode) return;
         handlingCode = true;
-        if (CryptoUriParser.isCryptoUrl(this, text) || BRBitId.isBitId(text) || InputDataManager.isWalletPair(this, text)) {
+        if (CryptoUriParser.isCryptoUrl(this, text) || BRBitId.isBitId(text) || InputDataManager.isWalletPair(text)) {
             Log.e(TAG, "onQRCodeRead: isCrypto");
             runOnUiThread(new Runnable() {
                 @Override
