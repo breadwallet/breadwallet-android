@@ -20,6 +20,7 @@ import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.presenter.fragments.FragmentLinkWallet;
+import com.breadwallet.protocols.messageexchange.entities.LinkMetaData;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
@@ -164,7 +165,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, ConfirmationActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putSerializable(ConfirmationActivity.EXTRA_CONFIRMATION_TYPE, ConfirmationActivity.ConfirmationType.LINK);
+                bundle.putParcelable(MessageExchangeService.EXTRA_METADATA, new LinkMetaData("Jade's Link UP!"));
                 intent.putExtras(bundle);
                 startActivity(intent);
             }
@@ -232,6 +233,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
 
+        //TODO: Shiv add flag to only check once pair has started.
         // Check for messages.
         startService(MessageExchangeService.createIntent(this, MessageExchangeService.ACTION_RETRIEVE_MESSAGES));
 
