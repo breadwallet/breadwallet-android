@@ -53,13 +53,13 @@ public class UserMetricsManager {
         }
 
         final MediaType JSON
-                = MediaType.parse(BRConstants.HEADER_VALUE_CONTENT_TYPE);
+                = MediaType.parse(BRConstants.CONTENT_TYPE_JSON);
 
         RequestBody requestBody = RequestBody.create(JSON, payload.toString());
 
         Request request = new Request.Builder()
                 .url(url)
-                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.HEADER_VALUE_CONTENT_TYPE)
+                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
                 .header(BRConstants.HEADER_ACCEPT, BRConstants.HEADER_VALUE_ACCEPT).post(requestBody).build();
 
         APIClient.getInstance(context).sendRequest(request, true);
