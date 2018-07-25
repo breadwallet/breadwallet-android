@@ -19,6 +19,7 @@ import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
+import com.breadwallet.presenter.fragments.FragmentLinkWallet;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
@@ -157,6 +158,17 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         });
         Log.e(TAG, "onCreate: 2");
 
+        // TODO: Remove this, just to test for now
+        mFiatTotal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(HomeActivity.this, ConfirmationActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(ConfirmationActivity.EXTRA_CONFIRMATION_TYPE, ConfirmationActivity.ConfirmationType.LINK);
+                intent.putExtras(bundle);
+                startActivity(intent);
+            }
+        });
     }
 
     public void hidePrompt() {
@@ -224,6 +236,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         startService(MessageExchangeService.createIntent(this, MessageExchangeService.ACTION_RETRIEVE_MESSAGES));
 
         Log.e(TAG, "onResume: took: " + (System.currentTimeMillis() - start));
+
     }
 
     private void populateWallets() {

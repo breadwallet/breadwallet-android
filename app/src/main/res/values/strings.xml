@@ -930,4 +930,17 @@
   <string name="WritePaperPhrase.previous">Previous</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d of %2$d</string>
+
+  <!-- Participate with BRD strings -->
+  <string name="LinkWallet.dialogTitle">Link Wallet</string>
+  <string name="LinkWallet.subtitle">SECURE CHECKOUT</string>
+  <string name="LinkWallet.domainWarning">Note: ONLY interact with this app when on one of the following domains:</string>
+  <string name="LinkWallet.validDomains">participate.brd.com, brd.com</string>
+  <string name="LinkWallet.appPermissionsTitle">This app will be able to:</string>
+  <string name="LinkWallet.readBalancePermission">Read your ETH balance</string>
+  <string name="LinkWallet.serviceCapabilities.seeEthAddress">See your Ethereum address.</string>
+  <string name="LinkWallet.serviceCapabilities.makeTransferRequests">Make Ethereum transfer requests.</string>
+  <string name="LinkWallet.serviceCapabilities.makeSmartContractRequests">Make Ethereum smart contract requests.f</string>
+  <string name="LinkWallet.requestTransactionsPermission">Request transactions</string>
+  <string name="LinkWallet.externalAppsReminder">External apps can not spend money without approval on this device.</string>
 </resources>
