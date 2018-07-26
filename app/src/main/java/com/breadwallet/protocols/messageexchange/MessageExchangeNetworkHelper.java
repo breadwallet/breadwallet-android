@@ -5,8 +5,7 @@ import android.util.Log;
 
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
-import com.breadwallet.protocols.messageexchange.entities.ServiceObject;
-import com.breadwallet.tools.crypto.Base58;
+import com.breadwallet.protocols.messageexchange.entities.ServiceMetaData;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
@@ -223,7 +222,7 @@ public final class MessageExchangeNetworkHelper {
 
     }
 
-    public static ServiceObject getService(Context context, String serviceId) {
+    public static ServiceMetaData getService(Context context, String serviceId) {
         String serviceUrl = APIClient.BASE_URL + SERVICE_PATH + "/" + serviceId;
         Request request = new Request.Builder()
                 .url(serviceUrl)
@@ -251,14 +250,14 @@ public final class MessageExchangeNetworkHelper {
                     domains.add(domainsJsonArray.getString(i));
                 }
             }
-            List<ServiceObject.Capability> capabilities = new ArrayList<>();
+            List<ServiceMetaData.Capability> capabilities = new ArrayList<>();
             if (object.has(CAPABILITIES)) {
                 JSONArray capabilitiesJsonArray = object.getJSONArray(CAPABILITIES);
                 for (int i = 0; i < capabilitiesJsonArray.length(); i++) {
                     JSONObject capabilityJson = capabilitiesJsonArray.getJSONObject(i);
                     String capabilityName = capabilityJson.has(NAME) ? capabilityJson.getString(NAME) : null;
                     JSONArray scopesJsonArray = capabilityJson.has(SCOPES) ? capabilityJson.getJSONArray(SCOPES) : new JSONArray();
-                    Map<String, String> scopes = new HashMap<>();
+                    HashMap<String, String> scopes = new HashMap<>();
                     for (int j = 0; j < scopesJsonArray.length(); j++) {
                         JSONObject scopeObject = scopesJsonArray.getJSONObject(j);
                         String scopeName = scopeObject.has(NAME) ? scopeObject.getString(NAME) : null;
@@ -266,12 +265,12 @@ public final class MessageExchangeNetworkHelper {
                         scopes.put(scopeName, scopeDescription);
                     }
                     String capabilityDescription = capabilityJson.has(DESCRIPTION) ? capabilityJson.getString(DESCRIPTION) : null;
-                    ServiceObject.Capability capability = new ServiceObject.Capability(capabilityName, scopes, capabilityDescription);
+                    ServiceMetaData.Capability capability = new ServiceMetaData.Capability(capabilityName, scopes, capabilityDescription);
                     capabilities.add(capability);
                 }
             }
 
-            return new ServiceObject(url, name, hash, createdTime, updatedTime, logo, description, domains, capabilities);
+            return new ServiceMetaData(url, name, hash, createdTime, updatedTime, logo, description, domains, capabilities);
         } catch (JSONException e) {
             e.printStackTrace();
         }
