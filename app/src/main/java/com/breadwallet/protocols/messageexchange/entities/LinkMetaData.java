@@ -62,6 +62,6 @@ public class LinkMetaData extends MetaData {
 
     @Override
     protected void writeToParcel(Parcel destination) {
-        destination.writeParcelable((Parcelable) mServiceMetaData, 0);
+        destination.writeParcelable(mServiceMetaData, 0);
     }
 }
