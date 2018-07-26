@@ -79,7 +79,7 @@ public final class MessageExchangeService extends IntentService {
     // TODO: REMOVE
     public static final boolean USE_NEW_CODE = true;
 
-    private enum MessageType {
+    public enum MessageType {
         LINK,
         PING,
         PONG,
@@ -99,7 +99,7 @@ public final class MessageExchangeService extends IntentService {
         super(TAG);
     }
 
-    private static Protos.Envelope createEnvelope(ByteString encryptedMessage, MessageType messageType,
+    public static Protos.Envelope createEnvelope(ByteString encryptedMessage, MessageType messageType,
                                                   ByteString senderPublicKey, ByteString receiverPublicKey,
                                                   String uniqueId, ByteString nonce) {
         Protos.Envelope envelope = Protos.Envelope.newBuilder()
@@ -398,12 +398,6 @@ public final class MessageExchangeService extends IntentService {
     private static Map<String, Protos.Envelope> mPendingRequests = new HashMap<>();
     private static PairingMetaData mPairingMetaData;
 
-    public enum ServiceCapability {
-        ACCOUNT,
-        PAYMENT,
-        CALL
-    }
-
     /**
      * Handles intents passed to the {@link MessageExchangeService} by creating a new worker thread to complete the work required.
      *
@@ -522,7 +516,6 @@ public final class MessageExchangeService extends IntentService {
         } catch (UnsupportedEncodingException e) {
             Log.e(TAG, "Failed to pair", e);
         }
-
     }
 
     /**
@@ -732,8 +725,6 @@ public final class MessageExchangeService extends IntentService {
         String senderId = mPairingMetaData.getId();
         if (senderId == null || !senderId.equals(link.getId().toStringUtf8())) {
             // If the response for the remote entity doesn't have the same id as the initial pairing request, reject.
-            // TODO send response encrypted with ephemeral key because we rejected the pairing key.
-            // This is wrong:
             sendResponse(envelope, createLink(Protos.Error.REMOTE_ID_MISMATCH));
         } else {
 

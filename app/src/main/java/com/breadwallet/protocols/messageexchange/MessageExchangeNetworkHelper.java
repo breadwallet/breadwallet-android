@@ -89,6 +89,7 @@ public final class MessageExchangeNetworkHelper {
     }
 
     // TODO if 100 entries received, then fetch again.
+    // TODO support after=CURSOR and then only fetch entries we have not processed.
     public static List<InboxEntry> fetchInbox(Context context) {
         List<InboxEntry> inboxEntries = new ArrayList<>();
         String inboxUrl = APIClient.BASE_URL + INBOX_PATH;
