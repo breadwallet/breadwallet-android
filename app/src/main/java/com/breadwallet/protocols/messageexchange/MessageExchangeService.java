@@ -419,9 +419,8 @@ public final class MessageExchangeService extends IntentService {
                     // User scanned QR, to initiate pairing with a remote wallet,
                     mPairingMetaData = intent.getParcelableExtra(EXTRA_METADATA);
 
-                    // Show more details about the pairing and ask the user to confirm.
-                    // TODO: Pass in valid domains, and request permissions list to populate in the UI
-                    MetaData linkMetaData = new LinkMetaData("");
+                    // Show more service details about the pairing and ask the user to confirm.
+                    MetaData linkMetaData = new LinkMetaData(MessageExchangeNetworkHelper.getService(this, SERVICE_PWB));
                     confirmRequest(linkMetaData);
                     break;
                 case ACTION_PROCESS_PAIR_REQUEST:
