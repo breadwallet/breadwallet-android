@@ -165,7 +165,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             public void onClick(View v) {
                 Intent intent = new Intent(HomeActivity.this, ConfirmationActivity.class);
                 Bundle bundle = new Bundle();
-                bundle.putParcelable(MessageExchangeService.EXTRA_METADATA, new LinkMetaData("Jade's Link UP!"));
+//                bundle.putParcelable(MessageExchangeService.EXTRA_METADATA, new LinkMetaData("Jade's Link UP!"));
                 intent.putExtras(bundle);
                 startActivity(intent);
             }

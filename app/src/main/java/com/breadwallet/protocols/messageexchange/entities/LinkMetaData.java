@@ -28,6 +28,8 @@ import android.os.Parcelable;
  * THE SOFTWARE.
  */
 public class LinkMetaData extends MetaData {
+    private ServiceMetaData mServiceMetaData;
+
     public static final Parcelable.Creator<LinkMetaData> CREATOR = new Parcelable.Creator<LinkMetaData>() {
         @Override
         public LinkMetaData[] newArray(int size) {
@@ -40,15 +42,26 @@ public class LinkMetaData extends MetaData {
         }
     };
 
-    public LinkMetaData(String id) {
-        super(id);
+    public LinkMetaData(ServiceMetaData serviceMetaData) {
+        super(""); // id not used.
+        mServiceMetaData = serviceMetaData;
     }
 
     public LinkMetaData(Parcel source) {
         super(source);
+        mServiceMetaData = source.readParcelable(ServiceMetaData.class.getClassLoader());
+    }
+
+    public ServiceMetaData getServiceMetaData() {
+        return mServiceMetaData;
+    }
+
+    public void setServiceMetaData(ServiceMetaData serviceMetaData) {
+        mServiceMetaData = serviceMetaData;
     }
 
     @Override
     protected void writeToParcel(Parcel destination) {
+        destination.writeParcelable((Parcelable) mServiceMetaData, 0);
     }
 }
