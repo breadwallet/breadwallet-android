@@ -3,6 +3,7 @@ package com.breadwallet.protocols.messageexchange.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,8 +78,9 @@ public class ServiceMetaData extends MetaData {
         mUpdatedTime = source.readString();
         mLogoUrl = source.readString();
         mDescription = source.readString();
-        source.readStringList(mDomains);
-        mCapabilities = source.readParcelable(Capability.class.getClassLoader());
+        mDomains = source.createStringArrayList();
+        mCapabilities = new ArrayList<>();
+        source.readList(mCapabilities, Capability.class.getClassLoader());
     }
 
     public String getUrl() {
@@ -163,7 +165,7 @@ public class ServiceMetaData extends MetaData {
         destination.writeString(mLogoUrl);
         destination.writeString(mDescription);
         destination.writeStringList(mDomains);
-        destination.writeParcelable((Parcelable) mCapabilities, 0);
+        destination.writeList(mCapabilities);
     }
 
     public static class Capability implements Parcelable {
@@ -191,7 +193,8 @@ public class ServiceMetaData extends MetaData {
 
         public Capability(Parcel source) {
             mName = source.readString();
-            mScopes = (HashMap<String, String>) source.readSerializable();
+            mScopes = new HashMap<>();
+            source.readMap(mScopes, String.class.getClassLoader());
             mDescription = source.readString();
         }
 
@@ -227,7 +230,7 @@ public class ServiceMetaData extends MetaData {
         @Override
         public void writeToParcel(Parcel destination, int flags) {
             destination.writeString(mName);
-            destination.writeSerializable(mScopes);
+            destination.writeMap(mScopes);
             destination.writeString(mDescription);
         }
     }
