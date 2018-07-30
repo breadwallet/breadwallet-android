@@ -6,10 +6,8 @@ import android.app.ActivityManager;
 import android.app.Application;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.graphics.Point;
-import android.hardware.fingerprint.FingerprintManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.util.Log;
@@ -24,6 +22,7 @@ import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
+import com.breadwallet.tools.services.BRDFirebaseMessagingService;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.crashlytics.android.Crashlytics;
@@ -169,12 +168,13 @@ public class BreadApp extends Application {
         }
     }
 
-    public static void generateWalletIfIfNeeded(Context app, String address) {
+    public static void generateWalletIfIfNeeded(final Context app, String address) {
         if (Utils.isNullOrEmpty(BRSharedPrefs.getWalletRewardId(app))) {
             String rewardId = generateWalletId(app, address);
             if (!Utils.isNullOrEmpty(rewardId)) {
-
                 BRSharedPrefs.putWalletRewardId(app, rewardId);
+                // TODO: This is a hack.  Decouple FCM logic from rewards id generation logic.
+                BRDFirebaseMessagingService.updateFcmRegistrationToken(app);
             } else {
                 BRReportsManager.reportBug(new NullPointerException("rewardId is empty"));
             }
