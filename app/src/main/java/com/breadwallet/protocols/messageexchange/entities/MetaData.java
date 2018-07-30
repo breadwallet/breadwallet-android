@@ -28,7 +28,7 @@ import android.os.Parcelable;
  * THE SOFTWARE.
  */
 public abstract class MetaData implements Parcelable {
-    private String mId;
+    protected String mId;
 
     public MetaData(String id) {
         mId = id;

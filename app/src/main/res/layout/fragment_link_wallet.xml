@@ -21,26 +21,31 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
+        <RelativeLayout
+            android:id="@+id/logo_subtitle_layout"
+            app:layout_constraintTop_toBottomOf="@id/dialogTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/brd_logo"
             android:layout_width="132dp"
             android:layout_height="80dp"
             android:src="@drawable/brd_logo_gradient"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/dialogTitle" />
+            android:layout_centerHorizontal="true" />
 
         <com.breadwallet.presenter.customviews.BaseTextView
             android:id="@+id/subtitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/LinkWallet.subtitle"
-            android:textSize="16sp"
+            android:layout_below="@id/brd_logo"
+            android:layout_marginTop="-16dp"
+            android:textSize="20sp"
             app:customTFont="CircularPro-Bold.otf"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/brd_logo" />
+            android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
 
 
         <com.breadwallet.presenter.customviews.BaseTextView
@@ -56,18 +61,16 @@
             android:text="@string/LinkWallet.domainWarning"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/subtitle" />
+            app:layout_constraintTop_toBottomOf="@id/logo_subtitle_layout" />
 
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/valid_domains_layout"
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_marginTop="12dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/domain_warning"
-            android:layout_height="wrap_content"></LinearLayout>
+            android:layout_height="wrap_content"></RelativeLayout>
 
 
         <com.breadwallet.presenter.customviews.BaseTextView
@@ -80,7 +83,7 @@
             android:textColor="@color/white_60_percent_opaque"
             app:layout_constraintTop_toBottomOf="@id/valid_domains_layout" />
 
-        <LinearLayout
+        <RelativeLayout
             android:id="@+id/permission_layout"
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -89,7 +92,7 @@
             android:layout_height="wrap_content">
 
 
-        </LinearLayout>
+        </RelativeLayout>
 
 
 

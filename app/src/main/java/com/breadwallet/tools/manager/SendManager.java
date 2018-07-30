@@ -108,27 +108,33 @@ public class SendManager {
                 sayError(app, app.getString(R.string.Send_insufficientGasTitle), String.format(app.getString(R.string.Send_insufficientGasMessage), CurrencyUtils.getFormattedAmount(app, "ETH", fee)));
             } else
                 sayError(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.Send_insufficientFunds));
+            callbackCompletionFailed(completion);
         } catch (AmountSmallerThanMinException e) {
             BigDecimal minAmount = walletManager.getMinOutputAmount(app);
             sayError(app, app.getString(R.string.Alerts_sendFailure), String.format(Locale.getDefault(), app.getString(R.string.PaymentProtocol_Errors_smallPayment),
                     BRConstants.BITS_SYMBOL + minAmount.divide(new BigDecimal(100), BRConstants.ROUNDING_MODE)));
+            callbackCompletionFailed(completion);
         } catch (SpendingNotAllowed spendingNotAllowed) {
             sayError(app, app.getString(R.string.Alert_error), app.getString(R.string.Send_isRescanning));
+            callbackCompletionFailed(completion);
             return false;
         } catch (FeeNeedsAdjust feeNeedsAdjust) {
             //offer to change amount, so it would be enough for fee
 //                    showFailed(app); //just show failed for now
             showAdjustFee((Activity) app, payment, walletManager, completion);
+
             return false;
         } catch (FeeOutOfDate ex) {
             //Fee is out of date, show not connected error
             BRReportsManager.reportBug(ex);
             sayError(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.NodeSelector_notConnected));
+            callbackCompletionFailed(completion);
             return false;
         } catch (SomethingWentWrong somethingWentWrong) {
             somethingWentWrong.printStackTrace();
             BRReportsManager.reportBug(somethingWentWrong);
             sayError(app, app.getString(R.string.Alerts_sendFailure), "Something went wrong:\n" + somethingWentWrong.getMessage());
+            callbackCompletionFailed(completion);
             return false;
         } finally {
             sending = false;
@@ -138,13 +144,24 @@ public class SendManager {
         return true;
     }
 
+    private static void callbackCompletionFailed(SendCompletion completion) {
+        if (completion != null) {
+            completion.onCompleted(null, false);
+        }
+    }
+
     private static void sayError(final Context app, final String title, final String message) {
-        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                BRDialog.showSimpleDialog(app, title, message);
-            }
-        });
+        if (app instanceof Activity) {
+            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    BRDialog.showSimpleDialog(app, title, message);
+                }
+            });
+        } else {
+            Log.e(TAG, "sayError: title: " + title + ", message: " + message);
+        }
+
     }
 
     /**

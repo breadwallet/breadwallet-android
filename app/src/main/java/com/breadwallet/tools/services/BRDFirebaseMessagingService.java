@@ -83,7 +83,8 @@ public final class BRDFirebaseMessagingService extends FirebaseMessagingService 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                updateFcmRegistrationToken(BRDFirebaseMessagingService.this, token);
+                //TODO: Comment out until DROID-748 is fixed to prevent crash
+//                updateFcmRegistrationToken(BRDFirebaseMessagingService.this, token);
             }
         });
     }
