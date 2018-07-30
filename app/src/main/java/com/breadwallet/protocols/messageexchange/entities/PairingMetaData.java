@@ -31,12 +31,12 @@ import com.breadwallet.tools.util.Utils;
  * THE SOFTWARE.
  */
 public class PairingMetaData implements Parcelable {
-    private static final String QUERY_PARAM_PUBLIC_KEY = "publicKey";
     private static final String QUERY_PARAM_ID = "id";
+    private static final String QUERY_PARAM_PUBLIC_KEY = "publicKey";
     private static final String QUERY_PARAM_SERVICE = "service";
 
-    private String mPublicKeyHex;
     private String mId;
+    private String mPublicKeyHex; // Base 58 encoded public key of remote entity.
     private String mService;
 
     public static final Creator<PairingMetaData> CREATOR = new Creator<PairingMetaData>() {
@@ -51,24 +51,25 @@ public class PairingMetaData implements Parcelable {
         }
     };
 
-    public PairingMetaData(String publicKeyHex, String id, String service) {
-        mPublicKeyHex = publicKeyHex;
+    public PairingMetaData(String id, String publicKeyHex, String service) {
         mId = id;
+        mPublicKeyHex = publicKeyHex;
         mService = service;
     }
 
     public PairingMetaData(Parcel source) {
-        mPublicKeyHex = source.readString();
         mId = source.readString();
+        mPublicKeyHex = source.readString();
         mService = source.readString();
     }
 
-    public String getPublicKeyHex() {
-        return mPublicKeyHex;
-    }
-
-    public void setPublicKeyHex(String publicKeyHex) {
-        mPublicKeyHex = mPublicKeyHex;
+    public PairingMetaData(String uriString) {
+        if (!Utils.isNullOrEmpty(uriString)) {
+            Uri uri = Uri.parse(uriString);
+            mId = uri.getQueryParameter(QUERY_PARAM_ID);
+            mPublicKeyHex = uri.getQueryParameter(QUERY_PARAM_PUBLIC_KEY);
+            mService = uri.getQueryParameter(QUERY_PARAM_SERVICE);
+        }
     }
 
     public String getId() {
@@ -77,6 +78,14 @@ public class PairingMetaData implements Parcelable {
 
     public void setId(String id) {
         mId = id;
+    }
+
+    public String getPublicKeyHex() {
+        return mPublicKeyHex;
+    }
+
+    public void setPublicKeyHex(String publicKeyHex) {
+        mPublicKeyHex = publicKeyHex;
     }
 
     public String getService() {
@@ -94,20 +103,8 @@ public class PairingMetaData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel destination, int flags) {
-        destination.writeString(mPublicKeyHex);
         destination.writeString(mId);
+        destination.writeString(mPublicKeyHex);
         destination.writeString(mService);
-    }
-
-    public static PairingMetaData parseUriString(String uriString) {
-        if (Utils.isNullOrEmpty(uriString)) {
-            return null;
-        }
-
-        Uri uri = Uri.parse(uriString);
-        String publicKeyHex = uri.getQueryParameter(QUERY_PARAM_PUBLIC_KEY);
-        String id = uri.getQueryParameter(QUERY_PARAM_ID);
-        String service = uri.getQueryParameter(QUERY_PARAM_SERVICE);
-        return new PairingMetaData(publicKeyHex, id, service);
     }
 }

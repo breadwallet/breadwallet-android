@@ -78,7 +78,8 @@ public class ServiceMetaData extends MetaData {
         mUpdatedTime = source.readString();
         mLogoUrl = source.readString();
         mDescription = source.readString();
-        mDomains = source.createStringArrayList();
+        mDomains = new ArrayList<>();
+        source.readStringList(mDomains);
         mCapabilities = new ArrayList<>();
         source.readList(mCapabilities, Capability.class.getClassLoader());
     }

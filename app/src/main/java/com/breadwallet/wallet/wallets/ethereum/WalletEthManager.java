@@ -88,6 +88,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
     public static final String ETH_SCHEME = "ethereum";
     //1ETH = 1000000000000000000 WEI
     public static final String ETHER_WEI = "1000000000000000000";
+    //Gas limit
+    public static final String GAS_LIMIT = "200000";
     //Max amount in ether
     public static final String MAX_ETH = "90000000";
     private final BigDecimal MAX_WEI = new BigDecimal(MAX_ETH).multiply(new BigDecimal(ETHER_WEI)); // 90m ETH * 18 (WEI)
@@ -1417,5 +1419,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
         }
     }
 
-
+    public BREthereumWallet getWallet() {
+        return mWallet;
+    }
 }
