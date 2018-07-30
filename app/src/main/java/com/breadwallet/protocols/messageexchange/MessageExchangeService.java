@@ -30,9 +30,7 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
-import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -80,7 +78,6 @@ public final class MessageExchangeService extends IntentService {
 
     private static final int NONCE_SIZE = 12;
 
-    private static Map<String, Protos.Envelope> mPendingRequests = new HashMap<>(); // TODO: this should be stored in the DB in case of app restart or crash.
     private static PairingMetaData mPairingMetaData;
 
     public enum MessageType {
@@ -262,7 +259,7 @@ public final class MessageExchangeService extends IntentService {
                 Protos.Envelope envelope = getEnvelopeFromInboxEntry(inboxEntry);
                 String cursor = inboxEntry.getCursor();
                 if (verifyEnvelopeSignature(envelope)) {
-                    processEnvelope(cursor, envelope);
+                    processEnvelope(envelope);
                     cursors.add(cursor);
                 } else {
                     Log.e(TAG, "retrieveInboxEntries: signature verification failed. id: " + cursor);
@@ -291,10 +288,9 @@ public final class MessageExchangeService extends IntentService {
     /**
      * Processes the message within the specified envelope.
      *
-     * @param cursor The cursor of the envelope.  This is used to identify the envelope.
      * @param envelope The envelope containing the message.
      */
-    private void processEnvelope(String cursor, Protos.Envelope envelope) {
+    private void processEnvelope(Protos.Envelope envelope) {
         byte[] decryptedMessage = decrypt(envelope);
         MessageType messageType = MessageType.valueOf(envelope.getMessageType());
         RequestMetaData metaData;
@@ -311,21 +307,19 @@ public final class MessageExchangeService extends IntentService {
                     processSyncRequest(messageType, envelope, decryptedMessage);
                     break;
                 case PAYMENT_REQUEST:
-                    // These are asynchronous requests.  Save until some event happens.
-                    // Use cursor # to identify this request.
-                    mPendingRequests.put(cursor, envelope);
+                    // Ask the user for approval before completing the request. This is an asynchronous request.
                     Protos.PaymentRequest paymentRequest = Protos.PaymentRequest.parseFrom(decryptedMessage);
-                    metaData = new PaymentRequestMetaData(cursor, paymentRequest.getScope(), paymentRequest.getNetwork(),
-                            paymentRequest.getAddress(), paymentRequest.getAmount(), paymentRequest.getMemo());
+                    metaData = new PaymentRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
+                            paymentRequest.getScope(), paymentRequest.getNetwork(), paymentRequest.getAddress(),
+                            paymentRequest.getAmount(), paymentRequest.getMemo());
                     confirmRequest(metaData);
                     break;
                 case CALL_REQUEST:
-                    // These are asynchronous requests.  Save until some event happens.
-                    // Use cursor # to identify this request.
-                    mPendingRequests.put(cursor, envelope);
+                    // Ask the user for approval before completing the request. This is an asynchronous request.
                     Protos.CallRequest callRequest = Protos.CallRequest.parseFrom(decryptedMessage);
-                    metaData = new CallRequestMetaData(cursor, callRequest.getScope(), callRequest.getNetwork(),
-                            callRequest.getAddress(), callRequest.getAmount(), callRequest.getMemo(), callRequest.getAbi());
+                    metaData = new CallRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
+                            callRequest.getScope(), callRequest.getNetwork(), callRequest.getAddress(),
+                            callRequest.getAmount(), callRequest.getMemo(), callRequest.getAbi());
                     confirmRequest(metaData);
                     break;
                 default:
@@ -340,31 +334,29 @@ public final class MessageExchangeService extends IntentService {
      * Processes synchronous messages.  These are messages that can be processed immediately upon receipt.
      *
      * @param messageType The type of message.
-     * @param incomingEnvelope The envelope containing the message to process along with metadata needed to send a response.
+     * @param requestEnvelope The envelope containing the message to process along with metadata needed to send a response.
      * @param decryptedMessage The decrypted message.
      * @throws InvalidProtocolBufferException
      */
-    private void processSyncRequest(MessageType messageType, Protos.Envelope incomingEnvelope, byte[] decryptedMessage)
+    private void processSyncRequest(MessageType messageType, Protos.Envelope requestEnvelope, byte[] decryptedMessage)
             throws InvalidProtocolBufferException {
         ByteString messageResponse;
         switch (messageType) {
             case LINK:
-                processLink(incomingEnvelope, decryptedMessage);
+                processLink(requestEnvelope, decryptedMessage);
             case PING:
                 Protos.Ping ping = Protos.Ping.parseFrom(decryptedMessage);
                 messageResponse = Protos.Pong.newBuilder().setPong(ping.getPing()).build().toByteString();
                 break;
             case ACCOUNT_REQUEST:
-                Protos.AccountRequest request = Protos.AccountRequest.parseFrom(decryptedMessage);
-                messageResponse = processAccountRequest(request);
+                messageResponse = processAccountRequest(decryptedMessage);
                 break;
             default:
                 // Should never happen because unknown message type is handled by the caller (processRequest()).
                 throw new IllegalArgumentException("Request type unknown: " + messageType.name());
         }
 
-        Protos.Envelope outgoingEnvelope = createResponseEnvelope(incomingEnvelope, messageResponse);
-        MessageExchangeNetworkHelper.sendEnvelope(this, outgoingEnvelope.toByteArray());
+        sendResponse(requestEnvelope, messageResponse);
     }
 
     /**
@@ -375,15 +367,14 @@ public final class MessageExchangeService extends IntentService {
      * @param isUserApproved True if the user approved the request; false, otherwise.
      */
     private void processAsyncRequest(RequestMetaData requestMetaData, boolean isUserApproved) {
-        Protos.Envelope requestEnvelope = mPendingRequests.get(requestMetaData.getId());
-        MessageType messageType = MessageType.valueOf(requestEnvelope.getMessageType());
+        MessageType messageType = MessageType.valueOf(requestMetaData.getMessageType());
 
         switch (messageType) {
             case PAYMENT_REQUEST:
-                processPaymentRequest(requestEnvelope, requestMetaData, isUserApproved);
+                processPaymentRequest(requestMetaData, isUserApproved);
                 break;
             case CALL_REQUEST:
-                processCallRequest(requestEnvelope, requestMetaData, isUserApproved);
+                processCallRequest(requestMetaData, isUserApproved);
                 break;
             default:
                 // Should never happen because unknown message type is handled by the caller (processRequest()).
@@ -507,8 +498,8 @@ public final class MessageExchangeService extends IntentService {
      * @param requestMessageType The request message type.
      * @return The response message type.
      */
-    private MessageType getResponseMessageType(MessageType requestMessageType) {
-        switch (requestMessageType) {
+    private MessageType getResponseMessageType(String requestMessageType) {
+        switch (MessageType.valueOf(requestMessageType)) {
             case LINK:
                 return MessageType.LINK;
             case PING:
@@ -530,13 +521,13 @@ public final class MessageExchangeService extends IntentService {
      * @param messageType
      * @param senderPublicKey
      * @param receiverPublicKey
-     * @param uniqueId
+     * @param identifier
      * @param nonce
      * @return The {@link Protos.Envelope} for the specified parameters.
      */
     public static Protos.Envelope createEnvelope(ByteString encryptedMessage, MessageType messageType,
                                                  ByteString senderPublicKey, ByteString receiverPublicKey,
-                                                 String uniqueId, ByteString nonce) {
+                                                 String identifier, ByteString nonce) {
         Protos.Envelope envelope = Protos.Envelope.newBuilder()
                 .setVersion(ENVELOPE_VERSION)
                 .setMessageType(messageType.name())
@@ -544,7 +535,7 @@ public final class MessageExchangeService extends IntentService {
                 .setEncryptedMessage(encryptedMessage)
                 .setSenderPublicKey(senderPublicKey)
                 .setReceiverPublicKey(receiverPublicKey)
-                .setIdentifier(uniqueId)
+                .setIdentifier(identifier)
                 .setSignature(ByteString.EMPTY)
                 .setNonce(nonce)
                 .build();
@@ -555,23 +546,20 @@ public final class MessageExchangeService extends IntentService {
     /**
      * Ercypts the response message and wraps it in an {@link Protos.Envelope} then signs it.
      *
-     * @param requestEnvelope TODO REMVOE THE NEED FOR THIS.
-     * @param messageResponse The uncerypted response message.
+     * @param messageResponse The unencrypted response message.
      * @return The {@link Protos.Envelope} containing the encrypted response message.
      */
-    private Protos.Envelope createResponseEnvelope(Protos.Envelope requestEnvelope, ByteString messageResponse) {
+    private Protos.Envelope createResponseEnvelope(String identifier, ByteString senderPublicKey, String requestMessageType, ByteString messageResponse) {
         // Encrypt the response message.
         BRCoreKey pairingKey = getPairingKey();
-        ByteString senderPublicKey = requestEnvelope.getSenderPublicKey();
         EncryptedMessage responseEncryptedMessage = encrypt(pairingKey, senderPublicKey.toByteArray(), messageResponse.toByteArray());
 
         // Determine type for response.
-        MessageType requestMessageType = MessageType.valueOf(requestEnvelope.getMessageType());
         MessageType responseMessageType = getResponseMessageType(requestMessageType);
 
         // Create message envelope sans signature.
         Protos.Envelope responseEnvelope = createEnvelope(ByteString.copyFrom(responseEncryptedMessage.getEncryptedData()),
-                responseMessageType, ByteString.copyFrom(pairingKey.getPubKey()), senderPublicKey, requestEnvelope.getIdentifier(),
+                responseMessageType, ByteString.copyFrom(pairingKey.getPubKey()), senderPublicKey, identifier,
                 ByteString.copyFrom(responseEncryptedMessage.getNonce()));
 
         // Sign message envelope.
@@ -582,7 +570,14 @@ public final class MessageExchangeService extends IntentService {
     }
 
     private void sendResponse(Protos.Envelope requestEnvelope, ByteString messageResponse) {
-        Protos.Envelope envelope = createResponseEnvelope(requestEnvelope, messageResponse);
+        Protos.Envelope envelope = createResponseEnvelope(requestEnvelope.getIdentifier(), requestEnvelope.getSenderPublicKey(),
+                requestEnvelope.getMessageType(), messageResponse);
+        MessageExchangeNetworkHelper.sendEnvelope(this, envelope.toByteArray());
+    }
+
+    private void sendResponse(RequestMetaData requestMetaData, ByteString messageResponse) {
+        Protos.Envelope envelope = createResponseEnvelope(requestMetaData.getId(), requestMetaData.getSenderPublicKey(),
+                requestMetaData.getMessageType(), messageResponse);
         MessageExchangeNetworkHelper.sendEnvelope(this, envelope.toByteArray());
     }
 
@@ -662,10 +657,11 @@ public final class MessageExchangeService extends IntentService {
      * Process the {@link MessageType.ACCOUNT_REQUEST} that was sent by the remote entity to retrieve more information
      * about the local entity.
      *
-     * @param request The request message.
+     * @param decryptedMessage The decrypted request message.
      * @return The response message.
      */
-    private ByteString processAccountRequest(Protos.AccountRequest request) {
+    private ByteString processAccountRequest(byte[] decryptedMessage) throws InvalidProtocolBufferException{
+        Protos.AccountRequest request = Protos.AccountRequest.parseFrom(decryptedMessage);
         String currencyCode = request.getScope();
         BaseWalletManager walletManager = WalletsMaster.getInstance(this).getWalletByIso(this, currencyCode);
 
@@ -694,11 +690,10 @@ public final class MessageExchangeService extends IntentService {
      *
      * This must be called after the user has been prompted to confirm the request.
      *
-     * @param requestEnvelope The request message envelope.
      * @param requestMetaData The request metadata.
      * @param isUserApproved True if the user approved the request; false, otherwise.
      */
-    private void processPaymentRequest(final Protos.Envelope requestEnvelope, RequestMetaData requestMetaData, boolean isUserApproved) {
+    private void processPaymentRequest(final RequestMetaData requestMetaData, boolean isUserApproved) {
         if (isUserApproved) {
             final String currencyCode = requestMetaData.getCurrencyCode();
             BaseWalletManager walletManager = WalletsMaster.getInstance(this).getWalletByIso(this, currencyCode);
@@ -719,7 +714,7 @@ public final class MessageExchangeService extends IntentService {
                                 .setError(Protos.Error.TRANSACTION_FAILED);
                     }
                     ByteString messageResponse = responseBuilder.build().toByteString();
-                    sendResponse(requestEnvelope, messageResponse);
+                    sendResponse(requestMetaData, messageResponse);
                 }
             });
 
@@ -728,7 +723,7 @@ public final class MessageExchangeService extends IntentService {
             responseBuilder.setStatus(Protos.Status.REJECTED)
                     .setError(Protos.Error.USER_DENIED);
             ByteString messageResponse = responseBuilder.build().toByteString();
-            sendResponse(requestEnvelope, messageResponse);
+            sendResponse(requestMetaData, messageResponse);
         }
     }
 
@@ -738,11 +733,10 @@ public final class MessageExchangeService extends IntentService {
      *
      * This must be called after the user has been prompted to confirm the request.
      *
-     * @param requestEnvelope The request message envelope.
      * @param requestMetaData The request metadata.
      * @param isUserApproved True if the user approved the request; false, otherwise.
      */
-    private void processCallRequest(final Protos.Envelope requestEnvelope, RequestMetaData requestMetaData, boolean isUserApproved) {
+    private void processCallRequest(final RequestMetaData requestMetaData, boolean isUserApproved) {
         if (isUserApproved) {
             final String currencyCode = requestMetaData.getCurrencyCode();
             BaseWalletManager walletManager = WalletsMaster.getInstance(this).getWalletByIso(this, currencyCode);
@@ -764,7 +758,7 @@ public final class MessageExchangeService extends IntentService {
                                 .setError(Protos.Error.TRANSACTION_FAILED);
                     }
                     ByteString messageResponse = responseBuilder.build().toByteString();
-                    sendResponse(requestEnvelope, messageResponse);
+                    sendResponse(requestMetaData, messageResponse);
                 }
             });
 
@@ -773,7 +767,7 @@ public final class MessageExchangeService extends IntentService {
             responseBuilder.setStatus(Protos.Status.REJECTED)
                     .setError(Protos.Error.USER_DENIED);
             ByteString messageResponse = responseBuilder.build().toByteString();
-            sendResponse(requestEnvelope, messageResponse);
+            sendResponse(requestMetaData, messageResponse);
         }
     }
 }
