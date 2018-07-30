@@ -47,6 +47,7 @@ public class CryptoRequest {
     public String message;
     public String req;
     public BigDecimal value; // ETH payment request amounts are called `value`
+    public String abi; //Smart contract data
 
     public String cn;
     public boolean isAmountRequested;

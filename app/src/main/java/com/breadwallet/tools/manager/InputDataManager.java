@@ -50,22 +50,11 @@ public final class InputDataManager {
         } else if (BRBitId.isBitId(result)) {
             BRBitId.signBitID(context, result, null);
         } else if (isWalletPair(result)) {
-            if (MessageExchangeService.USE_NEW_CODE) {
-                PairingMetaData pairingMetaData = PairingMetaData.parseUriString(result);
-                context.startService(MessageExchangeService.createIntent(
-                        context,
-                        MessageExchangeService.ACTION_REQUEST_TO_PAIR,
-                        pairingMetaData));
-            } else {
-
-                final PairingMetaData pairingMetaData = PairingMetaData.parseUriString(result);
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        MessageExchangeService.startPairing(context, pairingMetaData);
-                    }
-                });
-            }
+            PairingMetaData pairingMetaData = new PairingMetaData(result);
+            context.startService(MessageExchangeService.createIntent(
+                    context,
+                    MessageExchangeService.ACTION_REQUEST_TO_PAIR,
+                    pairingMetaData));
         }
     }
 

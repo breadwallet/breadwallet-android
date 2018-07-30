@@ -61,6 +61,7 @@ public class CallRequestMetaData extends RequestMetaData {
 
     @Override
     protected void writeToParcel(Parcel destination) {
+        super.writeToParcel(destination);
         destination.writeString(mAbi);
     }
 }

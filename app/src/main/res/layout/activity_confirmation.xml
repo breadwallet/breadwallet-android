@@ -1,45 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/secondary_background"
     android:id="@+id/fragment_container"
-    android:layout_height="match_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/secondary_background">
 
-
-    <LinearLayout
-        android:id="@+id/buttons_layout"
+    <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="70dp"
-        android:orientation="horizontal"
-        android:weightSum="2"
-        android:background="@color/primary_background"
-        app:layout_constraintBottom_toBottomOf="parent">
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="@color/primary_background"
+            android:visibility="invisible">
 
 
-        <com.breadwallet.presenter.customviews.BRButton
-            android:id="@+id/negative_button"
-            android:layout_width="200dp"
-            android:layout_height="60dp"
-            android:layout_marginStart="12dp"
-            android:layout_marginTop="10dp"
-            android:layout_weight="1"
-            android:text="@string/Crowdsale.decline"
-            app:buttonType="8"
-            app:isBreadButton="true" />
+            <com.breadwallet.presenter.customviews.BaseTextView
+                android:id="@+id/header_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:text="@string/PaymentConfirmation.headerTitle"
+                android:textSize="18sp"
+                app:customTFont="CircularPro-Bold.otf" />
+        </RelativeLayout>
 
-        <com.breadwallet.presenter.customviews.BRButton
-            android:id="@+id/positive_button"
-            android:layout_width="200dp"
-            android:layout_height="60dp"
-            android:layout_toEndOf="@id/negative_button"
-            android:layout_marginEnd="12dp"
-            android:layout_marginTop="10dp"
-            android:text="@string/BitID.approve"
-            android:layout_weight="1"
-            app:buttonType="9"
-            app:isBreadButton="true" />
 
-    </LinearLayout>
+        <LinearLayout
+            android:id="@+id/buttons_layout"
+            android:layout_width="match_parent"
+            android:layout_height="70dp"
+            android:background="@color/primary_background"
+            android:orientation="horizontal"
+            android:weightSum="2"
+            app:layout_constraintBottom_toBottomOf="parent">
 
-</android.support.constraint.ConstraintLayout>
+
+            <com.breadwallet.presenter.customviews.BRButton
+                android:id="@+id/negative_button"
+                android:layout_width="200dp"
+                android:layout_height="60dp"
+                android:layout_marginEnd="6dp"
+                android:layout_marginStart="12dp"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:text="@string/Crowdsale.decline"
+                app:buttonType="8"
+                app:isBreadButton="true" />
+
+            <com.breadwallet.presenter.customviews.BRButton
+                android:id="@+id/positive_button"
+                android:layout_width="200dp"
+                android:layout_height="60dp"
+                android:layout_marginEnd="12dp"
+                android:layout_marginTop="10dp"
+                android:layout_toEndOf="@id/negative_button"
+                android:layout_weight="1"
+                android:text="@string/BitID.approve"
+                app:buttonType="9"
+                app:isBreadButton="true" />
+
+        </LinearLayout>
+    </android.support.constraint.ConstraintLayout>
+
+</FrameLayout>
