@@ -213,36 +213,33 @@ public final class MessageExchangeService extends IntentService {
      * @param isUserApproved True, if the user approved the pairing; false, otherwise.
      */
     public void pair(boolean isUserApproved) {
-        try {
-            byte[] ephemeralKey = BRCoreKey.decodeHex(mPairingMetaData.getPublicKeyHex());
-            BRCoreKey pairingKey = getPairingKey();
+        byte[] ephemeralKey = BRCoreKey.decodeHex(mPairingMetaData.getPublicKeyHex());
+        BRCoreKey pairingKey = getPairingKey();
 
-            ByteString message;
-            if (isUserApproved) {
-                // TODO: I think this should be this wallet's id, not the remote entity's id, no? YES
-                message = createLink(ByteString.copyFrom(pairingKey.getPubKey()), ByteString.copyFrom(mPairingMetaData.getId(), StandardCharsets.UTF_8.name()));
+        ByteString message;
+        if (isUserApproved) {
+            // The user has approved, send a link message containing the local entity's public key and id.
+            message = createLink(ByteString.copyFrom(pairingKey.getPubKey()), ByteString.copyFrom(BRSharedPrefs.getWalletRewardId(this).getBytes()));
 
-                // Register our key with the server.
-                MessageExchangeNetworkHelper.sendAssociatedKey(this, pairingKey.getPubKey());
-            } else {
-                message = createLink(Protos.Error.USER_DENIED);
-            }
-
-            EncryptedMessage encryptedMessage = encrypt(pairingKey, ephemeralKey, message.toByteArray());
-            ByteString encryptedMessageByteString = ByteString.copyFrom(encryptedMessage.getEncryptedData());
-            Protos.Envelope envelope = createEnvelope(encryptedMessageByteString, MessageType.LINK, ByteString.copyFrom(pairingKey.getPubKey()),
-                    ByteString.copyFrom(ephemeralKey), BRSharedPrefs.getDeviceId(this), ByteString.copyFrom(encryptedMessage.getNonce()));
-            //TODO: This should not use getDeviceId... it should be a new UUID that we save for reference when message is replied to.
-
-            byte[] signature = pairingKey.compactSign(CryptoHelper.doubleSha256(envelope.toByteArray()));
-            envelope = envelope.toBuilder().setSignature(ByteString.copyFrom(signature)).build();
-            Log.d(TAG, "pair: request envelope:" + envelope.toString());
-
-            // Send link request to remote wallet.
-            MessageExchangeNetworkHelper.sendEnvelope(this, envelope.toByteArray());
-        } catch (UnsupportedEncodingException e) {
-            Log.e(TAG, "Failed to pair", e);
+            // Register our key with the server.
+            MessageExchangeNetworkHelper.sendAssociatedKey(this, pairingKey.getPubKey());
+        } else {
+            // The user has denied the request, send a link message containing an error code.
+            message = createLink(Protos.Error.USER_DENIED);
         }
+
+        EncryptedMessage encryptedMessage = encrypt(pairingKey, ephemeralKey, message.toByteArray());
+        ByteString encryptedMessageByteString = ByteString.copyFrom(encryptedMessage.getEncryptedData());
+        Protos.Envelope envelope = createEnvelope(encryptedMessageByteString, MessageType.LINK, ByteString.copyFrom(pairingKey.getPubKey()),
+                ByteString.copyFrom(ephemeralKey), BRSharedPrefs.getDeviceId(this), ByteString.copyFrom(encryptedMessage.getNonce()));
+        //TODO: This should not use getDeviceId... it should be a new UUID that we save for reference when message is replied to.
+
+        byte[] signature = pairingKey.compactSign(CryptoHelper.doubleSha256(envelope.toByteArray()));
+        envelope = envelope.toBuilder().setSignature(ByteString.copyFrom(signature)).build();
+        Log.d(TAG, "pair: request envelope:" + envelope.toString());
+
+        // Send link request to remote wallet.
+        MessageExchangeNetworkHelper.sendEnvelope(this, envelope.toByteArray());
     }
 
     /**
