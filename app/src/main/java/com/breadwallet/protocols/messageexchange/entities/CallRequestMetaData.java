@@ -2,6 +2,8 @@ package com.breadwallet.protocols.messageexchange.entities;
 
 import android.os.Parcel;
 
+import com.google.protobuf.ByteString;
+
 /**
  * BreadWallet
  * <p/>
@@ -41,8 +43,9 @@ public class CallRequestMetaData extends RequestMetaData {
         }
     };
 
-    public CallRequestMetaData(String id, String currencyCode, String network, String address, String amount, String memo, String abi) {
-        super(id, currencyCode, network, address, amount, memo);
+    public CallRequestMetaData(String id, String messageType, ByteString senderPublicKey, String currencyCode,
+                               String network, String address, String amount, String memo, String abi) {
+        super(id, messageType, senderPublicKey, currencyCode, network, address, amount, memo);
         mAbi = abi;
     }
 

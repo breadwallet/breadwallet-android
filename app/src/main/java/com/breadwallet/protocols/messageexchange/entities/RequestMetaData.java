@@ -3,6 +3,8 @@ package com.breadwallet.protocols.messageexchange.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.protobuf.ByteString;
+
 /**
  * BreadWallet
  * <p/>
@@ -28,14 +30,19 @@ import android.os.Parcelable;
  * THE SOFTWARE.
  */
 public abstract class RequestMetaData extends MetaData {
+    private String mMessageType;
+    private ByteString mSenderPublicKey;
     private String mCurrencyCode;
     private String mNetwork;
     private String mAddress;
     private String mAmount;
     private String mMemo;
 
-    public RequestMetaData(String id, String currencyCode, String network, String address, String amount, String memo) {
+    public RequestMetaData(String id, String messageType, ByteString senderPublicKey, String currencyCode,
+                           String network, String address, String amount, String memo) {
         super(id);
+        mMessageType = messageType;
+        mSenderPublicKey = senderPublicKey;
         mCurrencyCode = currencyCode;
         mNetwork = network;
         mAddress = address;
@@ -45,11 +52,29 @@ public abstract class RequestMetaData extends MetaData {
 
     public RequestMetaData(Parcel source) {
         super(source);
+        mMessageType = source.readString();
+        mSenderPublicKey = (ByteString) source.readSerializable();
         mCurrencyCode = source.readString();
         mNetwork = source.readString();
         mAddress = source.readString();
         mAmount = source.readString();
         mMemo = source.readString();
+    }
+
+    public String getMessageType() {
+        return mMessageType;
+    }
+
+    public void setMessageType(String messageType) {
+        mMessageType = messageType;
+    }
+
+    public ByteString getSenderPublicKey() {
+        return mSenderPublicKey;
+    }
+
+    public void setSenderPublicKey(ByteString senderPublicKey) {
+        mSenderPublicKey = senderPublicKey;
     }
 
     public String getCurrencyCode() {
@@ -94,6 +119,8 @@ public abstract class RequestMetaData extends MetaData {
 
     @Override
     protected void writeToParcel(Parcel destination) {
+        destination.writeString(mMessageType);
+        destination.writeSerializable(mSenderPublicKey);
         destination.writeString(mCurrencyCode);
         destination.writeString(mNetwork);
         destination.writeString(mAddress);

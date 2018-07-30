@@ -3,6 +3,8 @@ package com.breadwallet.protocols.messageexchange.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.protobuf.ByteString;
+
 /**
  * BreadWallet
  * <p/>
@@ -40,8 +42,9 @@ public class PaymentRequestMetaData extends RequestMetaData {
         }
     };
 
-    public PaymentRequestMetaData(String id, String currencyCode, String network, String address, String amount, String memo) {
-        super(id, currencyCode, network, address, amount,  memo);
+    public PaymentRequestMetaData(String id, String messageType, ByteString senderPublicKey, String currencyCode,
+                                  String network, String address, String amount, String memo) {
+        super(id, messageType, senderPublicKey, currencyCode, network, address, amount, memo);
     }
 
     public PaymentRequestMetaData(Parcel source) {
