@@ -140,13 +140,13 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             public void onClick(View view) {
                 UiUtils.showSendFragment(WalletActivity.this, null);
 
-                //todo remove this testing
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        MessageExchangeService.sendTestPing(WalletActivity.this);
-                    }
-                });
+//                //todo remove this testing
+//                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//                    @Override
+//                    public void run() {
+//                        MessageExchangeService.sendTestPing(WalletActivity.this);
+//                    }
+//                });
 
             }
         });
@@ -234,12 +234,12 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         byte[] pubkey = key.getPubKey();
         if (Utils.isNullOrEmpty(pubkey)) throw new NullPointerException();
         Log.e(TAG, "onCreate: pubkey:" + BRCoreKey.encodeHex(pubkey) + ", privkey: " + BRCoreKey.encodeHex(authKey));
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                MessageExchangeService.checkInboxAndRespond(WalletActivity.this);
-            }
-        });
+//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+//            @Override
+//            public void run() {
+//                MessageExchangeService.checkInboxAndRespond(WalletActivity.this);
+//            }
+//        });
 
     }
 

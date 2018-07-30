@@ -1,6 +1,5 @@
 package com.breadwallet.presenter.activities;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -11,11 +10,11 @@ import android.view.View;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.fragments.FragmentLinkWallet;
+import com.breadwallet.presenter.fragments.FragmentPaymentConfirmation;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.protocols.messageexchange.entities.LinkMetaData;
 import com.breadwallet.protocols.messageexchange.entities.RequestMetaData;
-
-import java.io.Serializable;
+import com.breadwallet.tools.util.Utils;
 
 /**
  * Created by Jade Byfield <jade@breadwallet.com> on  7/24/18.
@@ -41,8 +40,8 @@ import java.io.Serializable;
  */
 
 /**
- * This Activity is used to confirm a request.  Currently is supports Link, Payment and Call requests from the
- * {@link MessageExchangeService}.  Accordingly, it uses eithers {@link FragmentLinkWallet} or
+ * This Activity is used to confirm a request.  Currently it supports Link, Payment and Call requests from the
+ * {@link MessageExchangeService}.  Accordingly, it uses either {@link FragmentLinkWallet} or
  * {@link FragmentPaymentConfirmation}.
  */
 public class ConfirmationActivity extends FragmentActivity {
@@ -52,44 +51,66 @@ public class ConfirmationActivity extends FragmentActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirmation);
-        Bundle bundle = getIntent().getExtras();
-        // TODO: Jade check the action of the intent.
-        Parcelable metaData = getIntent().getParcelableExtra(MessageExchangeService.EXTRA_METADATA);
+
+        final Parcelable metaData = getIntent().getParcelableExtra(MessageExchangeService.EXTRA_METADATA);
+        String action = getIntent().getAction();
 
         BRButton positiveButton = findViewById(R.id.positive_button);
         BRButton negativeButton = findViewById(R.id.negative_button);
+        View headerView = findViewById(R.id.header);
 
-        if (metaData != null) {
-            Log.d(TAG, "Found metaData!");
-            if (metaData instanceof LinkMetaData) {
-                // Handles link messages.
+        if (!Utils.isNullOrEmpty(action) && action == MessageExchangeService.ACTION_GET_USER_CONFIRMATION) {
+            if (metaData != null) {
+                Log.d(TAG, "Found metaData!");
+                if (metaData instanceof LinkMetaData) {
 
-                // TODO Jade, probably just use the Parcelable instead of the bundle from here, if frag args allow it.
-                FragmentLinkWallet linkWalletFragment = FragmentLinkWallet.newInstance(bundle);
-                getFragmentManager().beginTransaction().add(R.id.fragment_container, linkWalletFragment).commit();
-                Log.d(TAG, "ConfirmationType LINK");
+                    // Handles link messages.
+                    FragmentLinkWallet linkWalletFragment = FragmentLinkWallet.newInstance((LinkMetaData) metaData);
+                    getFragmentManager().beginTransaction().add(R.id.fragment_container, linkWalletFragment).commit();
+                    Log.d(TAG, "ConfirmationType LINK");
 
-                positiveButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        handleLinkApproved();
-                    }
-                });
+                    positiveButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            handleLinkApproved();
+                        }
+                    });
 
-                negativeButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        handleLinkDeclined();
-                    }
-                });
+                    negativeButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            handleLinkDeclined();
+                        }
+                    });
 
-            } else if (metaData instanceof RequestMetaData) {
+                }
                 // Handles payment and call requests.
+                else if (metaData instanceof RequestMetaData) {
+                    headerView.setVisibility(View.VISIBLE);
+                    // Display FragmentPaymentConfirmation and set up new listeners for positive
+                    // and negative buttons
+                    FragmentPaymentConfirmation paymentConfirmationFragment = FragmentPaymentConfirmation.newInstance((RequestMetaData) metaData);
+                    getFragmentManager().beginTransaction().add(R.id.fragment_container, paymentConfirmationFragment).commit();
 
-                // Display FragmentPaymentConfirmation and set up new listeners for positive
-                // and negative buttons
-            } else {
-                Log.d(TAG, "Found unknown Confirmation request type!");
+                    positiveButton.setText(getResources().getString(R.string.Button_buy));
+                    positiveButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            handlePaymentApproved((RequestMetaData) metaData);
+                        }
+                    });
+
+                    negativeButton.setText(getResources().getString(R.string.Button_cancel));
+                    negativeButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            handlePaymentCanceled((RequestMetaData) metaData);
+                        }
+                    });
+
+                } else {
+                    Log.d(TAG, "Found unknown metadata type!");
+                }
             }
         }
     }
@@ -106,4 +127,15 @@ public class ConfirmationActivity extends FragmentActivity {
         finish();
     }
 
+    private void handlePaymentApproved(RequestMetaData metaData) {
+        Log.d(TAG, "handlePaymentApproved()");
+        startService(MessageExchangeService.createIntent(this, metaData, true));
+        finish();
+    }
+
+    private void handlePaymentCanceled(RequestMetaData metaData) {
+        Log.d(TAG, "handlePaymentCanceled()");
+        startService(MessageExchangeService.createIntent(this, metaData, false));
+        finish();
+    }
 }
