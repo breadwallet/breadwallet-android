@@ -14,6 +14,7 @@ import com.breadwallet.R;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Utils;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.platform.APIClient;
@@ -79,14 +80,6 @@ public final class BRDFirebaseMessagingService extends FirebaseMessagingService 
         // Save token in BRSharedPrefs
         BRSharedPrefs.putFCMRegistrationToken(this, token);
 
-        // Update BRD API to store new token
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                //TODO: Comment out until DROID-748 is fixed to prevent crash
-//                updateFcmRegistrationToken(BRDFirebaseMessagingService.this, token);
-            }
-        });
     }
 
     /**
@@ -133,47 +126,58 @@ public final class BRDFirebaseMessagingService extends FirebaseMessagingService 
 
     /**
      * @param context
-     * @param registrationToken The registration token that will be sending to our server to be updated
-     *                          each time it is refreshed.
      */
-    public static void updateFcmRegistrationToken(Context context, String registrationToken) {
+    public static void updateFcmRegistrationToken(final Context context) {
 
-        String url = BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + ENDPOINT_PUSH_DEVICES;
-        String deviceEnvironment;
+        // Check if we currently have a Firebase Messenger token stored in Shared Prefs
+        final String firebaseToken = BRSharedPrefs.getFCMRegistrationToken(context);
 
-        if (BuildConfig.DEBUG) {
-            deviceEnvironment = ENVIRONMENT_DEVELOPMENT;
-        } else {
-            deviceEnvironment = ENVIRONMENT_PRODUCTION;
+        // If so, send this token to our backend so that we can log this user device
+        if (!Utils.isNullOrEmpty(firebaseToken)) {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+
+                    String url = BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + ENDPOINT_PUSH_DEVICES;
+                    String deviceEnvironment;
+
+                    if (BuildConfig.DEBUG) {
+                        deviceEnvironment = ENVIRONMENT_DEVELOPMENT;
+                    } else {
+                        deviceEnvironment = ENVIRONMENT_PRODUCTION;
+                    }
+
+                    try {
+
+                        JSONObject payload = new JSONObject();
+                        payload.put(KEY_TOKEN, firebaseToken);
+                        payload.put(KEY_SERVICE, PUSH_SERVICE);
+
+                        JSONObject data = new JSONObject();
+                        data.put(KEY_DATA_ENVIRONMENT, deviceEnvironment);
+                        data.put(KEY_DATA_BUNDLE_ID, context.getPackageName());
+                        payload.put(KEY_DATA, data);
+
+                        final MediaType JSON
+                                = MediaType.parse(BRConstants.CONTENT_TYPE_JSON);
+
+                        RequestBody requestBody = RequestBody.create(JSON, payload.toString());
+
+                        Request request = new Request.Builder()
+                                .url(url)
+                                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
+                                .header(BRConstants.HEADER_ACCEPT, BRConstants.HEADER_VALUE_ACCEPT).post(requestBody).build();
+
+                       APIClient.getInstance(context).sendRequest(request, true);
+
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Error constructing JSON payload while updating FCM registration token.", e);
+                    }
+                }
+            });
+
         }
 
-
-        try {
-
-            JSONObject payload = new JSONObject();
-            payload.put(KEY_TOKEN, registrationToken);
-            payload.put(KEY_SERVICE, PUSH_SERVICE);
-
-            JSONObject data = new JSONObject();
-            data.put(KEY_DATA_ENVIRONMENT, deviceEnvironment);
-            data.put(KEY_DATA_BUNDLE_ID, context.getPackageName());
-            payload.put(KEY_DATA, data);
-
-            final MediaType JSON
-                    = MediaType.parse(BRConstants.CONTENT_TYPE_JSON);
-
-            RequestBody requestBody = RequestBody.create(JSON, payload.toString());
-
-            Request request = new Request.Builder()
-                    .url(url)
-                    .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
-                    .header(BRConstants.HEADER_ACCEPT, BRConstants.HEADER_VALUE_ACCEPT).post(requestBody).build();
-
-            APIClient.getInstance(context).sendRequest(request, true);
-
-        } catch (JSONException e) {
-            Log.e(TAG, "Error constructing JSON payload while updating FCM registration token.", e);
-        }
 
     }
 
