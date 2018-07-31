@@ -232,7 +232,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         });
 
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
-        Log.e(TAG, "onResume: took: " + (System.currentTimeMillis() - start));
     }
 
     private void populateWallets() {
