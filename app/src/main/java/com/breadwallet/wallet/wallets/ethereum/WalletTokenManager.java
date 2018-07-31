@@ -511,4 +511,9 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         builder.append(tx.getTargetAddress());
         Log.e(TAG, "printTxInfo: " + builder.toString());
     }
+
+    @Override
+    public BREthereumWallet getWallet() {
+        return mWalletToken;
+    }
 }

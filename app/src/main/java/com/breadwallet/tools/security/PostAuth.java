@@ -29,6 +29,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.entities.GenericTransactionMetaData;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TxMetaData;
@@ -221,7 +222,7 @@ public class PostAuth {
                 if (mCryptoRequest != null && mCryptoRequest.amount != null && mCryptoRequest.address != null) {
                     final byte[] txHash;
                     CryptoTransaction tx;
-                    if (Utils.isNullOrEmpty(mCryptoRequest.abi)) {
+                    if (mCryptoRequest.getGenericTransactionMetaData() == null) {
                         tx = mWalletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address);
 
                         if (tx == null) {
@@ -250,10 +251,13 @@ public class PostAuth {
 
                     } else {
                         WalletEthManager ethWallet = (WalletEthManager) mWalletManager;
-
-                        tx = new CryptoTransaction(ethWallet.getWallet().createTransactionGeneric(mCryptoRequest.address, mCryptoRequest.amount.toPlainString(),
-                                BREthereumAmount.Unit.ETHER_WEI, String.valueOf(ethWallet.getWallet().getDefaultGasPrice()), BREthereumAmount.Unit.ETHER_GWEI,
-                                WalletEthManager.GAS_LIMIT, mCryptoRequest.abi));
+                        GenericTransactionMetaData genericTransactionMetaData = mCryptoRequest.getGenericTransactionMetaData();
+                        tx = new CryptoTransaction(ethWallet.getWallet().createTransactionGeneric(
+                                genericTransactionMetaData.getTargetAddress(),
+                                genericTransactionMetaData.getAmount(),
+                                genericTransactionMetaData.getAmountUnit(), String.valueOf(genericTransactionMetaData.getGasPrice()),
+                                genericTransactionMetaData.getGasPriceUnit(),
+                                String.valueOf(genericTransactionMetaData.getGasLimit()), genericTransactionMetaData.getData()));
                     }
                     txHash = mWalletManager.signAndPublishTransaction(tx, rawPhrase);
 
