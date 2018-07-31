@@ -234,17 +234,12 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         byte[] pubkey = key.getPubKey();
         if (Utils.isNullOrEmpty(pubkey)) throw new NullPointerException();
         Log.e(TAG, "onCreate: pubkey:" + BRCoreKey.encodeHex(pubkey) + ", privkey: " + BRCoreKey.encodeHex(authKey));
-//        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-//            @Override
-//            public void run() {
-//                MessageExchangeService.checkInboxAndRespond(WalletActivity.this);
-//            }
-//        });
 
         //TODO: move to correct location.
-        //TODO: Shiv add flag to only check once pair has started.
-        // Check for messages.
-        startService(MessageExchangeService.createIntent(this, MessageExchangeService.ACTION_RETRIEVE_MESSAGES));
+        if (MessageExchangeService.getPairingMetaDataFromSharedPreferences(this).getId() != null) {
+            // Check for messages.
+            startService(MessageExchangeService.createIntent(this, MessageExchangeService.ACTION_RETRIEVE_MESSAGES));
+        }
     }
 
     private void startSyncLoggerIfNeeded() {
