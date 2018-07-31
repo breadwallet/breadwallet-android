@@ -406,12 +406,20 @@ public final class MessageExchangeService extends IntentService {
     private PairingMetaData getPairingMetaData() {
         if (mPairingMetaData == null) {
             // TODO: Temporary solution get from KV store
-            SharedPreferences sharedPreferences = getSharedPreferences("MyPrefsFile", 0);
-            mPairingMetaData = new PairingMetaData(sharedPreferences.getString("pmd_id", null),
-                    sharedPreferences.getString("pmd_publicKey", null),
-                    sharedPreferences.getString("pmd_service", null));
+            mPairingMetaData = getPairingMetaDataFromSharedPreferences(this);
         }
         return mPairingMetaData;
+    }
+
+    // TODO: Remove. Temporary added to fix crash (Recover wallet + open wallet). When pairing data is moved to KV store, add a timestamp
+    // in the shared prefs that is used as a flag to see if we are currently paired.
+    public static PairingMetaData getPairingMetaDataFromSharedPreferences(Context context) {
+        // TODO: Temporary solution get from KV store
+        SharedPreferences sharedPreferences = context.getSharedPreferences("MyPrefsFile", 0);
+        PairingMetaData pairingMetaData = new PairingMetaData(sharedPreferences.getString("pmd_id", null),
+                sharedPreferences.getString("pmd_publicKey", null),
+                sharedPreferences.getString("pmd_service", null));
+        return pairingMetaData;
     }
 
     /**
@@ -773,10 +781,8 @@ public final class MessageExchangeService extends IntentService {
             CryptoRequest cryptoRequest = new CryptoRequest(null, false,
                     null, requestMetaData.getAddress(), new BigDecimal(requestMetaData.getAmount()));
             GenericTransactionMetaData genericTransactionMetaData = new GenericTransactionMetaData(
-                    requestMetaData.getAddress()
-                    , requestMetaData.getAmount(), BREthereumAmount.Unit.ETHER_WEI,
-                    walletManager.getWallet().getDefaultGasPrice()
-                    , BREthereumAmount.Unit.ETHER_WEI, PWB_GAS_LIMIT,
+                    requestMetaData.getAddress(), requestMetaData.getAmount(), BREthereumAmount.Unit.ETHER_WEI,
+                    walletManager.getWallet().getDefaultGasPrice(), BREthereumAmount.Unit.ETHER_WEI, PWB_GAS_LIMIT,
                     ((CallRequestMetaData) requestMetaData).getAbi());
             cryptoRequest.setGenericTransactionMetaData(genericTransactionMetaData);
 
