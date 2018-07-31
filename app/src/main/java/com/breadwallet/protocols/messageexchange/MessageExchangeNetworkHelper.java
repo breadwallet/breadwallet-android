@@ -6,6 +6,7 @@ import android.util.Log;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
 import com.breadwallet.protocols.messageexchange.entities.ServiceMetaData;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
@@ -111,7 +112,7 @@ public final class MessageExchangeNetworkHelper {
         try {
             ErrorObject errorObject = getError(response.getBodyText());
             if (errorObject != null) {
-                Log.e(TAG, "fetchInbox: " + errorObject.mMessage);
+                BRDialog.showSimpleDialog(context, "fetchInbox: ", errorObject.mMessage);
                 return null;
             }
             JSONObject fullObj = new JSONObject(response.getBodyText());
@@ -162,10 +163,12 @@ public final class MessageExchangeNetworkHelper {
                 .header(BRConstants.HEADER_CONTENT_TYPE, CONTENT_TYPE_PROTOBUF)
                 .build();
         APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
-        Log.e(TAG, "sendEnvelope: " + response.code);
         ErrorObject errorObject = getError(response.getBodyText());
         if (errorObject != null) {
-            Log.e(TAG, "sendEnvelope: " + errorObject.mMessage);
+            BRDialog.showSimpleDialog(context, "sendEnvelope: ", errorObject.mMessage);
+        }
+        if (!response.isSuccessful()) {
+            BRDialog.showSimpleDialog(context, "sendEnvelope:", String.valueOf(response.getCode()));
         }
 
     }
@@ -185,10 +188,10 @@ public final class MessageExchangeNetworkHelper {
         APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
         ErrorObject errorObject = getError(response.getBodyText());
         if (errorObject != null) {
-            Log.e(TAG, "sendAck: err:" + errorObject.mMessage);
+            BRDialog.showSimpleDialog(context, "sendAck: err:", errorObject.mMessage);
         }
         if (!response.isSuccessful()) {
-            Log.e(TAG, "sendAck: code:" + response.getCode());
+            BRDialog.showSimpleDialog(context, "sendAck: code:", String.valueOf(response.getCode()));
         }
     }
 
@@ -204,10 +207,12 @@ public final class MessageExchangeNetworkHelper {
         APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
         ErrorObject errorObject = getError(response.getBodyText());
         if (errorObject != null) {
-            Log.e(TAG, "sendAssociatedKey: err:" + errorObject.mMessage);
+            BRDialog.showSimpleDialog(context, "sendAssociatedKey: err:", errorObject.mMessage);
+
         }
         if (!response.isSuccessful()) {
             Log.e(TAG, "sendAssociatedKey: code:" + response.getCode());
+            BRDialog.showSimpleDialog(context, "sendAssociatedKey: code:", String.valueOf(response.getCode()));
         }
 
     }
@@ -222,10 +227,10 @@ public final class MessageExchangeNetworkHelper {
         Log.e(TAG, "getAssociatedKeys: " + response.getCode() + ", " + response.getBodyText());
         ErrorObject errorObject = getError(response.getBodyText());
         if (errorObject != null) {
-            Log.e(TAG, "sendAssociatedKey: err:" + errorObject.mMessage);
+            BRDialog.showSimpleDialog(context, "sendAssociatedKey: err:", errorObject.mMessage);
         }
         if (!response.isSuccessful()) {
-            Log.e(TAG, "sendAssociatedKey: code:" + response.getCode());
+            BRDialog.showSimpleDialog(context, "sendAssociatedKey: code:", String.valueOf(response.getCode()));
         }
 
     }
@@ -240,6 +245,7 @@ public final class MessageExchangeNetworkHelper {
         ErrorObject errorObject = getError(response.getBodyText());
         if (errorObject != null) {
             Log.e(TAG, "getService: " + errorObject.mMessage);
+            BRDialog.showSimpleDialog(context, "getService error:", errorObject.mMessage);
             return null;
         }
         try {

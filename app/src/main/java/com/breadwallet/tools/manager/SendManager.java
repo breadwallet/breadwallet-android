@@ -5,6 +5,7 @@ import android.content.Context;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
@@ -64,11 +65,15 @@ public class SendManager {
 
 
     @WorkerThread
-    public static boolean sendTransaction(final Context app, final CryptoRequest payment, final BaseWalletManager walletManager, final SendCompletion completion) {
+    public static boolean sendTransaction(Context app, final CryptoRequest payment, final BaseWalletManager walletManager, final SendCompletion completion) {
         try {
             if (sending) {
                 Log.e(TAG, "sendTransaction: already sending..");
                 return false;
+            }
+            //TODO: Remove when Sendmanager is refactored such that an activity is not needed.
+            if (!(app instanceof Activity)) {
+                app = BreadApp.getBreadContext();
             }
             sending = true;
             long now = System.currentTimeMillis();

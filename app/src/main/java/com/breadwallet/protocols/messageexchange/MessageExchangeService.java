@@ -10,6 +10,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.breadwallet.core.BRCoreKey;
+import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.presenter.activities.ConfirmationActivity;
 import com.breadwallet.protocols.messageexchange.entities.CallRequestMetaData;
 import com.breadwallet.presenter.entities.CryptoRequest;
@@ -27,6 +28,8 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.entities.GenericTransactionMetaData;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
@@ -70,6 +73,8 @@ public final class MessageExchangeService extends IntentService {
     public static final String ACTION_GET_USER_CONFIRMATION = "com.breadwallet.protocols.messageexchange.ACTION_GET_USER_CONFIRMATION";
     private static final String EXTRA_IS_USER_APPROVED = "com.breadwallet.protocols.messageexchange.EXTRA_IS_USER_APPROVED";
     public static final String EXTRA_METADATA = "com.breadwallet.protocols.messageexchange.EXTRA_METADATA";
+
+    public static final long PWB_GAS_LIMIT = 200000;
 
     public static final int ENVELOPE_VERSION = 1;
     public static final String SERVICE_PWB = "PWB";
@@ -146,7 +151,7 @@ public final class MessageExchangeService extends IntentService {
      * Creates an intent to start the {@link MessageExchangeService}.
      *
      * @param context The context in which we are operation.
-     * @param action The action to specify when starting the service.
+     * @param action  The action to specify when starting the service.
      * @return The intent to start the {@link MessageExchangeService}.
      */
     public static Intent createIntent(Context context, String action) {
@@ -158,8 +163,8 @@ public final class MessageExchangeService extends IntentService {
     /**
      * Creates an intent to start the {@link MessageExchangeService}.
      *
-     * @param context The context in which we are operation.
-     * @param action The action to specify when starting the service.
+     * @param context    The context in which we are operation.
+     * @param action     The action to specify when starting the service.
      * @param parcelable The parcelable containing some metadata about starting the service.
      * @return The intent to start the {@link MessageExchangeService}.
      */
@@ -174,7 +179,7 @@ public final class MessageExchangeService extends IntentService {
      * Creates an intent with the specified parameters for the {@link ConfirmationActivity} to start this service.
      * Used for: Link.
      *
-     * @param context The context in which we are operating.
+     * @param context        The context in which we are operating.
      * @param isUserApproved True, if the user approved the pending request; false, otherwise.
      * @return An intent with the specified parameters.
      */
@@ -189,8 +194,8 @@ public final class MessageExchangeService extends IntentService {
      * Creates an intent with the specified parameters for the {@link ConfirmationActivity} to start this service.
      * Used for: Payment Request, Call Request.
      *
-     * @param context The context in which we are operating.
-     * @param parcelable The parcelable containing meta data needed when the service starts again.
+     * @param context        The context in which we are operating.
+     * @param parcelable     The parcelable containing meta data needed when the service starts again.
      * @param isUserApproved True, if the user approved the pending request; false, otherwise.
      * @return An intent with the specified parameters.
      */
@@ -280,6 +285,7 @@ public final class MessageExchangeService extends IntentService {
 
     /**
      * Get the {@link Protos.Envelope} from the {@link InboxEntry}
+     *
      * @param inboxEntry The inbox entry to retrieve the envelope from.
      * @return The message envelope.
      */
@@ -341,8 +347,8 @@ public final class MessageExchangeService extends IntentService {
     /**
      * Processes synchronous messages.  These are messages that can be processed immediately upon receipt.
      *
-     * @param messageType The type of message.
-     * @param requestEnvelope The envelope containing the message to process along with metadata needed to send a response.
+     * @param messageType      The type of message.
+     * @param requestEnvelope  The envelope containing the message to process along with metadata needed to send a response.
      * @param decryptedMessage The decrypted message.
      * @throws InvalidProtocolBufferException
      */
@@ -373,7 +379,7 @@ public final class MessageExchangeService extends IntentService {
      * because user approval is required.  This method is called once the user has been prompted for approval.
      *
      * @param requestMetaData The metadata associated with the request which is needed to create a response.
-     * @param isUserApproved True if the user approved the request; false, otherwise.
+     * @param isUserApproved  True if the user approved the request; false, otherwise.
      */
     private void processAsyncRequest(RequestMetaData requestMetaData, boolean isUserApproved) {
         MessageType messageType = MessageType.valueOf(requestMetaData.getMessageType());
@@ -444,7 +450,7 @@ public final class MessageExchangeService extends IntentService {
     /**
      * Generates the remote entity's pairing key which is needed for the encrypted message exchange for encrypting and
      * decrypting messages.
-     *
+     * <p>
      * The is generated using the local entity's authentication and the remote entity's id.
      *
      * @return The remote entity's pairing key.
@@ -472,9 +478,9 @@ public final class MessageExchangeService extends IntentService {
     /**
      * Encrypts the specified message.
      *
-     * @param pairingKey The local entity's pairing key.
+     * @param pairingKey      The local entity's pairing key.
      * @param senderPublicKey The remote identity's public key.
-     * @param message The message to encrypt.
+     * @param message         The message to encrypt.
      * @return The encrypted message.
      */
     private EncryptedMessage encrypt(BRCoreKey pairingKey, byte[] senderPublicKey, byte[] message) {
@@ -625,7 +631,7 @@ public final class MessageExchangeService extends IntentService {
      * of pairing.
      *
      * @param publicKey The local entity's public key.  The remote entity will use this encrypt messages to this entity.
-     * @param id The local entity's id.
+     * @param id        The local entity's id.
      * @return The {@link MessageType.LINK} message.
      */
     private ByteString createLink(ByteString publicKey, ByteString id) {
@@ -656,7 +662,7 @@ public final class MessageExchangeService extends IntentService {
      * Processes the {@link MessageType.LINK} message that was sent by the remote entity in response to the initial
      * {@link MessageType.LINK}  message sent by this entity.
      *
-     * @param envelope The envelope containing the message.
+     * @param envelope         The envelope containing the message.
      * @param decryptedMessage The decrypted message.
      * @throws InvalidProtocolBufferException If the decrypted message is malformed.
      */
@@ -684,7 +690,7 @@ public final class MessageExchangeService extends IntentService {
      * @param decryptedMessage The decrypted request message.
      * @return The response message.
      */
-    private ByteString processAccountRequest(byte[] decryptedMessage) throws InvalidProtocolBufferException{
+    private ByteString processAccountRequest(byte[] decryptedMessage) throws InvalidProtocolBufferException {
         Protos.AccountRequest request = Protos.AccountRequest.parseFrom(decryptedMessage);
         String currencyCode = request.getScope();
         BaseWalletManager walletManager = WalletsMaster.getInstance(this).getWalletByIso(this, currencyCode);
@@ -711,11 +717,11 @@ public final class MessageExchangeService extends IntentService {
     /**
      * Process the {@link MessageType.PAYMENT_REQUEST} that was sent by the remote entity to request a payment
      * from the local entity.
-     *
+     * <p>
      * This must be called after the user has been prompted to confirm the request.
      *
      * @param requestMetaData The request metadata.
-     * @param isUserApproved True if the user approved the request; false, otherwise.
+     * @param isUserApproved  True if the user approved the request; false, otherwise.
      */
     private void processPaymentRequest(final RequestMetaData requestMetaData, boolean isUserApproved) {
         if (isUserApproved) {
@@ -724,7 +730,6 @@ public final class MessageExchangeService extends IntentService {
 
             CryptoRequest cryptoRequest = new CryptoRequest(null, false,
                     null, requestMetaData.getAddress(), new BigDecimal(requestMetaData.getAmount()));
-
             SendManager.sendTransaction(this, cryptoRequest, walletManager, new SendManager.SendCompletion() {
                 @Override
                 public void onCompleted(String hash, boolean succeed) {
@@ -754,22 +759,28 @@ public final class MessageExchangeService extends IntentService {
     /**
      * Process the {@link MessageType.CALL_REQUEST} that was sent by the remote entity to request a call
      * from the local entity.
-     *
+     * <p>
      * This must be called after the user has been prompted to confirm the request.
      *
      * @param requestMetaData The request metadata.
-     * @param isUserApproved True if the user approved the request; false, otherwise.
+     * @param isUserApproved  True if the user approved the request; false, otherwise.
      */
     private void processCallRequest(final RequestMetaData requestMetaData, boolean isUserApproved) {
         if (isUserApproved) {
             final String currencyCode = requestMetaData.getCurrencyCode();
-            BaseWalletManager walletManager = WalletsMaster.getInstance(this).getWalletByIso(this, currencyCode);
-
+            WalletEthManager walletManager = WalletEthManager.getInstance(this);
+            //assume ETH wallet type for now
             CryptoRequest cryptoRequest = new CryptoRequest(null, false,
                     null, requestMetaData.getAddress(), new BigDecimal(requestMetaData.getAmount()));
-            cryptoRequest.abi = ((CallRequestMetaData) requestMetaData).getAbi();
+            GenericTransactionMetaData genericTransactionMetaData = new GenericTransactionMetaData(
+                    requestMetaData.getAddress()
+                    , requestMetaData.getAmount(), BREthereumAmount.Unit.ETHER_WEI,
+                    walletManager.getWallet().getDefaultGasPrice()
+                    , BREthereumAmount.Unit.ETHER_WEI, PWB_GAS_LIMIT,
+                    ((CallRequestMetaData) requestMetaData).getAbi());
+            cryptoRequest.setGenericTransactionMetaData(genericTransactionMetaData);
 
-            SendManager.sendTransaction(this, cryptoRequest, walletManager, new SendManager.SendCompletion() {
+            SendManager.sendTransaction(getApplicationContext(), cryptoRequest, walletManager, new SendManager.SendCompletion() {
                 @Override
                 public void onCompleted(String hash, boolean succeed) {
                     Protos.CallResponse.Builder responseBuilder = Protos.CallResponse.newBuilder();
