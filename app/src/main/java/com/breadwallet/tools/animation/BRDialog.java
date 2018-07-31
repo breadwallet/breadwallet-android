@@ -51,7 +51,7 @@ public class BRDialog {
             Log.e(TAG, "showCustomDialog: FAILED, context is destroyed");
             return;
         }
-
+        Log.e(TAG, "showCustomDialog: Title:" + title + ", message: " + message);
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
