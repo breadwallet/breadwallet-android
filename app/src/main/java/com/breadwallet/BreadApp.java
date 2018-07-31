@@ -14,7 +14,7 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.breadwallet.presenter.activities.util.ApplicationLifecycleObserver;
+import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
