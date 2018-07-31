@@ -34,9 +34,7 @@ import java.math.BigDecimal;
 import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * BreadWallet
@@ -245,7 +243,8 @@ public final class MessageExchangeService extends IntentService {
      * @param context The context in which we are operating.
      */
     private void retrieveInboxEntries(Context context) {
-        List<InboxEntry> inboxEntries = MessageExchangeNetworkHelper.fetchInbox(context);
+        String lastProcessedCursor = getLastProcessedCursor(); //TODO: remove
+        List<InboxEntry> inboxEntries = MessageExchangeNetworkHelper.fetchInbox(context, getLastProcessedCursor());
         int numOfInboxEntries = inboxEntries.size();
         Log.d(TAG, "retrieveInboxEntries: " + numOfInboxEntries);
 
@@ -258,15 +257,24 @@ public final class MessageExchangeService extends IntentService {
             for (InboxEntry inboxEntry : inboxEntries) {
                 Protos.Envelope envelope = getEnvelopeFromInboxEntry(inboxEntry);
                 String cursor = inboxEntry.getCursor();
-                if (verifyEnvelopeSignature(envelope)) {
-                    processEnvelope(envelope);
-                    cursors.add(cursor);
+
+                //TODO: temp hack for server bug
+                if (lastProcessedCursor != null && lastProcessedCursor.equals(cursor) ) {
+                    Log.e(TAG, "Received last cursor message when not expecting it. ");
                 } else {
-                    Log.e(TAG, "retrieveInboxEntries: signature verification failed. id: " + cursor);
+                    if (verifyEnvelopeSignature(envelope)) {
+                        processEnvelope(envelope);
+                        cursors.add(cursor);
+                    } else {
+                        Log.e(TAG, "retrieveInboxEntries: signature verification failed. id: " + cursor);
+                    }
                 }
             }
 
-            MessageExchangeNetworkHelper.sendAck(context, cursors);
+            if (cursors.size() > 0) {
+                MessageExchangeNetworkHelper.sendAck(context, cursors);
+                setLastProcessedCursor(cursors.get(cursors.size() - 1));
+            }
         }
     }
 
@@ -344,6 +352,7 @@ public final class MessageExchangeService extends IntentService {
         switch (messageType) {
             case LINK:
                 processLink(requestEnvelope, decryptedMessage);
+                return; // TODO: Returning for now because processLink sends a response if needed. Refactor so message response is sent back here
             case PING:
                 Protos.Ping ping = Protos.Ping.parseFrom(decryptedMessage);
                 messageResponse = Protos.Pong.newBuilder().setPong(ping.getPing()).build().toByteString();
@@ -414,6 +423,21 @@ public final class MessageExchangeService extends IntentService {
         editor.putString("pmd_id", pairingMetaData.getId());
         editor.putString("pmd_publicKey", pairingMetaData.getPublicKeyHex());
         editor.putString("pmd_service", pairingMetaData.getService());
+        editor.apply();
+    }
+
+    private String getLastProcessedCursor() {
+        // TODO: Temporary solution get from KV store
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefsFile", 0);
+        return sharedPreferences.getString("lastProcessedCursor", null);
+    }
+
+
+    private void setLastProcessedCursor(String lastProcessedCursor) {
+        // TODO: Temporary solution move to KV store
+        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefsFile", 0);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("lastProcessedCursor", lastProcessedCursor);
         editor.apply();
     }
 
