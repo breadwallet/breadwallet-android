@@ -68,6 +68,9 @@ public final class MessageExchangeNetworkHelper {
     public static final String ENTRIES_NAME = "entries";
     public static final String CONTENT_TYPE_PROTOBUF = "application/x-protobuf";
 
+    // Inbox Parameters
+    public static final String INBOX_PATH_AFTER_PARAMETER = "%s?after=%s";
+
     // Error parameters
     public static final String ERROR = "error";
     public static final String ERROR_MESSAGE = "message";
@@ -89,10 +92,14 @@ public final class MessageExchangeNetworkHelper {
     }
 
     // TODO if 100 entries received, then fetch again.
-    // TODO support after=CURSOR and then only fetch entries we have not processed.
-    public static List<InboxEntry> fetchInbox(Context context) {
+    public static List<InboxEntry> fetchInbox(Context context, String afterCursor) {
         List<InboxEntry> inboxEntries = new ArrayList<>();
         String inboxUrl = APIClient.BASE_URL + INBOX_PATH;
+
+        if (afterCursor != null) {
+            inboxUrl =  String.format(INBOX_PATH_AFTER_PARAMETER, inboxUrl, afterCursor);
+        }
+
         Request request = new Request.Builder()
                 .url(inboxUrl)
                 .get()

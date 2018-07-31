@@ -232,13 +232,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         });
 
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
-
-        //TODO: Shiv add flag to only check once pair has started.
-        // Check for messages.
-        startService(MessageExchangeService.createIntent(this, MessageExchangeService.ACTION_RETRIEVE_MESSAGES));
-
         Log.e(TAG, "onResume: took: " + (System.currentTimeMillis() - start));
-
     }
 
     private void populateWallets() {
