@@ -29,7 +29,7 @@ import android.arch.lifecycle.LifecycleObserver;
 import android.arch.lifecycle.OnLifecycleEvent;
 import android.util.Log;
 
-import com.platform.UserMetricsManager;
+import com.breadwallet.app.util.UserMetricsUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,8 +49,6 @@ public class ApplicationLifecycleObserver implements LifecycleObserver {
     public void onCreate() {
         Log.d(TAG, "onCreate");
         onLifeCycleEvent(Lifecycle.Event.ON_CREATE);
-
-        UserMetricsManager.sendUserMetricsRequest(); //TODO: Is this needed? onStart would be called right after onCreate...
     }
 
     /**
@@ -61,7 +59,7 @@ public class ApplicationLifecycleObserver implements LifecycleObserver {
         Log.d(TAG, "onStart");
         onLifeCycleEvent(Lifecycle.Event.ON_STOP);
 
-        UserMetricsManager.sendUserMetricsRequest(); //TODO: move out to more appropriate class who listens for these events.
+        UserMetricsUtil.sendUserMetricsRequest(); //TODO: move out to more appropriate class who listens for these events.
     }
 
     /**
