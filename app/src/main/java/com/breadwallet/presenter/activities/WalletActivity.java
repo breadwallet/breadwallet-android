@@ -241,6 +241,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 //            }
 //        });
 
+        //TODO: move to correct location.
+        //TODO: Shiv add flag to only check once pair has started.
+        // Check for messages.
+        startService(MessageExchangeService.createIntent(this, MessageExchangeService.ACTION_RETRIEVE_MESSAGES));
     }
 
     private void startSyncLoggerIfNeeded() {
