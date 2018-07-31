@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.app.util.UserMetricsUtil;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.crypto.Base58;
@@ -517,7 +518,7 @@ public class APIClient {
             String latestVersion = getLatestVersion();
             String currentTarVersion = null;
             byte[] hash = CryptoHelper.sha256(bFile);
-            UserMetricsManager.setBundleHash(hash);
+            UserMetricsUtil.setBundleHash(hash);
             assert hash != null;
             currentTarVersion = Utils.bytesToHex(hash);
             Log.d(TAG, bundleFile + ": updateBundle: version of the current tar: " + currentTarVersion);
