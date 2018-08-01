@@ -57,7 +57,7 @@ public class ApplicationLifecycleObserver implements LifecycleObserver {
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void onStart() {
         Log.d(TAG, "onStart");
-        onLifeCycleEvent(Lifecycle.Event.ON_STOP);
+        onLifeCycleEvent(Lifecycle.Event.ON_START);
 
         UserMetricsUtil.sendUserMetricsRequest(); //TODO: move out to more appropriate class who listens for these events.
     }
