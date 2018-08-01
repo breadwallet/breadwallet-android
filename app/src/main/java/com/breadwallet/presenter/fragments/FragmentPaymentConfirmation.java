@@ -7,15 +7,24 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.protocols.messageexchange.entities.RequestMetaData;
+import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
+
+import java.math.BigDecimal;
 
 public class FragmentPaymentConfirmation extends Fragment {
 
+    private static final String ICON_RESOURCE = "ccc";
+    private static final String ICO_NAME = "Container Crypto Coin";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -27,26 +36,29 @@ public class FragmentPaymentConfirmation extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_payment_confirmation, container, false);
 
-
         Bundle bundle = getArguments();
-        BaseTextView priceTextView = rootView.findViewById(R.id.price);
-        BaseTextView paymentMethod = rootView.findViewById(R.id.payment_method);
+        ImageView icoIcon = rootView.findViewById(R.id.ico_icon);
+        BaseTextView icoName = rootView.findViewById(R.id.ico_name);
+        BaseTextView icoPriceInformation = rootView.findViewById(R.id.ico_price_information);
 
         if (bundle != null) {
             RequestMetaData metaData = bundle.getParcelable(MessageExchangeService.EXTRA_METADATA);
             Log.d("FragmentPaymentConfir", "Price -> " + metaData.getAmount());
             Log.d("FragmentPaymentConfir", "Currency -> " + metaData.getCurrencyCode());
 
-            String price = metaData.getAmount();
-            if(!Utils.isNullOrEmpty(price)){
-                priceTextView.setText(price);
+            String currencyCode = metaData.getCurrencyCode();
+            String amount = metaData.getAmount();
+            int iconResourceId = getActivity().getResources().getIdentifier(ICON_RESOURCE, BRConstants.DRAWABLE, getActivity().getPackageName());
+            if (iconResourceId > 0) {
+                icoIcon.setBackground(getActivity().getDrawable(iconResourceId));
             }
 
-
-            String method = metaData.getCurrencyCode();
-            if(!Utils.isNullOrEmpty(method)){
-                paymentMethod.setText(method);
+            if (!Utils.isNullOrEmpty(amount)) {
+                String formattedPrice = CurrencyUtils.getFormattedAmount(getActivity(), currencyCode, new BigDecimal(amount));
+                icoPriceInformation.setText(String.format("Send %s to purchase CCC", formattedPrice));
             }
+
+            icoName.setText(ICO_NAME);
 
         }
         return rootView;
