@@ -1,171 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="60dp"
     android:layout_marginBottom="74dp"
+    android:layout_marginTop="60dp"
     android:background="@color/secondary_background">
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/ico_icon"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="64dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
-            android:id="@+id/buy_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_centerHorizontal="true"
-            android:text="@string/Button.buy"
-            android:textColor="@color/white_60_percent_opaque"
-            android:visibility="invisible" />
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/ico_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:textSize="30sp"
+        android:text="@string/Button.buy"
+        android:textColor="@color/white_60_percent_opaque"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ico_icon" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
-            android:id="@+id/buy_amount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/buy_label"
-            android:layout_centerHorizontal="true"
-            android:text="800"
-            android:textSize="44sp"
-            android:visibility="invisible" />
+    <com.breadwallet.presenter.customviews.BaseTextView
+        android:id="@+id/ico_price_information"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:textSize="18sp"
+        android:text="@string/Button.buy"
+        android:textColor="@color/white_60_percent_opaque"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ico_name" />
 
-        <com.breadwallet.presenter.customviews.BaseTextView
-            android:id="@+id/buy_currency"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/buy_label"
-            android:layout_marginStart="4dp"
-            android:layout_marginTop="26dp"
-            android:layout_toRightOf="@id/buy_amount"
-            android:text="KRT"
-            android:visibility="invisible" />
-
-
-        <com.breadwallet.presenter.customviews.BaseTextView
-            android:id="@+id/payment_method_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_below="@id/buy_amount"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="180dp"
-            android:text="@string/PaymentConfirmation.paymentMethod"
-            android:textColor="@color/white_60_percent_opaque"
-            android:textSize="16sp" />
-
-
-        <com.breadwallet.presenter.customviews.BaseTextView
-            android:id="@+id/payment_method"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@id/buy_amount"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="180dp"
-            android:text="Ethereum"
-            android:textSize="16sp"
-            app:customTFont="CircularPro-Bold.otf" />
-
-        <com.breadwallet.presenter.customviews.BaseTextView
-            android:id="@+id/delivery_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/payment_method_label"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
-            android:visibility="invisible"
-            android:text="@string/PaymentConfirmation.delivery"
-            android:textColor="@color/white_60_percent_opaque"
-            android:textSize="16sp" />
-
-        <com.breadwallet.presenter.customviews.BaseTextView
-            android:id="@+id/delivery_method"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@id/payment_method"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="20dp"
-            android:text="1-2 hours"
-            android:textSize="16sp"
-            android:visibility="invisible"
-            app:customTFont="CircularPro-Bold.otf" />
-
-
-        <com.breadwallet.presenter.customviews.BaseTextView
-            android:id="@+id/price_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/delivery_label"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
-            android:text="@string/PaymentConfirmation.price"
-            android:textColor="@color/white_60_percent_opaque"
-            android:textSize="16sp" />
-
-        <com.breadwallet.presenter.customviews.BaseTextView
-            android:id="@+id/price"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@id/delivery_method"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="20dp"
-            android:text="1.0 ETH"
-            android:textSize="16sp"
-            app:customTFont="CircularPro-Bold.otf" />
-
-        <com.breadwallet.presenter.customviews.BaseTextView
-            android:id="@+id/fee_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/price_label"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
-            android:text="@string/PaymentConfirmation.fee"
-            android:visibility="invisible"
-            android:textColor="@color/white_60_percent_opaque"
-            android:textSize="16sp" />
-
-        <com.breadwallet.presenter.customviews.BaseTextView
-            android:id="@+id/fee"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@id/price"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="20dp"
-            android:text=".00001 ETH"
-            android:textSize="16sp"
-            android:visibility="invisible"
-            app:customTFont="CircularPro-Bold.otf" />
-
-        <com.breadwallet.presenter.customviews.BaseTextView
-            android:id="@+id/total_charge_label"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/fee_label"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
-            android:text="@string/PaymentConfirmation.totalCharge"
-            android:visibility="invisible"
-            android:textColor="@color/white_60_percent_opaque"
-            android:textSize="16sp" />
-
-        <com.breadwallet.presenter.customviews.BaseTextView
-            android:id="@+id/total_charge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_below="@id/fee"
-            android:layout_marginEnd="10dp"
-            android:layout_marginTop="20dp"
-            android:text="1.00001 ETH"
-            android:textSize="16sp"
-            android:visibility="invisible"
-            app:customTFont="CircularPro-Bold.otf" />
-    </RelativeLayout>
-</FrameLayout>
+</android.support.constraint.ConstraintLayout>
 
