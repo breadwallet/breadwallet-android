@@ -395,4 +395,13 @@ public class WalletsMaster {
         }
     }
 
+    public boolean hasWallet(String currencyCode) {
+        for (BaseWalletManager walletManager : mWallets) {
+            if (walletManager.getIso().equalsIgnoreCase(currencyCode)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
