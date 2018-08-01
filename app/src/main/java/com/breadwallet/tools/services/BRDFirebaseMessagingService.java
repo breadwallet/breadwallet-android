@@ -2,7 +2,9 @@ package com.breadwallet.tools.services;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
@@ -11,6 +13,8 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.HomeActivity;
+import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
@@ -56,7 +60,7 @@ import okhttp3.RequestBody;
 public final class BRDFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String NOTIFICATION_TITLE = "title";
-    private static final String NOTIFICATION_MESSAGE = "message";
+    private static final String NOTIFICATION_BODY = "body";
     private static final String ENDPOINT_PUSH_DEVICES = "/me/push-devices";
     private static final String PUSH_SERVICE = "fcm";
     private static final String KEY_TOKEN = "token";
@@ -97,17 +101,29 @@ public final class BRDFirebaseMessagingService extends FirebaseMessagingService 
                 setupChannels(notificationManager);
             }
             int notificationId = getNextNotificationId();
+            String notificationTitle = remoteMessage.getData().get(NOTIFICATION_TITLE);
+            String notificationMessage = remoteMessage.getData().get(NOTIFICATION_BODY);
+
+            // Take the user to HomeActivity upon tapping the notification
+            Intent homeIntent = new Intent(this, HomeActivity.class);
+            homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, homeIntent, 0);
+
 
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.drawable.brd_logo_gradient)
-                    .setContentTitle(remoteMessage.getData().get(NOTIFICATION_TITLE))
-                    .setContentText(remoteMessage.getData().get(NOTIFICATION_MESSAGE))
-                    .setAutoCancel(true);
+                    .setContentTitle(notificationTitle)
+                    .setContentText(notificationMessage)
+                    .setAutoCancel(true)
+                    .setContentIntent(pendingIntent);
 
             notificationManager.notify(notificationId, notificationBuilder.build());
+
+            // Trigger an inbox retrieval to get new messages
+            startService(MessageExchangeService.createIntent(this, MessageExchangeService.ACTION_RETRIEVE_MESSAGES));
+
         }
     }
-
 
     /**
      * Starting in Android 0(API 26), all notifications must be assigned to a channel.
@@ -168,7 +184,7 @@ public final class BRDFirebaseMessagingService extends FirebaseMessagingService 
                                 .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
                                 .header(BRConstants.HEADER_ACCEPT, BRConstants.HEADER_VALUE_ACCEPT).post(requestBody).build();
 
-                       APIClient.getInstance(context).sendRequest(request, true);
+                        APIClient.getInstance(context).sendRequest(request, true);
 
                     } catch (JSONException e) {
                         Log.e(TAG, "Error constructing JSON payload while updating FCM registration token.", e);
@@ -195,4 +211,5 @@ public final class BRDFirebaseMessagingService extends FirebaseMessagingService 
         return newId;
 
     }
+
 }
