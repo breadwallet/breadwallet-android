@@ -227,19 +227,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         setPriceTags(cryptoPreferred, false);
 
-        //TODO Delete testing code
-        byte[] authKey = BRKeyStore.getAuthKey(this);
-        if (Utils.isNullOrEmpty(authKey)) throw new NullPointerException();
-        BRCoreKey key = new BRCoreKey(authKey);
-        byte[] pubkey = key.getPubKey();
-        if (Utils.isNullOrEmpty(pubkey)) throw new NullPointerException();
-        Log.e(TAG, "onCreate: pubkey:" + BRCoreKey.encodeHex(pubkey) + ", privkey: " + BRCoreKey.encodeHex(authKey));
-
         //TODO: move to correct location.
-        if (MessageExchangeService.getPairingMetaDataFromSharedPreferences(this).getId() != null) {
-            // Check for messages.
-            startService(MessageExchangeService.createIntent(this, MessageExchangeService.ACTION_RETRIEVE_MESSAGES));
-        }
+        // Check for messages.
+        startService(MessageExchangeService.createIntent(this, MessageExchangeService.ACTION_RETRIEVE_MESSAGES));
     }
 
     private void startSyncLoggerIfNeeded() {
