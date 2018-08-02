@@ -67,6 +67,7 @@ public class KVStoreManager {
     private static final String KEY_WALLET_INFO = "wallet-info";
     private static final String KEY_TOKEN_LIST_META_DATA = "token-list-metadata";
     private static final String KEY_PAIRING_META_DATA = "pairing-metadata";
+    private static final String KEY_CURSOR = "lastCursor";
     private static final String CLASS_VERSION = "classVersion";
     private static final String CREATION_DATE = "creationDate";
     private static final String NAME = "name";
@@ -85,6 +86,7 @@ public class KVStoreManager {
     private static final String SERVICE = "service";
     private static final String REMOTE_PUBKEY = "remotePubKey";
     private static final String CREATED = "created";
+    private static final String CURSOR = "cursor";
     private static final String TX_META_DATA_KEY_PREFIX = "txn2-";
     private static final String PAIRING_META_DATA_KEY_PREFIX = "pwd-";
 
@@ -242,6 +244,59 @@ public class KVStoreManager {
         CompletionObject completionObject = setData(app, result, key);
         if (completionObject != null && completionObject.err != null) {
             Log.e(TAG, "putPairingMetadata: Error setting value for key: " + KEY_PAIRING_META_DATA + ", err: " + completionObject.err);
+        }
+
+    }
+
+    public static String getLastCursor(Context context) {
+
+        JSONObject json;
+        byte[] data = getData(context, KEY_CURSOR);
+        try {
+            if (data == null) {
+                Log.e(TAG, "getLastCursor: data value is null");
+                return null;
+            }
+            json = new JSONObject(new String(data));
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+        String cursor = null;
+
+        try {
+            cursor = json.getString(CURSOR);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, "getLastCursor: FAILED to get json value");
+        }
+        Log.e(TAG, "getLastCursor: " + KEY_CURSOR);
+        return cursor;
+    }
+
+    public static void putLastCursor(Context app, String lastCursor) {
+
+        JSONObject obj = new JSONObject();
+        byte[] result;
+        try {
+            obj.put(CURSOR, lastCursor);
+            result = obj.toString().getBytes();
+
+        } catch (JSONException e) {
+            e.printStackTrace();
+            Log.e(TAG, "putLastCursor: FAILED to create json");
+            return;
+        }
+
+        if (result.length == 0) {
+            Log.e(TAG, "putLastCursor: FAILED: result is empty");
+            return;
+        }
+        Log.e(TAG, "putLastCursor: " + KEY_CURSOR);
+        CompletionObject completionObject = setData(app, result, KEY_CURSOR);
+        if (completionObject != null && completionObject.err != null) {
+            Log.e(TAG, "putLastCursor: Error setting value for key: " + KEY_CURSOR + ", err: " + completionObject.err);
         }
 
     }
