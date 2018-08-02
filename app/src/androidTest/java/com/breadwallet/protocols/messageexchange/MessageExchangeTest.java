@@ -61,28 +61,28 @@ public class MessageExchangeTest {
             Protos.Status.REJECTED
     };
 
-    /**
-     * Test that AccountResponse is generated correctly for the specified currency code.
-     */
-    @Test
-    public void testAccountResponse() {
-        try {
-            for (int i = ACCOUNT_RESPONSE_TEST_CURRENCY_CODES.length-1; i >= 0; i--) {
-                // Generate a test request for the specified currency code.
-                byte[] requestBytes = Protos.AccountRequest.newBuilder()
-                        .setScope(ACCOUNT_RESPONSE_TEST_CURRENCY_CODES[i]).build().toByteArray();
-
-                // Generate the response.
-                byte[] responseBytes = MessageExchangeService.generateAccountResponse(requestBytes).toByteArray();
-                Protos.AccountResponse response = Protos.AccountResponse.parseFrom(responseBytes);
-
-                // Verify that the response is as expected.
-                Assert.assertEquals(ACCOUNT_RESPONSE_TEST_CURRENCY_CODES[i], response.getScope());
-                Assert.assertEquals(ACCOUNT_RESPONSE_TEST_EXPECTED_ADDRESS[i], response.getAddress());
-                Assert.assertEquals(ACCOUNT_RESPONSE_TEST_EXPECTED_EXPECTED_STATUS[i], response.getStatus());
-            }
-        } catch (Exception e) {
-            Assert.fail(e.getMessage());
-        }
-    }
+//    /**
+//     * Test that AccountResponse is generated correctly for the specified currency code.
+//     */
+//    @Test
+//    public void testAccountResponse() {
+//        try {
+//            for (int i = ACCOUNT_RESPONSE_TEST_CURRENCY_CODES.length-1; i >= 0; i--) {
+//                // Generate a test request for the specified currency code.
+//                byte[] requestBytes = Protos.AccountRequest.newBuilder()
+//                        .setScope(ACCOUNT_RESPONSE_TEST_CURRENCY_CODES[i]).build().toByteArray();
+//
+//                // Generate the response.
+//                byte[] responseBytes = MessageExchangeService.generateAccountResponse(requestBytes).toByteArray();
+//                Protos.AccountResponse response = Protos.AccountResponse.parseFrom(responseBytes);
+//
+//                // Verify that the response is as expected.
+//                Assert.assertEquals(ACCOUNT_RESPONSE_TEST_CURRENCY_CODES[i], response.getScope());
+//                Assert.assertEquals(ACCOUNT_RESPONSE_TEST_EXPECTED_ADDRESS[i], response.getAddress());
+//                Assert.assertEquals(ACCOUNT_RESPONSE_TEST_EXPECTED_EXPECTED_STATUS[i], response.getStatus());
+//            }
+//        } catch (Exception e) {
+//            Assert.fail(e.getMessage());
+//        }
+//    }
 }

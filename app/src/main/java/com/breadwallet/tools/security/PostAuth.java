@@ -302,7 +302,7 @@ public class PostAuth {
 
     public static void stampMetaData(Context activity, byte[] txHash) {
         if (txMetaData != null) {
-            KVStoreManager.getInstance().putTxMetaData(activity, txMetaData, txHash);
+            KVStoreManager.putTxMetaData(activity, txMetaData, txHash);
             txMetaData = null;
         } else Log.e(TAG, "stampMetaData: txMetaData is null!");
     }

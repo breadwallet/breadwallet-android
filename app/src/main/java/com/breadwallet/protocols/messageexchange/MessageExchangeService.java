@@ -32,6 +32,7 @@ import com.breadwallet.wallet.entities.GenericTransactionMetaData;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.security.SecureRandom;
@@ -81,7 +82,7 @@ public final class MessageExchangeService extends IntentService {
 
     private static final int NONCE_SIZE = 12;
 
-    private static PairingMetaData mPairingMetaData;
+    public static PairingMetaData mPairingMetaData;
 
     public enum MessageType {
         LINK,
@@ -114,13 +115,10 @@ public final class MessageExchangeService extends IntentService {
         if (intent != null) {
             Log.d(TAG, "Intent Action -> " + intent.getAction());
 
-            // Retrieve pairing metadata from the KV store if we don't have it in memory.
-            getPairingMetaData();
-
             switch (intent.getAction()) {
                 case ACTION_REQUEST_TO_PAIR:
                     // User scanned QR, to initiate pairing with a remote wallet,
-                    setPairingMetaData((PairingMetaData) intent.getParcelableExtra(EXTRA_METADATA));
+                    savePairingMetaDataToKvStore((PairingMetaData) intent.getParcelableExtra(EXTRA_METADATA));
                     // Show more service details about the pairing and ask the user to confirm.
                     MetaData linkMetaData = new LinkMetaData(MessageExchangeNetworkHelper.getService(this, SERVICE_PWB));
                     confirmRequest(linkMetaData);
@@ -214,6 +212,7 @@ public final class MessageExchangeService extends IntentService {
      */
     public void pair(boolean isUserApproved) {
         byte[] ephemeralKey = BRCoreKey.decodeHex(mPairingMetaData.getPublicKeyHex());
+
         BRCoreKey pairingKey = getPairingKey();
 
         ByteString message;
@@ -261,10 +260,17 @@ public final class MessageExchangeService extends IntentService {
             List<String> cursors = new ArrayList<>();
             for (InboxEntry inboxEntry : inboxEntries) {
                 Protos.Envelope envelope = getEnvelopeFromInboxEntry(inboxEntry);
+                if (mPairingMetaData == null) {
+                    PairingMetaData pairingMetaData = getPairingMetaData(envelope.getSenderPublicKey().toByteArray());
+                    if (pairingMetaData == null) {
+                        Log.e(TAG, "retrieveInboxEntries: pairingMetaData is null!");
+                        break;
+                    }
+                }
                 String cursor = inboxEntry.getCursor();
 
                 //TODO: temp hack for server bug
-                if (lastProcessedCursor != null && lastProcessedCursor.equals(cursor) ) {
+                if (lastProcessedCursor != null && lastProcessedCursor.equals(cursor)) {
                     Log.e(TAG, "Received last cursor message when not expecting it. ");
                 } else {
                     if (verifyEnvelopeSignature(envelope)) {
@@ -403,23 +409,15 @@ public final class MessageExchangeService extends IntentService {
      *
      * @return The pairing meta data.
      */
-    private PairingMetaData getPairingMetaData() {
+    private PairingMetaData getPairingMetaData(byte[] publicKey) {
         if (mPairingMetaData == null) {
-            // TODO: Temporary solution get from KV store
-            mPairingMetaData = getPairingMetaDataFromSharedPreferences(this);
+            mPairingMetaData = getPairingMetaDataFromKvStore(this, publicKey);
         }
         return mPairingMetaData;
     }
 
-    // TODO: Remove. Temporary added to fix crash (Recover wallet + open wallet). When pairing data is moved to KV store, add a timestamp
-    // in the shared prefs that is used as a flag to see if we are currently paired.
-    public static PairingMetaData getPairingMetaDataFromSharedPreferences(Context context) {
-        // TODO: Temporary solution get from KV store
-        SharedPreferences sharedPreferences = context.getSharedPreferences("MyPrefsFile", 0);
-        PairingMetaData pairingMetaData = new PairingMetaData(sharedPreferences.getString("pmd_id", null),
-                sharedPreferences.getString("pmd_publicKey", null),
-                sharedPreferences.getString("pmd_service", null));
-        return pairingMetaData;
+    public static PairingMetaData getPairingMetaDataFromKvStore(Context context, byte[] publicKey) {
+        return KVStoreManager.getPairingMetadata(context, publicKey);
     }
 
     /**
@@ -428,16 +426,9 @@ public final class MessageExchangeService extends IntentService {
      *
      * @param pairingMetaData The pairing meta data.
      */
-    private void setPairingMetaData(PairingMetaData pairingMetaData) {
+    private void savePairingMetaDataToKvStore(PairingMetaData pairingMetaData) {
         mPairingMetaData = pairingMetaData;
-
-        // TODO: Temporary solution move to KV store
-        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefsFile", 0);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("pmd_id", pairingMetaData.getId());
-        editor.putString("pmd_publicKey", pairingMetaData.getPublicKeyHex());
-        editor.putString("pmd_service", pairingMetaData.getService());
-        editor.apply();
+        KVStoreManager.putPairingMetadata(this, pairingMetaData);
     }
 
     private String getLastProcessedCursor() {
@@ -491,7 +482,7 @@ public final class MessageExchangeService extends IntentService {
      * @param message         The message to encrypt.
      * @return The encrypted message.
      */
-    private EncryptedMessage encrypt(BRCoreKey pairingKey, byte[] senderPublicKey, byte[] message) {
+    public EncryptedMessage encrypt(BRCoreKey pairingKey, byte[] senderPublicKey, byte[] message) {
         byte[] nonce = generateRandomNonce();
         byte[] encryptedData = pairingKey.encryptUsingSharedSecret(senderPublicKey, message, nonce);
         return new EncryptedMessage(encryptedData, nonce);
@@ -503,7 +494,7 @@ public final class MessageExchangeService extends IntentService {
      * @param envelope The envelope containing the message to decrypt.
      * @return The decrypted message.
      */
-    private byte[] decrypt(Protos.Envelope envelope) {
+    public byte[] decrypt(Protos.Envelope envelope) {
         BRCoreKey pairingKey = getPairingKey();
         return pairingKey.decryptUsingSharedSecret(envelope.getSenderPublicKey().toByteArray(),
                 envelope.getEncryptedMessage().toByteArray(),
@@ -682,11 +673,7 @@ public final class MessageExchangeService extends IntentService {
             // If the response for the remote entity doesn't have the same id as the initial pairing request, reject.
             sendResponse(envelope, createLink(Protos.Error.REMOTE_ID_MISMATCH));
         } else {
-
-            // TODO: SHIV store in KV store.  K = sha256(pubkey) V = id, pub key, and service
-//            link.getId();
-//            link.getPublicKey();
-//            mPairingMetaData.getService();
+            savePairingMetaDataToKvStore(mPairingMetaData);
 
         }
     }

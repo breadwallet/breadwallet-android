@@ -36,7 +36,7 @@ public class PairingMetaData implements Parcelable {
     private static final String QUERY_PARAM_SERVICE = "service";
 
     private String mId;
-    private String mPublicKeyHex; // Base 58 encoded public key of remote entity.
+    private String mPublicKeyHex; // Hex encoded pub key
     private String mService;
 
     public static final Creator<PairingMetaData> CREATOR = new Creator<PairingMetaData>() {

@@ -62,7 +62,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
 //            //japanese
 //            mDebugPhrase = "こせき　ぎじにってい　けっこん　せつぞく　うんどう　ふこう　にっすう　こせい　きさま　なまみ　たきび　はかい";
 //            //english
-//            mDebugPhrase = "video tiger report bid suspect taxi mail argue naive layer metal surface";
+//            mDebugPhrase = "nurse bird city strike various benefit swing soup fog law source planet";
 //            //french
 //            mDebugPhrase = "vocation triage capsule marchand onduler tibia illicite entier fureur minorer amateur lubie";
 //            //spanish
