@@ -955,8 +955,8 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
         final Context ctx = BreadApp.getBreadContext();
         final WalletsMaster master = WalletsMaster.getInstance(ctx);
 
-        TxMetaData metaData = KVStoreManager.getInstance().createMetadata(ctx, this, new CryptoTransaction(transaction));
-        KVStoreManager.getInstance().putTxMetaData(ctx, metaData, transaction.getHash());
+        TxMetaData metaData = KVStoreManager.createMetadata(ctx, this, new CryptoTransaction(transaction));
+        KVStoreManager.putTxMetaData(ctx, metaData, transaction.getHash());
 
         final long amount = getWallet().getTransactionAmount(transaction);
         if (amount > 0) {
