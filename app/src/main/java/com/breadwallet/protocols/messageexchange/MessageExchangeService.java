@@ -432,18 +432,12 @@ public final class MessageExchangeService extends IntentService {
     }
 
     private String getLastProcessedCursor() {
-        // TODO: Temporary solution get from KV store
-        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefsFile", 0);
-        return sharedPreferences.getString("lastProcessedCursor", null);
+        return KVStoreManager.getLastCursor(this);
     }
 
 
     private void setLastProcessedCursor(String lastProcessedCursor) {
-        // TODO: Temporary solution move to KV store
-        SharedPreferences sharedPreferences = getSharedPreferences("MyPrefsFile", 0);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("lastProcessedCursor", lastProcessedCursor);
-        editor.apply();
+        KVStoreManager.putLastCursor(this, lastProcessedCursor);
     }
 
     /**
