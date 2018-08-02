@@ -263,7 +263,7 @@ public class FragmentTxDetails extends DialogFragment {
             BigDecimal fiatAmountNow = walletManager.getFiatForSmallestCrypto(app, cryptoAmount.abs(), null);
 
             BigDecimal fiatAmountWhenSent;
-            TxMetaData metaData = KVStoreManager.getInstance().getTxMetaData(app, mTransaction.getTxHash());
+            TxMetaData metaData = KVStoreManager.getTxMetaData(app, mTransaction.getTxHash());
             if (metaData == null || metaData.exchangeRate == 0 || Utils.isNullOrEmpty(metaData.exchangeCurrency)) {
                 fiatAmountWhenSent = BigDecimal.ZERO;
                 //always fiat amount
@@ -327,7 +327,7 @@ public class FragmentTxDetails extends DialogFragment {
 
             // Set the memo text if one is available
             String memo;
-            mTxMetaData = KVStoreManager.getInstance().getTxMetaData(app, mTransaction.getTxHash());
+            mTxMetaData = KVStoreManager.getTxMetaData(app, mTransaction.getTxHash());
 
             if (mTxMetaData != null) {
                 if (mTxMetaData.comment != null) {
@@ -419,7 +419,7 @@ public class FragmentTxDetails extends DialogFragment {
         // Update the memo field on the transaction and save it
         if (mTxMetaData == null) mTxMetaData = new TxMetaData();
         mTxMetaData.comment = mMemoText.getText().toString();
-        KVStoreManager.getInstance().putTxMetaData(getContext(), mTxMetaData, mTransaction.getTxHash());
+        KVStoreManager.putTxMetaData(getContext(), mTxMetaData, mTransaction.getTxHash());
         mTxMetaData = null;
 
         // Hide softkeyboard if it's visible

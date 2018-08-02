@@ -8,21 +8,19 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
 import com.breadwallet.R;
-import com.breadwallet.core.ethereum.BREthereumToken;
-import com.breadwallet.core.ethereum.BREthereumWallet;
+import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
-import com.breadwallet.presenter.fragments.FragmentLinkWallet;
-import com.breadwallet.protocols.messageexchange.entities.LinkMetaData;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
@@ -57,6 +55,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private static final String TAG = HomeActivity.class.getSimpleName();
 
     private static final String CCC_CURRENCY_CODE = "CCC";
+    private static final int ADD_CCC_WALLE_DELAY_SECONDS = 20;
+
 
     private RecyclerView mWalletRecycler;
     private WalletListAdapter mAdapter;
@@ -165,21 +165,15 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
                     Log.e(TAG, "Continue :" + info.title + " (FAILED)");
             }
         });
-        Log.e(TAG, "onCreate: 2");
 
-        // TODO: Remove this, just to test for now
-        mFiatTotal.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(HomeActivity.this, ConfirmationActivity.class);
-                Bundle bundle = new Bundle();
-//                bundle.putParcelable(MessageExchangeService.EXTRA_METADATA, new LinkMetaData("Jade's Link UP!"));
-                intent.putExtras(bundle);
-                startActivity(intent);
-            }
-        });
         //TODO BIG TEMPORARY HACK! FIX IN NEXT RELEASE
-        addCccWalletIfNeeded();
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                addCccWalletIfNeeded();
+            }
+        }, DateUtils.SECOND_IN_MILLIS * ADD_CCC_WALLE_DELAY_SECONDS);
+
     }
 
     public void hidePrompt() {
@@ -245,20 +239,26 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     }
 
     private void addCccWalletIfNeeded() {
+        if (MessageExchangeService.mPairingMetaData == null) {
+            return;
+        }
         WalletEthManager ethWallet = WalletEthManager.getInstance(this);
+//        byte[] pubKey = BRCoreKey.decodeHex(MessageExchangeService.mPairingMetaData.getPublicKeyHex());
 
-        if (!WalletsMaster.getInstance(this).hasWallet(CCC_CURRENCY_CODE) && MessageExchangeService.getPairingMetaDataFromSharedPreferences(this).getId() != null) {
+        if (!WalletsMaster.getInstance(this).hasWallet(CCC_CURRENCY_CODE) && MessageExchangeService.mPairingMetaData.getId() != null) {
             WalletTokenManager cccWallet = WalletTokenManager.getTokenWalletByIso(this, ethWallet, CCC_CURRENCY_CODE);
-            TokenListMetaData metaData = KVStoreManager.getInstance().getTokenListMetaData(this);
+            TokenListMetaData metaData = KVStoreManager.getTokenListMetaData(this);
 
             TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(cccWallet.getSymbol(this), true, cccWallet.getAddress());
             if (metaData == null) metaData = new TokenListMetaData(null, null);
-            if (metaData.enabledCurrencies == null)
+            if (metaData.enabledCurrencies == null) {
                 metaData.enabledCurrencies = new ArrayList<>();
-            if (!metaData.isCurrencyEnabled(item.symbol))
+            }
+            if (!metaData.isCurrencyEnabled(item.symbol)) {
                 metaData.enabledCurrencies.add(item);
+            }
 
-            KVStoreManager.getInstance().putTokenListMetaData(this, metaData);
+            KVStoreManager.putTokenListMetaData(this, metaData);
             WalletsMaster.getInstance(this).updateWallets(this);
         }
     }
