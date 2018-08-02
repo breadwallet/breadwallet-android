@@ -49,7 +49,7 @@ public class DeepLinkingManager {
         if (data != null && !data.toString().isEmpty()) {
             //handle external click with crypto scheme
             if (data.getScheme().equalsIgnoreCase(SCHEME_HTTPS)) {
-                //todo encrypted messages next.
+                InputDataManager.processQrResult(context, data.toString());
             } else {
                 CryptoUriParser.processRequest(context, data.toString(), WalletsMaster.getInstance(context).getCurrentWallet(context));
             }
