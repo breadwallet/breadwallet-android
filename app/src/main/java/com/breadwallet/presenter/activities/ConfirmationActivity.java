@@ -117,25 +117,25 @@ public class ConfirmationActivity extends FragmentActivity {
 
     public void handleLinkDeclined() {
         Log.d(TAG, "handleLinkDeclined()");
-        startService(MessageExchangeService.createIntent(this, false));
+        MessageExchangeService.enqueueWork(this,MessageExchangeService.createIntent(this, false));
         finish();
     }
 
     public void handleLinkApproved() {
         Log.d(TAG, "handleLinkApproved()");
-        startService(MessageExchangeService.createIntent(this, true));
+        MessageExchangeService.enqueueWork(this, MessageExchangeService.createIntent(this, true));
         finish();
     }
 
     private void handlePaymentApproved(RequestMetaData metaData) {
         Log.d(TAG, "handlePaymentApproved()");
-        startService(MessageExchangeService.createIntent(this, metaData, true));
+        MessageExchangeService.enqueueWork(this, MessageExchangeService.createIntent(this, metaData, true));
         finish();
     }
 
     private void handlePaymentCanceled(RequestMetaData metaData) {
         Log.d(TAG, "handlePaymentCanceled()");
-        startService(MessageExchangeService.createIntent(this, metaData, false));
+        MessageExchangeService.enqueueWork(this, MessageExchangeService.createIntent(this, metaData, false));
         finish();
     }
 }

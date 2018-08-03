@@ -336,7 +336,7 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
                 //use a handler to run a toast that shows the current timestamp
                 mPollHandler.post(new Runnable() {
                     public void run() {
-                        context.startService(MessageExchangeService.createIntent(context, MessageExchangeService.ACTION_RETRIEVE_MESSAGES));
+                        MessageExchangeService.enqueueWork(context, MessageExchangeService.createIntent(context, MessageExchangeService.ACTION_RETRIEVE_MESSAGES));
                     }
                 });
             }

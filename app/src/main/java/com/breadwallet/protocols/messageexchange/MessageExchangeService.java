@@ -1,11 +1,15 @@
 package com.breadwallet.protocols.messageexchange;
 
+import android.annotation.TargetApi;
 import android.app.IntentService;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.JobIntentService;
 import android.util.Base64;
 import android.util.Log;
 
@@ -64,7 +68,7 @@ import java.util.List;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public final class MessageExchangeService extends IntentService {
+public final class MessageExchangeService extends JobIntentService {
     private static final String TAG = MessageExchangeService.class.getSimpleName();
 
     public static final String ACTION_REQUEST_TO_PAIR = "com.breadwallet.protocols.messageexchange.ACTION_REQUEST_TO_PAIR";
@@ -81,6 +85,7 @@ public final class MessageExchangeService extends IntentService {
     public static final String SERVICE_PWB = "PWB";
 
     private static final int NONCE_SIZE = 12;
+    private static final int JOB_ID = 100;
 
     public static PairingMetaData mPairingMetaData;
 
@@ -96,12 +101,16 @@ public final class MessageExchangeService extends IntentService {
         CALL_RESPONSE
     }
 
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, MessageExchangeService.class, JOB_ID, work);
+    }
+
     /**
      * The {@link MessageExchangeService} is responsible for retrieving encrypted messages from the server which
      * are ultimately from another wallet.
      */
     public MessageExchangeService() {
-        super(TAG);
+        super();
     }
 
     /**
@@ -110,7 +119,7 @@ public final class MessageExchangeService extends IntentService {
      * @param intent The intent specifying the work that needs to be completed.
      */
     @Override
-    protected void onHandleIntent(Intent intent) {
+    protected void onHandleWork(Intent intent) {
         Log.d(TAG, "onHandleIntent()");
         if (intent != null) {
             Log.d(TAG, "Intent Action -> " + intent.getAction());
