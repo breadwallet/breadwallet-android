@@ -54,6 +54,7 @@
         <item name="approve_wallet_link_button">@color/approve_wallet_link_dark</item>
         <item name="deny_wallet_link_button">@color/deny_wallet_link_dark</item>
         <item name="confirmation_footer_background">@color/secondary_background</item>
+        <item name="link_wallet_subtitle_text_color">@color/link_wallet_subtitle_dark</item>
     </style>
 
     <style name="AppTheme.Light" parent="AppTheme">
@@ -82,6 +83,7 @@
         <item name="token_secondary_text_color">@color/almost_black</item>
         <item name="approve_wallet_link_button">@color/approve_wallet_link_light</item>
         <item name="deny_wallet_link_button">@color/deny_wallet_link_light</item>
+        <item name="link_wallet_subtitle_text_color">@color/link_wallet_subtitle</item>
     </style>
 
     <!-- Custom attributes for dark/light views and drawables -->
@@ -110,4 +112,5 @@
     <attr name="approve_wallet_link_button" format="reference"/>
     <attr name="deny_wallet_link_button" format="reference"/>
     <attr name="confirmation_footer_background" format="reference"/>
+    <attr name="link_wallet_subtitle_text_color" format="reference"/>
 </resources>
