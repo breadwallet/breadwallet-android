@@ -137,6 +137,10 @@ public class Utils {
         return str == null || str.isEmpty();
     }
 
+    public static boolean isNullOrZero(BigDecimal amount) {
+        return amount == null || amount.compareTo(BigDecimal.ZERO) == 0;
+    }
+
     public static boolean isNullOrEmpty(byte[] arr) {
         return arr == null || arr.length == 0;
     }
