@@ -25,6 +25,7 @@ package com.platform.kvstore;
  * THE SOFTWARE.
  */
 
+import android.arch.lifecycle.Lifecycle;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -33,8 +34,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.tools.crypto.CryptoHelper;
+import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -52,7 +55,7 @@ import java.util.regex.Pattern;
 
 import static com.platform.sqlite.PlatformSqliteHelper.KV_STORE_TABLE_NAME;
 
-public class ReplicatedKVStore implements BreadApp.OnAppBackgrounded {
+public class ReplicatedKVStore implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
     private static final String TAG = ReplicatedKVStore.class.getName();
 
     //    private AtomicInteger mOpenCounter = new AtomicInteger();
@@ -835,7 +838,6 @@ public class ReplicatedKVStore implements BreadApp.OnAppBackgrounded {
     }
 
 
-
     /**
      * encrypt some data using self.key
      */
@@ -913,7 +915,9 @@ public class ReplicatedKVStore implements BreadApp.OnAppBackgrounded {
     }
 
     @Override
-    public void onBackgrounded() {
-        tempAuthKey = null;
+    public void onLifeCycle(Lifecycle.Event event) {
+        if (event.name().equalsIgnoreCase(Lifecycle.Event.ON_STOP.toString())) {
+            tempAuthKey = null;
+        }
     }
 }
