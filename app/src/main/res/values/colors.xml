@@ -125,6 +125,11 @@
     <color name="unlink_header_start">#97B5ED</color>
     <color name="unlink_header_end">#779DE6</color>
 
+    // Link wallet screen
+    <color name="link_wallet_subtitle_dark">#FAA43A</color>
+    <color name="link_wallet_subtitle">#ffffff</color>
+    <color name="link_wallet_permission_bg">#1C0D31</color>
+
 
     <array name="pin_digit_button_colors">
         <item>#FE5A80</item>
