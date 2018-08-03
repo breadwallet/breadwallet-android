@@ -73,7 +73,7 @@ public class FragmentLinkWallet extends Fragment {
             domains.setLayoutParams(domainParams);
 
 
-            // Get the app permissions("capabilities") list and add them to the UI
+            // Get the app permissions list and add them to the UI
             List<ServiceMetaData.Capability> capabilities = serviceMetaData.getCapabilities();
             StringBuilder capabilityStringBuilder = new StringBuilder();
 
@@ -83,12 +83,11 @@ public class FragmentLinkWallet extends Fragment {
 
             RelativeLayout.LayoutParams capabilitiesParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             TextView capabilitiesTextView = new TextView(getContext());
-            capabilitiesTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             capabilitiesParams.addRule(RelativeLayout.ALIGN_PARENT_START, capabilitiesTextView.getId());
             capabilitiesTextView.setText(capabilityStringBuilder.toString());
             capabilitiesTextView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), TYPEFACE_PATH_CIRCULARPRO_BOOK));
             appPermissionsLayout.addView(capabilitiesTextView);
-            capabilitiesParams.setMargins(Utils.getPixelsFromDps(getContext(), 60), 0, 0, Utils.getPixelsFromDps(getContext(), 20));
+            capabilitiesParams.setMargins(Utils.getPixelsFromDps(getContext(), 40), 0, 0, Utils.getPixelsFromDps(getContext(), 20));
             capabilitiesTextView.setLayoutParams(capabilitiesParams);
 
             appPermissionScrollview.measure(0, 0);
