@@ -249,6 +249,10 @@ public final class MessageExchangeService extends IntentService {
     private void retrieveInboxEntries(Context context) {
         String lastProcessedCursor = getLastProcessedCursor(); //TODO: remove
         List<InboxEntry> inboxEntries = MessageExchangeNetworkHelper.fetchInbox(context, getLastProcessedCursor());
+        if (inboxEntries == null) {
+            Log.e(TAG, "retrieveInboxEntries: inboxEntries is null");
+            return;
+        }
         int numOfInboxEntries = inboxEntries.size();
         Log.d(TAG, "retrieveInboxEntries: " + numOfInboxEntries);
 
