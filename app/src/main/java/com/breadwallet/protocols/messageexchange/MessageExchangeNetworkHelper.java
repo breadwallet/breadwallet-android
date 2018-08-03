@@ -1,12 +1,19 @@
 package com.breadwallet.protocols.messageexchange;
 
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
+import android.os.Handler;
+import android.text.format.DateUtils;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
+import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
 import com.breadwallet.protocols.messageexchange.entities.ServiceMetaData;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.manager.BRApiManager;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
@@ -19,6 +26,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import okhttp3.MediaType;
 import okhttp3.Request;
@@ -48,7 +57,7 @@ import okhttp3.RequestBody;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public final class MessageExchangeNetworkHelper {
+public final class MessageExchangeNetworkHelper implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
 
     private static final String TAG = MessageExchangeNetworkHelper.class.getSimpleName();
 
@@ -89,7 +98,25 @@ public final class MessageExchangeNetworkHelper {
     public static final String CAPABILITIES = "capabilities";
     public static final String SCOPES = "scopes";
 
+    private static final int POLL_PERIOD_SECONDS = 2;
+
+    private static Timer mPollTimer;
+
+    private static TimerTask mPollTimerTask;
+
+    private static Handler mPollHandler;
+
+    private static MessageExchangeNetworkHelper mInstance;
+
     private MessageExchangeNetworkHelper() {
+        mPollHandler = new Handler();
+    }
+
+    public static MessageExchangeNetworkHelper getInstance() {
+        if (mInstance == null) {
+            mInstance = new MessageExchangeNetworkHelper();
+        }
+        return mInstance;
     }
 
     // TODO if 100 entries received, then fetch again.
@@ -98,7 +125,7 @@ public final class MessageExchangeNetworkHelper {
         String inboxUrl = APIClient.BASE_URL + INBOX_PATH;
 
         if (afterCursor != null) {
-            inboxUrl =  String.format(INBOX_PATH_AFTER_PARAMETER, inboxUrl, afterCursor);
+            inboxUrl = String.format(INBOX_PATH_AFTER_PARAMETER, inboxUrl, afterCursor);
         }
 
         Request request = new Request.Builder()
@@ -291,6 +318,43 @@ public final class MessageExchangeNetworkHelper {
         return null;
     }
 
+    public static void startInboxPolling() {
+        Log.e(TAG, "startInboxPolling: ");
+        //set a new Timer
+        if (mPollTimer != null) {
+            return;
+        }
+        mPollTimer = new Timer();
+        //initialize the TimerTask's job
+        initializeTimerTask(BreadApp.getBreadContext());
+
+        mPollTimer.schedule(mPollTimerTask, 0, DateUtils.SECOND_IN_MILLIS * POLL_PERIOD_SECONDS);
+    }
+
+    private static void initializeTimerTask(final Context context) {
+        mPollTimerTask = new TimerTask() {
+            public void run() {
+                //use a handler to run a toast that shows the current timestamp
+                mPollHandler.post(new Runnable() {
+                    public void run() {
+                        Log.e(TAG, "start inbox checker..");
+                        context.startService(MessageExchangeService.createIntent(context, MessageExchangeService.ACTION_RETRIEVE_MESSAGES));
+                    }
+                });
+            }
+        };
+    }
+
+    public static void stopInboxPolling() {
+        Log.e(TAG, "stopInboxPolling: ");
+        //stop the timer, if it's not already null
+        if (mPollTimer != null) {
+            mPollTimer.cancel();
+            mPollTimer = null;
+        }
+    }
+
+
     /**
      * Content-Type: application/json
      * {
@@ -307,6 +371,15 @@ public final class MessageExchangeNetworkHelper {
         } catch (Exception ignored) {
         }
         return null;
+    }
+
+    @Override
+    public void onLifeCycle(Lifecycle.Event event) {
+        if (event.name().equalsIgnoreCase(Lifecycle.Event.ON_START.toString())) {
+            startInboxPolling();
+        } else if (event.name().equalsIgnoreCase(Lifecycle.Event.ON_STOP.toString())) {
+            stopInboxPolling();
+        }
     }
 
     static class ErrorObject {

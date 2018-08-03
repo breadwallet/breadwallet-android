@@ -77,7 +77,7 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class WalletEthManager extends BaseEthereumWalletManager implements  BREthereumLightNode.Client,
+public class WalletEthManager extends BaseEthereumWalletManager implements BREthereumLightNode.Client,
         BREthereumLightNode.Listener {
     private static final String TAG = WalletEthManager.class.getSimpleName();
 
@@ -642,7 +642,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
     }
 
     protected void getEtherBalance(final BREthereumWallet wallet, final int wid, final String address, final int rid) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
+        if (BreadApp.isAppInBackground()) {
             return;
         }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -693,7 +693,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
                                    final String contractAddress,
                                    final String address,
                                    final int rid) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
+        if (BreadApp.isAppInBackground()) {
             Log.e(TAG, "getTokenBalance: App in background!");
             return;
         }
@@ -738,7 +738,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     @Override
     public void getGasPrice(final int wid, final int rid) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
+        if (BreadApp.isAppInBackground()) {
             return;
         }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -783,7 +783,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     @Override
     public void getGasEstimate(final int wid, final int tid, final String to, final String amount, final String data, final int rid) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
+        if (BreadApp.isAppInBackground()) {
             return;
         }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -831,7 +831,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     @Override
     public void submitTransaction(final int wid, final int tid, final String rawTransaction, final int rid) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
+        if (BreadApp.isAppInBackground()) {
             return;
         }
         if (Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
@@ -924,7 +924,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     @Override
     public void getTransactions(final String address, final int id) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
+        if (BreadApp.isAppInBackground()) {
             return;
         }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -1099,7 +1099,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     @Override
     public void getLogs(final String contract, final String address, final String event, final int rid) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
+        if (BreadApp.isAppInBackground()) {
             return;
         }
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
@@ -1162,7 +1162,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     @Override
     public void getBlockNumber(final int rid) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
+        if (BreadApp.isAppInBackground()) {
             return;
         }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
@@ -1327,7 +1327,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
 
     @Override
     public void getNonce(final String address, final int rid) {
-        if (BreadApp.isAppInBackground(BreadApp.getBreadContext())) {
+        if (BreadApp.isAppInBackground()) {
             return;
         }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {

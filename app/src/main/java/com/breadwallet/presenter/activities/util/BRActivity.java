@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.activities.util;
 
 import android.app.Activity;
+import android.arch.lifecycle.Lifecycle;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
@@ -10,6 +11,7 @@ import android.util.Log;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
+import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
@@ -57,7 +59,7 @@ import com.platform.HTTPServer;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgrounded {
+public class BRActivity extends FragmentActivity implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
     private static final String TAG = BRActivity.class.getName();
     public static final Point screenParametersPoint = new Point();
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
@@ -80,8 +82,6 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
     @Override
     protected void onStop() {
         super.onStop();
-        BreadApp.activityCounter.decrementAndGet();
-        BreadApp.onStop(this);
 
         //open back to HomeActivity if needed
         if (this instanceof WalletActivity)
@@ -95,7 +95,7 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
     protected void onResume() {
         init(this);
         super.onResume();
-        BreadApp.backgroundedTime = 0;
+        BreadApp.mBackgroundedTime = 0;
 
     }
 
@@ -283,8 +283,8 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
     private void lockIfNeeded(Activity app) {
         long start = System.currentTimeMillis();
         //lock wallet if 3 minutes passed
-        if (BreadApp.backgroundedTime != 0
-                && ((System.currentTimeMillis() - BreadApp.backgroundedTime) >= 180 * 1000)
+        if (BreadApp.mBackgroundedTime != 0
+                && ((System.currentTimeMillis() - BreadApp.mBackgroundedTime) >= 180 * 1000)
                 && !(app instanceof DisabledActivity)) {
             if (!BRKeyStore.getPinCode(app).isEmpty()) {
                 UiUtils.startBreadActivity(app, true);
@@ -294,12 +294,14 @@ public class BRActivity extends FragmentActivity implements BreadApp.OnAppBackgr
     }
 
     @Override
-    public void onBackgrounded() {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                HTTPServer.stopServer();
-            }
-        });
+    public void onLifeCycle(Lifecycle.Event event) {
+        if (event.name().equalsIgnoreCase(Lifecycle.Event.ON_STOP.toString())) {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    HTTPServer.stopServer();
+                }
+            });
+        }
     }
 }
