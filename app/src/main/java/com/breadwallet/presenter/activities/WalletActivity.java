@@ -253,14 +253,22 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             return;
         }
 
-        String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wm.getFiatExchangeRate(this));
-        String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wm.getFiatBalance(this));
+        BigDecimal bigExchangeRate = wm.getFiatExchangeRate(this);
+
+        String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), bigExchangeRate);
+        String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wm.getFiatExchangeRate(this));
         String cryptoBalance = CurrencyUtils.getFormattedAmount(this, wm.getIso(), wm.getCachedBalance(this), wm.getUiConfiguration().getMaxDecimalPlacesForUi());
 
         mCurrencyTitle.setText(wm.getName());
         mCurrencyPriceUsd.setText(String.format("%s per %s", fiatExchangeRate, wm.getIso()));
         mBalancePrimary.setText(fiatBalance);
         mBalanceSecondary.setText(cryptoBalance);
+
+        if (Utils.isNullOrZero(bigExchangeRate)) {
+            mCurrencyPriceUsd.setVisibility(View.INVISIBLE);
+        } else {
+            mCurrencyPriceUsd.setVisibility(View.VISIBLE);
+        }
 
         String startColor = wm.getUiConfiguration().getStartColor();
         String endColor = wm.getUiConfiguration().getEndColor();
