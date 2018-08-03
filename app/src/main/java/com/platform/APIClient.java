@@ -52,6 +52,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static com.breadwallet.tools.manager.BRApiManager.HEADER_WALLET_ID;
+
 import io.sigpipe.jbsdiff.InvalidHeaderException;
 import io.sigpipe.jbsdiff.ui.FileUI;
 import okhttp3.Interceptor;
@@ -283,7 +284,6 @@ public class APIClient {
         try {
             byte[] authKey = getCachedAuthKey();
             if (Utils.isNullOrEmpty(authKey)) {
-                BRReportsManager.reportBug(new IllegalArgumentException("Auth key is null!"));
                 Log.e(TAG, "signRequest: authkey is null");
                 return null;
             }
@@ -327,6 +327,9 @@ public class APIClient {
         Request request = newBuilder.build();
         if (withAuth) {
             AuthenticatedRequest authenticatedRequest = authenticateRequest(request);
+            if (authenticatedRequest == null) {
+                return null;
+            }
             request = authenticatedRequest.getRequest();
             if (request == null) {
                 return null;
