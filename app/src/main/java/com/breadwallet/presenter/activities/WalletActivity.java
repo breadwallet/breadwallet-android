@@ -227,9 +227,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         setPriceTags(cryptoPreferred, false);
 
-        //TODO: move to correct location.
-        // Check for messages.
-        startService(MessageExchangeService.createIntent(this, MessageExchangeService.ACTION_RETRIEVE_MESSAGES));
     }
 
     private void startSyncLoggerIfNeeded() {

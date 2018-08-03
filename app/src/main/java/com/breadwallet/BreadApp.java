@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
+import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
 import android.content.IntentFilter;
@@ -15,7 +16,7 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.breadwallet.app.ApplicationLifecycleObserver;
-import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.protocols.messageexchange.MessageExchangeNetworkHelper;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRApiManager;
@@ -25,6 +26,8 @@ import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.services.BRDFirebaseMessagingService;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
 
@@ -34,9 +37,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -67,18 +67,16 @@ import io.fabric.sdk.android.Fabric;
  * THE SOFTWARE.
  */
 
-public class BreadApp extends Application {
+public class BreadApp extends Application implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
     private static final String TAG = BreadApp.class.getName();
     public static int DISPLAY_HEIGHT_PX;
     public static int DISPLAY_WIDTH_PX;
     // host is the server(s) on which the API is hosted
     public static String HOST = "api.breadwallet.com";
-    private static List<OnAppBackgrounded> listeners;
-    private static Timer isBackgroundChecker;
-    public static AtomicInteger activityCounter = new AtomicInteger();
-    public static long backgroundedTime;
     private static Context mContext;
-    private ApplicationLifecycleObserver mObserver;
+    private static ApplicationLifecycleObserver mObserver;
+    public static long mBackgroundedTime;
+    public static Lifecycle.Event mLastApplicationEvent;
 
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
 
@@ -112,19 +110,6 @@ public class BreadApp extends Application {
                 .build();
         Fabric.with(fabric);
 
-//            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-//                    .detectDiskReads()
-//                    .detectDiskWrites()
-//                    .detectNetwork()   // or .detectAll() for all detectable problems
-//                    .penaltyLog()
-//                    .build());
-//            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-//                    .detectLeakedSqlLiteObjects()
-//                    .detectLeakedClosableObjects()
-//                    .penaltyLog()
-//                    .penaltyDeath()
-//                    .build());
-
         mContext = this;
 
         if (!Utils.isEmulatorOrDebug(this) && IS_ALPHA)
@@ -149,7 +134,10 @@ public class BreadApp extends Application {
         registerReceiver(InternetManager.getInstance(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
         mObserver = new ApplicationLifecycleObserver();
+        mObserver.addApplicationLifecycleListener(this);
+        mObserver.addApplicationLifecycleListener(MessageExchangeNetworkHelper.getInstance());
         ProcessLifecycleOwner.get().getLifecycle().addObserver(mObserver);
+
     }
 
 
@@ -245,48 +233,30 @@ public class BreadApp extends Application {
     }
 
     public static void setBreadContext(Activity app) {
-        BreadApp.activityCounter.incrementAndGet();
         currentActivity = app;
     }
 
-    public static synchronized void fireListeners() {
-        if (listeners == null) return;
-        List<OnAppBackgrounded> copy = new ArrayList<>(listeners);
-        for (OnAppBackgrounded lis : copy) if (lis != null) lis.onBackgrounded();
+    public static void addOnBackgroundedListener(ApplicationLifecycleObserver.ApplicationLifecycleListener listener) {
+        mObserver.addApplicationLifecycleListener(listener);
     }
 
-    public static void addOnBackgroundedListener(OnAppBackgrounded listener) {
-        if (listeners == null) listeners = new ArrayList<>();
-        if (listener != null && !listeners.contains(listener)) listeners.add(listener);
+    public static void removeOnBackgroundListener(ApplicationLifecycleObserver.ApplicationLifecycleListener listener) {
+        mObserver.removeApplicationLifecycleListener(listener);
     }
 
-    public static boolean isAppInBackground(final Context context) {
-        return context == null || activityCounter.get() <= 0;
+    public static boolean isAppInBackground() {
+        return mLastApplicationEvent.name().equalsIgnoreCase(Lifecycle.Event.ON_STOP.toString());
     }
 
-    //call onStop on every activity so
-    public static void onStop(final BRActivity app) {
-
-        if (isBackgroundChecker != null) isBackgroundChecker.cancel();
-        isBackgroundChecker = new Timer();
-        TimerTask backgroundCheck = new TimerTask() {
-            @Override
-            public void run() {
-                if (isAppInBackground(app)) {
-                    backgroundedTime = System.currentTimeMillis();
-                    Log.e(TAG, "App went in background!");
-                    // APP in background, do something
-                    fireListeners();
-                    isBackgroundChecker.cancel();
-                }
-                // APP in foreground, do something else
+    @Override
+    public void onLifeCycle(Lifecycle.Event event) {
+        mLastApplicationEvent = event;
+        if (event.name().equalsIgnoreCase(Lifecycle.Event.ON_STOP.toString())) {
+            mBackgroundedTime = System.currentTimeMillis();
+            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(this).getAllWallets(this));
+            for (BaseWalletManager w : list) {
+                w.disconnect(this);
             }
-        };
-
-        isBackgroundChecker.schedule(backgroundCheck, 500, 500);
-    }
-
-    public interface OnAppBackgrounded {
-        void onBackgrounded();
+        }
     }
 }
