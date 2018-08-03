@@ -145,7 +145,7 @@ public class BRApiManager {
     @WorkerThread
     private void updateData(final Context context) {
 
-        if (BreadApp.isAppInBackground(context)) {
+        if (BreadApp.isAppInBackground()) {
             Log.e(TAG, "doInBackground: Stopping timer, no activity on.");
             stopTimerTask();
             return;

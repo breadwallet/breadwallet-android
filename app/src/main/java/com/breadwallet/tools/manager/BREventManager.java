@@ -1,11 +1,13 @@
 package com.breadwallet.tools.manager;
 
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.tools.util.Utils;
 import com.platform.APIClient;
 
@@ -53,7 +55,7 @@ import static com.platform.APIClient.BASE_URL;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BREventManager implements BreadApp.OnAppBackgrounded {
+public class BREventManager implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
     private static final String TAG = BREventManager.class.getName();
 
     private static BREventManager instance;
@@ -80,13 +82,6 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
         Log.d(TAG, "pushEvent: " + eventName);
         Event event = new Event(sessionId, System.currentTimeMillis() * 1000, eventName, null);
         events.add(event);
-    }
-
-    @Override
-    public void onBackgrounded() {
-        Log.e(TAG, "onBackgrounded: ");
-        saveEvents();
-//        pushToServer();
     }
 
     private void saveEvents() {
@@ -247,6 +242,14 @@ public class BREventManager implements BreadApp.OnAppBackgrounded {
             Log.e("TAG", "Error in Reading: " + e.getLocalizedMessage());
             return null;
         }
+    }
+
+    @Override
+    public void onLifeCycle(Lifecycle.Event event) {
+        if (event.name().equalsIgnoreCase(Lifecycle.Event.ON_STOP.toString())) {
+            saveEvents();
+        }
+
     }
 
     public class Event {
