@@ -120,7 +120,7 @@ public final class BRDFirebaseMessagingService extends FirebaseMessagingService 
             notificationManager.notify(notificationId, notificationBuilder.build());
 
             // Trigger an inbox retrieval to get new messages
-            startService(MessageExchangeService.createIntent(this, MessageExchangeService.ACTION_RETRIEVE_MESSAGES));
+            MessageExchangeService.enqueueWork(this, MessageExchangeService.createIntent(this, MessageExchangeService.ACTION_RETRIEVE_MESSAGES));
 
         }
     }

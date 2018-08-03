@@ -51,7 +51,7 @@ public final class InputDataManager {
             BRBitId.signBitID(context, result, null);
         } else if (isWalletPair(result)) {
             PairingMetaData pairingMetaData = new PairingMetaData(result);
-            context.startService(MessageExchangeService.createIntent(
+            MessageExchangeService.enqueueWork(context, MessageExchangeService.createIntent(
                     context,
                     MessageExchangeService.ACTION_REQUEST_TO_PAIR,
                     pairingMetaData));
