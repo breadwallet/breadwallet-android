@@ -139,7 +139,7 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
         try {
             ErrorObject errorObject = getError(response.getBodyText());
             if (errorObject != null) {
-                BRDialog.showSimpleDialog(context, "fetchInbox: ", errorObject.mMessage);
+                Log.e(TAG, "fetchInbox: " + errorObject.mMessage);
                 return null;
             }
             JSONObject fullObj = new JSONObject(response.getBodyText());
@@ -192,10 +192,10 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
         APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
         ErrorObject errorObject = getError(response.getBodyText());
         if (errorObject != null) {
-            BRDialog.showSimpleDialog(context, "sendEnvelope: ", errorObject.mMessage);
+            Log.e(TAG, "sendEnvelope: " + errorObject.mMessage);
         }
         if (!response.isSuccessful()) {
-            BRDialog.showSimpleDialog(context, "sendEnvelope:", String.valueOf(response.getCode()));
+            Log.e(TAG, "sendEnvelope:" + String.valueOf(response.getCode()));
         }
 
     }
@@ -215,10 +215,10 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
         APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
         ErrorObject errorObject = getError(response.getBodyText());
         if (errorObject != null) {
-            BRDialog.showSimpleDialog(context, "sendAck: err:", errorObject.mMessage);
+            Log.e(TAG, "sendAck: err:" + errorObject.mMessage);
         }
         if (!response.isSuccessful()) {
-            BRDialog.showSimpleDialog(context, "sendAck: code:", String.valueOf(response.getCode()));
+            Log.e(TAG, "sendAck: code:" + String.valueOf(response.getCode()));
         }
     }
 
@@ -234,12 +234,11 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
         APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
         ErrorObject errorObject = getError(response.getBodyText());
         if (errorObject != null) {
-            BRDialog.showSimpleDialog(context, "sendAssociatedKey: err:", errorObject.mMessage);
+            Log.e(TAG, "sendAssociatedKey: err:" + errorObject.mMessage);
 
         }
         if (!response.isSuccessful()) {
             Log.e(TAG, "sendAssociatedKey: code:" + response.getCode());
-            BRDialog.showSimpleDialog(context, "sendAssociatedKey: code:", String.valueOf(response.getCode()));
         }
 
     }
@@ -254,10 +253,10 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
         Log.e(TAG, "getAssociatedKeys: " + response.getCode() + ", " + response.getBodyText());
         ErrorObject errorObject = getError(response.getBodyText());
         if (errorObject != null) {
-            BRDialog.showSimpleDialog(context, "sendAssociatedKey: err:", errorObject.mMessage);
+            Log.e(TAG, "sendAssociatedKey: err:" + errorObject.mMessage);
         }
         if (!response.isSuccessful()) {
-            BRDialog.showSimpleDialog(context, "sendAssociatedKey: code:", String.valueOf(response.getCode()));
+            Log.e(TAG, "sendAssociatedKey: code:" + String.valueOf(response.getCode()));
         }
 
     }
@@ -271,8 +270,7 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
         APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
         ErrorObject errorObject = getError(response.getBodyText());
         if (errorObject != null) {
-            Log.e(TAG, "getService: " + errorObject.mMessage);
-            BRDialog.showSimpleDialog(context, "getService error:", errorObject.mMessage);
+            Log.e(TAG, "getService error:" + errorObject.mMessage);
             return null;
         }
         try {
