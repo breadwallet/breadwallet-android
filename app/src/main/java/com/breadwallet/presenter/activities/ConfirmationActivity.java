@@ -55,8 +55,6 @@ public class ConfirmationActivity extends FragmentActivity {
         final Parcelable metaData = getIntent().getParcelableExtra(MessageExchangeService.EXTRA_METADATA);
         String action = getIntent().getAction();
 
-        BRButton positiveButton = findViewById(R.id.positive_button);
-        BRButton negativeButton = findViewById(R.id.negative_button);
         View headerView = findViewById(R.id.header);
 
         if (!Utils.isNullOrEmpty(action) && action == MessageExchangeService.ACTION_GET_USER_CONFIRMATION) {
@@ -69,20 +67,6 @@ public class ConfirmationActivity extends FragmentActivity {
                     getFragmentManager().beginTransaction().add(R.id.fragment_container, linkWalletFragment).commit();
                     Log.d(TAG, "ConfirmationType LINK");
 
-                    positiveButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            handleLinkApproved();
-                        }
-                    });
-
-                    negativeButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            handleLinkDeclined();
-                        }
-                    });
-
                 }
                 // Handles payment and call requests.
                 else if (metaData instanceof RequestMetaData) {
@@ -92,22 +76,6 @@ public class ConfirmationActivity extends FragmentActivity {
                     FragmentPaymentConfirmation paymentConfirmationFragment = FragmentPaymentConfirmation.newInstance((RequestMetaData) metaData);
                     getFragmentManager().beginTransaction().add(R.id.fragment_container, paymentConfirmationFragment).commit();
 
-                    positiveButton.setText(getResources().getString(R.string.Button_buy));
-                    positiveButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            handlePaymentApproved((RequestMetaData) metaData);
-                        }
-                    });
-
-                    negativeButton.setText(getResources().getString(R.string.Button_cancel));
-                    negativeButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            handlePaymentCanceled((RequestMetaData) metaData);
-                        }
-                    });
-
                 } else {
                     Log.d(TAG, "Found unknown metadata type!");
                 }
@@ -115,27 +83,4 @@ public class ConfirmationActivity extends FragmentActivity {
         }
     }
 
-    public void handleLinkDeclined() {
-        Log.d(TAG, "handleLinkDeclined()");
-        MessageExchangeService.enqueueWork(this,MessageExchangeService.createIntent(this, false));
-        finish();
-    }
-
-    public void handleLinkApproved() {
-        Log.d(TAG, "handleLinkApproved()");
-        MessageExchangeService.enqueueWork(this, MessageExchangeService.createIntent(this, true));
-        finish();
-    }
-
-    private void handlePaymentApproved(RequestMetaData metaData) {
-        Log.d(TAG, "handlePaymentApproved()");
-        MessageExchangeService.enqueueWork(this, MessageExchangeService.createIntent(this, metaData, true));
-        finish();
-    }
-
-    private void handlePaymentCanceled(RequestMetaData metaData) {
-        Log.d(TAG, "handlePaymentCanceled()");
-        MessageExchangeService.enqueueWork(this, MessageExchangeService.createIntent(this, metaData, false));
-        finish();
-    }
 }
