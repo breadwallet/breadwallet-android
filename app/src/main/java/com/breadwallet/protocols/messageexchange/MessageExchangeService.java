@@ -257,7 +257,7 @@ public final class MessageExchangeService extends JobIntentService {
      */
     private void retrieveInboxEntries(Context context) {
         String lastProcessedCursor = getLastProcessedCursor(); //TODO: remove
-        List<InboxEntry> inboxEntries = MessageExchangeNetworkHelper.fetchInbox(context, getLastProcessedCursor());
+        List<InboxEntry> inboxEntries = MessageExchangeNetworkHelper.fetchInbox(context, lastProcessedCursor);
         if (inboxEntries == null) {
             Log.e(TAG, "retrieveInboxEntries: inboxEntries is null");
             return;
@@ -281,14 +281,16 @@ public final class MessageExchangeService extends JobIntentService {
                     }
                 }
                 String cursor = inboxEntry.getCursor();
-
+                cursors.add(cursor);
                 //TODO: temp hack for server bug
+                Log.e(TAG, "retrieveInboxEntries: cursor: " + cursor);
+                Log.e(TAG, "retrieveInboxEntries: lastProcessedCursor: " + lastProcessedCursor);
                 if (lastProcessedCursor != null && lastProcessedCursor.equals(cursor)) {
                     Log.e(TAG, "Received last cursor message when not expecting it. ");
                 } else {
                     if (verifyEnvelopeSignature(envelope)) {
                         processEnvelope(envelope);
-                        cursors.add(cursor);
+
                     } else {
                         Log.e(TAG, "retrieveInboxEntries: signature verification failed. id: " + cursor);
                     }
@@ -450,7 +452,10 @@ public final class MessageExchangeService extends JobIntentService {
 
 
     private void setLastProcessedCursor(String lastProcessedCursor) {
-        KVStoreManager.putLastCursor(this, lastProcessedCursor);
+        Log.e(TAG, "setLastProcessedCursor: " + lastProcessedCursor);
+        if (!Utils.isNullOrEmpty(lastProcessedCursor)) {
+            KVStoreManager.putLastCursor(this, lastProcessedCursor);
+        }
     }
 
     /**

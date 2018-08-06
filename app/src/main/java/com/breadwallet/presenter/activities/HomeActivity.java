@@ -177,13 +177,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     }
 
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        //since we have one instance of activity at all times, this is needed to know when a new intent called upon this activity
-        DeepLinkingManager.handleUrlClick(this, intent);
-    }
-
     public void hidePrompt() {
         mPromptCard.setVisibility(View.GONE);
         Log.e(TAG, "hidePrompt: " + mCurrentPrompt);
@@ -244,7 +237,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         });
 
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
-        DeepLinkingManager.handleUrlClick(this, getIntent());
     }
 
     private void addCccWalletIfNeeded() {

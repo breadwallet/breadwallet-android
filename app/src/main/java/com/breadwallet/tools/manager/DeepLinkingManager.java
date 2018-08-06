@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
 
@@ -34,17 +35,14 @@ import com.breadwallet.wallet.util.CryptoUriParser;
  */
 public class DeepLinkingManager {
     private static final String TAG = DeepLinkingManager.class.getSimpleName();
-    public static final String SCHEME_BITCOIN = "bitcoin";
-    public static final String SCHEME_BREAD = "bread";
-    public static final String SCHEME_BCH = "bitcoincash";
-    public static final String SCHEME_BCH_TESTNET = "bchtest";
     public static final String SCHEME_HTTPS = "https";
 
     private DeepLinkingManager() {
     }
 
-    public static void handleUrlClick(Context context, Intent intent) {
-        Uri data = intent.getData();
+    public static void handleUrlClick(final Context context, Intent intent) {
+        final Uri data = intent.getData();
+        intent.setData(null);
         Log.e(TAG, "handleUrlClick: " + data);
         if (data != null && !data.toString().isEmpty()) {
             //handle external click with crypto scheme
@@ -53,6 +51,7 @@ public class DeepLinkingManager {
             } else {
                 CryptoUriParser.processRequest(context, data.toString(), WalletsMaster.getInstance(context).getCurrentWallet(context));
             }
+
         }
     }
 }

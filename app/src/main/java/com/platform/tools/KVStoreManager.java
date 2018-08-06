@@ -293,7 +293,7 @@ public class KVStoreManager {
             Log.e(TAG, "putLastCursor: FAILED: result is empty");
             return;
         }
-        Log.e(TAG, "putLastCursor: " + KEY_CURSOR);
+        Log.e(TAG, "putLastCursor: " + lastCursor);
         CompletionObject completionObject = setData(app, result, KEY_CURSOR);
         if (completionObject != null && completionObject.err != null) {
             Log.e(TAG, "putLastCursor: Error setting value for key: " + KEY_CURSOR + ", err: " + completionObject.err);
@@ -619,7 +619,6 @@ public class KVStoreManager {
         return decompressed;
 
     }
-
 
     //null means no change
     private static String getFinalValue(String newVal, String oldVal) {

@@ -177,6 +177,7 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        Log.e(TAG, "fetchInbox: " + inboxEntries.size());
         return inboxEntries;
     }
 
