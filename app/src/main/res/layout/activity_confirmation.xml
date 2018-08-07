@@ -23,47 +23,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="@string/PaymentConfirmation.title"
+                android:text="@string/PaymentConfirmation.headerTitle"
                 android:textSize="18sp"
                 app:customTFont="CircularPro-Bold.otf" />
         </RelativeLayout>
 
-
-        <LinearLayout
-            android:id="@+id/buttons_layout"
-            android:layout_width="match_parent"
-            android:layout_height="70dp"
-            android:background="@color/primary_background"
-            android:orientation="horizontal"
-            android:weightSum="2"
-            app:layout_constraintBottom_toBottomOf="parent">
-
-
-            <com.breadwallet.presenter.customviews.BRButton
-                android:id="@+id/negative_button"
-                android:layout_width="200dp"
-                android:layout_height="60dp"
-                android:layout_marginEnd="6dp"
-                android:layout_marginStart="12dp"
-                android:layout_marginTop="10dp"
-                android:layout_weight="1"
-                android:text="@string/Crowdsale.decline"
-                app:buttonType="8"
-                app:isBreadButton="true" />
-
-            <com.breadwallet.presenter.customviews.BRButton
-                android:id="@+id/positive_button"
-                android:layout_width="200dp"
-                android:layout_height="60dp"
-                android:layout_marginEnd="12dp"
-                android:layout_marginTop="10dp"
-                android:layout_toEndOf="@id/negative_button"
-                android:layout_weight="1"
-                android:text="@string/BitID.approve"
-                app:buttonType="9"
-                app:isBreadButton="true" />
-
-        </LinearLayout>
     </android.support.constraint.ConstraintLayout>
 
 </FrameLayout>
