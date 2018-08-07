@@ -1185,11 +1185,11 @@ Si necesitas ayuda, busca el (?) en la parte superior derecha de la mayoría de 
   <!-- Payment confirmation view title -->
   <string name="PaymentConfirmation.title">Confirmación</string>
   <!-- Eg. Send 1.0Eth to purchase CCC -->
-  <string name="PaymentConfirmation.amountText">Envía %1$@ para comprar %2$@</string>
+  <string name="PaymentConfirmation.amountText">Envía %1$s para comprar %2$s</string>
   <!-- Service capabilities description -->
-  <string name="EME.permissions.accountRequest">Solicitar %1$@ información de la cuenta</string>
+  <string name="EME.permissions.accountRequest">Solicitar %1$s información de la cuenta</string>
   <!-- Service capabilities description -->
-  <string name="EME.permissions.callRequest">Solicitar %1$@ llamada de contrato inteligente</string>
+  <string name="EME.permissions.callRequest">Solicitar %1$s llamada de contrato inteligente</string>
   <!-- Service capabilities description -->
-  <string name="EME.permissions.paymentRequest">Solicitar %1$@ pago</string>
+  <string name="EME.permissions.paymentRequest">Solicitar %1$s pago</string>
 </resources>

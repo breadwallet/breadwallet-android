@@ -1186,11 +1186,11 @@
   <!-- Payment confirmation view title -->
   <string name="PaymentConfirmation.title">확인</string>
   <!-- Eg. Send 1.0Eth to purchase CCC -->
-  <string name="PaymentConfirmation.amountText">%2$@ 구매를 위해 %1$@ 전송</string>
+  <string name="PaymentConfirmation.amountText">%2$s 구매를 위해 %1$s 전송</string>
   <!-- Service capabilities description -->
-  <string name="EME.permissions.accountRequest">%1$@ 계정 정보를 요청합니다</string>
+  <string name="EME.permissions.accountRequest">%1$s 계정 정보를 요청합니다</string>
   <!-- Service capabilities description -->
-  <string name="EME.permissions.callRequest">%1$@ 스마트계약 콜을 요청합니다</string>
+  <string name="EME.permissions.callRequest">%1$s 스마트계약 콜을 요청합니다</string>
   <!-- Service capabilities description -->
-  <string name="EME.permissions.paymentRequest">%1$@ 계정 정보를 요청합니다</string>
+  <string name="EME.permissions.paymentRequest">%1$s 계정 정보를 요청합니다</string>
 </resources>
