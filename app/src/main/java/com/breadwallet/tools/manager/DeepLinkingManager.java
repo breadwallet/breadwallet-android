@@ -1,13 +1,20 @@
 package com.breadwallet.tools.manager;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.util.Log;
 
+import com.breadwallet.R;
+import com.breadwallet.presenter.activities.camera.CameraActivity;
+import com.breadwallet.presenter.activities.intro.IntroActivity;
+import com.breadwallet.presenter.activities.intro.RecoverActivity;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 /**
  * BreadWallet
@@ -40,16 +47,22 @@ public class DeepLinkingManager {
     private DeepLinkingManager() {
     }
 
-    public static void handleUrlClick(final Context context, Intent intent) {
+    public static void handleUrlClick(final Activity activity, Intent intent) {
+        //Go to intro screen if the wallet is not create yet
+        if (WalletEthManager.getInstance(activity) == null) {
+            Intent introIntent = new Intent(activity, IntroActivity.class);
+            activity.startActivity(introIntent);
+            return;
+        }
         final Uri data = intent.getData();
         intent.setData(null);
         Log.e(TAG, "handleUrlClick: " + data);
         if (data != null && !data.toString().isEmpty()) {
             //handle external click with crypto scheme
             if (data.getScheme().equalsIgnoreCase(SCHEME_HTTPS)) {
-                InputDataManager.processQrResult(context, data.toString());
+                InputDataManager.processQrResult(activity, data.toString());
             } else {
-                CryptoUriParser.processRequest(context, data.toString(), WalletsMaster.getInstance(context).getCurrentWallet(context));
+                CryptoUriParser.processRequest(activity, data.toString(), WalletsMaster.getInstance(activity).getCurrentWallet(activity));
             }
 
         }
