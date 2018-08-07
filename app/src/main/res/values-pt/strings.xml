@@ -224,16 +224,10 @@
   <string name="FeeSelector.title">Velocidade de processamento</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">Administrador</string>
-  <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">Comprar Bitcoins</string>
-  <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">Menu</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">Carteiras</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">ativos totais</string>
-  <!-- (Tap here to) trade (your assets for other assets) -->
-  <string name="HomeScreen.trade">Comércio</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">A verificar o saldo da chave privada...</string>
   <!-- Sweep private key confirmation message -->
@@ -281,9 +275,11 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Ignorar</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">SEGURANÇA DO DISPOSITIVO COMPROMETIDA\n Qualquer aplicação com \"jailbreak\" consegue aceder aos seus dados de porta-chaves e roubar as suas bitcoins! Apague esta carteira imediatamente e restaure-a num dispositivo seguro.</string>
+  <string name="JailbreakWarnings.messageWithBalance">SEGURANÇA DO DISPOSITIVO COMPROMETIDA
+ Qualquer aplicação com \"jailbreak\" consegue aceder aos seus dados de porta-chaves e roubar as suas bitcoins! Apague esta carteira imediatamente e restaure-a num dispositivo seguro.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">SEGURANÇA DO DISPOSITIVO COMPROMETIDA\n Qualquer aplicação com \"jailbreak\" consegue aceder aos seus dados de porta-chaves da Bread e roubar as suas bitcoins. Por favor, use a Bread somente num dispositivo não desbloqueado.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">SEGURANÇA DO DISPOSITIVO COMPROMETIDA
+ Qualquer aplicação com \"jailbreak\" consegue aceder aos seus dados de porta-chaves da Bread e roubar as suas bitcoins. Por favor, use a Bread somente num dispositivo não desbloqueado.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">AVISO</string>
   <!-- Wipe wallet button -->
@@ -304,10 +300,6 @@
   <string name="MenuButton.addWallet">Adicionar Carteira</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Bloquear Carteira</string>
-  <!-- (Click here to) manage (your list of) wallets -->
-  <string name="MenuButton.manageWallets">Gerir Carteiras</string>
-  <!-- (press here to) scan (a) QR code -->
-  <string name="MenuButton.scan">Escanear o código QR</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">Centro de Segurança</string>
   <!-- Menu button title -->
@@ -596,8 +588,6 @@
   <string name="Settings.manage">Gerir</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">Notificações</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">Outro</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Preferências</string>
   <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -627,7 +617,9 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Escrever Novamente Chave de Papel</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">A chave de papel é a única forma de restaurar a sua Bread se o seu telefone for perdido, roubado, partido ou atualizado.\n\nVamos mostrar-lhe uma lista de palavras para escrever numa folha de papel e manter em segurança.</string>
+  <string name="StartPaperPhrase.body">A chave de papel é a única forma de restaurar a sua Bread se o seu telefone for perdido, roubado, partido ou atualizado.
+
+Vamos mostrar-lhe uma lista de palavras para escrever numa folha de papel e manter em segurança.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Escrever Chave de Papel</string>
   <!-- Argument is date -->
@@ -640,14 +632,10 @@
   <string name="StartViewController.recoverButton">Recuperar Carteira</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Conectando</string>
-  <!-- The sync has failed (to complete) -->
-  <string name="SyncingView.failed">A sincronização falhou</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">A Sincronizar</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Tentar Novamente</string>
-  <!-- "eg. Synced through <Jan 12, 2015> -->
-  <string name="SyncingView.syncedThrough">Sincronizado por %1$s</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">Sincronizando</string>
   <!-- 6 d (6 days) -->
@@ -899,7 +887,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">A Atualizar...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">As Breadwallets mudaram de nome para Bread, com um visual completamente novo e algumas características novas. \n\nSe precisar de ajuda, procure o (?) no canto superior direito da maioria das telas.</string>
+  <string name="Welcome.body">As Breadwallets mudaram de nome para Bread, com um visual completamente novo e algumas características novas. 
+
+Se precisar de ajuda, procure o (?) no canto superior direito da maioria das telas.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Bem-vindo ao Bread!</string>
   <!-- Wipe wallet alert message -->
@@ -930,4 +920,276 @@
   <string name="WritePaperPhrase.previous">Anterior</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d de %2$d</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">Outro</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Gerir Carteiras</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Menu</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Comprar Bitcoins</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">Comércio</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">Escanear o código QR</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">A sincronização falhou</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">Sincronizado por %1$s</string>
+  <string name="account.oauth.button.continue_email">Enviar a Ligação para o E-mail</string>
+  <string name="account.oauth.button.done">OK!</string>
+  <string name="account.oauth.instructions.continue">OK. Verifique o seu e-mail e siga as instruções.  Assim que tiver acabado, clique novamente em \"Iniciar Sessão\" e o problema já deve estar resolvido!</string>
+  <string name="account.oauth.label.start">Parece que está a tentar iniciar sessão com uma conta existente. Vamos enviar-lhe um e-mail. Abra a ligação que o mesmo contém, inicie uma sessão, autorize-nos e continue abaixo.</string>
+  <string name="account.oauth.error.fail">Falha na Autorização</string>
+  <string name="datetime.duration.day">dia</string>
+  <string name="datetime.duration.week">semana</string>
+  <string name="datetime.duration.month">mês</string>
+  <!-- Account error message -->
+  <string name="exchange.account_picker.error.empty">Nenhumas contas encontradas.</string>
+  <string name="exchange.label.empty_list">Infelizmente, neste momento, não há serviços disponíveis na sua área. </string>
+  <!-- Get started with Glidera -->
+  <string name="exchange.glidera.label.get_started">Começar com o {serviceName}</string>
+  <!-- Glidera message - choose bank -->
+  <string name="exchange.glidera.label.select_bank">Selecione o seu banco</string>
+  <!-- Agree to Glidera terms of service -->
+  <string name="exchange.glidera.label.tos_agree">Ao clicar abaixo, concorda com os Termos do Serviço do {serviceName}</string>
+  <!-- Glidera message - trying to do too many purchases at the same time -->
+  <string name="exchange.glidera.notice.after_first_transfer">Antes de poder efetuar outra compra, poderá ter de aguardar que a sua compra atual seja aprovada.</string>
+  <!-- Glidera message - trying to do too many purchases at the same time -->
+  <string name="exchange.glidera.notice.before_first_transfer">Não poderá fazer novas compras até que a sua primeira compra tenha sido aprovada.</string>
+  <!-- Glidera message - your order is in process -->
+  <string name="exchange.glidera.notice.details_waiting">Os seus dados pessoais estão a ser revistos. Isso pode demorar alguns dias.</string>
+  <!-- Glidera message - your order is in process -->
+  <string name="exchange.glidera.notice.id_verification_waiting">Os seus documentos estão a ser revistos. Isso pode demorar alguns dias.</string>
+  <!-- Glidera message - you’re registered with Glidera -->
+  <string name="exchange.glidera.notice.registered">Está registado no {service}.</string>
+  <string name="exchange.glidera.title.account_details">Dados da Conta</string>
+  <string name="exchange.glidera.title.bank_login">Início de Sessão no Banco</string>
+  <!-- Glidera message - picture of your ID (driver’s license or passport) -->
+  <string name="exchange.glidera.title.id_verification">Imagem de ID</string>
+  <!-- Glidera message - connect a bank account -->
+  <string name="exchange.glidera.title.link_account">Relacionar Conta</string>
+  <string name="exchange.glidera.title.preferences">Preferências da Conta</string>
+  <string name="exchange.glidera.title.registration">Registo</string>
+  <string name="exchange.glidera.notice.settings_trouble">Está a ter dificuldades com as definições acima?</string>
+  <!-- Glidera message - tap to go directly to their website -->
+  <string name="exchange.glidera.notice.visit_directly">Toque abaixo para visitar o {serviceName} diretamente.</string>
+  <!-- Glidera message - tap to out their settings -->
+  <string name="exchange.glidera.button.open_settings">Abrir as Definições do Glidera</string>
+  <string name="exchange.cash.button.buy">Comprar Bitcoin</string>
+  <!-- Check the status of your order -->
+  <string name="exchange.cash.button.status">Verificar o Estado</string>
+  <!-- Order details - how much, exchange rate -->
+  <string name="exchange.crypto.memo">Vendido por {toAmount}{toCurrency} à taxa de {rate}{toCurrency} por {fromCurrency}</string>
+  <string name="exchange.error.max_order">Máximo do pedido: {amount}</string>
+  <string name="exchange.error.min_order">Mínimo do pedido: {amount}</string>
+  <string name="exchange.geo.button.check_again">Verificar Novamente</string>
+  <string name="exchange.geo.button.enable">Ativar serviços de localização?</string>
+  <string name="exchange.geo.error.enable_in_settings">Tem de ativar os serviços de localização do seu telemóvel. Agradecemos que vá às suas Definições do Sistema e ative os Serviços de Localização.</string>
+  <string name="exchange.history.label.btc_price">Preço do BTC no momento da compra:</string>
+  <string name="exchange.history.label.price">Preço do {currency} no momento da compra:</string>
+  <string name="exchange.history.label.delivery_date_label">Data de Entrega:</string>
+  <string name="exchange.history.label.identifier">Identificador:</string>
+  <string name="exchange.history.label.service_label">Serviço:</string>
+  <string name="exchange.history.label.state.complete">Concluído</string>
+  <string name="exchange.history.label.state.processing">Disponível Em</string>
+  <string name="exchange.history.label.status_label">Estado:</string>
+  <string name="exchange.history.label.status.complete">Concluído</string>
+  <string name="exchange.history.label.status.failed">Falhou</string>
+  <string name="exchange.history.label.status.processing">Em Curso</string>
+  <string name="exchange.history.label.total">Preço total pago:</string>
+  <string name="exchange.history.title">Histórico de Câmbios</string>
+  <string name="exchange.label.provider">Serviços Prestados por {name}</string>
+  <string name="exchange.label.daily_and_monthly_limits">O seu limite é de {daily}/dia e {monthly}/mês.</string>
+  <string name="exchange.label.daily_limit">Hoje, pode comprar até {daily}.</string>
+  <string name="exchange.label.delivered">Entrega</string>
+  <string name="exchange.label.empty_history">Nenhumas transações. Compre alguma moeda!</string>
+  <string name="exchange.label.fees">Comissões</string>
+  <string name="exchange.label.limit.daily">Utilização diária: {consumed} de {amount}.</string>
+  <string name="exchange.label.limit.weekly">Utilização semanal: {consumed} of {amount}.</string>
+  <string name="exchange.label.limits">Limites</string>
+  <string name="exchange.label.link.purchase">Compra</string>
+  <string name="exchange.label.loading_limits">A carregar os seus limites...</string>
+  <!-- Order limit exceeded -->
+  <string name="exchange.label.zero_limits">Atingiu o seu limite de compras. Agradecemos que tente de novo mais tarde.</string>
+  <!-- Cannot buy yet, order in progress or ID verification required -->
+  <string name="exchange.label.zero_limits_and_no_history">Ainda não está autorizado a comprar bitcoin.  Verifique o separador das definições e contacte {email}.</string>
+  <string name="exchange.unsupported.title">Sem suporte neste momento.</string>
+  <string name="exchange.unsupported.paragraph.buy">A compra deste ativo ainda não é suportada. Estamos constantemente a adicionar suporte para mais ativos, pelo que agradecemos que volte a verificar mais tarde!</string>
+  <string name="exchange.unsupported.paragraph.sell">A compra deste ativo ainda não é suportada. Estamos constantemente a adicionar suporte para mais ativos, pelo que agradecemos que volte a verificar mais tarde!</string>
+  <string name="empty.title">Sem ativos.</string>
+  <string name="empty.paragraph.buy">Não tem quaisquer ativos para negociar. Comece por comprar alguns Bitcoin!</string>
+  <string name="exchange.libx.label.refreshing_token">A atualizar...</string>
+  <string name="exchange.libx.label.show_token">Token LibX: {token}</string>
+  <string name="exchange.libx.label.token_expires">Validade: {time}</string>
+  <string name="exchange.libx.label.token_fees">Comissões: {amount}</string>
+  <string name="exchange.libx.label.token_rate">Taxa: {amount}</string>
+  <string name="exchange.libx.label.token_sent">Enviado: {amount}</string>
+  <string name="exchange.libx.label.token_status">Estado:</string>
+  <string name="exchange.libx.notice.pin_done">Boa! Já está</string>
+  <string name="exchange.libx.notice.redeem_another">Resgatar outro</string>
+  <string name="exchange.libx.title.pin">PIN de Resgate da LibertyX</string>
+  <string name="exchange.libx.title.status">Estado da LibertyX</string>
+  <string name="exchange.libx.title.token">Criação de Token da LibertyX</string>
+  <string name="exchange.slogans.bank">Relacione a sua conta bancária para comprar e vender bitcoin utilizando a corretora premiada e na qual confiam as melhores carteiras a nível mundial.</string>
+  <string name="exchange.title.bank">Conta Bancária</string>
+  <string name="exchange.title.buy_bitcoin">Comprar Bitcoin</string>
+  <string name="exchange.title.buy_currency">Comprar {currency}</string>
+  <string name="exchange.title.buy_amount_in">Comprar {amount} {currency}</string>
+  <string name="exchange.title.buy_amount">Comprar {amount}</string>
+  <string name="exchange.title.buy_service">Escolha o método de pagamento.</string>
+  <string name="exchange.title.trade">Trocar {from} por {to}</string>
+  <string name="exchange.title.sell_bitcoin">Vender Bitcoin</string>
+  <string name="exchange.title.sell_currency">Vender {currency}</string>
+  <string name="exchange.title.sell_amount_in">Trocar {currency} Por:</string>
+  <string name="exchange.title.sell_amount">Vender {amount}</string>
+  <string name="exchange.title.sell_service">Por que outra moeda gostaria de trocar {currency}?</string>
+  <string name="exchange.title.cash">Dinheiro</string>
+  <string name="exchange.title.credit">Cartão de Crédito</string>
+  <string name="exchange.title.history">Histórico</string>
+  <string name="exchange.title.settings">Definições</string>
+  <string name="exchange.title.exchange">Câmbio de Criptomoeda</string>
+  <string name="exchange.title.confirm_buy">Confirmar a Compra</string>
+  <string name="exchange.title.confirm_trade">Confirmar a Transação</string>
+  <string name="exchange.label.in_currency">de {currency}</string>
+  <string name="exchange.title.choose">Como é que deseja pagar?</string>
+  <!-- Over the available order limit -->
+  <string name="exchange.source.title.maximum">Máximo Excedido</string>
+  <string name="exchange.source.paragraph.maximum">Pode comprar até {maximum} utilizando o seu saldo de {source}. Gostaria de alterar o montante da sua compra para {maximum}?</string>
+  <!-- Under the available order limit -->
+  <string name="exchange.source.title.minimum">O montante é inferior ao Mínimo</string>
+  <string name="exchange.source.paragraph.minimum">Tem de comprar pelo menos {minimum} com {source}. Gostaria de alterar o montante da sua compra para {minimum}?</string>
+  <string name="exchange.source.title.insufficient">Saldo Insuficiente</string>
+  <string name="exchange.source.paragraph.insufficient">Não tem {source} suficientes para cobrir a compra mínima de {minimum}. Compre mais {source} ou utilize outro método de pagamento.</string>
+  <string name="exchange.source.title.toolow">Saldo Insuficiente</string>
+  <!-- Over the available order limit -->
+  <string name="exchange.destination.title.maximum">Máximo Excedido</string>
+  <string name="exchange.destination.paragraph.maximum">Pode vender até {maximum} utilizando {destination}. Gostaria de alterar o seu montante para {maximum}?</string>
+  <string name="exchange.destination.title.minimum">O montante é inferior ao Mínimo</string>
+  <string name="exchange.destination.paragraph.minimum">Tem de vender pelo menos {minimum} para {destination}. Gostaria de alterar o montante da sua compra para {minimum}?</string>
+  <string name="exchange.destination.title.insufficient">Saldo Insuficiente</string>
+  <string name="exchange.destination.paragraph.insufficient">Não tem {destination} suficientes para cobrir o mínimo de {minimum}. Compre mais {source} ou utilize outro método de pagamento.</string>
+  <string name="exchange.destination.title.toolow">Saldo Insuficiente</string>
+  <string name="field.address.placeholder.line_1">Endereço...</string>
+  <!-- Second address line (apartment number for example) -->
+  <string name="field.address.placeholder.line_2">Linha 2...</string>
+  <!-- Third address line (apartment number for example) -->
+  <string name="field.address.placeholder.line_3">Linha 3...</string>
+  <!-- Service error -->
+  <string name="field.bitid.label.error">Erro de BitID:</string>
+  <string name="field.bitid.label.retry">Tente reenviar o formulário.</string>
+  <string name="field.countrystate.label.country">País:</string>
+  <!-- State or Province within a country -->
+  <string name="field.countrystate.label.state">Estado:</string>
+  <string name="field.image.button.retake">Retomar</string>
+  <string name="field.image.button.take">Tirar Foto</string>
+  <string name="field.verified_email.confirm">Confirmar</string>
+  <!-- Send email verification again -->
+  <string name="field.verified_email.reverify">Reenviar</string>
+  <string name="field.verified_email.verify">Enviar código de confirmação de e-mail</string>
+  <string name="field.verified_phone.confirm">Confirmar</string>
+  <!-- Send phone verification again -->
+  <string name="field.verified_phone.resend">Reenviar</string>
+  <string name="field.verified_phone.send">Enviar código de confirmação de telefone</string>
+  <string name="general.button.buy">Comprar</string>
+  <string name="general.button.cancel">Cancelar</string>
+  <string name="general.button.enable">Ativar</string>
+  <string name="general.button.next">Seguinte</string>
+  <string name="general.button.ok">OK</string>
+  <string name="general.button.proceed">Prosseguir</string>
+  <string name="general.button.refresh">Atualizar</string>
+  <string name="general.button.retry">Tentar novamente</string>
+  <string name="general.button.submit">Submeter</string>
+  <string name="general.button.history">Histórico</string>
+  <string name="general.button.back">Anterior</string>
+  <string name="general.error.timed_out">O pedido excedeu o limite de tempo</string>
+  <string name="general.error.touchid_error">Erro de TouchID: tente de novo</string>
+  <string name="general.error.params_error">Erro de Parâmetro</string>
+  <string name="general.error.fee_error">Erro no Cálculo da Comissão</string>
+  <string name="general.error.tx_error">Erro na Transação (Saldo Insuficiente?)</string>
+  <string name="general.error.network">Erro de Rede</string>
+  <string name="general.error.network_message">Ocorreu um Erro Desconhecido</string>
+  <string name="general.label.confirmation_code">Código de Confirmação</string>
+  <string name="general.label.email">E-mail</string>
+  <string name="general.label.error">Erro:</string>
+  <string name="general.label.phone">Telefone</string>
+  <string name="general.label.unknown_error">Erro Desconhecido</string>
+  <string name="general.label.min">Mín.</string>
+  <string name="general.label.max">Máx.</string>
+  <string name="general.label.estimate">Estimativa</string>
+  <string name="general.label.zero">Zero</string>
+  <string name="general.label.default">Predefinição</string>
+  <string name="general.loader.label.empty_state">Esta área foi deixada em branco intencionalmente</string>
+  <string name="general.loader.label.loading">A carregar {noun}</string>
+  <string name="general.placeholder.confirmation_code">Código de Confirmação</string>
+  <string name="general.placeholder.email">E-mail</string>
+  <string name="general.placeholder.phone">Telefone</string>
+  <string name="general.placeholder.pin">PIN</string>
+  <string name="general.status.loading">A carregar...</string>
+  <string name="buy.title">O que é que deseja comprar?</string>
+  <string name="buy.transaction.destination.per">por</string>
+  <string name="buy.confirm_quote.title">Comprar</string>
+  <string name="sell.confirm_quote.title">Vender</string>
+  <string name="buy.quote.payment_method">Método de Pagamento</string>
+  <string name="buy.quote.delivery">Entrega</string>
+  <string name="buy.quote.price">Preço</string>
+  <string name="buy.quote.subtotal">Subtotal</string>
+  <string name="buy.quote.fee">Comissão</string>
+  <string name="buy.quote.total">Encargo Total</string>
+  <string name="sell.quote.total">Montante da compra</string>
+  <string name="trade.title">Trocar os Seus:</string>
+  <string name="trade.confirm_quote.trade">Trocar</string>
+  <string name="trade.confirm_quote.for">Por</string>
+  <!-- Support search no results -->
+  <string name="support.label.no_search_results">Sem Resultados</string>
+  <!-- Support search results see more -->
+  <string name="support.label.see_more">Ver Mais</string>
+  <!-- Support search see fewer -->
+  <string name="support.label.see_fewer">Ver Menos</string>
+  <!-- Support section, see articles on a subject -->
+  <string name="support.label.see_articles">Ver Artigos</string>
+  <!-- Support search article not found -->
+  <string name="support.error.article_not_found">Artigo Não Encontrado</string>
+  <!-- Support footer email link -->
+  <string name="support.footer.email_us">Envie-nos um E-mail</string>
+  <!-- Support section footer -->
+  <string name="support.footer.privacy_policy">Política de Privacidade</string>
+  <!-- Support section footer -->
+  <string name="support.footer.rights">Todos os direitos reservados.</string>
+  <!-- Support search footer -->
+  <string name="support.footer.tos">Termos de Utilização</string>
+  <!-- Support section title -->
+  <string name="support.label.browse_topics">Percorrer Tópicos</string>
+  <!-- Support section title -->
+  <string name="support.label.faq">Perguntas Frequentes</string>
+  <!-- Support button label -->
+  <string name="support.title">Suporte</string>
+  <!-- Push notifications are disabled alert title" -->
+  <string name="PushNotifications.disabled">Notificações Desativadas</string>
+  <!-- Push notifications settings instructions -->
+  <string name="PushNotifications.enableInstructions">Para receber alertas, ative as notificações nas Definições</string>
+  <!-- Approve link wallet button label -->
+  <string name="LinkWallet.approve">Aprovar</string>
+  <!-- Decline link wallet button label -->
+  <string name="LinkWallet.decline">Recusar</string>
+  <!-- Link Wallet view title -->
+  <string name="LinkWallet.title">Relacionar Carteira</string>
+  <!-- Link Wallet view title above domain list -->
+  <string name="LinkWallet.domainTitle">Nota: interaja com esta aplicação APENAS quando se encontrar num dos seguintes domínios</string>
+  <!-- Link Wallet view title above permissions list -->
+  <string name="LinkWallet.permissionsTitle">Esta aplicação poderá:</string>
+  <!-- Link Wallet view dislaimer footer -->
+  <string name="LinkWallet.disclaimer">As aplicações externas não podem enviar dinheiro   sem a aprovação deste dispositivo</string>
+  <!-- Link wallet logo footer text -->
+  <string name="LinkWallet.logoFooter">Pagamento Seguro</string>
+  <!-- Payment confirmation view title -->
+  <string name="PaymentConfirmation.title">Confirmação</string>
+  <!-- Eg. Send 1.0Eth to purchase CCC -->
+  <string name="PaymentConfirmation.amountText">Enviar %1$@ para comprar %2$@</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.accountRequest">Requisitar %1$@ dados da conta</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.callRequest">Requisitar %1$@ ligação de contrato inteligente</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.paymentRequest">Requisitar %1$@ pagamento</string>
 </resources>

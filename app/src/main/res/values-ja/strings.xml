@@ -224,16 +224,10 @@
   <string name="FeeSelector.title">処理速度</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">管理</string>
-  <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">ビットコインを購入</string>
-  <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">メニュー</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">ウォレット</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">総資産</string>
-  <!-- (Tap here to) trade (your assets for other assets) -->
-  <string name="HomeScreen.trade">取引</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">秘密鍵の残高確認中...</string>
   <!-- Sweep private key confirmation message -->
@@ -261,7 +255,9 @@
   <!-- password textfield placeholder -->
   <string name="Import.passwordPlaceholder">パスワード</string>
   <!-- Caption for graphics -->
-  <string name="Import.rightCaption">あなたの\nブレッドの\nウォレット</string>
+  <string name="Import.rightCaption">あなたの
+ブレッドの
+ウォレット</string>
   <!-- Scan Private key button label -->
   <string name="Import.scan">秘密鍵をスキャン</string>
   <!-- Import wallet success alert title -->
@@ -281,9 +277,11 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">無視する</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">端末がセキュリティの危険にさらされている可能性があります\n 「脱獄」アプリはブレッドのキーチェーンデータにアクセスし、あなたのビットコインを盗む恐れがあります!  直ちにこのウォレットを完全削除して、安全な端末で復元して下さい。</string>
+  <string name="JailbreakWarnings.messageWithBalance">端末がセキュリティの危険にさらされている可能性があります
+ 「脱獄」アプリはブレッドのキーチェーンデータにアクセスし、あなたのビットコインを盗む恐れがあります!  直ちにこのウォレットを完全削除して、安全な端末で復元して下さい。</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">端末がセキュリティの危険にさらされている可能性があります\n「脱獄」アプリはブレッドのキーチェーンデータにアクセスし、あなたのビットコインを盗む恐れがあります!  ブレッドは必ず脱獄端末以外で利用してください。</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">端末がセキュリティの危険にさらされている可能性があります
+「脱獄」アプリはブレッドのキーチェーンデータにアクセスし、あなたのビットコインを盗む恐れがあります!  ブレッドは必ず脱獄端末以外で利用してください。</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">警告</string>
   <!-- Wipe wallet button -->
@@ -304,10 +302,6 @@
   <string name="MenuButton.addWallet">ウォレットの追加</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">ウォレットにロックを設定する</string>
-  <!-- (Click here to) manage (your list of) wallets -->
-  <string name="MenuButton.manageWallets">ウォレットの管理</string>
-  <!-- (press here to) scan (a) QR code -->
-  <string name="MenuButton.scan">QRコードの読み込み</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">セキュリティ</string>
   <!-- Menu button title -->
@@ -596,8 +590,6 @@
   <string name="Settings.manage">管理</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">通知</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">その他</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">設定</string>
   <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -627,7 +619,9 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">復元フレーズをもう一度書き留めてください</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">復元フレーズは、スマートフォンを紛失したり、盗まれたり、壊れたり、アップグレードした場合に、ご自身のブレッドを元に戻せる唯一の方法です。\n\n単語の一覧を表示しますので、紙に書き留めて安全に保管してください。</string>
+  <string name="StartPaperPhrase.body">復元フレーズは、スマートフォンを紛失したり、盗まれたり、壊れたり、アップグレードした場合に、ご自身のブレッドを元に戻せる唯一の方法です。
+
+単語の一覧を表示しますので、紙に書き留めて安全に保管してください。</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">復元フレーズを書き留めてください</string>
   <!-- Argument is date -->
@@ -640,14 +634,10 @@
   <string name="StartViewController.recoverButton">ウォレットを復元する</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">接続中</string>
-  <!-- The sync has failed (to complete) -->
-  <string name="SyncingView.failed">同期に失敗しました</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">同期中</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">再試行</string>
-  <!-- "eg. Synced through <Jan 12, 2015> -->
-  <string name="SyncingView.syncedThrough">%1$sまで同期完了</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">同期中</string>
   <!-- 6 d (6 days) -->
@@ -899,7 +889,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">更新中...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwalletは新しい機能や見た目を備えて、Breadという名前に生まれ変わりました。\n\nヘルプをご覧になるには、画面右上にある(?)からお探しください。</string>
+  <string name="Welcome.body">Breadwalletは新しい機能や見た目を備えて、Breadという名前に生まれ変わりました。
+
+ヘルプをご覧になるには、画面右上にある(?)からお探しください。</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Breadへようこそ！</string>
   <!-- Wipe wallet alert message -->
@@ -930,4 +922,276 @@
   <string name="WritePaperPhrase.previous">前へ</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%2$dの%1$d</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">その他</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">ウォレットの管理</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">メニュー</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">ビットコインを購入</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">取引</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">QRコードの読み込み</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">同期に失敗しました</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">%1$sまで同期完了</string>
+  <string name="account.oauth.button.continue_email">リンクを電子メールアドレスに送信する</string>
+  <string name="account.oauth.button.done">OK！</string>
+  <string name="account.oauth.instructions.continue">電子メールをチェックして,記載された指示に従ってください。操作を完了した後,もう一度「Login」を押せば,うまく行くはずです。</string>
+  <string name="account.oauth.label.start">既存のアカウントでログインしようとしているようです。こちらから電子メールを送信します。電子メールに記載されたリンクを開き,ログインし,認証を受けて,以下の操作を続行してください。</string>
+  <string name="account.oauth.error.fail">認証に失敗しました</string>
+  <string name="datetime.duration.day">日</string>
+  <string name="datetime.duration.week">週</string>
+  <string name="datetime.duration.month">月</string>
+  <!-- Account error message -->
+  <string name="exchange.account_picker.error.empty">アカウントが見つかりません。</string>
+  <string name="exchange.label.empty_list">あいにく現在あなたの地域で利用できるサービスはありません。</string>
+  <!-- Get started with Glidera -->
+  <string name="exchange.glidera.label.get_started">{serviceName}を使い始める</string>
+  <!-- Glidera message - choose bank -->
+  <string name="exchange.glidera.label.select_bank">銀行を選択してください</string>
+  <!-- Agree to Glidera terms of service -->
+  <string name="exchange.glidera.label.tos_agree">以下をクリックすることによって,あなたは{serviceName}の利用規約に同意することになります。</string>
+  <!-- Glidera message - trying to do too many purchases at the same time -->
+  <string name="exchange.glidera.notice.after_first_transfer">別の購入を行うには,現在の購入が決済されるまで待つ必要があります。</string>
+  <!-- Glidera message - trying to do too many purchases at the same time -->
+  <string name="exchange.glidera.notice.before_first_transfer">最初の購入が決済されるまで,次の購入を行うことはできません。</string>
+  <!-- Glidera message - your order is in process -->
+  <string name="exchange.glidera.notice.details_waiting">あなたの個人情報を審査中です。審査には数日かかることがあります。</string>
+  <!-- Glidera message - your order is in process -->
+  <string name="exchange.glidera.notice.id_verification_waiting">あなたの書類を審査中です。審査には数日かかることがあります。</string>
+  <!-- Glidera message - you’re registered with Glidera -->
+  <string name="exchange.glidera.notice.registered">あなたは{service}に登録しました。</string>
+  <string name="exchange.glidera.title.account_details">アカウントの詳細</string>
+  <string name="exchange.glidera.title.bank_login">銀行ログイン</string>
+  <!-- Glidera message - picture of your ID (driver’s license or passport) -->
+  <string name="exchange.glidera.title.id_verification">ID画像</string>
+  <!-- Glidera message - connect a bank account -->
+  <string name="exchange.glidera.title.link_account">リンクアカウント</string>
+  <string name="exchange.glidera.title.preferences">アカウントの設定</string>
+  <string name="exchange.glidera.title.registration">登録</string>
+  <string name="exchange.glidera.notice.settings_trouble">上の設定で問題が発生しましたか？</string>
+  <!-- Glidera message - tap to go directly to their website -->
+  <string name="exchange.glidera.notice.visit_directly">{serviceName}に直接アクセスするには,以下をタップしてください。</string>
+  <!-- Glidera message - tap to out their settings -->
+  <string name="exchange.glidera.button.open_settings">Glideraの設定を開く</string>
+  <string name="exchange.cash.button.buy">ビットコインを購入する</string>
+  <!-- Check the status of your order -->
+  <string name="exchange.cash.button.status">ステータスをチェックする</string>
+  <!-- Order details - how much, exchange rate -->
+  <string name="exchange.crypto.memo">1 {fromCurrency}につき{rate}{toCurrency}のレートで売却し,{toAmount}{toCurrency}に交換しました</string>
+  <string name="exchange.error.max_order">最高注文金額:{amount}</string>
+  <string name="exchange.error.min_order">最低注文金額:{amount}</string>
+  <string name="exchange.geo.button.check_again">もう一度チェックしてください</string>
+  <string name="exchange.geo.button.enable">位置サービスを有効にしますか？</string>
+  <string name="exchange.geo.error.enable_in_settings">携帯電話の位置情報アクセスを有効にする必要があります。「システム設定」で「位置サービス」を有効にしてください。</string>
+  <string name="exchange.history.label.btc_price">購入時のBTCの価格:</string>
+  <string name="exchange.history.label.price">購入時の{currency}の価格:</string>
+  <string name="exchange.history.label.delivery_date_label">入金日:</string>
+  <string name="exchange.history.label.identifier">識別子:</string>
+  <string name="exchange.history.label.service_label">サービス:</string>
+  <string name="exchange.history.label.state.complete">完了</string>
+  <string name="exchange.history.label.state.processing">以下の場所で入手可能</string>
+  <string name="exchange.history.label.status_label">ステータス:</string>
+  <string name="exchange.history.label.status.complete">完了</string>
+  <string name="exchange.history.label.status.failed">失敗しました</string>
+  <string name="exchange.history.label.status.processing">進行中</string>
+  <string name="exchange.history.label.total">支払い済みの総価格:</string>
+  <string name="exchange.history.title">交換履歴</string>
+  <string name="exchange.label.provider">{name}が提供しているサービス</string>
+  <string name="exchange.label.daily_and_monthly_limits">あなたの限度額は1日あたり{daily},1ヶ月あたり{monthly}です。</string>
+  <string name="exchange.label.daily_limit">今日は{daily}まで購入できます。</string>
+  <string name="exchange.label.delivered">入金</string>
+  <string name="exchange.label.empty_history">取引がありません。いずれかの通貨を購入してください。</string>
+  <string name="exchange.label.fees">料金</string>
+  <string name="exchange.label.limit.daily">1日の消費金額:{amount}のうち{consumed}。</string>
+  <string name="exchange.label.limit.weekly">1週間の消費金額:{amount}のうち{consumed}。</string>
+  <string name="exchange.label.limits">限度額</string>
+  <string name="exchange.label.link.purchase">購入する</string>
+  <string name="exchange.label.loading_limits">限度額を読み込み中...</string>
+  <!-- Order limit exceeded -->
+  <string name="exchange.label.zero_limits">購入の限度額に達しました。後日やり直してください。</string>
+  <!-- Cannot buy yet, order in progress or ID verification required -->
+  <string name="exchange.label.zero_limits_and_no_history">あなたはまだビットコインの購入を許可されていません。設定タブをチェックし,{email}にお問い合わせください。</string>
+  <string name="exchange.unsupported.title">現在サポートされていません。</string>
+  <string name="exchange.unsupported.paragraph.buy">このアセットの購入はまだサポートされていません。当社では常にサポートするアセットを追加しています。後日再びチェックしてください。</string>
+  <string name="exchange.unsupported.paragraph.sell">このアセットの購入はまだサポートされていません。当社では常にサポートするアセットを追加しています。後日再びチェックしてください。</string>
+  <string name="empty.title">アセットがありません。</string>
+  <string name="empty.paragraph.buy">取引するアセットがありません。ある程度の額のビットコインを購入してからサービスの利用を開始してください。</string>
+  <string name="exchange.libx.label.refreshing_token">リフレッシュ中...</string>
+  <string name="exchange.libx.label.show_token">LibXトークン:{token}</string>
+  <string name="exchange.libx.label.token_expires">期限:{time}</string>
+  <string name="exchange.libx.label.token_fees">料金:{amount}</string>
+  <string name="exchange.libx.label.token_rate">レート:{amount}</string>
+  <string name="exchange.libx.label.token_sent">送金額:{amount}</string>
+  <string name="exchange.libx.label.token_status">ステータス:</string>
+  <string name="exchange.libx.notice.pin_done">素晴らしい！取引が完了しました。</string>
+  <string name="exchange.libx.notice.redeem_another">別の通貨を換金する</string>
+  <string name="exchange.libx.title.pin">LibertyX換金PIN</string>
+  <string name="exchange.libx.title.status">LibertyXステータス</string>
+  <string name="exchange.libx.title.token">LibertyXトークン作成</string>
+  <string name="exchange.slogans.bank">世界中の有力なウォレットから信頼されている受賞歴のある仲介業者を利用してビットコインを売買するための銀行口座をリンクしてください。</string>
+  <string name="exchange.title.bank">銀行口座</string>
+  <string name="exchange.title.buy_bitcoin">ビットコインを購入する</string>
+  <string name="exchange.title.buy_currency">{currency}を購入する</string>
+  <string name="exchange.title.buy_amount_in">{amount} {currency}を購入する</string>
+  <string name="exchange.title.buy_amount">{amount}購入する</string>
+  <string name="exchange.title.buy_service">支払方法を選択してください。</string>
+  <string name="exchange.title.trade">{from}を{to}に交換する</string>
+  <string name="exchange.title.sell_bitcoin">ビットコインを売却する</string>
+  <string name="exchange.title.sell_currency">{currency}を売却する</string>
+  <string name="exchange.title.sell_amount_in">{currency}を次の通貨に交換する:</string>
+  <string name="exchange.title.sell_amount">{amount}売却する</string>
+  <string name="exchange.title.sell_service">{currency}をどの通貨に交換しますか？</string>
+  <string name="exchange.title.cash">現金</string>
+  <string name="exchange.title.credit">クレジットカード</string>
+  <string name="exchange.title.history">履歴</string>
+  <string name="exchange.title.settings">設定</string>
+  <string name="exchange.title.exchange">仮想通貨取引所</string>
+  <string name="exchange.title.confirm_buy">購入を確認する</string>
+  <string name="exchange.title.confirm_trade">取引を確認する</string>
+  <string name="exchange.label.in_currency">の{currency}</string>
+  <string name="exchange.title.choose">どの支払方法を利用しますか？</string>
+  <!-- Over the available order limit -->
+  <string name="exchange.source.title.maximum">最高金額を超えました</string>
+  <string name="exchange.source.paragraph.maximum">{source}の残高を利用して{maximum}まで購入できます。購入金額を{maximum}に変更しますか？</string>
+  <!-- Under the available order limit -->
+  <string name="exchange.source.title.minimum">金額が最低金額を下回っています</string>
+  <string name="exchange.source.paragraph.minimum">{source}で{minimum}以上購入する必要があります。購入金額を{minimum}に変更しますか？</string>
+  <string name="exchange.source.title.insufficient">不十分な残高</string>
+  <string name="exchange.source.paragraph.insufficient">最低購入金額{minimum}をまかなうのに十分な{source}がありません。{source}をもっと購入しますか。それとも,他の支払方法を利用しますか？</string>
+  <string name="exchange.source.title.toolow">残高が少なすぎます</string>
+  <!-- Over the available order limit -->
+  <string name="exchange.destination.title.maximum">最大金額を超えました</string>
+  <string name="exchange.destination.paragraph.maximum">{destination}に交換する場合は{maximum}まで売却できます。金額を{maximum}に変更しますか？</string>
+  <string name="exchange.destination.title.minimum">金額が最低金額を下回っています</string>
+  <string name="exchange.destination.paragraph.minimum">{destination}に交換するには{minimum}以上売却する必要があります。購入金額を{minimum}に変更しますか？</string>
+  <string name="exchange.destination.title.insufficient">不十分な残高</string>
+  <string name="exchange.destination.paragraph.insufficient">最低金額{minimum}をまかなうのに十分な{destination}がありません。{source}をもっと購入しますか？それとも,他の支払方法を利用しますか？</string>
+  <string name="exchange.destination.title.toolow">残高が少なすぎます</string>
+  <string name="field.address.placeholder.line_1">アドレス...</string>
+  <!-- Second address line (apartment number for example) -->
+  <string name="field.address.placeholder.line_2">2行目...</string>
+  <!-- Third address line (apartment number for example) -->
+  <string name="field.address.placeholder.line_3">3行目...</string>
+  <!-- Service error -->
+  <string name="field.bitid.label.error">BitIDエラー:</string>
+  <string name="field.bitid.label.retry">フォームの再送信を試してください。</string>
+  <string name="field.countrystate.label.country">国:</string>
+  <!-- State or Province within a country -->
+  <string name="field.countrystate.label.state">州:</string>
+  <string name="field.image.button.retake">撮り直す</string>
+  <string name="field.image.button.take">写真を撮る</string>
+  <string name="field.verified_email.confirm">確認する</string>
+  <!-- Send email verification again -->
+  <string name="field.verified_email.reverify">再送信する</string>
+  <string name="field.verified_email.verify">電子メール確認コードを送信する</string>
+  <string name="field.verified_phone.confirm">確認する</string>
+  <!-- Send phone verification again -->
+  <string name="field.verified_phone.resend">再送信する</string>
+  <string name="field.verified_phone.send">電話確認コードを送信する</string>
+  <string name="general.button.buy">購入する</string>
+  <string name="general.button.cancel">キャンセルする</string>
+  <string name="general.button.enable">有効にする</string>
+  <string name="general.button.next">次へ</string>
+  <string name="general.button.ok">OK</string>
+  <string name="general.button.proceed">続行する</string>
+  <string name="general.button.refresh">リフレッシュする</string>
+  <string name="general.button.retry">やり直す</string>
+  <string name="general.button.submit">送信する</string>
+  <string name="general.button.history">履歴</string>
+  <string name="general.button.back">戻る</string>
+  <string name="general.error.timed_out">要求がタイムアウトしました</string>
+  <string name="general.error.touchid_error">TouchIDエラー:やり直してください</string>
+  <string name="general.error.params_error">パラメーターエラー</string>
+  <string name="general.error.fee_error">料金計算エラー</string>
+  <string name="general.error.tx_error">取引エラー（残高不足？）</string>
+  <string name="general.error.network">ネットワークエラー</string>
+  <string name="general.error.network_message">不明なエラーが発生しました</string>
+  <string name="general.label.confirmation_code">確認コード</string>
+  <string name="general.label.email">電子メール</string>
+  <string name="general.label.error">エラー:</string>
+  <string name="general.label.phone">電話</string>
+  <string name="general.label.unknown_error">不明なエラー</string>
+  <string name="general.label.min">最小</string>
+  <string name="general.label.max">最大</string>
+  <string name="general.label.estimate">見積り</string>
+  <string name="general.label.zero">ゼロ</string>
+  <string name="general.label.default">デフォルト</string>
+  <string name="general.loader.label.empty_state">このエリアは意図的に空白になっています</string>
+  <string name="general.loader.label.loading">{noun}を読み込んでいます</string>
+  <string name="general.placeholder.confirmation_code">確認コード</string>
+  <string name="general.placeholder.email">電子メール</string>
+  <string name="general.placeholder.phone">電話</string>
+  <string name="general.placeholder.pin">PIN</string>
+  <string name="general.status.loading">読み込み中...</string>
+  <string name="buy.title">どの通貨を購入したいですか？</string>
+  <string name="buy.transaction.destination.per">につき</string>
+  <string name="buy.confirm_quote.title">購入する</string>
+  <string name="sell.confirm_quote.title">売却する</string>
+  <string name="buy.quote.payment_method">支払方法</string>
+  <string name="buy.quote.delivery">入金</string>
+  <string name="buy.quote.price">価格</string>
+  <string name="buy.quote.subtotal">小計</string>
+  <string name="buy.quote.fee">料金</string>
+  <string name="buy.quote.total">請求総額</string>
+  <string name="sell.quote.total">購入金額</string>
+  <string name="trade.title">次の通貨を交換する:</string>
+  <string name="trade.confirm_quote.trade">取引</string>
+  <string name="trade.confirm_quote.for">交換先通貨</string>
+  <!-- Support search no results -->
+  <string name="support.label.no_search_results">結果がありません</string>
+  <!-- Support search results see more -->
+  <string name="support.label.see_more">表示数を増やす</string>
+  <!-- Support search see fewer -->
+  <string name="support.label.see_fewer">表示数を減らす</string>
+  <!-- Support section, see articles on a subject -->
+  <string name="support.label.see_articles">記事を見る</string>
+  <!-- Support search article not found -->
+  <string name="support.error.article_not_found">記事が見つかりません</string>
+  <!-- Support footer email link -->
+  <string name="support.footer.email_us">当社に電子メールを送信してください</string>
+  <!-- Support section footer -->
+  <string name="support.footer.privacy_policy">個人情報保護方針</string>
+  <!-- Support section footer -->
+  <string name="support.footer.rights">All rights reserved.</string>
+  <!-- Support search footer -->
+  <string name="support.footer.tos">利用規約</string>
+  <!-- Support section title -->
+  <string name="support.label.browse_topics">トピックを閲覧する</string>
+  <!-- Support section title -->
+  <string name="support.label.faq">よくある質問</string>
+  <!-- Support button label -->
+  <string name="support.title">サポート</string>
+  <!-- Push notifications are disabled alert title" -->
+  <string name="PushNotifications.disabled">通知が無効になっています</string>
+  <!-- Push notifications settings instructions -->
+  <string name="PushNotifications.enableInstructions">アラートを受け取るには,設定で通知をオンにしてください</string>
+  <!-- Approve link wallet button label -->
+  <string name="LinkWallet.approve">承認する</string>
+  <!-- Decline link wallet button label -->
+  <string name="LinkWallet.decline">拒否する</string>
+  <!-- Link Wallet view title -->
+  <string name="LinkWallet.title">リンクウォレット</string>
+  <!-- Link Wallet view title above domain list -->
+  <string name="LinkWallet.domainTitle">ご注意:以下のいずれかのドメインに属している場合は,このアプリとのみ情報をやり取りしてください</string>
+  <!-- Link Wallet view title above permissions list -->
+  <string name="LinkWallet.permissionsTitle">このアプリでできること:</string>
+  <!-- Link Wallet view dislaimer footer -->
+  <string name="LinkWallet.disclaimer">外部のアプリは,このデバイスの承認がないと送金できません</string>
+  <!-- Link wallet logo footer text -->
+  <string name="LinkWallet.logoFooter">安全なチェックアウト</string>
+  <!-- Payment confirmation view title -->
+  <string name="PaymentConfirmation.title">確認</string>
+  <!-- Eg. Send 1.0Eth to purchase CCC -->
+  <string name="PaymentConfirmation.amountText">%2$@を購入するために%1$@を送金する</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.accountRequest">%1$@ のアカウント情報をリクエスト</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.callRequest">%1$@ のスマートコントラクトのコールをリクエスト</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.paymentRequest">%1$@ のアカウント情報をリクエスト</string>
 </resources>

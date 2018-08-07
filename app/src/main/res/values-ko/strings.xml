@@ -224,16 +224,10 @@
   <string name="FeeSelector.title">처리 속도</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">관리</string>
-  <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">비트코인 구매</string>
-  <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">메뉴</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">지갑</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">총 자산</string>
-  <!-- (Tap here to) trade (your assets for other assets) -->
-  <string name="HomeScreen.trade">교환</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">개인 열쇠 잔고 확인 중...</string>
   <!-- Sweep private key confirmation message -->
@@ -281,9 +275,11 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">무시</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! 이 지갑을 바로 지우시고 안전한 장치에서 복구하세요.</string>
+  <string name="JailbreakWarnings.messageWithBalance">장치 보안 취약
+모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! 이 지갑을 바로 지우시고 안전한 장치에서 복구하세요.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">장치 보안 취약\n모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! Bread를 비-jailbroken 장치에서만 사용해 주세요.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">장치 보안 취약
+모든 \'jailbreak\' 앱이 Bread의 키체인 데이터에 접속하여 귀하의 비트코인을 훔칠 수 있습니다! Bread를 비-jailbroken 장치에서만 사용해 주세요.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">경고</string>
   <!-- Wipe wallet button -->
@@ -304,10 +300,6 @@
   <string name="MenuButton.addWallet">지갑 추가</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">지갑 잠그기</string>
-  <!-- (Click here to) manage (your list of) wallets -->
-  <string name="MenuButton.manageWallets">지갑 관리</string>
-  <!-- (press here to) scan (a) QR code -->
-  <string name="MenuButton.scan">QR코드 스캔</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">보안 센터</string>
   <!-- Menu button title -->
@@ -596,8 +588,6 @@
   <string name="Settings.manage">관리</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">알림</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">기타</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">환경 설정</string>
   <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -627,7 +617,9 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">페이퍼 키를 다시 쓰기</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">페이퍼 키는 핸드폰을 분실하거나, 도난당하거나, 망가지거나, 업그레이드한 경우 브레드를 다시 살릴 수 있는 유일한 방법입니다.\n\n저희가 제시하는 단어 목록을 잘 적어서 안전하게 보관해 주세요.</string>
+  <string name="StartPaperPhrase.body">페이퍼 키는 핸드폰을 분실하거나, 도난당하거나, 망가지거나, 업그레이드한 경우 브레드를 다시 살릴 수 있는 유일한 방법입니다.
+
+저희가 제시하는 단어 목록을 잘 적어서 안전하게 보관해 주세요.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">페이퍼 키 작성하기</string>
   <!-- Argument is date -->
@@ -640,14 +632,10 @@
   <string name="StartViewController.recoverButton">지갑 복구하기</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">연결 중</string>
-  <!-- The sync has failed (to complete) -->
-  <string name="SyncingView.failed">동기화 실패</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">동기화 중</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">다시 시도</string>
-  <!-- "eg. Synced through <Jan 12, 2015> -->
-  <string name="SyncingView.syncedThrough">%1$s 전 동기화 됨</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">동기화 중</string>
   <!-- 6 d (6 days) -->
@@ -899,7 +887,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">업데이트 중...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet이 이름을 Bread로 바꾸고 새롭게 단장하였으며 새로운 기능도 갖췄습니다.\n\n도움이 필요하시면 대부분 화면에서 우측 상단에 있는 (?)을(를) 클릭하십시오.</string>
+  <string name="Welcome.body">Breadwallet이 이름을 Bread로 바꾸고 새롭게 단장하였으며 새로운 기능도 갖췄습니다.
+
+도움이 필요하시면 대부분 화면에서 우측 상단에 있는 (?)을(를) 클릭하십시오.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Bread에 환영합니다!</string>
   <!-- Wipe wallet alert message -->
@@ -930,4 +920,277 @@
   <string name="WritePaperPhrase.previous">이전</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%2$d의 %1$d</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">기타</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">지갑 관리</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">메뉴</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">비트코인 구매</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">교환</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">QR코드 스캔</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">동기화 실패</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">%1$s 전 동기화 됨</string>
+  <string name="account.oauth.button.continue_email">이메일로 링크 보내기</string>
+  <string name="account.oauth.button.done">확인!</string>
+  <string name="account.oauth.instructions.continue">OK. 이메일을 확인하고 안내를 따라하세요. 완료하면 \'로그인\'을 다시 누르면 됩니다!</string>
+  <string name="account.oauth.label.start">기존 계정으로 로그인 하시려는 것 같군요. 저희가 이메일을 보내드릴 것입니다. 이메일에 있는 링크를 여시고, 로그인  및  인증하시고 아래를 계속하세요.</string>
+  <string name="account.oauth.error.fail">인증 실패</string>
+  <string name="datetime.duration.day">일</string>
+  <string name="datetime.duration.week">주</string>
+  <string name="datetime.duration.month">월</string>
+  <!-- Account error message -->
+  <string name="exchange.account_picker.error.empty">계정이 없습니다.</string>
+  <string name="exchange.label.empty_list">안타깝게도, 지금은 귀하의 지역에 사용가능한 서비스가 없습니다.</string>
+  <!-- Get started with Glidera -->
+  <string name="exchange.glidera.label.get_started">{serviceName}로 시작하세요</string>
+  <!-- Glidera message - choose bank -->
+  <string name="exchange.glidera.label.select_bank">귀하의 은행을 선택하세요</string>
+  <!-- Agree to Glidera terms of service -->
+  <string name="exchange.glidera.label.tos_agree">아래를 클릭하시면, {serviceName} ToS에 동의하시게 됩니다</string>
+  <!-- Glidera message - trying to do too many purchases at the same time -->
+  <string name="exchange.glidera.notice.after_first_transfer">다른 구매를 하시기 전 귀하의 현재 구매가 완료될 때 까지 기다리셔야 할 수 있습니다.</string>
+  <!-- Glidera message - trying to do too many purchases at the same time -->
+  <string name="exchange.glidera.notice.before_first_transfer">귀하의 첫 번째 구매가 완료되기 전까지는 재구매할 수 없습니다.</string>
+  <!-- Glidera message - your order is in process -->
+  <string name="exchange.glidera.notice.details_waiting">귀하의 개인 세부정보를 검토 중입니다. 이 작업은 최대 며칠이 걸릴 수 있습니다.</string>
+  <!-- Glidera message - your order is in process -->
+  <string name="exchange.glidera.notice.id_verification_waiting">귀하의 서류를 검토 중입니다. 이 작업은 최대 며칠이 걸릴 수 있습니다.</string>
+  <!-- Glidera message - you’re registered with Glidera -->
+  <string name="exchange.glidera.notice.registered">귀하는 {service}에 등록되어 있습니다.</string>
+  <string name="exchange.glidera.title.account_details">계정 세부정보</string>
+  <string name="exchange.glidera.title.bank_login">은행 로그인</string>
+  <!-- Glidera message - picture of your ID (driver’s license or passport) -->
+  <string name="exchange.glidera.title.id_verification">ID 사진</string>
+  <!-- Glidera message - connect a bank account -->
+  <string name="exchange.glidera.title.link_account">링크 계정</string>
+  <string name="exchange.glidera.title.preferences">계정 기본 설정</string>
+  <string name="exchange.glidera.title.registration">등록</string>
+  <string name="exchange.glidera.notice.settings_trouble">위의 설정에 문제가 있으신가요?</string>
+  <!-- Glidera message - tap to go directly to their website -->
+  <string name="exchange.glidera.notice.visit_directly">직접 {serviceName}에 방문하시려면 아래를 탭하세요.</string>
+  <!-- Glidera message - tap to out their settings -->
+  <string name="exchange.glidera.button.open_settings">Glidera 설정 열기</string>
+  <string name="exchange.cash.button.buy">비트코인 구매</string>
+  <!-- Check the status of your order -->
+  <string name="exchange.cash.button.status">상태 확인</string>
+  <!-- Order details - how much, exchange rate -->
+  <string name="exchange.crypto.memo">{fromCurrency} 당 {rate}{toCurrency}의 환율로 {toAmount}{toCurrency} 판매됨</string>
+  <string name="exchange.error.max_order">최대 주문: {amount}</string>
+  <string name="exchange.error.min_order">최소 주문: {amount}</string>
+  <string name="exchange.geo.button.check_again">다시 확인</string>
+  <string name="exchange.geo.button.enable">위치 서비스를 켤까요?</string>
+  <string name="exchange.geo.error.enable_in_settings">핸드폰의 위치 접속을 켜 주셔야만 합니다. 시스템 설정으로 가서 위치 서비스를 켜 주세요.</string>
+  <string name="exchange.history.label.btc_price">구매 시 BTC 가격:</string>
+  <string name="exchange.history.label.price">구매 시 {currency} 가격</string>
+  <string name="exchange.history.label.delivery_date_label">인도 일자:</string>
+  <string name="exchange.history.label.identifier">식별자:</string>
+  <string name="exchange.history.label.service_label">서비스:</string>
+  <string name="exchange.history.label.state.complete">완료</string>
+  <string name="exchange.history.label.state.processing">사용가능</string>
+  <string name="exchange.history.label.status_label">상태:</string>
+  <string name="exchange.history.label.status.complete">완료</string>
+  <string name="exchange.history.label.status.failed">실패</string>
+  <string name="exchange.history.label.status.processing">처리중</string>
+  <string name="exchange.history.label.total">총 지불 가격:</string>
+  <string name="exchange.history.title">교환 기록</string>
+  <string name="exchange.label.provider">{name} 제공 서비스</string>
+  <string name="exchange.label.daily_and_monthly_limits">귀하의 한도는 {daily}/일, {monthly}/월입니다.</string>
+  <string name="exchange.label.daily_limit">오늘 최대 {daily}까지 구매하실 수 있습니다.</string>
+  <string name="exchange.label.delivered">인도</string>
+  <string name="exchange.label.empty_history">거래 없음. 코인을 구매하세요!</string>
+  <string name="exchange.label.fees">수수료</string>
+  <string name="exchange.label.limit.daily">일일 사용: {amount} 중 {consumed}</string>
+  <string name="exchange.label.limit.weekly">주간 사용: {amount} 중 {consumed}</string>
+  <string name="exchange.label.limits">한도</string>
+  <string name="exchange.label.link.purchase">구매</string>
+  <string name="exchange.label.loading_limits">한도 로딩중...</string>
+  <!-- Order limit exceeded -->
+  <string name="exchange.label.zero_limits">구매 한도에 도달했습니다, 나중에 다시 시도해 주세요.</string>
+  <!-- Cannot buy yet, order in progress or ID verification required -->
+  <string name="exchange.label.zero_limits_and_no_history">아직 비트코인을 구매하실 수 없습니다. 설정 탭을 확인하고, {email}로 연락해 주세요.</string>
+  <string name="exchange.unsupported.title">지금은 지원하지 않습니다.</string>
+  <string name="exchange.unsupported.paragraph.buy">이 자산의 구매는 아직 지원되지 않습니다. 더 많은 자산을 지원할 수 있도록 계속 추가하고 있으니 나중에 다시 확인해 주세요!</string>
+  <string name="exchange.unsupported.paragraph.sell">이 자산의 구매는 아직 지원되지 않습니다. 더 많은 자산을 지원할 수 있도록 계속 추가하고 있으니 나중에 다시 확인해 주세요!</string>
+  <string name="empty.title">자산 없음.</string>
+  <string name="empty.paragraph.buy">거래할 자산이 없습니다. 비트코인을 조금 구매하셔서 시작하세요!</string>
+  <string name="exchange.libx.label.refreshing_token">새로고침 중...</string>
+  <string name="exchange.libx.label.show_token">LibX 토큰: {token}</string>
+  <string name="exchange.libx.label.token_expires">만료: {time}</string>
+  <string name="exchange.libx.label.token_fees">수수료: {amount}</string>
+  <string name="exchange.libx.label.token_rate">환율: {amount}</string>
+  <string name="exchange.libx.label.token_sent">송금: {amount}</string>
+  <string name="exchange.libx.label.token_status">상태:</string>
+  <string name="exchange.libx.notice.pin_done">멋져요! 완료되었습니다</string>
+  <string name="exchange.libx.notice.redeem_another">다른 것 환매</string>
+  <string name="exchange.libx.title.pin">LibertyX 환매 PIN</string>
+  <string name="exchange.libx.title.status">LibertyX 상태</string>
+  <string name="exchange.libx.title.token">LibertyX 토큰 생성</string>
+  <string name="exchange.slogans.bank">세계 최고의 지갑이 신뢰하는 수상에 빛나는 중개소를 이용해 비트코인 구매와 판매를 위한 은행 계좌를 연결하세요.</string>
+  <string name="exchange.title.bank">은행 계좌</string>
+  <string name="exchange.title.buy_bitcoin">비트코인 구매</string>
+  <string name="exchange.title.buy_currency">{currency} 구매</string>
+  <string name="exchange.title.buy_amount_in">{amount} {currency} 구매</string>
+  <string name="exchange.title.buy_amount">{amount} 구매</string>
+  <string name="exchange.title.buy_service">결제 방법을 선택하세요</string>
+  <string name="exchange.title.trade">{from}와 {to} 교환</string>
+  <string name="exchange.title.sell_bitcoin">비트코인 판매</string>
+  <string name="exchange.title.sell_currency">{currency} 판매</string>
+  <string name="exchange.title.sell_amount_in">{currency}와 교환 대상:</string>
+  <string name="exchange.title.sell_amount">{amount} 판매</string>
+  <string name="exchange.title.sell_service">{currency}와 교환하려는 대상은?</string>
+  <string name="exchange.title.cash">현금</string>
+  <string name="exchange.title.credit">신용 카드</string>
+  <string name="exchange.title.history">이력</string>
+  <string name="exchange.title.settings">설정</string>
+  <string name="exchange.title.exchange">암호화폐 거래소</string>
+  <string name="exchange.title.confirm_buy">구매 확인</string>
+  <string name="exchange.title.confirm_trade">거래 확인</string>
+  <string name="exchange.label.in_currency">{currency}의</string>
+  <string name="exchange.title.choose">어떻게 지불하겠습니까?</string>
+  <!-- Over the available order limit -->
+  <string name="exchange.source.title.maximum">최대치 초과</string>
+  <string name="exchange.source.paragraph.maximum">귀하는 {source} 잔액을 이용해 최대 {maximum} 구매할 수 있습니다. 구매 금액을 {maximum}로 변경하시겠습니까?</string>
+  <!-- Under the available order limit -->
+  <string name="exchange.source.title.minimum">금액이 최소금액보다 적음</string>
+  <string name="exchange.source.paragraph.minimum">귀하는 {source}로 적어도 {minimum} 구매해야합니다. 구매 금액을 {minimum}로 변경하시겠습니까?</string>
+  <string name="exchange.source.title.insufficient">잔고 부족</string>
+  <string name="exchange.source.paragraph.insufficient">귀하는 {minimum}의 최소 구매를 보증하기 위한 충분한 {source}가 없습니다. {source}를 추가 구매하거나 다른 결제 방법을 이용하세요.</string>
+  <string name="exchange.source.title.toolow">잔액이 너무 적음</string>
+  <!-- Over the available order limit -->
+  <string name="exchange.destination.title.maximum">최대치 초과</string>
+  <string name="exchange.destination.paragraph.maximum">귀하는 {destination}를 위해 최대 {maximum} 판매할 수 있습니다. 금액을 {maximum}로 변경하시겠습니까?</string>
+  <string name="exchange.destination.title.minimum">금액이 최소금액보다 적음</string>
+  <string name="exchange.destination.paragraph.minimum">귀하는 {destination}에 대해 적어도 {minimum}을 판매해야 합니다. 구매 금액을 {minimum}로 변경하시겠습니까?</string>
+  <string name="exchange.destination.title.insufficient">잔고 부족</string>
+  <string name="exchange.destination.paragraph.insufficient">귀하는 {minimum}의 최저금액을 보장하기 위한 충분한 {destination}이 없습니다. {source}를 추가 구매하거나 다른 결제 방법을 이용하세요.</string>
+  <string name="exchange.destination.title.toolow">잔액이 너무 적음</string>
+  <string name="field.address.placeholder.line_1">주소...</string>
+  <!-- Second address line (apartment number for example) -->
+  <string name="field.address.placeholder.line_2">라인 2...</string>
+  <!-- Third address line (apartment number for example) -->
+  <string name="field.address.placeholder.line_3">라인 3...</string>
+  <!-- Service error -->
+  <string name="field.bitid.label.error">BitID 오류:</string>
+  <string name="field.bitid.label.retry">양식을 재전송하세요.</string>
+  <string name="field.countrystate.label.country">국가:</string>
+  <!-- State or Province within a country -->
+  <string name="field.countrystate.label.state">주:</string>
+  <string name="field.image.button.retake">재촬영</string>
+  <string name="field.image.button.take">사진 촬영</string>
+  <string name="field.verified_email.confirm">확인</string>
+  <!-- Send email verification again -->
+  <string name="field.verified_email.reverify">재전송</string>
+  <string name="field.verified_email.verify">이메일 확인 코드 전송</string>
+  <string name="field.verified_phone.confirm">확인</string>
+  <!-- Send phone verification again -->
+  <string name="field.verified_phone.resend">재전송</string>
+  <string name="field.verified_phone.send">폰 확인 코드 전송</string>
+  <string name="general.button.buy">구매</string>
+  <string name="general.button.cancel">취소</string>
+  <string name="general.button.enable">활성</string>
+  <string name="general.button.next">다음</string>
+  <string name="general.button.ok">확인</string>
+  <string name="general.button.proceed">진행</string>
+  <string name="general.button.refresh">새로고침</string>
+  <string name="general.button.retry">재시도</string>
+  <string name="general.button.submit">전송</string>
+  <string name="general.button.history">이력</string>
+  <string name="general.button.back">뒤로</string>
+  <string name="general.error.timed_out">요청 시간 초과</string>
+  <string name="general.error.touchid_error">TouchID 오류: 다시 시도하세요</string>
+  <string name="general.error.params_error">매개변수 오류</string>
+  <string name="general.error.fee_error">수수료 계산 오류</string>
+  <string name="general.error.tx_error">거래 오류 (낮은 잔고?)</string>
+  <string name="general.error.network">네트워크 오류</string>
+  <string name="general.error.network_message">알려지지 않은 오류 발생</string>
+  <string name="general.label.confirmation_code">확인 코드</string>
+  <string name="general.label.email">이메일</string>
+  <string name="general.label.error">오류:</string>
+  <string name="general.label.phone">전화:</string>
+  <string name="general.label.unknown_error">알려지지 않은 오류</string>
+  <string name="general.label.min">최소</string>
+  <string name="general.label.max">최대</string>
+  <string name="general.label.estimate">추정</string>
+  <string name="general.label.zero">제로</string>
+  <string name="general.label.default">기본</string>
+  <string name="general.loader.label.empty_state">이 부분은 의도적으로 공란으로 남겨두었습니다</string>
+  <string name="general.loader.label.loading">{noun} 로딩 중</string>
+  <string name="general.placeholder.confirmation_code">확인 코드</string>
+  <string name="general.placeholder.email">이메일</string>
+  <string name="general.placeholder.phone">전화</string>
+  <string name="general.placeholder.pin">PIN</string>
+  <string name="general.status.loading">로딩 중...</string>
+  <string name="buy.title">구매하고 싶은 것이 무엇입니까?</string>
+  <string name="buy.transaction.destination.per">당</string>
+  <string name="buy.confirm_quote.title">구매</string>
+  <string name="sell.confirm_quote.title">판매</string>
+  <string name="buy.quote.payment_method">결제 방법</string>
+  <string name="buy.quote.delivery">인도</string>
+  <string name="buy.quote.price">가격</string>
+  <string name="buy.quote.subtotal">소계</string>
+  <string name="buy.quote.fee">수수료</string>
+  <string name="buy.quote.total">총 요금</string>
+  <string name="sell.quote.total">구매금액</string>
+  <string name="trade.title">귀하의 거래:</string>
+  <string name="trade.confirm_quote.trade">거래</string>
+  <string name="trade.confirm_quote.for">교환 대상</string>
+  <!-- Support search no results -->
+  <string name="support.label.no_search_results">결과 없음</string>
+  <!-- Support search results see more -->
+  <string name="support.label.see_more">더 보기</string>
+  <!-- Support search see fewer -->
+  <string name="support.label.see_fewer">적게 보기</string>
+  <!-- Support section, see articles on a subject -->
+  <string name="support.label.see_articles">기사 보기
+</string>
+  <!-- Support search article not found -->
+  <string name="support.error.article_not_found">기사 없음</string>
+  <!-- Support footer email link -->
+  <string name="support.footer.email_us">이메일 보내기</string>
+  <!-- Support section footer -->
+  <string name="support.footer.privacy_policy">개인정보 정책</string>
+  <!-- Support section footer -->
+  <string name="support.footer.rights">저작권 보유</string>
+  <!-- Support search footer -->
+  <string name="support.footer.tos">약관</string>
+  <!-- Support section title -->
+  <string name="support.label.browse_topics">주제 찾아보기</string>
+  <!-- Support section title -->
+  <string name="support.label.faq">자주 하는 질문</string>
+  <!-- Support button label -->
+  <string name="support.title">지원</string>
+  <!-- Push notifications are disabled alert title" -->
+  <string name="PushNotifications.disabled">알림 비활성</string>
+  <!-- Push notifications settings instructions -->
+  <string name="PushNotifications.enableInstructions">알림을 받으려면 설정에서 알림을 켜세요</string>
+  <!-- Approve link wallet button label -->
+  <string name="LinkWallet.approve">승인</string>
+  <!-- Decline link wallet button label -->
+  <string name="LinkWallet.decline">거절</string>
+  <!-- Link Wallet view title -->
+  <string name="LinkWallet.title">연결 지갑</string>
+  <!-- Link Wallet view title above domain list -->
+  <string name="LinkWallet.domainTitle">주의: 다음 도메인의 경우에만 이 앱이 연동됨</string>
+  <!-- Link Wallet view title above permissions list -->
+  <string name="LinkWallet.permissionsTitle">이 앱의 기능:</string>
+  <!-- Link Wallet view dislaimer footer -->
+  <string name="LinkWallet.disclaimer">외부 앱은 이 장치의 승인 없이 돈을 전송할 수 없습니다</string>
+  <!-- Link wallet logo footer text -->
+  <string name="LinkWallet.logoFooter">안전한 체크아웃</string>
+  <!-- Payment confirmation view title -->
+  <string name="PaymentConfirmation.title">확인</string>
+  <!-- Eg. Send 1.0Eth to purchase CCC -->
+  <string name="PaymentConfirmation.amountText">%2$@ 구매를 위해 %1$@ 전송</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.accountRequest">%1$@ 계정 정보를 요청합니다</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.callRequest">%1$@ 스마트계약 콜을 요청합니다</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.paymentRequest">%1$@ 계정 정보를 요청합니다</string>
 </resources>
