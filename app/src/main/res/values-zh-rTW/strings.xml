@@ -224,16 +224,10 @@
   <string name="FeeSelector.title">處理速度</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">管理</string>
-  <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">購買比特幣</string>
-  <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">選單</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">錢包</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">總資產</string>
-  <!-- (Tap here to) trade (your assets for other assets) -->
-  <string name="HomeScreen.trade">換</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">正在檢查私密金鑰餘額…</string>
   <!-- Sweep private key confirmation message -->
@@ -281,9 +275,11 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">略過</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">裝置安全性遭破解\n 任何「越獄」應用程式都可以存取 Bread 的鑰匙圈資料、 竊取您的比特幣！立即抹除這個錢包，在安全的裝置上還原。</string>
+  <string name="JailbreakWarnings.messageWithBalance">裝置安全性遭破解
+ 任何「越獄」應用程式都可以存取 Bread 的鑰匙圈資料、 竊取您的比特幣！立即抹除這個錢包，在安全的裝置上還原。</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">裝置安全性遭破解\n 任何「越獄」應用程式都可以存取 Bread 的鑰匙圈資料、 竊取您的比特幣。請只在未越獄的裝置上使用 Bread。</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">裝置安全性遭破解
+ 任何「越獄」應用程式都可以存取 Bread 的鑰匙圈資料、 竊取您的比特幣。請只在未越獄的裝置上使用 Bread。</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">警告</string>
   <!-- Wipe wallet button -->
@@ -304,10 +300,6 @@
   <string name="MenuButton.addWallet">增加錢包</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">鎖定電子錢包</string>
-  <!-- (Click here to) manage (your list of) wallets -->
-  <string name="MenuButton.manageWallets">管理錢包</string>
-  <!-- (press here to) scan (a) QR code -->
-  <string name="MenuButton.scan">掃描 QR</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">資訊安全中心</string>
   <!-- Menu button title -->
@@ -596,8 +588,6 @@
   <string name="Settings.manage">管理</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">通知</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">其他</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">偏好</string>
   <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -627,7 +617,10 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">再寫一次紙本金鑰</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">您的手機遺失、損壞或升級時，紙本金鑰是復原\n Bread 唯一的方式。\n\n我們會向您出示一個字串，請寫在紙上並妥善保管。</string>
+  <string name="StartPaperPhrase.body">您的手機遺失、損壞或升級時，紙本金鑰是復原
+ Bread 唯一的方式。
+
+我們會向您出示一個字串，請寫在紙上並妥善保管。</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">寫下紙本金鑰</string>
   <!-- Argument is date -->
@@ -640,14 +633,10 @@
   <string name="StartViewController.recoverButton">恢復錢包</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">正在連線</string>
-  <!-- The sync has failed (to complete) -->
-  <string name="SyncingView.failed">同步失敗</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">正在同步</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">重試</string>
-  <!-- "eg. Synced through <Jan 12, 2015> -->
-  <string name="SyncingView.syncedThrough">從 %1$s 同步</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">正在同步</string>
   <!-- 6 d (6 days) -->
@@ -899,7 +888,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">正在更新……</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet 已經改名爲 Bread，有嶄新的面貌和一些新功能。\n\n如果需要協助，就在大部分畫面的右上角尋找(?)。</string>
+  <string name="Welcome.body">Breadwallet 已經改名爲 Bread，有嶄新的面貌和一些新功能。
+
+如果需要協助，就在大部分畫面的右上角尋找(?)。</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">歡迎使用 Bread！</string>
   <!-- Wipe wallet alert message -->
@@ -930,4 +921,276 @@
   <string name="WritePaperPhrase.previous">上一頁</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%2$d 之 %1$d</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">其他</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">管理錢包</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">選單</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">購買比特幣</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">換</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">掃描 QR</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">同步失敗</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">從 %1$s 同步</string>
+  <string name="account.oauth.button.continue_email">發送連結至電子信箱</string>
+  <string name="account.oauth.button.done">好！</string>
+  <string name="account.oauth.instructions.continue">好的,請檢查您的電子郵件並依指示操作。完成後再次點擊「登入」即可開始使用服務！</string>
+  <string name="account.oauth.label.start">您似乎正嘗試使用已存在的帳戶登入。我們將傳送電子郵件給您,請開啟郵件中的連結來登入並授權給我們才能繼續進行。</string>
+  <string name="account.oauth.error.fail">授權失敗</string>
+  <string name="datetime.duration.day">日</string>
+  <string name="datetime.duration.week">週</string>
+  <string name="datetime.duration.month">月</string>
+  <!-- Account error message -->
+  <string name="exchange.account_picker.error.empty">查無任何帳戶。</string>
+  <string name="exchange.label.empty_list">很抱歉,您所在的地區目前無法提供服務。</string>
+  <!-- Get started with Glidera -->
+  <string name="exchange.glidera.label.get_started">以{serviceName}開始使用服務</string>
+  <!-- Glidera message - choose bank -->
+  <string name="exchange.glidera.label.select_bank">選擇您的銀行</string>
+  <!-- Agree to Glidera terms of service -->
+  <string name="exchange.glidera.label.tos_agree">繼續點擊下列即認為您同意{serviceName}服務條款</string>
+  <!-- Glidera message - trying to do too many purchases at the same time -->
+  <string name="exchange.glidera.notice.after_first_transfer">您可能必須等候您目前的購買完成之後才能繼續進行其他購買。</string>
+  <!-- Glidera message - trying to do too many purchases at the same time -->
+  <string name="exchange.glidera.notice.before_first_transfer">在您最先的購買完成之前,您將無法再次進行購買。</string>
+  <!-- Glidera message - your order is in process -->
+  <string name="exchange.glidera.notice.details_waiting">您的個人資料正在接受審核。這可能需要花費幾天時間。</string>
+  <!-- Glidera message - your order is in process -->
+  <string name="exchange.glidera.notice.id_verification_waiting">您的文件正在接受審核。這可能需要花費幾天時間。</string>
+  <!-- Glidera message - you’re registered with Glidera -->
+  <string name="exchange.glidera.notice.registered">您目前已註冊{service}。</string>
+  <string name="exchange.glidera.title.account_details">帳戶資訊</string>
+  <string name="exchange.glidera.title.bank_login">銀行登入</string>
+  <!-- Glidera message - picture of your ID (driver’s license or passport) -->
+  <string name="exchange.glidera.title.id_verification">身分證件照片</string>
+  <!-- Glidera message - connect a bank account -->
+  <string name="exchange.glidera.title.link_account">連結帳戶</string>
+  <string name="exchange.glidera.title.preferences">帳戶偏好</string>
+  <string name="exchange.glidera.title.registration">註冊</string>
+  <string name="exchange.glidera.notice.settings_trouble">操作上述設定遇到問題了嗎？</string>
+  <!-- Glidera message - tap to go directly to their website -->
+  <string name="exchange.glidera.notice.visit_directly">點擊下方直接前往{serviceName}。</string>
+  <!-- Glidera message - tap to out their settings -->
+  <string name="exchange.glidera.button.open_settings">打開 Glidera 設定</string>
+  <string name="exchange.cash.button.buy">購買比特幣</string>
+  <!-- Check the status of your order -->
+  <string name="exchange.cash.button.status">查看狀態</string>
+  <!-- Order details - how much, exchange rate -->
+  <string name="exchange.crypto.memo">已賣出至{toAmount}{toCurrency},以每{fromCurrency}對{rate}{toCurrency}</string>
+  <string name="exchange.error.max_order">最高訂購上限:{amount}</string>
+  <string name="exchange.error.min_order">最少訂購下限:{amount}</string>
+  <string name="exchange.geo.button.check_again">再次確認</string>
+  <string name="exchange.geo.button.enable">允許定位服務？</string>
+  <string name="exchange.geo.error.enable_in_settings">您必須允許您的手機位置存取權限。請至系統設定允許定位服務。</string>
+  <string name="exchange.history.label.btc_price">購買時比特幣價格:</string>
+  <string name="exchange.history.label.price">購買時的{currency}價格:</string>
+  <string name="exchange.history.label.delivery_date_label">交付日期:</string>
+  <string name="exchange.history.label.identifier">識別碼:</string>
+  <string name="exchange.history.label.service_label">服務:</string>
+  <string name="exchange.history.label.state.complete">完成</string>
+  <string name="exchange.history.label.state.processing">可用於</string>
+  <string name="exchange.history.label.status_label">狀態:</string>
+  <string name="exchange.history.label.status.complete">完成</string>
+  <string name="exchange.history.label.status.failed">失敗</string>
+  <string name="exchange.history.label.status.processing">正在進行中</string>
+  <string name="exchange.history.label.total">總支付金額:</string>
+  <string name="exchange.history.title">換匯歷史紀錄</string>
+  <string name="exchange.label.provider">{name}提供的服務</string>
+  <string name="exchange.label.daily_and_monthly_limits">您的交易量限制{daily}/日及{monthly}/月。</string>
+  <string name="exchange.label.daily_limit">今日您的購買量上限可至{daily}。</string>
+  <string name="exchange.label.delivered">交付</string>
+  <string name="exchange.label.empty_history">無任何交易紀錄。買一些貨幣吧！</string>
+  <string name="exchange.label.fees">費用</string>
+  <string name="exchange.label.limit.daily">每日用量:{consumed}之{amount}。</string>
+  <string name="exchange.label.limit.weekly">每週用量:{consumed}之{amount}。</string>
+  <string name="exchange.label.limits">限制</string>
+  <string name="exchange.label.link.purchase">購買</string>
+  <string name="exchange.label.loading_limits">下載您的交易量限制……</string>
+  <!-- Order limit exceeded -->
+  <string name="exchange.label.zero_limits">您已達到購買上限。請稍後再試。</string>
+  <!-- Cannot buy yet, order in progress or ID verification required -->
+  <string name="exchange.label.zero_limits_and_no_history">您還不能購買比特幣。請前往設定頁面確認並聯繫{email}。</string>
+  <string name="exchange.unsupported.title">目前不支援。</string>
+  <string name="exchange.unsupported.paragraph.buy">尚未支援購買這項資產。我們正持續新增更多資產的相關支援,請之後再回來查看！</string>
+  <string name="exchange.unsupported.paragraph.sell">尚未支援購買這項資產。我們正持續新增更多資產的相關支援,請之後再回來查看！</string>
+  <string name="empty.title">無任何資產。</string>
+  <string name="empty.paragraph.buy">您沒有任何資產可以進行交易。購買一些比特幣作為開始吧！</string>
+  <string name="exchange.libx.label.refreshing_token">正在重新整理…</string>
+  <string name="exchange.libx.label.show_token">LibX 代幣:{token}</string>
+  <string name="exchange.libx.label.token_expires">到期:{time}</string>
+  <string name="exchange.libx.label.token_fees">費用:{amount}</string>
+  <string name="exchange.libx.label.token_rate">費率:{amount}</string>
+  <string name="exchange.libx.label.token_sent">發送:{amount}</string>
+  <string name="exchange.libx.label.token_status">狀態</string>
+  <string name="exchange.libx.notice.pin_done">太棒了！您已完成了</string>
+  <string name="exchange.libx.notice.redeem_another">兌換另一件</string>
+  <string name="exchange.libx.title.pin">LibertyX 兌換 PIN 碼</string>
+  <string name="exchange.libx.title.status">LibertyX 狀態</string>
+  <string name="exchange.libx.title.token">LibertyX 創造代幣</string>
+  <string name="exchange.slogans.bank">連結您的銀行帳戶來使用享譽全球並擁有獲獎殊榮的仲介服務進行比特幣買賣。</string>
+  <string name="exchange.title.bank">銀行帳戶</string>
+  <string name="exchange.title.buy_bitcoin">購買比特幣</string>
+  <string name="exchange.title.buy_currency">購買{currency}</string>
+  <string name="exchange.title.buy_amount_in">購買{amount}的{currency}</string>
+  <string name="exchange.title.buy_amount">購買{amount}</string>
+  <string name="exchange.title.buy_service">選擇付款方式。</string>
+  <string name="exchange.title.trade">將{from}交易為{to}</string>
+  <string name="exchange.title.sell_bitcoin">賣出比特幣</string>
+  <string name="exchange.title.sell_currency">賣出{currency}</string>
+  <string name="exchange.title.sell_amount_in">將{currency}交易為:</string>
+  <string name="exchange.title.sell_amount">賣出{amount}</string>
+  <string name="exchange.title.sell_service">您想將{currency}兌換成哪種貨幣？</string>
+  <string name="exchange.title.cash">現金</string>
+  <string name="exchange.title.credit">信用卡</string>
+  <string name="exchange.title.history">歷史紀錄</string>
+  <string name="exchange.title.settings">設定</string>
+  <string name="exchange.title.exchange">加密貨幣換匯</string>
+  <string name="exchange.title.confirm_buy">確認購買</string>
+  <string name="exchange.title.confirm_trade">確認交易</string>
+  <string name="exchange.label.in_currency">{currency}</string>
+  <string name="exchange.title.choose">您想要如何付款？</string>
+  <!-- Over the available order limit -->
+  <string name="exchange.source.title.maximum">超出最高數量限制</string>
+  <string name="exchange.source.paragraph.maximum">您目前的{source}餘額最高可以購買到{maximum}。您是否要將購買數量更改到{maximum}？</string>
+  <!-- Under the available order limit -->
+  <string name="exchange.source.title.minimum">數量低於最低限制</string>
+  <string name="exchange.source.paragraph.minimum">您最低必須以{source}購買{minimum}。您是否要將購買數量更改到{minimum}？</string>
+  <string name="exchange.source.title.insufficient">餘額不足</string>
+  <string name="exchange.source.paragraph.insufficient">您沒有足夠{source}來支付最低購買量{minimum}。請購買更多{source}或改用其他付款方式。</string>
+  <string name="exchange.source.title.toolow">餘額過低</string>
+  <!-- Over the available order limit -->
+  <string name="exchange.destination.title.maximum">超出最高數量限制</string>
+  <string name="exchange.destination.paragraph.maximum">您最高可以賣出{maximum}到{destination}。您是否要將購買數量更改到{maximum}？</string>
+  <string name="exchange.destination.title.minimum">數量低於最低限制</string>
+  <string name="exchange.destination.paragraph.minimum">您最低必須賣出{minimum}到{destination}。您是否要將購買數量更改到{minimum}？</string>
+  <string name="exchange.destination.title.insufficient">餘額不足</string>
+  <string name="exchange.destination.paragraph.insufficient">您沒有足夠{destination}來支付最低數量{minimum}。請購買更多{source}或改用其他付款方式。</string>
+  <string name="exchange.destination.title.toolow">餘額過低</string>
+  <string name="field.address.placeholder.line_1">地址…</string>
+  <!-- Second address line (apartment number for example) -->
+  <string name="field.address.placeholder.line_2">第 2 行…</string>
+  <!-- Third address line (apartment number for example) -->
+  <string name="field.address.placeholder.line_3">第 3 行…</string>
+  <!-- Service error -->
+  <string name="field.bitid.label.error">BitID 錯誤:</string>
+  <string name="field.bitid.label.retry">嘗試重新提交表單。</string>
+  <string name="field.countrystate.label.country">國家:</string>
+  <!-- State or Province within a country -->
+  <string name="field.countrystate.label.state">州別:</string>
+  <string name="field.image.button.retake">重新拍攝</string>
+  <string name="field.image.button.take">拍攝照片</string>
+  <string name="field.verified_email.confirm">確認</string>
+  <!-- Send email verification again -->
+  <string name="field.verified_email.reverify">重新發送</string>
+  <string name="field.verified_email.verify">發送確認碼到電子信箱</string>
+  <string name="field.verified_phone.confirm">確認</string>
+  <!-- Send phone verification again -->
+  <string name="field.verified_phone.resend">重新發送</string>
+  <string name="field.verified_phone.send">發送確認碼至手機</string>
+  <string name="general.button.buy">購買</string>
+  <string name="general.button.cancel">取消</string>
+  <string name="general.button.enable">啟用</string>
+  <string name="general.button.next">下一個</string>
+  <string name="general.button.ok">好</string>
+  <string name="general.button.proceed">繼續</string>
+  <string name="general.button.refresh">重新整理</string>
+  <string name="general.button.retry">重試</string>
+  <string name="general.button.submit">提交</string>
+  <string name="general.button.history">歷史紀錄</string>
+  <string name="general.button.back">返回</string>
+  <string name="general.error.timed_out">請求超時</string>
+  <string name="general.error.touchid_error">Touch ID 錯誤:再試一次</string>
+  <string name="general.error.params_error">參數錯誤</string>
+  <string name="general.error.fee_error">費用計算錯誤</string>
+  <string name="general.error.tx_error">交易錯誤（餘額過低？）</string>
+  <string name="general.error.network">網路錯誤</string>
+  <string name="general.error.network_message">發生未知錯誤</string>
+  <string name="general.label.confirmation_code">確認碼</string>
+  <string name="general.label.email">電子信箱</string>
+  <string name="general.label.error">錯誤:</string>
+  <string name="general.label.phone">電話</string>
+  <string name="general.label.unknown_error">未知的錯誤</string>
+  <string name="general.label.min">最低</string>
+  <string name="general.label.max">最高</string>
+  <string name="general.label.estimate">預估</string>
+  <string name="general.label.zero">零</string>
+  <string name="general.label.default">預設</string>
+  <string name="general.loader.label.empty_state">此區域為故意留空</string>
+  <string name="general.loader.label.loading">正在載入{noun}</string>
+  <string name="general.placeholder.confirmation_code">確認碼</string>
+  <string name="general.placeholder.email">電子郵件</string>
+  <string name="general.placeholder.phone">電話</string>
+  <string name="general.placeholder.pin">PIN 碼</string>
+  <string name="general.status.loading">載入中…</string>
+  <string name="buy.title">您想要如何付款？</string>
+  <string name="buy.transaction.destination.per">每</string>
+  <string name="buy.confirm_quote.title">購買</string>
+  <string name="sell.confirm_quote.title">賣出</string>
+  <string name="buy.quote.payment_method">付款方式</string>
+  <string name="buy.quote.delivery">交付</string>
+  <string name="buy.quote.price">價格</string>
+  <string name="buy.quote.subtotal">小計</string>
+  <string name="buy.quote.fee">費用</string>
+  <string name="buy.quote.total">總費用</string>
+  <string name="sell.quote.total">購買數量</string>
+  <string name="trade.title">買賣您的:</string>
+  <string name="trade.confirm_quote.trade">買賣</string>
+  <string name="trade.confirm_quote.for">到</string>
+  <!-- Support search no results -->
+  <string name="support.label.no_search_results">查無結果</string>
+  <!-- Support search results see more -->
+  <string name="support.label.see_more">查看更多</string>
+  <!-- Support search see fewer -->
+  <string name="support.label.see_fewer">查看更少</string>
+  <!-- Support section, see articles on a subject -->
+  <string name="support.label.see_articles">查看文章</string>
+  <!-- Support search article not found -->
+  <string name="support.error.article_not_found">查無文章</string>
+  <!-- Support footer email link -->
+  <string name="support.footer.email_us">寄電子郵件給我們</string>
+  <!-- Support section footer -->
+  <string name="support.footer.privacy_policy">隱私權政策</string>
+  <!-- Support section footer -->
+  <string name="support.footer.rights">版權所有。</string>
+  <!-- Support search footer -->
+  <string name="support.footer.tos">使用條款</string>
+  <!-- Support section title -->
+  <string name="support.label.browse_topics">瀏覽主題</string>
+  <!-- Support section title -->
+  <string name="support.label.faq">常見問題</string>
+  <!-- Support button label -->
+  <string name="support.title">支援</string>
+  <!-- Push notifications are disabled alert title" -->
+  <string name="PushNotifications.disabled">已停用通知功能</string>
+  <!-- Push notifications settings instructions -->
+  <string name="PushNotifications.enableInstructions">開啟設定中的通知功能來接收提醒</string>
+  <!-- Approve link wallet button label -->
+  <string name="LinkWallet.approve">同意</string>
+  <!-- Decline link wallet button label -->
+  <string name="LinkWallet.decline">拒絕</string>
+  <!-- Link Wallet view title -->
+  <string name="LinkWallet.title">連結電子錢包</string>
+  <!-- Link Wallet view title above domain list -->
+  <string name="LinkWallet.domainTitle">備註:在連線到下列網域時才會與此應用程式互動</string>
+  <!-- Link Wallet view title above permissions list -->
+  <string name="LinkWallet.permissionsTitle">此應用程式將可以:</string>
+  <!-- Link Wallet view dislaimer footer -->
+  <string name="LinkWallet.disclaimer">外部應用程式未經此裝置的允許無法匯款</string>
+  <!-- Link wallet logo footer text -->
+  <string name="LinkWallet.logoFooter">安全結帳</string>
+  <!-- Payment confirmation view title -->
+  <string name="PaymentConfirmation.title">確認</string>
+  <!-- Eg. Send 1.0Eth to purchase CCC -->
+  <string name="PaymentConfirmation.amountText">匯出%1$@來購買%2$@</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.accountRequest">要求%1$@帳戶資訊</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.callRequest">要求%1$@智慧合約呼叫</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.paymentRequest">要求%1$@付款</string>
 </resources>
