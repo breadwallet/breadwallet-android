@@ -1185,11 +1185,11 @@ Als u hulp nodig hebt, zoek naar de (?) rechtsboven in de meeste schermen.</stri
   <!-- Payment confirmation view title -->
   <string name="PaymentConfirmation.title">Bevestiging</string>
   <!-- Eg. Send 1.0Eth to purchase CCC -->
-  <string name="PaymentConfirmation.amountText">%1$@ versturen om %2$@ te kopen</string>
+  <string name="PaymentConfirmation.amountText">%1$s versturen om %2$s te kopen</string>
   <!-- Service capabilities description -->
-  <string name="EME.permissions.accountRequest">Vraag %1$@ accountgegevens aan</string>
+  <string name="EME.permissions.accountRequest">Vraag %1$s accountgegevens aan</string>
   <!-- Service capabilities description -->
-  <string name="EME.permissions.callRequest">Verzoek %1$@ smart contract oproep</string>
+  <string name="EME.permissions.callRequest">Verzoek %1$s smart contract oproep</string>
   <!-- Service capabilities description -->
-  <string name="EME.permissions.paymentRequest">Verzoek %1$@ betaling</string>
+  <string name="EME.permissions.paymentRequest">Verzoek %1$s betaling</string>
 </resources>
