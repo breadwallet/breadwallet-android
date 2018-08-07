@@ -55,7 +55,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
     private static final String TAG = HomeActivity.class.getSimpleName();
 
-    private static final String CCC_CURRENCY_CODE = "CCC";
+    public static final String CCC_CURRENCY_CODE = "CCC";
     private static final int ADD_CCC_WALLE_DELAY_SECONDS = 20;
 
 

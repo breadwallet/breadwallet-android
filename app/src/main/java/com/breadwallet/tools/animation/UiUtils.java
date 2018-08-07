@@ -138,7 +138,7 @@ public class UiUtils {
                 app.getFragmentManager().popBackStack();
                 return;
             }
-            String iso = BaseBitcoinWalletManager.BITCOIN_SYMBOL;
+            String iso = BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE;
             if (wm != null) wm.getIso();
             fragmentSupport = new FragmentSupport();
             Bundle bundle = new Bundle();

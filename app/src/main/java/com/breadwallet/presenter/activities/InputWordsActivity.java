@@ -212,8 +212,8 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                         WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
                         PostAuth.getInstance().setCachedPaperKey(cleanPhrase);
                         //Disallow BTC and BCH sending.
-                        BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCASH_SYMBOL, false);
-                        BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCOIN_SYMBOL, false);
+                        BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCASH_CURRENCY_CODE, false);
+                        BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE, false);
 
                         PostAuth.getInstance().onRecoverWalletAuth(app, false);
                     }
