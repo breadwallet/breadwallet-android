@@ -302,7 +302,8 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
                         JSONObject scopeObject = scopesJsonArray.getJSONObject(j);
                         String scopeName = scopeObject.has(NAME) ? scopeObject.getString(NAME) : null;
                         String scopeDescription = scopeObject.has(DESCRIPTION) ? scopeObject.getString(DESCRIPTION) : null;
-                        scopes.put(scopeName, scopeDescription);
+                        scopes.put(NAME, scopeName);
+                        scopes.put(DESCRIPTION, scopeDescription);
                     }
                     String capabilityDescription = capabilityJson.has(DESCRIPTION) ? capabilityJson.getString(DESCRIPTION) : null;
                     ServiceMetaData.Capability capability = new ServiceMetaData.Capability(capabilityName, scopes, capabilityDescription);

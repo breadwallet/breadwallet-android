@@ -947,7 +947,6 @@
 
     <!-- Payment Confirmation screen -->
     <string name="PaymentConfirmation.headerTitle">Confirmation</string>
-
     <string name="PaymentConfirmation.amountTex">Send %1$s to purchase %1$s</string>
 
 </resources>
