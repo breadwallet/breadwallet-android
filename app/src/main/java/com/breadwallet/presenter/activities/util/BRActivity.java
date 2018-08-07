@@ -82,7 +82,6 @@ public class BRActivity extends FragmentActivity implements ApplicationLifecycle
     @Override
     protected void onStop() {
         super.onStop();
-
         //open back to HomeActivity if needed
         if (this instanceof WalletActivity)
             BRSharedPrefs.putAppBackgroundedFromHome(this, false);

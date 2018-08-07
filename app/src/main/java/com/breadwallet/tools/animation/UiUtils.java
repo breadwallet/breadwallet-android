@@ -22,6 +22,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
@@ -100,26 +101,6 @@ public class UiUtils {
 
     public static void setIsSupportFragmentShown(boolean isSupportFragmentShown) {
         mSupportIsShowing = isSupportFragmentShown;
-    }
-
-    public static void showSendFragment(FragmentActivity app, final CryptoRequest request) {
-        if (app == null) {
-            Log.e(TAG, "showSendFragment: app is null");
-            return;
-        }
-
-        FragmentSend fragmentSend = (FragmentSend) app.getSupportFragmentManager().findFragmentByTag(FragmentSend.class.getName());
-        if (fragmentSend == null) {
-            fragmentSend = new FragmentSend();
-        }
-        fragmentSend.saveViewModelData(request);
-        if (!fragmentSend.isAdded()) {
-            app.getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                    .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
-                    .addToBackStack(FragmentSend.class.getName()).commit();
-        }
-
     }
 
     public static void showSupportFragment(FragmentActivity app, String articleId, BaseWalletManager wm) {

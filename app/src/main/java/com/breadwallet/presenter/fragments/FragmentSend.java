@@ -27,6 +27,7 @@ import android.widget.TextView;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
@@ -404,6 +405,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
                 saveViewModelData();
+                closeWithAnimation();
                 UiUtils.openScanner(getActivity(), BRConstants.SCANNER_REQUEST);
 
             }
@@ -633,6 +635,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     @Override
     public void onResume() {
         super.onResume();
+        loadParameters();
         loadViewModelData();
     }
 
@@ -640,6 +643,17 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     public void onPause() {
         super.onPause();
         Utils.hideKeyboard(getActivity());
+    }
+
+    private void loadParameters() {
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            CryptoRequest request = (CryptoRequest) arguments.getSerializable(WalletActivity.EXTRA_CRYPTO_REQUEST);
+            if (request != null) {
+                saveViewModelData(getActivity(), request);
+            }
+
+        }
     }
 
     private void handleClick(String key) {
@@ -837,7 +851,10 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         }
     }
 
-    public void saveViewModelData(CryptoRequest request) {
+    public void saveViewModelData(Activity activity, CryptoRequest request) {
+        if (mViewModel == null) {
+            mViewModel = ViewModelProviders.of(this).get(SendViewModel.class);
+        }
         String address = null;
         String code = null;
         String amount = null;
@@ -849,17 +866,17 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 code = mSelectedCurrencyCode;
             }
         } else {
-            BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
+            BaseWalletManager wm = WalletsMaster.getInstance(activity).getCurrentWallet(activity);
             address = request.address;
             memo = request.message;
             code = request.iso;
 
             if (request.amount != null) {
                 BigDecimal satoshiAmount = request.amount.multiply(new BigDecimal(BaseBitcoinWalletManager.ONE_BITCOIN_IN_SATOSHIS));
-                amount = wm.getFiatForSmallestCrypto(getActivity(), satoshiAmount, null).toPlainString();
+                amount = wm.getFiatForSmallestCrypto(activity, satoshiAmount, null).toPlainString();
             } else if (request.value != null) {
                 // ETH request amount param is named `value`
-                BigDecimal fiatAmount = wm.getFiatForSmallestCrypto(getActivity(), request.value, null);
+                BigDecimal fiatAmount = wm.getFiatForSmallestCrypto(activity, request.value, null);
                 fiatAmount = fiatAmount.setScale(2, RoundingMode.HALF_EVEN);
                 amount = fiatAmount.toPlainString();
             }
@@ -880,7 +897,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     }
 
     public void saveViewModelData() {
-        saveViewModelData(null);
+        saveViewModelData(getActivity(), null);
     }
 
     @Override
