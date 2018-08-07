@@ -106,9 +106,8 @@ public final class BRDFirebaseMessagingService extends FirebaseMessagingService 
 
             // Take the user to HomeActivity upon tapping the notification
             Intent homeIntent = new Intent(this, HomeActivity.class);
-            homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, homeIntent, 0);
-
 
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.drawable.brd_logo_gradient)
@@ -118,9 +117,6 @@ public final class BRDFirebaseMessagingService extends FirebaseMessagingService 
                     .setContentIntent(pendingIntent);
 
             notificationManager.notify(notificationId, notificationBuilder.build());
-
-            // Trigger an inbox retrieval to get new messages
-            MessageExchangeService.enqueueWork(this, MessageExchangeService.createIntent(this, MessageExchangeService.ACTION_RETRIEVE_MESSAGES));
 
         }
     }
