@@ -1185,11 +1185,11 @@ If you need help, look for the (?) in the top right of most screens.</string>
   <!-- Payment confirmation view title -->
   <string name="PaymentConfirmation.title">Confirmation</string>
   <!-- Eg. Send 1.0Eth to purchase CCC -->
-  <string name="PaymentConfirmation.amountText">Send %1$@ to purchase %2$@</string>
+  <string name="PaymentConfirmation.amountText">Send %1$s to purchase %2$s</string>
   <!-- Service capabilities description -->
-  <string name="EME.permissions.accountRequest">Request %1$@ account information</string>
+  <string name="EME.permissions.accountRequest">Request %1$s account information</string>
   <!-- Service capabilities description -->
-  <string name="EME.permissions.callRequest">Request %1$@ smart contract call</string>
+  <string name="EME.permissions.callRequest">Request %1$s smart contract call</string>
   <!-- Service capabilities description -->
-  <string name="EME.permissions.paymentRequest">Request %1$@ payment</string>
+  <string name="EME.permissions.paymentRequest">Request %1$s payment</string>
 </resources>

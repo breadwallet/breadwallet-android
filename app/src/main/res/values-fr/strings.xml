@@ -1187,11 +1187,11 @@ Si vous avez besoin d\'aide, cliquez sur le (?) en haut à droite de la plupart 
   <!-- Payment confirmation view title -->
   <string name="PaymentConfirmation.title">Confirmation </string>
   <!-- Eg. Send 1.0Eth to purchase CCC -->
-  <string name="PaymentConfirmation.amountText">Envoyer %1$@ pour acheter %2$@</string>
+  <string name="PaymentConfirmation.amountText">Envoyer %1$s pour acheter %2$s</string>
   <!-- Service capabilities description -->
-  <string name="EME.permissions.accountRequest">Demande %1$@ des informations de compte</string>
+  <string name="EME.permissions.accountRequest">Demande %1$s des informations de compte</string>
   <!-- Service capabilities description -->
-  <string name="EME.permissions.callRequest">Demande %1$@ d\'appel de contrat intelligent</string>
+  <string name="EME.permissions.callRequest">Demande %1$s d\'appel de contrat intelligent</string>
   <!-- Service capabilities description -->
-  <string name="EME.permissions.paymentRequest">Demande %1$@ de paiement</string>
+  <string name="EME.permissions.paymentRequest">Demande %1$s de paiement</string>
 </resources>
