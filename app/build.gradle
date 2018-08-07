@@ -12,7 +12,7 @@ android {
         minSdkVersion 23
         targetSdkVersion 27
         versionCode 307
-        versionName "3.3.1"
+        versionName "3.3.0"
         multiDexEnabled true
 
         // Similar to other properties in the defaultConfig block,
