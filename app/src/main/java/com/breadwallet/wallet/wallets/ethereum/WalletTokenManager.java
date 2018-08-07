@@ -15,12 +15,12 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
 import com.breadwallet.wallet.wallets.CryptoAddress;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
 import com.breadwallet.wallet.wallets.WalletManagerHelper;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -462,21 +462,21 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     //erc20 rates are in BTC (thus this math)
     private BigDecimal getFiatForToken(Context app, BigDecimal tokenAmount, String code) {
         //fiat rate for btc
-        CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
-
+        CurrencyEntity rate = RatesDataSource.getInstance(app).getCurrencyByCode(app, WalletBitcoinManager.BITCOIN_CURRENCY_CODE, code);
         //Btc rate for the token
-        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), "BTC");
-        if (btcRate == null) {
-            Log.e(TAG, "getUsdFromBtc: No USD rates for BTC");
+        CurrencyEntity tokenBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), WalletBitcoinManager.BITCOIN_CURRENCY_CODE);
+
+        if (rate == null) {
+            Log.e(TAG, "getUsdFromBtc: No USD rates for BTC or ETH");
             return null;
         }
         if (tokenBtcRate == null) {
-            Log.e(TAG, "getUsdFromBtc: No BTC rates for ETH");
+            Log.e(TAG, "getUsdFromBtc: No BTC or ETH rates for token");
             return null;
         }
-        if (tokenBtcRate.rate == 0 || btcRate.rate == 0) return BigDecimal.ZERO;
+        if (tokenBtcRate.rate == 0 || rate.rate == 0) return BigDecimal.ZERO;
 
-        return tokenAmount.multiply(new BigDecimal(tokenBtcRate.rate)).multiply(new BigDecimal(btcRate.rate));
+        return tokenAmount.multiply(new BigDecimal(tokenBtcRate.rate)).multiply(new BigDecimal(rate.rate));
     }
 
     //pass in a fiat amount and return the specified amount in tokens

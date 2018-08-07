@@ -84,7 +84,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     private CryptoTransaction mWatchedTransaction;
     private OnHashUpdated mWatchListener;
 
-    private static final String ISO = "ETH";
+    public static final String ETH_CURRENCY_CODE = "ETH";
     public static final String ETH_SCHEME = "ethereum";
     //1ETH = 1000000000000000000 WEI
     public static final String ETHER_WEI = "1000000000000000000";
@@ -431,12 +431,12 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     @Override
     public String getSymbol(Context app) {
 //        return BRConstants.symbolEther;
-        return ISO;
+        return ETH_CURRENCY_CODE;
     }
 
     @Override
     public String getIso() {
-        return ISO;
+        return ETH_CURRENCY_CODE;
     }
 
     @Override
