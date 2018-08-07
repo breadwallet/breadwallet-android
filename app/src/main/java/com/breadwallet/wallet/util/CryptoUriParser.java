@@ -2,12 +2,16 @@ package com.breadwallet.wallet.util;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
-import android.support.v4.app.FragmentActivity;
+import android.os.Handler;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
+import com.breadwallet.presenter.activities.HomeActivity;
+import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.tools.animation.UiUtils;
@@ -33,6 +37,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static com.breadwallet.presenter.activities.WalletActivity.EXTRA_CRYPTO_REQUEST;
 
 /**
  * BreadWallet
@@ -249,14 +255,14 @@ public class CryptoUriParser {
         return true;
     }
 
-    private static boolean tryCryptoUrl(final CryptoRequest requestObject, final Context app) {
+    private static boolean tryCryptoUrl(final CryptoRequest requestObject, final Context context) {
         if (requestObject == null || requestObject.address == null || requestObject.address.isEmpty())
             return false;
-        final BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
+        final BaseWalletManager wallet = WalletsMaster.getInstance(context).getCurrentWallet(context);
         if (requestObject.iso != null && !requestObject.iso.equalsIgnoreCase(wallet.getIso())) {
-            if (!(WalletsMaster.getInstance(app).isIsoErc20(app, wallet.getIso()) && requestObject.iso.equalsIgnoreCase("ETH"))) {
-                BRDialog.showCustomDialog(app, app.getString(R.string.Alert_error),
-                        String.format(app.getString(R.string.Send_invalidAddressMessage), wallet.getName()), app.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+            if (!(WalletsMaster.getInstance(context).isIsoErc20(context, wallet.getIso()) && requestObject.iso.equalsIgnoreCase("ETH"))) {
+                BRDialog.showCustomDialog(context, context.getString(R.string.Alert_error),
+                        String.format(context.getString(R.string.Send_invalidAddressMessage), wallet.getName()), context.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
                             @Override
                             public void onClick(BRDialogView brDialogView) {
                                 brDialogView.dismiss();
@@ -270,20 +276,24 @@ public class CryptoUriParser {
             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    UiUtils.showSendFragment((FragmentActivity) app, requestObject);
+                    BRSharedPrefs.putCurrentWalletIso(context, requestObject.iso);
+                    Intent newIntent = new Intent(context, WalletActivity.class);
+                    newIntent.putExtra(EXTRA_CRYPTO_REQUEST, requestObject);
+                    context.startActivity(newIntent);
                 }
             });
+            return true;
         } else {
-            UiUtils.killAllFragments((Activity) app);
+            UiUtils.killAllFragments((Activity) context);
             if (Utils.isNullOrEmpty(requestObject.address) || !wallet.isAddressValid(requestObject.address)) {
-                BRDialog.showSimpleDialog(app, app.getString(R.string.Send_invalidAddressTitle), "");
+                BRDialog.showSimpleDialog(context, context.getString(R.string.Send_invalidAddressTitle), "");
                 return true;
             }
 
             BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                 @Override
                 public void run() {
-                    SendManager.sendTransaction(app, requestObject, wallet, null);
+                    SendManager.sendTransaction(context, requestObject, wallet, null);
                 }
             });
 

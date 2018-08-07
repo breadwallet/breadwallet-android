@@ -9,9 +9,11 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
+import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.transition.TransitionManager;
@@ -23,12 +25,15 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ViewFlipper;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BaseTextView;
+import com.breadwallet.presenter.entities.CryptoRequest;
+import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
@@ -68,6 +73,8 @@ import java.text.SimpleDateFormat;
 public class WalletActivity extends BRActivity implements InternetManager.ConnectionReceiverListener,
         OnTxListModified, RatesDataSource.OnDataChanged, SyncListener, OnBalanceChangedListener {
     private static final String TAG = WalletActivity.class.getName();
+
+    public static final String EXTRA_CRYPTO_REQUEST = "com.breadwallet.presenter.activities.WalletActivity.EXTRA_CRYPTO_REQUEST";
 
     private static final String SYNCED_THROUGH_DATE_FORMAT = "MM/dd/yy HH:mm";
     private static final float SYNC_PROGRESS_LAYOUT_ANIMATION_ALPHA = 0.0f;
@@ -138,16 +145,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mSendButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                UiUtils.showSendFragment(WalletActivity.this, null);
-
-//                //todo remove this testing
-//                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        MessageExchangeService.sendTestPing(WalletActivity.this);
-//                    }
-//                });
-
+                showSendFragment(null);
             }
         });
 
@@ -417,10 +415,24 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mSyncNotificationBroadcastReceiver = new SyncNotificationBroadcastReceiver();
         SyncService.registerSyncNotificationBroadcastReceiver(WalletActivity.this.getApplicationContext(), mSyncNotificationBroadcastReceiver);
         SyncService.startService(this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletIso);
+        final CryptoRequest request = (CryptoRequest) getIntent().getSerializableExtra(EXTRA_CRYPTO_REQUEST);
 
         DeepLinkingManager.handleUrlClick(this, getIntent());
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                showSendIfNeeded(request);
+            }
+        }, DateUtils.SECOND_IN_MILLIS);
 
     }
+
+    private void showSendIfNeeded(CryptoRequest request) {
+        if (request != null) {
+            showSendFragment(request);
+        }
+    }
+
 
     @Override
     protected void onPause() {
@@ -573,6 +585,24 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 }
             }
         }
+    }
+
+    public void showSendFragment(final CryptoRequest request) {
+        FragmentSend fragmentSend = (FragmentSend) getSupportFragmentManager().findFragmentByTag(FragmentSend.class.getName());
+        if (fragmentSend == null) {
+            fragmentSend = new FragmentSend();
+        }
+
+        Bundle arguments = new Bundle();
+        arguments.putSerializable(EXTRA_CRYPTO_REQUEST, request);
+        fragmentSend.setArguments(arguments);
+        if (!fragmentSend.isAdded()) {
+            getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(0, 0, 0, R.animator.plain_300)
+                    .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
+                    .addToBackStack(FragmentSend.class.getName()).commit();
+        }
+
     }
 
 }

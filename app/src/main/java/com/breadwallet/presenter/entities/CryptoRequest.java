@@ -10,6 +10,7 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.entities.GenericTransactionMetaData;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 /**
@@ -37,7 +38,7 @@ import java.math.BigDecimal;
  * THE SOFTWARE.
  */
 
-public class CryptoRequest {
+public class CryptoRequest implements Serializable {
     public static final String TAG = CryptoRequest.class.getName();
     public String iso = "BTC"; //make it default
     public String address;
