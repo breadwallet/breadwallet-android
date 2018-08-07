@@ -932,27 +932,22 @@
     <string name="WritePaperPhrase.step">%1$d of %2$d</string>
 
     <!-- Participate with BRD strings -->
-    <string name="LinkWallet.dialogTitle">LINK WALLET</string>
-    <string name="LinkWallet.subtitle">SECURE CHECKOUT</string>
-    <string name="LinkWallet.domainWarning">Note: ONLY interact with this app when on one of the following domains:</string>
-    <string name="LinkWallet.validDomains">participate.brd.com, brd.com</string>
-    <string name="LinkWallet.appPermissionsTitle">This app will be able to</string>
-    <string name="LinkWallet.readBalancePermission">Read your ETH balance</string>
-    <string name="LinkWallet.serviceCapabilities.seeEthAddress">See your Ethereum address.</string>
-    <string name="LinkWallet.serviceCapabilities.makeTransferRequests">Make Ethereum transfer requests.</string>
-    <string name="LinkWallet.serviceCapabilities.makeSmartContractRequests">Make Ethereum smart contract requests.f</string>
-    <string name="LinkWallet.requestTransactionsPermission">Request transactions</string>
-    <string name="LinkWallet.externalAppsReminder">External apps can not spend money without approval on this device.</string>
+    <string name="LinkWallet.approve">Approve</string>
+    <string name="LinkWallet.deny">Decline</string>
+    <string name="LinkWallet.title">LINK WALLET</string>
+    <string name="LinkWallet.logoFooter">SECURE CHECKOUT</string>
+    <string name="LinkWallet.domainTitle">Note: ONLY interact with this app when on one of the following domains:</string>
+    <string name="LinkWallet.permissionsTitle">This app will be able to:</string>
+    <string name="LinkWallet.disclaimer">External apps can not spend money without approval on this device.</string>
 
     <!-- EME permission strings -->
     <string name="EME.permissions.accountRequest">Request %1$s account information</string>
     <string name="EME.permissions.callRequest">Request %1$s smart contract call</string>
     <string name="EME.permissions.paymentRequest">Request %1$s payment</string>
 
-
     <!-- Payment Confirmation screen -->
     <string name="PaymentConfirmation.headerTitle">Confirmation</string>
 
-
+    <string name="PaymentConfirmation.amountTex">Send %1$s to purchase %1$s</string>
 
 </resources>
