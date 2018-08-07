@@ -63,8 +63,15 @@ public final class InputDataManager {
             return false;
         }
         Uri uri = Uri.parse(result);
+        if (uri == null) {
+            return false;
+        }
         String path = uri.getPath();
-        if (uri.getHost().equalsIgnoreCase(BRConstants.URL_BRD_HOST)
+        String host = uri.getHost();
+        if (path == null || host == null) {
+            return false;
+        }
+        if (host.equalsIgnoreCase(BRConstants.URL_BRD_HOST)
                 && (path.contains(BRConstants.WALLET_PAIR_PATH) || path.contains(BRConstants.WALLET_LINK_PATH))) {
             Log.d(TAG, "isWalletPair: true");
             return true;
