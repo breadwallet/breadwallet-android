@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.WorkerThread;
 import android.text.format.DateUtils;
@@ -347,7 +345,7 @@ public class WalletsMaster {
             }
         }
         BaseWalletManager wallet = getWalletByIso(app, BRSharedPrefs.getCurrentWalletIso(app));
-        if (wallet == null) wallet = getWalletByIso(app, BaseBitcoinWalletManager.BITCOIN_SYMBOL);
+        if (wallet == null) wallet = getWalletByIso(app, BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE);
         if (wallet != null) {
             wallet.connect(app);
         }

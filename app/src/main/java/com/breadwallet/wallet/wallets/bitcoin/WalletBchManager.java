@@ -1,6 +1,5 @@
 package com.breadwallet.wallet.wallets.bitcoin;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 
@@ -50,7 +49,7 @@ public final class WalletBchManager extends BaseBitcoinWalletManager {
 
     private static final String TAG = WalletBchManager.class.getName();
 
-    private static final String ISO = BITCASH_SYMBOL;
+    private static final String ISO = BITCASH_CURRENCY_CODE;
     private static final String NAME = "Bitcoin Cash";
     private static final String SCHEME = BuildConfig.BITCOIN_TESTNET ? "bchtest" : "bitcoincash";
     private static final String COLOR = "#478559";
