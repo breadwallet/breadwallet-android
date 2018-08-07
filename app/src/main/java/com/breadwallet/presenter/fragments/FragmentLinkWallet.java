@@ -14,6 +14,8 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.customviews.BRButton;
+import com.breadwallet.protocols.messageexchange.MessageExchangeNetworkHelper;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.protocols.messageexchange.entities.LinkMetaData;
 import com.breadwallet.protocols.messageexchange.entities.ServiceMetaData;
@@ -44,6 +46,8 @@ public class FragmentLinkWallet extends Fragment {
         RelativeLayout validDomainsLayout = rootView.findViewById(R.id.valid_domains_layout);
         RelativeLayout appPermissionsLayout = rootView.findViewById(R.id.permission_layout);
         ScrollView appPermissionScrollview = rootView.findViewById(R.id.permission_scrollview_parent);
+        BRButton positiveButton = rootView.findViewById(R.id.positive_button);
+        BRButton negativeButton = rootView.findViewById(R.id.negative_button);
 
         if (bundle != null) {
             Log.d(TAG, "Found Bundle!");
@@ -78,7 +82,17 @@ public class FragmentLinkWallet extends Fragment {
             StringBuilder capabilityStringBuilder = new StringBuilder();
 
             for (ServiceMetaData.Capability capability : capabilities) {
-                capabilityStringBuilder.append("•" + capability.getDescription() + "\n\n");
+
+                if (!Utils.isNullOrEmpty(capability.getDescription())) {
+                    String localizedString = getLocalizedStringFromKey(capability.getDescription());
+                    String scopeDescription = capability.getScopes().get(MessageExchangeNetworkHelper.DESCRIPTION);
+
+                    if (!Utils.isNullOrEmpty(scopeDescription)) {
+                        localizedString = String.format(localizedString, scopeDescription);
+                    }
+
+                    capabilityStringBuilder.append("•" + localizedString + "\n\n");
+                }
             }
 
             RelativeLayout.LayoutParams capabilitiesParams = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
@@ -87,7 +101,7 @@ public class FragmentLinkWallet extends Fragment {
             capabilitiesTextView.setText(capabilityStringBuilder.toString());
             capabilitiesTextView.setTypeface(Typeface.createFromAsset(getResources().getAssets(), TYPEFACE_PATH_CIRCULARPRO_BOOK));
             appPermissionsLayout.addView(capabilitiesTextView);
-            capabilitiesParams.setMargins(Utils.getPixelsFromDps(getContext(), 40), 0, 0, Utils.getPixelsFromDps(getContext(), 20));
+            capabilitiesParams.setMargins(Utils.getPixelsFromDps(getContext(), 26), 0, 0, Utils.getPixelsFromDps(getContext(), 20));
             capabilitiesTextView.setLayoutParams(capabilitiesParams);
 
             appPermissionScrollview.measure(0, 0);
@@ -97,10 +111,42 @@ public class FragmentLinkWallet extends Fragment {
                 lp.topToBottom = validDomainsLayout.getId();
                 appPermissionScrollview.setLayoutParams(lp);
             }
+
+            positiveButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handleLinkApproved();
+                }
+            });
+
+            negativeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handleLinkDeclined();
+                }
+            });
         }
 
         return rootView;
 
+    }
+
+    private String getLocalizedStringFromKey(String key) {
+        String packageName = getActivity().getPackageName();
+        int resId = getResources().getIdentifier(key, "string", packageName);
+        return getString(resId);
+    }
+
+    private void handleLinkDeclined() {
+        Log.d(TAG, "handleLinkDeclined()");
+        MessageExchangeService.enqueueWork(getContext(), MessageExchangeService.createIntent(getContext(), false));
+        getActivity().finish();
+    }
+
+    private void handleLinkApproved() {
+        Log.d(TAG, "handleLinkApproved()");
+        MessageExchangeService.enqueueWork(getContext(), MessageExchangeService.createIntent(getContext(), true));
+        getActivity().finish();
     }
 
 

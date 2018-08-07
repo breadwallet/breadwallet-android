@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.protocols.messageexchange.entities.RequestMetaData;
@@ -23,6 +24,7 @@ import java.math.BigDecimal;
 
 public class FragmentPaymentConfirmation extends Fragment {
 
+    private static final String TAG = FragmentPaymentConfirmation.class.getSimpleName();
     private static final String ICON_RESOURCE = "ccc";
     private static final String ICO_NAME = "Container Crypto Coin";
 
@@ -40,9 +42,11 @@ public class FragmentPaymentConfirmation extends Fragment {
         ImageView icoIcon = rootView.findViewById(R.id.ico_icon);
         BaseTextView icoName = rootView.findViewById(R.id.ico_name);
         BaseTextView icoPriceInformation = rootView.findViewById(R.id.ico_price_information);
+        BRButton positiveButton = rootView.findViewById(R.id.positive_button);
+        BRButton negativeButton = rootView.findViewById(R.id.negative_button);
 
         if (bundle != null) {
-            RequestMetaData metaData = bundle.getParcelable(MessageExchangeService.EXTRA_METADATA);
+            final RequestMetaData metaData = bundle.getParcelable(MessageExchangeService.EXTRA_METADATA);
             Log.d("FragmentPaymentConfir", "Price -> " + metaData.getAmount());
             Log.d("FragmentPaymentConfir", "Currency -> " + metaData.getCurrencyCode());
 
@@ -60,8 +64,36 @@ public class FragmentPaymentConfirmation extends Fragment {
 
             icoName.setText(ICO_NAME);
 
+            positiveButton.setText(getResources().getString(R.string.Button_buy));
+            positiveButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handlePaymentApproved((RequestMetaData) metaData);
+                }
+            });
+
+            negativeButton.setText(getResources().getString(R.string.Button_cancel));
+            negativeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    handlePaymentCanceled((RequestMetaData) metaData);
+                }
+            });
+
         }
         return rootView;
+    }
+
+    private void handlePaymentApproved(RequestMetaData metaData) {
+        Log.d(TAG, "handlePaymentApproved()");
+        MessageExchangeService.enqueueWork(getContext(), MessageExchangeService.createIntent(getContext(), metaData, true));
+        getActivity().finish();
+    }
+
+    private void handlePaymentCanceled(RequestMetaData metaData) {
+        Log.d(TAG, "handlePaymentCanceled()");
+        MessageExchangeService.enqueueWork(getContext(), MessageExchangeService.createIntent(getContext(), metaData, false));
+        getActivity().finish();
     }
 
 
