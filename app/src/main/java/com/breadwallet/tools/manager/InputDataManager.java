@@ -71,11 +71,7 @@ public final class InputDataManager {
         if (path == null || host == null) {
             return false;
         }
-        if (host.equalsIgnoreCase(BRConstants.URL_BRD_HOST)
-                && (path.contains(BRConstants.WALLET_PAIR_PATH) || path.contains(BRConstants.WALLET_LINK_PATH))) {
-            Log.d(TAG, "isWalletPair: true");
-            return true;
-        }
-        return false;
+        return host.equalsIgnoreCase(BRConstants.URL_BRD_HOST)
+                && (path.contains(BRConstants.WALLET_PAIR_PATH) || path.contains(BRConstants.WALLET_LINK_PATH));
     }
 }
