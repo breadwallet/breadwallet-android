@@ -205,6 +205,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
 
         updateUi();
+        mWallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
 
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
@@ -212,7 +213,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
                 Thread.currentThread().setName("BG:" + TAG + ":refreshBalances and address");
                 Activity app = WalletActivity.this;
                 WalletsMaster.getInstance(app).refreshBalances(app);
-                WalletsMaster.getInstance(app).getCurrentWallet(app).refreshAddress(app);
+                if (mWallet != null) {
+                    mWallet.refreshAddress(app);
+                }
             }
         });
 
@@ -221,7 +224,6 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             BRDialog.showSimpleDialog(this, "Screen Altering App Detected", getString(R.string.Android_screenAlteringMessage));
         }
 
-        mWallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
 
         boolean cryptoPreferred = BRSharedPrefs.isCryptoPreferred(this);
 
@@ -385,30 +387,32 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         RatesDataSource.getInstance(this).addOnDataChangedListener(this);
         final BaseWalletManager wallet = WalletsMaster.getInstance(this).getCurrentWallet(this);
-        wallet.addTxListModifiedListener(this);
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                WalletEthManager.getInstance(WalletActivity.this).estimateGasPrice();
-                wallet.refreshCachedBalance(WalletActivity.this);
-                BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        updateUi();
+        if (wallet != null) {
+            wallet.addTxListModifiedListener(this);
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+                    WalletEthManager.getInstance(WalletActivity.this).estimateGasPrice();
+                    wallet.refreshCachedBalance(WalletActivity.this);
+                    BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateUi();
+                        }
+                    });
+                    if (wallet.getConnectStatus() != 2) {
+                        wallet.connect(WalletActivity.this);
                     }
-                });
-                if (wallet.getConnectStatus() != 2) {
-                    wallet.connect(WalletActivity.this);
+
                 }
+            });
 
-            }
-        });
+            wallet.addBalanceChangedListener(this);
 
-        wallet.addBalanceChangedListener(this);
+            mCurrentWalletIso = wallet.getIso();
 
-        mCurrentWalletIso = wallet.getIso();
-
-        wallet.addSyncListener(this);
+            wallet.addSyncListener(this);
+        }
 
         mSyncNotificationBroadcastReceiver = new SyncNotificationBroadcastReceiver();
         SyncService.registerSyncNotificationBroadcastReceiver(WalletActivity.this.getApplicationContext(), mSyncNotificationBroadcastReceiver);
@@ -422,7 +426,9 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     protected void onPause() {
         super.onPause();
         InternetManager.unregisterConnectionReceiver(this, this);
-        mWallet.removeSyncListener(this);
+        if (mWallet != null) {
+            mWallet.removeSyncListener(this);
+        }
         SyncService.unregisterSyncNotificationBroadcastReceiver(WalletActivity.this.getApplicationContext(), mSyncNotificationBroadcastReceiver);
     }
 
