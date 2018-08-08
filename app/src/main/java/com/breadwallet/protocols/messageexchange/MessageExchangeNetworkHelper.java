@@ -99,6 +99,7 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
     public static final String SCOPES = "scopes";
 
     private static final int POLL_PERIOD_SECONDS = 2;
+    private static final int POLL_AFTER_BACKGROUND_PERIOD_SECONDS = 30;
 
     private static Timer mPollTimer;
 
@@ -107,6 +108,15 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
     private static Handler mPollHandler;
 
     private static MessageExchangeNetworkHelper mInstance;
+    private static Handler mDelayHandler = new Handler();
+    private static Runnable mDelayStopPollingRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (BreadApp.isAppInBackground()) {
+                stopInboxPolling();
+            }
+        }
+    };
 
     private MessageExchangeNetworkHelper() {
         mPollHandler = new Handler();
@@ -177,7 +187,6 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        Log.e(TAG, "fetchInbox: " + inboxEntries.size());
         return inboxEntries;
     }
 
@@ -319,6 +328,7 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
     }
 
     public static void startInboxPolling() {
+        Log.d(TAG, "startInboxPolling: ");
         //set a new Timer
         if (mPollTimer != null) {
             return;
@@ -344,6 +354,7 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
     }
 
     public static void stopInboxPolling() {
+        Log.d(TAG, "stopInboxPolling: ");
         //stop the timer, if it's not already null
         if (mPollTimer != null) {
             mPollTimer.cancel();
@@ -373,9 +384,10 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
     @Override
     public void onLifeCycle(Lifecycle.Event event) {
         if (event.name().equalsIgnoreCase(Lifecycle.Event.ON_START.toString())) {
+            mDelayHandler.removeCallbacks(mDelayStopPollingRunnable);
             startInboxPolling();
         } else if (event.name().equalsIgnoreCase(Lifecycle.Event.ON_STOP.toString())) {
-            stopInboxPolling();
+            mDelayHandler.postDelayed(mDelayStopPollingRunnable, DateUtils.SECOND_IN_MILLIS * POLL_AFTER_BACKGROUND_PERIOD_SECONDS);
         }
     }
 
