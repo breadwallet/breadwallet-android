@@ -86,6 +86,7 @@ public class KVStoreManager {
     private static final String SERVICE = "service";
     private static final String REMOTE_PUBKEY = "remotePubKey";
     private static final String CREATED = "created";
+    private static final String RETURN_URL = "return-to";
     private static final String CURSOR = "cursor";
     private static final String TX_META_DATA_KEY_PREFIX = "txn2-";
     private static final String PAIRING_META_DATA_KEY_PREFIX = "pwd-";
@@ -198,6 +199,7 @@ public class KVStoreManager {
         String service = null;
         String remotePubKey = null;
         long created = 0;
+        String returnURl = null;
 
         try {
             classVersion = json.getInt(CLASS_VERSION);
@@ -205,13 +207,14 @@ public class KVStoreManager {
             service = json.getString(SERVICE);
             remotePubKey = json.getString(REMOTE_PUBKEY);
             created = json.getLong(CREATED);
+            returnURl = json.getString(RETURN_URL);
         } catch (JSONException e) {
             e.printStackTrace();
             Log.e(TAG, "getPairingMetadata: FAILED to get json value");
         }
         Log.e(TAG, "getPairingMetadata: " + key);
         String hexPubKey = BRCoreKey.encodeHex(Base64.decode(remotePubKey, Base64.NO_WRAP));
-        return new PairingMetaData(identifier, hexPubKey, service);
+        return new PairingMetaData(identifier, hexPubKey, service, returnURl);
     }
 
     public static void putPairingMetadata(Context app, PairingMetaData pairingData) {
@@ -227,6 +230,7 @@ public class KVStoreManager {
             obj.put(SERVICE, pairingData.getService());
             obj.put(REMOTE_PUBKEY, base64PubKey);
             obj.put(CREATED, System.currentTimeMillis());
+            obj.put(RETURN_URL, pairingData.getReturnUrl());
             result = obj.toString().getBytes();
 
         } catch (JSONException e) {
@@ -607,7 +611,7 @@ public class KVStoreManager {
         long ver = kvStore.localVersion(key).version;
         CompletionObject obj = kvStore.get(key, ver);
         if (obj.kv == null) {
-            Log.e(TAG, "getData: value is null for key: " + key);
+            Log.w(TAG, "getData: value is null for key: " + key);
             return null;
         }
 

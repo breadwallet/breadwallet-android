@@ -3,6 +3,7 @@ package com.breadwallet.protocols.messageexchange.entities;
 import android.net.Uri;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.util.Log;
 
 import com.breadwallet.tools.util.Utils;
 
@@ -31,13 +32,17 @@ import com.breadwallet.tools.util.Utils;
  * THE SOFTWARE.
  */
 public class PairingMetaData implements Parcelable {
+
+    private static final String TAG = PairingMetaData.class.getSimpleName();
     private static final String QUERY_PARAM_ID = "id";
     private static final String QUERY_PARAM_PUBLIC_KEY = "publicKey";
     private static final String QUERY_PARAM_SERVICE = "service";
+    private static final String QUERY_PARAM_RETURN_URL = "return-to";
 
     private String mId;
     private String mPublicKeyHex; // Hex encoded pub key
     private String mService;
+    private String mReturnUrl;
 
     public static final Creator<PairingMetaData> CREATOR = new Creator<PairingMetaData>() {
         @Override
@@ -51,24 +56,28 @@ public class PairingMetaData implements Parcelable {
         }
     };
 
-    public PairingMetaData(String id, String publicKeyHex, String service) {
+    public PairingMetaData(String id, String publicKeyHex, String service, String returnUrl) {
         mId = id;
         mPublicKeyHex = publicKeyHex;
         mService = service;
+        mReturnUrl = returnUrl;
     }
 
     public PairingMetaData(Parcel source) {
         mId = source.readString();
         mPublicKeyHex = source.readString();
         mService = source.readString();
+        mReturnUrl = source.readString();
     }
 
     public PairingMetaData(String uriString) {
+        Log.e(TAG, "PairingMetaData: " + uriString);
         if (!Utils.isNullOrEmpty(uriString)) {
             Uri uri = Uri.parse(uriString);
             mId = uri.getQueryParameter(QUERY_PARAM_ID);
             mPublicKeyHex = uri.getQueryParameter(QUERY_PARAM_PUBLIC_KEY);
             mService = uri.getQueryParameter(QUERY_PARAM_SERVICE);
+            mReturnUrl = uri.getQueryParameter(QUERY_PARAM_RETURN_URL);
         }
     }
 
@@ -96,6 +105,14 @@ public class PairingMetaData implements Parcelable {
         mService = service;
     }
 
+    public String getReturnUrl() {
+        return mReturnUrl;
+    }
+
+    public void setReturnUrl(String returnUrl) {
+        this.mReturnUrl = returnUrl;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -106,5 +123,6 @@ public class PairingMetaData implements Parcelable {
         destination.writeString(mId);
         destination.writeString(mPublicKeyHex);
         destination.writeString(mService);
+        destination.writeString(mReturnUrl);
     }
 }

@@ -56,10 +56,9 @@ public class DeepLinkingManager {
         }
         final Uri data = intent.getData();
         intent.setData(null);
-        Log.e(TAG, "handleUrlClick: " + data);
         if (data != null && !data.toString().isEmpty()) {
             //handle external click with crypto scheme
-            if (data.getScheme().equalsIgnoreCase(SCHEME_HTTPS)) {
+            if (data.getScheme().contains(SCHEME_HTTPS)) {
                 InputDataManager.processQrResult(activity, data.toString());
             } else {
                 CryptoUriParser.processRequest(activity, data.toString(), WalletsMaster.getInstance(activity).getCurrentWallet(activity));

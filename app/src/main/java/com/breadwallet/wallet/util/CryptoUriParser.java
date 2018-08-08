@@ -30,6 +30,8 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
+import org.eclipse.jetty.http.HttpScheme;
+
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
@@ -138,6 +140,9 @@ public class CryptoUriParser {
             obj.iso = wm.getIso();
 
         } else {
+            if (scheme.equalsIgnoreCase(HttpScheme.HTTP.asString()) || scheme.equalsIgnoreCase(HttpScheme.HTTPS.asString())) {
+                return null;
+            }
             List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(app).getAllWallets(app));
             for (BaseWalletManager walletManager : list) {
                 if (scheme.equalsIgnoreCase(walletManager.getScheme())) {
