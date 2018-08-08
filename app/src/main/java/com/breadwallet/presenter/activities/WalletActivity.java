@@ -244,6 +244,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         super.onNewIntent(intent);
         //since we have one instance of activity at all times, this is needed to know when a new intent called upon this activity
         DeepLinkingManager.handleUrlClick(this, intent);
+        showSendIfNeeded(intent);
     }
 
     private void updateUi() {
@@ -415,22 +416,23 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         mSyncNotificationBroadcastReceiver = new SyncNotificationBroadcastReceiver();
         SyncService.registerSyncNotificationBroadcastReceiver(WalletActivity.this.getApplicationContext(), mSyncNotificationBroadcastReceiver);
         SyncService.startService(this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletIso);
-        final CryptoRequest request = (CryptoRequest) getIntent().getSerializableExtra(EXTRA_CRYPTO_REQUEST);
 
         DeepLinkingManager.handleUrlClick(this, getIntent());
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                showSendIfNeeded(request);
-            }
-        }, DateUtils.SECOND_IN_MILLIS);
+        showSendIfNeeded(getIntent());
 
     }
 
-    private void showSendIfNeeded(CryptoRequest request) {
-        if (request != null) {
-            showSendFragment(request);
-        }
+    private void showSendIfNeeded(final Intent intent) {
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                final CryptoRequest request = (CryptoRequest) intent.getSerializableExtra(EXTRA_CRYPTO_REQUEST);
+                if (request != null) {
+                    showSendFragment(request);
+                }
+            }
+        }, DateUtils.SECOND_IN_MILLIS);
+
     }
 
 
