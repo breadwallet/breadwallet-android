@@ -1,11 +1,13 @@
 package com.breadwallet.protocols.messageexchange;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.IntentService;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.RequiresApi;
@@ -13,9 +15,11 @@ import android.support.v4.app.JobIntentService;
 import android.util.Base64;
 import android.util.Log;
 
+import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.presenter.activities.ConfirmationActivity;
+import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.protocols.messageexchange.entities.CallRequestMetaData;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.protocols.messageexchange.entities.EncryptedMessage;
@@ -29,6 +33,7 @@ import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -226,6 +231,8 @@ public final class MessageExchangeService extends JobIntentService {
 
         ByteString message;
         if (isUserApproved) {
+            //open the browser with the return url
+            openUrl(mPairingMetaData.getReturnUrl());
             // The user has approved, send a link message containing the local entity's public key and id.
             message = createLink(ByteString.copyFrom(pairingKey.getPubKey()), ByteString.copyFrom(BRSharedPrefs.getWalletRewardId(this).getBytes()));
 
@@ -248,6 +255,16 @@ public final class MessageExchangeService extends JobIntentService {
 
         // Send link request to remote wallet.
         MessageExchangeNetworkHelper.sendEnvelope(this, envelope.toByteArray());
+    }
+
+    private void openUrl(String returnUrl) {
+        if (!Utils.isNullOrEmpty(returnUrl)) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(returnUrl));
+            startActivity(intent);
+        } else {
+            Log.e(TAG, "openUrl: returnUrl is null!");
+        }
+
     }
 
     /**
