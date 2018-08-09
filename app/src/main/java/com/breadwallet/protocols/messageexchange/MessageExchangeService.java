@@ -49,6 +49,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 /**
  * BreadWallet
  * <p/>
@@ -260,6 +262,7 @@ public final class MessageExchangeService extends JobIntentService {
     private void openUrl(String returnUrl) {
         if (!Utils.isNullOrEmpty(returnUrl)) {
             Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(returnUrl));
+            intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } else {
             Log.e(TAG, "openUrl: returnUrl is null!");
@@ -647,7 +650,7 @@ public final class MessageExchangeService extends JobIntentService {
     private void confirmRequest(MetaData metaData) {
         Intent intent = new Intent(this, ConfirmationActivity.class);
         intent.setAction(ACTION_GET_USER_CONFIRMATION)
-                .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                .setFlags(FLAG_ACTIVITY_NEW_TASK);
         Bundle bundle = new Bundle();
         bundle.putParcelable(EXTRA_METADATA, metaData);
         intent.putExtras(bundle);
