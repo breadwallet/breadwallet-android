@@ -913,15 +913,14 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
 
         onSyncStopped(error);
 
-        if (Utils.isEmulatorOrDebug(context))
+        if (Utils.isEmulatorOrDebug(context)) {
             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                 @Override
                 public void run() {
                     Toast.makeText(context, "SyncStopped " + getIso() + " err(" + error + ") ", Toast.LENGTH_LONG).show();
                 }
             });
-
-        Log.e(getTag(), "syncStopped: peerManager:" + getPeerManager().toString());
+        }
 
         if (!Utils.isNullOrEmpty(error)) {
             if (mSyncRetryCount < SYNC_MAX_RETRY) {
