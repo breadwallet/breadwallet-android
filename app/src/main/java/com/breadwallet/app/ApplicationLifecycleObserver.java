@@ -74,10 +74,11 @@ public class ApplicationLifecycleObserver implements LifecycleObserver {
     /**
      * Passes a lifecycle event to all registered listeners.
      *
-     * @param event The lifecycle event that has just occured.
+     * @param event The lifecycle event that has just occurred.
      */
     private void onLifeCycleEvent(Lifecycle.Event event) {
-        for (ApplicationLifecycleListener listener : mListeners) {
+        for (int i = 0; i < mListeners.size(); i++) {
+            ApplicationLifecycleListener listener = mListeners.get(i);
             if (listener != null) {
                 listener.onLifeCycle(event);
             }
