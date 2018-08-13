@@ -24,6 +24,7 @@ import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.services.BRDFirebaseMessagingService;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
@@ -69,14 +70,25 @@ import io.fabric.sdk.android.Fabric;
 
 public class BreadApp extends Application implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
     private static final String TAG = BreadApp.class.getName();
-    public static int DISPLAY_HEIGHT_PX;
-    public static int DISPLAY_WIDTH_PX;
+    public static int mDisplayHeightPx;
+    public static int mDisplayWidthPx;
     // host is the server(s) on which the API is hosted
     public static String HOST = "api.breadwallet.com";
     private static Context mContext;
     private static ApplicationLifecycleObserver mObserver;
     public static long mBackgroundedTime;
     public static Lifecycle.Event mLastApplicationEvent;
+    private static final int NR_OF_BYTES = 10;
+
+    private Runnable mDisconnectWalletsRunnable = new Runnable() {
+        @Override
+        public void run() {
+            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(BreadApp.this).getAllWallets(BreadApp.this));
+            for (BaseWalletManager w : list) {
+                w.disconnect(BreadApp.this);
+            }
+        }
+    };
 
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
 
@@ -128,15 +140,15 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        DISPLAY_WIDTH_PX = size.x;
-        DISPLAY_HEIGHT_PX = size.y;
+        mDisplayWidthPx = size.x;
+        mDisplayHeightPx = size.y;
 
         registerReceiver(InternetManager.getInstance(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
         mObserver = new ApplicationLifecycleObserver();
-        mObserver.addApplicationLifecycleListener(this);
-        mObserver.addApplicationLifecycleListener(MessageExchangeNetworkHelper.getInstance());
         ProcessLifecycleOwner.get().getLifecycle().addObserver(mObserver);
+        addOnBackgroundedListener(this);
+        addOnBackgroundedListener(MessageExchangeNetworkHelper.getInstance());
 
     }
 
@@ -190,7 +202,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
             }
 
             // Get the first 10 bytes
-            byte[] firstTenBytes = Arrays.copyOfRange(sha256Address, 0, 10);
+            byte[] firstTenBytes = Arrays.copyOfRange(sha256Address, 0, NR_OF_BYTES);
 
             String base32String = new String(Base32.encode(firstTenBytes));
             base32String = base32String.toLowerCase();
@@ -228,7 +240,9 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
     public static Context getBreadContext() {
         Context app = currentActivity;
-        if (app == null) app = mContext;
+        if (app == null) {
+            app = mContext;
+        }
         return app;
     }
 
@@ -245,7 +259,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     }
 
     public static boolean isAppInBackground() {
-        return mLastApplicationEvent.name().equalsIgnoreCase(Lifecycle.Event.ON_STOP.toString());
+        return mLastApplicationEvent != null && mLastApplicationEvent.name().equalsIgnoreCase(Lifecycle.Event.ON_STOP.toString());
     }
 
     @Override
@@ -253,10 +267,9 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         mLastApplicationEvent = event;
         if (event.name().equalsIgnoreCase(Lifecycle.Event.ON_STOP.toString())) {
             mBackgroundedTime = System.currentTimeMillis();
-            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(this).getAllWallets(this));
-            for (BaseWalletManager w : list) {
-                w.disconnect(this);
-            }
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mDisconnectWalletsRunnable);
+        } else if (event.name().equalsIgnoreCase(Lifecycle.Event.ON_START.toString())) {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mDisconnectWalletsRunnable);
         }
     }
 }
