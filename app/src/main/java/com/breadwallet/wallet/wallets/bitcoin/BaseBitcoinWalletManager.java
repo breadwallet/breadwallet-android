@@ -974,7 +974,7 @@ public abstract class BaseBitcoinWalletManager extends BRCoreWalletManager imple
                             if (!BRToast.isToastShown()) {
                                 if (Utils.isEmulatorOrDebug(ctx))
                                     BRToast.showCustomToast(ctx, strToShow,
-                                            BreadApp.DISPLAY_HEIGHT_PX / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
+                                            BreadApp.mDisplayHeightPx / 2, Toast.LENGTH_LONG, R.drawable.toast_layout_black);
                                 AudioManager audioManager = (AudioManager) ctx.getSystemService(Context.AUDIO_SERVICE);
                                 if (audioManager.getRingerMode() == AudioManager.RINGER_MODE_NORMAL) {
                                     final MediaPlayer mp = MediaPlayer.create(ctx, R.raw.coinflip);
