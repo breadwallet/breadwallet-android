@@ -68,9 +68,9 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
                 BREthereumToken tk = WalletEthManager.getInstance(this).node.lookupToken(info.contractAddress);
                 if (tk == null) {
                     BRReportsManager.reportBug(new NullPointerException("No token for contract: " + info.contractAddress));
-
-                } else
+                } else {
                     tokenItem = new TokenItem(tk.getAddress(), tk.getSymbol(), tk.getName(), null);
+                }
 
 
             } else if (tokenSymbol.equalsIgnoreCase("btc"))

@@ -56,8 +56,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
     private static final String TAG = HomeActivity.class.getSimpleName();
 
     public static final String CCC_CURRENCY_CODE = "CCC";
-    private static final int ADD_CCC_WALLE_DELAY_SECONDS = 20;
-
 
     private RecyclerView mWalletRecycler;
     private WalletListAdapter mAdapter;
@@ -167,14 +165,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             }
         });
 
-        //TODO BIG TEMPORARY HACK! FIX IN NEXT RELEASE
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                addCccWalletIfNeeded();
-            }
-        }, DateUtils.SECOND_IN_MILLIS * ADD_CCC_WALLE_DELAY_SECONDS);
-
     }
 
     public void hidePrompt() {
@@ -214,6 +204,8 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         showNextPromptIfNeeded();
 
+        addCccWalletIfNeeded();
+
         populateWallets();
 
         new Handler().postDelayed(new Runnable() {
@@ -221,7 +213,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             public void run() {
                 mAdapter.startObserving();
             }
-        }, 500);
+        }, DateUtils.SECOND_IN_MILLIS / 2);
 
         InternetManager.registerConnectionReceiver(this, this);
 
@@ -244,13 +236,12 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
             return;
         }
         WalletEthManager ethWallet = WalletEthManager.getInstance(this);
-//        byte[] pubKey = BRCoreKey.decodeHex(MessageExchangeService.mPairingMetaData.getPublicKeyHex());
 
         if (!WalletsMaster.getInstance(this).hasWallet(CCC_CURRENCY_CODE) && MessageExchangeService.mPairingMetaData.getId() != null) {
             WalletTokenManager cccWallet = WalletTokenManager.getTokenWalletByIso(this, ethWallet, CCC_CURRENCY_CODE);
             TokenListMetaData metaData = KVStoreManager.getTokenListMetaData(this);
 
-            TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(cccWallet.getSymbol(this), true, cccWallet.getAddress());
+            TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(cccWallet.getSymbol(this), true, cccWallet.getContractAddress());
             if (metaData == null) metaData = new TokenListMetaData(null, null);
             if (metaData.enabledCurrencies == null) {
                 metaData.enabledCurrencies = new ArrayList<>();
