@@ -1,28 +1,20 @@
 package com.breadwallet.protocols.messageexchange;
 
-import android.annotation.TargetApi;
-import android.app.Activity;
-import android.app.IntentService;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.JobIntentService;
 import android.util.Base64;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.presenter.activities.ConfirmationActivity;
-import com.breadwallet.presenter.activities.settings.WebViewActivity;
-import com.breadwallet.protocols.messageexchange.entities.CallRequestMetaData;
 import com.breadwallet.presenter.entities.CryptoRequest;
+import com.breadwallet.protocols.messageexchange.entities.CallRequestMetaData;
 import com.breadwallet.protocols.messageexchange.entities.EncryptedMessage;
 import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
 import com.breadwallet.protocols.messageexchange.entities.LinkMetaData;
@@ -34,7 +26,6 @@ import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.tools.security.BRKeyStore;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -96,6 +87,7 @@ public final class MessageExchangeService extends JobIntentService {
     private static final int JOB_ID = 100;
 
     public static PairingMetaData mPairingMetaData;
+    public static MetaData mCurrentMetaData;
 
     public enum MessageType {
         LINK,
@@ -138,6 +130,7 @@ public final class MessageExchangeService extends JobIntentService {
                     savePairingMetaDataToKvStore((PairingMetaData) intent.getParcelableExtra(EXTRA_METADATA));
                     // Show more service details about the pairing and ask the user to confirm.
                     MetaData linkMetaData = new LinkMetaData(MessageExchangeNetworkHelper.getService(this, SERVICE_PWB));
+                    mCurrentMetaData = linkMetaData;
                     confirmRequest(linkMetaData);
                     break;
                 case ACTION_PROCESS_PAIR_REQUEST:
@@ -368,6 +361,7 @@ public final class MessageExchangeService extends JobIntentService {
                     metaData = new PaymentRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
                             paymentRequest.getScope(), paymentRequest.getNetwork(), paymentRequest.getAddress(),
                             paymentRequest.getAmount(), paymentRequest.getMemo());
+                    mCurrentMetaData = metaData;
                     confirmRequest(metaData);
                     break;
                 case CALL_REQUEST:
@@ -376,6 +370,7 @@ public final class MessageExchangeService extends JobIntentService {
                     metaData = new CallRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
                             callRequest.getScope(), callRequest.getNetwork(), callRequest.getAddress(),
                             callRequest.getAmount(), callRequest.getMemo(), callRequest.getAbi());
+                    mCurrentMetaData = metaData;
                     confirmRequest(metaData);
                     break;
                 default:
@@ -650,7 +645,7 @@ public final class MessageExchangeService extends JobIntentService {
      */
     private void confirmRequest(MetaData metaData) {
 
-        if(!BreadApp.isAppInBackground()){
+        if(!BreadApp.isAppInBackground()) {
             Intent intent = new Intent(this, ConfirmationActivity.class);
             intent.setAction(ACTION_GET_USER_CONFIRMATION)
                     .setFlags(FLAG_ACTIVITY_NEW_TASK);
@@ -659,6 +654,7 @@ public final class MessageExchangeService extends JobIntentService {
             intent.putExtras(bundle);
             startActivity(intent);
         }
+
     }
 
     /**
@@ -818,6 +814,7 @@ public final class MessageExchangeService extends JobIntentService {
                                 .setStatus(Protos.Status.ACCEPTED)
                                 .setTransactionId(hash);
                     } else {
+
                         responseBuilder.setStatus(Protos.Status.REJECTED)
                                 .setError(Protos.Error.TRANSACTION_FAILED);
                     }
