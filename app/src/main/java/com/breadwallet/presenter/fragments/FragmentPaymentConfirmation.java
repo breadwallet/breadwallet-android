@@ -1,6 +1,7 @@
 package com.breadwallet.presenter.fragments;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
@@ -87,15 +89,33 @@ public class FragmentPaymentConfirmation extends Fragment {
     private void handlePaymentApproved(RequestMetaData metaData) {
         Log.d(TAG, "handlePaymentApproved()");
         MessageExchangeService.enqueueWork(getContext(), MessageExchangeService.createIntent(getContext(), metaData, true));
-        getActivity().finish();
-    }
+
+        if(isParentActivityTaskRoot()){
+            Log.d(TAG, "Parent was task root, going Home");
+            Intent intent = new Intent(getActivity(), HomeActivity.class);
+            startActivity(intent);
+        }
+        else {
+            getActivity().getFragmentManager().popBackStack();
+        }    }
 
     private void handlePaymentCanceled(RequestMetaData metaData) {
         Log.d(TAG, "handlePaymentCanceled()");
         MessageExchangeService.enqueueWork(getContext(), MessageExchangeService.createIntent(getContext(), metaData, false));
-        getActivity().finish();
+
+        if(isParentActivityTaskRoot()){
+            Log.d(TAG, "Parent was task root, going Home");
+            Intent intent = new Intent(getActivity(), HomeActivity.class);
+            startActivity(intent);
+        }
+        else {
+            getActivity().getFragmentManager().popBackStack();
+        }
     }
 
+    private boolean isParentActivityTaskRoot(){
+        return getActivity().isTaskRoot();
+    }
 
     public static FragmentPaymentConfirmation newInstance(RequestMetaData requestMetaData) {
         Bundle args = new Bundle();
