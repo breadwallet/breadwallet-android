@@ -6,6 +6,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.ConfirmationActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.tools.manager.BRSharedPrefs;
@@ -29,6 +31,9 @@ import org.json.JSONObject;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+
+import static com.breadwallet.protocols.messageexchange.MessageExchangeService.ACTION_GET_USER_CONFIRMATION;
+import static com.breadwallet.protocols.messageexchange.MessageExchangeService.EXTRA_METADATA;
 
 /**
  * BreadWallet
@@ -104,10 +109,15 @@ public final class BRDFirebaseMessagingService extends FirebaseMessagingService 
             String notificationTitle = remoteMessage.getData().get(NOTIFICATION_TITLE);
             String notificationMessage = remoteMessage.getData().get(NOTIFICATION_BODY);
 
-            // Take the user to HomeActivity upon tapping the notification
-            Intent homeIntent = new Intent(this, HomeActivity.class);
-            homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, homeIntent, 0);
+            // Take the user to ConfirmActivity upon tapping the notification
+            Intent confirmIntent = new Intent(BreadApp.getBreadContext(), ConfirmationActivity.class);
+            confirmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            confirmIntent.setAction(ACTION_GET_USER_CONFIRMATION);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(EXTRA_METADATA, MessageExchangeService.mCurrentMetaData);
+            confirmIntent.putExtras(bundle);
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(BreadApp.getBreadContext(), 0, confirmIntent, 0);
 
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.drawable.brd_logo_gradient)
