@@ -64,7 +64,7 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
 //            //english
 //            mDebugPhrase = "nurse bird city strike various benefit swing soup fog law source planet";
 //            //french
-//            mDebugPhrase = "vocation triage capsule marchand onduler tibia illicite entier fureur minorer amateur lubie";
+//            mDebugPhrase = "eyebrow elbow weasel again gate organ mobile then behind name debate joke";
 //            //spanish
 //            mDebugPhrase = "zorro turismo mezcla nicho morir chico blanco pájaro alba esencia roer repetir";
 //            //chinese
