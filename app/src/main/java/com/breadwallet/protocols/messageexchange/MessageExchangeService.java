@@ -15,6 +15,7 @@ import android.support.v4.app.JobIntentService;
 import android.util.Base64;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.ethereum.BREthereumAmount;
@@ -648,13 +649,16 @@ public final class MessageExchangeService extends JobIntentService {
      * @param metaData The meta data related to the request.
      */
     private void confirmRequest(MetaData metaData) {
-        Intent intent = new Intent(this, ConfirmationActivity.class);
-        intent.setAction(ACTION_GET_USER_CONFIRMATION)
-                .setFlags(FLAG_ACTIVITY_NEW_TASK);
-        Bundle bundle = new Bundle();
-        bundle.putParcelable(EXTRA_METADATA, metaData);
-        intent.putExtras(bundle);
-        startActivity(intent);
+
+        if(!BreadApp.isAppInBackground()){
+            Intent intent = new Intent(this, ConfirmationActivity.class);
+            intent.setAction(ACTION_GET_USER_CONFIRMATION)
+                    .setFlags(FLAG_ACTIVITY_NEW_TASK);
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(EXTRA_METADATA, metaData);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
     }
 
     /**
