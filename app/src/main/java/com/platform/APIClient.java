@@ -473,10 +473,11 @@ public class APIClient {
             e.printStackTrace();
         }
 
-        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone("GMT"));
+        String gmt = "GMT";
+        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone(gmt));
         String httpDate = DATE_FORMAT.format(new Date());
 
-        request = modifiedRequest.header("Date", httpDate.substring(0, httpDate.length() - 6)).build();
+        request = modifiedRequest.header("Date", httpDate.substring(0, httpDate.indexOf(gmt) + gmt.length())).build();
 
         String queryString = request.url().encodedQuery();
 
