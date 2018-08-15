@@ -17,6 +17,7 @@ import com.breadwallet.R;
 import com.breadwallet.presenter.activities.ConfirmationActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
+import com.breadwallet.protocols.messageexchange.entities.CallRequestMetaData;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
@@ -105,28 +106,28 @@ public final class BRDFirebaseMessagingService extends FirebaseMessagingService 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 setupChannels(notificationManager);
             }
+            Log.e(TAG, "onMessageReceived: ");
             int notificationId = getNextNotificationId();
             String notificationTitle = remoteMessage.getData().get(NOTIFICATION_TITLE);
             String notificationMessage = remoteMessage.getData().get(NOTIFICATION_BODY);
 
             // Take the user to ConfirmActivity upon tapping the notification
-            Intent confirmIntent = new Intent(BreadApp.getBreadContext(), ConfirmationActivity.class);
-            confirmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            Intent confirmIntent = new Intent(getApplicationContext(), HomeActivity.class);
+            confirmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             confirmIntent.setAction(ACTION_GET_USER_CONFIRMATION);
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(EXTRA_METADATA, MessageExchangeService.mCurrentMetaData);
-            confirmIntent.putExtras(bundle);
 
-            PendingIntent pendingIntent = PendingIntent.getActivity(BreadApp.getBreadContext(), 0, confirmIntent, 0);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, confirmIntent, 0);
 
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.drawable.brd_logo_gradient)
                     .setContentTitle(notificationTitle)
                     .setContentText(notificationMessage)
                     .setAutoCancel(true)
                     .setContentIntent(pendingIntent);
 
-            notificationManager.notify(notificationId, notificationBuilder.build());
+                if (BreadApp.isAppInBackground()) {
+                    notificationManager.notify(notificationId, notificationBuilder.build());
+                }
 
         }
     }
