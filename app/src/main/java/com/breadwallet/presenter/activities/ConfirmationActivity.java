@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.fragments.FragmentLinkWallet;
 import com.breadwallet.presenter.fragments.FragmentPaymentConfirmation;
@@ -44,7 +45,7 @@ import com.breadwallet.tools.util.Utils;
  * {@link MessageExchangeService}.  Accordingly, it uses either {@link FragmentLinkWallet} or
  * {@link FragmentPaymentConfirmation}.
  */
-public class ConfirmationActivity extends FragmentActivity {
+public class ConfirmationActivity extends BRActivity {
     private static final String TAG = ConfirmationActivity.class.getSimpleName();
 
     @Override
@@ -52,24 +53,24 @@ public class ConfirmationActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_confirmation);
 
-        final Parcelable metaData = getIntent().getParcelableExtra(MessageExchangeService.EXTRA_METADATA);
+        final Parcelable metaData = getIntent().getExtras().getParcelable(MessageExchangeService.EXTRA_METADATA);
         String action = getIntent().getAction();
 
         View headerView = findViewById(R.id.header);
 
         if (!Utils.isNullOrEmpty(action) && action == MessageExchangeService.ACTION_GET_USER_CONFIRMATION) {
             if (metaData != null) {
-                Log.d(TAG, "Found metaData!");
+                Log.d(TAG, "Found metaData.");
                 if (metaData instanceof LinkMetaData) {
-
+                    Log.d(TAG, "ConfirmationType LINK");
                     // Handles link messages.
                     FragmentLinkWallet linkWalletFragment = FragmentLinkWallet.newInstance((LinkMetaData) metaData);
                     getFragmentManager().beginTransaction().add(R.id.fragment_container, linkWalletFragment).commit();
-                    Log.d(TAG, "ConfirmationType LINK");
 
                 }
                 // Handles payment and call requests.
                 else if (metaData instanceof RequestMetaData) {
+                    Log.d(TAG, "ConfirmationType PAYMENT OR CALL");
                     headerView.setVisibility(View.VISIBLE);
                     // Display FragmentPaymentConfirmation and set up new listeners for positive
                     // and negative buttons
@@ -79,6 +80,8 @@ public class ConfirmationActivity extends FragmentActivity {
                 } else {
                     Log.d(TAG, "Found unknown metadata type!");
                 }
+            } else {
+                Log.e(TAG, "onCreate: no metaData");
             }
         }
     }

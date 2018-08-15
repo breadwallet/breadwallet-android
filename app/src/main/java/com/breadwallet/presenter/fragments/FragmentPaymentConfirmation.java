@@ -3,19 +3,23 @@ package com.breadwallet.presenter.fragments;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.protocols.messageexchange.entities.RequestMetaData;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.tools.util.Utils;
@@ -70,7 +74,7 @@ public class FragmentPaymentConfirmation extends Fragment {
             positiveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    handlePaymentApproved((RequestMetaData) metaData);
+                    handlePaymentConfirmation(metaData, true);
                 }
             });
 
@@ -78,7 +82,7 @@ public class FragmentPaymentConfirmation extends Fragment {
             negativeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    handlePaymentCanceled((RequestMetaData) metaData);
+                    handlePaymentConfirmation(metaData, false);
                 }
             });
 
@@ -86,34 +90,28 @@ public class FragmentPaymentConfirmation extends Fragment {
         return rootView;
     }
 
-    private void handlePaymentApproved(RequestMetaData metaData) {
+    private void handlePaymentConfirmation(final RequestMetaData metaData, final boolean approved) {
         Log.d(TAG, "handlePaymentApproved()");
-        MessageExchangeService.enqueueWork(getContext(), MessageExchangeService.createIntent(getContext(), metaData, true));
 
-        if(isParentActivityTaskRoot()){
+        if (isParentActivityTaskRoot()) {
             Log.d(TAG, "Parent was task root, going Home");
             Intent intent = new Intent(getActivity(), HomeActivity.class);
             startActivity(intent);
+        } else {
+            getActivity().onBackPressed();
         }
-        else {
-            getActivity().getFragmentManager().popBackStack();
-        }    }
 
-    private void handlePaymentCanceled(RequestMetaData metaData) {
-        Log.d(TAG, "handlePaymentCanceled()");
-        MessageExchangeService.enqueueWork(getContext(), MessageExchangeService.createIntent(getContext(), metaData, false));
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                MessageExchangeService.enqueueWork(BreadApp.getBreadContext(), MessageExchangeService.createIntent(BreadApp.getBreadContext(), metaData, approved));
 
-        if(isParentActivityTaskRoot()){
-            Log.d(TAG, "Parent was task root, going Home");
-            Intent intent = new Intent(getActivity(), HomeActivity.class);
-            startActivity(intent);
-        }
-        else {
-            getActivity().getFragmentManager().popBackStack();
-        }
+            }
+        }, DateUtils.SECOND_IN_MILLIS);
+
     }
 
-    private boolean isParentActivityTaskRoot(){
+    private boolean isParentActivityTaskRoot() {
         return getActivity().isTaskRoot();
     }
 
