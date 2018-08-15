@@ -66,8 +66,9 @@ public class BRDialog {
                 dialog.setNegListener(negListener);
                 dialog.setDismissListener(dismissListener);
                 dialog.setIconRes(iconRes);
-                if (!activity.isDestroyed())
-                    dialog.show(activity.getFragmentManager(), dialog.getClass().getName());
+                if (!activity.isDestroyed()) {
+                    activity.getFragmentManager().beginTransaction().add(dialog, dialog.getTag()).commitAllowingStateLoss();
+                }
             }
         });
 
