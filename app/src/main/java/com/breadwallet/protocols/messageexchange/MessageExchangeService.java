@@ -120,7 +120,7 @@ public final class MessageExchangeService extends JobIntentService {
      */
     @Override
     protected void onHandleWork(Intent intent) {
-        Log.d(TAG, "onHandleIntent()");
+        Log.d(TAG, "onHandleWork()");
         if (intent != null) {
             Log.d(TAG, "Intent Action -> " + intent.getAction());
 
@@ -130,7 +130,6 @@ public final class MessageExchangeService extends JobIntentService {
                     savePairingMetaDataToKvStore((PairingMetaData) intent.getParcelableExtra(EXTRA_METADATA));
                     // Show more service details about the pairing and ask the user to confirm.
                     MetaData linkMetaData = new LinkMetaData(MessageExchangeNetworkHelper.getService(this, SERVICE_PWB));
-                    mCurrentMetaData = linkMetaData;
                     confirmRequest(linkMetaData);
                     break;
                 case ACTION_PROCESS_PAIR_REQUEST:
@@ -295,6 +294,9 @@ public final class MessageExchangeService extends JobIntentService {
                     }
                 }
                 String cursor = inboxEntry.getCursor();
+                if (BreadApp.isAppInBackground() && envelope.getMessageType().equalsIgnoreCase(MessageType.CALL_REQUEST.name())) {
+                    continue;
+                }
                 cursors.add(cursor);
                 //TODO: temp hack for server bug
                 Log.e(TAG, "retrieveInboxEntries: cursor: " + cursor);
@@ -361,6 +363,7 @@ public final class MessageExchangeService extends JobIntentService {
                     metaData = new PaymentRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
                             paymentRequest.getScope(), paymentRequest.getNetwork(), paymentRequest.getAddress(),
                             paymentRequest.getAmount(), paymentRequest.getMemo());
+                    Log.d("PAYMENT_REQUEST", "metadata -> " + metaData);
                     mCurrentMetaData = metaData;
                     confirmRequest(metaData);
                     break;
@@ -370,6 +373,7 @@ public final class MessageExchangeService extends JobIntentService {
                     metaData = new CallRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
                             callRequest.getScope(), callRequest.getNetwork(), callRequest.getAddress(),
                             callRequest.getAmount(), callRequest.getMemo(), callRequest.getAbi());
+                    Log.d("CALL_REQUEST", "metadata -> " + metaData);
                     mCurrentMetaData = metaData;
                     confirmRequest(metaData);
                     break;
@@ -644,8 +648,8 @@ public final class MessageExchangeService extends JobIntentService {
      * @param metaData The meta data related to the request.
      */
     private void confirmRequest(MetaData metaData) {
-
-        if(!BreadApp.isAppInBackground()) {
+        Log.e(TAG, "confirmRequest: " + metaData);
+        if (!BreadApp.isAppInBackground()) {
             Intent intent = new Intent(this, ConfirmationActivity.class);
             intent.setAction(ACTION_GET_USER_CONFIRMATION)
                     .setFlags(FLAG_ACTIVITY_NEW_TASK);
