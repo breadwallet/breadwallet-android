@@ -65,7 +65,7 @@ public class FragmentPaymentConfirmation extends Fragment {
 
             if (!Utils.isNullOrEmpty(amount)) {
                 String formattedPrice = CurrencyUtils.getFormattedAmount(getActivity(), currencyCode, new BigDecimal(amount));
-                icoPriceInformation.setText(String.format("Send %s to purchase CCC", formattedPrice));
+                icoPriceInformation.setText(String.format(getString(R.string.PaymentConfirmation_amountText), formattedPrice, currencyCode));
             }
 
             icoName.setText(ICO_NAME);
