@@ -31,6 +31,7 @@ import java.math.BigDecimal;
 public class SendViewModel extends ViewModel {
     private String mAddress;
     private String mMemo;
+    //Raw amount, ETH, BTC..
     private String mAmount;
     private String mChosenCode;
 
@@ -61,12 +62,18 @@ public class SendViewModel extends ViewModel {
         this.mAmount = amount;
     }
 
-
     public String getChosenCode() {
         return mChosenCode;
     }
 
     public void setChosenCode(String chosenCode) {
         this.mChosenCode = chosenCode;
+    }
+
+    public void clear() {
+        mAmount = null;
+        mMemo = null;
+        mAmount = null;
+        mChosenCode = null;
     }
 }
