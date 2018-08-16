@@ -194,8 +194,9 @@ public class Utils {
             View view = ((Activity) app).getCurrentFocus();
             if (view != null) {
                 InputMethodManager imm = (InputMethodManager) app.getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null)
+                if (imm != null) {
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
             }
         }
 
