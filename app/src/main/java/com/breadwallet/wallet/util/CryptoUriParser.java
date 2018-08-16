@@ -277,33 +277,15 @@ public class CryptoUriParser {
             } //  else ->   //allow tokens to scan ETH so continue ..
         }
 
-        if (requestObject.amount == null || requestObject.amount.compareTo(BigDecimal.ZERO) == 0) {
-            BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    BRSharedPrefs.putCurrentWalletIso(context, requestObject.iso);
-                    Intent newIntent = new Intent(context, WalletActivity.class);
-                    newIntent.putExtra(EXTRA_CRYPTO_REQUEST, requestObject);
-                    context.startActivity(newIntent);
-                }
-            });
-            return true;
-        } else {
-            UiUtils.killAllFragments((Activity) context);
-            if (Utils.isNullOrEmpty(requestObject.address) || !wallet.isAddressValid(requestObject.address)) {
-                BRDialog.showSimpleDialog(context, context.getString(R.string.Send_invalidAddressTitle), "");
-                return true;
+        BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
+            @Override
+            public void run() {
+                BRSharedPrefs.putCurrentWalletIso(context, requestObject.iso);
+                Intent newIntent = new Intent(context, WalletActivity.class);
+                newIntent.putExtra(EXTRA_CRYPTO_REQUEST, requestObject);
+                context.startActivity(newIntent);
             }
-
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    SendManager.sendTransaction(context, requestObject, wallet, null);
-                }
-            });
-
-        }
-
+        });
         return true;
 
     }

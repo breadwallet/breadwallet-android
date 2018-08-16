@@ -297,7 +297,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     @Override
     public BigDecimal getEstimatedFee(BigDecimal amount, String address) {
         BigDecimal fee;
-        if (amount == null) return null;
+        if (amount == null) {
+            return null;
+        }
         if (amount.compareTo(BigDecimal.ZERO) == 0) {
             fee = BigDecimal.ZERO;
         } else {
@@ -319,7 +321,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     @Override
     public BigDecimal getMaxOutputAmount(Context app) {
         BigDecimal balance = getCachedBalance(app);
-        if (balance.compareTo(BigDecimal.ZERO) == 0) return BigDecimal.ZERO;
+        if (balance.compareTo(BigDecimal.ZERO) == 0) {
+            return BigDecimal.ZERO;
+        }
         BigDecimal fee = new BigDecimal(mWallet.transactionEstimatedFee(balance.toPlainString()));
         if (fee.compareTo(balance) > 0) return BigDecimal.ZERO;
         return balance.subtract(fee);
