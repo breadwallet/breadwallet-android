@@ -846,13 +846,14 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             memo = request.message;
             code = request.iso;
             BaseWalletManager walletManager = WalletsMaster.getInstance(activity).getCurrentWallet(activity);
-            if (request.amount != null) {
+            if (request.amount != null && request.amount.compareTo(BigDecimal.ZERO) > 0 && !request.iso.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
                 // Crypto request amount param is named `amount` and it is in bitcoin and other currencies.
                 amount = walletManager.getCryptoForSmallestCrypto(activity, new BigDecimal(request.amount.toPlainString())).toPlainString();
-            } else if (request.value != null) {
+            } else if (request.value != null && request.value.compareTo(BigDecimal.ZERO) > 0 && request.iso.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
                 // ETH request amount param is named `value` and it is in ether.
                 amount = walletManager.getCryptoForSmallestCrypto(activity, new BigDecimal(request.value.toPlainString())).toPlainString();
             }
+
         }
         if (!Utils.isNullOrEmpty(address)) {
             mViewModel.setAddress(address);

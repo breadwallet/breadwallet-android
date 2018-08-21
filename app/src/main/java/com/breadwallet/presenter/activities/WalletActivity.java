@@ -423,15 +423,10 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     }
 
     private void showSendIfNeeded(final Intent intent) {
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                final CryptoRequest request = (CryptoRequest) intent.getSerializableExtra(EXTRA_CRYPTO_REQUEST);
-                if (request != null) {
-                    showSendFragment(request);
-                }
-            }
-        }, DateUtils.SECOND_IN_MILLIS);
+        final CryptoRequest request = (CryptoRequest) intent.getSerializableExtra(EXTRA_CRYPTO_REQUEST);
+        if (request != null) {
+            showSendFragment(request);
+        }
 
     }
 
