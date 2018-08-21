@@ -415,7 +415,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         mSyncNotificationBroadcastReceiver = new SyncNotificationBroadcastReceiver();
         SyncService.registerSyncNotificationBroadcastReceiver(WalletActivity.this.getApplicationContext(), mSyncNotificationBroadcastReceiver);
-        SyncService.startService(this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletIso);
+        SyncService.enqueueWork(WalletActivity.this.getApplicationContext(),mCurrentWalletIso);
 
         DeepLinkingManager.handleUrlClick(this, getIntent());
         showSendIfNeeded(getIntent());
@@ -452,7 +452,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                SyncService.startService(WalletActivity.this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletIso);
+              SyncService.enqueueWork(WalletActivity.this.getApplicationContext(),mCurrentWalletIso);
             }
         });
     }
@@ -475,7 +475,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             if (mBarFlipper != null && mBarFlipper.getDisplayedChild() == 2) {
                 mBarFlipper.setDisplayedChild(0);
             }
-            SyncService.startService(this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletIso);
+            SyncService.enqueueWork(WalletActivity.this.getApplicationContext(), mCurrentWalletIso);
 
         } else {
             if (mBarFlipper != null) {

@@ -33,8 +33,6 @@ import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
-import okhttp3.internal.Util;
-
 /**
  * Created by byfieldj on 1/31/18.
  */
@@ -183,7 +181,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                     }
                     String walletIso = mCurrentWalletSyncing.walletManager.getIso();
                     mCurrentWalletSyncing.walletManager.connect(mContext);
-                    SyncService.startService(mContext.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, walletIso);
+                    SyncService.enqueueWork(mContext,walletIso);
                 } finally {
                     mObesrverIsStarting = false;
                 }
