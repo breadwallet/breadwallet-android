@@ -28,6 +28,8 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
+import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 import org.eclipse.jetty.http.HttpScheme;
@@ -186,13 +188,14 @@ public class CryptoUriParser {
             if (keyValue[0].trim().equals("amount")) {
                 try {
                     BigDecimal bigDecimal = new BigDecimal(keyValue[1].trim());
-                    obj.amount = bigDecimal.multiply(new BigDecimal("100000000"));
+                    obj.amount = WalletBitcoinManager.getInstance(app).getSmallestCryptoForCrypto(app, bigDecimal);
                 } catch (NumberFormatException e) {
                     e.printStackTrace();
                 }
                 // ETH payment request amounts are called `value`
             } else if (keyValue[0].trim().equals("value")) {
-                obj.value = new BigDecimal(keyValue[1].trim());
+                BigDecimal bigDecimal = new BigDecimal(keyValue[1].trim());
+                obj.value = WalletEthManager.getInstance(app).getSmallestCryptoForCrypto(app, bigDecimal);
             } else if (keyValue[0].trim().equals("label")) {
                 obj.label = keyValue[1].trim();
             } else if (keyValue[0].trim().equals("message")) {
@@ -304,11 +307,11 @@ public class CryptoUriParser {
             builder = builder.appendPath(cleanAddress);
         }
         if (cryptoAmount.compareTo(BigDecimal.ZERO) != 0) {
-            if (iso.equalsIgnoreCase("ETH")) {
-                BigDecimal ethAmount = cryptoAmount.divide(new BigDecimal(WalletEthManager.ETHER_WEI), 3, BRConstants.ROUNDING_MODE);
-                builder = builder.appendQueryParameter("value", ethAmount.toPlainString() + "e18");
-            } else if (iso.equalsIgnoreCase("BTC") || iso.equalsIgnoreCase("BCH")) {
-                BigDecimal amount = cryptoAmount.divide(new BigDecimal(BaseBitcoinWalletManager.ONE_BITCOIN_IN_SATOSHIS), 8, BRConstants.ROUNDING_MODE);
+            if (iso.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
+                BigDecimal amount = WalletEthManager.getInstance(app).getCryptoForSmallestCrypto(app, cryptoAmount);
+                builder = builder.appendQueryParameter("value", amount.toPlainString());
+            } else if (iso.equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE) || iso.equalsIgnoreCase(WalletBchManager.BITCASH_CURRENCY_CODE)) {
+                BigDecimal amount = WalletBitcoinManager.getInstance(app).getCryptoForSmallestCrypto(app, cryptoAmount);
                 builder = builder.appendQueryParameter("amount", amount.toPlainString());
             } else {
                 throw new RuntimeException("URI not supported for: " + iso);
