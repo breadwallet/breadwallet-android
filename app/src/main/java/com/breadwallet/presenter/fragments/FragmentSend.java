@@ -2,6 +2,7 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -86,9 +87,6 @@ import static com.platform.HTTPServer.URL_SUPPORT;
 
 public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnInsertListener {
     private static final String TAG = FragmentSend.class.getName();
-
-    private static final int CURRENCY_CODE_TEXT_SIZE_LARGE = 28;
-    private static final int AMOUNT_TEXT_SIZE = 24;
 
     private BRKeyboard mKeyboard;
     private EditText mAddressEdit;
@@ -206,14 +204,14 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         if (mIsAmountLabelShown) { //only first time
             mIsAmountLabelShown = false;
             mAmountEdit.setHint("0");
-            mAmountEdit.setTextSize(AMOUNT_TEXT_SIZE);
+            mAmountEdit.setTextSize(getResources().getDimension(R.dimen.amount_text_size));
             mBalanceText.setVisibility(View.VISIBLE);
             mEditFeeIcon.setVisibility(View.VISIBLE);
             mAmountEdit.setVisibility(View.VISIBLE);
             mFeeText.setVisibility(View.VISIBLE);
             mCurrencyCode.setTextColor(getContext().getColor(R.color.almost_black));
             mCurrencyCode.setText(CurrencyUtils.getSymbolByIso(getActivity(), mSelectedCurrencyCode));
-            mCurrencyCode.setTextSize(CURRENCY_CODE_TEXT_SIZE_LARGE);
+            mCurrencyCode.setTextSize(getResources().getDimension(R.dimen.currency_code_text_size_large));
 
             ConstraintSet set = new ConstraintSet();
             set.clone(mAmountLayout);
@@ -680,44 +678,45 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     }
 
     private void updateText() {
-        Activity app = getActivity();
-        if (app == null) return;
+        Context context = getContext();
+        if (context == null) return;
 
         String stringAmount = mViewModel.getAmount();
         setAmount();
-        BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+        BaseWalletManager wm = WalletsMaster.getInstance(context).getCurrentWallet(context);
         String balanceString;
         if (mSelectedCurrencyCode == null)
             mSelectedCurrencyCode = wm.getIso();
-        BigDecimal mCurrentBalance = wm.getCachedBalance(app);
-        if (!mIsAmountLabelShown)
-            mCurrencyCode.setText(CurrencyUtils.getSymbolByIso(app, mSelectedCurrencyCode));
+        BigDecimal mCurrentBalance = wm.getCachedBalance(context);
+        if (!mIsAmountLabelShown) {
+            mCurrencyCode.setText(CurrencyUtils.getSymbolByIso(context, mSelectedCurrencyCode));
+        }
         mCurrencyCodeButton.setText(mSelectedCurrencyCode);
 
         //is the chosen ISO a crypto (could be also a fiat currency)
-        boolean isIsoCrypto = WalletsMaster.getInstance(app).isIsoCrypto(app, mSelectedCurrencyCode);
-        boolean isWalletErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, wm.getIso());
+        boolean isIsoCrypto = WalletsMaster.getInstance(context).isIsoCrypto(context, mSelectedCurrencyCode);
+        boolean isWalletErc20 = WalletsMaster.getInstance(context).isIsoErc20(context, wm.getIso());
         BigDecimal inputAmount = new BigDecimal(Utils.isNullOrEmpty(stringAmount) || stringAmount.equalsIgnoreCase(".") ? "0" : stringAmount);
 
         //smallest crypto e.g. satoshis
-        BigDecimal cryptoAmount = isIsoCrypto ? wm.getSmallestCryptoForCrypto(app, inputAmount) : wm.getSmallestCryptoForFiat(app, inputAmount);
+        BigDecimal cryptoAmount = isIsoCrypto ? wm.getSmallestCryptoForCrypto(context, inputAmount) : wm.getSmallestCryptoForFiat(context, inputAmount);
 
         //wallet's balance for the selected ISO
-        BigDecimal isoBalance = isIsoCrypto ? wm.getCryptoForSmallestCrypto(app, mCurrentBalance) : wm.getFiatForSmallestCrypto(app, mCurrentBalance, null);
+        BigDecimal isoBalance = isIsoCrypto ? wm.getCryptoForSmallestCrypto(context, mCurrentBalance) : wm.getFiatForSmallestCrypto(context, mCurrentBalance, null);
         if (isoBalance == null) isoBalance = BigDecimal.ZERO;
 
         BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, mAddressEdit.getText().toString());
 
         //get the fee for iso (dollars, bits, BTC..)
-        BigDecimal isoFee = isIsoCrypto ? rawFee : wm.getFiatForSmallestCrypto(app, rawFee, null);
+        BigDecimal isoFee = isIsoCrypto ? rawFee : wm.getFiatForSmallestCrypto(context, rawFee, null);
 
         //format the fee to the selected ISO
-        String formattedFee = CurrencyUtils.getFormattedAmount(app, mSelectedCurrencyCode, isoFee);
+        String formattedFee = CurrencyUtils.getFormattedAmount(context, mSelectedCurrencyCode, isoFee);
 
         if (isWalletErc20) {
-            BaseWalletManager ethWm = WalletEthManager.getInstance(app);
-            isoFee = isIsoCrypto ? rawFee : ethWm.getFiatForSmallestCrypto(app, rawFee, null);
-            formattedFee = CurrencyUtils.getFormattedAmount(app, isIsoCrypto ? ethWm.getIso() : mSelectedCurrencyCode, isoFee);
+            BaseWalletManager ethWm = WalletEthManager.getInstance(context);
+            isoFee = isIsoCrypto ? rawFee : ethWm.getFiatForSmallestCrypto(context, rawFee, null);
+            formattedFee = CurrencyUtils.getFormattedAmount(context, isIsoCrypto ? ethWm.getIso() : mSelectedCurrencyCode, isoFee);
         }
 
         boolean isOverTheBalance = inputAmount.compareTo(isoBalance) > 0;
@@ -736,8 +735,8 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 mCurrencyCode.setTextColor(getContext().getColor(R.color.almost_black));
         }
         //formattedBalance
-        String formattedBalance = CurrencyUtils.getFormattedAmount(app, mSelectedCurrencyCode,
-                isIsoCrypto ? wm.getSmallestCryptoForCrypto(app, isoBalance) : isoBalance);
+        String formattedBalance = CurrencyUtils.getFormattedAmount(context, mSelectedCurrencyCode,
+                isIsoCrypto ? wm.getSmallestCryptoForCrypto(context, isoBalance) : isoBalance);
         balanceString = String.format(getString(R.string.Send_balance), formattedBalance);
         mBalanceText.setText(balanceString);
         mFeeText.setText(String.format(getString(R.string.Send_fee), formattedFee));
@@ -829,7 +828,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         }
     }
 
-    public void saveViewModelData(Activity activity, CryptoRequest request) {
+    public void saveViewModelData(Context context, CryptoRequest request) {
         updateViewModel();
         String address = null;
         String code = null;
@@ -845,13 +844,13 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             address = request.address;
             memo = request.message;
             code = request.iso;
-            BaseWalletManager walletManager = WalletsMaster.getInstance(activity).getCurrentWallet(activity);
+            BaseWalletManager walletManager = WalletsMaster.getInstance(context).getCurrentWallet(context);
             if (request.amount != null && request.amount.compareTo(BigDecimal.ZERO) > 0 && !request.iso.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
                 // Crypto request amount param is named `amount` and it is in bitcoin and other currencies.
-                amount = walletManager.getCryptoForSmallestCrypto(activity, new BigDecimal(request.amount.toPlainString())).toPlainString();
+                amount = walletManager.getCryptoForSmallestCrypto(context, new BigDecimal(request.amount.toPlainString())).toPlainString();
             } else if (request.value != null && request.value.compareTo(BigDecimal.ZERO) > 0 && request.iso.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
                 // ETH request amount param is named `value` and it is in ether.
-                amount = walletManager.getCryptoForSmallestCrypto(activity, new BigDecimal(request.value.toPlainString())).toPlainString();
+                amount = walletManager.getCryptoForSmallestCrypto(context, new BigDecimal(request.value.toPlainString())).toPlainString();
             }
 
         }

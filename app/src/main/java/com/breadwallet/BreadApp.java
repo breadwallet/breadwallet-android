@@ -11,18 +11,22 @@ import android.content.IntentFilter;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.os.Build;
+import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
 import com.breadwallet.app.ApplicationLifecycleObserver;
+import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.protocols.messageexchange.MessageExchangeNetworkHelper;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
+import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.services.BRDFirebaseMessagingService;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
@@ -31,6 +35,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
+import com.platform.HTTPServer;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -72,21 +77,43 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     private static final String TAG = BreadApp.class.getName();
     public static int mDisplayHeightPx;
     public static int mDisplayWidthPx;
-    public static final  String WALLET_ID_PATTERN = "^[A-Z0-9]*$";
+    public static final String WALLET_ID_PATTERN = "^[A-Z0-9]*$";
     // host is the server(s) on which the API is hosted
     public static String HOST = "api.breadwallet.com";
     private static Context mContext;
     private static ApplicationLifecycleObserver mObserver;
-    public static long mBackgroundedTime;
-    public static Lifecycle.Event mLastApplicationEvent;
-    private static final int NR_OF_BYTES = 10;
+    private static long mBackgroundedTime;
+    private static Lifecycle.Event mLastApplicationEvent;
+    private static final int NUMBER_OF_BYTES_FOR_SHA256_NEEDED = 10;
+    private static final int LOCK_TIMEOUT = 180000; // 3 minutes in milliseconds
 
     private Runnable mDisconnectWalletsRunnable = new Runnable() {
         @Override
         public void run() {
             List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(BreadApp.this).getAllWallets(BreadApp.this));
-            for (BaseWalletManager w : list) {
-                w.disconnect(BreadApp.this);
+            for (final BaseWalletManager walletManager : list) {
+                //TODO Temporary new thread until the core lags are fixed
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        walletManager.disconnect(BreadApp.this);
+                    }
+                });
+            }
+        }
+    };
+    private Runnable mConnectWalletsRunnable = new Runnable() {
+        @Override
+        public void run() {
+            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(BreadApp.this).getAllWallets(BreadApp.this));
+            for (final BaseWalletManager walletManager : list) {
+                //TODO Temporary new thread until the core lags are fixed
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        walletManager.connect(BreadApp.this);
+                    }
+                });
             }
         }
     };
@@ -208,7 +235,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
             }
 
             // Get the first 10 bytes
-            byte[] firstTenBytes = Arrays.copyOfRange(sha256Address, 0, NR_OF_BYTES);
+            byte[] firstTenBytes = Arrays.copyOfRange(sha256Address, 0, NUMBER_OF_BYTES_FOR_SHA256_NEEDED);
 
             String base32String = new String(Base32.encode(firstTenBytes));
             base32String = base32String.toLowerCase();
@@ -271,11 +298,49 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     @Override
     public void onLifeCycle(Lifecycle.Event event) {
         mLastApplicationEvent = event;
-        if (event.name().equalsIgnoreCase(Lifecycle.Event.ON_STOP.toString())) {
-            mBackgroundedTime = System.currentTimeMillis();
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mDisconnectWalletsRunnable);
-        } else if (event.name().equalsIgnoreCase(Lifecycle.Event.ON_START.toString())) {
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mDisconnectWalletsRunnable);
+        switch (event) {
+            case ON_STOP:
+                Log.d(TAG, "onLifeCycle: STOP");
+                mBackgroundedTime = System.currentTimeMillis();
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mDisconnectWalletsRunnable);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mConnectWalletsRunnable);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        HTTPServer.stopServer();
+                    }
+                });
+                break;
+
+            case ON_START:
+                Log.d(TAG, "onLifeCycle: START");
+                mBackgroundedTime = 0;
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mDisconnectWalletsRunnable);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mConnectWalletsRunnable);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!HTTPServer.isStarted()) {
+                            HTTPServer.startServer();
+                        }
+                    }
+                });
+                break;
+
         }
     }
+
+    public static void lockIfNeeded(Activity activity) {
+        //lock wallet if 3 minutes passed
+        if (mBackgroundedTime != 0
+                && (System.currentTimeMillis() - mBackgroundedTime >= LOCK_TIMEOUT)
+                && !(activity instanceof DisabledActivity)) {
+            if (!BRKeyStore.getPinCode(activity).isEmpty()) {
+                UiUtils.startBreadActivity(activity, true);
+            }
+        }
+
+    }
+
+
 }

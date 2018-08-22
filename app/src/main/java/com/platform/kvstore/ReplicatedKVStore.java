@@ -916,8 +916,10 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
 
     @Override
     public void onLifeCycle(Lifecycle.Event event) {
-        if (event.name().equalsIgnoreCase(Lifecycle.Event.ON_STOP.toString())) {
-            tempAuthKey = null;
+        switch (event) {
+            case ON_STOP:
+                tempAuthKey = null;
+                break;
         }
     }
 }
