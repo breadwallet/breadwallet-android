@@ -246,8 +246,10 @@ public class BREventManager implements ApplicationLifecycleObserver.ApplicationL
 
     @Override
     public void onLifeCycle(Lifecycle.Event event) {
-        if (event.name().equalsIgnoreCase(Lifecycle.Event.ON_STOP.toString())) {
-            saveEvents();
+        switch (event) {
+            case ON_STOP:
+                saveEvents();
+                break;
         }
 
     }

@@ -14,7 +14,6 @@ import android.view.View;
 import android.widget.LinearLayout;
 
 import com.breadwallet.R;
-import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.presenter.activities.settings.SettingsActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
@@ -26,7 +25,6 @@ import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.manager.DeepLinkingManager;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.PromptManager;
 import com.breadwallet.tools.sqlite.RatesDataSource;

@@ -259,12 +259,12 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     @Override
     public void connect(Context app) {
-        //Not needed for ETH
+        node.connect();
     }
 
     @Override
     public void disconnect(Context app) {
-        //Not needed for ETH
+        node.disconnect();
     }
 
     @Override
@@ -646,9 +646,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     }
 
     protected void getEtherBalance(final BREthereumWallet wallet, final int wid, final String address, final int rid) {
-        if (BreadApp.isAppInBackground()) {
-            return;
-        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -697,10 +694,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                                    final String contractAddress,
                                    final String address,
                                    final int rid) {
-        if (BreadApp.isAppInBackground()) {
-            Log.e(TAG, "getTokenBalance: App in background!");
-            return;
-        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -742,9 +735,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     @Override
     public void getGasPrice(final int wid, final int rid) {
-        if (BreadApp.isAppInBackground()) {
-            return;
-        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -787,9 +777,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     @Override
     public void getGasEstimate(final int wid, final int tid, final String to, final String amount, final String data, final int rid) {
-        if (BreadApp.isAppInBackground()) {
-            return;
-        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -835,9 +822,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     @Override
     public void submitTransaction(final int wid, final int tid, final String rawTransaction, final int rid) {
-        if (BreadApp.isAppInBackground()) {
-            return;
-        }
         if (Utils.isEmulatorOrDebug(BreadApp.getBreadContext())) {
             Log.e(TAG, "submitTransaction: wid:" + wid);
             Log.e(TAG, "submitTransaction: tid:" + tid);
@@ -928,9 +912,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     @Override
     public void getTransactions(final String address, final int id) {
-        if (BreadApp.isAppInBackground()) {
-            return;
-        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -1103,9 +1084,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     @Override
     public void getLogs(final String contract, final String address, final String event, final int rid) {
-        if (BreadApp.isAppInBackground()) {
-            return;
-        }
         BRExecutor.getInstance().forBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -1166,9 +1144,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     @Override
     public void getBlockNumber(final int rid) {
-        if (BreadApp.isAppInBackground()) {
-            return;
-        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -1331,9 +1306,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     @Override
     public void getNonce(final String address, final int rid) {
-        if (BreadApp.isAppInBackground()) {
-            return;
-        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {

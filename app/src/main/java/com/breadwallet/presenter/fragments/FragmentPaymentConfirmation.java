@@ -101,13 +101,7 @@ public class FragmentPaymentConfirmation extends Fragment {
             getActivity().onBackPressed();
         }
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                MessageExchangeService.enqueueWork(BreadApp.getBreadContext(), MessageExchangeService.createIntent(BreadApp.getBreadContext(), metaData, approved));
-
-            }
-        }, DateUtils.SECOND_IN_MILLIS);
+        MessageExchangeService.enqueueWork(BreadApp.getBreadContext(), MessageExchangeService.createIntent(BreadApp.getBreadContext(), metaData, approved));
 
     }
 

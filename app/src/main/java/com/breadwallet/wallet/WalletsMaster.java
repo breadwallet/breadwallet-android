@@ -345,10 +345,16 @@ public class WalletsMaster {
             }
         }
         BaseWalletManager wallet = getWalletByIso(app, BRSharedPrefs.getCurrentWalletIso(app));
-        if (wallet == null) wallet = getWalletByIso(app, BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE);
+        if (wallet == null) {
+            wallet = getWalletByIso(app, BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE);
+        }
         if (wallet != null) {
             wallet.connect(app);
         }
+    }
+
+    public boolean isBrdWalletCreated(Context context) {
+        return !Utils.isNullOrEmpty(BRKeyStore.getMasterPublicKey(context));
     }
 
     @WorkerThread
