@@ -72,6 +72,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     private static final String TAG = BreadApp.class.getName();
     public static int mDisplayHeightPx;
     public static int mDisplayWidthPx;
+    public static final  String WALLET_ID_PATTERN = "^[A-Z0-9]*$";
     // host is the server(s) on which the API is hosted
     public static String HOST = "api.breadwallet.com";
     private static Context mContext;
@@ -168,15 +169,20 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         }
     }
 
-    public static void generateWalletIfIfNeeded(final Context app, String address) {
-        if (Utils.isNullOrEmpty(BRSharedPrefs.getWalletRewardId(app))) {
-            String rewardId = generateWalletId(app, address);
-            if (!Utils.isNullOrEmpty(rewardId)) {
-                BRSharedPrefs.putWalletRewardId(app, rewardId);
+    public static void generateWalletIfIfNeeded(final Context context, String address) {
+
+        String walletId = BRSharedPrefs.getWalletRewardId(context);
+        if (Utils.isNullOrEmpty(walletId) || !walletId.matches(WALLET_ID_PATTERN)) {
+            Log.e(TAG, "generateWalletIfIfNeeded: walletId is empty or faulty: " + walletId + ", generating again.");
+            String rewardId = generateWalletId(context, address);
+            if (!Utils.isNullOrEmpty(rewardId) && walletId.matches(WALLET_ID_PATTERN)) {
+                BRSharedPrefs.putWalletRewardId(context, rewardId);
                 // TODO: This is a hack.  Decouple FCM logic from rewards id generation logic.
-                BRDFirebaseMessagingService.updateFcmRegistrationToken(app);
+                BRDFirebaseMessagingService.updateFcmRegistrationToken(context);
             } else {
-                BRReportsManager.reportBug(new NullPointerException("rewardId is empty"));
+                Log.e(TAG, "generateWalletIfIfNeeded: walletId is empty or faulty after generation");
+                BRSharedPrefs.putWalletRewardId(context, "");
+                BRReportsManager.reportBug(new IllegalArgumentException("walletId is empty or faulty after generation: " + walletId));
             }
         }
 
