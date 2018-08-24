@@ -628,7 +628,7 @@ public class KVStoreTests {
         byte[] newPubKey = Base64.decode(base64Test, Base64.NO_WRAP);
         Assert.assertArrayEquals(rawPubKey, newPubKey);
 
-        PairingMetaData putMD = new PairingMetaData("some id", BRCoreKey.encodeHex(rawPubKey), "pwb");
+        PairingMetaData putMD = new PairingMetaData("some id", BRCoreKey.encodeHex(rawPubKey), "pwb", "some.url");
         KVStoreManager.putPairingMetadata(mActivityRule.getActivity(), putMD);
         List<KVItem> items = store.getRawKVs();
         Assert.assertEquals(1, items.size());
@@ -637,6 +637,7 @@ public class KVStoreTests {
         Assert.assertEquals(getMD.getId(), "some id");
         Assert.assertEquals(getMD.getPublicKeyHex(), BRCoreKey.encodeHex(rawPubKey));
         Assert.assertEquals(getMD.getService(), "pwb");
+        Assert.assertEquals(getMD.getReturnUrl(), "some.url");
 
 
     }

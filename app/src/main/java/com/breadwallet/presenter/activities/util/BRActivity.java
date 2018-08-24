@@ -1,7 +1,6 @@
 package com.breadwallet.presenter.activities.util;
 
 import android.app.Activity;
-import android.arch.lifecycle.Lifecycle;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
@@ -14,8 +13,6 @@ import android.view.Display;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.app.ApplicationLifecycleObserver;
-import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.InputWordsActivity;
@@ -36,7 +33,6 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
-import com.platform.HTTPServer;
 
 /**
  * BreadWallet
@@ -62,7 +58,7 @@ import com.platform.HTTPServer;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class BRActivity extends FragmentActivity implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
+public class BRActivity extends FragmentActivity {
     private static final String TAG = BRActivity.class.getName();
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
 
@@ -95,10 +91,9 @@ public class BRActivity extends FragmentActivity implements ApplicationLifecycle
 
     @Override
     protected void onResume() {
-        init(this);
+        //init first
+        init();
         super.onResume();
-        BreadApp.mBackgroundedTime = 0;
-
     }
 
     @Override
@@ -255,44 +250,21 @@ public class BRActivity extends FragmentActivity implements ApplicationLifecycle
         }
     }
 
-    public void init(Activity app) {
+    public void init() {
         //set status bar color
 //        ActivityUTILS.setStatusBarColor(app, android.R.color.transparent);
         InternetManager.getInstance();
-        if (!(app instanceof IntroActivity || app instanceof RecoverActivity || app instanceof WriteDownActivity))
-            BRApiManager.getInstance().startTimer(app);
+        if (!(this instanceof IntroActivity || this instanceof RecoverActivity || this instanceof WriteDownActivity))
+            BRApiManager.getInstance().startTimer(this);
         //show wallet locked if it is and we're not in an illegal activity
-        if (!(app instanceof InputPinActivity || app instanceof InputWordsActivity)) {
-            if (AuthManager.getInstance().isWalletDisabled(app)) {
-                AuthManager.getInstance().setWalletDisabled(app);
+        if (!(this instanceof InputPinActivity || this instanceof InputWordsActivity)) {
+            if (AuthManager.getInstance().isWalletDisabled(this)) {
+                AuthManager.getInstance().setWalletDisabled(this);
             }
         }
-        BreadApp.setBreadContext(app);
+        BreadApp.setBreadContext(this);
 
-
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                if (!HTTPServer.isStarted()) {
-                    HTTPServer.startServer();
-                    BreadApp.addOnBackgroundedListener(BRActivity.this);
-                }
-            }
-        });
-        lockIfNeeded(this);
-    }
-
-    private void lockIfNeeded(Activity app) {
-        long start = System.currentTimeMillis();
-        //lock wallet if 3 minutes passed
-        if (BreadApp.mBackgroundedTime != 0
-                && ((System.currentTimeMillis() - BreadApp.mBackgroundedTime) >= 180 * 1000)
-                && !(app instanceof DisabledActivity)) {
-            if (!BRKeyStore.getPinCode(app).isEmpty()) {
-                UiUtils.startBreadActivity(app, true);
-            }
-        }
-
+        BreadApp.lockIfNeeded(this);
     }
 
     private void saveScreenSizesIfNeeded() {
@@ -305,17 +277,5 @@ public class BRActivity extends FragmentActivity implements ApplicationLifecycle
             BRSharedPrefs.putScreenWidth(this, size.x);
         }
 
-    }
-
-    @Override
-    public void onLifeCycle(Lifecycle.Event event) {
-        if (event.name().equalsIgnoreCase(Lifecycle.Event.ON_STOP.toString())) {
-            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                @Override
-                public void run() {
-                    HTTPServer.stopServer();
-                }
-            });
-        }
     }
 }

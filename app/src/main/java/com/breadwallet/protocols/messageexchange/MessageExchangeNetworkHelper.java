@@ -201,12 +201,7 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
                 .build();
         APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
         ErrorObject errorObject = getError(response.getBodyText());
-        if (errorObject != null) {
-            Log.e(TAG, "sendEnvelope: " + errorObject.mMessage);
-        }
-        if (!response.isSuccessful()) {
-            Log.e(TAG, "sendEnvelope:" + String.valueOf(response.getCode()));
-        }
+        logError(errorObject, "sendEnvelope", response);
 
     }
 
@@ -224,12 +219,7 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
                 .build();
         APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
         ErrorObject errorObject = getError(response.getBodyText());
-        if (errorObject != null) {
-            Log.e(TAG, "sendAck: err:" + errorObject.mMessage);
-        }
-        if (!response.isSuccessful()) {
-            Log.e(TAG, "sendAck: code:" + String.valueOf(response.getCode()));
-        }
+        logError(errorObject, "sendAck", response);
     }
 
     public static void sendAssociatedKey(Context context, byte[] publicKey) {
@@ -243,14 +233,7 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
                 .build();
         APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
         ErrorObject errorObject = getError(response.getBodyText());
-        if (errorObject != null) {
-            Log.e(TAG, "sendAssociatedKey: err:" + errorObject.mMessage);
-
-        }
-        if (!response.isSuccessful()) {
-            Log.e(TAG, "sendAssociatedKey: code:" + response.getCode());
-        }
-
+        logError(errorObject, "sendAssociatedKey", response);
     }
 
     public static void getAssociatedKeys(Context context) {
@@ -262,12 +245,7 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
         APIClient.BRResponse response = APIClient.getInstance(context).sendRequest(request, true);
         Log.e(TAG, "getAssociatedKeys: " + response.getCode() + ", " + response.getBodyText());
         ErrorObject errorObject = getError(response.getBodyText());
-        if (errorObject != null) {
-            Log.e(TAG, "sendAssociatedKey: err:" + errorObject.mMessage);
-        }
-        if (!response.isSuccessful()) {
-            Log.e(TAG, "sendAssociatedKey: code:" + String.valueOf(response.getCode()));
-        }
+        logError(errorObject, "getAssociatedKeys", response);
 
     }
 
@@ -322,7 +300,7 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
 
             return new ServiceMetaData(url, name, hash, createdTime, updatedTime, logo, description, domains, capabilities);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(TAG, "getService: ", e);
         }
         return null;
     }
@@ -364,6 +342,15 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
         if (mPollTimer != null) {
             mPollTimer.cancel();
             mPollTimer = null;
+        }
+    }
+
+    private static void logError(ErrorObject errorObject, String tag, APIClient.BRResponse response) {
+        if (errorObject != null) {
+            Log.e(TAG, tag + ": " + errorObject.mMessage);
+        }
+        if (!response.isSuccessful()) {
+            Log.e(TAG, tag + ": " + String.valueOf(response.getCode()));
         }
     }
 

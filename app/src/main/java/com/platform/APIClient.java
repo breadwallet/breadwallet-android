@@ -18,9 +18,11 @@ import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.util.JsonRpcHelper;
 import com.platform.kvstore.RemoteKVStore;
 import com.platform.kvstore.ReplicatedKVStore;
 import com.platform.tools.TokenHolder;
@@ -99,6 +101,9 @@ public class APIClient {
 
     // proto is the transport protocol to use for talking to the API (either http or https)
     private static final String PROTO = "https";
+
+    private static final String GMT = "GMT";
+    private static final String BREAD = "bread";
 
     // convenience getter for the API endpoint
     public static final String BASE_URL = PROTO + "://" + BreadApp.HOST;
@@ -473,26 +478,25 @@ public class APIClient {
             e.printStackTrace();
         }
 
-        String gmt = "GMT";
-        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone(gmt));
+
+        DATE_FORMAT.setTimeZone(TimeZone.getTimeZone(GMT));
         String httpDate = DATE_FORMAT.format(new Date());
 
-        request = modifiedRequest.header("Date", httpDate.substring(0, httpDate.indexOf(gmt) + gmt.length())).build();
+        request = modifiedRequest.header(JsonRpcHelper.DATE, httpDate.substring(0, httpDate.indexOf(GMT) + GMT.length())).build();
 
         String queryString = request.url().encodedQuery();
 
-        String requestString = createRequest(request.method(), base58Body, request.header("Content-Type"),
-                request.header("Date"), request.url().encodedPath()
+        String requestString = createRequest(request.method(), base58Body, request.header(BRConstants.HEADER_CONTENT_TYPE),
+                request.header(JsonRpcHelper.DATE), request.url().encodedPath()
                         + ((queryString != null && !queryString.isEmpty()) ? ("?" + queryString) : ""));
         String signedRequest = signRequest(requestString);
         if (signedRequest == null) return null;
         String token = TokenHolder.retrieveToken(mContext);
-        String authValue = "bread " + token + ":" + signedRequest;
-//            Log.e(TAG, "sendRequest: authValue: " + authValue);
+        String authValue = BREAD + " " + token + ":" + signedRequest;
         modifiedRequest = request.newBuilder();
 
         try {
-            request = modifiedRequest.header("Authorization", authValue).build();
+            request = modifiedRequest.header(BRConstants.AUTHORIZATION, authValue).build();
         } catch (Exception e) {
             BRReportsManager.reportBug(e);
             return null;
