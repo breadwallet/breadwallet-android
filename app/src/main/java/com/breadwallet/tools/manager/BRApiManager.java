@@ -13,6 +13,7 @@ import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -315,9 +316,8 @@ public class BRApiManager {
 
         Request.Builder builder = new Request.Builder()
                 .url(myURL)
-                .header("Content-Type", "application/json")
-                .header("Accept", "application/json")
-                .header("User-agent", Utils.getAgentString(app, "android/HttpURLConnection"))
+                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
+                .header(BRConstants.HEADER_ACCEPT, BRConstants.CONTENT_TYPE_JSON)
                 .get();
         Iterator it = headers.entrySet().iterator();
         while (it.hasNext()) {

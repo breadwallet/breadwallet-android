@@ -47,6 +47,8 @@ public class BRSharedPrefs {
     public static final String PREFS_NAME = "MyPrefsFile";
     private static final String FCM_TOKEN = "fcmToken";
     private static final String NOTIFICATION_ID = "notificationId";
+    private static final String SCREEN_HEIGHT = "screenHeight";
+    private static final String SCREEN_WIDTH = "screenWidth";
 
     public static String getPreferredFiatIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
@@ -525,6 +527,30 @@ public class BRSharedPrefs {
     public static int getNotificationId(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getInt(NOTIFICATION_ID, 0);
+    }
+
+    public static void putScreenHeight(Context context, int screenHeight) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(SCREEN_HEIGHT, screenHeight);
+        editor.apply();
+    }
+
+    public static int getScreenHeight(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt(SCREEN_HEIGHT, 0);
+    }
+
+    public static void putScreenWidth(Context context, int screenWidth) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(SCREEN_WIDTH, screenWidth);
+        editor.apply();
+    }
+
+    public static int getScreenWidth(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getInt(SCREEN_WIDTH, 0);
     }
 
 
