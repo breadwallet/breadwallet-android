@@ -1,20 +1,13 @@
-package com.breadwallet.tools.manager;
+package com.breadwallet.tools.util;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.util.Log;
 
-import com.breadwallet.R;
-import com.breadwallet.presenter.activities.camera.CameraActivity;
 import com.breadwallet.presenter.activities.intro.IntroActivity;
-import com.breadwallet.presenter.activities.intro.RecoverActivity;
-import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.manager.InputDataManager;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
-import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 /**
  * BreadWallet
@@ -40,30 +33,30 @@ import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class DeepLinkingManager {
-    private static final String TAG = DeepLinkingManager.class.getSimpleName();
-    public static final String SCHEME_HTTPS = "https";
+public class DeepLinkingUtils {
+    private static final String TAG = DeepLinkingUtils.class.getSimpleName();
 
-    private DeepLinkingManager() {
+    private DeepLinkingUtils() {
     }
 
-    public static void handleUrlClick(final Activity activity, Intent intent) {
-        //Go to intro screen if the wallet is not create yet
-        if (WalletEthManager.getInstance(activity) == null) {
-            Intent introIntent = new Intent(activity, IntroActivity.class);
-            activity.startActivity(introIntent);
-            return;
-        }
+    public static void handleUrlClick(final Context context, Intent intent) {
+
         final Uri data = intent.getData();
+
         intent.setData(null);
         if (data != null && !data.toString().isEmpty()) {
-            //handle external click with crypto scheme
-            if (data.getScheme().contains(SCHEME_HTTPS)) {
-                InputDataManager.processQrResult(activity, data.toString());
-            } else {
-                CryptoUriParser.processRequest(activity, data.toString(), WalletsMaster.getInstance(activity).getCurrentWallet(activity));
+            //Go to intro screen if the wallet is not create yet
+            if (!WalletsMaster.getInstance(context).isBrdWalletCreated(context)) {
+                Intent introIntent = new Intent(context, IntroActivity.class);
+                context.startActivity(introIntent);
+                return;
             }
-
+            //handle external click with crypto scheme
+            if (CryptoUriParser.isCryptoUrl(context, data.toString())) {
+                CryptoUriParser.processRequest(context, data.toString(), WalletsMaster.getInstance(context).getCurrentWallet(context));
+            } else {
+                InputDataManager.processQrResult(context, data.toString());
+            }
         }
     }
 }

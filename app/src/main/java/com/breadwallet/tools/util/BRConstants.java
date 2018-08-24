@@ -111,6 +111,7 @@ public final class BRConstants {
     public static final String CONTENT_TYPE_JSON = "application/json; charset=utf-8";
     public static final String CONTENT_TYPE_TEXT = "text/plain";
     public static final String HEADER_VALUE_ACCEPT = "application/json";
+    public static final String AUTHORIZATION = "Authorization";
 
 
     /**

@@ -9,11 +9,9 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.constraint.ConstraintSet;
-import android.support.v4.app.FragmentActivity;
 import android.support.v7.widget.Toolbar;
 import android.text.format.DateUtils;
 import android.transition.TransitionManager;
@@ -25,24 +23,20 @@ import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ViewFlipper;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
-import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRSearchBar;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.fragments.FragmentSend;
-import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.manager.DeepLinkingManager;
+import com.breadwallet.tools.util.DeepLinkingUtils;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.TxManager;
-import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.services.SyncService;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -243,25 +237,25 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         //since we have one instance of activity at all times, this is needed to know when a new intent called upon this activity
-        DeepLinkingManager.handleUrlClick(this, intent);
+        DeepLinkingUtils.handleUrlClick(this, intent);
         showSendIfNeeded(intent);
     }
 
     private void updateUi() {
-        final BaseWalletManager wm = WalletsMaster.getInstance(this).getCurrentWallet(this);
-        if (wm == null) {
+        final BaseWalletManager walletManager = WalletsMaster.getInstance(this).getCurrentWallet(this);
+        if (walletManager == null) {
             Log.e(TAG, "updateUi: wallet is null");
             return;
         }
 
-        BigDecimal bigExchangeRate = wm.getFiatExchangeRate(this);
+        BigDecimal bigExchangeRate = walletManager.getFiatExchangeRate(this);
 
         String fiatExchangeRate = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), bigExchangeRate);
-        String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), wm.getFiatBalance(this));
-        String cryptoBalance = CurrencyUtils.getFormattedAmount(this, wm.getIso(), wm.getCachedBalance(this), wm.getUiConfiguration().getMaxDecimalPlacesForUi());
+        String fiatBalance = CurrencyUtils.getFormattedAmount(this, BRSharedPrefs.getPreferredFiatIso(this), walletManager.getFiatBalance(this));
+        String cryptoBalance = CurrencyUtils.getFormattedAmount(this, walletManager.getIso(), walletManager.getCachedBalance(this), walletManager.getUiConfiguration().getMaxDecimalPlacesForUi());
 
-        mCurrencyTitle.setText(wm.getName());
-        mCurrencyPriceUsd.setText(String.format("%s per %s", fiatExchangeRate, wm.getIso()));
+        mCurrencyTitle.setText(walletManager.getName());
+        mCurrencyPriceUsd.setText(String.format("%s per %s", fiatExchangeRate, walletManager.getIso()));
         mBalancePrimary.setText(fiatBalance);
         mBalanceSecondary.setText(cryptoBalance);
 
@@ -271,8 +265,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             mCurrencyPriceUsd.setVisibility(View.VISIBLE);
         }
 
-        String startColor = wm.getUiConfiguration().getStartColor();
-        String endColor = wm.getUiConfiguration().getEndColor();
+        String startColor = walletManager.getUiConfiguration().getStartColor();
+        String endColor = walletManager.getUiConfiguration().getEndColor();
         int currentTheme = UiUtils.getThemeId(this);
 
         if (currentTheme == R.style.AppTheme_Dark) {
@@ -417,7 +411,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         SyncService.registerSyncNotificationBroadcastReceiver(WalletActivity.this.getApplicationContext(), mSyncNotificationBroadcastReceiver);
         SyncService.startService(this.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, mCurrentWalletIso);
 
-        DeepLinkingManager.handleUrlClick(this, getIntent());
+        DeepLinkingUtils.handleUrlClick(this, getIntent());
         showSendIfNeeded(getIntent());
 
     }

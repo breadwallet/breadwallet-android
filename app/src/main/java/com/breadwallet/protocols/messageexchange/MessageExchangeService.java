@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Parcelable;
+import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.JobIntentService;
 import android.util.Base64;
 import android.util.Log;
@@ -342,7 +343,7 @@ public final class MessageExchangeService extends JobIntentService {
      * @param envelope The envelope containing the message.
      */
     private void processEnvelope(Protos.Envelope envelope) {
-        byte[] decryptedMessage = decrypt(envelope);
+        byte[] decryptedMessage = decryptEnvelope(envelope);
         MessageType messageType = MessageType.valueOf(envelope.getMessageType());
         RequestMetaData metaData;
 
@@ -526,11 +527,22 @@ public final class MessageExchangeService extends JobIntentService {
      * @param envelope The envelope containing the message to decrypt.
      * @return The decrypted message.
      */
-    public byte[] decrypt(Protos.Envelope envelope) {
+    public byte[] decryptEnvelope(Protos.Envelope envelope) {
         BRCoreKey pairingKey = getPairingKey();
-        return pairingKey.decryptUsingSharedSecret(envelope.getSenderPublicKey().toByteArray(),
-                envelope.getEncryptedMessage().toByteArray(),
-                envelope.getNonce().toByteArray());
+        return decrypt(pairingKey, envelope.getSenderPublicKey().toByteArray(),
+                envelope.getEncryptedMessage().toByteArray(), envelope.getNonce().toByteArray());
+    }
+
+    /**
+     * @param key              The key to decrypt with
+     * @param senderPublicKey  Sender public key
+     * @param encryptedMessage The message to decrypt
+     * @param nonce            The nonce used to encrypt the message
+     * @return The decrypted message bytes
+     */
+    @VisibleForTesting
+    protected byte[] decrypt(BRCoreKey key, byte[] senderPublicKey, byte[] encryptedMessage, byte[] nonce) {
+        return key.decryptUsingSharedSecret(senderPublicKey, encryptedMessage, nonce);
     }
 
     /**
