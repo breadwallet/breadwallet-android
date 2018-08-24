@@ -27,6 +27,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.interfaces.BRAuthCompletion;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.DecelerateOvershootInterpolator;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.FingerprintUiHelper;
 import com.breadwallet.tools.util.Utils;
@@ -210,23 +211,25 @@ public class FragmentFingerprint extends Fragment
 
     private void animateSignalSlide(final boolean reverse) {
         float layoutTY = fingerPrintLayout.getTranslationY();
+        int screenHeight = BRSharedPrefs.getScreenHeight(getContext());
         if (!reverse) {
-            fingerPrintLayout.setTranslationY(layoutTY + BRActivity.screenParametersPoint.y);
+            fingerPrintLayout.setTranslationY(layoutTY + screenHeight);
             fingerPrintLayout.animate()
                     .translationY(layoutTY)
-                    .setDuration(ANIMATION_DURATION + 200)
+                    .setDuration(ANIMATION_DURATION)
                     .setInterpolator(new DecelerateOvershootInterpolator(2.0f, 1f))
                     .withLayer();
         } else {
             fingerPrintLayout.animate()
-                    .translationY(1500)
+                    .translationY(screenHeight)
                     .setDuration(ANIMATION_DURATION)
                     .withLayer().setInterpolator(new AnticipateInterpolator(2f)).setListener(new AnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(Animator animation) {
                     super.onAnimationEnd(animation);
-                    if (getActivity() != null)
+                    if (getActivity() != null) {
                         getActivity().getFragmentManager().beginTransaction().remove(FragmentFingerprint.this).commit();
+                    }
                 }
             });
 

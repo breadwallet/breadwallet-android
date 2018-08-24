@@ -58,15 +58,11 @@ public class BRToast {
         if (customToastAvailable || !oldMessage.equals(message)) {
             oldMessage = message;
             customToastAvailable = false;
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    customToastAvailable = true;
-                }
-            }, 1000);
             LayoutInflater inflater = ((Activity) app).getLayoutInflater();
             View layout = inflater.inflate(R.layout.toast, (ViewGroup) ((Activity) app).findViewById(R.id.toast_layout_root));
-            layout.setBackgroundResource(layoutDrawable);
+            if (layoutDrawable != 0) {
+                layout.setBackgroundResource(layoutDrawable);
+            }
             TextView text = layout.findViewById(R.id.toast_text);
             text.setText(message);
             toast.setGravity(Gravity.TOP, 0, yOffSet);
