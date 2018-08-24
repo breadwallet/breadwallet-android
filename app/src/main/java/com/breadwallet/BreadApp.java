@@ -174,9 +174,9 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         String walletId = BRSharedPrefs.getWalletRewardId(context);
         if (Utils.isNullOrEmpty(walletId) || !walletId.matches(WALLET_ID_PATTERN)) {
             Log.e(TAG, "generateWalletIfIfNeeded: walletId is empty or faulty: " + walletId + ", generating again.");
-            String rewardId = generateWalletId(context, address);
-            if (!Utils.isNullOrEmpty(rewardId) && walletId.matches(WALLET_ID_PATTERN)) {
-                BRSharedPrefs.putWalletRewardId(context, rewardId);
+            walletId = generateWalletId(context, address);
+            if (!Utils.isNullOrEmpty(walletId) && walletId.matches(WALLET_ID_PATTERN)) {
+                BRSharedPrefs.putWalletRewardId(context, walletId);
                 // TODO: This is a hack.  Decouple FCM logic from rewards id generation logic.
                 BRDFirebaseMessagingService.updateFcmRegistrationToken(context);
             } else {

@@ -5,9 +5,12 @@ import android.arch.lifecycle.Lifecycle;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.Display;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
@@ -61,7 +64,6 @@ import com.platform.HTTPServer;
  */
 public class BRActivity extends FragmentActivity implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
     private static final String TAG = BRActivity.class.getName();
-    public static final Point screenParametersPoint = new Point();
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
 
     static {
@@ -75,8 +77,9 @@ public class BRActivity extends FragmentActivity implements ApplicationLifecycle
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        saveScreenSizesIfNeeded();
     }
 
     @Override
@@ -288,6 +291,18 @@ public class BRActivity extends FragmentActivity implements ApplicationLifecycle
             if (!BRKeyStore.getPinCode(app).isEmpty()) {
                 UiUtils.startBreadActivity(app, true);
             }
+        }
+
+    }
+
+    private void saveScreenSizesIfNeeded() {
+        if (BRSharedPrefs.getScreenHeight(this) == 0) {
+            Log.d(TAG, "saveScreenSizesIfNeeded: saving screen sizes.");
+            Display display = getWindowManager().getDefaultDisplay();
+            Point size = new Point();
+            display.getSize(size);
+            BRSharedPrefs.putScreenHeight(this, size.y);
+            BRSharedPrefs.putScreenWidth(this, size.x);
         }
 
     }

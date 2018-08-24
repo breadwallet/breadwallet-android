@@ -81,7 +81,7 @@ public class IntroActivity extends BRActivity {
         });
 
         if (Utils.isEmulatorOrDebug(this)) {
-            Utils.printPhoneSpecs();
+            Utils.printPhoneSpecs(this);
         }
 
         byte[] masterPubKey = BRKeyStore.getMasterPublicKey(this);
