@@ -23,13 +23,15 @@ import com.breadwallet.tools.util.Utils;
 
 import java.util.List;
 
+import static com.breadwallet.tools.util.BRConstants.STRING_RESOURCES_FILENAME;
+import static com.breadwallet.tools.util.BRConstants.TYPEFACE_PATH_CIRCULARPRO_BOLD;
+import static com.breadwallet.tools.util.BRConstants.TYPEFACE_PATH_CIRCULARPRO_BOOK;
+
 
 public class FragmentLinkWallet extends Fragment {
 
     private static final String TAG = FragmentLinkWallet.class.getSimpleName();
-    private static final int MAX_SCROLLVIEW_HEIGHT = 700;
-    private static final String TYPEFACE_PATH_CIRCULARPRO_BOLD = "fonts/CircularPro-Bold.otf";
-    private static final String TYPEFACE_PATH_CIRCULARPRO_BOOK = "fonts/CircularPro-Book.otf";
+
 
 
     @Override
@@ -105,9 +107,9 @@ public class FragmentLinkWallet extends Fragment {
             capabilitiesTextView.setLayoutParams(capabilitiesParams);
 
             appPermissionScrollview.measure(0, 0);
-            if (appPermissionScrollview.getMeasuredHeight() > MAX_SCROLLVIEW_HEIGHT) {
+            if (appPermissionScrollview.getMeasuredHeight() > getResources().getDimension(R.dimen.permissions_scrollview_max_height)) {
                 ConstraintLayout.LayoutParams lp = new ConstraintLayout.LayoutParams(
-                        ViewGroup.LayoutParams.MATCH_PARENT, MAX_SCROLLVIEW_HEIGHT);
+                        ViewGroup.LayoutParams.MATCH_PARENT, (int) getResources().getDimension(R.dimen.permissions_scrollview_max_height));
                 lp.topToBottom = validDomainsLayout.getId();
                 appPermissionScrollview.setLayoutParams(lp);
             }
@@ -115,14 +117,14 @@ public class FragmentLinkWallet extends Fragment {
             positiveButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    handleLinkApproved();
+                    handleLinkResponse(true);
                 }
             });
 
             negativeButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    handleLinkDeclined();
+                    handleLinkResponse(false);
                 }
             });
         }
@@ -133,19 +135,13 @@ public class FragmentLinkWallet extends Fragment {
 
     private String getLocalizedStringFromKey(String key) {
         String packageName = getActivity().getPackageName();
-        int resId = getResources().getIdentifier(key, "string", packageName);
+        int resId = getResources().getIdentifier(key, STRING_RESOURCES_FILENAME, packageName);
         return getString(resId);
     }
 
-    private void handleLinkDeclined() {
-        Log.d(TAG, "handleLinkDeclined()");
-        MessageExchangeService.enqueueWork(getContext(), MessageExchangeService.createIntent(getContext(), false));
-        getActivity().finish();
-    }
-
-    private void handleLinkApproved() {
-        Log.d(TAG, "handleLinkApproved()");
-        MessageExchangeService.enqueueWork(getContext(), MessageExchangeService.createIntent(getContext(), true));
+    private void handleLinkResponse(boolean approve){
+        Log.d(TAG, "handleLinkResponse(), " + approve);
+        MessageExchangeService.enqueueWork(getContext(), MessageExchangeService.createIntent(getContext(), approve));
         getActivity().finish();
     }
 
