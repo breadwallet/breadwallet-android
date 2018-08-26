@@ -93,7 +93,9 @@ public class FragmentPaymentConfirmation extends Fragment {
     private void handlePaymentConfirmation(final RequestMetaData metaData, final boolean approved) {
         Log.d(TAG, "handlePaymentApproved()");
 
-        if (isParentActivityTaskRoot()) {
+        // Check if ConfirmationActivity is at the root of the current task. If so, take the user home
+        // when they press "Cancel" or back button
+        if (getActivity().isTaskRoot()) {
             Log.d(TAG, "Parent was task root, going Home");
             Intent intent = new Intent(getActivity(), HomeActivity.class);
             startActivity(intent);
@@ -103,10 +105,6 @@ public class FragmentPaymentConfirmation extends Fragment {
 
         MessageExchangeService.enqueueWork(BreadApp.getBreadContext(), MessageExchangeService.createIntent(BreadApp.getBreadContext(), metaData, approved));
 
-    }
-
-    private boolean isParentActivityTaskRoot() {
-        return getActivity().isTaskRoot();
     }
 
     public static FragmentPaymentConfirmation newInstance(RequestMetaData requestMetaData) {

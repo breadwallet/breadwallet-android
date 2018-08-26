@@ -121,7 +121,6 @@ public final class BRConstants {
     public static final String EXTRA_URL = "com.breadwallet.EXTRA_URL";
     public static final String DRAWABLE = "drawable";
     public static final String CURRENCY_PARAMETER_STRING_FORMAT = "%s?currency=%s";
-    public static final String EXTRA_SERVICE_CAPABILITIES = "service_capabilities";
 
     /**
      * Social media links and privacy policy URLS
@@ -134,6 +133,17 @@ public final class BRConstants {
     public static final String URL_BRD_HOST = "brd.com";
     public static final String WALLET_PAIR_PATH = "wallet-pair";
     public static final String WALLET_LINK_PATH = "link-wallet";
+
+
+    /**
+     * Font constants
+     *
+     */
+    public static final String TYPEFACE_PATH_CIRCULARPRO_BOLD = "fonts/CircularPro-Bold.otf";
+    public static final String TYPEFACE_PATH_CIRCULARPRO_BOOK = "fonts/CircularPro-Book.otf";
+
+
+    public static final String STRING_RESOURCES_FILENAME = "string";
 
 
     private BRConstants() {

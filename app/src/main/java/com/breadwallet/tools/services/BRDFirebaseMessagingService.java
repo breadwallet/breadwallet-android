@@ -109,19 +109,18 @@ public final class BRDFirebaseMessagingService extends FirebaseMessagingService 
             Log.e(TAG, "onMessageReceived: ");
             int notificationId = getNextNotificationId();
             String notificationTitle = remoteMessage.getData().get(NOTIFICATION_TITLE);
-            String notificationMessage = remoteMessage.getData().get(NOTIFICATION_BODY);
+            String notificationBody = remoteMessage.getData().get(NOTIFICATION_BODY);
 
-            // Take the user to ConfirmActivity upon tapping the notification
-            Intent confirmIntent = new Intent(getApplicationContext(), HomeActivity.class);
-            confirmIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            confirmIntent.setAction(ACTION_GET_USER_CONFIRMATION);
+            // Take the user to HomeActivity upon tapping the notification
+            Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+            homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 
-            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, confirmIntent, 0);
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, homeIntent, 0);
 
             NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.drawable.brd_logo_gradient)
                     .setContentTitle(notificationTitle)
-                    .setContentText(notificationMessage)
+                    .setContentText(notificationBody)
                     .setAutoCancel(true)
                     .setContentIntent(pendingIntent);
 
