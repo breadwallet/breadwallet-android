@@ -895,7 +895,7 @@ public class ReplicatedKVStore implements ApplicationLifecycleObserver.Applicati
         if (Utils.isNullOrEmpty(tempAuthKey)) {
             tempAuthKey = BRKeyStore.getAuthKey(context);
             if (tempAuthKey == null) Log.e(TAG, "cacheKeyIfNeeded: FAILED, still null!");
-            BreadApp.addOnBackgroundedListener(instance);
+            ApplicationLifecycleObserver.addApplicationLifecycleListener(instance);
         }
     }
 

@@ -75,17 +75,21 @@ import io.fabric.sdk.android.Fabric;
 
 public class BreadApp extends Application implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
     private static final String TAG = BreadApp.class.getName();
+
+    public static final boolean IS_ALPHA = false;
+
+    public static String HOST = "api.breadwallet.com"; // The server(s) on which the API is hosted
+    private static final int LOCK_TIMEOUT = 180000; // 3 minutes in milliseconds
+    public static final String WALLET_ID_PATTERN = "^[A-Z0-9]*$";
+    private static final int NUMBER_OF_BYTES_FOR_SHA256_NEEDED = 10;
+
+    private static Context mContext;
     public static int mDisplayHeightPx;
     public static int mDisplayWidthPx;
-    public static final String WALLET_ID_PATTERN = "^[A-Z0-9]*$";
-    // host is the server(s) on which the API is hosted
-    public static String HOST = "api.breadwallet.com";
-    private static Context mContext;
-    private static ApplicationLifecycleObserver mObserver;
     private static long mBackgroundedTime;
     private static Lifecycle.Event mLastApplicationEvent;
-    private static final int NUMBER_OF_BYTES_FOR_SHA256_NEEDED = 10;
-    private static final int LOCK_TIMEOUT = 180000; // 3 minutes in milliseconds
+    private static Activity currentActivity;
+    public static final Map<String, String> mHeaders = new HashMap<>();
 
     private Runnable mDisconnectWalletsRunnable = new Runnable() {
         @Override
@@ -102,6 +106,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
             }
         }
     };
+
     private Runnable mConnectWalletsRunnable = new Runnable() {
         @Override
         public void run() {
@@ -129,12 +134,6 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
             Log.d(TAG, "Installer Package Name -> " + (PACKAGE_NAME == null ? "null" : BreadApp.getBreadContext().getPackageManager().getInstallerPackageName(PACKAGE_NAME)));
         }
     }
-
-    public static final boolean IS_ALPHA = false;
-
-    public static final Map<String, String> mHeaders = new HashMap<>();
-
-    private static Activity currentActivity;
 
     @Override
     public void onCreate() {
@@ -173,13 +172,10 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
         registerReceiver(InternetManager.getInstance(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
-        mObserver = new ApplicationLifecycleObserver();
-        ProcessLifecycleOwner.get().getLifecycle().addObserver(mObserver);
-        addOnBackgroundedListener(this);
-        addOnBackgroundedListener(MessageExchangeNetworkHelper.getInstance());
-
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(new ApplicationLifecycleObserver());
+        ApplicationLifecycleObserver.addApplicationLifecycleListener(this);
+        ApplicationLifecycleObserver.addApplicationLifecycleListener(MessageExchangeNetworkHelper.getInstance());
     }
-
 
     /**
      * Clears all app data from disk. This is equivalent to the user choosing to clear the app's data from within the
@@ -254,7 +250,6 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
         }
         return null;
-
     }
 
     @TargetApi(Build.VERSION_CODES.N)
@@ -283,14 +278,6 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         currentActivity = app;
     }
 
-    public static void addOnBackgroundedListener(ApplicationLifecycleObserver.ApplicationLifecycleListener listener) {
-        mObserver.addApplicationLifecycleListener(listener);
-    }
-
-    public static void removeOnBackgroundListener(ApplicationLifecycleObserver.ApplicationLifecycleListener listener) {
-        mObserver.removeApplicationLifecycleListener(listener);
-    }
-
     public static boolean isAppInBackground() {
         return mLastApplicationEvent != null && mLastApplicationEvent.name().equalsIgnoreCase(Lifecycle.Event.ON_STOP.toString());
     }
@@ -299,19 +286,6 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     public void onLifeCycle(Lifecycle.Event event) {
         mLastApplicationEvent = event;
         switch (event) {
-            case ON_STOP:
-                Log.d(TAG, "onLifeCycle: STOP");
-                mBackgroundedTime = System.currentTimeMillis();
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mDisconnectWalletsRunnable);
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mConnectWalletsRunnable);
-                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        HTTPServer.stopServer();
-                    }
-                });
-                break;
-
             case ON_START:
                 Log.d(TAG, "onLifeCycle: START");
                 mBackgroundedTime = 0;
@@ -326,7 +300,18 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                     }
                 });
                 break;
-
+            case ON_STOP:
+                Log.d(TAG, "onLifeCycle: STOP");
+                mBackgroundedTime = System.currentTimeMillis();
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mDisconnectWalletsRunnable);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mConnectWalletsRunnable);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        HTTPServer.stopServer();
+                    }
+                });
+                break;
         }
     }
 
@@ -341,6 +326,4 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         }
 
     }
-
-
 }

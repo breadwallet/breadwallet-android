@@ -44,14 +44,14 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
 public class SyncService extends JobIntentService {
     private static final String TAG = SyncService.class.getSimpleName();
 
+    private static final int JOB_ID = 0xe1743572; // Used to identify jobs that belong to this service. (Random number used for uniqueness.)
+
     public static final String ACTION_START_SYNC_PROGRESS_POLLING = "com.breadwallet.tools.services.ACTION_START_SYNC_PROGRESS_POLLING";
     public static final String ACTION_SYNC_PROGRESS_UPDATE = "com.breadwallet.tools.services.ACTION_SYNC_PROGRESS_UPDATE";
     public static final String EXTRA_WALLET_ISO = "com.breadwallet.tools.services.EXTRA_WALLET_ISO";
     public static final String EXTRA_PROGRESS = "com.breadwallet.tools.services.EXTRA_PROGRESS";
 
     private static final int POLLING_INTERVAL = 500; // in milliseconds
-    private static final int JOB_ID = 99;
-
 
     /**
      * Progress is identified as a double value between 0 and 1.
@@ -123,7 +123,6 @@ public class SyncService extends JobIntentService {
         return createIntent(context, action, walletIso)
                 .putExtra(EXTRA_PROGRESS, progress);
     }
-
 
     /**
      * Starts the sync polling service with the specified parameters.

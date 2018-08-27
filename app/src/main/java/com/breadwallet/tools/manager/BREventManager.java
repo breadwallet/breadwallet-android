@@ -27,7 +27,6 @@ import java.util.UUID;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 
 import static com.platform.APIClient.BASE_URL;
 
@@ -64,7 +63,7 @@ public class BREventManager implements ApplicationLifecycleObserver.ApplicationL
 
     private BREventManager() {
         sessionId = UUID.randomUUID().toString();
-        BreadApp.addOnBackgroundedListener(this);
+        ApplicationLifecycleObserver.addApplicationLifecycleListener(this);
     }
 
     public static BREventManager getInstance() {
