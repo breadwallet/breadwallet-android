@@ -22,7 +22,6 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.animation.OvershootInterpolator;
 
-import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.activities.HomeActivity;
@@ -31,7 +30,6 @@ import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
@@ -49,7 +47,6 @@ import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import java.util.List;
 
 import static android.content.Context.ACTIVITY_SERVICE;
-
 
 /**
  * BreadWallet
@@ -340,5 +337,4 @@ public class UiUtils {
 
         return 0;
     }
-
 }

@@ -408,8 +408,8 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         }
 
         mSyncNotificationBroadcastReceiver = new SyncNotificationBroadcastReceiver();
-        SyncService.registerSyncNotificationBroadcastReceiver(WalletActivity.this.getApplicationContext(), mSyncNotificationBroadcastReceiver);
-        SyncService.enqueueWork(WalletActivity.this.getApplicationContext(),mCurrentWalletIso);
+        SyncService.registerSyncNotificationBroadcastReceiver(getApplicationContext(), mSyncNotificationBroadcastReceiver);
+        SyncService.enqueueWork(getApplicationContext(), mCurrentWalletIso);
 
         DeepLinkingUtils.handleUrlClick(this, getIntent());
         showSendIfNeeded(getIntent());
@@ -432,7 +432,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         if (mWallet != null) {
             mWallet.removeSyncListener(this);
         }
-        SyncService.unregisterSyncNotificationBroadcastReceiver(WalletActivity.this.getApplicationContext(), mSyncNotificationBroadcastReceiver);
+        SyncService.unregisterSyncNotificationBroadcastReceiver(getApplicationContext(), mSyncNotificationBroadcastReceiver);
     }
 
     /* SyncListener methods */
@@ -443,12 +443,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     @Override
     public void syncStarted() {
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-              SyncService.enqueueWork(WalletActivity.this.getApplicationContext(),mCurrentWalletIso);
-            }
-        });
+        SyncService.enqueueWork(getApplicationContext(), mCurrentWalletIso);
     }
     /* SyncListener methods End*/
 
@@ -469,7 +464,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             if (mBarFlipper != null && mBarFlipper.getDisplayedChild() == 2) {
                 mBarFlipper.setDisplayedChild(0);
             }
-            SyncService.enqueueWork(WalletActivity.this.getApplicationContext(), mCurrentWalletIso);
+            SyncService.enqueueWork(getApplicationContext(), mCurrentWalletIso);
 
         } else {
             if (mBarFlipper != null) {
