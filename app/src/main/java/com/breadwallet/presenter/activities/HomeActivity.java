@@ -229,6 +229,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
     }
 
+    // TODO: pairing should not automatically add the ICO token to the user's wallet. That should be added when the CallRequest is received + approved.
     private void addCccWalletIfNeeded() {
         if (MessageExchangeService.mPairingMetaData == null) {
             return;
