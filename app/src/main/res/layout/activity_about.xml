@@ -9,31 +9,27 @@
     android:background="@color/extra_light_blue_background"
     tools:context="com.breadwallet.presenter.activities.SetPinActivity">
 
-    <View
+    <RelativeLayout
         android:id="@+id/view3"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="32dp"
-        android:background="@drawable/logo_circle"
         app:layout_constraintHorizontal_bias="0.501"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/title"/>
+        app:layout_constraintTop_toBottomOf="@+id/title">
 
-    <com.breadwallet.presenter.customviews.BRText
-        app:customTFont="Celevenia.otf"
-        android:id="@+id/textView11"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="bread"
-        android:textColor="@color/black"
-        android:textSize="26sp"
-        app:layout_constraintLeft_toLeftOf="@+id/view3"
-        app:layout_constraintRight_toRightOf="@+id/view3"
-        app:layout_constraintTop_toBottomOf="@+id/view3"/>
+        <ImageView
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:src="@drawable/loafwallet" />
+
+    </RelativeLayout>
 
     <com.breadwallet.presenter.customviews.BRText
         android:id="@+id/title"

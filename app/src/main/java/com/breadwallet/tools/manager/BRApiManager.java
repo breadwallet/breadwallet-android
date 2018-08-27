@@ -168,12 +168,11 @@ public class BRApiManager {
 
 
     public static JSONArray fetchRates(Activity activity) {
-        String jsonString = urlGET(activity, "https://litecoin.com/api/v1/ticker");
+        String jsonString = urlGET(activity, "https://litecoin.com/api/v1/rates");
         JSONArray jsonArray = null;
         if (jsonString == null) return null;
         try {
-            JSONObject obj = new JSONObject(jsonString);
-            jsonArray = obj.getJSONArray("price");
+            jsonArray = new JSONArray(jsonString);
 
         } catch (JSONException ignored) {
         }
@@ -181,14 +180,13 @@ public class BRApiManager {
     }
 
     public static JSONArray backupFetchRates(Activity activity) {
-        String jsonString = urlGET(activity, "https://api.loshan.co.uk/api/v1/ticker");
+        String jsonString = urlGET(activity, "https://api.loshan.co.uk/api/v1/rates");
 
         JSONArray jsonArray = null;
         if (jsonString == null) return null;
         try {
-            JSONObject obj = new JSONObject(jsonString);
+            jsonArray = new JSONArray(jsonString);
 
-            jsonArray = obj.getJSONArray("price");
         } catch (JSONException e) {
             e.printStackTrace();
         }

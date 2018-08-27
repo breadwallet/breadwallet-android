@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
   <!-- App name -->
-  <string name="About.appName.android">Bread</string>
+  <string name="About.appName.android">Loaf</string>
   <!-- About screen blog label -->
-  <string name="About.blog">Blog</string>
+  <string name="About.blog">Website</string>
   <!-- About screen footer -->
-  <string name="About.footer">Made by the global Loaf team. Version %1$s</string>
+  <string name="About.footer">Made by the global LoafWallet team. Version %1$s</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">Privacy Policy</string>
   <!-- About screen reddit label -->
@@ -29,7 +29,7 @@
   <!-- Error alert title -->
   <string name="Alert.error">Error</string>
   <!-- Keystore error -->
-  <string name="Alert.keystore.generic.android">There is a problem with your Android OS keystore, please contact support@breadwallet.com</string>
+  <string name="Alert.keystore.generic.android">There is a problem with your Android OS keystore, please contact contact@loafwallet.org</string>
   <!-- KeyStore error, keys are invalidated -->
   <string name="Alert.keystore.invalidated.android">Your Bread encrypted data was recently invalidated because your Android lock screen was disabled.</string>
   <!-- Keystore error title -->
@@ -85,7 +85,7 @@
   <!-- Approve button label -->
   <string name="BitID.approve">Approve</string>
   <!-- <sitename> is requesting authentication using your litecoin wallet -->
-  <string name="BitID.authenticationRequest">%1$s is requesting authentication using your litecoin wallet</string>
+  <string name="BitID.authenticationRequest">%1$s is requesting authentication using your Litecoin wallet</string>
   <!-- Deny button label -->
   <string name="BitID.deny">Deny</string>
   <!-- BitID error alert title -->
@@ -169,7 +169,7 @@
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Checking private key balance...</string>
   <!-- Sweep private key confirmation message -->
-  <string name="Import.confirm">Send %1$s from this private key into your wallet? The litecoin network will receive a fee of %2$s.</string>
+  <string name="Import.confirm">Send %1$s from this private key into your wallet? The Litecoin network will receive a fee of %2$s.</string>
   <!-- Duplicate key error message -->
   <string name="Import.Error.duplicate">This private key is already in your wallet.</string>
   <!-- empty private key error message -->
@@ -187,13 +187,13 @@
   <!-- Caption for graphics -->
   <string name="Import.leftCaption">Wallet to be imported</string>
   <!-- Import wallet intro screen message -->
-  <string name="Import.message">Importing a wallet transfers all the money from your other wallet into your Loaf wallet using a single transaction.</string>
+  <string name="Import.message">Importing a wallet transfers all the money from your other wallet into your LoafWallet using a single transaction.</string>
   <!-- Enter password alert view title -->
   <string name="Import.password">This private key is password protected.</string>
   <!-- password textfield placeholder -->
   <string name="Import.passwordPlaceholder">password</string>
   <!-- Caption for graphics -->
-  <string name="Import.rightCaption">Your Loaf Wallet</string>
+  <string name="Import.rightCaption">Your LoafWallet</string>
   <!-- Scan Private key button label -->
   <string name="Import.scan">Scan Private Key</string>
   <!-- Import wallet success alert title -->
@@ -213,15 +213,15 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Ignore</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">DEVICE SECURITY COMPROMISED\n Any \'jailbreak\' app can access Loaf\'s keychain data and steal your litecoin! Wipe this wallet immediately and restore on a secure device.</string>
+  <string name="JailbreakWarnings.messageWithBalance">DEVICE SECURITY COMPROMISED\n Any \'jailbreak\' app can access Loaf\'s keychain data and steal your Litecoin! Wipe this wallet immediately and restore on a secure device.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">DEVICE SECURITY COMPROMISED\n Any \'jailbreak\' app can access Loaf\'s keychain data and steal your litecoin. Please only use Loaf on a non-jailbroken device.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">DEVICE SECURITY COMPROMISED\n Any \'jailbreak\' app can access Loaf\'s keychain data and steal your Litecoin. Please only use Loaf on a non-jailbroken device.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">WARNING</string>
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Location services are disabled.</string>
   <!-- No permissions for location services -->
-  <string name="LocationPlugin.notAuthorized">Loaf does not have permission to access location services.</string>
+  <string name="LocationPlugin.notAuthorized">LoafWallet does not have permission to access location services.</string>
   <!-- Wallet creation date prefix -->
   <string name="ManageWallet.creationDatePrefix">You created your wallet on %1$s</string>
   <!-- Manage wallet description text -->
@@ -299,7 +299,7 @@
   <!-- Transaction rejected prompt title -->
   <string name="Prompts.RecommendRescan.title">Transaction Rejected</string>
   <!-- Share data prompt body -->
-  <string name="Prompts.ShareData.body">Help improve Loaf by sharing your anonymous data with us</string>
+  <string name="Prompts.ShareData.body">Help improve LoafWallet by sharing your anonymous data with us</string>
   <!-- Share data prompt title -->
   <string name="Prompts.ShareData.title">Share Anonymous Data</string>
   <!-- Enable touch ID prompt body -->
@@ -313,11 +313,11 @@
   <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
   <string name="Prompts.TouchId.usePin.android">PIN</string>
   <!-- Upgrade PIN prompt body. -->
-  <string name="Prompts.UpgradePin.body">Loaf has upgraded to using a 6-digit PIN. Tap here to upgrade.</string>
+  <string name="Prompts.UpgradePin.body">LoafWallet has upgraded to using a 6-digit PIN. Tap here to upgrade.</string>
   <!-- Upgrade PIN prompt title. -->
   <string name="Prompts.UpgradePin.title">Upgrade PIN</string>
   <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
-  <string name="PushNotifications.body">Turn on notifications to receive special messages from Loaf in the future.</string>
+  <string name="PushNotifications.body">Turn on notifications to receive special messages from LoafWallet in the future.</string>
   <!-- Push notifications toggle switch label -->
   <string name="PushNotifications.label">Push Notifications</string>
   <!-- Push notifications are off label -->
@@ -347,7 +347,7 @@
   <!-- Enter paper key instruction -->
   <string name="RecoverWallet.instruction">Enter Paper Key</string>
   <!-- Recover wallet intro -->
-  <string name="RecoverWallet.intro">Recover your Loaf with your paper key.</string>
+  <string name="RecoverWallet.intro">Recover your LoafWallet with your paper key.</string>
   <!-- Invalid paper key message -->
   <string name="RecoverWallet.invalid">The paper key you entered is invalid. Please double-check each word and try again.</string>
   <!-- Previous button accessibility label -->
@@ -375,7 +375,7 @@
   <!-- extimated time -->
   <string name="ReScan.body1">20-45 minutes</string>
   <!-- Syncing explanation -->
-  <string name="ReScan.body2">If a transaction shows as completed on the litecoin network but not in your Loaf.</string>
+  <string name="ReScan.body2">If a transaction shows as completed on the Litecoin network but not in your LoafWallet.</string>
   <!-- Syncing explanation -->
   <string name="ReScan.body3">You repeatedly get an error saying your transaction was rejected.</string>
   <!-- Start Sync button label -->
@@ -401,17 +401,17 @@
   <!-- Security Center Info -->
   <string name="SecurityCenter.info">Enable all security features for maximum protection.</string>
   <!-- Paper Key button description -->
-  <string name="SecurityCenter.paperKeyDescription">The only way to access your litecoin if you lose or upgrade your phone.</string>
+  <string name="SecurityCenter.paperKeyDescription">The only way to access your Litecoin if you lose or upgrade your phone.</string>
   <!-- Paper Key button title -->
   <string name="SecurityCenter.paperKeyTitle">Paper Key</string>
   <!-- PIN button description -->
-  <string name="SecurityCenter.pinDescription">Protects your Loaf from unauthorized users.</string>
+  <string name="SecurityCenter.pinDescription">Protects your LoafWallet from unauthorized users.</string>
   <!-- PIN button title -->
   <string name="SecurityCenter.pinTitle">6-Digit PIN</string>
   <!-- Security Center Title -->
   <string name="SecurityCenter.title">Security Center</string>
   <!-- Touch ID button description -->
-  <string name="SecurityCenter.touchIdDescription">Conveniently unlock your Loaf and send money up to a set limit.</string>
+  <string name="SecurityCenter.touchIdDescription">Conveniently unlock your LoafWallet and send money up to a set limit.</string>
   <!-- Touch ID button title -->
   <string name="SecurityCenter.touchIdTitle">Touch ID</string>
   <!-- Security center fingerprint authentication button -->
@@ -427,7 +427,7 @@
   <!-- Camera not allowed message -->
   <string name="Send.cameraunavailableMessage">Go to Settings to allow camera access.</string>
   <!-- Camera not allowed alert title -->
-  <string name="Send.cameraUnavailableTitle">Loaf is not allowed to access the camera</string>
+  <string name="Send.cameraUnavailableTitle">LoafWallet is not allowed to access the camera</string>
   <!-- Warning when sending to self. -->
   <string name="Send.containsAddress">The destination is your own address. You cannot send to yourself.</string>
   <!-- Could not create transaction alert title -->
@@ -441,9 +441,9 @@
   <!-- Payee identity not certified alert title. -->
   <string name="Send.identityNotCertified">Payee identity isn\'t certified.</string>
   <!-- Invalid address alert message -->
-  <string name="Send.invalidAddressMessage">The destination address is not a valid litecoin address.</string>
+  <string name="Send.invalidAddressMessage">The destination address is not a valid Litecoin address.</string>
   <!-- Invalid address on pasteboard message -->
-  <string name="Send.invalidAddressOnPasteboard">Pasteboard does not contain a valid litecoin address.</string>
+  <string name="Send.invalidAddressOnPasteboard">Pasteboard does not contain a valid Litecoin address.</string>
   <!-- Invalid address alert title -->
   <string name="Send.invalidAddressTitle">Invalid Address</string>
   <!-- Is rescanning error message -->
@@ -483,7 +483,7 @@
   <!-- Join Early access label -->
   <string name="Settings.earlyAccess">Join Early Access</string>
   <!-- Are you enjoying loaf alert message body -->
-  <string name="Settings.enjoying">Are you enjoying Loaf?</string>
+  <string name="Settings.enjoying">Are you enjoying LoafWallet?</string>
   <!-- Import wallet label -->
   <string name="Settings.importTitle">Import Wallet</string>
   <!-- Manage settings section header -->
@@ -507,7 +507,7 @@
   <!-- Start or recover another wallet menu label. -->
   <string name="Settings.wipe">Start/Recover Another Wallet</string>
   <!-- Share data view body -->
-  <string name="ShareData.body">Help improve Loaf by sharing your anonymous data with us. This does not include any financial information. We respect your financial privacy.</string>
+  <string name="ShareData.body">Help improve LoafWallet by sharing your anonymous data with us. This does not include any financial information. We respect your financial privacy.</string>
   <!-- Share data header -->
   <string name="ShareData.header">Share Data?</string>
   <!-- Share data switch label. -->
@@ -515,7 +515,7 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Write Down Paper Key Again</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Your paper key is the only way to restore your Loaf if your phone is lost, stolen, broken, or upgraded.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
+  <string name="StartPaperPhrase.body">Your paper key is the only way to restore your LoafWallet if your phone is lost, stolen, broken, or upgraded.\n\nWe will show you a list of words to write down on a piece of paper and keep safe.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Write Down Paper Key</string>
   <!-- Argument is date -->
@@ -547,13 +547,13 @@
   <!-- Fingerprint Is Not Setup -->
   <string name="TouchIdSettings.disabledWarning.title.android">Fingerprint Authentication Not Enabled</string>
   <!-- Touch Id screen label -->
-  <string name="TouchIdSettings.label">Use your fingerprint to unlock your Loaf and send money up to a set limit.</string>
+  <string name="TouchIdSettings.label">Use your fingerprint to unlock your LoafWallet and send money up to a set limit.</string>
   <!-- Link Text (see TouchIdSettings.customizeText) -->
   <string name="TouchIdSettings.linkText">Touch ID Spending Limit Screen</string>
   <!-- Spending Limit: b100,000 ($100) -->
   <string name="TouchIdSettings.spendingLimit">Spending limit: %1$s (%2$s)</string>
   <!-- Touch id switch label. -->
-  <string name="TouchIdSettings.switchLabel">Enable Touch ID for Loaf</string>
+  <string name="TouchIdSettings.switchLabel">Enable Touch ID for LoafWallet</string>
   <!-- Enable fingerprint for this wallet called Bread -->
   <string name="TouchIdSettings.switchLabel.android">Enable Fingerprint Authentication</string>
   <!-- Touch ID settings view title -->
@@ -659,9 +659,9 @@
   <!-- Wallet unlocked message -->
   <string name="UnlockScreen.unlocked">Wallet Unlocked</string>
   <!-- Update PIN caption text -->
-  <string name="UpdatePin.caption">Remember this PIN. If you forget it, you won\'t be able to access your litecoin.</string>
+  <string name="UpdatePin.caption">Remember this PIN. If you forget it, you won\'t be able to access your Litecoin.</string>
   <!-- PIN creation info. -->
-  <string name="UpdatePin.createInstruction">Your PIN will be used to unlock your Loaf and send money.</string>
+  <string name="UpdatePin.createInstruction">Your PIN will be used to unlock your LoafWallet and send money.</string>
   <!-- Update PIN title -->
   <string name="UpdatePin.createTitle">Set PIN</string>
   <!-- Update PIN title -->
@@ -695,7 +695,7 @@
   <!-- Authorize transaction with touch id message -->
   <string name="VerifyPin.touchIdMessage">Authorize this transaction</string>
   <!-- 'No wallet' warning for watch app -->
-  <string name="Watch.noWalletWarning">Open the Loaf iPhone app to set up your wallet.</string>
+  <string name="Watch.noWalletWarning">Open the LoafWallet iPhone app to set up your wallet.</string>
   <!-- Dismiss button label -->
   <string name="Webview.dismiss">Dismiss</string>
   <!-- Webview loading error message -->
@@ -703,9 +703,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">Updating...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Loafwallet has changed its name to Loaf, with a brand new look and some new features.\n\nIf you need help, look for the (?) in the top right of most screens.</string>
+  <string name="Welcome.body">LoafWallet has just updated! \nIf you need help, look for the (?) in the top right of most screens.</string>
   <!-- Top title of welcome screen -->
-  <string name="Welcome.title">Welcome to Loaf!</string>
+  <string name="Welcome.title">Welcome to LoafWallet!</string>
   <!-- Wipe wallet alert message -->
   <string name="WipeWallet.alertMessage">Are you sure you want to delete this wallet?</string>
   <!-- Wipe wallet alert title -->
@@ -717,7 +717,7 @@
   <!-- Enter phrase to wipe wallet instruction. -->
   <string name="WipeWallet.instruction">To start a new wallet or restore an existing wallet, you must first erase the wallet that is currently installed. To continue, enter the current wallet\'s Paper Key.</string>
   <!-- Start wipe wallet view message -->
-  <string name="WipeWallet.startMessage">Starting or recovering another wallet allows you to access and manage a different Loaf wallet on this device.</string>
+  <string name="WipeWallet.startMessage">Starting or recovering another wallet allows you to access and manage a different LoafWallet on this device.</string>
   <!-- Start wipe wallet view warning -->
   <string name="WipeWallet.startWarning">Your current wallet will be removed from this device. If you wish to restore it in the future, you will need to enter your Paper Key.</string>
   <!-- Wipe wallet navigation item title. -->

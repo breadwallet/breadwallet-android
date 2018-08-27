@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <resources>
   <!-- App name -->
-  <string name="About.appName.android">Bread</string>
+  <string name="About.appName.android">Loaf</string>
   <!-- About screen blog label -->
   <string name="About.blog">Blog</string>
   <!-- About screen footer -->
-  <string name="About.footer">Gemaakt door het globale Bread team. Versie %1$s</string>
+  <string name="About.footer">Gemaakt door het globale Loaf team. Versie %1$s</string>
   <!-- Privay Policy button label -->
   <string name="About.privacy">Privacyverklaring</string>
   <!-- About screen reddit label -->
@@ -23,7 +23,7 @@
   <!-- Loading Wallet Message -->
   <string name="Account.loadingMessage">Portemonnee Laden</string>
   <!-- Default wallet name -->
-  <string name="AccountHeader.defaultWalletName">Mijn Bread</string>
+  <string name="AccountHeader.defaultWalletName">Mijn Loaf</string>
   <!-- Equals symbol -->
   <string name="AccountHeader.equals">=</string>
   <!-- Manage wallet button title -->
@@ -33,9 +33,9 @@
   <!-- Error alert title -->
   <string name="Alert.error">Error</string>
   <!-- Keystore error -->
-  <string name="Alert.keystore.generic.android">Er is een probleem het uw Android OS keystore, neemt u alstublieft contact op met support@breadwallet.com</string>
+  <string name="Alert.keystore.generic.android">Er is een probleem het uw Android OS keystore, neemt u alstublieft contact op met contact@loafwallet.org</string>
   <!-- KeyStore error, keys are invalidated -->
-  <string name="Alert.keystore.invalidated.android">Uw door Bread geëncrypteerde data is onlangs ongeldig gemaakt omdat uw Android schermvergrendeling is uitgeschakeld.</string>
+  <string name="Alert.keystore.invalidated.android">Uw door Loaf geëncrypteerde data is onlangs ongeldig gemaakt omdat uw Android schermvergrendeling is uitgeschakeld.</string>
   <!-- Keystore error title -->
   <string name="Alert.keystore.title.android">Android KeyStore fout</string>
   <!-- No internet alert message -->
@@ -189,13 +189,13 @@
   <!-- Caption for graphics -->
   <string name="Import.leftCaption">Portemonnee die geïmporteerd kan worden</string>
   <!-- Import wallet intro screen message -->
-  <string name="Import.message">Door een portemonnee te importeren plaats je het geld van je andere portemonnee naar je Bread portemonnee via een enkele transactie.</string>
+  <string name="Import.message">Door een portemonnee te importeren plaats je het geld van je andere portemonnee naar je Loaf portemonnee via een enkele transactie.</string>
   <!-- Enter password alert view title -->
   <string name="Import.password">Deze persoonlijke sleutel is beveiligd met een wachtwoord.</string>
   <!-- password textfield placeholder -->
   <string name="Import.passwordPlaceholder">wachtwoord</string>
   <!-- Caption for graphics -->
-  <string name="Import.rightCaption">Jouw Bread Portemonnee</string>
+  <string name="Import.rightCaption">Jouw Loaf Portemonnee</string>
   <!-- Scan Private key button label -->
   <string name="Import.scan">Scan Persoonlijke Sleutel</string>
   <!-- Import wallet success alert title -->
@@ -215,9 +215,9 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Negeren</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">APPARAAT BEVEILIGING BESCHADIGD\nElke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan hiermee je Litecoins stelen! Wis deze portemonnee direct en herstel het op een veilig apparaat.</string>
+  <string name="JailbreakWarnings.messageWithBalance">APPARAAT BEVEILIGING BESCHADIGD\nElke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Loaf en kan hiermee je Litecoins stelen! Wis deze portemonnee direct en herstel het op een veilig apparaat.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">APPARAAT BEVEILIGING BESCHADIGD\nElke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan hiermee je Litecoins stelen. Gebruik Bread a.u.b. alleen op een niet-gejailbreakt apparaat.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">APPARAAT BEVEILIGING BESCHADIGD\nElke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Loaf en kan hiermee je Litecoins stelen. Gebruik Loaf a.u.b. alleen op een niet-gejailbreakt apparaat.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">WAARSCHUWING</string>
   <!-- Wipe wallet button -->
@@ -225,7 +225,7 @@
   <!-- Location services disabled error -->
   <string name="LocationPlugin.disabled">Locatievoorzieningen zijn uitgeschakeld.</string>
   <!-- No permissions for location services -->
-  <string name="LocationPlugin.notAuthorized">Bread heeft geen toestemming om locatievoorzieningen te gebruiken.</string>
+  <string name="LocationPlugin.notAuthorized">Loaf heeft geen toestemming om locatievoorzieningen te gebruiken.</string>
   <!-- Wallet creation date prefix -->
   <string name="ManageWallet.creationDatePrefix">Je hebt je portemonnee gecreëerd op %1$s</string>
   <!-- Manage wallet description text -->
@@ -303,7 +303,7 @@
   <!-- Transaction rejected prompt title -->
   <string name="Prompts.RecommendRescan.title">Transactie Geweigerd</string>
   <!-- Share data prompt body -->
-  <string name="Prompts.ShareData.body">Help ons bij het verbeteren van Bread door je anonieme data met ons te delen</string>
+  <string name="Prompts.ShareData.body">Help ons bij het verbeteren van Loaf door je anonieme data met ons te delen</string>
   <!-- Share data prompt title -->
   <string name="Prompts.ShareData.title">Deel Anonieme Data</string>
   <!-- Enable touch ID prompt body -->
@@ -317,7 +317,7 @@
   <!-- Button on fingerprint prompt so the user can enter their PIN instead -->
   <string name="Prompts.TouchId.usePin.android">PIN</string>
   <!-- Upgrade PIN prompt body. -->
-  <string name="Prompts.UpgradePin.body">Bread is geüpgrade naar een 6-cijferige PIN. Tik hier om te upgraden.</string>
+  <string name="Prompts.UpgradePin.body">Loaf is geüpgrade naar een 6-cijferige PIN. Tik hier om te upgraden.</string>
   <!-- Upgrade PIN prompt title. -->
   <string name="Prompts.UpgradePin.title">PIN Upgraden</string>
   <!-- Notifications will be added later but users can set their preferences now, which is why we specify "in the future". -->
@@ -351,7 +351,7 @@
   <!-- Enter paper key instruction -->
   <string name="RecoverWallet.instruction">Papieren Sleutel Invoeren</string>
   <!-- Recover wallet intro -->
-  <string name="RecoverWallet.intro">Herstel je Bread met je papieren sleutel.</string>
+  <string name="RecoverWallet.intro">Herstel je Loaf met je papieren sleutel.</string>
   <!-- Invalid paper key message -->
   <string name="RecoverWallet.invalid">De papieren sleutel die je hebt ingevoerd is ongeldig. Check ieder woord a.u.b. en probeer het opnieuw.</string>
   <!-- Previous button accessibility label -->
@@ -379,7 +379,7 @@
   <!-- extimated time -->
   <string name="ReScan.body1">20-45 minuten</string>
   <!-- Syncing explanation -->
-  <string name="ReScan.body2">Als een transactie als voltooid staat op het Litecoin netwerk maar niet in je Bread.</string>
+  <string name="ReScan.body2">Als een transactie als voltooid staat op het Litecoin netwerk maar niet in je Loaf.</string>
   <!-- Syncing explanation -->
   <string name="ReScan.body3">Je kreeg herhaaldelijk een foutmelding die zei dat je transactie werd afgewezen.</string>
   <!-- Start Sync button label -->
@@ -409,13 +409,13 @@
   <!-- Paper Key button title -->
   <string name="SecurityCenter.paperKeyTitle">Papieren Sleutel</string>
   <!-- PIN button description -->
-  <string name="SecurityCenter.pinDescription">Beschermt je Bread van ongeautoriseerde gebruikers.</string>
+  <string name="SecurityCenter.pinDescription">Beschermt je Loaf van ongeautoriseerde gebruikers.</string>
   <!-- PIN button title -->
   <string name="SecurityCenter.pinTitle">6-cijferige PIN</string>
   <!-- Security Center Title -->
   <string name="SecurityCenter.title">Veiligheidscentrum</string>
   <!-- Touch ID button description -->
-  <string name="SecurityCenter.touchIdDescription">Ontgrendel je Bread handig en stuur geld tot een bepaalde ingestelde limiet.</string>
+  <string name="SecurityCenter.touchIdDescription">Ontgrendel je Loaf handig en stuur geld tot een bepaalde ingestelde limiet.</string>
   <!-- Touch ID button title -->
   <string name="SecurityCenter.touchIdTitle">Touch ID</string>
   <!-- Security center fingerprint authentication button -->
@@ -425,13 +425,13 @@
   <!-- Balance: $4.00 -->
   <string name="Send.balance">Balans: %1$s</string>
   <!-- Instructions how to allow the camera access for the app -->
-  <string name="Send.cameraUnavailabeMessage.android">Sta cameratoegang toe via \"Instellingen\" &gt; \"Apps\" &gt; \"Bread\" &gt; \"Toestemmingen\"</string>
+  <string name="Send.cameraUnavailabeMessage.android">Sta cameratoegang toe via \"Instellingen\" &gt; \"Apps\" &gt; \"Loaf\" &gt; \"Toestemmingen\"</string>
   <!-- Permission required to access camera -->
-  <string name="Send.cameraUnavailabeTitle.android">Bread heeft geen toegang tot de camera</string>
+  <string name="Send.cameraUnavailabeTitle.android">Loaf heeft geen toegang tot de camera</string>
   <!-- Camera not allowed message -->
   <string name="Send.cameraunavailableMessage">Ga naar Instellingen om camera gebruik toe te staan.</string>
   <!-- Camera not allowed alert title -->
-  <string name="Send.cameraUnavailableTitle">Bread heeft geen toestemming voor het gebruik van de camera</string>
+  <string name="Send.cameraUnavailableTitle">Loaf heeft geen toestemming voor het gebruik van de camera</string>
   <!-- Warning when sending to self. -->
   <string name="Send.containsAddress">De bestemming is je eigen adres. Je kunt het niet naar jezelf sturen.</string>
   <!-- Could not create transaction alert title -->
@@ -486,8 +486,8 @@
   <string name="Settings.currency">Toon valuta</string>
   <!-- Join Early access label -->
   <string name="Settings.earlyAccess">Doe Mee aan Early Access</string>
-  <!-- Are you enjoying bread alert message body -->
-  <string name="Settings.enjoying">Vind je Bread leuk?</string>
+  <!-- Are you enjoying Loaf alert message body -->
+  <string name="Settings.enjoying">Vind je Loaf leuk?</string>
   <!-- Import wallet label -->
   <string name="Settings.importTitle">Importeer Portemonnee</string>
   <!-- Manage settings section header -->
@@ -511,7 +511,7 @@
   <!-- Start or recover another wallet menu label. -->
   <string name="Settings.wipe">Begin of herstel een andere portomonnee</string>
   <!-- Share data view body -->
-  <string name="ShareData.body">Help om Bread te verbeteren door je anonieme data met ons te delen. Dit bevat geen financiële informatie. We respecteren je financiële privacy.</string>
+  <string name="ShareData.body">Help om Loaf te verbeteren door je anonieme data met ons te delen. Dit bevat geen financiële informatie. We respecteren je financiële privacy.</string>
   <!-- Share data header -->
   <string name="ShareData.header">Data Delen?</string>
   <!-- Share data switch label. -->
@@ -519,7 +519,7 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Schrijf Papieren Sleutel Opnieuw Op</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Je papieren sleutel is de enige manier om je Bread te herstellen als je telefoon verloren, gestolen, kapot of geüpgrade is.\n\nWe zullen je een lijst met woorden laten zie die je op een papiertje moet schrijven en veilig moet bewaren.</string>
+  <string name="StartPaperPhrase.body">Je papieren sleutel is de enige manier om je Loaf te herstellen als je telefoon verloren, gestolen, kapot of geüpgrade is.\n\nWe zullen je een lijst met woorden laten zie die je op een papiertje moet schrijven en veilig moet bewaren.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Schrijf Papieren Sleutel Op</string>
   <!-- Argument is date -->
@@ -551,14 +551,14 @@
   <!-- Fingerprint Is Not Setup -->
   <string name="TouchIdSettings.disabledWarning.title.android">Authenticatie met vingerafdruk niet ingesteld</string>
   <!-- Touch Id screen label -->
-  <string name="TouchIdSettings.label">Gebruik je vingerafdruk om je Bread te ontgrendelen en geld tot een ingestelde limiet te versturen.</string>
+  <string name="TouchIdSettings.label">Gebruik je vingerafdruk om je Loaf te ontgrendelen en geld tot een ingestelde limiet te versturen.</string>
   <!-- Link Text (see TouchIdSettings.customizeText) -->
   <string name="TouchIdSettings.linkText">Touch-ID uitgavenlimietscherm</string>
   <!-- Spending Limit: b100,000 ($100) -->
   <string name="TouchIdSettings.spendingLimit">Bestedingslimiet: %1$s (%2$s)</string>
   <!-- Touch id switch label. -->
-  <string name="TouchIdSettings.switchLabel">Schakel Touch ID in voor Bread</string>
-  <!-- Enable fingerprint for this wallet called Bread -->
+  <string name="TouchIdSettings.switchLabel">Schakel Touch ID in voor Loaf</string>
+  <!-- Enable fingerprint for this wallet called Loaf -->
   <string name="TouchIdSettings.switchLabel.android">Stel authenticatie met vingerafdruk</string>
   <!-- Touch ID settings view title -->
   <string name="TouchIdSettings.title">Touch ID</string>
@@ -653,7 +653,7 @@
   <!-- Instruction to touch the sensor for fingerprint authentication -->
   <string name="UnlockScreen.touchIdInstructions.android">Aanraaksensor</string>
   <!-- TouchID prompt text -->
-  <string name="UnlockScreen.touchIdPrompt">Ontgrendel je Bread.</string>
+  <string name="UnlockScreen.touchIdPrompt">Ontgrendel je Loaf.</string>
   <!-- Device authentication body -->
   <string name="UnlockScreen.touchIdPrompt.android">Ontgrendel alstublieft uw Android-apparaat om door te gaan.</string>
   <!-- Unlock with TouchID accessibility label -->
@@ -665,7 +665,7 @@
   <!-- Update PIN caption text -->
   <string name="UpdatePin.caption">Onthoud deze PIN. Als je deze vergeet, zul je niet in staat zijn om bij je Litecoins te kunnen.</string>
   <!-- PIN creation info. -->
-  <string name="UpdatePin.createInstruction">Je PIN zal worden gebruikt om je Bread te ontgrendelen en geld te versturen.</string>
+  <string name="UpdatePin.createInstruction">Je PIN zal worden gebruikt om je Loaf te ontgrendelen en geld te versturen.</string>
   <!-- Update PIN title -->
   <string name="UpdatePin.createTitle">PIN Instellen</string>
   <!-- Update PIN title -->
@@ -699,7 +699,7 @@
   <!-- Authorize transaction with touch id message -->
   <string name="VerifyPin.touchIdMessage">Autoriseer deze transactie</string>
   <!-- 'No wallet' warning for watch app -->
-  <string name="Watch.noWalletWarning">Open de Bread iPhone app om je portemonnee in te stellen.</string>
+  <string name="Watch.noWalletWarning">Open de Loaf iPhone app om je portemonnee in te stellen.</string>
   <!-- Dismiss button label -->
   <string name="Webview.dismiss">Verwerpen</string>
   <!-- Webview loading error message -->
@@ -707,7 +707,7 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">Updaten...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet is omgedoopt tot Bread, met een gloednieuw uiterlijk en enkele nieuwe functies.\n\nAls u hulp nodig hebt, zoek naar de (?) rechtsboven in de meeste schermen.</string>
+  <string name="Welcome.body">Loafwallet is omgedoopt tot Loaf, met een gloednieuw uiterlijk en enkele nieuwe functies.\n\nAls u hulp nodig hebt, zoek naar de (?) rechtsboven in de meeste schermen.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Welkom bij Brood!</string>
   <!-- Wipe wallet alert message -->
@@ -721,9 +721,9 @@
   <!-- Enter phrase to wipe wallet instruction. -->
   <string name="WipeWallet.instruction">Voer de herstelzin van deze portomonnee in om hem te wissen of een anderen te herstellen. Je huidige saldo zal op deze zin blijven.</string>
   <!-- Start wipe wallet view message -->
-  <string name="WipeWallet.startMessage">Een andere portemonnee beginnen of herstellen zal u toestaan om nog een Bread portemonnee op dit apparaat te gebruiken.</string>
+  <string name="WipeWallet.startMessage">Een andere portemonnee beginnen of herstellen zal u toestaan om nog een Loaf portemonnee op dit apparaat te gebruiken.</string>
   <!-- Start wipe wallet view warning -->
-  <string name="WipeWallet.startWarning">U zal niet langer uw huidige Bread portemonnee kunnen bereiken vanaf dit apparaat. Uw saldo zal hetzelfde blijven.</string>
+  <string name="WipeWallet.startWarning">U zal niet langer uw huidige Loaf portemonnee kunnen bereiken vanaf dit apparaat. Uw saldo zal hetzelfde blijven.</string>
   <!-- Wipe wallet navigation item title. -->
   <string name="WipeWallet.title">Start of herstel een anderen portomonnee</string>
   <!-- Wipe wallet button title -->
