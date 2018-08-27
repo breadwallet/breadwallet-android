@@ -90,7 +90,7 @@ public class ApplicationLifecycleObserver implements LifecycleObserver {
      *
      * @param listener The listener to register.
      */
-    public void addApplicationLifecycleListener(ApplicationLifecycleListener listener) {
+    public static void addApplicationLifecycleListener(ApplicationLifecycleListener listener) {
         if (listener != null && !mListeners.contains(listener)) {
             mListeners.add(listener);
         }
@@ -101,7 +101,7 @@ public class ApplicationLifecycleObserver implements LifecycleObserver {
      *
      * @param listener The listener to unregister.
      */
-    public void removeApplicationLifecycleListener(ApplicationLifecycleListener listener) {
+    public static void removeApplicationLifecycleListener(ApplicationLifecycleListener listener) {
         if (listener != null && mListeners != null && mListeners.contains(listener)) {
             mListeners.remove(listener);
         }

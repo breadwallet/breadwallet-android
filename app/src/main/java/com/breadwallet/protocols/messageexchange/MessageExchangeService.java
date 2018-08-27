@@ -71,6 +71,8 @@ import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
 public final class MessageExchangeService extends JobIntentService {
     private static final String TAG = MessageExchangeService.class.getSimpleName();
 
+    private static final int JOB_ID = 0xcebbbf9b; // Used to identify jobs that belong to this service. (Random number used for uniqueness.)
+
     public static final String ACTION_REQUEST_TO_PAIR = "com.breadwallet.protocols.messageexchange.ACTION_REQUEST_TO_PAIR";
     public static final String ACTION_RETRIEVE_MESSAGES = "com.breadwallet.protocols.messageexchange.ACTION_RETRIEVE_MESSAGES";
     private static final String ACTION_PROCESS_PAIR_REQUEST = "com.breadwallet.protocols.messageexchange.ACTION_PROCESS_PAIR_REQUEST";
@@ -79,13 +81,10 @@ public final class MessageExchangeService extends JobIntentService {
     private static final String EXTRA_IS_USER_APPROVED = "com.breadwallet.protocols.messageexchange.EXTRA_IS_USER_APPROVED";
     public static final String EXTRA_METADATA = "com.breadwallet.protocols.messageexchange.EXTRA_METADATA";
 
-    public static final long PWB_GAS_LIMIT = 200000;
-
-    public static final int ENVELOPE_VERSION = 1;
-    public static final String SERVICE_PWB = "PWB";
-
-    private static final int NONCE_SIZE = 12;
-    private static final int JOB_ID = 100;
+    private static final int ENVELOPE_VERSION = 1;  // The current envelope version number for our message exchange protocol.
+    private static final int NONCE_SIZE = 12; // Nonce size for our message exchange protocol.
+    private static final long GAS_LIMIT = 200000; // Gas limit for transactions that use our message exchange protocol.
+    private static final String SERVICE_PWB = "PWB"; // Our service name for the feature known as Participate With BRD, Secure Checkout, etc.
 
     public static PairingMetaData mPairingMetaData;
     public static MetaData mCurrentMetaData;
@@ -100,18 +99,6 @@ public final class MessageExchangeService extends JobIntentService {
         PAYMENT_RESPONSE,
         CALL_REQUEST,
         CALL_RESPONSE
-    }
-
-    public static void enqueueWork(Context context, Intent work) {
-        enqueueWork(context, MessageExchangeService.class, JOB_ID, work);
-    }
-
-    /**
-     * The {@link MessageExchangeService} is responsible for retrieving encrypted messages from the server which
-     * are ultimately from another wallet.
-     */
-    public MessageExchangeService() {
-        super();
     }
 
     /**
@@ -153,6 +140,17 @@ public final class MessageExchangeService extends JobIntentService {
                     Log.d(TAG, "Intent not recognized.");
             }
         }
+    }
+
+    /**
+     * Adds work to the {@link }MessageExchangeService} work queue. See {@link #onHandleWork(Intent)}
+     * for types of work that can be done in this service.
+     *
+     * @param context The context in which we are operating.
+     * @param work The intent containing the work that needs to be done.
+     */
+    public static void enqueueWork(Context context, Intent work) {
+        enqueueWork(context, MessageExchangeService.class, JOB_ID, work);
     }
 
     /**
@@ -227,8 +225,9 @@ public final class MessageExchangeService extends JobIntentService {
 
         ByteString message;
         if (isUserApproved) {
-            //open the browser with the return url
+            // Open the browser with the return url
             openUrl(mPairingMetaData.getReturnUrl());
+
             // The user has approved, send a link message containing the local entity's public key and id.
             message = createLink(ByteString.copyFrom(pairingKey.getPubKey()), ByteString.copyFrom(BRSharedPrefs.getWalletRewardId(this).getBytes()));
 
@@ -253,15 +252,19 @@ public final class MessageExchangeService extends JobIntentService {
         MessageExchangeNetworkHelper.sendEnvelope(this, envelope.toByteArray());
     }
 
-    private void openUrl(String returnUrl) {
-        if (!Utils.isNullOrEmpty(returnUrl)) {
-            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(returnUrl));
+    /**
+     * Starts a browser activity with the specified URL.
+     *
+     * @param url The URL to open in the browser.
+     */
+    private void openUrl(String url) {
+        if (!Utils.isNullOrEmpty(url)) {
+            Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
             intent.addFlags(FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         } else {
             Log.e(TAG, "openUrl: returnUrl is null!");
         }
-
     }
 
     /**
@@ -660,7 +663,6 @@ public final class MessageExchangeService extends JobIntentService {
      * @param metaData The meta data related to the request.
      */
     private void confirmRequest(MetaData metaData) {
-        Log.e(TAG, "confirmRequest: " + metaData);
         if (!BreadApp.isAppInBackground()) {
             Intent intent = new Intent(this, ConfirmationActivity.class);
             intent.setAction(ACTION_GET_USER_CONFIRMATION)
@@ -670,7 +672,6 @@ public final class MessageExchangeService extends JobIntentService {
             intent.putExtras(bundle);
             startActivity(intent);
         }
-
     }
 
     /**
@@ -817,7 +818,7 @@ public final class MessageExchangeService extends JobIntentService {
                     null, requestMetaData.getAddress(), new BigDecimal(requestMetaData.getAmount()));
             GenericTransactionMetaData genericTransactionMetaData = new GenericTransactionMetaData(
                     requestMetaData.getAddress(), requestMetaData.getAmount(), BREthereumAmount.Unit.ETHER_WEI,
-                    walletManager.getWallet().getDefaultGasPrice(), BREthereumAmount.Unit.ETHER_WEI, PWB_GAS_LIMIT,
+                    walletManager.getWallet().getDefaultGasPrice(), BREthereumAmount.Unit.ETHER_WEI, GAS_LIMIT,
                     ((CallRequestMetaData) requestMetaData).getAbi());
             cryptoRequest.setGenericTransactionMetaData(genericTransactionMetaData);
 
