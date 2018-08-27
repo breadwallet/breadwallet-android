@@ -654,6 +654,8 @@
   <string name="UnlockScreen.touchIdPrompt.android">Please unlock your Android device to continue.</string>
   <!-- Unlock with TouchID accessibility label -->
   <string name="UnlockScreen.touchIdText">Unlock with TouchID</string>
+  <!-- View a transaction on the blockchain explorer -->
+  <string name="ViewOnBlockchain">View on blockchain</string>
   <!-- Device authentication title -->
   <string name="UnlockScreen.touchIdTitle.android">Authentication required</string>
   <!-- Wallet unlocked message -->

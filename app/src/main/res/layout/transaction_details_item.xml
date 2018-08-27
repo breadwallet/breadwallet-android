@@ -255,14 +255,13 @@
                     android:background="@color/separator_gray"/>
 
                 <com.breadwallet.presenter.customviews.BRText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
-                    android:text="@string/TransactionDetails.txHashHeader"
-                    android:textColor="@color/light_gray"
-                    app:customTFont="CircularPro-Bold.otf"
-                    />
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:text="@string/TransactionDetails.txHashHeader"
+                android:textColor="@color/light_gray"
+                />
 
                 <com.breadwallet.presenter.customviews.BRText
                     android:id="@+id/tx_hash"
@@ -270,8 +269,19 @@
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="16dp"
                     android:layout_marginStart="16dp"
-                    android:textColor="@color/almost_black"
-                    android:textIsSelectable="true"/>
+                    android:textColor="@color/almost_black"/>
+
+                <com.breadwallet.presenter.customviews.BRText
+                    android:id="@+id/tx_hash_link"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/ViewOnBlockchain"
+                    android:textColor="@color/dark_blue"
+                    android:clickable="true"
+                    />
 
                 <View
                     android:layout_width="match_parent"

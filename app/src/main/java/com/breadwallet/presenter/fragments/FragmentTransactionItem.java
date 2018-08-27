@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
@@ -20,6 +21,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Button;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
@@ -88,6 +90,7 @@ public class FragmentTransactionItem extends Fragment {
     private LinearLayout signalLayout;
     private ImageButton close;
     private String oldComment;
+    private TextView mTxHashLink;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -107,6 +110,7 @@ public class FragmentTransactionItem extends Fragment {
         mConfirmationText = (TextView) rootView.findViewById(R.id.confirmation_text);
         mAvailableSpend = (TextView) rootView.findViewById(R.id.available_spend);
         mTxHash = (TextView) rootView.findViewById(R.id.tx_hash);
+        mTxHashLink = (TextView) rootView.findViewById(R.id.tx_hash_link);
         close = (ImageButton) rootView.findViewById(R.id.close_button);
 
         ImageButton faq = (ImageButton) rootView.findViewById(R.id.faq_button);
@@ -186,6 +190,19 @@ public class FragmentTransactionItem extends Fragment {
         String toFrom = sent ? String.format(getString(R.string.TransactionDetails_to), addr) : String.format(getString(R.string.TransactionDetails_from), addr);
 
         mTxHash.setText(item.getTxHashHexReversed());
+        mTxHashLink.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Activity app = getActivity();
+                if (app != null)
+                    app.getFragmentManager().popBackStack();
+                String txUrl = BRConstants.BLOCK_EXPLORER_BASE_URL + item.getTxHashHexReversed();
+                Log.d(TAG, "txUrl = " + txUrl);
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(txUrl));
+                startActivity(browserIntent);
+                app.overridePendingTransition(R.anim.enter_from_bottom, R.anim.empty_300);
+            }
+        });
 
 
         int level = getLevel(item);
