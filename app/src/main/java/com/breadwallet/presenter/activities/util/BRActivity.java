@@ -25,7 +25,7 @@ import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
-import com.breadwallet.tools.manager.InputDataManager;
+import com.breadwallet.tools.manager.AppEntryPointHandler;
 import com.breadwallet.tools.security.AuthManager;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
@@ -208,7 +208,7 @@ public class BRActivity extends FragmentActivity {
                         @Override
                         public void run() {
                             String result = data.getStringExtra("result");
-                            InputDataManager.processQrResult(BRActivity.this, result);
+                            AppEntryPointHandler.processQrResult(BRActivity.this, result);
                         }
                     });
 
