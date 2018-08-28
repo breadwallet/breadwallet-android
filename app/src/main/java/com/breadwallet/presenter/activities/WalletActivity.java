@@ -32,8 +32,8 @@ import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.fragments.FragmentSend;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.animation.BRDialog;
+import com.breadwallet.tools.manager.AppEntryPointHandler;
 import com.breadwallet.tools.manager.BRSharedPrefs;
-import com.breadwallet.tools.util.DeepLinkingUtils;
 import com.breadwallet.tools.manager.FontManager;
 import com.breadwallet.tools.manager.InternetManager;
 import com.breadwallet.tools.manager.TxManager;
@@ -237,7 +237,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
         //since we have one instance of activity at all times, this is needed to know when a new intent called upon this activity
-        DeepLinkingUtils.handleUrlClick(this, intent);
+        AppEntryPointHandler.processDeepLink(this, intent);
         showSendIfNeeded(intent);
     }
 
@@ -411,7 +411,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
         SyncService.registerSyncNotificationBroadcastReceiver(getApplicationContext(), mSyncNotificationBroadcastReceiver);
         SyncService.enqueueWork(getApplicationContext(), mCurrentWalletIso);
 
-        DeepLinkingUtils.handleUrlClick(this, getIntent());
+        AppEntryPointHandler.processDeepLink(this, getIntent());
         showSendIfNeeded(getIntent());
 
     }
