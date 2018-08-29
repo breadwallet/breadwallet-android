@@ -80,7 +80,8 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
     public static String HOST = "api.breadwallet.com"; // The server(s) on which the API is hosted
     private static final int LOCK_TIMEOUT = 180000; // 3 minutes in milliseconds
-    public static final String WALLET_ID_PATTERN = "^[A-Z0-9]*$";
+    private static final String WALLET_ID_PATTERN = "^[a-z0-9 ]*$"; // The wallet ID is in the form "xxxx xxxx xxxx xxxx" where x is a lowercase letter or a number.
+    private static final String WALLET_ID_SEPARATOR = " ";
     private static final int NUMBER_OF_BYTES_FOR_SHA256_NEEDED = 10;
 
     private static Context mContext;
@@ -193,7 +194,6 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     }
 
     public static void generateWalletIfIfNeeded(final Context context, String address) {
-
         String walletId = BRSharedPrefs.getWalletRewardId(context);
         if (Utils.isNullOrEmpty(walletId) || !walletId.matches(WALLET_ID_PATTERN)) {
             Log.e(TAG, "generateWalletIfIfNeeded: walletId is empty or faulty: " + walletId + ", generating again.");
@@ -208,7 +208,6 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                 BRReportsManager.reportBug(new IllegalArgumentException("walletId is empty or faulty after generation: " + walletId));
             }
         }
-
     }
 
     private static synchronized String generateWalletId(Context app, String address) {
@@ -230,18 +229,21 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                 return null;
             }
 
-            // Get the first 10 bytes
+            // Get the first 10 bytes of the hash
             byte[] firstTenBytes = Arrays.copyOfRange(sha256Address, 0, NUMBER_OF_BYTES_FOR_SHA256_NEEDED);
 
+            // Convert to lower case String
             String base32String = new String(Base32.encode(firstTenBytes));
             base32String = base32String.toLowerCase();
 
+            // Insert a space every 4 chars so the format is "xxxx xxxx xxxx xxxx", where x is a lowercase letter or a number.
             StringBuilder builder = new StringBuilder();
-
             Matcher matcher = Pattern.compile(".{1,4}").matcher(base32String);
+            String separator = "";
             while (matcher.find()) {
                 String piece = base32String.substring(matcher.start(), matcher.end());
-                builder.append(piece + " ");
+                builder.append(separator + piece);
+                separator = WALLET_ID_SEPARATOR;
             }
             return builder.toString();
 
