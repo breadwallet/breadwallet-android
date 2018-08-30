@@ -29,6 +29,9 @@ import java.math.BigDecimal;
  * THE SOFTWARE.
  */
 public class SendViewModel extends ViewModel {
+    private static final String DECIMAL = ".";
+    private static final String DECIMAL_WITH_LEADING_ZERO = "0.";
+
     private String mAddress;
     private String mMemo;
     //Raw amount, ETH, BTC..
@@ -59,6 +62,10 @@ public class SendViewModel extends ViewModel {
     }
 
     public void setAmount(String amount) {
+        if (DECIMAL.equals(amount)) {
+            amount = DECIMAL_WITH_LEADING_ZERO;
+        }
+
         this.mAmount = amount;
     }
 
