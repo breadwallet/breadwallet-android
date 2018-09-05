@@ -4,30 +4,37 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Application;
+import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.ProcessLifecycleOwner;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.IntentFilter;
 import android.graphics.Point;
-import android.hardware.fingerprint.FingerprintManager;
 import android.net.ConnectivityManager;
 import android.os.Build;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.breadwallet.presenter.activities.util.ApplicationLifecycleObserver;
-import com.breadwallet.presenter.activities.util.BRActivity;
+import com.breadwallet.app.ApplicationLifecycleObserver;
+import com.breadwallet.presenter.activities.DisabledActivity;
+import com.breadwallet.protocols.messageexchange.MessageExchangeNetworkHelper;
+import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.crypto.Base32;
 import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
+import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.services.BRDFirebaseMessagingService;
+import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
+import com.breadwallet.wallet.WalletsMaster;
+import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
+import com.platform.HTTPServer;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -35,9 +42,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -68,18 +72,56 @@ import io.fabric.sdk.android.Fabric;
  * THE SOFTWARE.
  */
 
-public class BreadApp extends Application {
+public class BreadApp extends Application implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
     private static final String TAG = BreadApp.class.getName();
-    public static int DISPLAY_HEIGHT_PX;
-    public static int DISPLAY_WIDTH_PX;
-    // host is the server(s) on which the API is hosted
-    public static String HOST = "api.breadwallet.com";
-    private static List<OnAppBackgrounded> listeners;
-    private static Timer isBackgroundChecker;
-    public static AtomicInteger activityCounter = new AtomicInteger();
-    public static long backgroundedTime;
+
+    public static final boolean IS_ALPHA = false;
+
+    public static String HOST = "api.breadwallet.com"; // The server(s) on which the API is hosted
+    private static final int LOCK_TIMEOUT = 180000; // 3 minutes in milliseconds
+    private static final String WALLET_ID_PATTERN = "^[a-z0-9 ]*$"; // The wallet ID is in the form "xxxx xxxx xxxx xxxx" where x is a lowercase letter or a number.
+    private static final String WALLET_ID_SEPARATOR = " ";
+    private static final int NUMBER_OF_BYTES_FOR_SHA256_NEEDED = 10;
+
     private static Context mContext;
-    private ApplicationLifecycleObserver mObserver;
+    public static int mDisplayHeightPx;
+    public static int mDisplayWidthPx;
+    private static long mBackgroundedTime;
+    private static Lifecycle.Event mLastApplicationEvent;
+    private static Activity currentActivity;
+    private static final Map<String, String> mHeaders = new HashMap<>();
+
+    private Runnable mDisconnectWalletsRunnable = new Runnable() {
+        @Override
+        public void run() {
+            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(BreadApp.this).getAllWallets(BreadApp.this));
+            for (final BaseWalletManager walletManager : list) {
+                //TODO Temporary new thread until the core lags are fixed
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        walletManager.disconnect(BreadApp.this);
+                    }
+                });
+            }
+        }
+    };
+
+    private Runnable mConnectWalletsRunnable = new Runnable() {
+        @Override
+        public void run() {
+            List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(BreadApp.this).getAllWallets(BreadApp.this));
+            for (final BaseWalletManager walletManager : list) {
+                //TODO Temporary new thread until the core lags are fixed
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        walletManager.connect(BreadApp.this);
+                    }
+                });
+            }
+        }
+    };
 
     private static final String PACKAGE_NAME = BreadApp.getBreadContext() == null ? null : BreadApp.getBreadContext().getApplicationContext().getPackageName();
 
@@ -92,12 +134,6 @@ public class BreadApp extends Application {
             Log.d(TAG, "Installer Package Name -> " + (PACKAGE_NAME == null ? "null" : BreadApp.getBreadContext().getPackageManager().getInstallerPackageName(PACKAGE_NAME)));
         }
     }
-
-    public static final boolean IS_ALPHA = false;
-
-    public static final Map<String, String> mHeaders = new HashMap<>();
-
-    private static Activity currentActivity;
 
     @Override
     public void onCreate() {
@@ -113,19 +149,6 @@ public class BreadApp extends Application {
                 .build();
         Fabric.with(fabric);
 
-//            StrictMode.setThreadPolicy(new StrictMode.ThreadPolicy.Builder()
-//                    .detectDiskReads()
-//                    .detectDiskWrites()
-//                    .detectNetwork()   // or .detectAll() for all detectable problems
-//                    .penaltyLog()
-//                    .build());
-//            StrictMode.setVmPolicy(new StrictMode.VmPolicy.Builder()
-//                    .detectLeakedSqlLiteObjects()
-//                    .detectLeakedClosableObjects()
-//                    .penaltyLog()
-//                    .penaltyDeath()
-//                    .build());
-
         mContext = this;
 
         if (!Utils.isEmulatorOrDebug(this) && IS_ALPHA)
@@ -133,26 +156,26 @@ public class BreadApp extends Application {
 
         boolean isTestVersion = APIClient.getInstance(this).isStaging();
         boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
-        String lang = getCurrentLocale(this);
+        String languageCode = getCurrentLanguageCode();
 
         mHeaders.put(BRApiManager.HEADER_IS_INTERNAL, IS_ALPHA ? "true" : "false");
         mHeaders.put(BRApiManager.HEADER_TESTFLIGHT, isTestVersion ? "true" : "false");
         mHeaders.put(BRApiManager.HEADER_TESTNET, isTestNet ? "true" : "false");
-        mHeaders.put(BRApiManager.HEADER_ACCEPT_LANGUAGE, lang);
+        mHeaders.put(BRApiManager.HEADER_ACCEPT_LANGUAGE, languageCode);
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         Point size = new Point();
         display.getSize(size);
-        DISPLAY_WIDTH_PX = size.x;
-        DISPLAY_HEIGHT_PX = size.y;
+        mDisplayWidthPx = size.x;
+        mDisplayHeightPx = size.y;
 
         registerReceiver(InternetManager.getInstance(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
-        mObserver = new ApplicationLifecycleObserver();
-        ProcessLifecycleOwner.get().getLifecycle().addObserver(mObserver);
+        ProcessLifecycleOwner.get().getLifecycle().addObserver(new ApplicationLifecycleObserver());
+        ApplicationLifecycleObserver.addApplicationLifecycleListener(this);
+        ApplicationLifecycleObserver.addApplicationLifecycleListener(MessageExchangeNetworkHelper.getInstance());
     }
-
 
     /**
      * Clears all app data from disk. This is equivalent to the user choosing to clear the app's data from within the
@@ -169,17 +192,21 @@ public class BreadApp extends Application {
         }
     }
 
-    public static void generateWalletIfIfNeeded(Context app, String address) {
-        if (Utils.isNullOrEmpty(BRSharedPrefs.getWalletRewardId(app))) {
-            String rewardId = generateWalletId(app, address);
-            if (!Utils.isNullOrEmpty(rewardId)) {
-
-                BRSharedPrefs.putWalletRewardId(app, rewardId);
+    public static void generateWalletIfIfNeeded(final Context context, String address) {
+        String walletId = BRSharedPrefs.getWalletRewardId(context);
+        if (Utils.isNullOrEmpty(walletId) || !walletId.matches(WALLET_ID_PATTERN)) {
+            Log.e(TAG, "generateWalletIfIfNeeded: walletId is empty or faulty: " + walletId + ", generating again.");
+            walletId = generateWalletId(context, address);
+            if (!Utils.isNullOrEmpty(walletId) && walletId.matches(WALLET_ID_PATTERN)) {
+                BRSharedPrefs.putWalletRewardId(context, walletId);
+                // TODO: This is a hack.  Decouple FCM logic from rewards id generation logic.
+                BRDFirebaseMessagingService.updateFcmRegistrationToken(context);
             } else {
-                BRReportsManager.reportBug(new NullPointerException("rewardId is empty"));
+                Log.e(TAG, "generateWalletIfIfNeeded: walletId is empty or faulty after generation");
+                BRSharedPrefs.putWalletRewardId(context, "");
+                BRReportsManager.reportBug(new IllegalArgumentException("walletId is empty or faulty after generation: " + walletId));
             }
         }
-
     }
 
     private static synchronized String generateWalletId(Context app, String address) {
@@ -201,18 +228,21 @@ public class BreadApp extends Application {
                 return null;
             }
 
-            // Get the first 10 bytes
-            byte[] firstTenBytes = Arrays.copyOfRange(sha256Address, 0, 10);
+            // Get the first 10 bytes of the hash
+            byte[] firstTenBytes = Arrays.copyOfRange(sha256Address, 0, NUMBER_OF_BYTES_FOR_SHA256_NEEDED);
 
+            // Convert to lower case String
             String base32String = new String(Base32.encode(firstTenBytes));
             base32String = base32String.toLowerCase();
 
+            // Insert a space every 4 chars so the format is "xxxx xxxx xxxx xxxx", where x is a lowercase letter or a number.
             StringBuilder builder = new StringBuilder();
-
             Matcher matcher = Pattern.compile(".{1,4}").matcher(base32String);
+            String separator = "";
             while (matcher.find()) {
                 String piece = base32String.substring(matcher.start(), matcher.end());
-                builder.append(piece + " ");
+                builder.append(separator + piece);
+                separator = WALLET_ID_SEPARATOR;
             }
             return builder.toString();
 
@@ -221,16 +251,15 @@ public class BreadApp extends Application {
 
         }
         return null;
-
     }
 
     @TargetApi(Build.VERSION_CODES.N)
-    public String getCurrentLocale(Context ctx) {
+    private String getCurrentLanguageCode() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return ctx.getResources().getConfiguration().getLocales().get(0).getLanguage();
+            return getResources().getConfiguration().getLocales().get(0).toString();
         } else {
-            //noinspection deprecation
-            return ctx.getResources().getConfiguration().locale.getLanguage();
+            // No inspection deprecation.
+            return getResources().getConfiguration().locale.toString();
         }
     }
 
@@ -240,53 +269,62 @@ public class BreadApp extends Application {
 
     public static Context getBreadContext() {
         Context app = currentActivity;
-        if (app == null) app = mContext;
+        if (app == null) {
+            app = mContext;
+        }
         return app;
     }
 
     public static void setBreadContext(Activity app) {
-        BreadApp.activityCounter.incrementAndGet();
         currentActivity = app;
     }
 
-    public static synchronized void fireListeners() {
-        if (listeners == null) return;
-        List<OnAppBackgrounded> copy = new ArrayList<>(listeners);
-        for (OnAppBackgrounded lis : copy) if (lis != null) lis.onBackgrounded();
+    public static boolean isAppInBackground() {
+        return mLastApplicationEvent != null && mLastApplicationEvent.name().equalsIgnoreCase(Lifecycle.Event.ON_STOP.toString());
     }
 
-    public static void addOnBackgroundedListener(OnAppBackgrounded listener) {
-        if (listeners == null) listeners = new ArrayList<>();
-        if (listener != null && !listeners.contains(listener)) listeners.add(listener);
+    @Override
+    public void onLifeCycle(Lifecycle.Event event) {
+        mLastApplicationEvent = event;
+        switch (event) {
+            case ON_START:
+                Log.d(TAG, "onLifeCycle: START");
+                mBackgroundedTime = 0;
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mDisconnectWalletsRunnable);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mConnectWalletsRunnable);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (!HTTPServer.isStarted()) {
+                            HTTPServer.startServer();
+                        }
+                    }
+                });
+                break;
+            case ON_STOP:
+                Log.d(TAG, "onLifeCycle: STOP");
+                mBackgroundedTime = System.currentTimeMillis();
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(mDisconnectWalletsRunnable);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().remove(mConnectWalletsRunnable);
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        HTTPServer.stopServer();
+                    }
+                });
+                break;
+        }
     }
 
-    public static boolean isAppInBackground(final Context context) {
-        return context == null || activityCounter.get() <= 0;
-    }
-
-    //call onStop on every activity so
-    public static void onStop(final BRActivity app) {
-
-        if (isBackgroundChecker != null) isBackgroundChecker.cancel();
-        isBackgroundChecker = new Timer();
-        TimerTask backgroundCheck = new TimerTask() {
-            @Override
-            public void run() {
-                if (isAppInBackground(app)) {
-                    backgroundedTime = System.currentTimeMillis();
-                    Log.e(TAG, "App went in background!");
-                    // APP in background, do something
-                    fireListeners();
-                    isBackgroundChecker.cancel();
-                }
-                // APP in foreground, do something else
+    public static void lockIfNeeded(Activity activity) {
+        //lock wallet if 3 minutes passed
+        if (mBackgroundedTime != 0
+                && (System.currentTimeMillis() - mBackgroundedTime >= LOCK_TIMEOUT)
+                && !(activity instanceof DisabledActivity)) {
+            if (!BRKeyStore.getPinCode(activity).isEmpty()) {
+                UiUtils.startBreadActivity(activity, true);
             }
-        };
+        }
 
-        isBackgroundChecker.schedule(backgroundCheck, 500, 500);
-    }
-
-    public interface OnAppBackgrounded {
-        void onBackgrounded();
     }
 }

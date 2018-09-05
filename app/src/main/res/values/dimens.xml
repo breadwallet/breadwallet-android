@@ -4,6 +4,7 @@
     <!--<dimen name="activity_vertical_margin">16dp</dimen>-->
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="transaction_item_margin">10dp</dimen>
+
     <dimen name="pager_indicator_shadow_padding">2dp</dimen>
     <dimen name="separator_height">1px</dimen>
     <dimen name="text_size">18sp</dimen>
@@ -25,5 +26,12 @@
     <dimen name="pin_dot_size">24dp</dimen>
     <dimen name="manage_wallets_footer_padding_left">12dp</dimen>
     <dimen name="large_button_height">72dp</dimen>
+    <dimen name="currency_code_text_size_large">28px</dimen>
+    <dimen name="amount_text_size">24px</dimen>
     <dimen name="margin">10dp</dimen>
+
+
+    <!-- Participate with BRD link wallet dialog -->
+    <dimen name="link_wallet_dialog_width">360dp</dimen>
+    <dimen name="permissions_scrollview_max_height">700dp</dimen>
 </resources>

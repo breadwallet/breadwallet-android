@@ -87,7 +87,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
                 Log.d(TAG, "Error finding icon for -> " + iconResourceName);
             }
 
-            boolean isHidden = KVStoreManager.getInstance().getTokenListMetaData(mContext).isCurrencyHidden(item.symbol);
+            boolean isHidden = KVStoreManager.getTokenListMetaData(mContext).isCurrencyHidden(item.symbol);
 
             TypedValue showWalletTypedValue = new TypedValue();
             TypedValue hideWalletTypedValue = new TypedValue();
@@ -103,7 +103,7 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
                 @Override
                 public void onClick(View v) {
                     // If token is already hidden, show it
-                    if (KVStoreManager.getInstance().getTokenListMetaData(mContext).isCurrencyHidden(item.symbol)) {
+                    if (KVStoreManager.getTokenListMetaData(mContext).isCurrencyHidden(item.symbol)) {
                         mListener.onShowToken(item);
                         // If token is already showing, hide it
                     } else {
@@ -250,12 +250,12 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
     public void onItemMove(int fromPosition, int toPosition) {
         notifyItemMoved(fromPosition, toPosition);
 
-        TokenListMetaData currentMd = KVStoreManager.getInstance().getTokenListMetaData(mContext);
+        TokenListMetaData currentMd = KVStoreManager.getTokenListMetaData(mContext);
 
         Collections.swap(currentMd.enabledCurrencies, fromPosition, toPosition);
         Collections.swap(mTokens, fromPosition, toPosition);
 
-        KVStoreManager.getInstance().putTokenListMetaData(mContext, currentMd);
+        KVStoreManager.putTokenListMetaData(mContext, currentMd);
 
     }
 }

@@ -3,9 +3,13 @@ package com.breadwallet.platform;
 import android.support.test.filters.LargeTest;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
+import android.util.Base64;
 
+import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.presenter.activities.intro.WriteDownActivity;
 import com.breadwallet.presenter.activities.settings.TestActivity;
+import com.breadwallet.protocols.messageexchange.entities.PairingMetaData;
+import com.breadwallet.tools.crypto.Base58;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.platform.entities.TxMetaData;
@@ -523,6 +527,7 @@ public class KVStoreTests {
         Assert.assertArrayEquals(ReplicatedKVStore.decrypt(obj.value, mActivityRule.getActivity()), "derp".getBytes());
 
     }
+
     @Test
     public void testGetAllMds() {
         store.set(0, 1, "Key1", "Key1".getBytes(), System.currentTimeMillis(), 0);
@@ -547,11 +552,11 @@ public class KVStoreTests {
         tx.txSize = 23423;
         tx.exchangeCurrency = "curr";
         tx.exchangeRate = 23.4343;
-        KVStoreManager.getInstance().putTxMetaData(mActivityRule.getActivity(), tx, theHash);
+        KVStoreManager.putTxMetaData(mActivityRule.getActivity(), tx, theHash);
         List<KVItem> items = store.getRawKVs();
         Assert.assertEquals(7, items.size());
 
-        Map<String, TxMetaData> mds = KVStoreManager.getInstance().getAllTxMD(mActivityRule.getActivity());
+        Map<String, TxMetaData> mds = KVStoreManager.getAllTxMD(mActivityRule.getActivity());
         Assert.assertEquals(mds.size(), 1);
 
 //        Assert.assertEquals(mds.(0).blockHeight, 123);
@@ -584,7 +589,7 @@ public class KVStoreTests {
     }
 
     @Test
-    public void testKVManager() {
+    public void testTxMetaData() {
         TxMetaData tx = new TxMetaData();
         byte[] theHash = new byte[]{3, 5, 64, 2, 4, 5, 63, 7, 0, 56, 34};
         tx.blockHeight = 123;
@@ -596,11 +601,11 @@ public class KVStoreTests {
         tx.txSize = 23423;
         tx.exchangeCurrency = "curr";
         tx.exchangeRate = 23.4343;
-        KVStoreManager.getInstance().putTxMetaData(mActivityRule.getActivity(), tx, theHash);
+        KVStoreManager.putTxMetaData(mActivityRule.getActivity(), tx, theHash);
         List<KVItem> items = store.getRawKVs();
         Assert.assertEquals(1, items.size());
 
-        TxMetaData newTx = KVStoreManager.getInstance().getTxMetaData(mActivityRule.getActivity(), theHash);
+        TxMetaData newTx = KVStoreManager.getTxMetaData(mActivityRule.getActivity(), theHash);
         Assert.assertEquals(newTx.blockHeight, 123);
         Assert.assertEquals(newTx.classVersion, 3);
         Assert.assertEquals(newTx.comment, "hehey !");
@@ -612,6 +617,29 @@ public class KVStoreTests {
         Assert.assertEquals(newTx.exchangeRate, 23.4343, 0);
 
     }
-    //((MockUpAdapter) remote).remoteKVs.size()
+
+    @Test
+    public void testPairingMetaData() {
+        String base58 = "ptwP6ngmYKCYVtFnaLmyKV6HfTUAW39jBFb5yV2eLKLD";
+
+        byte[] rawPubKey = Base58.decode(base58);
+
+        String base64Test = Base64.encodeToString(rawPubKey, Base64.NO_WRAP);
+        byte[] newPubKey = Base64.decode(base64Test, Base64.NO_WRAP);
+        Assert.assertArrayEquals(rawPubKey, newPubKey);
+
+        PairingMetaData putMD = new PairingMetaData("some id", BRCoreKey.encodeHex(rawPubKey), "pwb", "some.url");
+        KVStoreManager.putPairingMetadata(mActivityRule.getActivity(), putMD);
+        List<KVItem> items = store.getRawKVs();
+        Assert.assertEquals(1, items.size());
+
+        PairingMetaData getMD = KVStoreManager.getPairingMetadata(mActivityRule.getActivity(), rawPubKey);
+        Assert.assertEquals(getMD.getId(), "some id");
+        Assert.assertEquals(getMD.getPublicKeyHex(), BRCoreKey.encodeHex(rawPubKey));
+        Assert.assertEquals(getMD.getService(), "pwb");
+        Assert.assertEquals(getMD.getReturnUrl(), "some.url");
+
+
+    }
 
 }

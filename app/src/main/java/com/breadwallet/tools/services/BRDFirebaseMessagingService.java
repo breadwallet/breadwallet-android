@@ -2,8 +2,11 @@ package com.breadwallet.tools.services;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -11,9 +14,14 @@ import android.util.Log;
 import com.breadwallet.BreadApp;
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.ConfirmationActivity;
+import com.breadwallet.presenter.activities.HomeActivity;
+import com.breadwallet.protocols.messageexchange.MessageExchangeService;
+import com.breadwallet.protocols.messageexchange.entities.CallRequestMetaData;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.Utils;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 import com.platform.APIClient;
@@ -24,6 +32,9 @@ import org.json.JSONObject;
 import okhttp3.MediaType;
 import okhttp3.Request;
 import okhttp3.RequestBody;
+
+import static com.breadwallet.protocols.messageexchange.MessageExchangeService.ACTION_GET_USER_CONFIRMATION;
+import static com.breadwallet.protocols.messageexchange.MessageExchangeService.EXTRA_METADATA;
 
 /**
  * BreadWallet
@@ -55,7 +66,7 @@ import okhttp3.RequestBody;
 public final class BRDFirebaseMessagingService extends FirebaseMessagingService {
 
     private static final String NOTIFICATION_TITLE = "title";
-    private static final String NOTIFICATION_MESSAGE = "message";
+    private static final String NOTIFICATION_BODY = "body";
     private static final String ENDPOINT_PUSH_DEVICES = "/me/push-devices";
     private static final String PUSH_SERVICE = "fcm";
     private static final String KEY_TOKEN = "token";
@@ -79,13 +90,6 @@ public final class BRDFirebaseMessagingService extends FirebaseMessagingService 
         // Save token in BRSharedPrefs
         BRSharedPrefs.putFCMRegistrationToken(this, token);
 
-        // Update BRD API to store new token
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                updateFcmRegistrationToken(BRDFirebaseMessagingService.this, token);
-            }
-        });
     }
 
     /**
@@ -102,18 +106,30 @@ public final class BRDFirebaseMessagingService extends FirebaseMessagingService 
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
                 setupChannels(notificationManager);
             }
+            Log.e(TAG, "onMessageReceived: ");
             int notificationId = getNextNotificationId();
+            String notificationTitle = remoteMessage.getData().get(NOTIFICATION_TITLE);
+            String notificationBody = remoteMessage.getData().get(NOTIFICATION_BODY);
 
-            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
+            // Take the user to HomeActivity upon tapping the notification
+            Intent homeIntent = new Intent(getApplicationContext(), HomeActivity.class);
+            homeIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(), 0, homeIntent, 0);
+
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getApplicationContext(), NOTIFICATION_CHANNEL_ID)
                     .setSmallIcon(R.drawable.brd_logo_gradient)
-                    .setContentTitle(remoteMessage.getData().get(NOTIFICATION_TITLE))
-                    .setContentText(remoteMessage.getData().get(NOTIFICATION_MESSAGE))
-                    .setAutoCancel(true);
+                    .setContentTitle(notificationTitle)
+                    .setContentText(notificationBody)
+                    .setAutoCancel(true)
+                    .setContentIntent(pendingIntent);
 
-            notificationManager.notify(notificationId, notificationBuilder.build());
+                if (BreadApp.isAppInBackground()) {
+                    notificationManager.notify(notificationId, notificationBuilder.build());
+                }
+
         }
     }
-
 
     /**
      * Starting in Android 0(API 26), all notifications must be assigned to a channel.
@@ -132,47 +148,58 @@ public final class BRDFirebaseMessagingService extends FirebaseMessagingService 
 
     /**
      * @param context
-     * @param registrationToken The registration token that will be sending to our server to be updated
-     *                          each time it is refreshed.
      */
-    public static void updateFcmRegistrationToken(Context context, String registrationToken) {
+    public static void updateFcmRegistrationToken(final Context context) {
 
-        String url = BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + ENDPOINT_PUSH_DEVICES;
-        String deviceEnvironment;
+        // Check if we currently have a Firebase Messenger token stored in Shared Prefs
+        final String firebaseToken = BRSharedPrefs.getFCMRegistrationToken(context);
 
-        if (BuildConfig.DEBUG) {
-            deviceEnvironment = ENVIRONMENT_DEVELOPMENT;
-        } else {
-            deviceEnvironment = ENVIRONMENT_PRODUCTION;
+        // If so, send this token to our backend so that we can log this user device
+        if (!Utils.isNullOrEmpty(firebaseToken)) {
+            BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                @Override
+                public void run() {
+
+                    String url = BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + ENDPOINT_PUSH_DEVICES;
+                    String deviceEnvironment;
+
+                    if (BuildConfig.DEBUG) {
+                        deviceEnvironment = ENVIRONMENT_DEVELOPMENT;
+                    } else {
+                        deviceEnvironment = ENVIRONMENT_PRODUCTION;
+                    }
+
+                    try {
+
+                        JSONObject payload = new JSONObject();
+                        payload.put(KEY_TOKEN, firebaseToken);
+                        payload.put(KEY_SERVICE, PUSH_SERVICE);
+
+                        JSONObject data = new JSONObject();
+                        data.put(KEY_DATA_ENVIRONMENT, deviceEnvironment);
+                        data.put(KEY_DATA_BUNDLE_ID, context.getPackageName());
+                        payload.put(KEY_DATA, data);
+
+                        final MediaType JSON
+                                = MediaType.parse(BRConstants.CONTENT_TYPE_JSON);
+
+                        RequestBody requestBody = RequestBody.create(JSON, payload.toString());
+
+                        Request request = new Request.Builder()
+                                .url(url)
+                                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
+                                .header(BRConstants.HEADER_ACCEPT, BRConstants.HEADER_VALUE_ACCEPT).post(requestBody).build();
+
+                        APIClient.getInstance(context).sendRequest(request, true);
+
+                    } catch (JSONException e) {
+                        Log.e(TAG, "Error constructing JSON payload while updating FCM registration token.", e);
+                    }
+                }
+            });
+
         }
 
-
-        try {
-
-            JSONObject payload = new JSONObject();
-            payload.put(KEY_TOKEN, registrationToken);
-            payload.put(KEY_SERVICE, PUSH_SERVICE);
-
-            JSONObject data = new JSONObject();
-            data.put(KEY_DATA_ENVIRONMENT, deviceEnvironment);
-            data.put(KEY_DATA_BUNDLE_ID, context.getPackageName());
-            payload.put(KEY_DATA, data);
-
-            final MediaType JSON
-                    = MediaType.parse(BRConstants.HEADER_VALUE_CONTENT_TYPE);
-
-            RequestBody requestBody = RequestBody.create(JSON, payload.toString());
-
-            Request request = new Request.Builder()
-                    .url(url)
-                    .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.HEADER_VALUE_CONTENT_TYPE)
-                    .header(BRConstants.HEADER_ACCEPT, BRConstants.HEADER_VALUE_ACCEPT).post(requestBody).build();
-
-            APIClient.getInstance(context).sendRequest(request, true);
-
-        } catch (JSONException e) {
-            Log.e(TAG, "Error constructing JSON payload while updating FCM registration token.", e);
-        }
 
     }
 
@@ -190,4 +217,5 @@ public final class BRDFirebaseMessagingService extends FirebaseMessagingService 
         return newId;
 
     }
+
 }

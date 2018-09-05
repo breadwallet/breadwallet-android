@@ -224,16 +224,10 @@
   <string name="FeeSelector.title">Скорость обработки</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">Админ</string>
-  <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">Купить Bitcoin</string>
-  <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">Меню</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">Кошельки</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">итого активов</string>
-  <!-- (Tap here to) trade (your assets for other assets) -->
-  <string name="HomeScreen.trade">Обмен</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Проверяем баланс по персональному ключу...</string>
   <!-- Sweep private key confirmation message -->
@@ -281,9 +275,11 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Игнорировать</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">БЕЗОПАСНОСТЬ УСТРОЙСТВА ПОДВЕРГНУТА РИСКУ\n Какое-либо приложение по снятию ограничений с файловой системы может получить доступ к данным цепочки ключей  Bread и украсть ваши биткойны! Немедленно очистите ваш кошелек и восстановите его на безопасном устройстве.</string>
+  <string name="JailbreakWarnings.messageWithBalance">БЕЗОПАСНОСТЬ УСТРОЙСТВА ПОДВЕРГНУТА РИСКУ
+ Какое-либо приложение по снятию ограничений с файловой системы может получить доступ к данным цепочки ключей  Bread и украсть ваши биткойны! Немедленно очистите ваш кошелек и восстановите его на безопасном устройстве.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">БЕЗОПАСНОСТЬ УСТРОЙСТВА ПОДВЕРГНУТА РИСКУ\n Какое-либо приложение по снятию ограничений с файловой системы может получить доступ к данным цепочки ключей  Bread и украсть ваши биткойны. Пожалуйста, используйте Bread только на устройствах с не снятыми с файловой системы ограничениями.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">БЕЗОПАСНОСТЬ УСТРОЙСТВА ПОДВЕРГНУТА РИСКУ
+ Какое-либо приложение по снятию ограничений с файловой системы может получить доступ к данным цепочки ключей  Bread и украсть ваши биткойны. Пожалуйста, используйте Bread только на устройствах с не снятыми с файловой системы ограничениями.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">ПРЕДУПРЕЖДЕНИЕ</string>
   <!-- Wipe wallet button -->
@@ -304,10 +300,6 @@
   <string name="MenuButton.addWallet">Добавить кошелек</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Заблокировать кошелек</string>
-  <!-- (Click here to) manage (your list of) wallets -->
-  <string name="MenuButton.manageWallets">Управлять кошельками</string>
-  <!-- (press here to) scan (a) QR code -->
-  <string name="MenuButton.scan">Сканировать QR код</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">Центр безопасности</string>
   <!-- Menu button title -->
@@ -596,8 +588,6 @@
   <string name="Settings.manage">Управление</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">Уведомления</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">Другие</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Параметры</string>
   <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -627,7 +617,9 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Выписать бумажный ключ снова</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Бумажный ключ – это единственный способ восстановить ваш Bread-кошелек в случае потери, кражи, поломки или замены вашего телефона.\n\nМы покажем вам список слов, которые необходимо записать на листе бумаги и хранить в надежном месте.</string>
+  <string name="StartPaperPhrase.body">Бумажный ключ – это единственный способ восстановить ваш Bread-кошелек в случае потери, кражи, поломки или замены вашего телефона.
+
+Мы покажем вам список слов, которые необходимо записать на листе бумаги и хранить в надежном месте.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Выписать бумажный ключ</string>
   <!-- Argument is date -->
@@ -640,14 +632,10 @@
   <string name="StartViewController.recoverButton">Восстановить кошелек</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Соединение</string>
-  <!-- The sync has failed (to complete) -->
-  <string name="SyncingView.failed">Ошибка синхронизации</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Синхронизация</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Повторить</string>
-  <!-- "eg. Synced through <Jan 12, 2015> -->
-  <string name="SyncingView.syncedThrough">Синхронизированно до %1$s</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">Синхронизация</string>
   <!-- 6 d (6 days) -->
@@ -899,7 +887,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">Идет обновление...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet сменил свое название на Bread и обзавелся новым дизайном и функциями.\n\nЕсли вам нужна помощь, то ищите иконку (?) в правом верхнем углу большинства экранов.</string>
+  <string name="Welcome.body">Breadwallet сменил свое название на Bread и обзавелся новым дизайном и функциями.
+
+Если вам нужна помощь, то ищите иконку (?) в правом верхнем углу большинства экранов.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Добро пожаловать в Bread!</string>
   <!-- Wipe wallet alert message -->
@@ -930,4 +920,278 @@
   <string name="WritePaperPhrase.previous">Назад</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d из %2$d</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">Другие</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Управлять кошельками</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Меню</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Купить Bitcoin</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">Обмен</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">Сканировать QR код</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">Ошибка синхронизации</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">Синхронизированно до %1$s</string>
+  <string name="account.oauth.button.continue_email">Отправить Ссылку на Эл. почту</string>
+  <string name="account.oauth.button.done">Окей!</string>
+  <string name="account.oauth.instructions.continue">Ладно, проверьте эл. почту, выполняйте указания. Завершив, снова нажмите «Вход в систему», и всё будет хорошо!</string>
+  <string name="account.oauth.label.start">Похоже, Вы пытаетесь войти в систему, используя существующую учетную запись. Мы отправим вам эл. письмо, откройте ссылку внутри, войдите в систему, дайте нам разрешение и продолжите далее.</string>
+  <string name="account.oauth.error.fail">Ошибка Авторизации</string>
+  <string name="datetime.duration.day">день</string>
+  <string name="datetime.duration.week">неделя</string>
+  <string name="datetime.duration.month">месяц</string>
+  <!-- Account error message -->
+  <string name="exchange.account_picker.error.empty">Не найдено учетных записей.</string>
+  <string name="exchange.label.empty_list">К сожалению, на данный момент в Вашем регионе не могут быть предоставлены какие-либо услуги.</string>
+  <!-- Get started with Glidera -->
+  <string name="exchange.glidera.label.get_started">Начните с {serviceName}</string>
+  <!-- Glidera message - choose bank -->
+  <string name="exchange.glidera.label.select_bank">Выберите банк</string>
+  <!-- Agree to Glidera terms of service -->
+  <string name="exchange.glidera.label.tos_agree">Щелкнув ниже, Вы соглашаетесь с Условиями Использования {serviceName}</string>
+  <!-- Glidera message - trying to do too many purchases at the same time -->
+  <string name="exchange.glidera.notice.after_first_transfer">Придется подождать до исчезновения Вашей текущей покупки, прежде чем сможете осуществить еще одну.</string>
+  <!-- Glidera message - trying to do too many purchases at the same time -->
+  <string name="exchange.glidera.notice.before_first_transfer">Вы не сможете сделать приобретение снова, пока не исчезнет Ваша первая покупка.</string>
+  <!-- Glidera message - your order is in process -->
+  <string name="exchange.glidera.notice.details_waiting">Ваши личные данные находятся на стадии проверки. На это может уйти несколько дней.</string>
+  <!-- Glidera message - your order is in process -->
+  <string name="exchange.glidera.notice.id_verification_waiting">Ваши документы находятся на стадии проверки. На это может уйти несколько дней.</string>
+  <!-- Glidera message - you’re registered with Glidera -->
+  <string name="exchange.glidera.notice.registered">Вы зарегистрированы с {service}.</string>
+  <string name="exchange.glidera.title.account_details">Подробности Счета</string>
+  <string name="exchange.glidera.title.bank_login">Вход в Систему Банка</string>
+  <!-- Glidera message - picture of your ID (driver’s license or passport) -->
+  <string name="exchange.glidera.title.id_verification">Фото на Документы</string>
+  <!-- Glidera message - connect a bank account -->
+  <string name="exchange.glidera.title.link_account">Привязать Счет</string>
+  <string name="exchange.glidera.title.preferences">Настройки Учетной Записи</string>
+  <string name="exchange.glidera.title.registration">Регистрация</string>
+  <string name="exchange.glidera.notice.settings_trouble">Испытываете трудности с вышеуказанными настройками?</string>
+  <!-- Glidera message - tap to go directly to their website -->
+  <string name="exchange.glidera.notice.visit_directly">Нажмите ниже, чтобы посетить непосредственно {serviceName}.</string>
+  <!-- Glidera message - tap to out their settings -->
+  <string name="exchange.glidera.button.open_settings">Открыть Настройки Glidera</string>
+  <string name="exchange.cash.button.buy">Купить Биткойн</string>
+  <!-- Check the status of your order -->
+  <string name="exchange.cash.button.status">Проверить Статус</string>
+  <!-- Order details - how much, exchange rate -->
+  <string name="exchange.crypto.memo">Продано за {toAmount}{toCurrency}, по курсу {rate}{toCurrency} за {fromCurrency}</string>
+  <string name="exchange.error.max_order">Максимальный заказ: {amount}</string>
+  <string name="exchange.error.min_order">Минимальный заказа: {amount}</string>
+  <string name="exchange.geo.button.check_again">Проверить Снова</string>
+  <string name="exchange.geo.button.enable">Активировать определение местоположения?</string>
+  <string name="exchange.geo.error.enable_in_settings">Вы должны активировать доступ к местоположению для своего телефона. Пожалуйста, перейдите в Системные Настройки и включите Определение Местоположения.</string>
+  <string name="exchange.history.label.btc_price">Цена BTC при покупке:</string>
+  <string name="exchange.history.label.price">Цена {currency} при покупке:</string>
+  <string name="exchange.history.label.delivery_date_label">Дата Доставки:</string>
+  <string name="exchange.history.label.identifier">Идентификатор:</string>
+  <string name="exchange.history.label.service_label">Сервис:</string>
+  <string name="exchange.history.label.state.complete">Завершить</string>
+  <string name="exchange.history.label.state.processing">Доступен На</string>
+  <string name="exchange.history.label.status_label">Статус:</string>
+  <string name="exchange.history.label.status.complete">Завершить</string>
+  <string name="exchange.history.label.status.failed">Отказ</string>
+  <string name="exchange.history.label.status.processing"> В Стадии Выполнения</string>
+  <string name="exchange.history.label.total">Всего заплачено:</string>
+  <string name="exchange.history.title">История Обмена</string>
+  <string name="exchange.label.provider">Услуги Предоставлены {name}</string>
+  <string name="exchange.label.daily_and_monthly_limits">Ваш лимит – {daily}/в день и {monthly}/в месяц.</string>
+  <string name="exchange.label.daily_limit"> Вы можете приобрести до {daily} сегодня.</string>
+  <string name="exchange.label.delivered">Доставка</string>
+  <string name="exchange.label.empty_history">Никаких транзакций. Приобретайте койн!</string>
+  <string name="exchange.label.fees">Платежи</string>
+  <string name="exchange.label.limit.daily">Суточное потребление: {consumed} {amount}</string>
+  <string name="exchange.label.limit.weekly">Еженедельное потребление: {consumed} {amount}</string>
+  <string name="exchange.label.limits">Ограничения</string>
+  <string name="exchange.label.link.purchase">Покупка</string>
+  <string name="exchange.label.loading_limits">Загрузка Ваших ограничений...</string>
+  <!-- Order limit exceeded -->
+  <string name="exchange.label.zero_limits">Вы достигли лимита покупок. Пожалуйста, повторите попытку позже.</string>
+  <!-- Cannot buy yet, order in progress or ID verification required -->
+  <string name="exchange.label.zero_limits_and_no_history">Вам еще не разрешено покупать биткойн. Проверьте вкладку настроек и свяжитесь с {email}.</string>
+  <string name="exchange.unsupported.title">Не поддерживается в данный момент.</string>
+  <string name="exchange.unsupported.paragraph.buy">Приобретение этого актива пока не поддерживается. Мы постоянно добавляем помощь для большего количества активов. Пожалуйста, вернитесь позже!</string>
+  <string name="exchange.unsupported.paragraph.sell">Приобретение этого актива пока не поддерживается. Мы постоянно добавляем помощь для большего количества активов. Пожалуйста, вернитесь позже!</string>
+  <string name="empty.title">Нет активов.</string>
+  <string name="empty.paragraph.buy">У Вас нет активов для торговли. Начните с покупки Биткойна!</string>
+  <string name="exchange.libx.label.refreshing_token">Обновление...</string>
+  <string name="exchange.libx.label.show_token">Токен LibX: {token}</string>
+  <string name="exchange.libx.label.token_expires">Срок истекает: {time}</string>
+  <string name="exchange.libx.label.token_fees">Платежи: {amount}</string>
+  <string name="exchange.libx.label.token_rate">Курс: {amount}</string>
+  <string name="exchange.libx.label.token_sent">Отправлено: {amount}</string>
+  <string name="exchange.libx.label.token_status">Статус:</string>
+  <string name="exchange.libx.notice.pin_done">Потрясающе! Вы завершили</string>
+  <string name="exchange.libx.notice.redeem_another">Выкупить другую</string>
+  <string name="exchange.libx.title.pin">LibertyX Выкупить ПИН-код</string>
+  <string name="exchange.libx.title.status">Статус LibertyX</string>
+  <string name="exchange.libx.title.token">LibertyX Создать Токен</string>
+  <string name="exchange.slogans.bank">Привяжите свой банковский счет для купли-продажи биткойна с помощью удостоенной наград брокерской фирмы, которая пользуется доверием лучших кошельков мира.  </string>
+  <string name="exchange.title.bank">Банковский Счет</string>
+  <string name="exchange.title.buy_bitcoin">Купить Биткойн</string>
+  <string name="exchange.title.buy_currency">Купить {currency}</string>
+  <string name="exchange.title.buy_amount_in">Купить {amount} {currency}</string>
+  <string name="exchange.title.buy_amount">Купить {amount}</string>
+  <string name="exchange.title.buy_service">Выбрать способ оплаты.</string>
+  <string name="exchange.title.trade">Обменять {from} на {to}</string>
+  <string name="exchange.title.sell_bitcoin">Продать Биткойн</string>
+  <string name="exchange.title.sell_currency">Продать {currency}</string>
+  <string name="exchange.title.sell_amount_in">Обменять {currency} На:</string>
+  <string name="exchange.title.sell_amount">Продать {amount}</string>
+  <string name="exchange.title.sell_service">Что бы Вы хотели обменять на {currency}?</string>
+  <string name="exchange.title.cash">Наличные</string>
+  <string name="exchange.title.credit">Кредитная Карта</string>
+  <string name="exchange.title.history">История</string>
+  <string name="exchange.title.settings">Настройки</string>
+  <string name="exchange.title.exchange">Криптообмен</string>
+  <string name="exchange.title.confirm_buy">Подтвердить Покупку</string>
+  <string name="exchange.title.confirm_trade">Подтвердить Торговлю</string>
+  <string name="exchange.label.in_currency">{currency}</string>
+  <string name="exchange.title.choose">Как желаете расплатиться?</string>
+  <!-- Over the available order limit -->
+  <string name="exchange.source.title.maximum">Превышен Максимум</string>
+  <string name="exchange.source.paragraph.maximum">Вы можете приобрести до {maximum}, используя свой баланс {source}. Хотите изменить сумму покупки на {maximum}?</string>
+  <!-- Under the available order limit -->
+  <string name="exchange.source.title.minimum">Сумма ниже Минимума</string>
+  <string name="exchange.source.paragraph.minimum">Вы должны приобрести по крайней мере {minimum} с {source}. Хотите изменить сумму покупки на {minimum}?</string>
+  <string name="exchange.source.title.insufficient">Недостаток Средств </string>
+  <string name="exchange.source.paragraph.insufficient">У Вас недостаточно {source}, чтобы покрыть минимальную покупку {minimum}. Приобретите больше {source} или используйте другой способ оплаты.</string>
+  <string name="exchange.source.title.toolow">Слишком Низкий Остаток</string>
+  <!-- Over the available order limit -->
+  <string name="exchange.destination.title.maximum">Превышен Максимум</string>
+  <string name="exchange.destination.paragraph.maximum">Вы можете продать до {maximum}, используя для {destination}. Хотите изменить сумму на {maximum}?</string>
+  <string name="exchange.destination.title.minimum">Сумма ниже Минимума</string>
+  <string name="exchange.destination.paragraph.minimum">Вы должны продать по крайней мере {minimum} для {destination}. Хотите изменить сумму покупки на {minimum}?</string>
+  <string name="exchange.destination.title.insufficient">Недостаток Средств </string>
+  <string name="exchange.destination.paragraph.insufficient">У Вас недостаточно {destination}, чтобы покрыть минимум {minimum}. Приобретите больше {source} или используйте другой способ оплаты.</string>
+  <string name="exchange.destination.title.toolow">Слишком Низкий Остаток</string>
+  <string name="field.address.placeholder.line_1">Адрес...</string>
+  <!-- Second address line (apartment number for example) -->
+  <string name="field.address.placeholder.line_2">2-я Строка...</string>
+  <!-- Third address line (apartment number for example) -->
+  <string name="field.address.placeholder.line_3">3-я Строка...</string>
+  <!-- Service error -->
+  <string name="field.bitid.label.error">Ошибка BitID:</string>
+  <string name="field.bitid.label.retry">Попробуйте повторно внести форму на рассмотрение.</string>
+  <string name="field.countrystate.label.country">Страна:</string>
+  <!-- State or Province within a country -->
+  <string name="field.countrystate.label.state">Штат:</string>
+  <string name="field.image.button.retake">Взять повторно</string>
+  <string name="field.image.button.take">Сделать Снимок</string>
+  <string name="field.verified_email.confirm">Подтвердить</string>
+  <!-- Send email verification again -->
+  <string name="field.verified_email.reverify">Переслать</string>
+  <string name="field.verified_email.verify">Отправить код подтверждения эл. почты</string>
+  <string name="field.verified_phone.confirm">Подтвердить</string>
+  <!-- Send phone verification again -->
+  <string name="field.verified_phone.resend">Переслать</string>
+  <string name="field.verified_phone.send">Отправить код подтверждения номера телефона</string>
+  <string name="general.button.buy">Купить</string>
+  <string name="general.button.cancel">Отменить</string>
+  <string name="general.button.enable">Активировать </string>
+  <string name="general.button.next">Следующий</string>
+  <string name="general.button.ok">Окей</string>
+  <string name="general.button.proceed">Продолжить</string>
+  <string name="general.button.refresh">Обновить</string>
+  <string name="general.button.retry">Повторить снова</string>
+  <string name="general.button.submit">Отправить</string>
+  <string name="general.button.history">История</string>
+  <string name="general.button.back">Назад</string>
+  <string name="general.error.timed_out">Истекло время запроса</string>
+  <string name="general.error.touchid_error">Ошибка TouchID: повторите попытку</string>
+  <string name="general.error.params_error">Ошибка Параметра</string>
+  <string name="general.error.fee_error">Ошибка Расчета Платежа</string>
+  <string name="general.error.tx_error">Ошибка Транзакции (Низкий Остаток?)</string>
+  <string name="general.error.network">Ошибка Сети</string>
+  <string name="general.error.network_message">Произошла Неизвестная Ошибка</string>
+  <string name="general.label.confirmation_code">Код Подтверждения
+</string>
+  <string name="general.label.email">Эл. почта</string>
+  <string name="general.label.error">Ошибка:</string>
+  <string name="general.label.phone">Телефон</string>
+  <string name="general.label.unknown_error">Неизвестная Ошибка</string>
+  <string name="general.label.min">Мин.</string>
+  <string name="general.label.max">Макс.</string>
+  <string name="general.label.estimate">Оценить
+</string>
+  <string name="general.label.zero">Нуль</string>
+  <string name="general.label.default">По умолчанию</string>
+  <string name="general.loader.label.empty_state">Эта область намеренно осталась незаполненной</string>
+  <string name="general.loader.label.loading">Загрузка {noun}</string>
+  <string name="general.placeholder.confirmation_code">Код Подтверждения</string>
+  <string name="general.placeholder.email">Эл. почта</string>
+  <string name="general.placeholder.phone">Телефон</string>
+  <string name="general.placeholder.pin">ПИН-код</string>
+  <string name="general.status.loading">Загрузка...</string>
+  <string name="buy.title">Что бы Вы хотели купить?</string>
+  <string name="buy.transaction.destination.per">за</string>
+  <string name="buy.confirm_quote.title">Купить</string>
+  <string name="sell.confirm_quote.title">Продать</string>
+  <string name="buy.quote.payment_method">Способ Оплаты</string>
+  <string name="buy.quote.delivery">Доставка</string>
+  <string name="buy.quote.price">Цена</string>
+  <string name="buy.quote.subtotal">Промежуточная Сумма</string>
+  <string name="buy.quote.fee">Платеж</string>
+  <string name="buy.quote.total"> Общая Стоимость</string>
+  <string name="sell.quote.total">Сумма покупки</string>
+  <string name="trade.title">Обменять Ваши:</string>
+  <string name="trade.confirm_quote.trade">Обменять</string>
+  <string name="trade.confirm_quote.for">На</string>
+  <!-- Support search no results -->
+  <string name="support.label.no_search_results">Без Результатов</string>
+  <!-- Support search results see more -->
+  <string name="support.label.see_more">Более Подробно</string>
+  <!-- Support search see fewer -->
+  <string name="support.label.see_fewer">Скрыть Подробности</string>
+  <!-- Support section, see articles on a subject -->
+  <string name="support.label.see_articles">Смотреть Статьи</string>
+  <!-- Support search article not found -->
+  <string name="support.error.article_not_found">Статья Не Найдена</string>
+  <!-- Support footer email link -->
+  <string name="support.footer.email_us">Свяжитесь с Нами по Эл. почте</string>
+  <!-- Support section footer -->
+  <string name="support.footer.privacy_policy">Политика Конфиденциальности</string>
+  <!-- Support section footer -->
+  <string name="support.footer.rights">Все права защищены.</string>
+  <!-- Support search footer -->
+  <string name="support.footer.tos">Условия Использования</string>
+  <!-- Support section title -->
+  <string name="support.label.browse_topics">Просмотреть Темы</string>
+  <!-- Support section title -->
+  <string name="support.label.faq">Часто Задаваемые Вопросы</string>
+  <!-- Support button label -->
+  <string name="support.title">Поддержка</string>
+  <!-- Push notifications are disabled alert title" -->
+  <string name="PushNotifications.disabled">Уведомления Отключены</string>
+  <!-- Push notifications settings instructions -->
+  <string name="PushNotifications.enableInstructions">Включить уведомления в Настройках, чтобы получать оповещения</string>
+  <!-- Approve link wallet button label -->
+  <string name="LinkWallet.approve">Одобрить</string>
+  <!-- Decline link wallet button label -->
+  <string name="LinkWallet.decline">Отклонить</string>
+  <!-- Link Wallet view title -->
+  <string name="LinkWallet.title">Прикрепить Кошелек</string>
+  <!-- Link Wallet view title above domain list -->
+  <string name="LinkWallet.domainTitle">Примечание: взаимодействуйте ТОЛЬКО с этим приложением, когда находитесь на одном из следующих доменов</string>
+  <!-- Link Wallet view title above permissions list -->
+  <string name="LinkWallet.permissionsTitle">Это приложение способно:</string>
+  <!-- Link Wallet view dislaimer footer -->
+  <string name="LinkWallet.disclaimer">Внешние приложения не могут отправлять деньги без согласия с этого устройства</string>
+  <!-- Link wallet logo footer text -->
+  <string name="LinkWallet.logoFooter">Защищенная Оплата Покупок</string>
+  <!-- Payment confirmation view title -->
+  <string name="PaymentConfirmation.title">Подтверждение</string>
+  <!-- Eg. Send 1.0Eth to purchase CCC -->
+  <string name="PaymentConfirmation.amountText">Отправить %1$s, чтобы купить %2$s</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.accountRequest">Запросить %1$s информацию об учётной записи</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.callRequest">Запросить %1$s вызов смарт-контракта</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.paymentRequest">Запросить %1$s платёж</string>
 </resources>

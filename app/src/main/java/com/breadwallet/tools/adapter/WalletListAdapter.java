@@ -25,9 +25,11 @@ import com.breadwallet.tools.services.SyncService;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 
+import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
@@ -103,9 +105,20 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             String name = wallet.getName();
             String currencyCode = wallet.getIso();
 
-            String exchangeRate = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatExchangeRate(mContext));
-            String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), wallet.getFiatBalance(mContext));
+            BigDecimal bigExchangeRate = wallet.getFiatExchangeRate(mContext);
+            BigDecimal bigFiatBalance = wallet.getFiatBalance(mContext);
+
+            String exchangeRate = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), bigExchangeRate);
+            String fiatBalance = CurrencyUtils.getFormattedAmount(mContext, BRSharedPrefs.getPreferredFiatIso(mContext), bigFiatBalance);
             String cryptoBalance = CurrencyUtils.getFormattedAmount(mContext, wallet.getIso(), wallet.getCachedBalance(mContext));
+
+            if (Utils.isNullOrZero(bigExchangeRate)) {
+                holder.mWalletBalanceFiat.setVisibility(View.INVISIBLE);
+                holder.mTradePrice.setVisibility(View.INVISIBLE);
+            } else {
+                holder.mWalletBalanceFiat.setVisibility(View.VISIBLE);
+                holder.mTradePrice.setVisibility(View.VISIBLE);
+            }
 
             // Set wallet fields
             holder.mWalletName.setText(name);
@@ -119,7 +132,6 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             holder.mSyncingLabel.setText(item.mLabelText);
 
             String currencyCodeWithPrefix = IMAGE_RESOURCE_ID_PREFIX.concat(currencyCode).toLowerCase();
-
 
             int iconResourceId = mContext.getResources().getIdentifier(currencyCodeWithPrefix, BRConstants.DRAWABLE, mContext.getPackageName());
             if (iconResourceId > 0) {
@@ -169,7 +181,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                     }
                     String walletIso = mCurrentWalletSyncing.walletManager.getIso();
                     mCurrentWalletSyncing.walletManager.connect(mContext);
-                    SyncService.startService(mContext.getApplicationContext(), SyncService.ACTION_START_SYNC_PROGRESS_POLLING, walletIso);
+                    SyncService.enqueueWork(mContext, walletIso);
                 } finally {
                     mObesrverIsStarting = false;
                 }

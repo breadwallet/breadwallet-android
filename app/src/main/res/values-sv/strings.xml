@@ -224,16 +224,10 @@
   <string name="FeeSelector.title">Bearbetningshastighet</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">Admin</string>
-  <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">Köp Bitcoin</string>
-  <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">Meny</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">Plånböcker</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">totala tillgångar</string>
-  <!-- (Tap here to) trade (your assets for other assets) -->
-  <string name="HomeScreen.trade">Handla</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Kontrollerar privat nyckelsaldo...</string>
   <!-- Sweep private key confirmation message -->
@@ -281,9 +275,11 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Ignorera</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Töm denna plånbok direkt och återställ den på en säker enhet.</string>
+  <string name="JailbreakWarnings.messageWithBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD
+En \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Töm denna plånbok direkt och återställ den på en säker enhet.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD\nEn \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Använd Bread endast på en säker enhet.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">ENHETENS SÄKERHET ÄR ÄVENTYRAD
+En \"intrångs\"-app kan få tillgång till Breads nyckeldata och stjäla dina bitcoin! Använd Bread endast på en säker enhet.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">VARNING</string>
   <!-- Wipe wallet button -->
@@ -304,10 +300,6 @@
   <string name="MenuButton.addWallet">Lägg till plånbok</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Lås plånbok</string>
-  <!-- (Click here to) manage (your list of) wallets -->
-  <string name="MenuButton.manageWallets">Hantera plånböcker</string>
-  <!-- (press here to) scan (a) QR code -->
-  <string name="MenuButton.scan">Skanna QR-kod</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">Säkerhetscenter</string>
   <!-- Menu button title -->
@@ -596,8 +588,6 @@
   <string name="Settings.manage">Hantera</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">Meddelanden</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">Andra</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Preferenser</string>
   <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -627,7 +617,9 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Skriv ner ordnyckel på nytt</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Din ordnyckel  är enda sättet att återställ Bread om du förlorat din telefon, blivit bestulen på den eller har uppgraderat den.\n\nVi visar dig en lista över ord som du kan skriva ner på ett papper och gömma undan.</string>
+  <string name="StartPaperPhrase.body">Din ordnyckel  är enda sättet att återställ Bread om du förlorat din telefon, blivit bestulen på den eller har uppgraderat den.
+
+Vi visar dig en lista över ord som du kan skriva ner på ett papper och gömma undan.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Skriv ner ordnyckel</string>
   <!-- Argument is date -->
@@ -640,14 +632,10 @@
   <string name="StartViewController.recoverButton">Återställ plånbok</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Ansluter</string>
-  <!-- The sync has failed (to complete) -->
-  <string name="SyncingView.failed">Synkronisering misslyckades</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Synkar</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Försök igen</string>
-  <!-- "eg. Synced through <Jan 12, 2015> -->
-  <string name="SyncingView.syncedThrough">Synkroniserad genom %1$s</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">Synkroniserar</string>
   <!-- 6 d (6 days) -->
@@ -899,7 +887,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">Uppdaterar...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadplånboken har bytt namn till Bread, med ett splitter nytt utseende och några nya funktioner.\n\nOm du behöver hjälp, leta efter (?)-tecknet i det övre högra hörnet på de flesta skärmar.</string>
+  <string name="Welcome.body">Breadplånboken har bytt namn till Bread, med ett splitter nytt utseende och några nya funktioner.
+
+Om du behöver hjälp, leta efter (?)-tecknet i det övre högra hörnet på de flesta skärmar.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Välkommen till Bread!</string>
   <!-- Wipe wallet alert message -->
@@ -930,4 +920,276 @@
   <string name="WritePaperPhrase.previous">Föregående</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d av %2$d</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">Andra</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Hantera plånböcker</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Meny</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Köp Bitcoin</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">Handla</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">Skanna QR-kod</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">Synkronisering misslyckades</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">Synkroniserad genom %1$s</string>
+  <string name="account.oauth.button.continue_email">Skicka länk till e-post</string>
+  <string name="account.oauth.button.done">Ok!</string>
+  <string name="account.oauth.instructions.continue">Ok, kolla din e-post, följ instruktionerna. När du är klar, klicka på \"Logga in\" igen så ska det bli bra!</string>
+  <string name="account.oauth.label.start">Det ser ut som om du försöker logga in med ett befintligt konto. Vi skickar ett mejl till dig, öppna länken i det, auktorisera oss, och fortsätt nedan.</string>
+  <string name="account.oauth.error.fail">Auktorisation misslyckades</string>
+  <string name="datetime.duration.day">dag</string>
+  <string name="datetime.duration.week">vecka</string>
+  <string name="datetime.duration.month">månad</string>
+  <!-- Account error message -->
+  <string name="exchange.account_picker.error.empty">Inga konton hittades.</string>
+  <string name="exchange.label.empty_list">Tyvärr finns det inga tjänster tillgängliga i ditt område just nu.</string>
+  <!-- Get started with Glidera -->
+  <string name="exchange.glidera.label.get_started">Kom igång med {serviceName}</string>
+  <!-- Glidera message - choose bank -->
+  <string name="exchange.glidera.label.select_bank">Välj din bank</string>
+  <!-- Agree to Glidera terms of service -->
+  <string name="exchange.glidera.label.tos_agree">Genom att klicka nedan godkänner du villkoren för {serviceName}</string>
+  <!-- Glidera message - trying to do too many purchases at the same time -->
+  <string name="exchange.glidera.notice.after_first_transfer">Du kan behöva vänta tills ditt pågående köp gått igenom innan du kan göra ett köp till.</string>
+  <!-- Glidera message - trying to do too many purchases at the same time -->
+  <string name="exchange.glidera.notice.before_first_transfer">Du kommer inte att kunna köpa igen förrän efter att ditt första köp gått igenom.</string>
+  <!-- Glidera message - your order is in process -->
+  <string name="exchange.glidera.notice.details_waiting">Dina personliga uppgifter granskas. Detta kan ta upp till några dagar.</string>
+  <!-- Glidera message - your order is in process -->
+  <string name="exchange.glidera.notice.id_verification_waiting">Dina dokument granskas. Detta kan ta upp till några dagar.</string>
+  <!-- Glidera message - you’re registered with Glidera -->
+  <string name="exchange.glidera.notice.registered">Du är registrerad hos {service}.</string>
+  <string name="exchange.glidera.title.account_details">Kontouppgifter</string>
+  <string name="exchange.glidera.title.bank_login">Bankinloggning</string>
+  <!-- Glidera message - picture of your ID (driver’s license or passport) -->
+  <string name="exchange.glidera.title.id_verification">ID-bild</string>
+  <!-- Glidera message - connect a bank account -->
+  <string name="exchange.glidera.title.link_account">Länka konto</string>
+  <string name="exchange.glidera.title.preferences">Kontoinställningar</string>
+  <string name="exchange.glidera.title.registration">Registrering</string>
+  <string name="exchange.glidera.notice.settings_trouble">Har du problem med ovanstående inställningar?</string>
+  <!-- Glidera message - tap to go directly to their website -->
+  <string name="exchange.glidera.notice.visit_directly">Klicka nedan för att besöka {serviceName} direkt.</string>
+  <!-- Glidera message - tap to out their settings -->
+  <string name="exchange.glidera.button.open_settings">Öppna Glidera-inställningar</string>
+  <string name="exchange.cash.button.buy">Köp Bitcoin</string>
+  <!-- Check the status of your order -->
+  <string name="exchange.cash.button.status">Kontrollera status</string>
+  <!-- Order details - how much, exchange rate -->
+  <string name="exchange.crypto.memo">Såld för {toAmount}{toCurrency}, med en kurs på {rate}{toCurrency} per {fromCurrency}</string>
+  <string name="exchange.error.max_order">Högsta beställning: {amount}</string>
+  <string name="exchange.error.min_order">Lägsta beställning: {amount}</string>
+  <string name="exchange.geo.button.check_again">Kontrollera igen</string>
+  <string name="exchange.geo.button.enable">Aktivera platstjänster?</string>
+  <string name="exchange.geo.error.enable_in_settings">Du måste aktivera tillgång till platstjänster på din telefon. Var god gå till dina systeminställningar och aktivera platstjänster.</string>
+  <string name="exchange.history.label.btc_price">BTC-pris vid köp:</string>
+  <string name="exchange.history.label.price">{currency} pris vid köp:</string>
+  <string name="exchange.history.label.delivery_date_label">Leveransdatum:</string>
+  <string name="exchange.history.label.identifier">Identifierare:</string>
+  <string name="exchange.history.label.service_label">Tjänst:</string>
+  <string name="exchange.history.label.state.complete">Slutförd</string>
+  <string name="exchange.history.label.state.processing">Tillgänglig </string>
+  <string name="exchange.history.label.status_label">Status:</string>
+  <string name="exchange.history.label.status.complete">Slutförd</string>
+  <string name="exchange.history.label.status.failed">Misslyckades</string>
+  <string name="exchange.history.label.status.processing">Pågår</string>
+  <string name="exchange.history.label.total">Totalt pris betalt: </string>
+  <string name="exchange.history.title">Växlingshistorik</string>
+  <string name="exchange.label.provider">Tjänster tillhandahålls av {name}</string>
+  <string name="exchange.label.daily_and_monthly_limits">Din gräns är {daily}/dag, och {monthly}/månad.</string>
+  <string name="exchange.label.daily_limit">Du kan köpa upp till {daily} idag.</string>
+  <string name="exchange.label.delivered">Leverans</string>
+  <string name="exchange.label.empty_history">Inga transaktioner. Köp några coin!</string>
+  <string name="exchange.label.fees">Avgifter</string>
+  <string name="exchange.label.limit.daily">Daglig användning: {consumed} av {amount}.</string>
+  <string name="exchange.label.limit.weekly">Veckovis användning: {consumed} av {amount}.</string>
+  <string name="exchange.label.limits">Gränser</string>
+  <string name="exchange.label.link.purchase">Köp</string>
+  <string name="exchange.label.loading_limits">Laddar dina gränser...</string>
+  <!-- Order limit exceeded -->
+  <string name="exchange.label.zero_limits">Du har nått din gräns för köp. Var god försök igen senare.</string>
+  <!-- Cannot buy yet, order in progress or ID verification required -->
+  <string name="exchange.label.zero_limits_and_no_history">Du har inte godkännande att köpa bitcoin än. Kontrollera inställningsfliken, och kontakta {email}.</string>
+  <string name="exchange.unsupported.title">Stöds inte just nu.</string>
+  <string name="exchange.unsupported.paragraph.buy">Köp av denna tillgång stöds ännu inte. Vi lägger ständigt till stöd för fler tillgångar, så kom gärna tillbaka senare!</string>
+  <string name="exchange.unsupported.paragraph.sell">Köp av denna tillgång stöds ännu inte. Vi lägger ständigt till stöd för fler tillgångar, så kom gärna tillbaka senare!</string>
+  <string name="empty.title">Inga tillgångar.</string>
+  <string name="empty.paragraph.buy">Du har inga tillgångar att handla. Kom igång genom att köpa några Bitcoin!</string>
+  <string name="exchange.libx.label.refreshing_token">Uppdaterar...</string>
+  <string name="exchange.libx.label.show_token">LibX token: {token}</string>
+  <string name="exchange.libx.label.token_expires">Förfaller: {time}</string>
+  <string name="exchange.libx.label.token_fees">Avgifter: {amount}</string>
+  <string name="exchange.libx.label.token_rate">Kurs: {amount}</string>
+  <string name="exchange.libx.label.token_sent">Skickat: {amount}</string>
+  <string name="exchange.libx.label.token_status">Status:</string>
+  <string name="exchange.libx.notice.pin_done">Fantastiskt! Du är klar</string>
+  <string name="exchange.libx.notice.redeem_another">Lös in en till</string>
+  <string name="exchange.libx.title.pin">LibertyX lös in PIN</string>
+  <string name="exchange.libx.title.status">LibertyX status</string>
+  <string name="exchange.libx.title.token">LibertyX skapa token</string>
+  <string name="exchange.slogans.bank">Länka ditt bankkonto för att köpa och sälja bitcoin med den prisvinnande mäklaren som är betrodd av topp-plånböcker över hela världen.</string>
+  <string name="exchange.title.bank">Bankkonto</string>
+  <string name="exchange.title.buy_bitcoin">Köp Bitcoin</string>
+  <string name="exchange.title.buy_currency">Köp {currency}</string>
+  <string name="exchange.title.buy_amount_in">Köp {amount} {currency}</string>
+  <string name="exchange.title.buy_amount">Köp {amount}</string>
+  <string name="exchange.title.buy_service">Välj betalningsmetod.</string>
+  <string name="exchange.title.trade">Handla  {from} för  {to}</string>
+  <string name="exchange.title.sell_bitcoin">Sälj Bitcoin</string>
+  <string name="exchange.title.sell_currency">Sälj {currency}</string>
+  <string name="exchange.title.sell_amount_in">Handla  {currency} för:</string>
+  <string name="exchange.title.sell_amount">Sälj {amount}</string>
+  <string name="exchange.title.sell_service">Vad vill du växla {currency} till:</string>
+  <string name="exchange.title.cash">Kontant</string>
+  <string name="exchange.title.credit">Kreditkort</string>
+  <string name="exchange.title.history">Historik</string>
+  <string name="exchange.title.settings">Inställningar</string>
+  <string name="exchange.title.exchange">Kryptomäklare</string>
+  <string name="exchange.title.confirm_buy">Bekräfta köp</string>
+  <string name="exchange.title.confirm_trade">Bekräfta affär</string>
+  <string name="exchange.label.in_currency">av {currency}</string>
+  <string name="exchange.title.choose">Hur vill du betala?</string>
+  <!-- Over the available order limit -->
+  <string name="exchange.source.title.maximum">Högsta belopp överskridet</string>
+  <string name="exchange.source.paragraph.maximum">Du kan köpa upp till {maximum} med ditt {source}-saldo. Vill du ändra ditt köpbelopp till {maximum}?</string>
+  <!-- Under the available order limit -->
+  <string name="exchange.source.title.minimum">Belopp är under minimum</string>
+  <string name="exchange.source.paragraph.minimum">Du måste köpa minst {minimum} med {source}. Vill du ändra ditt köpbelopp till {minimum}?</string>
+  <string name="exchange.source.title.insufficient">Otillräckligt saldo</string>
+  <string name="exchange.source.paragraph.insufficient">Du har inte tillräckligt {source} för att täcka minimiköpet på {minimum}. Köp mer {source} eller använd en annan betalningsmetod.</string>
+  <string name="exchange.source.title.toolow">För litet saldo</string>
+  <!-- Over the available order limit -->
+  <string name="exchange.destination.title.maximum">Maxbelopp överskridet</string>
+  <string name="exchange.destination.paragraph.maximum">Du kan sälja upp till {maximum} med {destination}. Vill du ändra ditt belopp till {maximum}?</string>
+  <string name="exchange.destination.title.minimum">Beloppet är under minimum</string>
+  <string name="exchange.destination.paragraph.minimum">Du måste sälja minst {minimum} för {destination}. Vill du ändra ditt köpbelopp till {minimum}?</string>
+  <string name="exchange.destination.title.insufficient">Otillräckligt saldo</string>
+  <string name="exchange.destination.paragraph.insufficient">Du har inte tillräckligt {destination} för att täcka minimum på {minimum}. Köp mer {source} eller använd en annan betalningsmetod.</string>
+  <string name="exchange.destination.title.toolow">För lågt saldo</string>
+  <string name="field.address.placeholder.line_1">Adress...</string>
+  <!-- Second address line (apartment number for example) -->
+  <string name="field.address.placeholder.line_2">Rad 2...</string>
+  <!-- Third address line (apartment number for example) -->
+  <string name="field.address.placeholder.line_3">Rad 3...</string>
+  <!-- Service error -->
+  <string name="field.bitid.label.error">BitID-fel:</string>
+  <string name="field.bitid.label.retry">Försök att skicka formuläret igen.</string>
+  <string name="field.countrystate.label.country">Land:</string>
+  <!-- State or Province within a country -->
+  <string name="field.countrystate.label.state">Stat:</string>
+  <string name="field.image.button.retake">Återta</string>
+  <string name="field.image.button.take">Ta bild</string>
+  <string name="field.verified_email.confirm">Bekräfta</string>
+  <!-- Send email verification again -->
+  <string name="field.verified_email.reverify">Skicka om</string>
+  <string name="field.verified_email.verify">Skicka mejl med bekräftelsekod</string>
+  <string name="field.verified_phone.confirm">Bekräfta</string>
+  <!-- Send phone verification again -->
+  <string name="field.verified_phone.resend">Skicka om</string>
+  <string name="field.verified_phone.send">Skicka bekräftelsekod till telefon</string>
+  <string name="general.button.buy">Köp</string>
+  <string name="general.button.cancel">Avbryt</string>
+  <string name="general.button.enable">Aktivera</string>
+  <string name="general.button.next">Nästa</string>
+  <string name="general.button.ok">Ok</string>
+  <string name="general.button.proceed">Fortsätt</string>
+  <string name="general.button.refresh">Uppdatera</string>
+  <string name="general.button.retry">Försök igen</string>
+  <string name="general.button.submit">Skicka</string>
+  <string name="general.button.history">Historik</string>
+  <string name="general.button.back">Tillbaka</string>
+  <string name="general.error.timed_out">Begäran överskred tidsgräns</string>
+  <string name="general.error.touchid_error">TouchID-fel: försök igen</string>
+  <string name="general.error.params_error">Parameter-fel</string>
+  <string name="general.error.fee_error">Fel vid avgiftsberäkning</string>
+  <string name="general.error.tx_error">Transaktionsfel (lågt saldo?)</string>
+  <string name="general.error.network">Nätverksfel</string>
+  <string name="general.error.network_message">Ett okänt fel uppstod</string>
+  <string name="general.label.confirmation_code">Bekräftelsekod</string>
+  <string name="general.label.email">E-post</string>
+  <string name="general.label.error">Fel:</string>
+  <string name="general.label.phone">Telefonnummer:</string>
+  <string name="general.label.unknown_error">Okänt fel</string>
+  <string name="general.label.min">Min</string>
+  <string name="general.label.max">Max</string>
+  <string name="general.label.estimate">Uppskattning</string>
+  <string name="general.label.zero">Noll</string>
+  <string name="general.label.default">Förvalt värde</string>
+  <string name="general.loader.label.empty_state">Detta område har avsiktligen lämnats tomt</string>
+  <string name="general.loader.label.loading">Laddar {noun}</string>
+  <string name="general.placeholder.confirmation_code">Bekräftelsekod</string>
+  <string name="general.placeholder.email">E-post</string>
+  <string name="general.placeholder.phone">Telefonnummer</string>
+  <string name="general.placeholder.pin">PIN</string>
+  <string name="general.status.loading">Laddar...</string>
+  <string name="buy.title">Vad vill du köpa?</string>
+  <string name="buy.transaction.destination.per">per</string>
+  <string name="buy.confirm_quote.title">Köp</string>
+  <string name="sell.confirm_quote.title">Sälj</string>
+  <string name="buy.quote.payment_method">Betalningsmetod</string>
+  <string name="buy.quote.delivery">Leverans</string>
+  <string name="buy.quote.price">Pris</string>
+  <string name="buy.quote.subtotal">Delbelopp</string>
+  <string name="buy.quote.fee">Avgift</string>
+  <string name="buy.quote.total">Total kostnad</string>
+  <string name="sell.quote.total">Köpbelopp</string>
+  <string name="trade.title">Handla din:</string>
+  <string name="trade.confirm_quote.trade">Affär</string>
+  <string name="trade.confirm_quote.for">För</string>
+  <!-- Support search no results -->
+  <string name="support.label.no_search_results">Inga resultat</string>
+  <!-- Support search results see more -->
+  <string name="support.label.see_more">Se fler</string>
+  <!-- Support search see fewer -->
+  <string name="support.label.see_fewer">Se färre</string>
+  <!-- Support section, see articles on a subject -->
+  <string name="support.label.see_articles">Se artiklar</string>
+  <!-- Support search article not found -->
+  <string name="support.error.article_not_found">Artikeln hittades inte</string>
+  <!-- Support footer email link -->
+  <string name="support.footer.email_us">Mejla oss</string>
+  <!-- Support section footer -->
+  <string name="support.footer.privacy_policy">Integritetspolicy</string>
+  <!-- Support section footer -->
+  <string name="support.footer.rights">Alla rättigheter förbehållna.</string>
+  <!-- Support search footer -->
+  <string name="support.footer.tos">Användarvillkor</string>
+  <!-- Support section title -->
+  <string name="support.label.browse_topics">Bläddra bland ämnen</string>
+  <!-- Support section title -->
+  <string name="support.label.faq">Vanliga frågor</string>
+  <!-- Support button label -->
+  <string name="support.title">Support</string>
+  <!-- Push notifications are disabled alert title" -->
+  <string name="PushNotifications.disabled">Meddelanden avaktiverade</string>
+  <!-- Push notifications settings instructions -->
+  <string name="PushNotifications.enableInstructions">Aktivera meddelanden i inställningar för att ta emot larm</string>
+  <!-- Approve link wallet button label -->
+  <string name="LinkWallet.approve">Godkänn</string>
+  <!-- Decline link wallet button label -->
+  <string name="LinkWallet.decline">Avböj</string>
+  <!-- Link Wallet view title -->
+  <string name="LinkWallet.title">Länka plånbok</string>
+  <!-- Link Wallet view title above domain list -->
+  <string name="LinkWallet.domainTitle">OBS: Interagera BARA med denna app från en av följande domäner</string>
+  <!-- Link Wallet view title above permissions list -->
+  <string name="LinkWallet.permissionsTitle">Denna app kommer att kunna:</string>
+  <!-- Link Wallet view dislaimer footer -->
+  <string name="LinkWallet.disclaimer">Externa appar kan inte skicka pengar utan godkännande från denna enhet</string>
+  <!-- Link wallet logo footer text -->
+  <string name="LinkWallet.logoFooter">Säker kassa</string>
+  <!-- Payment confirmation view title -->
+  <string name="PaymentConfirmation.title">Bekräftelse</string>
+  <!-- Eg. Send 1.0Eth to purchase CCC -->
+  <string name="PaymentConfirmation.amountText">Skicka %1$s för att köpa %2$s</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.accountRequest">Begär %1$s betalning</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.callRequest">Begär %1$s smart kontraktsamtal</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.paymentRequest">Begär %1$s kontoinformation</string>
 </resources>

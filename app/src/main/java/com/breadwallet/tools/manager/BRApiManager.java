@@ -4,23 +4,28 @@ import android.content.Context;
 import android.os.Handler;
 import android.os.NetworkOnMainThreadException;
 import android.support.annotation.WorkerThread;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.threads.executor.BRExecutor;
+import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -35,6 +40,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import okhttp3.Request;
+
+import static com.breadwallet.presenter.activities.HomeActivity.CCC_CURRENCY_CODE;
 
 /**
  * BreadWallet
@@ -64,18 +71,24 @@ import okhttp3.Request;
 public class BRApiManager {
     private static final String TAG = BRApiManager.class.getName();
 
+    public static final String HEADER_WALLET_ID = "X-Wallet-Id";
+    public static final String HEADER_IS_INTERNAL = "X-Is-Internal";
+    public static final String HEADER_TESTFLIGHT = "X-Testflight";
+    public static final String HEADER_TESTNET = "X-Bitcoin-Testnet";
+    public static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
+    public static final String NAME = "name";
+    public static final String CODE = "code";
+    public static final String RATE = "rate";
+    public static final String PRICE_BTC = "price_btc";
+    public static final String SYMBOL = "symbol";
+    public static final String RATES_URL_BTC = "https://api.coinmarketcap.com/v1/ticker/?limit=1000&convert=BTC";
+
     private static BRApiManager instance;
     private Timer timer;
 
     private TimerTask timerTask;
 
     private Handler handler;
-
-    public static final String HEADER_WALLET_ID = "X-Wallet-Id";
-    public static final String HEADER_IS_INTERNAL = "X-Is-Internal";
-    public static final String HEADER_TESTFLIGHT = "X-Testflight";
-    public static final String HEADER_TESTNET = "X-Bitcoin-Testnet";
-    public static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
 
     private BRApiManager() {
         handler = new Handler();
@@ -100,17 +113,20 @@ public class BRApiManager {
             if (arr != null) {
                 int length = arr.length();
                 for (int i = 0; i < length; i++) {
-                    CurrencyEntity tmp = new CurrencyEntity();
+                    CurrencyEntity currencyEntity = new CurrencyEntity();
                     try {
                         JSONObject tmpObj = (JSONObject) arr.get(i);
-                        tmp.name = tmpObj.getString("name");
-                        tmp.code = tmpObj.getString("code");
-                        tmp.rate = Float.valueOf(tmpObj.getString("rate"));
-                        tmp.iso = walletManager.getIso();
+                        currencyEntity.name = tmpObj.getString(NAME);
+                        currencyEntity.code = tmpObj.getString(CODE);
+                        currencyEntity.rate = Float.valueOf(tmpObj.getString(RATE));
+                        currencyEntity.iso = walletManager.getIso();
+                        if (currencyEntity.iso.equalsIgnoreCase(CCC_CURRENCY_CODE)) {
+                            currencyEntity = convertCccEthRatesToBtc(context, currencyEntity);
+                        }
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
-                    set.add(tmp);
+                    set.add(currencyEntity);
                 }
 
             } else {
@@ -120,6 +136,20 @@ public class BRApiManager {
             e.printStackTrace();
         }
         if (set.size() > 0) RatesDataSource.getInstance(context).putCurrencies(context, set);
+
+    }
+
+    private CurrencyEntity convertCccEthRatesToBtc(Context context, CurrencyEntity currencyEntity) {
+        if (currencyEntity == null) {
+            return null;
+        }
+        CurrencyEntity ethBtcExchangeRate = RatesDataSource.getInstance(context).getCurrencyByCode(context, "ETH", "BTC");
+        if (ethBtcExchangeRate == null) {
+            Log.e(TAG, "computeCccRates: ethBtcExchangeRate is null");
+            return null;
+        }
+        float newRate = new BigDecimal(currencyEntity.rate).multiply(new BigDecimal(ethBtcExchangeRate.rate)).floatValue();
+        return new CurrencyEntity("BTC", currencyEntity.name, newRate, currencyEntity.iso);
 
     }
 
@@ -144,9 +174,7 @@ public class BRApiManager {
 
     @WorkerThread
     private void updateData(final Context context) {
-
-        if (BreadApp.isAppInBackground(context)) {
-            Log.e(TAG, "doInBackground: Stopping timer, no activity on.");
+        if (BreadApp.isAppInBackground()) {
             stopTimerTask();
             return;
         }
@@ -161,8 +189,8 @@ public class BRApiManager {
 
         for (final BaseWalletManager w : list) {
             //only update stuff for non erc20 for now, API endpoint BUG
-            if (w.getIso().equalsIgnoreCase("BTC") || w.getIso().equalsIgnoreCase("BCH")
-                    || w.getIso().equalsIgnoreCase("ETH")) {
+            if (w.getIso().equalsIgnoreCase(WalletBitcoinManager.BITCOIN_CURRENCY_CODE) || w.getIso().equalsIgnoreCase(WalletBitcoinManager.BITCASH_CURRENCY_CODE)
+                    || w.getIso().equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE) || w.getIso().equalsIgnoreCase(HomeActivity.CCC_CURRENCY_CODE)) {
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
@@ -174,7 +202,6 @@ public class BRApiManager {
                     public void run() {
                         //get each wallet's rates
                         updateRates(context, w);
-
                     }
                 });
             }
@@ -185,8 +212,8 @@ public class BRApiManager {
     @WorkerThread
     private synchronized void updateErc20Rates(Context context) {
         //get all erc20 rates.
-        String url = "https://api.coinmarketcap.com/v1/ticker/?limit=1000&convert=BTC";
-        String result = urlGET(context, url);
+
+        String result = urlGET(context, RATES_URL_BTC);
         try {
             if (Utils.isNullOrEmpty(result)) {
                 Log.e(TAG, "updateErc20Rates: Failed to fetch");
@@ -207,10 +234,10 @@ public class BRApiManager {
                     continue;
                 }
                 JSONObject json = (JSONObject) obj;
-                String code = "BTC";
-                String name = json.getString("name");
-                String rate = json.getString("price_btc");
-                String iso = json.getString("symbol");
+                String code = WalletBitcoinManager.BITCOIN_CURRENCY_CODE;
+                String name = json.getString(NAME);
+                String rate = json.getString(PRICE_BTC);
+                String iso = json.getString(SYMBOL);
 
                 CurrencyEntity ent = new CurrencyEntity(code, name, Float.valueOf(rate), iso);
                 tmp.add(ent);
@@ -234,7 +261,7 @@ public class BRApiManager {
         //initialize the TimerTask's job
         initializeTimerTask(context);
 
-        timer.schedule(timerTask, 1000, 60000);
+        timer.schedule(timerTask, DateUtils.SECOND_IN_MILLIS, DateUtils.MINUTE_IN_MILLIS);
     }
 
     public void stopTimerTask() {
@@ -289,9 +316,8 @@ public class BRApiManager {
 
         Request.Builder builder = new Request.Builder()
                 .url(myURL)
-                .header("Content-Type", "application/json")
-                .header("Accept", "application/json")
-                .header("User-agent", Utils.getAgentString(app, "android/HttpURLConnection"))
+                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
+                .header(BRConstants.HEADER_ACCEPT, BRConstants.CONTENT_TYPE_JSON)
                 .get();
         Iterator it = headers.entrySet().iterator();
         while (it.hasNext()) {

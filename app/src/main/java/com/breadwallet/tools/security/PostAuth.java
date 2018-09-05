@@ -11,6 +11,9 @@ import android.util.Log;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
+import com.breadwallet.core.ethereum.BREthereumAmount;
+import com.breadwallet.core.ethereum.BREthereumTransaction;
+import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
@@ -26,7 +29,9 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.entities.GenericTransactionMetaData;
 import com.breadwallet.wallet.wallets.CryptoTransaction;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TxMetaData;
 import com.platform.tools.BRBitId;
 import com.platform.tools.KVStoreManager;
@@ -215,32 +220,46 @@ public class PostAuth {
         try {
             if (rawPhrase.length > 0) {
                 if (mCryptoRequest != null && mCryptoRequest.amount != null && mCryptoRequest.address != null) {
+                    final byte[] txHash;
+                    CryptoTransaction tx;
+                    if (mCryptoRequest.getGenericTransactionMetaData() == null) {
+                        tx = mWalletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address);
 
-                    CryptoTransaction tx = mWalletManager.createTransaction(mCryptoRequest.amount, mCryptoRequest.address);
+                        if (tx == null) {
+                            BRDialog.showCustomDialog(activity, activity.getString(R.string.Alert_error), activity.getString(R.string.Send_insufficientFunds),
+                                    activity.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
+                                        @Override
+                                        public void onClick(BRDialogView brDialogView) {
+                                            brDialogView.dismiss();
+                                        }
+                                    }, null, null, 0);
+                            return;
+                        }
 
-                    if (tx == null) {
-                        BRDialog.showCustomDialog(activity, activity.getString(R.string.Alert_error), activity.getString(R.string.Send_insufficientFunds),
-                                activity.getString(R.string.AccessibilityLabels_close), null, new BRDialogView.BROnClickListener() {
-                                    @Override
-                                    public void onClick(BRDialogView brDialogView) {
-                                        brDialogView.dismiss();
-                                    }
-                                }, null, null, 0);
-                        return;
+                        txMetaData = new TxMetaData();
+                        txMetaData.comment = mCryptoRequest.message;
+                        txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(activity);
+                        BigDecimal fiatExchangeRate = mWalletManager.getFiatExchangeRate(activity);
+                        txMetaData.exchangeRate = fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue();
+                        txMetaData.fee = mWalletManager.getTxFee(tx).toPlainString();
+                        txMetaData.txSize = tx.getTxSize().intValue();
+                        txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(activity, mWalletManager.getIso());
+                        txMetaData.creationTime = (int) (System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS);
+                        txMetaData.deviceId = BRSharedPrefs.getDeviceId(activity);
+                        txMetaData.classVersion = 1;
+
+
+                    } else {
+                        WalletEthManager ethWallet = (WalletEthManager) mWalletManager;
+                        GenericTransactionMetaData genericTransactionMetaData = mCryptoRequest.getGenericTransactionMetaData();
+                        tx = new CryptoTransaction(ethWallet.getWallet().createTransactionGeneric(
+                                genericTransactionMetaData.getTargetAddress(),
+                                genericTransactionMetaData.getAmount(),
+                                genericTransactionMetaData.getAmountUnit(), String.valueOf(genericTransactionMetaData.getGasPrice()),
+                                genericTransactionMetaData.getGasPriceUnit(),
+                                String.valueOf(genericTransactionMetaData.getGasLimit()), genericTransactionMetaData.getData()));
                     }
-                    final byte[] txHash = mWalletManager.signAndPublishTransaction(tx, rawPhrase);
-
-                    txMetaData = new TxMetaData();
-                    txMetaData.comment = mCryptoRequest.message;
-                    txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(activity);
-                    BigDecimal fiatExchangeRate = mWalletManager.getFiatExchangeRate(activity);
-                    txMetaData.exchangeRate = fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue();
-                    txMetaData.fee = mWalletManager.getTxFee(tx).toPlainString();
-                    txMetaData.txSize = tx.getTxSize().intValue();
-                    txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(activity, mWalletManager.getIso());
-                    txMetaData.creationTime = (int) (System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS);
-                    txMetaData.deviceId = BRSharedPrefs.getDeviceId(activity);
-                    txMetaData.classVersion = 1;
+                    txHash = mWalletManager.signAndPublishTransaction(tx, rawPhrase);
 
                     if (Utils.isNullOrEmpty(txHash)) {
                         if (tx.getEtherTx() != null) {
@@ -283,7 +302,7 @@ public class PostAuth {
 
     public static void stampMetaData(Context activity, byte[] txHash) {
         if (txMetaData != null) {
-            KVStoreManager.getInstance().putTxMetaData(activity, txMetaData, txHash);
+            KVStoreManager.putTxMetaData(activity, txMetaData, txHash);
             txMetaData = null;
         } else Log.e(TAG, "stampMetaData: txMetaData is null!");
     }

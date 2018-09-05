@@ -4,10 +4,9 @@ import android.app.Activity;
 import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.security.keystore.UserNotAuthenticatedException;
 import android.support.annotation.WorkerThread;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -94,7 +93,7 @@ public class WalletsMaster {
         }
 
         mWallets.clear();
-        mTokenListMetaData = KVStoreManager.getInstance().getTokenListMetaData(app);
+        mTokenListMetaData = KVStoreManager.getTokenListMetaData(app);
         if (mTokenListMetaData == null) {
             List<TokenListMetaData.TokenInfo> enabled = new ArrayList<>();
             enabled.add(new TokenListMetaData.TokenInfo("BTC", false, null));
@@ -103,7 +102,7 @@ public class WalletsMaster {
             BREthereumWallet brdWallet = ethWallet.node.getWallet(ethWallet.node.tokenBRD);
             enabled.add(new TokenListMetaData.TokenInfo(brdWallet.getToken().getSymbol(), true, brdWallet.getToken().getAddress()));
             mTokenListMetaData = new TokenListMetaData(enabled, null);
-            KVStoreManager.getInstance().putTokenListMetaData(app, mTokenListMetaData); //put default currencies if null
+            KVStoreManager.putTokenListMetaData(app, mTokenListMetaData); //put default currencies if null
         }
 
         for (TokenListMetaData.TokenInfo enabled : mTokenListMetaData.enabledCurrencies) {
@@ -217,11 +216,11 @@ public class WalletsMaster {
             BRReportsManager.reportBug(new IllegalArgumentException("authKey is invalid"), true);
         }
         BRKeyStore.putAuthKey(authKey, ctx);
-        int walletCreationTime = (int) (System.currentTimeMillis() / 1000);
+        int walletCreationTime = (int) (System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS);
         BRKeyStore.putWalletCreationTime(walletCreationTime, ctx);
         final WalletInfo info = new WalletInfo();
         info.creationDate = walletCreationTime;
-        KVStoreManager.getInstance().putWalletInfo(ctx, info); //push the creation time to the kv store
+        KVStoreManager.putWalletInfo(ctx, info); //push the creation time to the kv store
 
         //store the serialized in the KeyStore
         byte[] pubKey = new BRCoreMasterPubKey(paperKeyBytes, true).serialize();
@@ -346,10 +345,16 @@ public class WalletsMaster {
             }
         }
         BaseWalletManager wallet = getWalletByIso(app, BRSharedPrefs.getCurrentWalletIso(app));
-        if (wallet == null) wallet = getWalletByIso(app, BaseBitcoinWalletManager.BITCOIN_SYMBOL);
+        if (wallet == null) {
+            wallet = getWalletByIso(app, BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE);
+        }
         if (wallet != null) {
             wallet.connect(app);
         }
+    }
+
+    public boolean isBrdWalletCreated(Context context) {
+        return !Utils.isNullOrEmpty(BRKeyStore.getMasterPublicKey(context));
     }
 
     @WorkerThread
@@ -393,6 +398,15 @@ public class WalletsMaster {
             //else just sit in the intro screen
 
         }
+    }
+
+    public boolean hasWallet(String currencyCode) {
+        for (BaseWalletManager walletManager : mWallets) {
+            if (walletManager.getIso().equalsIgnoreCase(currencyCode)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

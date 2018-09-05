@@ -62,9 +62,9 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
 //            //japanese
 //            mDebugPhrase = "こせき　ぎじにってい　けっこん　せつぞく　うんどう　ふこう　にっすう　こせい　きさま　なまみ　たきび　はかい";
 //            //english
-//            mDebugPhrase = "video tiger report bid suspect taxi mail argue naive layer metal surface";
+//            mDebugPhrase = "nurse bird city strike various benefit swing soup fog law source planet";
 //            //french
-//            mDebugPhrase = "vocation triage capsule marchand onduler tibia illicite entier fureur minorer amateur lubie";
+//            mDebugPhrase = "eyebrow elbow weasel again gate organ mobile then behind name debate joke";
 //            //spanish
 //            mDebugPhrase = "zorro turismo mezcla nicho morir chico blanco pájaro alba esencia roer repetir";
 //            //chinese
@@ -212,8 +212,8 @@ public class InputWordsActivity extends BRActivity implements View.OnFocusChange
                         WalletsMaster m = WalletsMaster.getInstance(InputWordsActivity.this);
                         PostAuth.getInstance().setCachedPaperKey(cleanPhrase);
                         //Disallow BTC and BCH sending.
-                        BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCASH_SYMBOL, false);
-                        BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCOIN_SYMBOL, false);
+                        BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCASH_CURRENCY_CODE, false);
+                        BRSharedPrefs.putAllowSpend(app, BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE, false);
 
                         PostAuth.getInstance().onRecoverWalletAuth(app, false);
                     }
