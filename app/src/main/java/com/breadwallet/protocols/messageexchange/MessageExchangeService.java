@@ -87,7 +87,6 @@ public final class MessageExchangeService extends JobIntentService {
     private static final String SERVICE_PWB = "PWB"; // Our service name for the feature known as Participate With BRD, Secure Checkout, etc.
 
     public static PairingMetaData mPairingMetaData;
-    public static MetaData mCurrentMetaData;
 
     public enum MessageType {
         LINK,
@@ -367,8 +366,7 @@ public final class MessageExchangeService extends JobIntentService {
                     metaData = new PaymentRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
                             paymentRequest.getScope(), paymentRequest.getNetwork(), paymentRequest.getAddress(),
                             paymentRequest.getAmount(), paymentRequest.getMemo());
-                    Log.d("PAYMENT_REQUEST", "metadata -> " + metaData);
-                    mCurrentMetaData = metaData;
+                    Log.d(TAG, "Payment request metadata: " + metaData);
                     confirmRequest(metaData);
                     break;
                 case CALL_REQUEST:
@@ -377,8 +375,7 @@ public final class MessageExchangeService extends JobIntentService {
                     metaData = new CallRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
                             callRequest.getScope(), callRequest.getNetwork(), callRequest.getAddress(),
                             callRequest.getAmount(), callRequest.getMemo(), callRequest.getAbi());
-                    Log.d("CALL_REQUEST", "metadata -> " + metaData);
-                    mCurrentMetaData = metaData;
+                    Log.d(TAG, "Call request metadata: " + metaData);
                     confirmRequest(metaData);
                     break;
                 default:
