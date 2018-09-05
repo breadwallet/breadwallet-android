@@ -11,7 +11,6 @@ import android.content.IntentFilter;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.os.Build;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
@@ -90,7 +89,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     private static long mBackgroundedTime;
     private static Lifecycle.Event mLastApplicationEvent;
     private static Activity currentActivity;
-    public static final Map<String, String> mHeaders = new HashMap<>();
+    private static final Map<String, String> mHeaders = new HashMap<>();
 
     private Runnable mDisconnectWalletsRunnable = new Runnable() {
         @Override
@@ -157,12 +156,12 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
         boolean isTestVersion = APIClient.getInstance(this).isStaging();
         boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
-        String lang = getCurrentLocale(this);
+        String languageCode = getCurrentLanguageCode();
 
         mHeaders.put(BRApiManager.HEADER_IS_INTERNAL, IS_ALPHA ? "true" : "false");
         mHeaders.put(BRApiManager.HEADER_TESTFLIGHT, isTestVersion ? "true" : "false");
         mHeaders.put(BRApiManager.HEADER_TESTNET, isTestNet ? "true" : "false");
-        mHeaders.put(BRApiManager.HEADER_ACCEPT_LANGUAGE, lang);
+        mHeaders.put(BRApiManager.HEADER_ACCEPT_LANGUAGE, languageCode);
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
@@ -255,12 +254,12 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     }
 
     @TargetApi(Build.VERSION_CODES.N)
-    public String getCurrentLocale(Context ctx) {
+    private String getCurrentLanguageCode() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            return ctx.getResources().getConfiguration().getLocales().get(0).getLanguage();
+            return getResources().getConfiguration().getLocales().get(0).toString();
         } else {
-            //noinspection deprecation
-            return ctx.getResources().getConfiguration().locale.getLanguage();
+            // No inspection deprecation.
+            return getResources().getConfiguration().locale.toString();
         }
     }
 
