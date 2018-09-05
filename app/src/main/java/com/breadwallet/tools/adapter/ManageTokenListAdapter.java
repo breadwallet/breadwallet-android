@@ -252,10 +252,13 @@ public class ManageTokenListAdapter extends RecyclerView.Adapter<ManageTokenList
 
         TokenListMetaData currentMd = KVStoreManager.getTokenListMetaData(mContext);
 
-        Collections.swap(currentMd.enabledCurrencies, fromPosition, toPosition);
-        Collections.swap(mTokens, fromPosition, toPosition);
-
-        KVStoreManager.putTokenListMetaData(mContext, currentMd);
+        // Only move this token to position that is not the last position, which is the "Add Wallet"
+        // button
+        if(toPosition < mTokens.size()) {
+            Collections.swap(currentMd.enabledCurrencies, fromPosition, toPosition);
+            Collections.swap(mTokens, fromPosition, toPosition);
+            KVStoreManager.putTokenListMetaData(mContext, currentMd);
+        }
 
     }
 }
