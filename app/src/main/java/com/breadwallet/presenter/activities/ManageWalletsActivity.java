@@ -54,7 +54,7 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
 
         final ArrayList<TokenItem> tokenItems = new ArrayList<>();
 
-        mTokens = KVStoreManager.getInstance().getTokenListMetaData(ManageWalletsActivity.this).enabledCurrencies;
+        mTokens = KVStoreManager.getTokenListMetaData(ManageWalletsActivity.this).enabledCurrencies;
 
         for (int i = 0; i < mTokens.size(); i++) {
 
@@ -68,9 +68,9 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
                 BREthereumToken tk = WalletEthManager.getInstance(this).node.lookupToken(info.contractAddress);
                 if (tk == null) {
                     BRReportsManager.reportBug(new NullPointerException("No token for contract: " + info.contractAddress));
-
-                } else
+                } else {
                     tokenItem = new TokenItem(tk.getAddress(), tk.getSymbol(), tk.getName(), null);
+                }
 
 
             } else if (tokenSymbol.equalsIgnoreCase("btc"))
@@ -95,7 +95,7 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
             public void onShowToken(TokenItem token) {
                 Log.d(TAG, "onShowToken");
 
-                TokenListMetaData metaData = KVStoreManager.getInstance().getTokenListMetaData(ManageWalletsActivity.this);
+                TokenListMetaData metaData = KVStoreManager.getTokenListMetaData(ManageWalletsActivity.this);
                 TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(token.symbol, true, token.address);
                 if (metaData == null) metaData = new TokenListMetaData(null, null);
 
@@ -104,7 +104,7 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
                 metaData.showCurrency(item.symbol);
 
                 final TokenListMetaData finalMetaData = metaData;
-                KVStoreManager.getInstance().putTokenListMetaData(ManageWalletsActivity.this, finalMetaData);
+                KVStoreManager.putTokenListMetaData(ManageWalletsActivity.this, finalMetaData);
                 mAdapter.notifyDataSetChanged();
 
             }
@@ -113,7 +113,7 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
             public void onHideToken(TokenItem token) {
                 Log.d(TAG, "onHideToken");
 
-                TokenListMetaData metaData = KVStoreManager.getInstance().getTokenListMetaData(ManageWalletsActivity.this);
+                TokenListMetaData metaData = KVStoreManager.getTokenListMetaData(ManageWalletsActivity.this);
                 TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(token.symbol, true, token.address);
                 if (metaData == null) metaData = new TokenListMetaData(null, null);
 
@@ -122,7 +122,7 @@ public class ManageWalletsActivity extends BaseSettingsActivity implements OnSta
 
                 metaData.hiddenCurrencies.add(item);
 
-                KVStoreManager.getInstance().putTokenListMetaData(ManageWalletsActivity.this, metaData);
+                KVStoreManager.putTokenListMetaData(ManageWalletsActivity.this, metaData);
                 mAdapter.notifyDataSetChanged();
 
             }

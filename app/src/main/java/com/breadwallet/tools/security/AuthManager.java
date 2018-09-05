@@ -6,9 +6,11 @@ import android.app.KeyguardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.DisabledActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
@@ -86,7 +88,8 @@ public class AuthManager {
         BRKeyStore.putLastPinUsedTime(System.currentTimeMillis(), context);
     }
 
-    public void authPrompt(final Context context, String title, String message, boolean forcePin, boolean forceFingerprint, BRAuthCompletion completion) {
+    public void authPrompt(Context context, String title, String message, boolean forcePin, boolean forceFingerprint, BRAuthCompletion completion) {
+        context = BreadApp.getBreadContext();
         if (context == null || !(context instanceof Activity)) {
             Log.e(TAG, "authPrompt: context is null or not Activity: " + context);
             return;
@@ -128,7 +131,7 @@ public class AuthManager {
                 transaction.add(android.R.id.content, fingerprintFragment, FragmentFingerprint.class.getName());
                 transaction.addToBackStack(null);
                 if (!app.isDestroyed()) {
-                    transaction.commit();
+                    transaction.commitAllowingStateLoss();
                 }
             } else {
                 breadPin = new PinFragment();
@@ -142,7 +145,7 @@ public class AuthManager {
                 transaction.add(android.R.id.content, breadPin, breadPin.getClass().getName());
                 transaction.addToBackStack(null);
                 if (!app.isDestroyed()) {
-                    transaction.commit();
+                    transaction.commitAllowingStateLoss();
                 }
             }
         } else {

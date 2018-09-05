@@ -2,6 +2,7 @@ package com.breadwallet.presenter.fragments;
 
 import android.app.Activity;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,6 +28,7 @@ import android.widget.TextView;
 
 import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
+import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.presenter.customviews.BRKeyboard;
@@ -50,11 +52,9 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
-import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 
 import static com.breadwallet.wallet.util.CryptoUriParser.parseRequest;
 import static com.platform.HTTPServer.URL_SUPPORT;
@@ -200,69 +200,38 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         return rootView;
     }
 
+    private void startEditingAmount() {
+        if (mIsAmountLabelShown) { //only first time
+            mIsAmountLabelShown = false;
+            mAmountEdit.setHint("0");
+            mAmountEdit.setTextSize(getResources().getDimension(R.dimen.amount_text_size));
+            mBalanceText.setVisibility(View.VISIBLE);
+            mEditFeeIcon.setVisibility(View.VISIBLE);
+            mAmountEdit.setVisibility(View.VISIBLE);
+            mFeeText.setVisibility(View.VISIBLE);
+            mCurrencyCode.setTextColor(getContext().getColor(R.color.almost_black));
+            mCurrencyCode.setText(CurrencyUtils.getSymbolByIso(getActivity(), mSelectedCurrencyCode));
+            mCurrencyCode.setTextSize(getResources().getDimension(R.dimen.currency_code_text_size_large));
+
+            ConstraintSet set = new ConstraintSet();
+            set.clone(mAmountLayout);
+
+            int px4 = Utils.getPixelsFromDps(getContext(), 4);
+            set.connect(mBalanceText.getId(), ConstraintSet.TOP, mCurrencyCode.getId(), ConstraintSet.BOTTOM, px4);
+            set.connect(mFeeText.getId(), ConstraintSet.TOP, mBalanceText.getId(), ConstraintSet.BOTTOM, px4);
+            set.connect(mFeeText.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px4);
+            set.connect(mCurrencyCode.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, px4);
+            set.connect(mCurrencyCode.getId(), ConstraintSet.BOTTOM, -1, ConstraintSet.TOP, -1);
+            set.applyTo(mAmountLayout);
+        }
+    }
+
     private void setListeners() {
         mAmountEdit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
                 showKeyboard(true);
-                if (mIsAmountLabelShown) { //only first time
-                    mIsAmountLabelShown = false;
-                    mAmountEdit.setHint("0");
-                    mAmountEdit.setTextSize(24);
-                    mBalanceText.setVisibility(View.VISIBLE);
-                    mEditFeeIcon.setVisibility(View.VISIBLE);
-                    mFeeText.setVisibility(View.VISIBLE);
-                    mCurrencyCode.setTextColor(getContext().getColor(R.color.almost_black));
-                    mCurrencyCode.setText(CurrencyUtils.getSymbolByIso(getActivity(), mSelectedCurrencyCode));
-                    mCurrencyCode.setTextSize(28);
-                    final float scaleX = mAmountEdit.getScaleX();
-                    mAmountEdit.setScaleX(0);
-
-                    AutoTransition tr = new AutoTransition();
-                    tr.setInterpolator(new OvershootInterpolator());
-                    tr.addListener(new android.support.transition.Transition.TransitionListener() {
-                        @Override
-                        public void onTransitionStart(@NonNull android.support.transition.Transition transition) {
-
-                        }
-
-                        @Override
-                        public void onTransitionEnd(@NonNull android.support.transition.Transition transition) {
-                            mAmountEdit.requestLayout();
-                            mAmountEdit.animate().setDuration(100).scaleX(scaleX);
-                        }
-
-                        @Override
-                        public void onTransitionCancel(@NonNull android.support.transition.Transition transition) {
-
-                        }
-
-                        @Override
-                        public void onTransitionPause(@NonNull android.support.transition.Transition transition) {
-
-                        }
-
-                        @Override
-                        public void onTransitionResume(@NonNull android.support.transition.Transition transition) {
-
-                        }
-                    });
-
-                    ConstraintSet set = new ConstraintSet();
-                    set.clone(mAmountLayout);
-                    TransitionManager.beginDelayedTransition(mAmountLayout, tr);
-
-                    int px4 = Utils.getPixelsFromDps(getContext(), 4);
-                    set.connect(mBalanceText.getId(), ConstraintSet.TOP, mCurrencyCode.getId(), ConstraintSet.BOTTOM, px4);
-                    set.connect(mFeeText.getId(), ConstraintSet.TOP, mBalanceText.getId(), ConstraintSet.BOTTOM, px4);
-                    set.connect(mFeeText.getId(), ConstraintSet.BOTTOM, ConstraintSet.PARENT_ID, ConstraintSet.BOTTOM, px4);
-                    set.connect(mCurrencyCode.getId(), ConstraintSet.TOP, ConstraintSet.PARENT_ID, ConstraintSet.TOP, px4);
-                    set.connect(mCurrencyCode.getId(), ConstraintSet.BOTTOM, -1, ConstraintSet.TOP, -1);
-                    set.applyTo(mAmountLayout);
-
-                }
-
+                startEditingAmount();
             }
         });
 
@@ -404,6 +373,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
                 saveViewModelData();
+                closeWithAnimation();
                 UiUtils.openScanner(getActivity(), BRConstants.SCANNER_REQUEST);
 
             }
@@ -504,6 +474,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mCloseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mViewModel.clear();
                 closeWithAnimation();
             }
         });
@@ -555,10 +526,11 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
         } else {
             Utils.hideKeyboard(getActivity());
-            if (mSignalLayout.indexOfChild(mKeyboardLayout) == -1)
+            if (mSignalLayout.indexOfChild(mKeyboardLayout) == -1) {
                 mSignalLayout.addView(mKeyboardLayout, mKeyboardIndex);
-            else
+            } else {
                 mSignalLayout.removeView(mKeyboardLayout);
+            }
 
         }
     }
@@ -633,6 +605,8 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     @Override
     public void onResume() {
         super.onResume();
+        mIsAmountLabelShown = true;
+        loadParameters();
         loadViewModelData();
     }
 
@@ -640,6 +614,17 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     public void onPause() {
         super.onPause();
         Utils.hideKeyboard(getActivity());
+    }
+
+    private void loadParameters() {
+        Bundle arguments = getArguments();
+        if (arguments != null) {
+            CryptoRequest request = (CryptoRequest) arguments.getSerializable(WalletActivity.EXTRA_CRYPTO_REQUEST);
+            if (request != null) {
+                saveViewModelData(getActivity(), request);
+            }
+
+        }
     }
 
     private void handleClick(String key) {
@@ -693,44 +678,45 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     }
 
     private void updateText() {
-        Activity app = getActivity();
-        if (app == null) return;
+        Context context = getContext();
+        if (context == null) return;
 
         String stringAmount = mViewModel.getAmount();
         setAmount();
-        BaseWalletManager wm = WalletsMaster.getInstance(app).getCurrentWallet(app);
+        BaseWalletManager wm = WalletsMaster.getInstance(context).getCurrentWallet(context);
         String balanceString;
         if (mSelectedCurrencyCode == null)
             mSelectedCurrencyCode = wm.getIso();
-        BigDecimal mCurrentBalance = wm.getCachedBalance(app);
-        if (!mIsAmountLabelShown)
-            mCurrencyCode.setText(CurrencyUtils.getSymbolByIso(app, mSelectedCurrencyCode));
+        BigDecimal mCurrentBalance = wm.getCachedBalance(context);
+        if (!mIsAmountLabelShown) {
+            mCurrencyCode.setText(CurrencyUtils.getSymbolByIso(context, mSelectedCurrencyCode));
+        }
         mCurrencyCodeButton.setText(mSelectedCurrencyCode);
 
         //is the chosen ISO a crypto (could be also a fiat currency)
-        boolean isIsoCrypto = WalletsMaster.getInstance(app).isIsoCrypto(app, mSelectedCurrencyCode);
-        boolean isWalletErc20 = WalletsMaster.getInstance(app).isIsoErc20(app, wm.getIso());
+        boolean isIsoCrypto = WalletsMaster.getInstance(context).isIsoCrypto(context, mSelectedCurrencyCode);
+        boolean isWalletErc20 = WalletsMaster.getInstance(context).isIsoErc20(context, wm.getIso());
         BigDecimal inputAmount = new BigDecimal(Utils.isNullOrEmpty(stringAmount) || stringAmount.equalsIgnoreCase(".") ? "0" : stringAmount);
 
         //smallest crypto e.g. satoshis
-        BigDecimal cryptoAmount = isIsoCrypto ? wm.getSmallestCryptoForCrypto(app, inputAmount) : wm.getSmallestCryptoForFiat(app, inputAmount);
+        BigDecimal cryptoAmount = isIsoCrypto ? wm.getSmallestCryptoForCrypto(context, inputAmount) : wm.getSmallestCryptoForFiat(context, inputAmount);
 
         //wallet's balance for the selected ISO
-        BigDecimal isoBalance = isIsoCrypto ? wm.getCryptoForSmallestCrypto(app, mCurrentBalance) : wm.getFiatForSmallestCrypto(app, mCurrentBalance, null);
+        BigDecimal isoBalance = isIsoCrypto ? wm.getCryptoForSmallestCrypto(context, mCurrentBalance) : wm.getFiatForSmallestCrypto(context, mCurrentBalance, null);
         if (isoBalance == null) isoBalance = BigDecimal.ZERO;
 
         BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, mAddressEdit.getText().toString());
 
         //get the fee for iso (dollars, bits, BTC..)
-        BigDecimal isoFee = isIsoCrypto ? rawFee : wm.getFiatForSmallestCrypto(app, rawFee, null);
+        BigDecimal isoFee = isIsoCrypto ? rawFee : wm.getFiatForSmallestCrypto(context, rawFee, null);
 
         //format the fee to the selected ISO
-        String formattedFee = CurrencyUtils.getFormattedAmount(app, mSelectedCurrencyCode, isoFee);
+        String formattedFee = CurrencyUtils.getFormattedAmount(context, mSelectedCurrencyCode, isoFee);
 
         if (isWalletErc20) {
-            BaseWalletManager ethWm = WalletEthManager.getInstance(app);
-            isoFee = isIsoCrypto ? rawFee : ethWm.getFiatForSmallestCrypto(app, rawFee, null);
-            formattedFee = CurrencyUtils.getFormattedAmount(app, isIsoCrypto ? ethWm.getIso() : mSelectedCurrencyCode, isoFee);
+            BaseWalletManager ethWm = WalletEthManager.getInstance(context);
+            isoFee = isIsoCrypto ? rawFee : ethWm.getFiatForSmallestCrypto(context, rawFee, null);
+            formattedFee = CurrencyUtils.getFormattedAmount(context, isIsoCrypto ? ethWm.getIso() : mSelectedCurrencyCode, isoFee);
         }
 
         boolean isOverTheBalance = inputAmount.compareTo(isoBalance) > 0;
@@ -749,8 +735,8 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 mCurrencyCode.setTextColor(getContext().getColor(R.color.almost_black));
         }
         //formattedBalance
-        String formattedBalance = CurrencyUtils.getFormattedAmount(app, mSelectedCurrencyCode,
-                isIsoCrypto ? wm.getSmallestCryptoForCrypto(app, isoBalance) : isoBalance);
+        String formattedBalance = CurrencyUtils.getFormattedAmount(context, mSelectedCurrencyCode,
+                isIsoCrypto ? wm.getSmallestCryptoForCrypto(context, isoBalance) : isoBalance);
         balanceString = String.format(getString(R.string.Send_balance), formattedBalance);
         mBalanceText.setText(balanceString);
         mFeeText.setText(String.format(getString(R.string.Send_fee), formattedFee));
@@ -768,17 +754,21 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
     }
 
     private void setAmount() {
-        String tmpAmount = mViewModel.getAmount();
-        int divider = tmpAmount.length();
-        if (tmpAmount.contains(".")) {
-            divider = tmpAmount.indexOf(".");
+        String cryptoAmount = mViewModel.getAmount();
+
+        int divider = cryptoAmount.length();
+        if (cryptoAmount.contains(".")) {
+            divider = cryptoAmount.indexOf(".");
         }
         StringBuilder newAmount = new StringBuilder();
-        for (int i = 0; i < tmpAmount.length(); i++) {
-            newAmount.append(tmpAmount.charAt(i));
+        for (int i = 0; i < cryptoAmount.length(); i++) {
+            newAmount.append(cryptoAmount.charAt(i));
             if (divider > 3 && divider - 1 != i && divider > i && ((divider - i - 1) % 3 == 0)) {
                 newAmount.append(",");
             }
+        }
+        if (!Utils.isNullOrEmpty(cryptoAmount) && new BigDecimal(cryptoAmount).compareTo(BigDecimal.ZERO) > 0) {
+            startEditingAmount();
         }
         mAmountEdit.setText(newAmount.toString());
     }
@@ -834,10 +824,12 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
             if (!Utils.isNullOrEmpty(mViewModel.getChosenCode())) {
                 mSelectedCurrencyCode = mViewModel.getChosenCode().toUpperCase();
             }
+            updateText();
         }
     }
 
-    public void saveViewModelData(CryptoRequest request) {
+    public void saveViewModelData(Context context, CryptoRequest request) {
+        updateViewModel();
         String address = null;
         String code = null;
         String amount = null;
@@ -849,20 +841,18 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 code = mSelectedCurrencyCode;
             }
         } else {
-            BaseWalletManager wm = WalletsMaster.getInstance(getActivity()).getCurrentWallet(getActivity());
             address = request.address;
             memo = request.message;
             code = request.iso;
-
-            if (request.amount != null) {
-                BigDecimal satoshiAmount = request.amount.multiply(new BigDecimal(BaseBitcoinWalletManager.ONE_BITCOIN_IN_SATOSHIS));
-                amount = wm.getFiatForSmallestCrypto(getActivity(), satoshiAmount, null).toPlainString();
-            } else if (request.value != null) {
-                // ETH request amount param is named `value`
-                BigDecimal fiatAmount = wm.getFiatForSmallestCrypto(getActivity(), request.value, null);
-                fiatAmount = fiatAmount.setScale(2, RoundingMode.HALF_EVEN);
-                amount = fiatAmount.toPlainString();
+            BaseWalletManager walletManager = WalletsMaster.getInstance(context).getCurrentWallet(context);
+            if (request.amount != null && request.amount.compareTo(BigDecimal.ZERO) > 0 && !request.iso.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
+                // Crypto request amount param is named `amount` and it is in bitcoin and other currencies.
+                amount = walletManager.getCryptoForSmallestCrypto(context, new BigDecimal(request.amount.toPlainString())).toPlainString();
+            } else if (request.value != null && request.value.compareTo(BigDecimal.ZERO) > 0 && request.iso.equalsIgnoreCase(WalletEthManager.ETH_CURRENCY_CODE)) {
+                // ETH request amount param is named `value` and it is in ether.
+                amount = walletManager.getCryptoForSmallestCrypto(context, new BigDecimal(request.value.toPlainString())).toPlainString();
             }
+
         }
         if (!Utils.isNullOrEmpty(address)) {
             mViewModel.setAddress(address);
@@ -879,8 +869,14 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         loadViewModelData();
     }
 
+    private void updateViewModel() {
+        if (mViewModel == null) {
+            mViewModel = ViewModelProviders.of(this).get(SendViewModel.class);
+        }
+    }
+
     public void saveViewModelData() {
-        saveViewModelData(null);
+        saveViewModelData(getActivity(), null);
     }
 
     @Override

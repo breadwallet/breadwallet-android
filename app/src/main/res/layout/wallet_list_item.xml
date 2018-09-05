@@ -27,10 +27,13 @@
     <com.breadwallet.presenter.customviews.BaseTextView
         android:id="@+id/wallet_name"
         android:layout_width="wrap_content"
+        android:maxLines="1"
+        android:maxWidth="180dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:layout_toEndOf="@+id/icon_background"
+        android:ellipsize="end"
         android:textColor="@color/white"
         android:textSize="18sp"
         app:customTFont="CircularPro-Bold.otf"/>

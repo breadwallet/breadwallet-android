@@ -24,6 +24,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.breadwallet.presenter.activities.intro.IntroActivity;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -87,11 +88,11 @@ public class Utils {
     }
 
     @SuppressWarnings("deprecation")
-    public static void printPhoneSpecs() {
+    public static void printPhoneSpecs(Context context) {
         String specsTag = "PHONE SPECS";
         Log.e(specsTag, "");
         Log.e(specsTag, "***************************PHONE SPECS***************************");
-        Log.e(specsTag, "* screen X: " + IntroActivity.screenParametersPoint.x + " , screen Y: " + IntroActivity.screenParametersPoint.y);
+        Log.e(specsTag, "* screen X: " + BRSharedPrefs.getScreenWidth(context) + " , screen Y: " + BRSharedPrefs.getScreenHeight(context));
         Log.e(specsTag, "* Build.CPU_ABI: " + Build.CPU_ABI);
         Runtime rt = Runtime.getRuntime();
         long maxMemory = rt.maxMemory();
@@ -135,6 +136,10 @@ public class Utils {
 
     public static boolean isNullOrEmpty(String str) {
         return str == null || str.isEmpty();
+    }
+
+    public static boolean isNullOrZero(BigDecimal amount) {
+        return amount == null || amount.compareTo(BigDecimal.ZERO) == 0;
     }
 
     public static boolean isNullOrEmpty(byte[] arr) {
@@ -190,8 +195,9 @@ public class Utils {
             View view = ((Activity) app).getCurrentFocus();
             if (view != null) {
                 InputMethodManager imm = (InputMethodManager) app.getSystemService(Context.INPUT_METHOD_SERVICE);
-                if (imm != null)
+                if (imm != null) {
                     imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+                }
             }
         }
 

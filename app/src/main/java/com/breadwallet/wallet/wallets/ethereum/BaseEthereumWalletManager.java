@@ -2,6 +2,7 @@ package com.breadwallet.wallet.wallets.ethereum;
 
 import android.content.Context;
 
+import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -42,6 +43,8 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
         return mAddress;
     }
 
+    public abstract BREthereumWallet getWallet();
+
     @Override
     public boolean isAddressValid(String address) {
         return !Utils.isNullOrEmpty(address) && address.startsWith(ETHEREUM_ADDRESS_PREFIX);
@@ -59,11 +62,13 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
 
     // TODO not used by ETH, ERC20
     @Override
-    public void addSyncListener(SyncListener listener) { }
+    public void addSyncListener(SyncListener listener) {
+    }
 
     // TODO not used by ETH, ERC20
     @Override
-    public void removeSyncListener(SyncListener listener) { }
+    public void removeSyncListener(SyncListener listener) {
+    }
 
     @Override
     public void addTxListModifiedListener(OnTxListModified listener) {
@@ -77,6 +82,7 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
 
     //TODO Not used by ETH, ERC20
     @Override
-    public void refreshAddress(Context app) { }
+    public void refreshAddress(Context app) {
+    }
 
 }

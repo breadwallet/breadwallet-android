@@ -224,16 +224,10 @@
   <string name="FeeSelector.title">Verwerkingssnelheid</string>
   <!-- This is the section that allows administration of the user's wallet -->
   <string name="HomeScreen.admin">Beheerder</string>
-  <!-- Home screen menu button to buy some bitcoin -->
-  <string name="HomeScreen.buy">Bitcoins Kopen</string>
-  <!-- Menu button on the home screen toolbar -->
-  <string name="HomeScreen.menu">Menu</string>
   <!-- This section lists the users wallets -->
   <string name="HomeScreen.portfolio">Wallets</string>
   <!-- Label for the total balance of all the user's assets (style is all lower case if your language permits) -->
   <string name="HomeScreen.totalAssets">Totale Prijs:</string>
-  <!-- (Tap here to) trade (your assets for other assets) -->
-  <string name="HomeScreen.trade">Handel</string>
   <!-- Checking private key balance progress view text -->
   <string name="Import.checking">Private key balans checken...</string>
   <!-- Sweep private key confirmation message -->
@@ -281,9 +275,11 @@
   <!-- Ignore jailbreak warning button -->
   <string name="JailbreakWarnings.ignore">Negeren</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithBalance">APPARAAT BEVEILIGING BESCHADIGD\nElke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan hiermee je Bitcoins stelen! Wis deze portemonnee direct en herstel het op een veilig apparaat.</string>
+  <string name="JailbreakWarnings.messageWithBalance">APPARAAT BEVEILIGING BESCHADIGD
+Elke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan hiermee je Bitcoins stelen! Wis deze portemonnee direct en herstel het op een veilig apparaat.</string>
   <!-- Jailbreak warning message -->
-  <string name="JailbreakWarnings.messageWithoutBalance">APPARAAT BEVEILIGING BESCHADIGD\nElke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan hiermee je Bitcoins stelen. Gebruik Bread a.u.b. alleen op een niet-gejailbreakt apparaat.</string>
+  <string name="JailbreakWarnings.messageWithoutBalance">APPARAAT BEVEILIGING BESCHADIGD
+Elke \'jailbreak\' app heeft toegang tot de sleutelhanger data van Bread en kan hiermee je Bitcoins stelen. Gebruik Bread a.u.b. alleen op een niet-gejailbreakt apparaat.</string>
   <!-- Jailbreak warning title -->
   <string name="JailbreakWarnings.title">WAARSCHUWING</string>
   <!-- Wipe wallet button -->
@@ -304,10 +300,6 @@
   <string name="MenuButton.addWallet">Voeg Wallet toe</string>
   <!-- Menu button title -->
   <string name="MenuButton.lock">Portemonnee Vergrendelen</string>
-  <!-- (Click here to) manage (your list of) wallets -->
-  <string name="MenuButton.manageWallets">Beheer portemonnees</string>
-  <!-- (press here to) scan (a) QR code -->
-  <string name="MenuButton.scan">Scan QR-code</string>
   <!-- Menu button title -->
   <string name="MenuButton.security">Veiligheidscentrum</string>
   <!-- Menu button title -->
@@ -596,8 +588,6 @@
   <string name="Settings.manage">Beheer</string>
   <!-- Notifications label -->
   <string name="Settings.notifications">Notificaties</string>
-  <!-- Section header for "other settings". -->
-  <string name="Settings.other">Andere</string>
   <!-- Preferences settings section header -->
   <string name="Settings.preferences">Voorkeuren</string>
   <!-- Tap here to reset the list of currencies to the default settings. -->
@@ -627,7 +617,9 @@
   <!-- button label -->
   <string name="StartPaperPhrase.againButtonTitle">Schrijf Papieren Sleutel Opnieuw Op</string>
   <!-- Paper key explanation text. -->
-  <string name="StartPaperPhrase.body">Je papieren sleutel is de enige manier om je Bread te herstellen als je telefoon verloren, gestolen, kapot of geüpgrade is.\n\nWe zullen je een lijst met woorden laten zie die je op een papiertje moet schrijven en veilig moet bewaren.</string>
+  <string name="StartPaperPhrase.body">Je papieren sleutel is de enige manier om je Bread te herstellen als je telefoon verloren, gestolen, kapot of geüpgrade is.
+
+We zullen je een lijst met woorden laten zie die je op een papiertje moet schrijven en veilig moet bewaren.</string>
   <!-- button label -->
   <string name="StartPaperPhrase.buttonTitle">Schrijf Papieren Sleutel Op</string>
   <!-- Argument is date -->
@@ -640,14 +632,10 @@
   <string name="StartViewController.recoverButton">Wallet herstellen</string>
   <!-- Syncing view connectiong state header text -->
   <string name="SyncingView.connecting">Aan het verbinden</string>
-  <!-- The sync has failed (to complete) -->
-  <string name="SyncingView.failed">Synchronisatie mislukt</string>
   <!-- Syncing view header text -->
   <string name="SyncingView.header">Synchroniseren</string>
   <!-- Retry button label -->
   <string name="SyncingView.retry">Opnieuw proberen</string>
-  <!-- "eg. Synced through <Jan 12, 2015> -->
-  <string name="SyncingView.syncedThrough">Gesynchroniseerd via %1$s</string>
   <!-- Syncing view syncing state header text -->
   <string name="SyncingView.syncing">Aan het synchroniseren</string>
   <!-- 6 d (6 days) -->
@@ -899,7 +887,9 @@
   <!-- Updating webview message -->
   <string name="Webview.updating">Updaten...</string>
   <!-- Welcome screen text. (?) will be replaced with the help icon users should look for. -->
-  <string name="Welcome.body">Breadwallet is omgedoopt tot Bread, met een gloednieuw uiterlijk en enkele nieuwe functies.\n\nAls u hulp nodig hebt, zoek naar de (?) rechtsboven in de meeste schermen.</string>
+  <string name="Welcome.body">Breadwallet is omgedoopt tot Bread, met een gloednieuw uiterlijk en enkele nieuwe functies.
+
+Als u hulp nodig hebt, zoek naar de (?) rechtsboven in de meeste schermen.</string>
   <!-- Top title of welcome screen -->
   <string name="Welcome.title">Welkom bij Brood!</string>
   <!-- Wipe wallet alert message -->
@@ -930,4 +920,276 @@
   <string name="WritePaperPhrase.previous">Vorige</string>
   <!-- 1 of 3 -->
   <string name="WritePaperPhrase.step">%1$d van %2$d</string>
+  <!-- Section header for "other settings". -->
+  <string name="Settings.other">Andere</string>
+  <!-- (Click here to) manage (your list of) wallets -->
+  <string name="MenuButton.manageWallets">Beheer wallets</string>
+  <!-- Menu button on the home screen toolbar -->
+  <string name="HomeScreen.menu">Menu</string>
+  <!-- Home screen menu button to buy some bitcoin -->
+  <string name="HomeScreen.buy">Bitcoins Kopen</string>
+  <!-- (Tap here to) trade (your assets for other assets) -->
+  <string name="HomeScreen.trade">Handel</string>
+  <!-- (press here to) scan (a) QR code -->
+  <string name="MenuButton.scan">Scan QR-code</string>
+  <!-- The sync has failed (to complete) -->
+  <string name="SyncingView.failed">Synchronisatie mislukt</string>
+  <!-- "eg. Synced through <Jan 12, 2015> -->
+  <string name="SyncingView.syncedThrough">Gesynchroniseerd via %1$s</string>
+  <string name="account.oauth.button.continue_email">Link Versturen naar E-mailadres</string>
+  <string name="account.oauth.button.done">Oké!</string>
+  <string name="account.oauth.instructions.continue">Oké, check je mail en volg de instructies. Klik wanneer je klaar bent nog een keer op \"Inloggen\" en het is geregeld!</string>
+  <string name="account.oauth.label.start">Het lijkt erop dat je probeert in te loggen met een bestaand account. We sturen je een e-mail, open de link die daarin staat, log in, autoriseer ons en ga hieronder verder.</string>
+  <string name="account.oauth.error.fail">Autorisatie Mislukt</string>
+  <string name="datetime.duration.day">dag</string>
+  <string name="datetime.duration.week">week</string>
+  <string name="datetime.duration.month">maand</string>
+  <!-- Account error message -->
+  <string name="exchange.account_picker.error.empty">Geen accounts gevonden.</string>
+  <string name="exchange.label.empty_list">Helaas zijn er momenteel geen diensten beschikbaar in je regio.</string>
+  <!-- Get started with Glidera -->
+  <string name="exchange.glidera.label.get_started">Begin met {serviceName}</string>
+  <!-- Glidera message - choose bank -->
+  <string name="exchange.glidera.label.select_bank">Selecteer je bank</string>
+  <!-- Agree to Glidera terms of service -->
+  <string name="exchange.glidera.label.tos_agree">Door hieronder te klikken ga je akkoord met de Algemene Voorwaarden van {serviceName}.</string>
+  <!-- Glidera message - trying to do too many purchases at the same time -->
+  <string name="exchange.glidera.notice.after_first_transfer">Het kan zijn dat je moet wachten tot je huidige aankoop verwerkt is voordat je een andere aankoop kan doen.</string>
+  <!-- Glidera message - trying to do too many purchases at the same time -->
+  <string name="exchange.glidera.notice.before_first_transfer">Je zult geen nieuwe aankoop kunnen doen totdat je eerste aankoop verwerkt is.</string>
+  <!-- Glidera message - your order is in process -->
+  <string name="exchange.glidera.notice.details_waiting">Je persoonlijke gegevens worden gecontroleerd. Dit kan enkele dagen duren.</string>
+  <!-- Glidera message - your order is in process -->
+  <string name="exchange.glidera.notice.id_verification_waiting">Je documenten worden gecontroleerd. Dit kan enkele dagen duren.</string>
+  <!-- Glidera message - you’re registered with Glidera -->
+  <string name="exchange.glidera.notice.registered">Je bent aangemeld met {service}.</string>
+  <string name="exchange.glidera.title.account_details">Accountgegevens</string>
+  <string name="exchange.glidera.title.bank_login">Inloggen met Bank</string>
+  <!-- Glidera message - picture of your ID (driver’s license or passport) -->
+  <string name="exchange.glidera.title.id_verification">ID-beeld</string>
+  <!-- Glidera message - connect a bank account -->
+  <string name="exchange.glidera.title.link_account">Account Koppelen</string>
+  <string name="exchange.glidera.title.preferences">Accountvoorkeuren</string>
+  <string name="exchange.glidera.title.registration">Aanmelding</string>
+  <string name="exchange.glidera.notice.settings_trouble">Ondervind je problemen met de instellingen hierboven?</string>
+  <!-- Glidera message - tap to go directly to their website -->
+  <string name="exchange.glidera.notice.visit_directly">Tik hieronder om {serviceName} rechtstreeks te bezoeken.</string>
+  <!-- Glidera message - tap to out their settings -->
+  <string name="exchange.glidera.button.open_settings">Glidera-instellingen Openen</string>
+  <string name="exchange.cash.button.buy">Bitcoin kopen</string>
+  <!-- Check the status of your order -->
+  <string name="exchange.cash.button.status">Status Controleren</string>
+  <!-- Order details - how much, exchange rate -->
+  <string name="exchange.crypto.memo">Verkocht voor {toAmount}{toCurrency}, voor een prijs van {rate}{toCurrency} per {fromCurrency}.</string>
+  <string name="exchange.error.max_order">Maximale bestelling: {amount}</string>
+  <string name="exchange.error.min_order">Minimale bestelling: {amount}</string>
+  <string name="exchange.geo.button.check_again">Opnieuw Controleren</string>
+  <string name="exchange.geo.button.enable">Locatiediensten inschakelen?</string>
+  <string name="exchange.geo.error.enable_in_settings">Je moet locatietoegang voor je telefoon inschakelen. Ga naar Systeeminstellingen en schakel Locatiediensten in.</string>
+  <string name="exchange.history.label.btc_price">BTC-prijs bij aankoop:</string>
+  <string name="exchange.history.label.price">Prijs in {currency} bij aankoop:</string>
+  <string name="exchange.history.label.delivery_date_label">Leveringsdatum:</string>
+  <string name="exchange.history.label.identifier">Identificator:</string>
+  <string name="exchange.history.label.service_label">Dienst:</string>
+  <string name="exchange.history.label.state.complete">Voltooien</string>
+  <string name="exchange.history.label.state.processing">Beschikbaar Op</string>
+  <string name="exchange.history.label.status_label">Status:</string>
+  <string name="exchange.history.label.status.complete">Voltooid</string>
+  <string name="exchange.history.label.status.failed">Mislukt</string>
+  <string name="exchange.history.label.status.processing">In Uitvoering</string>
+  <string name="exchange.history.label.total">Totale betaalde prijs:</string>
+  <string name="exchange.history.title">Handelsgeschiedenis</string>
+  <string name="exchange.label.provider">Diensten Aangeboden door {name}</string>
+  <string name="exchange.label.daily_and_monthly_limits">Je limiet is {daily} per dag en {monthly} per maand.</string>
+  <string name="exchange.label.daily_limit">Je kan vandaag tot {daily} kopen.</string>
+  <string name="exchange.label.delivered">Levering</string>
+  <string name="exchange.label.empty_history">Geen transacties. Koop wat valuta!</string>
+  <string name="exchange.label.fees">Kosten</string>
+  <string name="exchange.label.limit.daily">Dagelijks gebruik: {consumed} van {amount}.</string>
+  <string name="exchange.label.limit.weekly">Wekelijks gebruik: {consumed} van {amount}.</string>
+  <string name="exchange.label.limits">Limieten</string>
+  <string name="exchange.label.link.purchase">Aankopen</string>
+  <string name="exchange.label.loading_limits">Je limieten worden geladen...</string>
+  <!-- Order limit exceeded -->
+  <string name="exchange.label.zero_limits">Je hebt je limiet voor aankopen bereikt. Probeer het later opnieuw.</string>
+  <!-- Cannot buy yet, order in progress or ID verification required -->
+  <string name="exchange.label.zero_limits_and_no_history">Je hebt nog geen toestemming voor het kopen van Bitcoin. Controleer het instellingentabblad en neem contact op met {email}.</string>
+  <string name="exchange.unsupported.title">Momenteel niet ondersteund.</string>
+  <string name="exchange.unsupported.paragraph.buy">De aankoop van deze activa wordt nog niet ondersteund. We voegen constant ondersteuning toe voor meer activa, dus kijk binnenkort nog eens!</string>
+  <string name="exchange.unsupported.paragraph.sell">De aankoop van deze activa wordt nog niet ondersteund. We voegen constant ondersteuning toe voor meer activa, dus kijk binnenkort nog eens!</string>
+  <string name="empty.title">Geen activa.</string>
+  <string name="empty.paragraph.buy">Je hebt geen activa om te verhandelen. Begin met het kopen van wat Bitcoin!</string>
+  <string name="exchange.libx.label.refreshing_token">Vernieuwen...</string>
+  <string name="exchange.libx.label.show_token">LibX-token: {token}</string>
+  <string name="exchange.libx.label.token_expires">Verloopt op: {time}</string>
+  <string name="exchange.libx.label.token_fees">Kosten: {amount}</string>
+  <string name="exchange.libx.label.token_rate">Tarief: {amount}</string>
+  <string name="exchange.libx.label.token_sent">Verstuurd: {amount}</string>
+  <string name="exchange.libx.label.token_status">Status:</string>
+  <string name="exchange.libx.notice.pin_done">Fantastisch! Je bent klaar.</string>
+  <string name="exchange.libx.notice.redeem_another">Nog een verzilveren</string>
+  <string name="exchange.libx.title.pin">LibertyX Pincode Verzilveren</string>
+  <string name="exchange.libx.title.status">LibertyX-status</string>
+  <string name="exchange.libx.title.token">LibertyX Token Aanmaken</string>
+  <string name="exchange.slogans.bank">Link je bankrekening om Bitcoin te kopen en verkopen met behulp van de prijswinnende makelaardij die vertrouwd wordt door de grootste portefeuilles ter wereld.</string>
+  <string name="exchange.title.bank">Bankrekening</string>
+  <string name="exchange.title.buy_bitcoin">Bitcoin kopen</string>
+  <string name="exchange.title.buy_currency">{currency} kopen</string>
+  <string name="exchange.title.buy_amount_in">{amount} {currency} kopen</string>
+  <string name="exchange.title.buy_amount">{amount} kopen</string>
+  <string name="exchange.title.buy_service">Betalingsmethode kiezen.</string>
+  <string name="exchange.title.trade">{from} verhandelen voor {to}</string>
+  <string name="exchange.title.sell_bitcoin">Bitcoin verkopen</string>
+  <string name="exchange.title.sell_currency">{currency} verkopen</string>
+  <string name="exchange.title.sell_amount_in">{currency} verhandelen voor:</string>
+  <string name="exchange.title.sell_amount">{amount} verkopen</string>
+  <string name="exchange.title.sell_service">Waar wil je {currency} voor omwisselen?</string>
+  <string name="exchange.title.cash">Cash</string>
+  <string name="exchange.title.credit">Creditcard</string>
+  <string name="exchange.title.history">Geschiedenis</string>
+  <string name="exchange.title.settings">Instellingen</string>
+  <string name="exchange.title.exchange">Cryptobeurs</string>
+  <string name="exchange.title.confirm_buy">Aankoop bevestigen</string>
+  <string name="exchange.title.confirm_trade">Deal Bevestigen</string>
+  <string name="exchange.label.in_currency">van {currency}</string>
+  <string name="exchange.title.choose">Hoe wil je betalen?</string>
+  <!-- Over the available order limit -->
+  <string name="exchange.source.title.maximum">Maximum Overschreden</string>
+  <string name="exchange.source.paragraph.maximum">Je kan tot {maximum} kopen met behulp van je {source}-saldo. Wil je je aankoophoeveelheid veranderen naar {maximum}?</string>
+  <!-- Under the available order limit -->
+  <string name="exchange.source.title.minimum">Hoeveelheid valt onder Minimum</string>
+  <string name="exchange.source.paragraph.minimum">Je moet ten minste {minimum} kopen met {source}. Wil je je aankoophoeveelheid veranderen naar {minimum}?</string>
+  <string name="exchange.source.title.insufficient">Ontoereikend Saldo</string>
+  <string name="exchange.source.paragraph.insufficient">Je hebt niet genoeg {source} om te voldoen aan de minimumaankoop van {minimum}. Koop meer {source} of gebruik een andere betalingsmethode.</string>
+  <string name="exchange.source.title.toolow">Saldo te Laag</string>
+  <!-- Over the available order limit -->
+  <string name="exchange.destination.title.maximum">Maximum Overschreden</string>
+  <string name="exchange.destination.paragraph.maximum">Je kan tot {maximum} verkopen met behulp van {destination}. Wil je je hoeveelheid veranderen naar {maximum}?</string>
+  <string name="exchange.destination.title.minimum">Hoeveelheid valt onder Minimum</string>
+  <string name="exchange.destination.paragraph.minimum">Je moet ten minste {minimum} verkopen voor {destination}. Wil je je aankoophoeveelheid veranderen naar {minimum}?</string>
+  <string name="exchange.destination.title.insufficient">Ontoereikend Saldo</string>
+  <string name="exchange.destination.paragraph.insufficient">Je hebt niet genoeg {destination} om te voldoen aan het minimum van {minimum}. Koop meer {source} of gebruik een andere betalingsmethode.</string>
+  <string name="exchange.destination.title.toolow">Saldo te Laag</string>
+  <string name="field.address.placeholder.line_1">Adres...</string>
+  <!-- Second address line (apartment number for example) -->
+  <string name="field.address.placeholder.line_2">Regel 2...</string>
+  <!-- Third address line (apartment number for example) -->
+  <string name="field.address.placeholder.line_3">Regel 3...</string>
+  <!-- Service error -->
+  <string name="field.bitid.label.error">BitID-fout:</string>
+  <string name="field.bitid.label.retry">Probeer het formulier opnieuw in te dienen.</string>
+  <string name="field.countrystate.label.country">Land:</string>
+  <!-- State or Province within a country -->
+  <string name="field.countrystate.label.state">Staat:</string>
+  <string name="field.image.button.retake">Opnieuw maken</string>
+  <string name="field.image.button.take">Foto Maken</string>
+  <string name="field.verified_email.confirm">Bevestigen</string>
+  <!-- Send email verification again -->
+  <string name="field.verified_email.reverify">Opnieuw verzenden</string>
+  <string name="field.verified_email.verify">E-mail met bevestigingscode versturen</string>
+  <string name="field.verified_phone.confirm">Bevestigen</string>
+  <!-- Send phone verification again -->
+  <string name="field.verified_phone.resend">Opnieuw versturen</string>
+  <string name="field.verified_phone.send">Verstuur bevestigingscode naar telefoon</string>
+  <string name="general.button.buy">Kopen</string>
+  <string name="general.button.cancel">Annuleren</string>
+  <string name="general.button.enable">Inschakelen</string>
+  <string name="general.button.next">Volgende</string>
+  <string name="general.button.ok">Oké</string>
+  <string name="general.button.proceed">Doorgaan</string>
+  <string name="general.button.refresh">Vernieuwen</string>
+  <string name="general.button.retry">Opnieuw proberen</string>
+  <string name="general.button.submit">Indienen</string>
+  <string name="general.button.history">Geschiedenis</string>
+  <string name="general.button.back">Terug</string>
+  <string name="general.error.timed_out">Maximale tijd voor verzoek is overschreden</string>
+  <string name="general.error.touchid_error">TouchID-fout: opnieuw proberen</string>
+  <string name="general.error.params_error">Parameterfout</string>
+  <string name="general.error.fee_error">Fout bij het berekenen van de kosten</string>
+  <string name="general.error.tx_error">Transactiefout (Laag Saldo?)</string>
+  <string name="general.error.network">Netwerkfout</string>
+  <string name="general.error.network_message">Er Is Een Onbekende Fout Opgetreden</string>
+  <string name="general.label.confirmation_code">Bevestigingscode</string>
+  <string name="general.label.email">E-mail</string>
+  <string name="general.label.error">Fout:</string>
+  <string name="general.label.phone">Telefoon</string>
+  <string name="general.label.unknown_error">Onbekende Fout</string>
+  <string name="general.label.min">Min.</string>
+  <string name="general.label.max">Max.</string>
+  <string name="general.label.estimate">Schatting</string>
+  <string name="general.label.zero">Nul</string>
+  <string name="general.label.default">Standaard</string>
+  <string name="general.loader.label.empty_state">Dit veld is met opzet leeg gelaten</string>
+  <string name="general.loader.label.loading">{noun} wordt geladen</string>
+  <string name="general.placeholder.confirmation_code">Bevestigingscode</string>
+  <string name="general.placeholder.email">E-mail</string>
+  <string name="general.placeholder.phone">Telefoon</string>
+  <string name="general.placeholder.pin">Pincode</string>
+  <string name="general.status.loading">Laden...</string>
+  <string name="buy.title">Wat wil je kopen?</string>
+  <string name="buy.transaction.destination.per">per</string>
+  <string name="buy.confirm_quote.title">Kopen</string>
+  <string name="sell.confirm_quote.title">Verkopen</string>
+  <string name="buy.quote.payment_method">Betalingsmethode</string>
+  <string name="buy.quote.delivery">Levering</string>
+  <string name="buy.quote.price">Prijs</string>
+  <string name="buy.quote.subtotal">Subtotaal</string>
+  <string name="buy.quote.fee">Kosten</string>
+  <string name="buy.quote.total">Totale Kosten</string>
+  <string name="sell.quote.total">Aankoophoeveelheid</string>
+  <string name="trade.title">Verhandel je:</string>
+  <string name="trade.confirm_quote.trade">Verhandelen</string>
+  <string name="trade.confirm_quote.for">Voor</string>
+  <!-- Support search no results -->
+  <string name="support.label.no_search_results">Geen Resultaten</string>
+  <!-- Support search results see more -->
+  <string name="support.label.see_more">Meer Weergeven</string>
+  <!-- Support search see fewer -->
+  <string name="support.label.see_fewer">Minder Weergeven</string>
+  <!-- Support section, see articles on a subject -->
+  <string name="support.label.see_articles">Artikelen Weergeven</string>
+  <!-- Support search article not found -->
+  <string name="support.error.article_not_found">Artikel Niet Gevonden</string>
+  <!-- Support footer email link -->
+  <string name="support.footer.email_us">E-mail Ons</string>
+  <!-- Support section footer -->
+  <string name="support.footer.privacy_policy">Privacybeleid</string>
+  <!-- Support section footer -->
+  <string name="support.footer.rights">Alle rechten voorbehouden.</string>
+  <!-- Support search footer -->
+  <string name="support.footer.tos">Algemene Voorwaarden</string>
+  <!-- Support section title -->
+  <string name="support.label.browse_topics">Onderwerpen Doorzoeken</string>
+  <!-- Support section title -->
+  <string name="support.label.faq">Veelgestelde Vragen</string>
+  <!-- Support button label -->
+  <string name="support.title">Ondersteuning</string>
+  <!-- Push notifications are disabled alert title" -->
+  <string name="PushNotifications.disabled">Meldingen Uitgeschakeld</string>
+  <!-- Push notifications settings instructions -->
+  <string name="PushNotifications.enableInstructions">Schakel meldingen in in Instellingen om notificaties te ontvangen</string>
+  <!-- Approve link wallet button label -->
+  <string name="LinkWallet.approve">Goedkeuren</string>
+  <!-- Decline link wallet button label -->
+  <string name="LinkWallet.decline">Afwijzen</string>
+  <!-- Link Wallet view title -->
+  <string name="LinkWallet.title">Portefeuille Koppelen</string>
+  <!-- Link Wallet view title above domain list -->
+  <string name="LinkWallet.domainTitle">Let op: werk alleen met deze app wanneer je je op één van de volgende domeinen bevind</string>
+  <!-- Link Wallet view title above permissions list -->
+  <string name="LinkWallet.permissionsTitle">Deze app zal in staat zijn om:</string>
+  <!-- Link Wallet view dislaimer footer -->
+  <string name="LinkWallet.disclaimer">Externe apps kunnen geen geld versturen zonder goedkeuring vanaf dit toestel</string>
+  <!-- Link wallet logo footer text -->
+  <string name="LinkWallet.logoFooter">Beveiligde Betalingspagina</string>
+  <!-- Payment confirmation view title -->
+  <string name="PaymentConfirmation.title">Bevestiging</string>
+  <!-- Eg. Send 1.0Eth to purchase CCC -->
+  <string name="PaymentConfirmation.amountText">%1$s versturen om %2$s te kopen</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.accountRequest">Vraag %1$s accountgegevens aan</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.callRequest">Verzoek %1$s smart contract oproep</string>
+  <!-- Service capabilities description -->
+  <string name="EME.permissions.paymentRequest">Verzoek %1$s betaling</string>
 </resources>

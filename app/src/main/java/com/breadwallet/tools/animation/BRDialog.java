@@ -7,6 +7,7 @@ import android.support.annotation.NonNull;
 import android.text.SpannableString;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.presenter.customviews.BRDialogView;
 import com.breadwallet.tools.threads.executor.BRExecutor;
@@ -42,16 +43,17 @@ public class BRDialog {
     /**
      * Safe from any threads
      *
-     * @param app needs to be activity
+     * @param context needs to be activity
      */
-    public static void showCustomDialog(@NonNull final Context app, @NonNull final String title, @NonNull final String message,
+    public static void showCustomDialog(@NonNull final Context context, @NonNull final String title, @NonNull final String message,
                                         @NonNull final String posButton, final String negButton, final BRDialogView.BROnClickListener posListener,
                                         final BRDialogView.BROnClickListener negListener, final DialogInterface.OnDismissListener dismissListener, final int iconRes) {
-        if (((Activity) app).isDestroyed()) {
+        final Activity activity = (context instanceof Activity) ? (Activity) context : (Activity) BreadApp.getBreadContext();
+        if (activity.isDestroyed()) {
             Log.e(TAG, "showCustomDialog: FAILED, context is destroyed");
             return;
         }
-
+        Log.e(TAG, "showCustomDialog: Title:" + title + ", message: " + message);
         BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -64,8 +66,9 @@ public class BRDialog {
                 dialog.setNegListener(negListener);
                 dialog.setDismissListener(dismissListener);
                 dialog.setIconRes(iconRes);
-                if (!((Activity) app).isDestroyed())
-                    dialog.show(((Activity) app).getFragmentManager(), dialog.getClass().getName());
+                if (!activity.isDestroyed()) {
+                    activity.getFragmentManager().beginTransaction().add(dialog, dialog.getTag()).commitAllowingStateLoss();
+                }
             }
         });
 

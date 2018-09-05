@@ -30,7 +30,6 @@ import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.presenter.activities.camera.ScanQRActivity;
 import com.breadwallet.presenter.activities.settings.WebViewActivity;
 import com.breadwallet.presenter.customviews.BRDialogView;
-import com.breadwallet.presenter.entities.CryptoRequest;
 import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.presenter.fragments.FragmentReceive;
 import com.breadwallet.presenter.fragments.FragmentRequestAmount;
@@ -48,7 +47,6 @@ import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import java.util.List;
 
 import static android.content.Context.ACTIVITY_SERVICE;
-
 
 /**
  * BreadWallet
@@ -102,26 +100,6 @@ public class UiUtils {
         mSupportIsShowing = isSupportFragmentShown;
     }
 
-    public static void showSendFragment(FragmentActivity app, final CryptoRequest request) {
-        if (app == null) {
-            Log.e(TAG, "showSendFragment: app is null");
-            return;
-        }
-
-        FragmentSend fragmentSend = (FragmentSend) app.getSupportFragmentManager().findFragmentByTag(FragmentSend.class.getName());
-        if (fragmentSend == null) {
-            fragmentSend = new FragmentSend();
-        }
-        fragmentSend.saveViewModelData(request);
-        if (!fragmentSend.isAdded()) {
-            app.getSupportFragmentManager().beginTransaction()
-                    .setCustomAnimations(0, 0, 0, R.animator.plain_300)
-                    .add(android.R.id.content, fragmentSend, FragmentSend.class.getName())
-                    .addToBackStack(FragmentSend.class.getName()).commit();
-        }
-
-    }
-
     public static void showSupportFragment(FragmentActivity app, String articleId, BaseWalletManager wm) {
         if (mSupportIsShowing) {
             return;
@@ -138,7 +116,7 @@ public class UiUtils {
                 app.getFragmentManager().popBackStack();
                 return;
             }
-            String iso = BaseBitcoinWalletManager.BITCOIN_SYMBOL;
+            String iso = BaseBitcoinWalletManager.BITCOIN_CURRENCY_CODE;
             if (wm != null) wm.getIso();
             fragmentSupport = new FragmentSupport();
             Bundle bundle = new Bundle();
@@ -359,5 +337,4 @@ public class UiUtils {
 
         return 0;
     }
-
 }

@@ -85,7 +85,7 @@ public class AddWalletsActivity extends BRActivity {
         super.onResume();
 
         List<TokenItem> tokenItems = new ArrayList<>();
-        TokenListMetaData tokenListMetaData = KVStoreManager.getInstance().getTokenListMetaData(this);
+        TokenListMetaData tokenListMetaData = KVStoreManager.getTokenListMetaData(this);
         for (BREthereumToken token : WalletEthManager.getInstance(this).node.tokens) {
             TokenItem tokenItem = new TokenItem(token.getAddress(), token.getSymbol(), token.getName(), null);
             if (!tokenListMetaData.isCurrencyEnabled(tokenItem.symbol)) {
@@ -99,7 +99,7 @@ public class AddWalletsActivity extends BRActivity {
 
                 Log.d(TAG, "onTokenAdded, -> " + token.symbol);
 
-                TokenListMetaData metaData = KVStoreManager.getInstance().getTokenListMetaData(AddWalletsActivity.this);
+                TokenListMetaData metaData = KVStoreManager.getTokenListMetaData(AddWalletsActivity.this);
                 TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(token.symbol, true, token.address);
                 if (metaData == null) metaData = new TokenListMetaData(null, null);
                 if (metaData.enabledCurrencies == null)
@@ -107,7 +107,7 @@ public class AddWalletsActivity extends BRActivity {
                 if (!metaData.isCurrencyEnabled(item.symbol))
                     metaData.enabledCurrencies.add(item);
 
-                KVStoreManager.getInstance().putTokenListMetaData(AddWalletsActivity.this, metaData);
+                KVStoreManager.putTokenListMetaData(AddWalletsActivity.this, metaData);
 
                 mAdapter.notifyDataSetChanged();
 
@@ -117,12 +117,12 @@ public class AddWalletsActivity extends BRActivity {
             public void onTokenRemoved(TokenItem token) {
                 Log.d(TAG, "onTokenRemoved, -> " + token.name);
 
-                TokenListMetaData metaData = KVStoreManager.getInstance().getTokenListMetaData(AddWalletsActivity.this);
+                TokenListMetaData metaData = KVStoreManager.getTokenListMetaData(AddWalletsActivity.this);
                 TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(token.symbol, true, token.address);
                 if (metaData == null) metaData = new TokenListMetaData(null, null);
                 metaData.disableCurrency(item.symbol);
 
-                KVStoreManager.getInstance().putTokenListMetaData(AddWalletsActivity.this, metaData);
+                KVStoreManager.putTokenListMetaData(AddWalletsActivity.this, metaData);
 
                 mAdapter.notifyDataSetChanged();
             }

@@ -2,6 +2,7 @@ package com.breadwallet.presenter.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
+import android.arch.lifecycle.Lifecycle;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
+import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRKeyboard;
 import com.breadwallet.presenter.customviews.PinLayout;
@@ -30,13 +32,10 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.platform.APIClient;
 
-import java.util.ArrayList;
-import java.util.List;
 
-public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgrounded, PinLayout.OnPinInserted {
+public class LoginActivity extends BRActivity implements PinLayout.OnPinInserted {
     private static final String TAG = LoginActivity.class.getName();
     private BRKeyboard mKeyboard;
     private LinearLayout mPinLayout;
@@ -118,8 +117,6 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
             }
         }, DateUtils.SECOND_IN_MILLIS / 2);
 
-        BreadApp.addOnBackgroundedListener(this);
-
     }
 
     @Override
@@ -135,6 +132,7 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
             }
         });
         APIClient.getInstance(this).updatePlatform(this);
+
     }
 
     @Override
@@ -216,16 +214,6 @@ public class LoginActivity extends BRActivity implements BreadApp.OnAppBackgroun
             }
             // other 'case' lines to check for other
             // permissions this app might request
-        }
-    }
-
-
-    @Override
-    public void onBackgrounded() {
-        //disconnect all wallets on backgrounded
-        List<BaseWalletManager> list = new ArrayList<>(WalletsMaster.getInstance(LoginActivity.this).getAllWallets(LoginActivity.this));
-        for (BaseWalletManager w : list) {
-            w.disconnect(LoginActivity.this);
         }
     }
 
