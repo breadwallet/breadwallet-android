@@ -25,6 +25,7 @@
 package com.breadwallet.app.util;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
@@ -50,11 +51,20 @@ public final class UserMetricsUtil {
     private static final String TAG = UserMetricsUtil.class.getSimpleName();
 
     private static final String ENDPOINT_ME_METRICS = "/me/metrics";
-    private static final String METRIC_LAUNCH = "launch";
+    private static final String URL = BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + ENDPOINT_ME_METRICS;
+
     private static final String FIELD_METRIC = "metric";
+    private static final String METRIC_LAUNCH = "launch";
     private static final String FIELD_DATA = "data";
+
+    // Data field names and some values
     private static final String FIELD_BUNDLES = "bundles";
     private static final String BUNDLE_WEB = "brd-web";
+    private static final String FIELD_OS_VERSION = "os_version";
+    private static final String FIELD_USER_AGENT = "user_agent";
+    private static final String SYSTEM_PROPERTY_USER_AGENT = "http.agent";
+    private static final String FIELD_DEVICE_TYPE = "device_type";
+    private static final String DEVICE_TYPE = Build.MANUFACTURER + " " + Build.MODEL;
 
     private static byte[] bundleHash;
 
@@ -65,48 +75,44 @@ public final class UserMetricsUtil {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-
-                //First, check if we have a wallet ID already stored in SharedPrefs
+                // First, check if we have a wallet ID already stored in SharedPrefs
                 String walletId = BRSharedPrefs.getWalletRewardId(BreadApp.getBreadContext());
 
                 // Only make this request if we have a valid wallet ID
                 if (walletId != null && !walletId.isEmpty()) {
-                    UserMetricsUtil.makeUserMetricsRequest(BreadApp.getBreadContext(), UserMetricsUtil.METRIC_LAUNCH);
+                    UserMetricsUtil.makeUserMetricsRequest(BreadApp.getBreadContext());
                 }
             }
         });
     }
 
-    private static void makeUserMetricsRequest(Context context, String metricName) {
-
-        String url = BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + ENDPOINT_ME_METRICS;
-
-        JSONObject payload = new JSONObject();
-
+    private static void makeUserMetricsRequest(Context context) {
         try {
-            JSONObject data = new JSONObject();
             JSONObject bundles = new JSONObject();
             bundles.put(BUNDLE_WEB, bundleHash);
+
+            JSONObject data = new JSONObject();
             data.put(FIELD_BUNDLES, bundles);
-            payload.put(FIELD_METRIC, metricName);
+            data.put(FIELD_OS_VERSION, Build.VERSION.RELEASE);
+            data.put(FIELD_USER_AGENT,  System.getProperty(SYSTEM_PROPERTY_USER_AGENT));
+            data.put(FIELD_DEVICE_TYPE, DEVICE_TYPE);
+
+            JSONObject payload = new JSONObject();
+            payload.put(FIELD_METRIC, METRIC_LAUNCH);
             payload.put(FIELD_DATA, data);
 
+            final MediaType JSON = MediaType.parse(BRConstants.CONTENT_TYPE_JSON);
+            RequestBody requestBody = RequestBody.create(JSON, payload.toString());
+            Request request = new Request.Builder()
+                    .url(URL)
+                    .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
+                    .header(BRConstants.HEADER_ACCEPT, BRConstants.HEADER_VALUE_ACCEPT).post(requestBody).build();
+
+            APIClient.getInstance(context).sendRequest(request, true);
+
         } catch (JSONException e) {
-            e.printStackTrace();
-            Log.d(TAG, "Error constructing json payload for request!");
+            Log.e(TAG, "Error constructing JSON payload for user metrics request.");
         }
-
-        final MediaType JSON
-                = MediaType.parse(BRConstants.CONTENT_TYPE_JSON);
-
-        RequestBody requestBody = RequestBody.create(JSON, payload.toString());
-
-        Request request = new Request.Builder()
-                .url(url)
-                .header(BRConstants.HEADER_CONTENT_TYPE, BRConstants.CONTENT_TYPE_JSON)
-                .header(BRConstants.HEADER_ACCEPT, BRConstants.HEADER_VALUE_ACCEPT).post(requestBody).build();
-
-        APIClient.getInstance(context).sendRequest(request, true);
     }
 
     public static void setBundleHash(byte[] hash) {
