@@ -43,6 +43,7 @@ public class JsonRpcHelper {
     private static final String PROTOCOL = "https";
     public static final String METHOD = "method";
     public static final String JSONRPC = "jsonrpc";
+    public static final String VERSION_2 = "2.0";
     public static final String ETH_BALANCE = "eth_getBalance";
     public static final String LATEST = "latest";
     public static final String PARAMS = "params";

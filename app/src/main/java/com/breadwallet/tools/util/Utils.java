@@ -65,6 +65,8 @@ import static android.content.Context.FINGERPRINT_SERVICE;
 public class Utils {
     public static final String TAG = Utils.class.getName();
 
+    private static final String NUMBER_PATTERN = "-?\\d+(\\.\\d+)?";
+
     public static boolean isUsingCustomInputMethod(Context context) {
         if (context == null) return false;
         InputMethodManager imm = (InputMethodManager) context.getSystemService(
@@ -136,6 +138,10 @@ public class Utils {
 
     public static boolean isNullOrEmpty(String str) {
         return str == null || str.isEmpty();
+    }
+
+    public static boolean isNumber(String str) {
+        return !Utils.isNullOrEmpty(str) && str.matches(NUMBER_PATTERN);
     }
 
     public static boolean isNullOrZero(BigDecimal amount) {
