@@ -85,6 +85,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     private OnHashUpdated mWatchListener;
 
     public static final String ETH_CURRENCY_CODE = "ETH";
+    public static final String HEX_PREFIX = "0x";
     public static final String ETH_SCHEME = "ethereum";
     //1ETH = 1000000000000000000 WEI
     public static final String ETHER_WEI = "1000000000000000000";
@@ -101,6 +102,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     private BREthereumWallet mWallet;
     public BREthereumLightNode node;
+    public List<OnTransactionEventListener> mTransactionEventListeners = new ArrayList<>();
 
     private WalletEthManager(final Context app, byte[] ethPubKey, BREthereumNetwork network) {
         mUiConfig = new WalletUiConfiguration("#5e6fa5", null,
@@ -128,6 +130,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                         + Locale.getDefault().getLanguage());
                 return;
             }
+
 
             node = new BREthereumLightNode(this, network, paperKey, words);
             node.addListener(this);
@@ -654,7 +657,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                 final JSONArray params = new JSONArray();
 
                 try {
-                    payload.put(JsonRpcHelper.JSONRPC, "2.0");
+                    payload.put(JsonRpcHelper.JSONRPC, JsonRpcHelper.VERSION_2);
                     payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_BALANCE);
                     params.put(address);
                     params.put(JsonRpcHelper.LATEST);
@@ -720,7 +723,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                                     node.announceBalance(wid, balance, rid);
 
                                 } else {
-                                    Log.e(TAG, "onRpcRequestCompleted: Response does not contain the key 'result'.");
+                                    Log.e(TAG, "onRpcRequestCompleted: Error: " + jsonResult);
                                 }
                             }
                         } catch (JSONException je) {
@@ -760,8 +763,9 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                                 JSONObject responseObject = new JSONObject(jsonResult);
                                 if (responseObject.has(JsonRpcHelper.RESULT)) {
                                     String gasPrice = responseObject.getString(JsonRpcHelper.RESULT);
-                                    Log.d(TAG, "onRpcRequestCompleted: getGasPrice: " + gasPrice);
                                     node.announceGasPrice(wid, gasPrice, rid);
+                                } else {
+                                    Log.e(TAG, "onRpcRequestCompleted: Error: " + jsonResult);
                                 }
                             }
                         } catch (JSONException je) {
@@ -785,20 +789,24 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
                 final JSONObject payload = new JSONObject();
                 final JSONArray params = new JSONArray();
-
-                params.put(to);
-                params.put(amount);
-                params.put(data);
+                final JSONObject param1 = new JSONObject();
 
                 try {
+                    param1.put(JsonRpcHelper.TO, to);
+                    if (!amount.equalsIgnoreCase(HEX_PREFIX)) {
+                        param1.put(JsonRpcHelper.VALUE, amount);
+                    }
+                    if (!data.equalsIgnoreCase(HEX_PREFIX)) {
+                        param1.put(JsonRpcHelper.DATA, data);
+                    }
+                    params.put(param1);
+                    payload.put(JsonRpcHelper.JSONRPC, JsonRpcHelper.VERSION_2);
                     payload.put(JsonRpcHelper.METHOD, JsonRpcHelper.ETH_ESTIMATE_GAS);
                     payload.put(JsonRpcHelper.PARAMS, params);
                     payload.put(JsonRpcHelper.ID, rid);
-
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
-
                 JsonRpcHelper.makeRpcRequest(BreadApp.getBreadContext(), ethUrl, payload, new JsonRpcHelper.JsonRpcRequestListener() {
                     @Override
                     public void onRpcRequestCompleted(String jsonResult) {
@@ -809,6 +817,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                                 String gasEstimate = responseObject.getString(JsonRpcHelper.RESULT);
                                 Log.d(TAG, "onRpcRequestCompleted: getGasEstimate: " + gasEstimate);
                                 node.announceGasEstimate(wid, tid, gasEstimate, rid);
+                            } else {
+                                Log.e(TAG, "onRpcRequestCompleted: Error: " + jsonResult);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -1171,6 +1181,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                             if (responseObject.has(JsonRpcHelper.RESULT)) {
                                 String blockNumber = responseObject.getString(JsonRpcHelper.RESULT);
                                 node.announceBlockNumber(blockNumber, rid);
+                            } else {
+                                Log.e(TAG, "onRpcRequestCompleted: Error: " + jsonResult);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -1254,6 +1266,10 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
         if (app != null) {
             String iso = (null == wallet.getToken() ? getIso() : wallet.getToken().getSymbol());
+            for (OnTransactionEventListener listener : mTransactionEventListeners) {
+                listener.onTransactionEvent(event);
+                mTransactionEventListeners.remove(listener);
+            }
             switch (event) {
                 case ADDED:
                     printInfo("New transaction added: ", iso, event.name());
@@ -1285,7 +1301,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                     } else {
                         Log.e(TAG, "handleTransactionEvent: tx is null");
                     }
-                    Log.e(TAG, "handleTransactionEvent: SUBMITTED: " + transaction.getHash());
+                    Log.d(TAG, "handleTransactionEvent: SUBMITTED: " + transaction.getHash());
                     printInfo("Transaction submitted: " + transaction.getAmount(), iso, event.name());
                     break;
                 case BLOCKED:
@@ -1336,6 +1352,8 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
                                 String nonce = responseObject.getString(JsonRpcHelper.RESULT);
                                 Log.d(TAG, "onRpcRequestCompleted: getNonce: " + nonce);
                                 node.announceNonce(address, nonce, rid);
+                            } else {
+                                Log.e(TAG, "onRpcRequestCompleted: Error: " + jsonResult);
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -1395,5 +1413,19 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     public BREthereumWallet getWallet() {
         return mWallet;
+    }
+
+    public void addTransactionEventListener(OnTransactionEventListener listener) {
+        if (!mTransactionEventListeners.contains(listener)) {
+            mTransactionEventListeners.add(listener);
+        }
+    }
+
+    public void removeTransactionEventListener(OnTransactionEventListener listener) {
+        mTransactionEventListeners.remove(listener);
+    }
+
+    public interface OnTransactionEventListener {
+        void onTransactionEvent(TransactionEvent event);
     }
 }

@@ -132,7 +132,7 @@ public class SendManager {
         } catch (FeeOutOfDate ex) {
             //Fee is out of date, show not connected error
             BRReportsManager.reportBug(ex);
-            sayError(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.NodeSelector_notConnected));
+            sayError(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.Send_noFeesError));
             callbackCompletionFailed(completion);
             return false;
         } catch (SomethingWentWrong somethingWentWrong) {
