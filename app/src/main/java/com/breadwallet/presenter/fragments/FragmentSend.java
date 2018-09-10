@@ -767,7 +767,7 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 newAmount.append(",");
             }
         }
-        if (!Utils.isNullOrEmpty(cryptoAmount) && new BigDecimal(cryptoAmount).compareTo(BigDecimal.ZERO) > 0) {
+        if (Utils.isNumber(cryptoAmount) && new BigDecimal(cryptoAmount).compareTo(BigDecimal.ZERO) > 0) {
             startEditingAmount();
         }
         mAmountEdit.setText(newAmount.toString());
