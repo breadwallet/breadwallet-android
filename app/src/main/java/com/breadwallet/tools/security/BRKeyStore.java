@@ -863,13 +863,8 @@ public class BRKeyStore {
                 return;
             }
             String message = context.getString(R.string.UnlockScreen_touchIdPrompt_android);
-            if (Utils.isEmulatorOrDebug(app)) {
-                message = alias;
-            }
             Intent intent = mKeyguardManager.createConfirmDeviceCredentialIntent(context.getString(R.string.UnlockScreen_touchIdTitle_android), message);
 
-            if (Utils.isEmulatorOrDebug(context))
-                intent = mKeyguardManager.createConfirmDeviceCredentialIntent(alias, context.getString(R.string.UnlockScreen_touchIdPrompt_android));
             if (intent != null) {
                 app.startActivityForResult(intent, requestCode);
             } else {
