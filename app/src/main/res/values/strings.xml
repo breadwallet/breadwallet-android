@@ -1192,4 +1192,5 @@ If you need help, look for the (?) in the top right of most screens.</string>
   <string name="EME.permissions.callRequest">Request %1$s smart contract call</string>
   <!-- Service capabilities description -->
   <string name="EME.permissions.paymentRequest">Request %1$s payment</string>
+  <string name="Alert.timedOut">Request timed out. Check your connection and try again.</string>
 </resources>
