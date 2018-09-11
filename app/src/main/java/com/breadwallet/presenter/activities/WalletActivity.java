@@ -409,7 +409,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
         mSyncNotificationBroadcastReceiver = new SyncNotificationBroadcastReceiver();
         SyncService.registerSyncNotificationBroadcastReceiver(getApplicationContext(), mSyncNotificationBroadcastReceiver);
-        SyncService.enqueueWork(getApplicationContext(), mCurrentWalletIso);
+        SyncService.startService(getApplicationContext(), mCurrentWalletIso);
 
         AppEntryPointHandler.processDeepLink(this, getIntent());
         showSendIfNeeded(getIntent());
@@ -443,7 +443,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
 
     @Override
     public void syncStarted() {
-        SyncService.enqueueWork(getApplicationContext(), mCurrentWalletIso);
+        SyncService.startService(getApplicationContext(), mCurrentWalletIso);
     }
     /* SyncListener methods End*/
 
@@ -464,7 +464,7 @@ public class WalletActivity extends BRActivity implements InternetManager.Connec
             if (mBarFlipper != null && mBarFlipper.getDisplayedChild() == 2) {
                 mBarFlipper.setDisplayedChild(0);
             }
-            SyncService.enqueueWork(getApplicationContext(), mCurrentWalletIso);
+            SyncService.startService(getApplicationContext(), mCurrentWalletIso);
 
         } else {
             if (mBarFlipper != null) {

@@ -181,7 +181,7 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                     }
                     String walletIso = mCurrentWalletSyncing.walletManager.getIso();
                     mCurrentWalletSyncing.walletManager.connect(mContext);
-                    SyncService.enqueueWork(mContext, walletIso);
+                    SyncService.startService(mContext, walletIso);
                 } finally {
                     mObesrverIsStarting = false;
                 }
