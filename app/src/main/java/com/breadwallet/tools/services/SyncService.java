@@ -1,17 +1,17 @@
 package com.breadwallet.tools.services;
 
 import android.app.AlarmManager;
+import android.app.IntentService;
 import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.support.v4.app.JobIntentService;
+//import android.support.v4.app.JobIntentService;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
-import com.breadwallet.presenter.activities.WalletActivity;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.wallet.WalletsMaster;
@@ -41,10 +41,10 @@ import com.breadwallet.wallet.abstracts.BaseWalletManager;
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-public class SyncService extends JobIntentService {
+public class SyncService extends /*Job*/ IntentService {
     private static final String TAG = SyncService.class.getSimpleName();
 
-    private static final int JOB_ID = 0xe1743572; // Used to identify jobs that belong to this service. (Random number used for uniqueness.)
+//    private static final int JOB_ID = 0xe1743572; // Used to identify jobs that belong to this service. (Random number used for uniqueness.)
 
     public static final String ACTION_START_SYNC_PROGRESS_POLLING = "com.breadwallet.tools.services.ACTION_START_SYNC_PROGRESS_POLLING";
     public static final String ACTION_SYNC_PROGRESS_UPDATE = "com.breadwallet.tools.services.ACTION_SYNC_PROGRESS_UPDATE";
@@ -75,12 +75,20 @@ public class SyncService extends JobIntentService {
     }
 
     /**
+     * The {@link SyncService} is responsible for polling the native layer for wallet sync updates and
+     * posting updates to registered listeners.  The actual data sync is done natively and not in Java.
+     */
+    public SyncService() {
+        super(TAG);
+    }
+
+    /**
      * Handles intents passed to the {@link SyncService} by creating a new worker thread to complete the work required.
      *
      * @param intent The intent specifying the work that needs to be completed.
      */
     @Override
-    protected void onHandleWork(Intent intent) {
+    protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             switch (intent.getAction()) {
                 case ACTION_START_SYNC_PROGRESS_POLLING:
@@ -130,8 +138,9 @@ public class SyncService extends JobIntentService {
      * @param context   The context in which we are operating.
      * @param currencyCode    The currency code of the wallet that is syncing.
      */
-    public static void enqueueWork(Context context, String currencyCode) {
-        enqueueWork(context, SyncService.class, JOB_ID, createIntent(context, SyncService.ACTION_START_SYNC_PROGRESS_POLLING, currencyCode));
+    public static void startService(Context context, String currencyCode) {
+//        enqueueWork(context, SyncService.class, JOB_ID, createIntent(context, SyncService.ACTION_START_SYNC_PROGRESS_POLLING, currencyCode));
+        context.startService(createIntent(context, ACTION_START_SYNC_PROGRESS_POLLING, currencyCode));
     }
 
     /**
