@@ -64,10 +64,13 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
     private WalletUiConfiguration uiConfig;
 
+    private static final String DEFAULT_COLOR_LEFT  = "#ff5193"; // tokenWallet.getToken().getColorLeft()
+    private static final String DEFAULT_COLOR_RIGHT = "#f9a43a"; // tokenWallet.getToken().getColorRight();
+
     private WalletTokenManager(WalletEthManager walletEthManager, BREthereumWallet tokenWallet) {
         mWalletEthManager = walletEthManager;
         mWalletToken = tokenWallet;
-        uiConfig = new WalletUiConfiguration(tokenWallet.getToken().getColorLeft(), tokenWallet.getToken().getColorRight(), false, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
+        uiConfig = new WalletUiConfiguration(DEFAULT_COLOR_LEFT, DEFAULT_COLOR_RIGHT, false, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
         mAddress = mWalletEthManager.getAddress();
     }
 
@@ -98,7 +101,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
     //for testing only
     public static WalletTokenManager getBrdWallet(WalletEthManager walletEthManager) {
-        BREthereumWallet brdWallet = walletEthManager.node.getWallet(walletEthManager.node.tokenBRD);
+        BREthereumWallet brdWallet = walletEthManager.node.getWallet(walletEthManager.node.getBRDToken());
         if (brdWallet.getToken() == null) {
             BRReportsManager.reportBug(new NullPointerException("getBrd failed"));
             return null;
@@ -137,7 +140,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     }
 
     public synchronized static void mapTokenIsos(Context app) {
-        BREthereumToken[] tokens = WalletEthManager.getInstance(app).node.tokens;
+        BREthereumToken[] tokens = WalletEthManager.getInstance(app).node.getTokens();
         for (BREthereumToken t : tokens) {
             if (!mTokenIsos.containsKey(t.getSymbol().toLowerCase())) {
                 mTokenIsos.put(t.getSymbol().toLowerCase(), t.getAddress().toLowerCase());
