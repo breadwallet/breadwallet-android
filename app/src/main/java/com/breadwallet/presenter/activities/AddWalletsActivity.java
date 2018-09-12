@@ -86,7 +86,7 @@ public class AddWalletsActivity extends BRActivity {
 
         List<TokenItem> tokenItems = new ArrayList<>();
         TokenListMetaData tokenListMetaData = KVStoreManager.getTokenListMetaData(this);
-        for (BREthereumToken token : WalletEthManager.getInstance(this).node.tokens) {
+        for (BREthereumToken token : WalletEthManager.getInstance(this).node.getTokens()) {
             TokenItem tokenItem = new TokenItem(token.getAddress(), token.getSymbol(), token.getName(), null);
             if (!tokenListMetaData.isCurrencyEnabled(tokenItem.symbol)) {
                 tokenItems.add(tokenItem);

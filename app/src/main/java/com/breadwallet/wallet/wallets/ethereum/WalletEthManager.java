@@ -135,6 +135,15 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
             node = new BREthereumLightNode(this, network, paperKey, words);
             node.addListener(this);
 
+            node.announceToken("0xAf30D2a7E90d7DC361c8C4585e9BB7D2F6f15bc7",
+                    "1ST",
+                    "FirstBlood",
+                    "",
+                    18,
+                    null,
+                    null,
+                    0);
+
             mWallet = node.getWallet();
 
             if (null == mWallet) {
@@ -148,6 +157,16 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
             Log.e(TAG, "WalletEthManager: Using the pubkey to create");
             node = new BREthereumLightNode(this, network, ethPubKey);
             node.addListener(this);
+
+            node.announceToken("0xAf30D2a7E90d7DC361c8C4585e9BB7D2F6f15bc7",
+                    "1ST",
+                    "FirstBlood",
+                    "",
+                    18,
+                    null,
+                    null,
+                    0);
+
 
             mWallet = node.getWallet();
 

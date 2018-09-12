@@ -99,7 +99,7 @@ public class WalletsMaster {
             enabled.add(new TokenListMetaData.TokenInfo("BTC", false, null));
             enabled.add(new TokenListMetaData.TokenInfo("BCH", false, null));
             enabled.add(new TokenListMetaData.TokenInfo("ETH", false, null));
-            BREthereumWallet brdWallet = ethWallet.node.getWallet(ethWallet.node.tokenBRD);
+            BREthereumWallet brdWallet = ethWallet.node.getWallet(ethWallet.node.getBRDToken());
             enabled.add(new TokenListMetaData.TokenInfo(brdWallet.getToken().getSymbol(), true, brdWallet.getToken().getAddress()));
             mTokenListMetaData = new TokenListMetaData(enabled, null);
             KVStoreManager.putTokenListMetaData(app, mTokenListMetaData); //put default currencies if null
@@ -242,7 +242,7 @@ public class WalletsMaster {
 
     public boolean isIsoErc20(Context app, String iso) {
         if (Utils.isNullOrEmpty(iso)) return false;
-        BREthereumToken[] tokens = WalletEthManager.getInstance(app).node.tokens;
+        BREthereumToken[] tokens = WalletEthManager.getInstance(app).node.getTokens();
         for (BREthereumToken token : tokens) {
             if (token.getSymbol().equalsIgnoreCase(iso)) {
                 return true;
