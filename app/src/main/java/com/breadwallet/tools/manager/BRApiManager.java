@@ -1,5 +1,6 @@
 package com.breadwallet.tools.manager;
 
+import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.os.Handler;
 import android.os.NetworkOnMainThreadException;
@@ -8,6 +9,7 @@ import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.entities.CurrencyEntity;
 import com.breadwallet.tools.animation.UiUtils;
@@ -68,7 +70,7 @@ import static com.breadwallet.presenter.activities.HomeActivity.CCC_CURRENCY_COD
  * THE SOFTWARE.
  */
 
-public class BRApiManager {
+public class BRApiManager implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
     private static final String TAG = BRApiManager.class.getName();
 
     public static final String HEADER_WALLET_ID = "X-Wallet-Id";
@@ -155,6 +157,7 @@ public class BRApiManager {
 
 
     private void initializeTimerTask(final Context context) {
+        ApplicationLifecycleObserver.addApplicationLifecycleListener(this);
         timerTask = new TimerTask() {
             public void run() {
                 //use a handler to run a toast that shows the current timestamp
@@ -174,10 +177,6 @@ public class BRApiManager {
 
     @WorkerThread
     private void updateData(final Context context) {
-        if (BreadApp.isAppInBackground()) {
-            stopTimerTask();
-            return;
-        }
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
@@ -244,8 +243,9 @@ public class BRApiManager {
 
             }
             RatesDataSource.getInstance(context).putCurrencies(context, tmp);
-            if (object != null)
+            if (object != null) {
                 BRReportsManager.reportBug(new IllegalArgumentException("JSONArray returns a wrong object: " + object));
+            }
         } catch (JSONException e) {
             BRReportsManager.reportBug(e);
             e.printStackTrace();
@@ -255,7 +255,9 @@ public class BRApiManager {
 
     public void startTimer(Context context) {
         //set a new Timer
-        if (timer != null) return;
+        if (timer != null) {
+            return;
+        }
         timer = new Timer();
         Log.e(TAG, "startTimer: started...");
         //initialize the TimerTask's job
@@ -346,4 +348,14 @@ public class BRApiManager {
         return bodyText;
     }
 
+    @Override
+    public void onLifeCycle(Lifecycle.Event event) {
+        switch (event) {
+            case ON_STOP:
+                stopTimerTask();
+                ApplicationLifecycleObserver.removeApplicationLifecycleListener(this);
+                break;
+        }
+
+    }
 }
