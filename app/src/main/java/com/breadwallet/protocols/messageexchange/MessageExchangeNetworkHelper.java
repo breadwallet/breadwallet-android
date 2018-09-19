@@ -375,11 +375,14 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
 
     @Override
     public void onLifeCycle(Lifecycle.Event event) {
-        if (event.name().equalsIgnoreCase(Lifecycle.Event.ON_START.toString())) {
-            mDelayHandler.removeCallbacks(mDelayStopPollingRunnable);
-            startInboxPolling();
-        } else if (event.name().equalsIgnoreCase(Lifecycle.Event.ON_STOP.toString())) {
-            mDelayHandler.postDelayed(mDelayStopPollingRunnable, DateUtils.SECOND_IN_MILLIS * POLL_AFTER_BACKGROUND_PERIOD_SECONDS);
+        switch (event) {
+            case ON_STOP:
+                mDelayHandler.postDelayed(mDelayStopPollingRunnable, DateUtils.SECOND_IN_MILLIS * POLL_AFTER_BACKGROUND_PERIOD_SECONDS);
+                break;
+            case ON_START:
+                mDelayHandler.removeCallbacks(mDelayStopPollingRunnable);
+                startInboxPolling();
+                break;
         }
     }
 
