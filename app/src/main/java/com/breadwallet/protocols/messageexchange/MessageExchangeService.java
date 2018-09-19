@@ -146,7 +146,7 @@ public final class MessageExchangeService extends JobIntentService {
      * for types of work that can be done in this service.
      *
      * @param context The context in which we are operating.
-     * @param work The intent containing the work that needs to be done.
+     * @param work    The intent containing the work that needs to be done.
      */
     public static void enqueueWork(Context context, Intent work) {
         enqueueWork(context, MessageExchangeService.class, JOB_ID, work);
@@ -660,15 +660,13 @@ public final class MessageExchangeService extends JobIntentService {
      * @param metaData The meta data related to the request.
      */
     private void confirmRequest(MetaData metaData) {
-        if (!BreadApp.isAppInBackground()) {
-            Intent intent = new Intent(this, ConfirmationActivity.class);
-            intent.setAction(ACTION_GET_USER_CONFIRMATION)
-                    .setFlags(FLAG_ACTIVITY_NEW_TASK);
-            Bundle bundle = new Bundle();
-            bundle.putParcelable(EXTRA_METADATA, metaData);
-            intent.putExtras(bundle);
-            startActivity(intent);
-        }
+        Intent intent = new Intent(this, ConfirmationActivity.class);
+        intent.setAction(ACTION_GET_USER_CONFIRMATION)
+                .setFlags(FLAG_ACTIVITY_NEW_TASK);
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(EXTRA_METADATA, metaData);
+        intent.putExtras(bundle);
+        startActivity(intent);
     }
 
     /**
