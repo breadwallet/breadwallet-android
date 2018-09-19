@@ -88,7 +88,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     public static int mDisplayWidthPx;
     private static long mBackgroundedTime;
     private static Lifecycle.Event mLastApplicationEvent;
-    private static Activity currentActivity;
+    private static Activity mCurrentActivity;
     private static final Map<String, String> mHeaders = new HashMap<>();
 
     private Runnable mDisconnectWalletsRunnable = new Runnable() {
@@ -268,7 +268,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     }
 
     public static Context getBreadContext() {
-        Context app = currentActivity;
+        Context app = mCurrentActivity;
         if (app == null) {
             app = mContext;
         }
@@ -276,7 +276,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     }
 
     public static void setBreadContext(Activity app) {
-        currentActivity = app;
+        mCurrentActivity = app;
     }
 
     public static boolean isAppInBackground() {

@@ -2,7 +2,6 @@ package com.breadwallet.presenter.customviews;
 
 import android.app.Activity;
 import android.content.Context;
-import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -38,47 +37,50 @@ import com.breadwallet.R;
  * THE SOFTWARE.
  */
 public class BRToast {
-    private static boolean customToastAvailable = true;
-    private static String oldMessage;
-    private static Toast toast;
+    private static boolean mCustomToastAvailable = true;
+    private static String mOldMessage;
+    private static Toast mToast;
 
     /**
-     * Shows a custom toast using the given string as a paramater,
+     * Shows a custom mToast using the given string as a paramater,
      *
-     * @param message the message to be shown in the custom toast
+     * @param message the message to be shown in the custom mToast
      */
 
-    public static void showCustomToast(Context app, String message, int yOffSet, int duration, int layoutDrawable) {
-        if (app == null) return;
-        if (!(app instanceof Activity)) app = BreadApp.getBreadContext();
-        if (app == null) return;
-        if (toast == null) toast = new Toast(app);
-        if (BreadApp.isAppInBackground()) return;
-
-        if (customToastAvailable || !oldMessage.equals(message)) {
-            oldMessage = message;
-            customToastAvailable = false;
-            LayoutInflater inflater = ((Activity) app).getLayoutInflater();
-            View layout = inflater.inflate(R.layout.toast, (ViewGroup) ((Activity) app).findViewById(R.id.toast_layout_root));
+    public static void showCustomToast(Context context, String message, int yOffSet, int duration, int layoutDrawable) {
+        if (!(context instanceof Activity)) {
+            context = BreadApp.getBreadContext();
+        }
+        if (context == null || ((Activity) context).isDestroyed()) {
+            return;
+        }
+        if (mToast == null) {
+            mToast = new Toast(context);
+        }
+        if (mCustomToastAvailable || !mOldMessage.equals(message)) {
+            mOldMessage = message;
+            mCustomToastAvailable = false;
+            LayoutInflater inflater = ((Activity) context).getLayoutInflater();
+            View layout = inflater.inflate(R.layout.toast, (ViewGroup) ((Activity) context).findViewById(R.id.toast_layout_root));
             if (layoutDrawable != 0) {
                 layout.setBackgroundResource(layoutDrawable);
             }
             TextView text = layout.findViewById(R.id.toast_text);
             text.setText(message);
-            toast.setGravity(Gravity.TOP, 0, yOffSet);
-            toast.setDuration(duration);
-            toast.setView(layout);
-            toast.show();
+            mToast.setGravity(Gravity.TOP, 0, yOffSet);
+            mToast.setDuration(duration);
+            mToast.setView(layout);
+            mToast.show();
         }
     }
 
     public static void cancelToast() {
-        if (toast != null) {
-            toast.cancel();
+        if (mToast != null) {
+            mToast.cancel();
         }
     }
 
     public static boolean isToastShown() {
-        return toast != null && toast.getView() != null && toast.getView().isShown();
+        return mToast != null && mToast.getView() != null && mToast.getView().isShown();
     }
 }
