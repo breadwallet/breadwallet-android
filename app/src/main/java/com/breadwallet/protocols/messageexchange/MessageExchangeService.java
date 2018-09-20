@@ -365,7 +365,8 @@ public final class MessageExchangeService extends JobIntentService {
                     Protos.PaymentRequest paymentRequest = Protos.PaymentRequest.parseFrom(decryptedMessage);
                     metaData = new PaymentRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
                             paymentRequest.getScope(), paymentRequest.getNetwork(), paymentRequest.getAddress(),
-                            paymentRequest.getAmount(), paymentRequest.getMemo());
+                            paymentRequest.getAmount(), paymentRequest.getMemo(), paymentRequest.getTransactionSize(),
+                            paymentRequest.getTransactionFee());
                     Log.d(TAG, "Payment request metadata: " + metaData);
                     confirmRequest(metaData);
                     break;
@@ -374,7 +375,8 @@ public final class MessageExchangeService extends JobIntentService {
                     Protos.CallRequest callRequest = Protos.CallRequest.parseFrom(decryptedMessage);
                     metaData = new CallRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
                             callRequest.getScope(), callRequest.getNetwork(), callRequest.getAddress(),
-                            callRequest.getAmount(), callRequest.getMemo(), callRequest.getAbi());
+                            callRequest.getAmount(), callRequest.getMemo(), callRequest.getTransactionSize(),
+                            callRequest.getTransactionFee(), callRequest.getAbi());
                     Log.d(TAG, "Call request metadata: " + metaData);
                     confirmRequest(metaData);
                     break;
@@ -767,6 +769,7 @@ public final class MessageExchangeService extends JobIntentService {
             final String currencyCode = requestMetaData.getCurrencyCode();
             BaseWalletManager walletManager = WalletsMaster.getInstance(this).getWalletByIso(this, currencyCode);
 
+            // TODO: Support getting gas limit and fee from requestMetaData as with call request.
             CryptoRequest cryptoRequest = new CryptoRequest(null, false,
                     null, requestMetaData.getAddress(), new BigDecimal(requestMetaData.getAmount()));
             SendManager.sendTransaction(this, cryptoRequest, walletManager, new SendManager.SendCompletion() {
@@ -808,12 +811,15 @@ public final class MessageExchangeService extends JobIntentService {
         if (isUserApproved) {
             final String currencyCode = requestMetaData.getCurrencyCode();
             WalletEthManager walletManager = WalletEthManager.getInstance(this);
-            //assume ETH wallet type for now
+
+            // Assume ETH wallet type for now.
             CryptoRequest cryptoRequest = new CryptoRequest(null, false,
                     null, requestMetaData.getAddress(), new BigDecimal(requestMetaData.getAmount()));
             GenericTransactionMetaData genericTransactionMetaData = new GenericTransactionMetaData(
                     requestMetaData.getAddress(), requestMetaData.getAmount(), BREthereumAmount.Unit.ETHER_WEI,
-                    walletManager.getWallet().getDefaultGasPrice(), BREthereumAmount.Unit.ETHER_WEI, GAS_LIMIT,
+                    Utils.isNullOrEmpty(requestMetaData.getTransactionFee()) ? walletManager.getWallet().getDefaultGasPrice() : Long.valueOf(requestMetaData.getTransactionFee()),
+                    BREthereumAmount.Unit.ETHER_WEI,
+                    Utils.isNullOrEmpty(requestMetaData.getTransactionSize()) ? GAS_LIMIT : Long.valueOf(requestMetaData.getTransactionSize()),
                     ((CallRequestMetaData) requestMetaData).getAbi());
             cryptoRequest.setGenericTransactionMetaData(genericTransactionMetaData);
 
