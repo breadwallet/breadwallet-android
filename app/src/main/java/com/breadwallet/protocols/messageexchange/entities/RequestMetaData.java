@@ -1,7 +1,6 @@
 package com.breadwallet.protocols.messageexchange.entities;
 
 import android.os.Parcel;
-import android.os.Parcelable;
 
 import com.google.protobuf.ByteString;
 
@@ -37,9 +36,12 @@ public abstract class RequestMetaData extends MetaData {
     private String mAddress;
     private String mAmount;
     private String mMemo;
+    private String mTransactionSize;
+    private String mTransactionFee;
 
     public RequestMetaData(String id, String messageType, ByteString senderPublicKey, String currencyCode,
-                           String network, String address, String amount, String memo) {
+                           String network, String address, String amount, String memo, String transactionSize,
+                           String transactionFee) {
         super(id);
         mMessageType = messageType;
         mSenderPublicKey = senderPublicKey;
@@ -48,6 +50,8 @@ public abstract class RequestMetaData extends MetaData {
         mAddress = address;
         mAmount = amount;
         mMemo = memo;
+        mTransactionSize = transactionSize;
+        mTransactionFee = transactionFee;
     }
 
     public RequestMetaData(Parcel source) {
@@ -59,6 +63,8 @@ public abstract class RequestMetaData extends MetaData {
         mAddress = source.readString();
         mAmount = source.readString();
         mMemo = source.readString();
+        mTransactionSize = source.readString();
+        mTransactionFee = source.readString();
     }
 
     public String getMessageType() {
@@ -117,6 +123,22 @@ public abstract class RequestMetaData extends MetaData {
         mMemo = memo;
     }
 
+    public String getTransactionSize() {
+        return mTransactionSize;
+    }
+
+    public void setTransactionSize(String transactionSize) {
+        mTransactionSize = transactionSize;
+    }
+
+    public String getTransactionFee() {
+        return mTransactionFee;
+    }
+
+    public void setTransactionFee(String transactionFee) {
+        mTransactionFee = transactionFee;
+    }
+
     @Override
     protected void writeToParcel(Parcel destination) {
         destination.writeString(mMessageType);
@@ -126,5 +148,7 @@ public abstract class RequestMetaData extends MetaData {
         destination.writeString(mAddress);
         destination.writeString(mAmount);
         destination.writeString(mMemo);
+        destination.writeString(mTransactionSize);
+        destination.writeString(mTransactionFee);
     }
 }
