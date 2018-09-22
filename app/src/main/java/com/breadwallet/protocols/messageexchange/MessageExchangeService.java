@@ -297,7 +297,7 @@ public final class MessageExchangeService extends JobIntentService {
                     }
                 }
                 String cursor = inboxEntry.getCursor();
-                if (BreadApp.isAppInBackground() && envelope.getMessageType().equalsIgnoreCase(MessageType.CALL_REQUEST.name())) {
+                if (BreadApp.isInBackground() && envelope.getMessageType().equalsIgnoreCase(MessageType.CALL_REQUEST.name())) {
                     continue;
                 }
                 cursors.add(cursor);
