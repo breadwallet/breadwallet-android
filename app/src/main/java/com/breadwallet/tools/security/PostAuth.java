@@ -8,6 +8,7 @@ import android.support.annotation.WorkerThread;
 import android.text.format.DateUtils;
 import android.util.Log;
 
+import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
@@ -94,9 +95,10 @@ public class PostAuth {
     }
 
     public void onCreateWalletAuth(final Activity activity, boolean authAsked) {
-        long start = System.currentTimeMillis();
         boolean success = WalletsMaster.getInstance(activity).generateRandomSeed(activity);
         if (success) {
+            BreadApp.initialize();
+
             Intent intent = new Intent(activity, WriteDownActivity.class);
             intent.putExtra(WriteDownActivity.EXTRA_VIEW_REASON, WriteDownActivity.ViewReason.NEW_WALLET.getValue());
             activity.startActivity(intent);
@@ -186,6 +188,7 @@ public class PostAuth {
                     BRKeyStore.putAuthKey(authKey, activity);
                     BRCoreMasterPubKey mpk = new BRCoreMasterPubKey(mCachedPaperKey.getBytes(), true);
                     BRKeyStore.putMasterPublicKey(mpk.serialize(), activity);
+                    BreadApp.initialize();
 
                     Intent intent = new Intent(activity, InputPinActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);

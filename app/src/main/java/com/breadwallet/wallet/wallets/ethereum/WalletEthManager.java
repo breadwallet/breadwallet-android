@@ -160,7 +160,7 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
         if (Utils.isNullOrEmpty(mAddress)) {
             BRReportsManager.reportBug(new IllegalArgumentException("Eth address missing!"), true);
         }
-        BreadApp.generateWalletIfIfNeeded(app, mAddress);
+
         WalletsMaster.getInstance(app).setSpendingLimitIfNotSet(app, this);
 
         estimateGasPrice();
