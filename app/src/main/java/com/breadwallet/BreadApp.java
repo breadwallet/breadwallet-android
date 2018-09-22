@@ -75,9 +75,8 @@ import io.fabric.sdk.android.Fabric;
 public class BreadApp extends Application implements ApplicationLifecycleObserver.ApplicationLifecycleListener {
     private static final String TAG = BreadApp.class.getName();
 
-    public static final boolean IS_ALPHA = false;
-
-    public static String HOST = "api.breadwallet.com"; // The server(s) on which the API is hosted
+    // The server(s) on which the API is hosted
+    public static final String HOST = BuildConfig.DEBUG ? "stage2.breadwallet.com" : "api.breadwallet.com";
     private static final int LOCK_TIMEOUT = 180000; // 3 minutes in milliseconds
     private static final String WALLET_ID_PATTERN = "^[a-z0-9 ]*$"; // The wallet ID is in the form "xxxx xxxx xxxx xxxx" where x is a lowercase letter or a number.
     private static final String WALLET_ID_SEPARATOR = " ";
@@ -139,10 +138,6 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     public void onCreate() {
         super.onCreate();
 
-        if (BuildConfig.DEBUG) {
-            HOST = "stage2.breadwallet.com";
-        }
-
         final Fabric fabric = new Fabric.Builder(this)
                 .kits(new Crashlytics.Builder().disabled(BuildConfig.DEBUG).build())
                 .debuggable(BuildConfig.DEBUG)// Enables Crashlytics debugger
@@ -151,17 +146,10 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
         mContext = this;
 
-        if (!Utils.isEmulatorOrDebug(this) && IS_ALPHA)
-            throw new RuntimeException("can't be alpha for release");
-
-        boolean isTestVersion = APIClient.getInstance(this).isStaging();
-        boolean isTestNet = BuildConfig.BITCOIN_TESTNET;
-        String languageCode = getCurrentLanguageCode();
-
-        mHeaders.put(BRApiManager.HEADER_IS_INTERNAL, IS_ALPHA ? "true" : "false");
-        mHeaders.put(BRApiManager.HEADER_TESTFLIGHT, isTestVersion ? "true" : "false");
-        mHeaders.put(BRApiManager.HEADER_TESTNET, isTestNet ? "true" : "false");
-        mHeaders.put(BRApiManager.HEADER_ACCEPT_LANGUAGE, languageCode);
+        mHeaders.put(BRApiManager.HEADER_IS_INTERNAL, BuildConfig.IS_INTERNAL_BUILD ? "true" : "false");
+        mHeaders.put(BRApiManager.HEADER_TESTFLIGHT, APIClient.getInstance(this).isStaging() ? "true" : "false");
+        mHeaders.put(BRApiManager.HEADER_TESTNET, BuildConfig.BITCOIN_TESTNET ? "true" : "false");
+        mHeaders.put(BRApiManager.HEADER_ACCEPT_LANGUAGE, getCurrentLanguageCode());
 
         WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
