@@ -75,13 +75,7 @@ public final class UserMetricsUtil {
         BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
             @Override
             public void run() {
-                // First, check if we have a wallet ID already stored in SharedPrefs
-                String walletId = BRSharedPrefs.getWalletRewardId(BreadApp.getBreadContext());
-
-                // Only make this request if we have a valid wallet ID
-                if (walletId != null && !walletId.isEmpty()) {
-                    UserMetricsUtil.makeUserMetricsRequest(BreadApp.getBreadContext());
-                }
+                UserMetricsUtil.makeUserMetricsRequest(BreadApp.getBreadContext());
             }
         });
     }

@@ -11,8 +11,6 @@ import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
 import com.breadwallet.protocols.messageexchange.entities.ServiceMetaData;
-import com.breadwallet.tools.animation.BRDialog;
-import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
@@ -25,7 +23,6 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -112,7 +109,7 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
     private static Runnable mDelayStopPollingRunnable = new Runnable() {
         @Override
         public void run() {
-            if (BreadApp.isAppInBackground()) {
+            if (BreadApp.isInBackground()) {
                 stopInboxPolling();
             }
         }
