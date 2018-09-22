@@ -32,6 +32,7 @@ import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.crashlytics.android.Crashlytics;
 import com.platform.APIClient;
 import com.platform.HTTPServer;
@@ -82,11 +83,10 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     private static final String WALLET_ID_SEPARATOR = " ";
     private static final int NUMBER_OF_BYTES_FOR_SHA256_NEEDED = 10;
 
-    private static Context mContext;
+    private static BreadApp mInstance;
     public static int mDisplayHeightPx;
     public static int mDisplayWidthPx;
     private static long mBackgroundedTime;
-    private static Lifecycle.Event mLastApplicationEvent;
     private static Activity mCurrentActivity;
     private static final Map<String, String> mHeaders = new HashMap<>();
 
@@ -138,13 +138,13 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
     public void onCreate() {
         super.onCreate();
 
+        mInstance = this;
+
         final Fabric fabric = new Fabric.Builder(this)
                 .kits(new Crashlytics.Builder().disabled(BuildConfig.DEBUG).build())
                 .debuggable(BuildConfig.DEBUG)// Enables Crashlytics debugger
                 .build();
         Fabric.with(fabric);
-
-        mContext = this;
 
         mHeaders.put(BRApiManager.HEADER_IS_INTERNAL, BuildConfig.IS_INTERNAL_BUILD ? "true" : "false");
         mHeaders.put(BRApiManager.HEADER_TESTFLIGHT, APIClient.getInstance(this).isStaging() ? "true" : "false");
@@ -160,9 +160,99 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
 
         registerReceiver(InternetManager.getInstance(), new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION));
 
-        ProcessLifecycleOwner.get().getLifecycle().addObserver(new ApplicationLifecycleObserver());
-        ApplicationLifecycleObserver.addApplicationLifecycleListener(this);
-        ApplicationLifecycleObserver.addApplicationLifecycleListener(MessageExchangeNetworkHelper.getInstance());
+        initialize();
+    }
+
+    /**
+     * Initializes the application.  Only put things in here that need to happen after the user has created or
+     * recovered the BRD wallet.
+     */
+    public static void initialize() {
+        if (bRDWalletExists()) {
+            // Initialize the wallet id (also called rewards id).
+            initializeWalletId();
+
+            // Initialize application lifecycle observer and register this application for events.
+            ProcessLifecycleOwner.get().getLifecycle().addObserver(new ApplicationLifecycleObserver());
+            ApplicationLifecycleObserver.addApplicationLifecycleListener(mInstance);
+
+            // TODO: fix this (MessageExchangeNetworkHelper should not be a ApplicationLifecycleListener.)
+            ApplicationLifecycleObserver.addApplicationLifecycleListener(MessageExchangeNetworkHelper.getInstance());
+
+            // Initialize the Firebase Messaging Service.
+            BRDFirebaseMessagingService.initialize(mInstance);
+        }
+    }
+
+    /**
+     * Returns whether the BRD wallet exists.  i.e. has the BRD wallet been created or recovered.
+     *
+     * @return True if the BRD wallet exists; false, otherwise.
+     */
+    private static boolean bRDWalletExists() {
+        return BRKeyStore.getMasterPublicKey(mInstance) != null;
+    }
+
+    /**
+     * Initialize the wallet id (rewards id), and save it in the SharedPreferences.
+     */
+    private static void initializeWalletId() {
+        String walletId = generateWalletId();
+        if (!Utils.isNullOrEmpty(walletId) && walletId.matches(WALLET_ID_PATTERN)) {
+            BRSharedPrefs.putWalletRewardId(mInstance, walletId);
+        } else {
+            Log.e(TAG, "initializeWalletId: walletId is empty or faulty after generation");
+            BRSharedPrefs.putWalletRewardId(mInstance, "");
+            BRReportsManager.reportBug(new IllegalArgumentException("walletId is empty or faulty after generation: " + walletId));
+        }
+    }
+
+    /**
+     * Generates the wallet id (rewards id) based on the Ethereum address. The format of the id is
+     * "xxxx xxxx xxxx xxxx", where x is a lowercase letter or a number.
+     *
+     * @return The wallet id.
+     */
+    private static synchronized String generateWalletId() {
+        try {
+            // Retrieve the ETH address since the wallet id is based on this.
+            String address = WalletEthManager.getInstance(mInstance).getAddress();
+
+            // Remove the first 2 characters i.e. 0x
+            String rawAddress = address.substring(2, address.length());
+
+            // Get the address bytes.
+            byte[] addressBytes = rawAddress.getBytes("UTF-8");
+
+            // Run SHA256 on the address bytes.
+            byte[] sha256Address = CryptoHelper.sha256(addressBytes);
+            if (Utils.isNullOrEmpty(sha256Address)) {
+                BRReportsManager.reportBug(new IllegalAccessException("Failed to generate SHA256 hash."));
+                return null;
+            }
+
+            // Get the first 10 bytes of the SHA256 hash.
+            byte[] firstTenBytes = Arrays.copyOfRange(sha256Address, 0, NUMBER_OF_BYTES_FOR_SHA256_NEEDED);
+
+            // Convert the first 10 bytes to a lower case string.
+            String base32String = new String(Base32.encode(firstTenBytes));
+            base32String = base32String.toLowerCase();
+
+            // Insert a space every 4 chars to match the specified format.
+            StringBuilder builder = new StringBuilder();
+            Matcher matcher = Pattern.compile(".{1,4}").matcher(base32String);
+            String separator = "";
+            while (matcher.find()) {
+                String piece = base32String.substring(matcher.start(), matcher.end());
+                builder.append(separator + piece);
+                separator = WALLET_ID_SEPARATOR;
+            }
+            return builder.toString();
+
+        } catch (UnsupportedEncodingException e) {
+            Log.e(TAG, "Unable to get address bytes.", e);
+            return null;
+        }
     }
 
     /**
@@ -175,72 +265,16 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
      * @throws IllegalStateException if the {@link ActivityManager} fails to wipe the user's data.
      */
     public static void clearApplicationUserData() {
-        if (!((ActivityManager) mContext.getSystemService(ACTIVITY_SERVICE)).clearApplicationUserData()) {
+        if (!((ActivityManager) mInstance.getSystemService(ACTIVITY_SERVICE)).clearApplicationUserData()) {
             throw new IllegalStateException(TAG + ": Failed to clear user application data.");
         }
     }
 
-    public static void generateWalletIfIfNeeded(final Context context, String address) {
-        String walletId = BRSharedPrefs.getWalletRewardId(context);
-        if (Utils.isNullOrEmpty(walletId) || !walletId.matches(WALLET_ID_PATTERN)) {
-            Log.e(TAG, "generateWalletIfIfNeeded: walletId is empty or faulty: " + walletId + ", generating again.");
-            walletId = generateWalletId(context, address);
-            if (!Utils.isNullOrEmpty(walletId) && walletId.matches(WALLET_ID_PATTERN)) {
-                BRSharedPrefs.putWalletRewardId(context, walletId);
-                // TODO: This is a hack.  Decouple FCM logic from rewards id generation logic.
-                BRDFirebaseMessagingService.updateFcmRegistrationToken(context);
-            } else {
-                Log.e(TAG, "generateWalletIfIfNeeded: walletId is empty or faulty after generation");
-                BRSharedPrefs.putWalletRewardId(context, "");
-                BRReportsManager.reportBug(new IllegalArgumentException("walletId is empty or faulty after generation: " + walletId));
-            }
-        }
-    }
-
-    private static synchronized String generateWalletId(Context app, String address) {
-        if (app == null) {
-            Log.e(TAG, "generateWalletId: app is null");
-            return null;
-        }
-        try {
-            // Remove the first 2 characters
-            String cleanAddress = address.substring(2, address.length());
-
-            // Get the shortened address bytes
-            byte[] addressBytes = cleanAddress.getBytes("UTF-8");
-
-            // Run sha256 on the shortened address bytes
-            byte[] sha256Address = CryptoHelper.sha256(addressBytes);
-            if (Utils.isNullOrEmpty(sha256Address)) {
-                BRReportsManager.reportBug(new IllegalAccessException("Failed to sha256"));
-                return null;
-            }
-
-            // Get the first 10 bytes of the hash
-            byte[] firstTenBytes = Arrays.copyOfRange(sha256Address, 0, NUMBER_OF_BYTES_FOR_SHA256_NEEDED);
-
-            // Convert to lower case String
-            String base32String = new String(Base32.encode(firstTenBytes));
-            base32String = base32String.toLowerCase();
-
-            // Insert a space every 4 chars so the format is "xxxx xxxx xxxx xxxx", where x is a lowercase letter or a number.
-            StringBuilder builder = new StringBuilder();
-            Matcher matcher = Pattern.compile(".{1,4}").matcher(base32String);
-            String separator = "";
-            while (matcher.find()) {
-                String piece = base32String.substring(matcher.start(), matcher.end());
-                builder.append(separator + piece);
-                separator = WALLET_ID_SEPARATOR;
-            }
-            return builder.toString();
-
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-
-        }
-        return null;
-    }
-
+    /**
+     * Return the current language code i.e. "en_US" for US English.
+     *
+     * @return The current language code.
+     */
     @TargetApi(Build.VERSION_CODES.N)
     private String getCurrentLanguageCode() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
@@ -251,29 +285,36 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         }
     }
 
+    /**
+     * Returns true if the application is in the background; false, otherwise.
+     *
+     * @return True if the application is in the background; false, otherwise.
+     */
+    public static boolean isInBackground() {
+        return mBackgroundedTime > 0;
+    }
+
+    // TODO: Refactor and move to more appropriate class
     public static Map<String, String> getBreadHeaders() {
         return mHeaders;
     }
 
+    // TODO: Refactor so this does not store the current activity like this.
     public static Context getBreadContext() {
         Context app = mCurrentActivity;
         if (app == null) {
-            app = mContext;
+            app = mInstance;
         }
         return app;
     }
 
+    // TODO: Refactor so this does not store the current activity like this.
     public static void setBreadContext(Activity app) {
         mCurrentActivity = app;
     }
 
-    public static boolean isAppInBackground() {
-        return mLastApplicationEvent != null && mLastApplicationEvent.name().equalsIgnoreCase(Lifecycle.Event.ON_STOP.toString());
-    }
-
     @Override
     public void onLifeCycle(Lifecycle.Event event) {
-        mLastApplicationEvent = event;
         switch (event) {
             case ON_START:
                 Log.d(TAG, "onLifeCycle: START");
