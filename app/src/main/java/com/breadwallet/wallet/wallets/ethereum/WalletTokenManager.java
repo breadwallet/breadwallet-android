@@ -5,6 +5,7 @@ import android.support.annotation.WorkerThread;
 import android.util.Log;
 
 import com.breadwallet.core.ethereum.BREthereumAmount;
+import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.core.ethereum.BREthereumWallet;
@@ -269,28 +270,6 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     }
 
     @Override
-    public List<TxUiHolder> getTxUiHolders(Context app) {
-        long start = System.currentTimeMillis();
-        BREthereumTransaction txs[] = mWalletToken.getTransactions();
-        int blockHeight = (int) mWalletEthManager.node.getBlockHeight();
-        if (app != null && blockHeight != Integer.MAX_VALUE && blockHeight > 0) {
-            BRSharedPrefs.putLastBlockHeight(app, getIso(), blockHeight);
-        }
-        if (txs == null || txs.length <= 0) return null;
-        List<TxUiHolder> uiTxs = new ArrayList<>();
-        for (int i = txs.length - 1; i >= 0; i--) { //revere order
-            BREthereumTransaction tx = txs[i];
-//            printTxInfo(tx);
-            uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(mWalletEthManager.getReceiveAddress(app).stringify()),
-                    tx.getBlockTimestamp(), (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null :
-                    tx.getHash().getBytes(), tx.getHash(), new BigDecimal(tx.getFee(BREthereumAmount.Unit.ETHER_GWEI)),
-                    tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
-                    new BigDecimal(tx.getAmount(getUnit())), true));
-        }
-        return uiTxs;
-    }
-
-    @Override
     public boolean containsAddress(String address) {
         return mWalletEthManager.containsAddress(address);
     }
@@ -519,5 +498,10 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     @Override
     public BREthereumWallet getWallet() {
         return mWalletToken;
+    }
+
+    @Override
+    protected WalletEthManager getEthereumWallet() {
+        return mWalletEthManager;
     }
 }
