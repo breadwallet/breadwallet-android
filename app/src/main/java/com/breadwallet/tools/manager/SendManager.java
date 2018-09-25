@@ -110,7 +110,7 @@ public class SendManager {
             BigDecimal fee = walletManager.getEstimatedFee(payment.amount, "");
             if (WalletsMaster.getInstance(app).isIsoErc20(app, walletManager.getIso()) &&
                     fee.compareTo(WalletEthManager.getInstance(app).getCachedBalance(app)) > 0) {
-                sayError(app, app.getString(R.string.Send_insufficientGasTitle), String.format(app.getString(R.string.Send_insufficientGasMessage), CurrencyUtils.getFormattedAmount(app, "ETH", fee)));
+                sayError(app, app.getString(R.string.Send_insufficientGasTitle), String.format(app.getString(R.string.Send_insufficientGasMessage), CurrencyUtils.getFormattedAmount(app, WalletEthManager.ETH_CURRENCY_CODE, fee)));
             } else
                 sayError(app, app.getString(R.string.Alerts_sendFailure), app.getString(R.string.Send_insufficientFunds));
             callbackCompletionFailed(completion);
