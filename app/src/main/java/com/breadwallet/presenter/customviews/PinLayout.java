@@ -3,6 +3,7 @@ package com.breadwallet.presenter.customviews;
 import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
@@ -62,6 +63,7 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
     private String mLastInsertedPin;
     private boolean mIsPinUpdating;
     private int mPinDotBackground;
+    private static final int PIN_INSERTED_DELAY_MILLISECONDS = 50;
 
     public PinLayout(Context context) {
         super(context);
@@ -150,21 +152,33 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
         updatePinUi(pinLength);
 
         if (mPinStringBuilder.length() == mPinLimit) {
-            String pin = mPinStringBuilder.toString();
-            String currentPin = BRKeyStore.getPinCode(getContext());
-            if (pin.equals(currentPin)) {
-                mOnPinInsertedListener.onPinInserted(pin, true);
-                authSuccess(getContext());
-                useNewDigitLimit(true);
-            } else {
-                mOnPinInsertedListener.onPinInserted(pin, false);
-                if (!mIsPinUpdating && !currentPin.isEmpty()) {
-                    authFailed(getContext(), pin);
+
+            new Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    String pin = mPinStringBuilder.toString();
+                    String currentPin = BRKeyStore.getPinCode(getContext());
+                    if (pin.equals(currentPin)) {
+                        mOnPinInsertedListener.onPinInserted(pin, true);
+                        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                            @Override
+                            public void run() {
+                                authSuccess(getContext());
+                                useNewDigitLimit(true);
+                            }
+                        });
+                    } else {
+                        mOnPinInsertedListener.onPinInserted(pin, false);
+                        if (!mIsPinUpdating && !currentPin.isEmpty()) {
+                            authFailed(getContext(), pin);
+                        }
+                    }
+
+                    updatePinUi(0);
+                    mPinStringBuilder = new StringBuilder();
+                    mLastInsertedPin = pin;
                 }
-            }
-            updatePinUi(0);
-            mPinStringBuilder = new StringBuilder();
-            mLastInsertedPin = pin;
+            }, PIN_INSERTED_DELAY_MILLISECONDS);
 
         }
     }
@@ -193,7 +207,6 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
         }
         handleKeyInsert();
     }
-
 
 
     public void setup(BRKeyboard keyboard, OnPinInserted onPinInsertedListener) {
@@ -241,17 +254,13 @@ public class PinLayout extends LinearLayout implements BRKeyboard.OnInsertListen
     //when pin auth success
     public void authSuccess(final Context app) {
         //put the new total limit
-        BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
-            @Override
-            public void run() {
-                BaseWalletManager walletManager = WalletsMaster.getInstance(app).getCurrentWallet(app);
-                if (walletManager != null) {
-                    BRKeyStore.putTotalLimit(app, walletManager.getTotalSent(app).add(BRKeyStore.getSpendLimit(app, walletManager.getIso())), walletManager.getIso());
-                }
-                BRKeyStore.putFailCount(0, app);
-                BRKeyStore.putLastPinUsedTime(System.currentTimeMillis(), app);
-            }
-        });
+
+        BaseWalletManager walletManager = WalletsMaster.getInstance(app).getCurrentWallet(app);
+        if (walletManager != null) {
+            BRKeyStore.putTotalLimit(app, walletManager.getTotalSent(app).add(BRKeyStore.getSpendLimit(app, walletManager.getIso())), walletManager.getIso());
+        }
+        BRKeyStore.putFailCount(0, app);
+        BRKeyStore.putLastPinUsedTime(System.currentTimeMillis(), app);
     }
 
     public void setIsPinUpdating(boolean updating) {
