@@ -1428,4 +1428,5 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
     public interface OnTransactionEventListener {
         void onTransactionEvent(TransactionEvent event);
     }
+
 }
