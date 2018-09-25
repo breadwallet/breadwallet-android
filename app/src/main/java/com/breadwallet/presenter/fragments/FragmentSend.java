@@ -435,13 +435,11 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
 
                     BigDecimal rawFee = wm.getEstimatedFee(cryptoAmount, mAddressEdit.getText().toString());
                     BaseWalletManager ethWm = WalletEthManager.getInstance(app);
-                    BigDecimal isoFee = isIsoCrypto ? rawFee : ethWm.getFiatForSmallestCrypto(app, rawFee, null);
                     BigDecimal b = ethWm.getCachedBalance(app);
-                    if (isoFee.compareTo(b) > 0) {
+                    if (rawFee.compareTo(b) > 0) {
                         if (allFilled) {
-                            BigDecimal ethVal = ethWm.getCryptoForSmallestCrypto(app, isoFee);
-                            sayInsufficientEthereumForFee(app, ethVal.setScale(ethWm.getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE).toPlainString());
-
+                            BigDecimal ethVal = ethWm.getCryptoForSmallestCrypto(app, rawFee);
+                            sayInsufficientEthereumForFee(ethVal.setScale(ethWm.getMaxDecimalPlaces(app), BRConstants.ROUNDING_MODE).toPlainString());
                             allFilled = false;
                         }
                     }
@@ -576,22 +574,14 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 }, null, null, 0);
     }
 
-    private void sayInsufficientEthereumForFee(final Activity app, String ethNeeded) {
-        String message = String.format("You must have at least %s Ethereum in your wallet in order to transfer this type of token. " +
-                "Would you like to go to your Ethereum wallet now?", ethNeeded);
-        BRDialog.showCustomDialog(app, "Insufficient Ethereum Balance", message, app.getString(R.string.Button_continueAction),
-                app.getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
+    private void sayInsufficientEthereumForFee(String ethNeeded) {
+        String message = String.format(getActivity().getString(R.string.Send_insufficientGasMessage), ethNeeded);
+        BRDialog.showCustomDialog(getActivity(), getActivity().getString(R.string.Send_insufficientGasTitle), message, getActivity().getString(R.string.Button_continueAction),
+                getActivity().getString(R.string.Button_cancel), new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
                         brDialogView.dismissWithAnimation();
-                        app.getFragmentManager().popBackStack();
-                        new Handler().postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                if (!app.isDestroyed())
-                                    app.onBackPressed();
-                            }
-                        }, 1000);
+                        getActivity().getFragmentManager().popBackStack();
                     }
                 }, new BRDialogView.BROnClickListener() {
                     @Override
@@ -600,7 +590,6 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                     }
                 }, null, 0);
     }
-
 
     @Override
     public void onResume() {
