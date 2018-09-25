@@ -39,10 +39,8 @@ import com.platform.tools.BRBitId;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
-import java.util.Arrays;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.logging.Handler;
 
 
 /**
@@ -77,7 +75,7 @@ public class PostAuth {
     public CryptoRequest mCryptoRequest;
     //The user is stuck with endless authentication due to KeyStore bug.
     public static boolean mAuthLoopBugHappened;
-    public static TxMetaData txMetaData;
+    public static TxMetaData mTxMetaData;
     public SendManager.SendCompletion mSendCompletion;
     private BaseWalletManager mWalletManager;
 
@@ -241,18 +239,17 @@ public class PostAuth {
                             return;
                         }
 
-                        txMetaData = new TxMetaData();
-                        txMetaData.comment = mCryptoRequest.message;
-                        txMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(context);
+                        mTxMetaData = new TxMetaData();
+                        mTxMetaData.comment = mCryptoRequest.message;
+                        mTxMetaData.exchangeCurrency = BRSharedPrefs.getPreferredFiatIso(context);
                         BigDecimal fiatExchangeRate = mWalletManager.getFiatExchangeRate(context);
-                        txMetaData.exchangeRate = fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue();
-                        txMetaData.fee = mWalletManager.getTxFee(tx).toPlainString();
-                        txMetaData.txSize = tx.getTxSize().intValue();
-                        txMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(context, mWalletManager.getIso());
-                        txMetaData.creationTime = (int) (System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS);
-                        txMetaData.deviceId = BRSharedPrefs.getDeviceId(context);
-                        txMetaData.classVersion = 1;
-
+                        mTxMetaData.exchangeRate = fiatExchangeRate == null ? 0 : fiatExchangeRate.doubleValue();
+                        mTxMetaData.fee = mWalletManager.getTxFee(tx).toPlainString();
+                        mTxMetaData.txSize = tx.getTxSize().intValue();
+                        mTxMetaData.blockHeight = BRSharedPrefs.getLastBlockHeight(context, mWalletManager.getIso());
+                        mTxMetaData.creationTime = (int) (System.currentTimeMillis() / DateUtils.SECOND_IN_MILLIS);
+                        mTxMetaData.deviceId = BRSharedPrefs.getDeviceId(context);
+                        mTxMetaData.classVersion = 1;
 
                     } else {
                         WalletEthManager ethWallet = (WalletEthManager) mWalletManager;
@@ -318,36 +315,35 @@ public class PostAuth {
     }
 
     private void continueWithPayment(final Context context, byte[] rawPhrase, CryptoTransaction transaction) {
-        final byte[] txHash = mWalletManager.signAndPublishTransaction(transaction, rawPhrase);
-        if (Utils.isNullOrEmpty(txHash)) {
-            if (transaction.getEtherTx() != null) {
-                mWalletManager.watchTransactionForHash(transaction, new BaseWalletManager.OnHashUpdated() {
-                    @Override
-                    public void onUpdated(String hash) {
-                        if (mSendCompletion != null) {
-                            mSendCompletion.onCompleted(hash, true);
-                            stampMetaData(context, txHash);
-                            mSendCompletion = null;
-                        }
+        if (transaction.getEtherTx() != null) {
+            mWalletManager.watchTransactionForHash(transaction, new BaseWalletManager.OnHashUpdated() {
+                @Override
+                public void onUpdated(String hash) {
+                    if (mSendCompletion != null) {
+                        mSendCompletion.onCompleted(hash, true);
+                        mSendCompletion = null;
                     }
-                });
-                return; // ignore ETH since txs do not have the hash right away
-            }
-            BRDialog.showSimpleDialog(context, context.getString(R.string.Alerts_sendFailure), context.getString(R.string.Send_creatTransactionError));
-        } else {
+                    stampMetaData(context, hash.getBytes());
+                }
+            });
+        }
+        final byte[] txHash = mWalletManager.signAndPublishTransaction(transaction, rawPhrase);
+        if (!Utils.isNullOrEmpty(txHash)) {
             if (mSendCompletion != null) {
                 mSendCompletion.onCompleted(transaction.getHash(), true);
                 mSendCompletion = null;
             }
             stampMetaData(context, txHash);
         }
+
     }
 
     public static void stampMetaData(Context activity, byte[] txHash) {
-        if (txMetaData != null) {
-            KVStoreManager.putTxMetaData(activity, txMetaData, txHash);
-            txMetaData = null;
-        } else Log.e(TAG, "stampMetaData: txMetaData is null!");
+        if (mTxMetaData != null) {
+            KVStoreManager.putTxMetaData(activity, mTxMetaData, txHash);
+        } else {
+            Log.e(TAG, "stampMetaData: mTxMetaData is null!");
+        }
     }
 
     public void onPaymentProtocolRequest(final Activity activity, boolean authAsked) {
@@ -373,7 +369,6 @@ public class PostAuth {
                 if (Utils.isNullOrEmpty(txHash)) {
                     Log.e(TAG, "run: txHash is null");
                 }
-                Arrays.fill(paperKey, (byte) 0);
                 mPaymentProtocolTx = null;
             }
         });
