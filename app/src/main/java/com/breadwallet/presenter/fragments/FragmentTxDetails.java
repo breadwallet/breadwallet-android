@@ -176,11 +176,12 @@ public class FragmentTxDetails extends DialogFragment {
             }
         });
 
+        updateUi();
+
         mMemoText.setImeOptions(EditorInfo.IME_ACTION_DONE);
         int color = mToFromAddress.getTextColors().getDefaultColor();
         mMemoText.setTextColor(color);
 
-        updateUi();
         return rootView;
     }
 
@@ -340,9 +341,6 @@ public class FragmentTxDetails extends DialogFragment {
 
                 exchangeRateFormatted = CurrencyUtils.getFormattedAmount(app, metaIso, new BigDecimal(mTxMetaData.exchangeRate));
                 mExchangeRate.setText(exchangeRateFormatted);
-            } else {
-                mMemoText.setText("");
-
             }
             if (tkn != null) { // it's a token transfer ETH tx
                 mMemoText.setText(String.format(app.getString(R.string.Transaction_tokenTransfer), tkn.getSymbol()));
@@ -417,9 +415,15 @@ public class FragmentTxDetails extends DialogFragment {
     public void onPause() {
         super.onPause();
         // Update the memo field on the transaction and save it
-        if (mTxMetaData == null) mTxMetaData = new TxMetaData();
-        mTxMetaData.comment = mMemoText.getText().toString();
-        KVStoreManager.putTxMetaData(getContext(), mTxMetaData, mTransaction.getTxHash());
+        mTxMetaData = KVStoreManager.getTxMetaData(getActivity(), mTransaction.getTxHash());
+        if (mTxMetaData == null) {
+            mTxMetaData = new TxMetaData();
+        }
+        String memo = mMemoText.getText().toString();
+        if (!memo.isEmpty()) {
+            mTxMetaData.comment = memo;
+            KVStoreManager.putTxMetaData(getContext(), mTxMetaData, mTransaction.getTxHash());
+        }
         mTxMetaData = null;
 
         // Hide softkeyboard if it's visible
