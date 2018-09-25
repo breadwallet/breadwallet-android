@@ -96,7 +96,6 @@ public class TxManager {
 
     @WorkerThread
     public synchronized void updateTxList(final Context app) {
-        long start = System.currentTimeMillis();
         BaseWalletManager wallet = WalletsMaster.getInstance(app).getCurrentWallet(app);
         if (wallet == null) {
             Log.e(TAG, "updateTxList: wallet is null");
@@ -106,9 +105,6 @@ public class TxManager {
             TxManager.getInstance().adapter.updateData();
         final List<TxUiHolder> items = wallet.getTxUiHolders(app);
 
-        long took = (System.currentTimeMillis() - start);
-        if (took > 500)
-            Log.e(TAG, "updateTxList: took: " + took);
         if (adapter != null) {
             BRExecutor.getInstance().forMainThreadTasks().execute(new Runnable() {
                 @Override
