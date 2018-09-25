@@ -401,22 +401,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     }
 
-    @Override
-    public List<TxUiHolder> getTxUiHolders(Context app) {
-        BREthereumTransaction txs[] = mWallet.getTransactions();
-        if (txs == null || txs.length <= 0) return null;
-        List<TxUiHolder> uiTxs = new ArrayList<>();
-        for (int i = txs.length - 1; i >= 0; i--) { //revere order
-            BREthereumTransaction tx = txs[i];
-            uiTxs.add(new TxUiHolder(tx, tx.getTargetAddress().equalsIgnoreCase(mWallet.getAccount().getPrimaryAddress()), tx.getBlockTimestamp(),
-                    (int) tx.getBlockNumber(), Utils.isNullOrEmpty(tx.getHash()) ? null : tx.getHash().getBytes(), tx.getHash(),
-                    new BigDecimal(tx.getFee(BREthereumAmount.Unit.ETHER_WEI)),
-                    tx.getTargetAddress(), tx.getSourceAddress(), null, 0,
-                    new BigDecimal(tx.getAmount(BREthereumAmount.Unit.ETHER_WEI)), true));
-        }
-
-        return uiTxs;
-    }
 
     @Override
     public boolean containsAddress(String address) {
@@ -1193,10 +1177,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
         });
     }
 
-    public BREthereumLightNode getNode() {
-        return node;
-    }
-
     private void printInfo(String infoText, String walletIso, String eventName) {
         Log.d(TAG, String.format("%s (%s): %s", eventName, walletIso, infoText));
     }
@@ -1365,7 +1345,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     }
 
-
     /**
      * refresh current wallet's balance by code
      *
@@ -1411,6 +1390,10 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
         }
     }
 
+    public long getBlockHeight(){
+        return node.getBlockHeight();
+    }
+
     public BREthereumWallet getWallet() {
         return mWallet;
     }
@@ -1427,6 +1410,11 @@ public class WalletEthManager extends BaseEthereumWalletManager implements BREth
 
     public interface OnTransactionEventListener {
         void onTransactionEvent(TransactionEvent event);
+    }
+
+    @Override
+    protected WalletEthManager getEthereumWallet() {
+        return this;
     }
 
 }
