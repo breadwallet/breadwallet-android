@@ -19,7 +19,6 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BRNotificationBar;
 import com.breadwallet.presenter.customviews.BaseTextView;
-import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
@@ -34,11 +33,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
-import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
-import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.platform.HTTPServer;
-import com.platform.entities.TokenListMetaData;
-import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -202,8 +197,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
 
         showNextPromptIfNeeded();
 
-        addCccWalletIfNeeded();
-
         populateWallets();
 
         new Handler().postDelayed(new Runnable() {
@@ -227,31 +220,6 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         });
 
         onConnectionChanged(InternetManager.getInstance().isConnected(this));
-    }
-
-    // TODO: pairing should not automatically add the ICO token to the user's wallet. That should be added when the CallRequest is received + approved.
-    private void addCccWalletIfNeeded() {
-        if (MessageExchangeService.mPairingMetaData == null) {
-            return;
-        }
-        WalletEthManager ethWallet = WalletEthManager.getInstance(this);
-
-        if (!WalletsMaster.getInstance(this).hasWallet(CCC_CURRENCY_CODE) && MessageExchangeService.mPairingMetaData.getId() != null) {
-            WalletTokenManager cccWallet = WalletTokenManager.getTokenWalletByIso(this, ethWallet, CCC_CURRENCY_CODE);
-            TokenListMetaData metaData = KVStoreManager.getTokenListMetaData(this);
-
-            TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(cccWallet.getSymbol(this), true, cccWallet.getContractAddress());
-            if (metaData == null) metaData = new TokenListMetaData(null, null);
-            if (metaData.enabledCurrencies == null) {
-                metaData.enabledCurrencies = new ArrayList<>();
-            }
-            if (!metaData.isCurrencyEnabled(item.symbol)) {
-                metaData.enabledCurrencies.add(item);
-            }
-
-            KVStoreManager.putTokenListMetaData(this, metaData);
-            WalletsMaster.getInstance(this).updateWallets(this);
-        }
     }
 
     private void populateWallets() {

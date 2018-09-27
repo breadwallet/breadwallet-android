@@ -110,7 +110,10 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         return mWalletToken.getToken().getAddress();
     }
 
-    public synchronized static WalletTokenManager getTokenWalletByIso(Context app, WalletEthManager walletEthManager, String iso) {
+    public synchronized static WalletTokenManager getTokenWalletByIso(Context app, String iso) {
+
+        WalletEthManager walletEthManager = WalletEthManager.getInstance(app);
+
         long start = System.currentTimeMillis();
         if (mTokenIsos.size() <= 0) mapTokenIsos(app);
 

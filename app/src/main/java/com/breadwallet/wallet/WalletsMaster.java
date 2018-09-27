@@ -120,7 +120,7 @@ public class WalletsMaster {
                 mWallets.add(ethWallet);
             } else {
                 //add ERC20 wallet
-                WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(app, ethWallet, enabled.symbol);
+                WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(app, enabled.symbol);
                 if (tokenWallet != null && !isHidden) mWallets.add(tokenWallet);
             }
 
@@ -147,7 +147,7 @@ public class WalletsMaster {
         if (iso.equalsIgnoreCase("ETH"))
             return WalletEthManager.getInstance(app);
         else if (isIsoErc20(app, iso)) {
-            return WalletTokenManager.getTokenWalletByIso(app, WalletEthManager.getInstance(app), iso);
+            return WalletTokenManager.getTokenWalletByIso(app, iso);
         }
         return null;
     }
