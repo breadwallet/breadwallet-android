@@ -32,8 +32,10 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.entities.GenericTransactionMetaData;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
+import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+import com.platform.entities.TokenListMetaData;
 import com.platform.tools.KVStoreManager;
 
 import java.math.BigDecimal;
@@ -789,6 +791,9 @@ public final class MessageExchangeService extends JobIntentService {
                 }
             });
 
+            // Add token to home screen once request has been approved
+            addNewTokenToTokenList(requestMetaData);
+
         } else {
             Protos.PaymentResponse.Builder responseBuilder = Protos.PaymentResponse.newBuilder();
             responseBuilder.setStatus(Protos.Status.REJECTED)
@@ -841,6 +846,9 @@ public final class MessageExchangeService extends JobIntentService {
                 }
             });
 
+            // Add token to home screen once request has been approved
+            addNewTokenToTokenList(requestMetaData);
+
         } else {
             Protos.CallResponse.Builder responseBuilder = Protos.CallResponse.newBuilder();
             responseBuilder.setStatus(Protos.Status.REJECTED)
@@ -849,4 +857,34 @@ public final class MessageExchangeService extends JobIntentService {
             sendResponse(requestMetaData, messageResponse);
         }
     }
+
+
+    /**
+     * Adds the token from a payment or call request to the token list and adds it to the home screen.
+     *
+     * @param requestMetaData The payment/call request metadata that contains details on the new token.
+     */
+    private void addNewTokenToTokenList(RequestMetaData requestMetaData) {
+
+        if (requestMetaData != null) {
+            
+            if (!WalletsMaster.getInstance(this).hasWallet(requestMetaData.getCurrencyCode())) {
+                WalletTokenManager tokenWalletManager = WalletTokenManager.getTokenWalletByIso(this, requestMetaData.getCurrencyCode());
+                TokenListMetaData tokenListMetaData = KVStoreManager.getTokenListMetaData(this);
+
+                TokenListMetaData.TokenInfo item = new TokenListMetaData.TokenInfo(tokenWalletManager.getSymbol(this), true, requestMetaData.getAddress());
+                if (tokenListMetaData == null) {
+                    tokenListMetaData = new TokenListMetaData(null, null);
+                }
+
+                if (!tokenListMetaData.isCurrencyEnabled(item.symbol)) {
+                    tokenListMetaData.enabledCurrencies.add(item);
+                }
+
+                KVStoreManager.putTokenListMetaData(this, tokenListMetaData);
+                WalletsMaster.getInstance(this).updateWallets(this);
+            }
+        }
+    }
+
 }
