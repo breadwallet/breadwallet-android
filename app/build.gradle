@@ -29,6 +29,14 @@ android {
             }
         }
     }
+    signingConfigs {
+        FakeSigningConfig {
+            keyAlias 'key0'
+            keyPassword 'qwerty'
+            storeFile file('../FakeSigningKey')
+            storePassword 'qwerty'
+        }
+    }
     testOptions {
         unitTests.returnDefaultValues = true
     }
@@ -61,6 +69,7 @@ android {
                     targets "core"
                 }
             }
+            //signingConfig signingConfigs.FakeSigningConfig // Uncomment to fake sign a mainnet release build for testing.
         }
         brdTestnet {
             applicationId = "com.breadwallet.testnet"
@@ -76,6 +85,7 @@ android {
                     targets "core"
                 }
             }
+            signingConfig signingConfigs.FakeSigningConfig
         }
     }
     lintOptions {
@@ -95,8 +105,6 @@ android {
     buildTypes {
         release {
             manifestPlaceholders = [applicationIcon: "@mipmap/ic_launcher"]
-
-
             debuggable = false
             minifyEnabled = false
             buildConfigField "boolean", "IS_INTERNAL_BUILD", "false"
@@ -109,7 +117,6 @@ android {
         debug {
             applicationIdSuffix '.debug'
             manifestPlaceholders = [applicationIcon: "@mipmap/ic_launcher_grayscale"]
-
             debuggable = true
             jniDebuggable = true
             minifyEnabled = false
@@ -203,7 +210,7 @@ dependencies {
     implementation 'tools.fastlane:screengrab:1.1.0'
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     implementation 'com.google.protobuf:protobuf-lite:3.0.0'
-    implementation group: 'com.google.guava', name: 'guava', version: '25.1-android'
+    implementation 'com.google.guava:guava:25.1-android'
     implementation 'com.squareup.picasso:picasso:2.71828'
 }
 
