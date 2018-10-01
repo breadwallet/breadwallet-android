@@ -443,7 +443,6 @@ public class BRKeyStore {
     }
 
     public static boolean putPhrase(byte[] strToStore, Context context, int requestCode) throws UserNotAuthenticatedException {
-        PostAuth.mAuthLoopBugHappened = true;//todo remove
         if (PostAuth.mAuthLoopBugHappened) {
             showLoopBugMessage(context);
             throw new UserNotAuthenticatedException();
