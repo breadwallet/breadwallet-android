@@ -443,6 +443,7 @@ public class BRKeyStore {
     }
 
     public static boolean putPhrase(byte[] strToStore, Context context, int requestCode) throws UserNotAuthenticatedException {
+        PostAuth.mAuthLoopBugHappened = true;//todo remove
         if (PostAuth.mAuthLoopBugHappened) {
             showLoopBugMessage(context);
             throw new UserNotAuthenticatedException();
@@ -1046,12 +1047,16 @@ public class BRKeyStore {
     }
 
     private static void showLoopBugMessage(final Context app) {
-        if (bugMessageShowing) return;
+        if (bugMessageShowing) {
+            return;
+        }
         bugMessageShowing = true;
         Log.e(TAG, "showLoopBugMessage: ");
         String mess = app.getString(R.string.ErrorMessages_loopingLockScreen_android);
 
-        SpannableString ss = new SpannableString(mess.replace("[", "").replace("]", ""));
+        int startIndex = mess.indexOf("[") - 1;
+        int endIndex = mess.indexOf("]") - 1;
+        SpannableString spannableMessage = new SpannableString(mess.replace("[", "").replace("]", ""));
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(View textView) {
@@ -1073,12 +1078,14 @@ public class BRKeyStore {
                 ds.setUnderlineText(false);
             }
         };
-        ss.setSpan(clickableSpan, mess.indexOf("[") - 1, mess.indexOf("]") - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), ss, app.getString(R.string.AccessibilityLabels_close), null,
+        spannableMessage.setSpan(clickableSpan, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), spannableMessage, app.getString(R.string.AccessibilityLabels_close), null,
                 new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
-                        if (app instanceof Activity) ((Activity) app).finish();
+                        if (app instanceof Activity) {
+                            ((Activity) app).finish();
+                        }
                     }
                 }, null, new DialogInterface.OnDismissListener() {
                     @Override
@@ -1088,7 +1095,6 @@ public class BRKeyStore {
                 }, 0);
 
     }
-
 
     public static boolean writeBytesToFile(String path, byte[] data) {
         FileOutputStream fos = null;
