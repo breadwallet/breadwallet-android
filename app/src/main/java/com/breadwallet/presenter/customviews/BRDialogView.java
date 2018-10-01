@@ -49,27 +49,29 @@ import com.breadwallet.tools.util.Utils;
  */
 public class BRDialogView extends DialogFragment {
 
-    private static final String TAG = BRDialogView.class.getName();
+    public static final String POSITIVE_BUTTON_COLOR = "#4b77f3";
+    public static final String NEGATIVE_BUTTON_COLOR = "#b3c0c8";
+    public static final int MAX_LINE_COUNT = 4;
+    public static final int SMALLER_TEXT_SIZE = 16;
+    public static final int MESSAGE_PADDING_END = 16;
 
-    private String title = "";
-    private String message = "";
-    private String posButton = "";
-    private String negButton = "";
-    private BRDialogView.BROnClickListener posListener;
-    private BRDialogView.BROnClickListener negListener;
-    private BRDialogView.BROnClickListener helpListener;
-    private DialogInterface.OnDismissListener dismissListener;
-    private int iconRes = 0;
-    private BRButton negativeButton;
-    private BRButton positiveButton;
-    private LinearLayout buttonsLayout;
-    private ImageButton helpButton;
-    private LinearLayout mainLayout;
+    private String mTitle = "";
+    private String mMessage = "";
+    private String mPositiveButtonText = "";
+    private String mNegativeButtonText = "";
+    private BRDialogView.BROnClickListener mPositiveListener;
+    private BRDialogView.BROnClickListener mNegativeListener;
+    private BRDialogView.BROnClickListener mHelpListener;
+    private DialogInterface.OnDismissListener mDismissListener;
+    private BRButton mNegativeButton;
+    private LinearLayout mButtonsLayout;
+    private ImageButton mHelpButton;
+    private LinearLayout mMainLayout;
 
     //provide the way to have clickable span in the message
-    private SpannableString spanMessage;
+    private SpannableString mSpanMessage;
 
-    private boolean showHelpIcon;
+    private boolean mShowHelpIcon;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -80,56 +82,56 @@ public class BRDialogView extends DialogFragment {
         TextView titleText = view.findViewById(R.id.dialog_title);
         TextView messageText = view.findViewById(R.id.dialog_text);
         BRButton positiveButton = view.findViewById(R.id.pos_button);
-        negativeButton = view.findViewById(R.id.neg_button);
-//        ImageView icon = (ImageView) view.findViewById(R.id.dialog_icon);
-        mainLayout = view.findViewById(R.id.main_layout);
-        buttonsLayout = view.findViewById(R.id.linearLayout3);
-        helpButton = view.findViewById(R.id.help_icon);
+        mNegativeButton = view.findViewById(R.id.neg_button);
+        mMainLayout = view.findViewById(R.id.main_layout);
+        mButtonsLayout = view.findViewById(R.id.linearLayout3);
+        mHelpButton = view.findViewById(R.id.help_icon);
 
         //assuming that is the last text to bet set.
-        if (Utils.isNullOrEmpty(title)) {
-            mainLayout.removeView(titleText);
+        if (Utils.isNullOrEmpty(mTitle)) {
+            mMainLayout.removeView(titleText);
         }
-        if (Utils.isNullOrEmpty(message) && Utils.isNullOrEmpty(spanMessage.toString())) {
-            mainLayout.removeView(messageText);
+        if (Utils.isNullOrEmpty(mMessage) && Utils.isNullOrEmpty(mSpanMessage.toString())) {
+            mMainLayout.removeView(messageText);
         }
 
         // Resize the title text if it is greater than 4 lines
-        titleText.setText(title);
-        if (titleText.getLineCount() > 4) {
-            titleText.setTextSize(16);
+        titleText.setText(mTitle);
+        if (titleText.getLineCount() > MAX_LINE_COUNT) {
+            titleText.setTextSize(SMALLER_TEXT_SIZE);
         }
 
         // Resize the message text if it is greater than 4 lines
-        if (!Utils.isNullOrEmpty(message)) {
-            messageText.setText(message);
+        if (!Utils.isNullOrEmpty(mMessage)) {
+            messageText.setText(mMessage);
 
         }
-        if (!Utils.isNullOrEmpty(spanMessage.toString())) {
-            messageText.setText(spanMessage);
+        if (!Utils.isNullOrEmpty(mSpanMessage.toString())) {
+            messageText.setText(mSpanMessage);
             messageText.setMovementMethod(LinkMovementMethod.getInstance());
         }
 
-        if (messageText.getLineCount() > 4) {
-            messageText.setTextSize(16);
+        if (messageText.getLineCount() > MAX_LINE_COUNT) {
+            messageText.setTextSize(SMALLER_TEXT_SIZE);
         }
 
-        positiveButton.setColor(Color.parseColor("#4b77f3"));
+        positiveButton.setColor(Color.parseColor(POSITIVE_BUTTON_COLOR));
         positiveButton.setHasShadow(false);
-        positiveButton.setText(posButton);
+        positiveButton.setText(mPositiveButtonText);
         positiveButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) return;
-                if (posListener != null) {
-                    posListener.onClick(BRDialogView.this);
+                if (!UiUtils.isClickAllowed()) {
+                    return;
+                }
+                if (mPositiveListener != null) {
+                    mPositiveListener.onClick(BRDialogView.this);
                 }
             }
         });
-        if (Utils.isNullOrEmpty(negButton)) {
-            Log.e(TAG, "onCreateDialog: removing negative button");
-            buttonsLayout.removeView(negativeButton);
-            buttonsLayout.requestLayout();
+        if (Utils.isNullOrEmpty(mNegativeButtonText)) {
+            mButtonsLayout.removeView(mNegativeButton);
+            mButtonsLayout.requestLayout();
 
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
             params.gravity = Gravity.CENTER_HORIZONTAL;
@@ -137,52 +139,58 @@ public class BRDialogView extends DialogFragment {
             positiveButton.setLayoutParams(params);
         }
 
-        negativeButton.setColor(Color.parseColor("#b3c0c8"));
-        negativeButton.setHasShadow(false);
-        negativeButton.setText(negButton);
-        negativeButton.setOnClickListener(new View.OnClickListener() {
+        mNegativeButton.setColor(Color.parseColor(NEGATIVE_BUTTON_COLOR));
+        mNegativeButton.setHasShadow(false);
+        mNegativeButton.setText(mNegativeButtonText);
+        mNegativeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!UiUtils.isClickAllowed()) return;
-                if (negListener != null)
-                    negListener.onClick(BRDialogView.this);
+                if (!UiUtils.isClickAllowed()) {
+                    return;
+                }
+                if (mNegativeListener != null) {
+                    mNegativeListener.onClick(BRDialogView.this);
+                }
             }
         });
 
         builder.setView(view);
 
-        if (showHelpIcon) {
-            helpButton.setVisibility(View.VISIBLE);
+        if (mShowHelpIcon) {
+            mHelpButton.setVisibility(View.VISIBLE);
 
-            messageText.setPadding(0, 0, 0, Utils.getPixelsFromDps(getContext(), 16));
+            messageText.setPadding(0, 0, 0, Utils.getPixelsFromDps(getContext(), MESSAGE_PADDING_END));
 
-            helpButton.setOnClickListener(new View.OnClickListener() {
+            mHelpButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if (!UiUtils.isClickAllowed()) return;
-                    if (helpListener != null)
-                        helpListener.onClick(BRDialogView.this);
+                    if (!UiUtils.isClickAllowed()) {
+                        return;
+                    }
+                    if (mHelpListener != null) {
+                        mHelpListener.onClick(BRDialogView.this);
+                    }
                 }
             });
 
         } else {
-            helpButton.setVisibility(View.INVISIBLE);
+            mHelpButton.setVisibility(View.INVISIBLE);
 
         }
-//        builder.setOnDismissListener(dismissListener);
         // Create the AlertDialog object and return it
         return builder.create();
     }
 
     public void showHelpIcon(boolean show) {
-        this.showHelpIcon = show;
+        this.mShowHelpIcon = show;
     }
 
     @Override
     public void onDismiss(DialogInterface dialog) {
         super.onDismiss(dialog);
-        if (dismissListener != null)
-            dismissListener.onDismiss(dialog);
+        if (mDismissListener != null) {
+            mDismissListener.onDismiss(dialog);
+        }
     }
 
     @Override
@@ -192,11 +200,11 @@ public class BRDialogView extends DialogFragment {
     }
 
     public void setTitle(String title) {
-        this.title = title;
+        this.mTitle = title;
     }
 
     public void setMessage(String message) {
-        this.message = message;
+        this.mMessage = message;
     }
 
     public void setSpan(SpannableString message) {
@@ -204,38 +212,34 @@ public class BRDialogView extends DialogFragment {
             BRReportsManager.reportBug(new NullPointerException("setSpan with null message"));
             return;
         }
-        this.spanMessage = message;
+        this.mSpanMessage = message;
     }
 
     public void setPosButton(@NonNull String posButton) {
-        this.posButton = posButton;
+        this.mPositiveButtonText = posButton;
     }
 
     public void setNegButton(String negButton) {
-        this.negButton = negButton;
+        this.mNegativeButtonText = negButton;
     }
 
     public void setPosListener(BRDialogView.BROnClickListener posListener) {
-        this.posListener = posListener;
+        this.mPositiveListener = posListener;
     }
 
     public void setNegListener(BRDialogView.BROnClickListener negListener) {
-        this.negListener = negListener;
+        this.mNegativeListener = negListener;
     }
 
     public void setHelpListener(BROnClickListener helpListener) {
-        this.helpListener = helpListener;
+        this.mHelpListener = helpListener;
     }
 
     public void setDismissListener(DialogInterface.OnDismissListener dismissListener) {
-        this.dismissListener = dismissListener;
+        this.mDismissListener = dismissListener;
     }
 
-    public void setIconRes(int iconRes) {
-        this.iconRes = iconRes;
-    }
-
-    public static interface BROnClickListener {
+    public interface BROnClickListener {
         void onClick(BRDialogView brDialogView);
     }
 
