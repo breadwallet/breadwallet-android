@@ -87,10 +87,12 @@ public class BRDialogView extends DialogFragment {
         helpButton = view.findViewById(R.id.help_icon);
 
         //assuming that is the last text to bet set.
-        if (Utils.isNullOrEmpty(title))
+        if (Utils.isNullOrEmpty(title)) {
             mainLayout.removeView(titleText);
-        if (Utils.isNullOrEmpty(message))
+        }
+        if (Utils.isNullOrEmpty(message) && Utils.isNullOrEmpty(spanMessage.toString())) {
             mainLayout.removeView(messageText);
+        }
 
         // Resize the title text if it is greater than 4 lines
         titleText.setText(title);
@@ -98,15 +100,18 @@ public class BRDialogView extends DialogFragment {
             titleText.setTextSize(16);
         }
 
-
         // Resize the message text if it is greater than 4 lines
-        messageText.setText(message);
-        if (messageText.getLineCount() > 4) {
-            messageText.setTextSize(16);
+        if (!Utils.isNullOrEmpty(message)) {
+            messageText.setText(message);
+
         }
-        if (spanMessage != null) {
+        if (!Utils.isNullOrEmpty(spanMessage.toString())) {
             messageText.setText(spanMessage);
             messageText.setMovementMethod(LinkMovementMethod.getInstance());
+        }
+
+        if (messageText.getLineCount() > 4) {
+            messageText.setTextSize(16);
         }
 
         positiveButton.setColor(Color.parseColor("#4b77f3"));
@@ -116,8 +121,9 @@ public class BRDialogView extends DialogFragment {
             @Override
             public void onClick(View v) {
                 if (!UiUtils.isClickAllowed()) return;
-                if (posListener != null)
+                if (posListener != null) {
                     posListener.onClick(BRDialogView.this);
+                }
             }
         });
         if (Utils.isNullOrEmpty(negButton)) {
@@ -142,8 +148,6 @@ public class BRDialogView extends DialogFragment {
                     negListener.onClick(BRDialogView.this);
             }
         });
-//        if (iconRes != 0)
-//            icon.setImageResource(iconRes);
 
         builder.setView(view);
 
@@ -239,6 +243,5 @@ public class BRDialogView extends DialogFragment {
         BRDialogView.this.dismiss();
 
     }
-
 
 }
