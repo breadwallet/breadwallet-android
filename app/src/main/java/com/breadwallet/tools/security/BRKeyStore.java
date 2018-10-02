@@ -109,7 +109,8 @@ public class BRKeyStore {
     public static final String NEW_PADDING = KeyProperties.ENCRYPTION_PADDING_NONE;
     public static final String NEW_BLOCK_MODE = KeyProperties.BLOCK_MODE_GCM;
 
-    public static Map<String, AliasObject> aliasObjectMap;
+    public static final String START_SPANNABLE_SYMBOL = "[";
+    public static final String END_SPANNABLE_SYMBOL = "]";
 
     private static final String PHRASE_IV = "ivphrase";
     private static final String CANARY_IV = "ivcanary";
@@ -152,10 +153,12 @@ public class BRKeyStore {
     private static final String TOKEN_FILENAME = "my_token";
     private static final String PASS_TIME_FILENAME = "my_pass_time";
     private static final String ETH_PUBKEY_FILENAME = "my_eth_pubkey";
-    private static boolean bugMessageShowing;
-
     public static final int AUTH_DURATION_SEC = 300;
     private static final ReentrantLock lock = new ReentrantLock();
+
+    private static boolean bugMessageShowing;
+
+    public static Map<String, AliasObject> aliasObjectMap;
 
     static {
         aliasObjectMap = new HashMap<>();
@@ -1046,12 +1049,17 @@ public class BRKeyStore {
     }
 
     private static void showLoopBugMessage(final Context app) {
-        if (bugMessageShowing) return;
+        if (bugMessageShowing) {
+            return;
+        }
         bugMessageShowing = true;
         Log.e(TAG, "showLoopBugMessage: ");
         String mess = app.getString(R.string.ErrorMessages_loopingLockScreen_android);
 
-        SpannableString ss = new SpannableString(mess.replace("[", "").replace("]", ""));
+        int startIndex = mess.indexOf(START_SPANNABLE_SYMBOL) - 1;
+        int endIndex = mess.indexOf(END_SPANNABLE_SYMBOL) - 1;
+        SpannableString spannableMessage = new SpannableString(mess.replace(START_SPANNABLE_SYMBOL, "")
+                .replace(END_SPANNABLE_SYMBOL, ""));
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(View textView) {
@@ -1073,12 +1081,14 @@ public class BRKeyStore {
                 ds.setUnderlineText(false);
             }
         };
-        ss.setSpan(clickableSpan, mess.indexOf("[") - 1, mess.indexOf("]") - 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), ss, app.getString(R.string.AccessibilityLabels_close), null,
+        spannableMessage.setSpan(clickableSpan, startIndex, endIndex, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+        BRDialog.showCustomDialog(app, app.getString(R.string.JailbreakWarnings_title), spannableMessage, app.getString(R.string.AccessibilityLabels_close), null,
                 new BRDialogView.BROnClickListener() {
                     @Override
                     public void onClick(BRDialogView brDialogView) {
-                        if (app instanceof Activity) ((Activity) app).finish();
+                        if (app instanceof Activity) {
+                            ((Activity) app).finish();
+                        }
                     }
                 }, null, new DialogInterface.OnDismissListener() {
                     @Override
@@ -1089,8 +1099,7 @@ public class BRKeyStore {
 
     }
 
-
-    public static boolean writeBytesToFile(String path, byte[] data) {
+    private static boolean writeBytesToFile(String path, byte[] data) {
         FileOutputStream fos = null;
         try {
             File file = new File(path);
