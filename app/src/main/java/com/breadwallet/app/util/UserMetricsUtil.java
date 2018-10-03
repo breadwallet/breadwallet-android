@@ -29,13 +29,19 @@ import android.os.Build;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.BuildConfig;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.google.android.gms.ads.identifier.AdvertisingIdClient;
+import com.google.android.gms.common.GooglePlayServicesNotAvailableException;
+import com.google.android.gms.common.GooglePlayServicesRepairableException;
 import com.platform.APIClient;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.io.IOException;
 
 import okhttp3.MediaType;
 import okhttp3.Request;
@@ -65,6 +71,8 @@ public final class UserMetricsUtil {
     private static final String SYSTEM_PROPERTY_USER_AGENT = "http.agent";
     private static final String FIELD_DEVICE_TYPE = "device_type";
     private static final String DEVICE_TYPE = Build.MANUFACTURER + " " + Build.MODEL;
+    private static final String FIELD_APPLICATION_ID = "application_id";
+    private static final String FIELD_ADVERTISING_ID = "advertising_id";
 
     private static byte[] bundleHash;
 
@@ -90,6 +98,8 @@ public final class UserMetricsUtil {
             data.put(FIELD_OS_VERSION, Build.VERSION.RELEASE);
             data.put(FIELD_USER_AGENT,  System.getProperty(SYSTEM_PROPERTY_USER_AGENT));
             data.put(FIELD_DEVICE_TYPE, DEVICE_TYPE);
+            data.put(FIELD_APPLICATION_ID, BuildConfig.APPLICATION_ID);
+            data.put(FIELD_ADVERTISING_ID, AdvertisingIdClient.getAdvertisingIdInfo(context).getId());
 
             JSONObject payload = new JSONObject();
             payload.put(FIELD_METRIC, METRIC_LAUNCH);
@@ -104,8 +114,8 @@ public final class UserMetricsUtil {
 
             APIClient.getInstance(context).sendRequest(request, true);
 
-        } catch (JSONException e) {
-            Log.e(TAG, "Error constructing JSON payload for user metrics request.");
+        } catch (GooglePlayServicesNotAvailableException | GooglePlayServicesRepairableException | IOException | JSONException  e) {
+            Log.e(TAG, "Error constructing JSON payload for user metrics request.", e);
         }
     }
 
