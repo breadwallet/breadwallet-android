@@ -17,6 +17,7 @@ import android.view.WindowManager;
 
 import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.presenter.activities.DisabledActivity;
+import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.protocols.messageexchange.MessageExchangeNetworkHelper;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.crypto.Base32;
@@ -29,6 +30,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.services.BRDFirebaseMessagingService;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -147,7 +149,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
         Fabric.with(fabric);
 
         mHeaders.put(BRApiManager.HEADER_IS_INTERNAL, BuildConfig.IS_INTERNAL_BUILD ? "true" : "false");
-        mHeaders.put(BRApiManager.HEADER_TESTFLIGHT, APIClient.getInstance(this).isStaging() ? "true" : "false");
+        mHeaders.put(BRApiManager.HEADER_TESTFLIGHT, BuildConfig.DEBUG ? "true" : "false");
         mHeaders.put(BRApiManager.HEADER_TESTNET, BuildConfig.BITCOIN_TESTNET ? "true" : "false");
         mHeaders.put(BRApiManager.HEADER_ACCEPT_LANGUAGE, getCurrentLanguageCode());
 
@@ -329,6 +331,14 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                         }
                     }
                 });
+
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        TokenUtil.getTokenList(mInstance);
+                    }
+                });
+
                 break;
             case ON_STOP:
                 Log.d(TAG, "onLifeCycle: STOP");

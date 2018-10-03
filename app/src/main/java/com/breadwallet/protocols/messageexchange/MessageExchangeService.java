@@ -15,6 +15,7 @@ import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.presenter.activities.ConfirmationActivity;
 import com.breadwallet.presenter.entities.CryptoRequest;
+import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.protocols.messageexchange.entities.CallRequestMetaData;
 import com.breadwallet.protocols.messageexchange.entities.EncryptedMessage;
 import com.breadwallet.protocols.messageexchange.entities.InboxEntry;
@@ -27,6 +28,7 @@ import com.breadwallet.tools.crypto.CryptoHelper;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.SendManager;
 import com.breadwallet.tools.security.BRKeyStore;
+import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -365,20 +367,28 @@ public final class MessageExchangeService extends JobIntentService {
                 case PAYMENT_REQUEST:
                     // Ask the user for approval before completing the request. This is an asynchronous request.
                     Protos.PaymentRequest paymentRequest = Protos.PaymentRequest.parseFrom(decryptedMessage);
+
+                    // Fetch the ICO token info and pass the relevant fields back to the metaData object.
+                    TokenItem icoToken = getIcoTokenInfo(paymentRequest.getAddress());
+
                     metaData = new PaymentRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
                             paymentRequest.getScope(), paymentRequest.getNetwork(), paymentRequest.getAddress(),
                             paymentRequest.getAmount(), paymentRequest.getMemo(), paymentRequest.getTransactionSize(),
-                            paymentRequest.getTransactionFee());
+                            paymentRequest.getTransactionFee(), icoToken.symbol, icoToken.name);
                     Log.d(TAG, "Payment request metadata: " + metaData);
                     confirmRequest(metaData);
                     break;
                 case CALL_REQUEST:
                     // Ask the user for approval before completing the request. This is an asynchronous request.
                     Protos.CallRequest callRequest = Protos.CallRequest.parseFrom(decryptedMessage);
+
+                    // Fetch the ICO token info and pass the relevant fields back to the metaData object.
+                    TokenItem tokenItem = getIcoTokenInfo(callRequest.getAddress());
+
                     metaData = new CallRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
                             callRequest.getScope(), callRequest.getNetwork(), callRequest.getAddress(),
                             callRequest.getAmount(), callRequest.getMemo(), callRequest.getTransactionSize(),
-                            callRequest.getTransactionFee(), callRequest.getAbi());
+                            callRequest.getTransactionFee(), callRequest.getAbi(), tokenItem.symbol, tokenItem.name);
                     Log.d(TAG, "Call request metadata: " + metaData);
                     confirmRequest(metaData);
                     break;
@@ -867,7 +877,6 @@ public final class MessageExchangeService extends JobIntentService {
     private void addNewTokenToTokenList(RequestMetaData requestMetaData) {
 
         if (requestMetaData != null) {
-            
             if (!WalletsMaster.getInstance(this).hasWallet(requestMetaData.getCurrencyCode())) {
                 WalletTokenManager tokenWalletManager = WalletTokenManager.getTokenWalletByIso(this, requestMetaData.getCurrencyCode());
                 TokenListMetaData tokenListMetaData = KVStoreManager.getTokenListMetaData(this);
@@ -887,4 +896,23 @@ public final class MessageExchangeService extends JobIntentService {
         }
     }
 
+    /**
+     * Fetches information about a specific token sale from /currencies?saleAddress=[CONTRACT_ADDRESS].
+     *
+     * @param saleAddress The token sale address where the ICO is being held.
+     * @return A TokenItem comprising of all the info about the ICO token.
+     */
+    private TokenItem getIcoTokenInfo(final String saleAddress) {
+        TokenItem tokenItem = null;
+
+        // Get the ICO token info from /currencies?saleAddress=[CONTRACT_ADDRESS]
+        ArrayList<TokenItem> tokenItems = TokenUtil.getTokenList(MessageExchangeService.this, saleAddress);
+        if (tokenItems == null || tokenItems.isEmpty()) {
+            Log.e(TAG, "No token info found at sale address: " + saleAddress);
+        } else if (tokenItems.size() > 0) {
+            tokenItem = tokenItems.get(0);
+        }
+
+        return tokenItem;
+    }
 }
