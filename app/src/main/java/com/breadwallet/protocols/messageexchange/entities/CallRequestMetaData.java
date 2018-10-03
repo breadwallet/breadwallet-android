@@ -45,8 +45,8 @@ public class CallRequestMetaData extends RequestMetaData {
 
     public CallRequestMetaData(String id, String messageType, ByteString senderPublicKey, String currencyCode,
                                String network, String address, String amount, String memo, String transactionSize,
-                               String transactionFee, String abi) {
-        super(id, messageType, senderPublicKey, currencyCode, network, address, amount, memo, transactionSize, transactionFee);
+                               String transactionFee, String abi, String tokenSymbol, String tokenName) {
+        super(id, messageType, senderPublicKey, currencyCode, network, address, amount, memo, transactionSize, transactionFee, tokenSymbol, tokenName);
         mAbi = abi;
     }
 

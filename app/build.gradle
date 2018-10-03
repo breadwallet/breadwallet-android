@@ -213,6 +213,7 @@ dependencies {
     implementation 'android.arch.lifecycle:extensions:1.1.1'
     implementation 'com.google.protobuf:protobuf-lite:3.0.0'
     implementation group: 'com.google.guava', name: 'guava', version: '25.1-android'
+    implementation 'com.squareup.picasso:picasso:2.71828'
 
 }
 

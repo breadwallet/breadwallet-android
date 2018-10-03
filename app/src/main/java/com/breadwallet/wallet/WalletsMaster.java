@@ -10,6 +10,7 @@ import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.BuildConfig;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
@@ -24,6 +25,7 @@ import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
+import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.TrustedNode;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
@@ -96,11 +98,11 @@ public class WalletsMaster {
         mTokenListMetaData = KVStoreManager.getTokenListMetaData(app);
         if (mTokenListMetaData == null) {
             List<TokenListMetaData.TokenInfo> enabled = new ArrayList<>();
-            enabled.add(new TokenListMetaData.TokenInfo("BTC", false, null));
-            enabled.add(new TokenListMetaData.TokenInfo("BCH", false, null));
-            enabled.add(new TokenListMetaData.TokenInfo("ETH", false, null));
-            BREthereumWallet brdWallet = ethWallet.node.getWallet(ethWallet.node.getBRDToken());
-            enabled.add(new TokenListMetaData.TokenInfo(brdWallet.getToken().getSymbol(), true, brdWallet.getToken().getAddress()));
+            enabled.add(new TokenListMetaData.TokenInfo(WalletBitcoinManager.BITCOIN_CURRENCY_CODE, false, null));
+            enabled.add(new TokenListMetaData.TokenInfo(WalletBchManager.BITCASH_CURRENCY_CODE, false, null));
+            enabled.add(new TokenListMetaData.TokenInfo(WalletEthManager.ETH_CURRENCY_CODE, false, null));
+            enabled.add(new TokenListMetaData.TokenInfo(WalletTokenManager.BRD_CURRENCY_CODE, true, WalletTokenManager.BRD_CONTRACT_ADDRESS));
+
             mTokenListMetaData = new TokenListMetaData(enabled, null);
             KVStoreManager.putTokenListMetaData(app, mTokenListMetaData); //put default currencies if null
         }
@@ -121,7 +123,9 @@ public class WalletsMaster {
             } else {
                 //add ERC20 wallet
                 WalletTokenManager tokenWallet = WalletTokenManager.getTokenWalletByIso(app, enabled.symbol);
-                if (tokenWallet != null && !isHidden) mWallets.add(tokenWallet);
+                if (tokenWallet != null && !isHidden) {
+                    mWallets.add(tokenWallet);
+                }
             }
 
         }
@@ -137,7 +141,6 @@ public class WalletsMaster {
 
     //return the needed wallet for the iso
     public BaseWalletManager getWalletByIso(Context app, String iso) {
-//        Log.d(TAG, "getWalletByIso() Getting wallet by ISO -> " + iso);
         if (Utils.isNullOrEmpty(iso))
             throw new RuntimeException("getWalletByIso with iso = null, Cannot happen!");
         if (iso.equalsIgnoreCase("BTC"))

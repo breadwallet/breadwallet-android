@@ -23,12 +23,14 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.services.SyncService;
 import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.math.BigDecimal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -131,15 +133,22 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
             holder.mSyncingLabel.setVisibility(item.mShowSyncProgress ? View.VISIBLE : View.INVISIBLE);
             holder.mSyncingLabel.setText(item.mLabelText);
 
-            String currencyCodeWithPrefix = IMAGE_RESOURCE_ID_PREFIX.concat(currencyCode).toLowerCase();
-
-            int iconResourceId = mContext.getResources().getIdentifier(currencyCodeWithPrefix, BRConstants.DRAWABLE, mContext.getPackageName());
-            if (iconResourceId > 0) {
-                holder.mLogoIcon.setBackground(mContext.getDrawable(iconResourceId));
+            String tokenIconPath = TokenUtil.getTokenIconPath(mContext, currencyCode, false);
+            if (!Utils.isNullOrEmpty(tokenIconPath)) {
+                File iconFile = new File(tokenIconPath);
+                Picasso.get().load(iconFile).into(holder.mLogoIcon);
             }
 
-            String startColor = wallet.getUiConfiguration().getStartColor();
-            String endColor = wallet.getUiConfiguration().getEndColor();
+            String startColor;
+            String endColor;
+            if (!wallet.getIso().equalsIgnoreCase("BTC") && !wallet.getIso().equalsIgnoreCase("BCH") && !wallet.getIso().equalsIgnoreCase("ETH")) {
+                // TODO: In DROID-878 fix this so we don't have to retrieve this from TokenUtil.
+                startColor = TokenUtil.getTokenStartColor(wallet.getIso());
+                endColor = TokenUtil.getTokenEndColor(wallet.getIso());
+            } else {
+                startColor = wallet.getUiConfiguration().getStartColor();
+                endColor = wallet.getUiConfiguration().getEndColor();
+            }
 
             Drawable drawable = mContext.getResources().getDrawable(R.drawable.crypto_card_shape, null).mutate();
             //create gradient with 2 colors if exist
