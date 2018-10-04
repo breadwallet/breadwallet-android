@@ -507,10 +507,11 @@ public class APIClient {
         return new AuthenticatedRequest(request, token);
     }
 
+    // TODO: Remove and make a more generic way of getting this.
     public String getBundleHash() {
         byte[] bFile = new byte[0];
         try {
-            File bundleFile = new File(getBundleResource(mContext, mBundleFileName));
+            File bundleFile = new File(getBundleResource(mContext, WEB_BUNDLE_NAME));
             FileInputStream in = new FileInputStream(bundleFile);
             bFile = IOUtils.toByteArray(in);
             in.close();
