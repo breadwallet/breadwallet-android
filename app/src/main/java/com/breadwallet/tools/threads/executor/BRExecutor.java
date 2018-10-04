@@ -2,8 +2,11 @@ package com.breadwallet.tools.threads.executor;
 
 import android.util.Log;
 
+import com.breadwallet.tools.manager.BRReportsManager;
+
 import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.RejectedExecutionHandler;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -34,39 +37,39 @@ import java.util.concurrent.TimeUnit;
  * THE SOFTWARE.
  */
 /*
-* Singleton class for default executor supplier
-*/
+ * Singleton class for default executor supplier
+ */
 public class BRExecutor implements RejectedExecutionHandler {
     private static final String TAG = BRExecutor.class.getName();
     /*
-    * Number of cores to decide the number of threads
-    */
+     * Number of cores to decide the number of threads
+     */
     public static final int NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors();
 
     /*
-    * thread pool executor for background tasks
-    */
+     * thread pool executor for background tasks
+     */
     private final ThreadPoolExecutor mForBackgroundTasks;
     /*
-    * thread pool executor for light weight background tasks
-    */
+     * thread pool executor for light weight background tasks
+     */
     private final ThreadPoolExecutor mForLightWeightBackgroundTasks;
     //    /*
 //    * thread pool executor for serialized tasks (one at the time)
 //    */
 //    private final ThreadPoolExecutor mForSerializedTasks;
     /*
-    * thread pool executor for main thread tasks
-    */
+     * thread pool executor for main thread tasks
+     */
     private final Executor mMainThreadExecutor;
     /*
-    * an instance of BRExecutor
-    */
+     * an instance of BRExecutor
+     */
     private static BRExecutor sInstance;
 
     /*
-    * returns the instance of BRExecutor
-    */
+     * returns the instance of BRExecutor
+     */
     public static BRExecutor getInstance() {
         if (sInstance == null) {
             synchronized (BRExecutor.class) {
@@ -79,8 +82,8 @@ public class BRExecutor implements RejectedExecutionHandler {
 
 
     /*
-    * constructor for  BRExecutor
-    */
+     * constructor for  BRExecutor
+     */
     private BRExecutor() {
 
         ThreadFactory backgroundPriorityThreadFactory = new
@@ -123,16 +126,16 @@ public class BRExecutor implements RejectedExecutionHandler {
     }
 
     /*
-    * returns the thread pool executor for background task
-    */
+     * returns the thread pool executor for background task
+     */
 
     public ThreadPoolExecutor forBackgroundTasks() {
         return mForBackgroundTasks;
     }
 
     /*
-    * returns the thread pool executor for light weight background task
-    */
+     * returns the thread pool executor for light weight background task
+     */
     public ThreadPoolExecutor forLightWeightBackgroundTasks() {
         return mForLightWeightBackgroundTasks;
     }
@@ -145,8 +148,8 @@ public class BRExecutor implements RejectedExecutionHandler {
 //    }
 
     /*
-    * returns the thread pool executor for main thread task
-    */
+     * returns the thread pool executor for main thread task
+     */
     public Executor forMainThreadTasks() {
         return mMainThreadExecutor;
     }
@@ -154,5 +157,6 @@ public class BRExecutor implements RejectedExecutionHandler {
     @Override
     public void rejectedExecution(Runnable r, ThreadPoolExecutor executor) {
         Log.e(TAG, "rejectedExecution: ");
+        BRReportsManager.reportBug(new RejectedExecutionException("rejectedExecution: core pool size: " + executor.getCorePoolSize()));
     }
 }
