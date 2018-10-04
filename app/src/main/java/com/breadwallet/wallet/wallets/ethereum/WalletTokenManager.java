@@ -10,10 +10,12 @@ import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.CurrencyEntity;
+import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.RatesDataSource;
 import com.breadwallet.tools.util.BRConstants;
+import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.configs.WalletSettingsConfiguration;
 import com.breadwallet.wallet.configs.WalletUiConfiguration;
@@ -137,11 +139,10 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         return null;
     }
 
-    public synchronized static void mapTokenIsos(Context app) {
-        BREthereumToken[] tokens = WalletEthManager.getInstance(app).node.getTokens();
-        for (BREthereumToken t : tokens) {
-            if (!mTokenIsos.containsKey(t.getSymbol().toLowerCase())) {
-                mTokenIsos.put(t.getSymbol().toLowerCase(), t.getAddress().toLowerCase());
+    public static synchronized void mapTokenIsos(Context app) {
+        for (TokenItem tokenItem : TokenUtil.getTokenItems(app)) {
+            if (!mTokenIsos.containsKey(tokenItem.symbol.toLowerCase())) {
+                mTokenIsos.put(tokenItem.symbol.toLowerCase(), tokenItem.address.toLowerCase());
             }
         }
     }
