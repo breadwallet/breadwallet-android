@@ -1,6 +1,7 @@
 package com.platform;
 
 
+import android.accounts.AuthenticatorException;
 import android.content.Context;
 import android.content.pm.ApplicationInfo;
 import android.net.Uri;
@@ -323,7 +324,12 @@ public class APIClient {
         if (withAuth) {
             String walletId = BRSharedPrefs.getWalletRewardId(BreadApp.getBreadContext());
             if (!Utils.isNullOrEmpty(walletId)) {
-                newBuilder.addHeader(HEADER_WALLET_ID, walletId);
+                try {
+                    newBuilder.addHeader(HEADER_WALLET_ID, walletId);
+                } catch (IllegalArgumentException ex) {
+                    BRReportsManager.reportBug(ex);
+                    Log.e(TAG, "sendHttpRequest: ", ex);
+                }
             }
         }
 
@@ -350,6 +356,7 @@ public class APIClient {
             rawResponse = mHTTPClient.newCall(request).execute();
         } catch (IOException e) {
             Log.e(TAG, "sendRequest: ", e);
+            BRReportsManager.reportBug(e);
             return new Response.Builder().code(599).request(request)
                     .body(ResponseBody.create(null, e.getMessage())).protocol(Protocol.HTTP_1_1).build();
         }
@@ -357,7 +364,8 @@ public class APIClient {
         try {
             bytesBody = rawResponse.body().bytes();
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.e(TAG, "sendHttpRequest: ", e);
+            BRReportsManager.reportBug(e);
         }
 
         if (Utils.isNullOrEmpty(bytesBody)) {
@@ -391,7 +399,11 @@ public class APIClient {
     public BRResponse sendRequest(Request request, boolean withAuth) {
         try (Response response = sendHttpRequest(request, withAuth)) {
             if (response == null) {
+                BRReportsManager.reportBug(new AuthenticatorException("Request: " + request.url() + " response is null"));
                 return new BRResponse();
+            }
+            if (response.code() == 401) {
+                BRReportsManager.reportBug(new AuthenticatorException("Request: " + request.url() + " returned 401!"));
             }
             if (response.isRedirect()) {
                 String newLocation = request.url().scheme() + "://" + request.url().host() + response.header("location");
@@ -402,6 +414,7 @@ public class APIClient {
                 } else if (!Utils.isEmulatorOrDebug(mContext) && (!newUri.getHost().equalsIgnoreCase(BreadApp.HOST)
                         || !newUri.getScheme().equalsIgnoreCase(PROTO))) {
                     Log.e(TAG, "sendRequest: WARNING: redirect is NOT safe: " + newLocation);
+                    BRReportsManager.reportBug(new IllegalAccessException("redirect is NOT safe: " + newLocation));
                     return createBrResponse(new Response.Builder().code(500).request(request)
                             .body(ResponseBody.create(null, new byte[0])).protocol(Protocol.HTTP_1_1).build());
                 } else {
