@@ -106,7 +106,7 @@ public class BRDialogView extends DialogFragment {
             messageText.setText(mMessage);
 
         }
-        if (!Utils.isNullOrEmpty(mSpanMessage.toString())) {
+        if (mSpanMessage != null && !Utils.isNullOrEmpty(mSpanMessage.toString())) {
             messageText.setText(mSpanMessage);
             messageText.setMovementMethod(LinkMovementMethod.getInstance());
         }
