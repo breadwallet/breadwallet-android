@@ -517,6 +517,20 @@ public class APIClient {
         return new AuthenticatedRequest(request, token);
     }
 
+    public String getBundleHash() {
+        byte[] bFile = new byte[0];
+        try {
+            File bundleFile = new File(getBundleResource(mContext, mBundleFileName));
+            FileInputStream in = new FileInputStream(bundleFile);
+            bFile = IOUtils.toByteArray(in);
+            in.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        byte[] hash = CryptoHelper.sha256(bFile);
+        return BRCoreKey.encodeHex(hash);
+    }
+
     public synchronized void updateBundle() {
         if (UiUtils.isMainThread()) {
             throw new NetworkOnMainThreadException();
