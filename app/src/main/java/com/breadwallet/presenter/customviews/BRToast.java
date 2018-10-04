@@ -11,6 +11,7 @@ import android.widget.Toast;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
+import com.breadwallet.tools.manager.BRSharedPrefs;
 
 /**
  * BreadWallet
@@ -67,6 +68,9 @@ public class BRToast {
             }
             TextView text = layout.findViewById(R.id.toast_text);
             text.setText(message);
+            if (yOffSet == -1 || yOffSet == 0) {
+                yOffSet = BRSharedPrefs.getScreenHeight(context) / 2;
+            }
             mToast.setGravity(Gravity.TOP, 0, yOffSet);
             mToast.setDuration(duration);
             mToast.setView(layout);
