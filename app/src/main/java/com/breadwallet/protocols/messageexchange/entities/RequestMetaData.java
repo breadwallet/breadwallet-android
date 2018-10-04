@@ -38,10 +38,12 @@ public abstract class RequestMetaData extends MetaData {
     private String mMemo;
     private String mTransactionSize;
     private String mTransactionFee;
+    private String mTokenSymbol;
+    private String mTokenName;
 
     public RequestMetaData(String id, String messageType, ByteString senderPublicKey, String currencyCode,
                            String network, String address, String amount, String memo, String transactionSize,
-                           String transactionFee) {
+                           String transactionFee, String tokenSymbol, String tokenName) {
         super(id);
         mMessageType = messageType;
         mSenderPublicKey = senderPublicKey;
@@ -52,6 +54,8 @@ public abstract class RequestMetaData extends MetaData {
         mMemo = memo;
         mTransactionSize = transactionSize;
         mTransactionFee = transactionFee;
+        mTokenSymbol = tokenSymbol;
+        mTokenName = tokenName;
     }
 
     public RequestMetaData(Parcel source) {
@@ -65,6 +69,8 @@ public abstract class RequestMetaData extends MetaData {
         mMemo = source.readString();
         mTransactionSize = source.readString();
         mTransactionFee = source.readString();
+        mTokenSymbol = source.readString();
+        mTokenName = source.readString();
     }
 
     public String getMessageType() {
@@ -139,6 +145,22 @@ public abstract class RequestMetaData extends MetaData {
         mTransactionFee = transactionFee;
     }
 
+    public void setTokenSymbol(String tokenSymbol) {
+        mTokenSymbol = tokenSymbol;
+    }
+
+    public String getTokenSymbol() {
+        return mTokenSymbol;
+    }
+
+    public void setTokenName(String tokenName){
+        mTokenName = tokenName;
+    }
+
+    public String getTokenName() {
+        return mTokenName;
+    }
+
     @Override
     protected void writeToParcel(Parcel destination) {
         destination.writeString(mMessageType);
@@ -150,5 +172,7 @@ public abstract class RequestMetaData extends MetaData {
         destination.writeString(mMemo);
         destination.writeString(mTransactionSize);
         destination.writeString(mTransactionFee);
+        destination.writeString(mTokenSymbol);
+        destination.writeString(mTokenName);
     }
 }

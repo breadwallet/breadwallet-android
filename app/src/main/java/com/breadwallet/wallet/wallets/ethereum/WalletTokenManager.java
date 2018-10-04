@@ -4,13 +4,12 @@ import android.content.Context;
 import android.support.annotation.WorkerThread;
 import android.util.Log;
 
+import com.breadwallet.BuildConfig;
 import com.breadwallet.core.ethereum.BREthereumAmount;
-import com.breadwallet.core.ethereum.BREthereumLightNode;
 import com.breadwallet.core.ethereum.BREthereumToken;
 import com.breadwallet.core.ethereum.BREthereumTransaction;
 import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.entities.CurrencyEntity;
-import com.breadwallet.presenter.entities.TxUiHolder;
 import com.breadwallet.tools.manager.BRReportsManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.sqlite.RatesDataSource;
@@ -24,9 +23,7 @@ import com.breadwallet.wallet.wallets.WalletManagerHelper;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -64,10 +61,15 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
     private WalletUiConfiguration uiConfig;
 
+    private static final String DEFAULT_COLOR_LEFT  = "#ff5193"; // tokenWallet.getToken().getColorLeft()
+    private static final String DEFAULT_COLOR_RIGHT = "#f9a43a"; // tokenWallet.getToken().getColorRight();
+    public static final String BRD_CONTRACT_ADDRESS = BuildConfig.BITCOIN_TESTNET ? "0x7108ca7c4718efa810457f228305c9c71390931a" : "0x558ec3152e2eb2174905cd19aea4e34a23de9ad6";
+    public static final String BRD_CURRENCY_CODE = "BRD";
+
     private WalletTokenManager(WalletEthManager walletEthManager, BREthereumWallet tokenWallet) {
         mWalletEthManager = walletEthManager;
         mWalletToken = tokenWallet;
-        uiConfig = new WalletUiConfiguration(tokenWallet.getToken().getColorLeft(), tokenWallet.getToken().getColorRight(), false, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
+        uiConfig = new WalletUiConfiguration(DEFAULT_COLOR_LEFT, DEFAULT_COLOR_RIGHT, false, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
         mAddress = mWalletEthManager.getAddress();
     }
 
@@ -98,7 +100,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
     //for testing only
     public static WalletTokenManager getBrdWallet(WalletEthManager walletEthManager) {
-        BREthereumWallet brdWallet = walletEthManager.node.getWallet(walletEthManager.node.tokenBRD);
+        BREthereumWallet brdWallet = walletEthManager.node.getWallet(walletEthManager.node.getBRDToken());
         if (brdWallet.getToken() == null) {
             BRReportsManager.reportBug(new NullPointerException("getBrd failed"));
             return null;
@@ -121,7 +123,6 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         address = address == null ? null : address.toLowerCase();
         if (address == null) {
             if (!iso.equalsIgnoreCase("BTC") && !iso.equalsIgnoreCase("BCH") && !iso.equalsIgnoreCase("ETH"))
-                BRReportsManager.reportBug(new NullPointerException("getTokenWalletByIso: address is null for: " + iso));
             return null;
         }
         if (mTokenWallets.containsKey(address)) {
@@ -137,7 +138,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
     }
 
     public synchronized static void mapTokenIsos(Context app) {
-        BREthereumToken[] tokens = WalletEthManager.getInstance(app).node.tokens;
+        BREthereumToken[] tokens = WalletEthManager.getInstance(app).node.getTokens();
         for (BREthereumToken t : tokens) {
             if (!mTokenIsos.containsKey(t.getSymbol().toLowerCase())) {
                 mTokenIsos.put(t.getSymbol().toLowerCase(), t.getAddress().toLowerCase());

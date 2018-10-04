@@ -3,9 +3,7 @@ package com.breadwallet.presenter.fragments;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.annotation.Nullable;
-import android.text.format.DateUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,20 +17,17 @@ import com.breadwallet.presenter.customviews.BRButton;
 import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.protocols.messageexchange.MessageExchangeService;
 import com.breadwallet.protocols.messageexchange.entities.RequestMetaData;
-import com.breadwallet.tools.threads.executor.BRExecutor;
-import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.CurrencyUtils;
+import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.tools.util.Utils;
-import com.breadwallet.wallet.WalletsMaster;
-import com.breadwallet.wallet.abstracts.BaseWalletManager;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.math.BigDecimal;
 
 public class FragmentPaymentConfirmation extends Fragment {
 
     private static final String TAG = FragmentPaymentConfirmation.class.getSimpleName();
-    private static final String ICON_RESOURCE = "ccc";
-    private static final String ICO_NAME = "Container Crypto Coin";
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,22 +48,26 @@ public class FragmentPaymentConfirmation extends Fragment {
 
         if (bundle != null) {
             final RequestMetaData metaData = bundle.getParcelable(MessageExchangeService.EXTRA_METADATA);
-            Log.d("FragmentPaymentConfir", "Price -> " + metaData.getAmount());
-            Log.d("FragmentPaymentConfir", "Currency -> " + metaData.getCurrencyCode());
+            final String amount = metaData.getAmount();
 
-            String currencyCode = metaData.getCurrencyCode();
-            String amount = metaData.getAmount();
-            int iconResourceId = getActivity().getResources().getIdentifier(ICON_RESOURCE, BRConstants.DRAWABLE, getActivity().getPackageName());
-            if (iconResourceId > 0) {
-                icoIcon.setBackground(getActivity().getDrawable(iconResourceId));
+            // Load the token icon using its symbol
+            final String tokenIconPath = TokenUtil.getTokenIconPath(getContext(), metaData.getTokenSymbol(), true);
+
+            if (!Utils.isNullOrEmpty(tokenIconPath)) {
+                File iconFile = new File(tokenIconPath);
+                Picasso.get().load(iconFile).into(icoIcon);
             }
 
+            // Display the token purchase amount
             if (!Utils.isNullOrEmpty(amount)) {
-                String formattedPrice = CurrencyUtils.getFormattedAmount(getActivity(), currencyCode, new BigDecimal(amount));
-                icoPriceInformation.setText(String.format(getString(R.string.PaymentConfirmation_amountText), formattedPrice, currencyCode));
+                String formattedPrice = CurrencyUtils.getFormattedAmount(getActivity(), metaData.getCurrencyCode(), new BigDecimal(amount));
+                icoPriceInformation.setText(String.format(getString(R.string.PaymentConfirmation_amountText), formattedPrice, metaData.getTokenSymbol().toUpperCase()));
             }
 
-            icoName.setText(ICO_NAME);
+            // Display the token name below the icon
+            if (!Utils.isNullOrEmpty(metaData.getTokenName())) {
+                icoName.setText(metaData.getTokenName());
+            }
 
             positiveButton.setText(getResources().getString(R.string.Button_buy));
             positiveButton.setOnClickListener(new View.OnClickListener() {

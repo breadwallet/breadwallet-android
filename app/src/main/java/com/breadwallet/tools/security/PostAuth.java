@@ -12,10 +12,7 @@ import com.breadwallet.BreadApp;
 import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.BRCoreMasterPubKey;
-import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.core.ethereum.BREthereumLightNode;
-import com.breadwallet.core.ethereum.BREthereumTransaction;
-import com.breadwallet.core.ethereum.BREthereumWallet;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.PaperKeyActivity;
 import com.breadwallet.presenter.activities.PaperKeyProveActivity;
@@ -410,13 +407,7 @@ public class PostAuth {
                 return;
             }
 
-            if (phrase == null) {
-                // TODO: Should this be BreapApp.clearApplicationUserData()? I think we want to handle the case where the keystore
-                // TODO: returns a null phrase erroneously (in which case yes).
-                // TODO: However, phrase == null on first boot, so we need to distinguish the cases before making the change.
-                WalletsMaster m = WalletsMaster.getInstance(activity);
-                m.wipeAll(activity);
-            } else {
+            if (phrase != null) {
                 Log.e(TAG, "onCanaryCheck: Canary wasn't there, but the phrase persists, adding canary to keystore.");
                 try {
                     BRKeyStore.putCanary(BRConstants.CANARY_STRING, activity, 0);
