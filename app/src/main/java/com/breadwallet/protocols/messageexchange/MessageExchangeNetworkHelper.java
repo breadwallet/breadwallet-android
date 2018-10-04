@@ -3,6 +3,7 @@ package com.breadwallet.protocols.messageexchange;
 import android.arch.lifecycle.Lifecycle;
 import android.content.Context;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.format.DateUtils;
 import android.util.Log;
 
@@ -116,7 +117,7 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
     };
 
     private MessageExchangeNetworkHelper() {
-        mPollHandler = new Handler();
+        mPollHandler = new Handler(Looper.getMainLooper());
     }
 
     public static MessageExchangeNetworkHelper getInstance() {

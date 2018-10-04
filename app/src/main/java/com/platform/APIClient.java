@@ -3,13 +3,13 @@ package com.platform;
 
 import android.accounts.AuthenticatorException;
 import android.content.Context;
-import android.content.pm.ApplicationInfo;
 import android.net.Uri;
 import android.os.NetworkOnMainThreadException;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.BuildConfig;
 import com.breadwallet.app.util.UserMetricsUtil;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.tools.animation.UiUtils;
@@ -123,20 +123,19 @@ public class APIClient {
 
     private OkHttpClient mHTTPClient;
 
-    private static final String BUNDLES_FOLDER_NAME = "bundles";
+    private static final String BUNDLES_FOLDER = "/bundles";
     private static final String BRD_WEB = "brd-web-3";
     private static final String BRD_WEB_STAGING = "brd-web-3-staging";
-    private static String mBundleName = BRD_WEB;
+    public static final String BRD_TOKEN_ASSETS = "brd-tokens-prod";
+    public static final String BRD_TOKEN_ASSETS_STAGING = "brd-tokens-staging";
+    private static final String TAR_FILE_NAME_FORMAT =  "/%s.tar";
+
+    public static final String WEB_BUNDLE_NAME = BuildConfig.DEBUG ? BRD_WEB_STAGING : BRD_WEB;
+    public static final String TOKEN_ASSETS_BUNDLE_NAME = BuildConfig.DEBUG ? BRD_TOKEN_ASSETS_STAGING : BRD_TOKEN_ASSETS;
+    private static final String[] BUNDLE_NAMES = {WEB_BUNDLE_NAME, TOKEN_ASSETS_BUNDLE_NAME};
 
     private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss z", Locale.US);
-
-
-    private static final String BUNDLES_FOLDER = String.format("/%s", BUNDLES_FOLDER_NAME);
-
-    private static String mBundleFileName;
-    private static String mExtractedBundleFolderName;
     private static final boolean PRINT_FILES = false;
-
     private static final int MAX_RETRY = 3;
     private static final int CONNECTION_TIMEOUT_SECONDS = 30;
 
@@ -177,15 +176,6 @@ public class APIClient {
 
     private APIClient(Context context) {
         mContext = context;
-        if (0 != (context.getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE)) {
-            mBundleName = BRD_WEB_STAGING;
-        }
-        mBundleFileName = String.format("/%s.tar", mBundleName);
-        mExtractedBundleFolderName = String.format("%s-extracted", mBundleName);
-    }
-
-    public boolean isStaging() {
-        return mBundleName.contains("staging") || mBundleName.contains("stage");
     }
 
     //returns the fee per kb or 0 if something went wrong
@@ -532,74 +522,73 @@ public class APIClient {
     }
 
     public synchronized void updateBundle() {
-        if (UiUtils.isMainThread()) {
-            throw new NetworkOnMainThreadException();
-        }
-        File bundleFile = new File(getBundleResource(mContext, mBundleFileName));
-        if (bundleFile.exists()) {
-            Log.d(TAG, bundleFile + ": updateBundle: exists");
+        for (String bundleName : BUNDLE_NAMES) {
+            File bundleFile = new File(getBundleResource(mContext, String.format(TAR_FILE_NAME_FORMAT, bundleName)));
+            if (bundleFile.exists()) {
+                Log.d(TAG, bundleFile + ": updateBundle: exists");
 
-            byte[] bFile = new byte[0];
-            try {
-                FileInputStream in = new FileInputStream(bundleFile);
-                bFile = IOUtils.toByteArray(in);
-                in.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            String latestVersion = getLatestVersion();
-            String currentTarVersion = null;
-            byte[] hash = CryptoHelper.sha256(bFile);
-            UserMetricsUtil.setBundleHash(hash);
-            assert hash != null;
-            currentTarVersion = Utils.bytesToHex(hash);
-            Log.d(TAG, bundleFile + ": updateBundle: version of the current tar: " + currentTarVersion);
-            if (latestVersion != null) {
-                if (latestVersion.equals(currentTarVersion)) {
-                    Log.d(TAG, bundleFile + ": updateBundle: have the latest version");
-                    tryExtractTar();
-                } else {
-                    Log.d(TAG, bundleFile + ": updateBundle: don't have the most recent version, download diff");
-                    downloadDiff(currentTarVersion);
-                    tryExtractTar();
+                byte[] bFile = new byte[0];
+                try {
+                    FileInputStream in = new FileInputStream(bundleFile);
+                    bFile = IOUtils.toByteArray(in);
+                    in.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
+
+                String latestVersion = getLatestVersion(bundleName);
+                String currentTarVersion;
+                byte[] hash = CryptoHelper.sha256(bFile);
+                UserMetricsUtil.setBundleHash(hash);
+                assert hash != null;
+                currentTarVersion = Utils.bytesToHex(hash);
+                Log.d(TAG, bundleFile + ": updateBundle: version of the current tar: " + currentTarVersion);
+                if (latestVersion != null) {
+                    if (latestVersion.equals(currentTarVersion)) {
+                        Log.d(TAG, bundleFile + ": updateBundle: have the latest version");
+                        tryExtractTar(bundleName);
+                    } else {
+                        Log.d(TAG, bundleFile + ": updateBundle: don't have the most recent version, download diff");
+                        downloadDiff(bundleName, currentTarVersion);
+                        tryExtractTar(bundleName);
+                    }
+                } else {
+                    Log.d(TAG, bundleFile + ": updateBundle: latestVersion is null");
+                }
+
             } else {
-                Log.d(TAG, bundleFile + ": updateBundle: latestVersion is null");
+                Log.d(TAG, bundleFile + ": updateBundle: bundle doesn't exist, downloading new copy");
+                long startTime = System.currentTimeMillis();
+                Request request = new Request.Builder()
+                        .url(String.format("%s/assets/bundles/%s/download", BASE_URL, bundleName))
+                        .get().build();
+                byte[] body;
+                BRResponse response = sendRequest(request, false);
+                Log.d(TAG, bundleFile + ": updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
+                body = writeBundleToFile(bundleName, response.getBody());
+                if (Utils.isNullOrEmpty(body)) {
+                    Log.e(TAG, "updateBundle: body is null, returning.");
+                    return;
+                }
+
+                boolean b = tryExtractTar(bundleName);
+                if (!b) {
+                    Log.e(TAG, "updateBundle: Failed to extract tar");
+                }
             }
 
-        } else {
-            Log.d(TAG, bundleFile + ": updateBundle: bundle doesn't exist, downloading new copy");
-            long startTime = System.currentTimeMillis();
-            Request request = new Request.Builder()
-                    .url(String.format("%s/assets/bundles/%s/download", BASE_URL, mBundleName))
-                    .get().build();
-            byte[] body;
-            BRResponse response = sendRequest(request, false);
-            Log.d(TAG, bundleFile + ": updateBundle: Downloaded, took: " + (System.currentTimeMillis() - startTime));
-            body = writeBundleToFile(response.getBody());
-            if (Utils.isNullOrEmpty(body)) {
-                Log.e(TAG, "updateBundle: body is null, returning.");
-                return;
-            }
-
-            boolean b = tryExtractTar();
-            if (!b) {
-                Log.e(TAG, "updateBundle: Failed to extract tar");
-            }
+            logFiles("updateBundle after", bundleName, mContext);
         }
-
-        logFiles("updateBundle after", mContext);
     }
 
-    public String getLatestVersion() {
+    public String getLatestVersion(String bundleName) {
         if (UiUtils.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
         String latestVersion = null;
         Request request = new Request.Builder()
                 .get()
-                .url(String.format("%s/assets/bundles/%s/versions", BASE_URL, mBundleName))
+                .url(String.format("%s/assets/bundles/%s/versions", BASE_URL, bundleName))
                 .build();
 
         BRResponse response = sendRequest(request, false);
@@ -618,12 +607,12 @@ public class APIClient {
         return latestVersion;
     }
 
-    public void downloadDiff(String currentTarVersion) {
+    public void downloadDiff(String bundleName, String currentTarVersion) {
         if (UiUtils.isMainThread()) {
             throw new NetworkOnMainThreadException();
         }
         Request diffRequest = new Request.Builder()
-                .url(String.format("%s/assets/bundles/%s/diff/%s", BASE_URL, mBundleName, currentTarVersion))
+                .url(String.format("%s/assets/bundles/%s/diff/%s", BASE_URL, bundleName, currentTarVersion))
                 .get().build();
         BRResponse resp = sendRequest(diffRequest, false);
         if (Utils.isNullOrEmpty(resp.getBodyText())) {
@@ -634,13 +623,13 @@ public class APIClient {
         File tempFile = null;
         byte[] patchBytes = null;
         try {
-            patchFile = new File(getBundleResource(mContext, mBundleName + "-patch.diff"));
+            patchFile = new File(getBundleResource(mContext, bundleName + "-patch.diff"));
             patchBytes = resp.getBody();
             Log.e(TAG, "downloadDiff: trying to write to file");
             FileUtils.writeByteArrayToFile(patchFile, patchBytes);
-            tempFile = new File(getBundleResource(mContext, mBundleName + "-2temp.tar"));
+            tempFile = new File(getBundleResource(mContext, bundleName + "-2temp.tar"));
             boolean a = tempFile.createNewFile();
-            File bundleFile = new File(getBundleResource(mContext, mBundleName + ".tar"));
+            File bundleFile = new File(getBundleResource(mContext, bundleName + ".tar"));
             FileUI.patch(bundleFile, tempFile, patchFile);
             byte[] updatedBundleBytes = IOUtils.toByteArray(new FileInputStream(tempFile));
             if (Utils.isNullOrEmpty(updatedBundleBytes))
@@ -649,7 +638,7 @@ public class APIClient {
 
         } catch (IOException | InvalidHeaderException | CompressorException | NullPointerException e) {
             Log.e(TAG, "downloadDiff: ", e);
-            new File(getBundleResource(mContext, mBundleName + ".tar")).delete();
+            new File(getBundleResource(mContext, bundleName + ".tar")).delete();
         } finally {
             if (patchFile != null) {
                 patchFile.delete();
@@ -659,16 +648,16 @@ public class APIClient {
             }
         }
 
-        logFiles("downloadDiff", mContext);
+        logFiles("downloadDiff", bundleName, mContext);
     }
 
-    public byte[] writeBundleToFile(byte[] response) {
+    public byte[] writeBundleToFile(String bundleName, byte[] response) {
         try {
             if (response == null) {
                 Log.e(TAG, "writeBundleToFile: WARNING, response is null");
                 return null;
             }
-            File bundleFile = new File(getBundleResource(mContext, mBundleName + ".tar"));
+            File bundleFile = new File(getBundleResource(mContext, bundleName + ".tar"));
             FileUtils.writeByteArrayToFile(bundleFile, response);
             return response;
         } catch (IOException e) {
@@ -678,14 +667,14 @@ public class APIClient {
         return null;
     }
 
-    public boolean tryExtractTar() {
+    public boolean tryExtractTar(String bundleName) {
         Context app = BreadApp.getBreadContext();
         if (app == null) {
             Log.e(TAG, "tryExtractTar: failed to extract, app is null");
             return false;
         }
-        File bundleFile = new File(getBundleResource(mContext, mBundleName + ".tar"));
-        Log.e(TAG, "tryExtractTar: " + bundleFile.getAbsolutePath());
+        File bundleFile = new File(getBundleResource(mContext, bundleName + ".tar"));
+        Log.d(TAG, "tryExtractTar: " + bundleFile.getAbsolutePath());
         boolean result = false;
         TarArchiveInputStream debInputStream = null;
         try {
@@ -695,7 +684,7 @@ public class APIClient {
             while ((entry = (TarArchiveEntry) debInputStream.getNextEntry()) != null) {
 
                 final String outPutFileName = entry.getName().replace("./", "");
-                final File outputFile = new File(getExtractedPath(mContext, null), outPutFileName);
+                final File outputFile = new File(getExtractedPath(mContext, bundleName, null), outPutFileName);
                 if (!entry.isDirectory()) {
                     FileUtils.writeByteArrayToFile(outputFile, org.apache.commons.compress.utils.IOUtils.toByteArray(debInputStream));
                 }
@@ -713,7 +702,7 @@ public class APIClient {
                 e.printStackTrace();
             }
         }
-        logFiles("tryExtractTar", mContext);
+        logFiles("tryExtractTar", bundleName,  mContext);
         return result;
 
     }
@@ -804,7 +793,7 @@ public class APIClient {
                 APIClient apiClient = APIClient.getInstance(mContext);
                 apiClient.updateBundle();
                 long endTime = System.currentTimeMillis();
-                Log.d(TAG, "updateBundle " + mBundleName + ": DONE in " + (endTime - startTime) + "ms");
+                Log.d(TAG, "updateBundle " + WEB_BUNDLE_NAME + ": DONE in " + (endTime - startTime) + "ms");
                 itemFinished();
             }
         });
@@ -893,8 +882,9 @@ public class APIClient {
     }
 
     //returns the extracted folder or the path in it
-    public String getExtractedPath(Context app, String path) {
-        String extracted = app.getFilesDir().getAbsolutePath() + "/" + mExtractedBundleFolderName;
+    public String getExtractedPath(Context app, String bundleName, String path) {
+        String extractedBundleFolder = String.format("%s-extracted", bundleName);
+        String extracted = app.getFilesDir().getAbsolutePath() + "/" + extractedBundleFolder;
         if (Utils.isNullOrEmpty(path)) {
             return extracted;
         } else {
@@ -913,10 +903,10 @@ public class APIClient {
         return mCachedAuthKey;
     }
 
-    private void logFiles(String tag, Context ctx) {
+    private void logFiles(String tag, String bundleName, Context ctx) {
         if (PRINT_FILES) {
             Log.e(TAG, "logFiles " + tag + " : START LOGGING");
-            String path = getExtractedPath(ctx, null);
+            String path = getExtractedPath(ctx, bundleName, null);
 
             File directory = new File(path);
             File[] files = directory.listFiles();
@@ -962,7 +952,9 @@ public class APIClient {
             if (Utils.isNullOrEmpty(contentType)) {
                 if (headers != null && headers.containsKey("Content-Type")) {
                     contentType = headers.get("Content-Type");
-                    if (Utils.isNullOrEmpty(contentType)) contentType = "application/json";
+                    if (Utils.isNullOrEmpty(contentType)) {
+                        contentType = "application/json";
+                    }
                 }
             }
 
@@ -988,7 +980,9 @@ public class APIClient {
         }
 
         public int getCode() {
-            if (code == 0) throw new RuntimeException("code can't be 0");
+            if (code == 0){
+                throw new RuntimeException("code can't be 0");
+            }
             return code;
         }
 
@@ -997,8 +991,12 @@ public class APIClient {
         }
 
         public String getBodyText() {
-            if (!Utils.isNullOrEmpty(body)) return new String(body);
-            else return "";
+            if (!Utils.isNullOrEmpty(body)) {
+                return new String(body);
+            }
+            else {
+                return "";
+            }
         }
 
         public String getUrl() {

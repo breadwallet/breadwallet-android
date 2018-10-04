@@ -79,7 +79,7 @@ public class HTTPFileMiddleware implements Middleware {
         APIClient.BRResponse brResp = new APIClient.BRResponse();
         if (DEBUG_URL == null) {
             // fetch the file locally
-            String requestedFile = APIClient.getInstance(app).getExtractedPath(app, target);
+            String requestedFile = APIClient.getInstance(app).getExtractedPath(app, APIClient.WEB_BUNDLE_NAME, target);
             Log.d(TAG, "Request local file -> " + requestedFile);
             Log.d(TAG, "Request local file target -> " + target);
 
