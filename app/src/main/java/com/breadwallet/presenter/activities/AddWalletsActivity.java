@@ -16,6 +16,7 @@ import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.customviews.BREdit;
 import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.tools.adapter.AddTokenListAdapter;
+import com.breadwallet.tools.util.TokenUtil;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.entities.TokenListMetaData;
@@ -86,8 +87,7 @@ public class AddWalletsActivity extends BRActivity {
 
         List<TokenItem> tokenItems = new ArrayList<>();
         TokenListMetaData tokenListMetaData = KVStoreManager.getTokenListMetaData(this);
-        for (BREthereumToken token : WalletEthManager.getInstance(this).node.getTokens()) {
-            TokenItem tokenItem = new TokenItem(token.getAddress(), token.getSymbol(), token.getName(), null);
+        for (TokenItem tokenItem : TokenUtil.getTokenItems(this)) {
             if (!tokenListMetaData.isCurrencyEnabled(tokenItem.symbol)) {
                 tokenItems.add(tokenItem);
             }

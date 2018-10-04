@@ -17,7 +17,6 @@ import android.view.WindowManager;
 
 import com.breadwallet.app.ApplicationLifecycleObserver;
 import com.breadwallet.presenter.activities.DisabledActivity;
-import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.protocols.messageexchange.MessageExchangeNetworkHelper;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.crypto.Base32;
@@ -36,7 +35,6 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.crashlytics.android.Crashlytics;
-import com.platform.APIClient;
 import com.platform.HTTPServer;
 
 import java.io.UnsupportedEncodingException;
@@ -335,7 +333,7 @@ public class BreadApp extends Application implements ApplicationLifecycleObserve
                 BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
                     @Override
                     public void run() {
-                        TokenUtil.getTokenList(mInstance);
+                        TokenUtil.fetchTokensFromServer(mInstance);
                     }
                 });
 

@@ -902,15 +902,10 @@ public final class MessageExchangeService extends JobIntentService {
      * @param saleAddress The token sale address where the ICO is being held.
      * @return A TokenItem comprising of all the info about the ICO token.
      */
-    private TokenItem getIcoTokenInfo(final String saleAddress) {
-        TokenItem tokenItem = null;
-
-        // Get the ICO token info from /currencies?saleAddress=[CONTRACT_ADDRESS]
-        ArrayList<TokenItem> tokenItems = TokenUtil.getTokenList(MessageExchangeService.this, saleAddress);
-        if (tokenItems == null || tokenItems.isEmpty()) {
-            Log.e(TAG, "No token info found at sale address: " + saleAddress);
-        } else if (tokenItems.size() > 0) {
-            tokenItem = tokenItems.get(0);
+    private TokenItem getIcoTokenInfo(String saleAddress) {
+        TokenItem tokenItem = TokenUtil.getTokenItem(this, saleAddress);
+        if (tokenItem == null) {
+            Log.e(TAG, "No token metadata found at sale address: " + saleAddress);
         }
 
         return tokenItem;
