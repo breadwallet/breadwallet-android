@@ -162,11 +162,8 @@ public class LinkPlugin implements Plugin {
                     try {
                         postUrl = json.getString("url");
                         String method = json.getString("method");
-                        String strBody = json.getString("body");
-                        String headers = json.getString("headers");
                         String closeOn = json.getString("closeOn");
-                        if (Utils.isNullOrEmpty(postUrl) || Utils.isNullOrEmpty(method) ||
-                                Utils.isNullOrEmpty(strBody) || Utils.isNullOrEmpty(headers) || Utils.isNullOrEmpty(closeOn))
+                        if (Utils.isNullOrEmpty(postUrl) || Utils.isNullOrEmpty(method) || Utils.isNullOrEmpty(closeOn))
                             return BRHTTPHelper.handleError(400, "malformed json:" + json.toString(), baseRequest, response);
                     } catch (JSONException e) {
                         e.printStackTrace();
