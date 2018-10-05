@@ -42,6 +42,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -128,7 +129,7 @@ public class APIClient {
     private static final String BRD_WEB_STAGING = "brd-web-3-staging";
     public static final String BRD_TOKEN_ASSETS = "brd-tokens-prod";
     public static final String BRD_TOKEN_ASSETS_STAGING = "brd-tokens-staging";
-    private static final String TAR_FILE_NAME_FORMAT =  "/%s.tar";
+    private static final String TAR_FILE_NAME_FORMAT = "/%s.tar";
 
     public static final String WEB_BUNDLE_NAME = BuildConfig.DEBUG ? BRD_WEB_STAGING : BRD_WEB;
     public static final String TOKEN_ASSETS_BUNDLE_NAME = BuildConfig.DEBUG ? BRD_TOKEN_ASSETS_STAGING : BRD_TOKEN_ASSETS;
@@ -348,7 +349,7 @@ public class APIClient {
             Log.e(TAG, "sendRequest: ", e);
             BRReportsManager.reportBug(e);
             return new Response.Builder().code(599).request(request)
-                    .body(ResponseBody.create(null, e.getMessage())).protocol(Protocol.HTTP_1_1).build();
+                    .body(ResponseBody.create(null, e.getMessage() == null ? "" : e.getMessage())).protocol(Protocol.HTTP_1_1).build();
         }
         byte[] bytesBody = new byte[0];
         try {
@@ -703,7 +704,7 @@ public class APIClient {
                 e.printStackTrace();
             }
         }
-        logFiles("tryExtractTar", bundleName,  mContext);
+        logFiles("tryExtractTar", bundleName, mContext);
         return result;
 
     }
@@ -981,7 +982,7 @@ public class APIClient {
         }
 
         public int getCode() {
-            if (code == 0){
+            if (code == 0) {
                 throw new RuntimeException("code can't be 0");
             }
             return code;
@@ -994,8 +995,7 @@ public class APIClient {
         public String getBodyText() {
             if (!Utils.isNullOrEmpty(body)) {
                 return new String(body);
-            }
-            else {
+            } else {
                 return "";
             }
         }
