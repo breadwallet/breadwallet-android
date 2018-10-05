@@ -95,7 +95,7 @@ public abstract class BaseEthereumWalletManager implements BaseWalletManager {
 
     @Override
     public List<TxUiHolder> getTxUiHolders(Context app) {
-        BREthereumTransaction txs[] = getEthereumWallet().getWallet().getTransactions();
+        BREthereumTransaction txs[] = getWallet().getTransactions();
         int blockHeight = (int) getEthereumWallet().getBlockHeight();
         if (app != null && blockHeight != Integer.MAX_VALUE && blockHeight > 0) {
             BRSharedPrefs.putLastBlockHeight(app, getIso(), blockHeight);
