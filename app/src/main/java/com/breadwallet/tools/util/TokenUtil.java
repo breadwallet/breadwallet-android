@@ -29,6 +29,7 @@ import android.content.Context;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.R;
 import com.breadwallet.presenter.entities.TokenItem;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.platform.APIClient;
@@ -37,11 +38,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 import okhttp3.Request;
@@ -73,10 +76,40 @@ public final class TokenUtil {
     }
 
     /**
+     * When the app first starts, fetch our local copy of tokens.json from the resource folder
+     * @param context The Context of the caller
+     */
+    public static void initialize(Context context) {
+        String filePath = context.getFilesDir().getAbsolutePath() + File.separator + TOKENS_FILENAME;
+        File tokensFile = new File(filePath);
+
+        if (!tokensFile.exists()) {
+            InputStream tokensInputStream = context.getResources().openRawResource(R.raw.tokens);
+            BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(tokensInputStream));
+            StringBuilder stringBuilder = new StringBuilder();
+            String line;
+
+            try {
+                while ((line = bufferedReader.readLine()) != null) {
+                    stringBuilder.append(line).append('\n');
+                }
+
+                // Copy the APK tokens.json to a file on internal storage
+                saveTokenListToFile(context, stringBuilder.toString());
+
+                mTokenItems = parseJsonToTokenList(context, stringBuilder.toString());
+
+            } catch (IOException e) {
+                Log.e(TAG, "Could not read from resource file at res/raw/tokens.json ", e);
+            }
+        }
+    }
+
+    /**
      * This method can either fetch the list of supported tokens, or fetch a specific token by saleAddress
      * Request the list of tokens we support from the /currencies endpoint
      *
-     * @param context     The Context of the caller
+     * @param context  The Context of the caller
      * @param tokenUrl The URL of the endpoint to get the token metadata from.
      */
     private static APIClient.BRResponse fetchTokensFromServer(Context context, String tokenUrl) {
@@ -95,7 +128,8 @@ public final class TokenUtil {
      * @param saleAddress Optional sale address value if we are looking for a specific token response.
      */
     public static TokenItem getTokenItem(Context context, String saleAddress) {
-        APIClient.BRResponse response = fetchTokensFromServer(context, BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + ENDPOINT_CURRENCIES_SALE_ADDRESS + saleAddress);
+        APIClient.BRResponse response = fetchTokensFromServer(context,
+                BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + ENDPOINT_CURRENCIES_SALE_ADDRESS + saleAddress);
         if (response != null && !response.getBodyText().isEmpty()) {
             ArrayList<TokenItem> tokenItems = parseJsonToTokenList(context, response.getBodyText());
 
@@ -110,15 +144,16 @@ public final class TokenUtil {
         if (mTokenItems == null) {
             mTokenItems = getTokensFromFile(context);
         }
-
         return mTokenItems;
     }
 
     public static void fetchTokensFromServer(Context context) {
-        APIClient.BRResponse response = fetchTokensFromServer(context, BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + ENDPOINT_CURRENCIES);
+        APIClient.BRResponse response = fetchTokensFromServer(context,
+                BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + ENDPOINT_CURRENCIES);
 
         if (response != null && !response.getBodyText().isEmpty()) {
-            // Synchronize on the class object since getTokenItems is static and also synchronizes on the class object rather than on an instance of the class.
+            // Synchronize on the class object since getTokenItems is static and also synchronizes on the class object
+            // rather than on an instance of the class.
             synchronized (TokenItem.class) {
                 String responseBody = response.getBodyText();
                 saveTokenListToFile(context, responseBody);
@@ -193,7 +228,6 @@ public final class TokenUtil {
             fileWriter.write(jsonResponse);
             fileWriter.flush();
             fileWriter.close();
-
         } catch (IOException e) {
             Log.e(TAG, "Error writing tokens JSON response to tokens.json:", e);
         }
@@ -210,17 +244,15 @@ public final class TokenUtil {
 
             return parseJsonToTokenList(context, new String(fileBytes));
 
-        }  catch (FileNotFoundException e) {
-            // TODO: Fix with DROID-890. Swallow for now  There is not tokens.json on first boot.
-            return new ArrayList<TokenItem>();
         } catch (IOException e) {
             Log.e(TAG, "Error reading tokens.json file: ", e);
-            return null;
+            return mTokenItems;
         }
     }
 
     public static String getTokenIconPath(Context context, String symbol, boolean withBackground) {
-        String bundleResource = APIClient.getInstance(context).getExtractedPath(context, APIClient.TOKEN_ASSETS_BUNDLE_NAME, null);
+        String bundleResource = APIClient.getInstance(context)
+                .getExtractedPath(context, APIClient.TOKEN_ASSETS_BUNDLE_NAME, null);
         String iconsDirectory;
 
         if (!withBackground) {
