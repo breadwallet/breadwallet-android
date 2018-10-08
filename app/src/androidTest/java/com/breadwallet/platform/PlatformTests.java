@@ -127,7 +127,7 @@ public class PlatformTests {
 //        APIClient.BRResponse response = apiClient.sendRequest(request, false, 0);
 //        File bundleFile = new File(apiClient.getBundleResource(mActivityRule.getActivity(), BREAD_POINT + ".tar"));
 //        apiClient.writeBundleToFile(response.getBody());
-//        String latestVersion = apiClient.getLatestVersion();
+//        String latestVersion = apiClient.fetchBundleVersion();
 //        Assert.assertNotNull(latestVersion);
 //        String currentTarVersion = getCurrentVersion(bundleFile);
 //        Log.e(TAG, "bundleUpdateTest: latestVersion: " + latestVersion + ", currentTarVersion: " + currentTarVersion);
