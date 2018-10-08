@@ -106,7 +106,7 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
     private static Handler mPollHandler;
 
     private static MessageExchangeNetworkHelper mInstance;
-    private static Handler mDelayHandler = new Handler();
+    private static Handler mDelayHandler;
     private static Runnable mDelayStopPollingRunnable = new Runnable() {
         @Override
         public void run() {
@@ -118,6 +118,7 @@ public final class MessageExchangeNetworkHelper implements ApplicationLifecycleO
 
     private MessageExchangeNetworkHelper() {
         mPollHandler = new Handler(Looper.getMainLooper());
+        mDelayHandler = new Handler(Looper.getMainLooper());
     }
 
     public static MessageExchangeNetworkHelper getInstance() {
