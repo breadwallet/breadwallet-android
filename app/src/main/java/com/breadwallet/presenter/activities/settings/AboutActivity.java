@@ -186,7 +186,10 @@ public class AboutActivity extends BaseSettingsActivity {
         stringBuilder.append("\nBuild Type: " + BuildConfig.BUILD_TYPE);
         stringBuilder.append("\nBuild Flavor: " + BuildConfig.FLAVOR);
         stringBuilder.append("\nApp Version: " + (BuildConfig.VERSION_NAME + " " + BuildConfig.VERSION_CODE));
-        stringBuilder.append("\nWeb Bundle Version: " + APIClient.getInstance(this).getBundleHash());
+        for (String bundleName : APIClient.BUNDLE_NAMES) {
+            stringBuilder.append(String.format("\n Bundle %s - Version: %s", bundleName, BRSharedPrefs.getBundleHash(this, bundleName)));
+        }
+
         stringBuilder.append("\nNetwork: " + (BuildConfig.BITCOIN_TESTNET ? "Testnet" : "Mainnet"));
         stringBuilder.append("\nOS Version: " + Build.VERSION.RELEASE);
         stringBuilder.append("\nDevice Type: " + (Build.MANUFACTURER + " " + Build.MODEL + "\n"));
