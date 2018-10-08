@@ -49,6 +49,7 @@ public class BRSharedPrefs {
     private static final String NOTIFICATION_ID = "notificationId";
     private static final String SCREEN_HEIGHT = "screenHeight";
     private static final String SCREEN_WIDTH = "screenWidth";
+    private static final String BUNDLE_HASH_PREFIX = "bundleHash_";
 
     public static String getPreferredFiatIso(Context context) {
         SharedPreferences settingsToGet = context.getSharedPreferences(PREFS_NAME, 0);
@@ -551,6 +552,19 @@ public class BRSharedPrefs {
     public static int getScreenWidth(Context context) {
         SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         return prefs.getInt(SCREEN_WIDTH, 0);
+    }
+
+    public static void putBundleHash(Context context, String bundleName, String bundleHash) {
+        Log.e(TAG, "putBundleHash: " + bundleHash);
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(BUNDLE_HASH_PREFIX + bundleName, bundleHash);
+        editor.apply();
+    }
+
+    public static String getBundleHash(Context context, String bundleName) {
+        SharedPreferences prefs = context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        return prefs.getString(BUNDLE_HASH_PREFIX + bundleName, null);
     }
 
 

@@ -74,8 +74,6 @@ public final class UserMetricsUtil {
     private static final String FIELD_APPLICATION_ID = "application_id";
     private static final String FIELD_ADVERTISING_ID = "advertising_id";
 
-    private static byte[] bundleHash;
-
     private UserMetricsUtil() {
     }
 
@@ -91,12 +89,14 @@ public final class UserMetricsUtil {
     private static void makeUserMetricsRequest(Context context) {
         try {
             JSONObject bundles = new JSONObject();
-            bundles.put(BUNDLE_WEB, bundleHash);
+            for (String bundleName : APIClient.BUNDLE_NAMES) {
+                bundles.put(bundleName, BRSharedPrefs.getBundleHash(context, bundleName));
+            }
 
             JSONObject data = new JSONObject();
             data.put(FIELD_BUNDLES, bundles);
             data.put(FIELD_OS_VERSION, Build.VERSION.RELEASE);
-            data.put(FIELD_USER_AGENT,  System.getProperty(SYSTEM_PROPERTY_USER_AGENT));
+            data.put(FIELD_USER_AGENT, System.getProperty(SYSTEM_PROPERTY_USER_AGENT));
             data.put(FIELD_DEVICE_TYPE, DEVICE_TYPE);
             data.put(FIELD_APPLICATION_ID, BuildConfig.APPLICATION_ID);
             data.put(FIELD_ADVERTISING_ID, AdvertisingIdClient.getAdvertisingIdInfo(context).getId());
@@ -114,12 +114,9 @@ public final class UserMetricsUtil {
 
             APIClient.getInstance(context).sendRequest(request, true);
 
-        } catch (GooglePlayServicesNotAvailableException | GooglePlayServicesRepairableException | IOException | JSONException  e) {
+        } catch (GooglePlayServicesNotAvailableException | GooglePlayServicesRepairableException | IOException | JSONException e) {
             Log.e(TAG, "Error constructing JSON payload for user metrics request.", e);
         }
     }
 
-    public static void setBundleHash(byte[] hash) {
-        bundleHash = hash;
-    }
 }
