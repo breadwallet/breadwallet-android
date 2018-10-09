@@ -37,7 +37,6 @@ public class AboutActivity extends BaseSettingsActivity {
     private static final String LOGS_EMAIL_SUBJECT = "BRD Android App Feedback [ID:%s]"; // Placeholder is for a unique id. 
     private static final String DEFAULT_LOG_ATTACHMENT_BODY = "No logs.";
     private static final String LOGS_FILE_NAME = "Logs.txt";
-    private static final String BRD_AUTHORITY = "com.breadwallet";
     private static final String MIME_TYPE = "text/plain";
 
     private BaseTextView mCopy;
@@ -123,7 +122,6 @@ public class AboutActivity extends BaseSettingsActivity {
                 Toast.makeText(AboutActivity.this, getString(R.string.Receive_copied), Toast.LENGTH_SHORT).show();
             }
         });
-
     }
 
     @Override
@@ -144,7 +142,7 @@ public class AboutActivity extends BaseSettingsActivity {
 
     private void shareLogs() {
         File file = FileHelper.saveToExternalStorage(this, LOGS_FILE_NAME, getLogs());
-        Uri uri = FileProvider.getUriForFile(this, BRD_AUTHORITY, file);
+        Uri uri = FileProvider.getUriForFile(this, BuildConfig.APPLICATION_ID, file);
         Intent emailIntent = new Intent(Intent.ACTION_SEND);
         emailIntent.setType(MIME_TYPE);
         emailIntent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
@@ -193,7 +191,6 @@ public class AboutActivity extends BaseSettingsActivity {
         stringBuilder.append("\nNetwork: " + (BuildConfig.BITCOIN_TESTNET ? "Testnet" : "Mainnet"));
         stringBuilder.append("\nOS Version: " + Build.VERSION.RELEASE);
         stringBuilder.append("\nDevice Type: " + (Build.MANUFACTURER + " " + Build.MODEL + "\n"));
-        // TODO: add stringBuilder.append("Token Asset Bundle Version: " + ???;
 
         return stringBuilder.toString();
     }
