@@ -41,7 +41,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.SocketTimeoutException;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -348,7 +347,7 @@ public class APIClient {
             Log.e(TAG, "sendRequest: ", e);
             BRReportsManager.reportBug(e);
             return new Response.Builder().code(599).request(request)
-                    .body(ResponseBody.create(null, e.getMessage() == null ? "" : e.getMessage())).protocol(Protocol.HTTP_1_1).build();
+                    .body(ResponseBody.create(null, e.getMessage())).message(e.getMessage()).protocol(Protocol.HTTP_1_1).build();
         }
         byte[] bytesBody = new byte[0];
         try {
