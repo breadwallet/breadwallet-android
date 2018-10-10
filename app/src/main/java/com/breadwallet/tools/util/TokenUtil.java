@@ -63,8 +63,9 @@ public final class TokenUtil {
     private static final String FIELD_SALE_ADDRESS = "sale_address";
     private static final String FIELD_CONTRACT_INITIAL_VALUE = "contract_initial_value";
     private static final String FIELD_COLORS = "colors";
-    private static final String TOKEN_ICONS_WHITE_NO_BACKGROUND = "white-no-bg";
-    private static final String TOKEN_ICONS_WHITE_SQUARE_BACKGROUND = "white-square-bg";
+    private static final String ICON_DIRECTORY_NAME_WHITE_NO_BACKGROUND = "white-no-bg";
+    private static final String ICON_DIRECTORY_NAME_WHITE_SQUARE_BACKGROUND = "white-square-bg";
+    private static final String ICON_FILE_NAME_FORMAT = "%s.png";
     private static final int START_COLOR_INDEX = 0;
     private static final int END_COLOR_INDEX = 1;
     private static final String TOKENS_FILENAME = "tokens.json";
@@ -250,26 +251,19 @@ public final class TokenUtil {
         }
     }
 
-    public static String getTokenIconPath(Context context, String symbol, boolean withBackground) {
+    public static String getTokenIconPath(Context context, String currencyCode, boolean withBackground) {
         String bundleResource = APIClient.getInstance(context)
                 .getExtractedPath(context, APIClient.TOKEN_ASSETS_BUNDLE_NAME, null);
-        String iconsDirectory;
-
-        if (!withBackground) {
-            iconsDirectory = TOKEN_ICONS_WHITE_NO_BACKGROUND;
-        } else {
-            iconsDirectory = TOKEN_ICONS_WHITE_SQUARE_BACKGROUND;
-        }
-
-        File directory = new File(bundleResource);
-        if (directory.exists() && directory.isDirectory()) {
-            for (File file : directory.listFiles()) {
-                if (file.getName().equalsIgnoreCase(iconsDirectory)) {
-                    if (file.isDirectory()) {
-                        for (File iconFile : file.listFiles()) {
-                            if (iconFile.getName().contains(symbol.toLowerCase())) {
-                                return iconFile.getAbsolutePath();
-                            }
+        String iconDirectoryName = withBackground
+                ? ICON_DIRECTORY_NAME_WHITE_SQUARE_BACKGROUND : ICON_DIRECTORY_NAME_WHITE_NO_BACKGROUND;
+        String iconFileName = String.format(ICON_FILE_NAME_FORMAT, currencyCode);
+        File bundleDirectory = new File(bundleResource);
+        if (bundleDirectory.exists() && bundleDirectory.isDirectory()) {
+            for (File iconDirectory : bundleDirectory.listFiles()) {
+                if (iconDirectory.getName().equalsIgnoreCase(iconDirectoryName) && iconDirectory.isDirectory()) {
+                    for (File iconFile : iconDirectory.listFiles()) {
+                        if (iconFile.getName().equalsIgnoreCase(iconFileName)) {
+                            return iconFile.getAbsolutePath();
                         }
                     }
                 }
