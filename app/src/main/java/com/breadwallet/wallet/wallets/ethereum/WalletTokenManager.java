@@ -63,15 +63,15 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
 
     private WalletUiConfiguration uiConfig;
 
-    private static final String DEFAULT_COLOR_LEFT  = "#ff5193"; // tokenWallet.getToken().getColorLeft()
-    private static final String DEFAULT_COLOR_RIGHT = "#f9a43a"; // tokenWallet.getToken().getColorRight();
     public static final String BRD_CONTRACT_ADDRESS = BuildConfig.BITCOIN_TESTNET ? "0x7108ca7c4718efa810457f228305c9c71390931a" : "0x558ec3152e2eb2174905cd19aea4e34a23de9ad6";
     public static final String BRD_CURRENCY_CODE = "BRD";
 
     private WalletTokenManager(WalletEthManager walletEthManager, BREthereumWallet tokenWallet) {
         mWalletEthManager = walletEthManager;
         mWalletToken = tokenWallet;
-        uiConfig = new WalletUiConfiguration(DEFAULT_COLOR_LEFT, DEFAULT_COLOR_RIGHT, false, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
+
+        String currencyCode = tokenWallet.getSymbol();
+        uiConfig = new WalletUiConfiguration(TokenUtil.getTokenStartColor(currencyCode), TokenUtil.getTokenEndColor(currencyCode), false, WalletManagerHelper.MAX_DECIMAL_PLACES_FOR_UI);
         mAddress = mWalletEthManager.getAddress();
     }
 
