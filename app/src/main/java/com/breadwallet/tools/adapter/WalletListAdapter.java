@@ -139,19 +139,11 @@ public class WalletListAdapter extends RecyclerView.Adapter<WalletListAdapter.Wa
                 Picasso.get().load(iconFile).into(holder.mLogoIcon);
             }
 
-            String startColor;
-            String endColor;
-            if (!wallet.getIso().equalsIgnoreCase("BTC") && !wallet.getIso().equalsIgnoreCase("BCH") && !wallet.getIso().equalsIgnoreCase("ETH")) {
-                // TODO: In DROID-878 fix this so we don't have to retrieve this from TokenUtil.
-                startColor = TokenUtil.getTokenStartColor(wallet.getIso());
-                endColor = TokenUtil.getTokenEndColor(wallet.getIso());
-            } else {
-                startColor = wallet.getUiConfiguration().getStartColor();
-                endColor = wallet.getUiConfiguration().getEndColor();
-            }
-
+            String startColor = wallet.getUiConfiguration().getStartColor();
+            String endColor = wallet.getUiConfiguration().getEndColor();
             Drawable drawable = mContext.getResources().getDrawable(R.drawable.crypto_card_shape, null).mutate();
-            //create gradient with 2 colors if exist
+
+            // Create gradient if 2 colors exist.
             ((GradientDrawable) drawable).setColors(new int[]{Color.parseColor(startColor), Color.parseColor(endColor == null ? startColor : endColor)});
             ((GradientDrawable) drawable).setOrientation(GradientDrawable.Orientation.LEFT_RIGHT);
             holder.mParent.setBackground(drawable);
