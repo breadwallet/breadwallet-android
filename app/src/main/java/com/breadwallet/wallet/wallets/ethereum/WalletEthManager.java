@@ -609,9 +609,6 @@ public class WalletEthManager extends BaseEthereumWalletManager implements  BREt
     //pass in a fiat amount and return the specified amount in ETH
     //ETH rates are in BTC (thus this math)
     private BigDecimal getEthForFiat(Context app, BigDecimal fiatAmount, String code) {
-        //TODO daokun.xi
-        //换算关系，btc兑pre；其他货币兑btc；其他货币兑pre，需要乘以它和btc之间的rate和btc与pre之间的rate
-
         //fiat rate for btc
         CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
         //Btc rate for ether

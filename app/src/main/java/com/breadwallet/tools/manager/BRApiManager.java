@@ -88,6 +88,8 @@ public class BRApiManager {
     public static final String HEADER_TESTNET = "X-Bitcoin-Testnet";
     public static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
 
+    private static final String ELA_SERVIER_URL = "http://WalletServiceTest-env.jwpzumvc5i.ap-northeast-1.elasticbeanstalk.com:8080";
+
     private BRApiManager() {
         handler = new Handler();
     }
@@ -325,47 +327,49 @@ public class BRApiManager {
             tx.outputs.add(outputs);
 
             String json = new Gson().toJson(tx);
-//                    String result = urlPost(url, json);
+            String result = urlPost(url, json);
 
-            String result = "{\n" +
-                    "\t\"result\": {\n" +
-                    "\t\t\"Transactions\": [{\n" +
-                    "\t\t\t\"UTXOInputs\": [{\n" +
-                    "\t\t\t\t\"address\": \"EbunxcqXie6UExs5SXDbFZxr788iGGvAs9\",\n" +
-                    "\t\t\t\t\"txid\": \"1d88dad1c8bfc2d58b37d3d022e38f18d2a80148468e448ece3a3c230ced9bcc\",\n" +
-                    "\t\t\t\t\"index\": 0\n" +
-                    "\t\t\t}],\n" +
-                    "\t\t\t\"Fee\": 100.0,\n" +
-                    "\t\t\t\"Outputs\": [{\n" +
-                    "\t\t\t\t\"amount\": 10000,\n" +
-                    "\t\t\t\t\"address\": \"ETyWPmg5aNais2iNrt2zGVjxJ3EVbuzVYo\"\n" +
-                    "\t\t\t}, {\n" +
-                    "\t\t\t\t\"amount\": 99989900,\n" +
-                    "\t\t\t\t\"address\": \"EbunxcqXie6UExs5SXDbFZxr788iGGvAs9\"\n" +
-                    "\t\t\t}]\n" +
-                    "\t\t}]\n" +
-                    "\t},\n" +
-                    "\t\"status\": 200\n" +
-                    "}";
             JSONObject jsonObject = new JSONObject(result);
             String tranactions = jsonObject.getString("result");
             TransactionRes res = new Gson().fromJson(tranactions, TransactionRes.class);
             List<UTXOInputs> inputs = res.Transactions.get(0).UTXOInputs;
             for(int i=0; i<inputs.size(); i++){
                 UTXOInputs utxoInputs = inputs.get(i);
-                utxoInputs.privateKey  = "FABB669B7D2FF2BEBBED1C3F1C9A9519C48993D1FC9D89DCB4C7CA14BDB8C99F";
+                utxoInputs.privateKey  = WalletElaManager.getPrivateKey();
             }
 
             transactionJson =new Gson().toJson(res);
 
             sendElaRawTx(transactionJson);
-
-            Log.i("xidaokun", transactionJson);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
         return transactionJson;
+    }
+
+    //TODO test
+    private String getCreateTx(){
+        return "{\n" +
+                "\t\"result\": {\n" +
+                "\t\t\"Transactions\": [{\n" +
+                "\t\t\t\"UTXOInputs\": [{\n" +
+                "\t\t\t\t\"address\": \"EbunxcqXie6UExs5SXDbFZxr788iGGvAs9\",\n" +
+                "\t\t\t\t\"txid\": \"1d88dad1c8bfc2d58b37d3d022e38f18d2a80148468e448ece3a3c230ced9bcc\",\n" +
+                "\t\t\t\t\"index\": 0\n" +
+                "\t\t\t}],\n" +
+                "\t\t\t\"Fee\": 100.0,\n" +
+                "\t\t\t\"Outputs\": [{\n" +
+                "\t\t\t\t\"amount\": 10000,\n" +
+                "\t\t\t\t\"address\": \"ETyWPmg5aNais2iNrt2zGVjxJ3EVbuzVYo\"\n" +
+                "\t\t\t}, {\n" +
+                "\t\t\t\t\"amount\": 99989900,\n" +
+                "\t\t\t\t\"address\": \"EbunxcqXie6UExs5SXDbFZxr788iGGvAs9\"\n" +
+                "\t\t\t}]\n" +
+                "\t\t}]\n" +
+                "\t},\n" +
+                "\t\"status\": 200\n" +
+                "}";
     }
 
 

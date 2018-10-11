@@ -1,6 +1,7 @@
 package com.breadwallet.wallet.wallets.ela;
 
 import android.content.Context;
+import android.security.keystore.UserNotAuthenticatedException;
 
 import com.breadwallet.BreadApp;
 import com.breadwallet.core.BRCoreAddress;
@@ -57,6 +58,8 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     protected static String mAddress;
 
+    protected static String mPrivateKey;
+
     private static Context mContext;
 
     public static WalletElaManager getInstance(Context context){
@@ -89,15 +92,24 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         throw new RuntimeException("stub");
     }
 
+    public static String getPrivateKey(){
+        if(mPrivateKey == null){
+            try {
+                byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
+                mPrivateKey = Utility.getPrivateKey(new String(phrase), "english", "");
+            } catch (UserNotAuthenticatedException e) {
+                e.printStackTrace();
+            }
+        }
+        return mPrivateKey;
+    }
+
     @Override
     public String getAddress() {
         if (mAddress == null) {
             try {
-                byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
-                String splitPhrase = new String(phrase);
-
-                String privateKey = Utility.getPrivateKey(splitPhrase, "english", "") /*"FABB669B7D2FF2BEBBED1C3F1C9A9519C48993D1FC9D89DCB4C7CA14BDB8C99F"*/;
-                String publickey = Utility.getPublicKey(privateKey);
+                getPrivateKey();
+                String publickey = Utility.getPublicKey(mPrivateKey);
                 mAddress = Utility.getAddress(publickey);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -198,7 +210,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     //TODO 手续费
     @Override
     public BigDecimal getEstimatedFee(BigDecimal amount, String address) {
-        BigDecimal fee = BigDecimal.ZERO;
+        BigDecimal fee = new BigDecimal(100).divide(new BigDecimal(ONE_ELA_IN_SALA));
         return fee;
     }
 
@@ -248,15 +260,12 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
             @Override
             public void run() {
                 String balance = BRApiManager.getElaBalance(mContext, getAddress());
-//                try {
-//                    Thread.sleep(6000);
-//                } catch (InterruptedException e) {
-//                    e.printStackTrace();
-//                }
                 final BigDecimal tmp = new BigDecimal((balance==null || balance.equals(""))? "0": balance);
-                BRSharedPrefs.putCachedBalance(app, getIso(), tmp);
+                BRSharedPrefs.putCachedBalance(app, getIso(), tmp.multiply(ONE_ELA));
             }
         }).start();
+
+//        BRSharedPrefs.putCachedBalance(app, getIso(), new BigDecimal("12").multiply(ONE_ELA));
     }
 
     @Override
@@ -330,7 +339,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public int getMaxDecimalPlaces(Context app) {
-       return -1;
+        return WalletManagerHelper.MAX_DECIMAL_PLACES;
     }
 
     @Override
@@ -387,23 +396,23 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         return mSettingsConfig;
     }
 
-    private BigDecimal getFiatForEla(Context app, BigDecimal elaAmount, String code) {
+    private BigDecimal getFiatForEla(Context app, BigDecimal elaAmount, String code) {//总资产
         //fiat rate for btc
         CurrencyEntity btcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, "BTC", code);
         //Btc rate for ela
-        CurrencyEntity ethBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), "BTC");
+        CurrencyEntity elaBtcRate = RatesDataSource.getInstance(app).getCurrencyByCode(app, getIso(), "BTC");
         if (btcRate == null) {
             return null;
         }
-        if (ethBtcRate == null) {
+        if (elaBtcRate == null) {
             return null;
         }
 
-        return elaAmount.multiply(new BigDecimal(ethBtcRate.rate)).multiply(new BigDecimal(btcRate.rate));
+        return elaAmount.multiply(new BigDecimal(elaBtcRate.rate)).multiply(new BigDecimal(btcRate.rate));
     }
 
     @Override
-    public BigDecimal getFiatExchangeRate(Context app) {//这里关系到交易所交易价格
+    public BigDecimal getFiatExchangeRate(Context app) {//行情价格
         BigDecimal fiatData = getFiatForEla(app, new BigDecimal(1), BRSharedPrefs.getPreferredFiatIso(app));
         if (fiatData == null) return null;
         return fiatData; //dollars
@@ -411,7 +420,8 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getFiatBalance(Context app) {
-        return getFiatForEla(app, BRSharedPrefs.getCachedBalance(app, getIso()), BRSharedPrefs.getPreferredFiatIso(app));
+        BigDecimal amount = BRSharedPrefs.getCachedBalance(app, getIso()).divide(ONE_ELA);
+        return getFiatForEla(app, amount, BRSharedPrefs.getPreferredFiatIso(app));
     }
 
     @Override
@@ -458,14 +468,12 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         return result;
     }
 
-    //TODO 待确认
     @Override
     public BigDecimal getCryptoForSmallestCrypto(Context app, BigDecimal amount) {
-        if (amount == null) return null;
-        return amount; //only using Tokens
+        if (amount == null || amount.compareTo(BigDecimal.ZERO) == 0) return amount;
+        return amount.divide(ONE_ELA, 8, ROUNDING_MODE);
     }
 
-    //待确认
     @Override
     public BigDecimal getSmallestCryptoForCrypto(Context app, BigDecimal amount) {
         if (amount.doubleValue() == 0) return amount;
