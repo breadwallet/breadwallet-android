@@ -56,7 +56,7 @@ android {
         brd {
             applicationId = "com.breadwallet"
             dimension "mode"
-            resValue "string", "app_name", "BRD"
+            resValue "string", "app_name", "ElephantWallet"
             buildConfigField "boolean", "BITCOIN_TESTNET", "false"
 
             externalNativeBuild {
@@ -73,7 +73,7 @@ android {
         brdTestnet {
             applicationId = "com.breadtestnet"
             dimension "mode"
-            resValue "string", "app_name", "BRD-testnet"
+            resValue "string", "app_name", "ElephantWallet-testnet"
             buildConfigField "boolean", "BITCOIN_TESTNET", "true"
 
             externalNativeBuild {
