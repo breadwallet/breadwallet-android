@@ -1,4 +1,4 @@
-![ƀ](/images/icon.png) wallet for Android
+![ƀ](/images/icon_ela.png) wallet for Android
 
 ## How to set up the development environment
 1. Download and install Java 7 or up
