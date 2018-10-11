@@ -257,6 +257,7 @@ public class WalletTokenManager extends BaseEthereumWalletManager {
         //no need
     }
 
+    //TODO
     @WorkerThread
     @Override
     public void refreshCachedBalance(final Context app) {

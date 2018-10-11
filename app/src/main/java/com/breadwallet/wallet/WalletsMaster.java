@@ -26,11 +26,13 @@ import com.breadwallet.tools.threads.executor.BRExecutor;
 import com.breadwallet.tools.util.BRConstants;
 import com.breadwallet.tools.util.Bip39Reader;
 import com.breadwallet.tools.util.TrustedNode;
+import com.breadwallet.tools.util.TypesConverter;
 import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBchManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletTokenManager;
 import com.platform.entities.TokenListMetaData;
@@ -97,6 +99,7 @@ public class WalletsMaster {
         mTokenListMetaData = KVStoreManager.getInstance().getTokenListMetaData(app);
         if (mTokenListMetaData == null) {
             List<TokenListMetaData.TokenInfo> enabled = new ArrayList<>();
+            enabled.add(new TokenListMetaData.TokenInfo("ELA", false, null));
             enabled.add(new TokenListMetaData.TokenInfo("BTC", false, null));
             enabled.add(new TokenListMetaData.TokenInfo("BCH", false, null));
             enabled.add(new TokenListMetaData.TokenInfo("ETH", false, null));
@@ -110,7 +113,9 @@ public class WalletsMaster {
 
             boolean isHidden = mTokenListMetaData.isCurrencyHidden(enabled.symbol);
 
-            if (enabled.symbol.equalsIgnoreCase("BTC") && !isHidden) {
+            if(enabled.symbol.equalsIgnoreCase("ELA")){
+                mWallets.add(WalletElaManager.getInstance(app));
+            } else if (enabled.symbol.equalsIgnoreCase("BTC") && !isHidden) {
                 //BTC wallet
                 mWallets.add(WalletBitcoinManager.getInstance(app));
             } else if (enabled.symbol.equalsIgnoreCase("BCH") && !isHidden) {
@@ -139,6 +144,8 @@ public class WalletsMaster {
     //return the needed wallet for the iso
     public BaseWalletManager getWalletByIso(Context app, String iso) {
 //        Log.d(TAG, "getWalletByIso() Getting wallet by ISO -> " + iso);
+        if(iso.equalsIgnoreCase("ELA"))
+            return WalletElaManager.getInstance(app);
         if (Utils.isNullOrEmpty(iso))
             throw new RuntimeException("getWalletByIso with iso = null, Cannot happen!");
         if (iso.equalsIgnoreCase("BTC"))
@@ -147,7 +154,7 @@ public class WalletsMaster {
             return WalletBchManager.getInstance(app);
         if (iso.equalsIgnoreCase("ETH"))
             return WalletEthManager.getInstance(app);
-        else if (isIsoErc20(app, iso)) {
+        if (isIsoErc20(app, iso)) {
             return WalletTokenManager.getTokenWalletByIso(app, WalletEthManager.getInstance(app), iso);
         }
         return null;
@@ -178,14 +185,14 @@ public class WalletsMaster {
         if (languageCode == null) languageCode = "en";
         list = Bip39Reader.bip39List(ctx, languageCode);
         words = list.toArray(new String[list.size()]);
-        final byte[] randomSeed = sr.generateSeed(16);
+        final byte[] randomSeed = sr.generateSeed(16);//128bit
         if (words.length != 2048) {
             BRReportsManager.reportBug(new IllegalArgumentException("the list is wrong, size: " + words.length), true);
             return false;
         }
         if (randomSeed.length != 16)
             throw new NullPointerException("failed to create the seed, seed length is not 128: " + randomSeed.length);
-        byte[] paperKeyBytes = BRCoreMasterPubKey.generatePaperKey(randomSeed, words);
+        byte[] paperKeyBytes = BRCoreMasterPubKey.generatePaperKey(randomSeed, words);//生成助记词
         if (paperKeyBytes == null || paperKeyBytes.length == 0) {
             BRReportsManager.reportBug(new NullPointerException("failed to encodeSeed"), true);
             return false;
@@ -212,7 +219,8 @@ public class WalletsMaster {
         if (phrase.length == 0) throw new RuntimeException("phrase is empty");
         byte[] seed = BRCoreKey.getSeedFromPhrase(phrase);
         if (seed == null || seed.length == 0) throw new RuntimeException("seed is null");
-        byte[] authKey = BRCoreKey.getAuthPrivKeyForAPI(seed);
+        byte[] authKey = BRCoreKey.getAuthPrivKeyForAPI(seed);//privatekey
+
         if (authKey == null || authKey.length == 0) {
             BRReportsManager.reportBug(new IllegalArgumentException("authKey is invalid"), true);
         }

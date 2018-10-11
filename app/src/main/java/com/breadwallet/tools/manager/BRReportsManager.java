@@ -39,7 +39,7 @@ public class BRReportsManager {
     public static void reportBug(RuntimeException er, boolean crash) {
         Log.e(TAG, "reportBug: ", er);
         try {
-            Crashlytics.logException(er);
+//            Crashlytics.logException(er);
         } catch (Exception e) {
             Log.e(TAG, "reportBug: failed to report to FireBase: ", e);
         }
@@ -49,7 +49,7 @@ public class BRReportsManager {
     public static void reportBug(Exception er) {
         Log.e(TAG, "reportBug: ", er);
         try {
-            Crashlytics.logException(er);
+//            Crashlytics.logException(er);
         } catch (Exception e) {
             Log.e(TAG, "reportBug: failed to report to FireBase: ", e);
         }

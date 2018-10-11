@@ -33,11 +33,15 @@ public class CryptoTransaction {
 
     private BRCoreTransaction mCoreTx;
     private BREthereumTransaction mEtherTx;
+    private String mElaTx;
 
     public CryptoTransaction(Object transaction) {
         if (transaction instanceof BRCoreTransaction) mCoreTx = (BRCoreTransaction) transaction;
         else if (transaction instanceof BREthereumTransaction)
             mEtherTx = (BREthereumTransaction) transaction;
+        else if(transaction instanceof String)
+            mElaTx = (String) transaction;
+
     }
 
     public BigDecimal getTxSize() {
@@ -56,6 +60,10 @@ public class CryptoTransaction {
         if (mCoreTx != null) return mCoreTx.getReverseHash();
         else if (mEtherTx != null) return mEtherTx.getHash();
         else return null;
+    }
+
+    public String getElaTx(){
+        return mElaTx;
     }
 
     public BRCoreTransaction getCoreTx() {

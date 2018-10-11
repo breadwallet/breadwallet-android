@@ -51,6 +51,7 @@ import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.util.CryptoUriParser;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.BaseBitcoinWalletManager;
+import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.breadwallet.wallet.wallets.ethereum.WalletEthManager;
 
 import java.math.BigDecimal;
@@ -411,6 +412,23 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
         mSend.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                /********************************测试************************************************/
+//                WalletsMaster mastert = WalletsMaster.getInstance(getActivity());
+//                final BaseWalletManager wmt = mastert.getCurrentWallet(getActivity());
+//                String rawAddresst = mAddressEdit.getText().toString();
+//                String amountStrt = mViewModel.getAmount();
+//                String commentt = mCommentEdit.getText().toString();
+//
+//                //TODO daokun.xi
+//                if(wmt.getIso().equalsIgnoreCase("ELA")){
+//                    WalletElaManager walletElaManager = (WalletElaManager) wmt;
+//                    walletElaManager.signAndPublishTransaction(walletElaManager.getAddress(), rawAddresst, Integer.parseInt(amountStrt), commentt);
+//                    closeWithAnimation();
+//                    return;
+//                }
+                /********************************测试************************************************/
+
                 //not allowed now
                 if (!UiUtils.isClickAllowed()) return;
                 WalletsMaster master = WalletsMaster.getInstance(getActivity());
@@ -425,6 +443,14 @@ public class FragmentSend extends ModalDialogFragment implements BRKeyboard.OnIn
                 String rawAddress = mAddressEdit.getText().toString();
                 String amountStr = mViewModel.getAmount();
                 String comment = mCommentEdit.getText().toString();
+
+//                //TODO daokun.xi
+//                if(wm.getIso().equalsIgnoreCase("ELA")){
+//                    WalletElaManager walletElaManager = (WalletElaManager) wm;
+//                    walletElaManager.signAndPublishTransaction(walletElaManager.getAddress(), rawAddress, Integer.parseInt(amountStr), comment);
+//                    closeWithAnimation();
+//                    return;
+//                }
 
                 //inserted amount
                 BigDecimal rawAmount = new BigDecimal(Utils.isNullOrEmpty(amountStr) || amountStr.equalsIgnoreCase(".") ? "0" : amountStr);

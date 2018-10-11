@@ -15,12 +15,20 @@ import com.breadwallet.tools.util.Utils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.wallet.wallets.ela.WalletElaManager;
+import com.breadwallet.wallet.wallets.ela.request.CreateTx;
+import com.breadwallet.wallet.wallets.ela.request.Outputs;
+import com.breadwallet.wallet.wallets.ela.response.transaction.TransactionRes;
+import com.breadwallet.wallet.wallets.ela.response.transaction.UTXOInputs;
+import com.elastos.jni.Utility;
+import com.google.gson.Gson;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -34,7 +42,10 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import okhttp3.MediaType;
 import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * BreadWallet
@@ -281,6 +292,110 @@ public class BRApiManager {
             e.printStackTrace();
         }
         return jsonArray;
+    }
+
+    @WorkerThread
+    public static String getElaBalance(Context app, String address){
+//        String address = WalletElaManager.getInstance(app).getAddress();
+        String url = "http://fun-api-test.elastos.org/"+"/api/1/balance/"+address;
+        String result = urlGET(app, url);
+        String balance = null;
+        try {
+            JSONObject object = new JSONObject(result);
+            balance = object.getString("result");
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return balance;
+    }
+
+
+    public static String createElaTx(final String inputAddress, final String outputsAddress, final int amount, String memo){
+        String transactionJson = null;
+        try {
+            String url = "http://fun-api-test.elastos.org/"+"/api/1/createTx";
+
+            CreateTx tx = new CreateTx();
+            tx.inputs.add(inputAddress);
+
+            Outputs outputs = new Outputs();
+            outputs.addr = outputsAddress;
+            outputs.amt = amount;
+
+            tx.outputs.add(outputs);
+
+            String json = new Gson().toJson(tx);
+//                    String result = urlPost(url, json);
+
+            String result = "{\n" +
+                    "\t\"result\": {\n" +
+                    "\t\t\"Transactions\": [{\n" +
+                    "\t\t\t\"UTXOInputs\": [{\n" +
+                    "\t\t\t\t\"address\": \"EbunxcqXie6UExs5SXDbFZxr788iGGvAs9\",\n" +
+                    "\t\t\t\t\"txid\": \"1d88dad1c8bfc2d58b37d3d022e38f18d2a80148468e448ece3a3c230ced9bcc\",\n" +
+                    "\t\t\t\t\"index\": 0\n" +
+                    "\t\t\t}],\n" +
+                    "\t\t\t\"Fee\": 100.0,\n" +
+                    "\t\t\t\"Outputs\": [{\n" +
+                    "\t\t\t\t\"amount\": 10000,\n" +
+                    "\t\t\t\t\"address\": \"ETyWPmg5aNais2iNrt2zGVjxJ3EVbuzVYo\"\n" +
+                    "\t\t\t}, {\n" +
+                    "\t\t\t\t\"amount\": 99989900,\n" +
+                    "\t\t\t\t\"address\": \"EbunxcqXie6UExs5SXDbFZxr788iGGvAs9\"\n" +
+                    "\t\t\t}]\n" +
+                    "\t\t}]\n" +
+                    "\t},\n" +
+                    "\t\"status\": 200\n" +
+                    "}";
+            JSONObject jsonObject = new JSONObject(result);
+            String tranactions = jsonObject.getString("result");
+            TransactionRes res = new Gson().fromJson(tranactions, TransactionRes.class);
+            List<UTXOInputs> inputs = res.Transactions.get(0).UTXOInputs;
+            for(int i=0; i<inputs.size(); i++){
+                UTXOInputs utxoInputs = inputs.get(i);
+                utxoInputs.privateKey  = "FABB669B7D2FF2BEBBED1C3F1C9A9519C48993D1FC9D89DCB4C7CA14BDB8C99F";
+            }
+
+            transactionJson =new Gson().toJson(res);
+
+            sendElaRawTx(transactionJson);
+
+            Log.i("xidaokun", transactionJson);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return transactionJson;
+    }
+
+
+    public static void sendElaRawTx(final String transaction){
+        try {
+            String url = "http://fun-api-test.elastos.org/"+"/api/1/sendRawTx";
+            String rawTransaction = Utility.generateRawTransaction(transaction);
+            String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";
+            String result = urlPost(url, json);
+
+            Log.i("xidaokun", "result:"+result);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
+    public static String urlPost(String url, String json) throws IOException {
+        RequestBody body = RequestBody.create(JSON, json);
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .build();
+        Response response = APIClient.elaClient.newCall(request).execute();
+        if (response.isSuccessful()) {
+            return response.body().string();
+        } else {
+            throw new IOException("Unexpected code " + response);
+        }
     }
 
     @WorkerThread

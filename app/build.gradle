@@ -20,7 +20,7 @@ android {
         ndk {
             // Specifies the ABI configurations of your native
             // libraries Gradle should build and package with your APK.
-            abiFilters 'x86', 'x86_64', 'armeabi-v7a', 'arm64-v8a'
+            abiFilters 'x86', 'x86_64', 'armeabi-v7a'
             //, 'armeabi' (not supported by NDK 17.0.4754217)
         }
         externalNativeBuild {
@@ -149,9 +149,12 @@ repositories {
 
 dependencies {
     implementation 'commons-io:commons-io:2.4'
-    implementation 'org.eclipse.jetty:jetty-webapp:9.2.19.v20160908' //do not update
-    implementation 'org.eclipse.jetty.websocket:websocket-server:9.2.19.v20160908' //do not update
-    implementation 'org.eclipse.jetty:jetty-continuation:9.2.19.v20160908' //do not update
+    implementation 'org.eclipse.jetty:jetty-webapp:9.2.19.v20160908'
+    //do not update
+    implementation 'org.eclipse.jetty.websocket:websocket-server:9.2.19.v20160908'
+    //do not update
+    implementation 'org.eclipse.jetty:jetty-continuation:9.2.19.v20160908'
+    //do not update
     implementation 'org.slf4j:slf4j-api:1.7.22'
     implementation 'com.android.support:appcompat-v7:27.1.1'
     implementation 'com.android.support:design:27.1.1'
@@ -171,6 +174,7 @@ dependencies {
     implementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     implementation 'tools.fastlane:screengrab:1.1.0'
     implementation 'android.arch.lifecycle:extensions:1.1.1'
+    implementation 'org.kie.modules:com-google-code-gson:6.5.0.Final'
 }
 
 apply plugin: 'com.google.gms.google-services'

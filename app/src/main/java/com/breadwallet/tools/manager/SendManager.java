@@ -161,7 +161,7 @@ public class SendManager {
             throw new SomethingWentWrong("wrong parameters: paymentRequest");
         }
         BigDecimal balance = walletManager.getCachedBalance(app);
-        BigDecimal minOutputAmount = walletManager.getMinOutputAmount(app);
+        BigDecimal minOutputAmount = walletManager.getMinOutputAmount(app);//可以在manager中配置
 
         //not enough for fee
         if (paymentRequest.notEnoughForFee(app, walletManager)) {

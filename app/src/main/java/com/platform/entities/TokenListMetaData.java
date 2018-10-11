@@ -55,6 +55,7 @@ public class TokenListMetaData {
 
         if (this.enabledCurrencies == null) {
             this.enabledCurrencies = new ArrayList<>();
+            this.enabledCurrencies.add(new TokenInfo("ELA", false, null));
             this.enabledCurrencies.add(new TokenInfo("BTC", false, null));
             this.enabledCurrencies.add(new TokenInfo("BCH", false, null));
             this.enabledCurrencies.add(new TokenInfo("ETH", false, null));

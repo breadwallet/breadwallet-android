@@ -1,6 +1,5 @@
 package com.breadwallet.wallet.wallets.bitcoin;
 
-import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 

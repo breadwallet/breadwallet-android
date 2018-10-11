@@ -21,6 +21,7 @@ import com.breadwallet.presenter.customviews.BaseTextView;
 import com.breadwallet.tools.adapter.WalletListAdapter;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.listeners.RecyclerItemClickListener;
+import com.breadwallet.tools.manager.BRApiManager;
 import com.breadwallet.tools.manager.BREventManager;
 import com.breadwallet.tools.manager.BRSharedPrefs;
 import com.breadwallet.tools.manager.InternetManager;
@@ -32,6 +33,7 @@ import com.breadwallet.tools.util.CurrencyUtils;
 import com.breadwallet.wallet.WalletsMaster;
 import com.breadwallet.wallet.abstracts.BaseWalletManager;
 import com.breadwallet.wallet.wallets.bitcoin.WalletBitcoinManager;
+import com.breadwallet.wallet.wallets.ela.WalletElaManager;
 import com.platform.HTTPServer;
 
 import java.math.BigDecimal;
