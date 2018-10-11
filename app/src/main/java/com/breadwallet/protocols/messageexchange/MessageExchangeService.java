@@ -11,6 +11,7 @@ import android.util.Base64;
 import android.util.Log;
 
 import com.breadwallet.BreadApp;
+import com.breadwallet.R;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.presenter.activities.ConfirmationActivity;
@@ -369,12 +370,12 @@ public final class MessageExchangeService extends JobIntentService {
                     Protos.PaymentRequest paymentRequest = Protos.PaymentRequest.parseFrom(decryptedMessage);
 
                     // Fetch the ICO token info and pass the relevant fields back to the metaData object.
-                    TokenItem icoToken = getIcoTokenInfo(paymentRequest.getAddress());
+                    TokenItem paymentRequestTokenItem = getIcoTokenInfo(paymentRequest.getAddress());
 
                     metaData = new PaymentRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
                             paymentRequest.getScope(), paymentRequest.getNetwork(), paymentRequest.getAddress(),
                             paymentRequest.getAmount(), paymentRequest.getMemo(), paymentRequest.getTransactionSize(),
-                            paymentRequest.getTransactionFee(), icoToken.symbol, icoToken.name);
+                            paymentRequest.getTransactionFee(), paymentRequestTokenItem != null && paymentRequestTokenItem.symbol != null ? paymentRequestTokenItem.symbol : "", paymentRequestTokenItem != null && paymentRequestTokenItem.name != null ? paymentRequestTokenItem.name : getResources().getString(R.string.LinkWallet_logoFooter));
                     Log.d(TAG, "Payment request metadata: " + metaData);
                     confirmRequest(metaData);
                     break;
@@ -383,12 +384,12 @@ public final class MessageExchangeService extends JobIntentService {
                     Protos.CallRequest callRequest = Protos.CallRequest.parseFrom(decryptedMessage);
 
                     // Fetch the ICO token info and pass the relevant fields back to the metaData object.
-                    TokenItem tokenItem = getIcoTokenInfo(callRequest.getAddress());
+                    TokenItem callRequestTokenItem = getIcoTokenInfo(callRequest.getAddress());
 
                     metaData = new CallRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
                             callRequest.getScope(), callRequest.getNetwork(), callRequest.getAddress(),
                             callRequest.getAmount(), callRequest.getMemo(), callRequest.getTransactionSize(),
-                            callRequest.getTransactionFee(), callRequest.getAbi(), tokenItem.symbol, tokenItem.name);
+                            callRequest.getTransactionFee(), callRequest.getAbi(), callRequestTokenItem != null && callRequestTokenItem.symbol != null ? callRequestTokenItem.symbol : "", callRequestTokenItem != null && callRequestTokenItem.name != null ? callRequestTokenItem.name : getResources().getString(R.string.LinkWallet_logoFooter));
                     Log.d(TAG, "Call request metadata: " + metaData);
                     confirmRequest(metaData);
                     break;
