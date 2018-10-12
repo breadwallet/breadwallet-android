@@ -56,16 +56,21 @@ import okhttp3.RequestBody;
 public final class UserMetricsUtil {
     private static final String TAG = UserMetricsUtil.class.getSimpleName();
 
+    /* Url fields */
     private static final String ENDPOINT_ME_METRICS = "/me/metrics";
     private static final String URL = BRConstants.HTTPS_PROTOCOL + BreadApp.HOST + ENDPOINT_ME_METRICS;
 
+    /* Metric field key */
     private static final String FIELD_METRIC = "metric";
-    private static final String METRIC_LAUNCH = "launch";
+    /* Data field key */
     private static final String FIELD_DATA = "data";
 
-    // Data field names and some values
+    /* Metric field values */
+    private static final String METRIC_LAUNCH = "launch";
+    private static final String METRIC_PIGEON_TRANSACTION = "pigeon-transaction";
+
+    /* Various field keys and values for data field of launch metric */
     private static final String FIELD_BUNDLES = "bundles";
-    private static final String BUNDLE_WEB = "brd-web";
     private static final String FIELD_OS_VERSION = "os_version";
     private static final String FIELD_USER_AGENT = "user_agent";
     private static final String SYSTEM_PROPERTY_USER_AGENT = "http.agent";
@@ -73,6 +78,15 @@ public final class UserMetricsUtil {
     private static final String DEVICE_TYPE = Build.MANUFACTURER + " " + Build.MODEL;
     private static final String FIELD_APPLICATION_ID = "application_id";
     private static final String FIELD_ADVERTISING_ID = "advertising_id";
+
+    /* Various field keys and values for data field of pigeon transaction metric */
+    private static final String FIELD_TRANSACTION_HASH = "transactionHash";
+    private static final String FIELD_FROM_CURRENCY = "fromCurrency";
+    private static final String FIELD_TIMESTAMP =  "timestamp";
+    private static final String FIELD_FROM_AMOUNT = "fromAmount";
+    private static final String FIELD_FROM_ADDRESS = "fromAddress";
+    private static final String FIELD_TO_CURRENCY = "toCurrency";
+    private static final String FIELD_TO_AMOUNT = "toAmount";
 
     private UserMetricsUtil() {
     }
@@ -116,6 +130,26 @@ public final class UserMetricsUtil {
 
         } catch (GooglePlayServicesNotAvailableException | GooglePlayServicesRepairableException | IOException | JSONException e) {
             Log.e(TAG, "Error constructing JSON payload for user metrics request.", e);
+        }
+    }
+
+    public static void logCallRequestResponse(String transactionHash, String fromCurrency, String fromAmount, String fromAddress, String toCurrency, String toAmount, String timestamp){
+
+        try {
+            JSONObject data = new JSONObject();
+            data.put(FIELD_TRANSACTION_HASH, transactionHash);
+            data.put(FIELD_FROM_CURRENCY, fromCurrency);
+            data.put(FIELD_FROM_AMOUNT, fromAmount);
+            data.put(FIELD_FROM_ADDRESS, fromAddress);
+            data.put(FIELD_TO_CURRENCY, toCurrency);
+            data.put(FIELD_TO_AMOUNT, toAmount);
+            data.put(FIELD_TIMESTAMP, timestamp);
+
+            JSONObject payload = new JSONObject();
+            payload.put(FIELD_METRIC, METRIC_PIGEON_TRANSACTION);
+            payload.put(FIELD_DATA, data);
+        } catch(JSONException e) {
+            Log.e(TAG, "Error creating call request payload! ", e);
         }
     }
 

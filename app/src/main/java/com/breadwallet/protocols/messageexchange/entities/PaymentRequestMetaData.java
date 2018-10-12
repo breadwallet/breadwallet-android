@@ -44,8 +44,8 @@ public class PaymentRequestMetaData extends RequestMetaData {
 
     public PaymentRequestMetaData(String id, String messageType, ByteString senderPublicKey, String currencyCode,
                                   String network, String address, String amount, String memo, String transactionSize,
-                                  String transactionFee, String tokenSymbol, String tokenName) {
-        super(id, messageType, senderPublicKey, currencyCode, network, address, amount, memo, transactionSize, transactionFee, tokenSymbol, tokenName);
+                                  String transactionFee, String tokenSymbol, String tokenName, String tokenAmount) {
+        super(id, messageType, senderPublicKey, currencyCode, network, address, amount, memo, transactionSize, transactionFee, tokenSymbol, tokenName, tokenAmount);
     }
 
     public PaymentRequestMetaData(Parcel source) {
