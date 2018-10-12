@@ -97,9 +97,9 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     public static String getPrivateKey(){
         if(mPrivateKey == null){
             try {
-                mPrivateKey = "A4FFD2C6258FC4ACA3D3573D929058DE60C0F7E561978E72EC1B9C2F9749E734";
-//                byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
-//                mPrivateKey = Utility.getPrivateKey(new String(phrase), "english", "");
+//                mPrivateKey = "A4FFD2C6258FC4ACA3D3573D929058DE60C0F7E561978E72EC1B9C2F9749E734";
+                byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
+                mPrivateKey = Utility.getPrivateKey(new String(phrase), "english", "");
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -131,8 +131,8 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     @Override
     public byte[] signAndPublishTransaction(CryptoTransaction tx, byte[] seed) {
         String raw = tx.getElaTx();
-        BRApiManager.sendElaRawTx(raw);
-        return new byte[0];
+        byte[] ret = BRApiManager.sendElaRawTx(raw);
+        return ret;
     }
 
     @Override
@@ -207,7 +207,8 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getTxFee(CryptoTransaction tx) {
-        return new BigDecimal(getWallet().getTransactionFee(tx.getCoreTx()));
+        BigDecimal fee = new BigDecimal(100).divide(ONE_ELA, 8, BRConstants.ROUNDING_MODE);
+        return fee;
     }
 
     @Override
@@ -218,7 +219,8 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getFeeForTransactionSize(BigDecimal size) {
-        return new BigDecimal(getWallet().getFeeForTransactionSize(size.longValue()));
+        BigDecimal fee = new BigDecimal(100).divide(ONE_ELA, 8, BRConstants.ROUNDING_MODE);
+        return fee;
     }
 
     @Override
@@ -324,8 +326,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public CryptoAddress getReceiveAddress(Context app) {
-        BRCoreAddress addr = getWallet().getReceiveAddress();
-        return new CryptoAddress(mAddress, addr);
+        return new CryptoAddress(mAddress, null);
     }
 
     @Override

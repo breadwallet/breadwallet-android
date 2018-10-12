@@ -22,6 +22,7 @@ import com.breadwallet.wallet.wallets.ela.response.transaction.TransactionRes;
 import com.breadwallet.wallet.wallets.ela.response.transaction.UTXOInputs;
 import com.elastos.jni.Utility;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.platform.APIClient;
 
 import org.json.JSONArray;
@@ -188,6 +189,14 @@ public class BRApiManager {
                         //get each wallet's rates
                         updateRates(context, w);
 
+                    }
+                });
+            }
+            if(w.getIso().equalsIgnoreCase("ELA")){
+                BRExecutor.getInstance().forLightWeightBackgroundTasks().execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        w.refreshCachedBalance(context);
                     }
                 });
             }
@@ -370,18 +379,21 @@ public class BRApiManager {
     }
 
 
-    public static void sendElaRawTx(final String transaction){
+    public static byte[] sendElaRawTx(final String transaction){
+
+        String result = null;
         try {
             String url = ELA_SERVIER_URL+"/api/1/sendRawTx";
             String rawTransaction = Utility.generateRawTransaction(transaction);
             String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";
-            String result = urlPost(url, json);
-
-            Log.i(TAG, "result:"+result);
-        } catch (IOException e) {
+            String tmp = urlPost(url, json);
+            JSONObject jsonObject = new JSONObject(tmp);
+            result = jsonObject.getString("result");
+        } catch (Exception e) {
             e.printStackTrace();
         }
 
+        return result.getBytes();
     }
 
     public static final MediaType JSON = MediaType.parse("application/json; charset=utf-8");

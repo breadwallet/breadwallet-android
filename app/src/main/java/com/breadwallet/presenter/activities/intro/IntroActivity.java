@@ -10,12 +10,14 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.breadwallet.R;
 import com.breadwallet.presenter.activities.HomeActivity;
 import com.breadwallet.presenter.activities.InputPinActivity;
 import com.breadwallet.presenter.activities.util.BRActivity;
 import com.breadwallet.presenter.interfaces.BROnSignalCompletion;
+import com.breadwallet.tools.animation.BRDialog;
 import com.breadwallet.tools.animation.UiUtils;
 import com.breadwallet.tools.security.BRKeyStore;
 import com.breadwallet.tools.security.PostAuth;
@@ -68,6 +70,10 @@ public class IntroActivity extends BRActivity {
         mSplashScreen = findViewById(R.id.splash_screen);
         TextView subtitle = findViewById(R.id.intro_subtitle);
 
+        if(!"armeabi-v7a".equals(android.os.Build.CPU_ABI)){
+            BRDialog.showSimpleDialog(this, "Incompatible", "not support "+android.os.Build.CPU_ABI);
+            return;
+        }
         setListeners();
         updateBundles();
         ImageButton faq = findViewById(R.id.faq_button);
