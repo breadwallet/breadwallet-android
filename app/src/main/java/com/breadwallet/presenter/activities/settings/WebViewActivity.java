@@ -53,6 +53,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -284,8 +285,9 @@ public class WebViewActivity extends BRActivity {
             if (!Utils.isNullOrEmpty(headers)) {
                 httpHeaders = new HashMap<>();
                 JSONObject jsonHeaders = new JSONObject(headers);
-                while (jsonHeaders.keys().hasNext()) {
-                    String key = jsonHeaders.keys().next();
+                Iterator<String> headerIterator = jsonHeaders.keys();
+                while (headerIterator.hasNext()) {
+                    String key = headerIterator.next();
                     httpHeaders.put(key, jsonHeaders.getString(key));
                 }
             }
