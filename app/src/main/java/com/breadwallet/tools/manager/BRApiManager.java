@@ -298,8 +298,7 @@ public class BRApiManager {
 
     @WorkerThread
     public static String getElaBalance(Context app, String address){
-//        String address = WalletElaManager.getInstance(app).getAddress();
-        String url = "http://fun-api-test.elastos.org/"+"/api/1/balance/"+address;
+        String url = ELA_SERVIER_URL+"/api/1/balance/"+address;
         String result = urlGET(app, url);
         String balance = null;
         try {
@@ -315,7 +314,7 @@ public class BRApiManager {
     public static String createElaTx(final String inputAddress, final String outputsAddress, final int amount, String memo){
         String transactionJson = null;
         try {
-            String url = "http://fun-api-test.elastos.org/"+"/api/1/createTx";
+            String url = ELA_SERVIER_URL+"/api/1/createTx";
 
             CreateTx tx = new CreateTx();
             tx.inputs.add(inputAddress);
@@ -339,8 +338,6 @@ public class BRApiManager {
             }
 
             transactionJson =new Gson().toJson(res);
-
-            sendElaRawTx(transactionJson);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -349,7 +346,7 @@ public class BRApiManager {
     }
 
     //TODO test
-    private String getCreateTx(){
+    private static String getCreateTx(){
         return "{\n" +
                 "\t\"result\": {\n" +
                 "\t\t\"Transactions\": [{\n" +
@@ -375,12 +372,12 @@ public class BRApiManager {
 
     public static void sendElaRawTx(final String transaction){
         try {
-            String url = "http://fun-api-test.elastos.org/"+"/api/1/sendRawTx";
+            String url = ELA_SERVIER_URL+"/api/1/sendRawTx";
             String rawTransaction = Utility.generateRawTransaction(transaction);
             String json = "{"+"\"data\"" + ":" + "\"" + rawTransaction + "\"" +"}";
             String result = urlPost(url, json);
 
-            Log.i("xidaokun", "result:"+result);
+            Log.i(TAG, "result:"+result);
         } catch (IOException e) {
             e.printStackTrace();
         }

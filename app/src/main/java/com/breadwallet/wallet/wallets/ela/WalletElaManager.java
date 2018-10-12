@@ -39,17 +39,19 @@ import static com.breadwallet.tools.util.BRConstants.ROUNDING_MODE;
 public class WalletElaManager extends BRCoreWalletManager implements BaseWalletManager {
 
     public static final int ONE_ELA_IN_SALA = 100000000; // 1 ela in sala, 100 millions
-    public static final String MAX_ELA = "90000000"; //Max amount in ela
+    public static final String MAX_ELA = "10000"; //Max amount in ela
     public static final String ELA_SYMBOL = "ELA";
     private static final String SCHEME = "elastos";
     private static final String NAME = "Elastos";
-    private static final String ELA_ADDRESS_PREFIX = "Ela";
+    private static final String ELA_ADDRESS_PREFIX = "E";
 
     private final BigDecimal ONE_ELA = new BigDecimal(ONE_ELA_IN_SALA);
 
     private static WalletElaManager mInstance;
 
-    private final BigDecimal MAX_SATOSHIS = new BigDecimal(MAX_ELA).multiply(new BigDecimal(ONE_ELA_IN_SALA));
+    private final BigDecimal MAX_SALA = new BigDecimal(MAX_ELA).multiply(new BigDecimal(ONE_ELA_IN_SALA));
+
+    private final BigDecimal MIN_SALA = new BigDecimal("100");
 
     private WalletSettingsConfiguration mSettingsConfig;
     private WalletUiConfiguration mUiConfig;
@@ -95,9 +97,10 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
     public static String getPrivateKey(){
         if(mPrivateKey == null){
             try {
-                byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
-                mPrivateKey = Utility.getPrivateKey(new String(phrase), "english", "");
-            } catch (UserNotAuthenticatedException e) {
+                mPrivateKey = "A4FFD2C6258FC4ACA3D3573D929058DE60C0F7E561978E72EC1B9C2F9749E734";
+//                byte[] phrase = BRKeyStore.getPhrase(mContext, 0);
+//                mPrivateKey = Utility.getPrivateKey(new String(phrase), "english", "");
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -122,7 +125,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public boolean isAddressValid(String address) {
-        return /*!Utils.isNullOrEmpty(address) && address.startsWith(ELA_ADDRESS_PREFIX)*/true;
+        return !Utils.isNullOrEmpty(address) && address.startsWith(ELA_ADDRESS_PREFIX);
     }
 
     @Override
@@ -207,10 +210,9 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         return new BigDecimal(getWallet().getTransactionFee(tx.getCoreTx()));
     }
 
-    //TODO 手续费
     @Override
     public BigDecimal getEstimatedFee(BigDecimal amount, String address) {
-        BigDecimal fee = new BigDecimal(100).divide(new BigDecimal(ONE_ELA_IN_SALA));
+        BigDecimal fee = new BigDecimal(100).divide(ONE_ELA, 8, BRConstants.ROUNDING_MODE);
         return fee;
     }
 
@@ -226,12 +228,12 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getMaxOutputAmount(Context app) {
-        return new BigDecimal(getWallet().getMaxOutputAmount());
+        return MAX_SALA;
     }
 
     @Override
     public BigDecimal getMinOutputAmount(Context app) {
-        return new BigDecimal(getWallet().getMinOutputAmount());
+        return MIN_SALA;
     }
 
     @Override
@@ -262,10 +264,16 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
                 String balance = BRApiManager.getElaBalance(mContext, getAddress());
                 final BigDecimal tmp = new BigDecimal((balance==null || balance.equals(""))? "0": balance);
                 BRSharedPrefs.putCachedBalance(app, getIso(), tmp.multiply(ONE_ELA));
+                //TODO mock api
+//                try {
+//                    Thread.sleep(10*1000);
+//                } catch (InterruptedException e) {
+//                    e.printStackTrace();
+//                }
+//                BRSharedPrefs.putCachedBalance(app, getIso(), new BigDecimal("12").multiply(ONE_ELA));
+
             }
         }).start();
-
-//        BRSharedPrefs.putCachedBalance(app, getIso(), new BigDecimal("12").multiply(ONE_ELA));
     }
 
     @Override
@@ -347,9 +355,10 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
         return BRSharedPrefs.getCachedBalance(app, getIso());
     }
 
+    //TODO wait
     @Override
     public BigDecimal getTotalSent(Context app) {
-        return new BigDecimal(getWallet().getTotalSent());
+        return BigDecimal.ZERO;
     }
 
     @Override
@@ -383,7 +392,7 @@ public class WalletElaManager extends BRCoreWalletManager implements BaseWalletM
 
     @Override
     public BigDecimal getMaxAmount(Context app) {
-        return MAX_SATOSHIS;
+        return MAX_SALA;
     }
 
     @Override
