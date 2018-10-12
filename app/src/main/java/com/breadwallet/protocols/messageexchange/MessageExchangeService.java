@@ -9,9 +9,9 @@ import android.support.annotation.VisibleForTesting;
 import android.support.v4.app.JobIntentService;
 import android.util.Base64;
 import android.util.Log;
-
 import com.breadwallet.BreadApp;
 import com.breadwallet.R;
+import com.breadwallet.app.util.UserMetricsUtil;
 import com.breadwallet.core.BRCoreKey;
 import com.breadwallet.core.ethereum.BREthereumAmount;
 import com.breadwallet.presenter.activities.ConfirmationActivity;
@@ -372,10 +372,13 @@ public final class MessageExchangeService extends JobIntentService {
                     // Fetch the ICO token info and pass the relevant fields back to the metaData object.
                     TokenItem paymentRequestTokenItem = getIcoTokenInfo(paymentRequest.getAddress());
 
+                    double tokenPurchaseAmount = calculateTokenAmount(paymentRequest.getAmount(), paymentRequestTokenItem);
+
                     metaData = new PaymentRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
                             paymentRequest.getScope(), paymentRequest.getNetwork(), paymentRequest.getAddress(),
                             paymentRequest.getAmount(), paymentRequest.getMemo(), paymentRequest.getTransactionSize(),
-                            paymentRequest.getTransactionFee(), paymentRequestTokenItem != null && paymentRequestTokenItem.symbol != null ? paymentRequestTokenItem.symbol : "", paymentRequestTokenItem != null && paymentRequestTokenItem.name != null ? paymentRequestTokenItem.name : getResources().getString(R.string.LinkWallet_logoFooter));
+                            paymentRequest.getTransactionFee(), paymentRequestTokenItem != null && paymentRequestTokenItem.symbol != null ? paymentRequestTokenItem.symbol : "", paymentRequestTokenItem != null && paymentRequestTokenItem.name != null ? paymentRequestTokenItem.name : getResources().getString(R.string.LinkWallet_logoFooter), String.valueOf(tokenPurchaseAmount));
+
                     Log.d(TAG, "Payment request metadata: " + metaData);
                     confirmRequest(metaData);
                     break;
@@ -386,10 +389,13 @@ public final class MessageExchangeService extends JobIntentService {
                     // Fetch the ICO token info and pass the relevant fields back to the metaData object.
                     TokenItem callRequestTokenItem = getIcoTokenInfo(callRequest.getAddress());
 
+                    double purchaseAmount = calculateTokenAmount(callRequest.getAmount(), callRequestTokenItem);
+
                     metaData = new CallRequestMetaData(envelope.getIdentifier(), envelope.getMessageType(), envelope.getSenderPublicKey(),
                             callRequest.getScope(), callRequest.getNetwork(), callRequest.getAddress(),
                             callRequest.getAmount(), callRequest.getMemo(), callRequest.getTransactionSize(),
-                            callRequest.getTransactionFee(), callRequest.getAbi(), callRequestTokenItem != null && callRequestTokenItem.symbol != null ? callRequestTokenItem.symbol : "", callRequestTokenItem != null && callRequestTokenItem.name != null ? callRequestTokenItem.name : getResources().getString(R.string.LinkWallet_logoFooter));
+                            callRequest.getTransactionFee(), callRequest.getAbi(), callRequestTokenItem != null && callRequestTokenItem.symbol != null ? callRequestTokenItem.symbol : "", callRequestTokenItem != null && callRequestTokenItem.name != null ? callRequestTokenItem.name : getResources().getString(R.string.LinkWallet_logoFooter), String.valueOf(purchaseAmount));
+
                     Log.d(TAG, "Call request metadata: " + metaData);
                     confirmRequest(metaData);
                     break;
@@ -399,6 +405,27 @@ public final class MessageExchangeService extends JobIntentService {
         } catch (InvalidProtocolBufferException e) {
             Log.e(TAG, "Error parsing protobuf for " + messageType.name() + "message.", e);
         }
+    }
+
+    /**
+     * Here we use the ICO token exchange rate to calculate the amount of tokens to be purchased.
+     *
+     * @param fromAmount The amount being sent to purchase a quantity of an ICO token (usually ETH).
+     * @param tokenItem  The ICO token being purchased.
+     * @return The amount of the ICO token being purchased.
+     */
+    private double calculateTokenAmount(String fromAmount, TokenItem tokenItem) {
+
+        if (tokenItem == null) {
+            return 0;
+        }
+
+        // Exchange rate contains prefix "ETH" - e.g ETH .00125000
+        // Remove all letters and symbols that are not 0-9 or a period
+        String tokenExchangeRate = tokenItem.getContractInitialValue();
+        tokenExchangeRate = tokenExchangeRate.replaceAll("\\D+", "");
+
+        return Double.parseDouble(fromAmount) / Double.parseDouble(tokenExchangeRate);
     }
 
     /**
@@ -793,6 +820,10 @@ public final class MessageExchangeService extends JobIntentService {
                         responseBuilder.setScope(currencyCode)
                                 .setStatus(Protos.Status.ACCEPTED)
                                 .setTransactionId(hash);
+
+                        // Add token to home screen once request has been approved
+                        addNewTokenToTokenList(hash, requestMetaData);
+
                     } else {
                         responseBuilder.setStatus(Protos.Status.REJECTED)
                                 .setError(Protos.Error.TRANSACTION_FAILED);
@@ -801,9 +832,6 @@ public final class MessageExchangeService extends JobIntentService {
                     sendResponse(requestMetaData, messageResponse);
                 }
             });
-
-            // Add token to home screen once request has been approved
-            addNewTokenToTokenList(requestMetaData);
 
         } else {
             Protos.PaymentResponse.Builder responseBuilder = Protos.PaymentResponse.newBuilder();
@@ -847,6 +875,10 @@ public final class MessageExchangeService extends JobIntentService {
                         responseBuilder.setScope(currencyCode)
                                 .setStatus(Protos.Status.ACCEPTED)
                                 .setTransactionId(hash);
+
+                        // Add token to home screen once request has been approved
+                        addNewTokenToTokenList(hash, requestMetaData);
+
                     } else {
 
                         responseBuilder.setStatus(Protos.Status.REJECTED)
@@ -856,10 +888,6 @@ public final class MessageExchangeService extends JobIntentService {
                     sendResponse(requestMetaData, messageResponse);
                 }
             });
-
-            // Add token to home screen once request has been approved
-            addNewTokenToTokenList(requestMetaData);
-
         } else {
             Protos.CallResponse.Builder responseBuilder = Protos.CallResponse.newBuilder();
             responseBuilder.setStatus(Protos.Status.REJECTED)
@@ -874,8 +902,9 @@ public final class MessageExchangeService extends JobIntentService {
      * Adds the token from a payment or call request to the token list and adds it to the home screen.
      *
      * @param requestMetaData The payment/call request metadata that contains details on the new token.
+     * @param txHash The hash of the token purchase transaction that was just made.
      */
-    private void addNewTokenToTokenList(RequestMetaData requestMetaData) {
+    private void addNewTokenToTokenList(String txHash, RequestMetaData requestMetaData) {
 
         if (requestMetaData != null) {
             if (!WalletsMaster.getInstance(this).hasWallet(requestMetaData.getCurrencyCode())) {
@@ -893,6 +922,8 @@ public final class MessageExchangeService extends JobIntentService {
 
                 KVStoreManager.putTokenListMetaData(this, tokenListMetaData);
                 WalletsMaster.getInstance(this).updateWallets(this);
+
+                UserMetricsUtil.logCallRequestResponse(txHash, requestMetaData.getCurrencyCode(), requestMetaData.getAmount(), requestMetaData.getAddress(), item.symbol, String.valueOf(requestMetaData.getTokenAmount()), String.valueOf(System.currentTimeMillis()));
             }
         }
     }
