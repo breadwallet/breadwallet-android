@@ -272,6 +272,7 @@ public class HomeActivity extends BRActivity implements InternetManager.Connecti
         } else {
             if (mNotificationBar != null) {
                 mNotificationBar.setVisibility(View.VISIBLE);
+                mNotificationBar.bringToFront();
             }
         }
 
